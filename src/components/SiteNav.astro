@@ -1,15 +1,6 @@
 ---
 import { Logo } from "./design-system/brand/Logo.jsx";
-
-const sections = [
-	{ href: "/", label: "Overview" },
-	{ href: "/getting-started/", label: "Getting Started" },
-	{ href: "/rules/", label: "Rules" },
-	{ href: "/configuration/", label: "Configuration" },
-	{ href: "/results-reports/", label: "Results & Reports" },
-	{ href: "/conformance/", label: "Conformance" },
-	{ href: "/troubleshooting/", label: "Troubleshooting" },
-];
+import { sections } from "../data/sections";
 
 const currentPath = Astro.url.pathname;
 const isActive = (href: string) =>

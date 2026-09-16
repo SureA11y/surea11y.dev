@@ -3,9 +3,11 @@
 The docs and rules site for `@surea11y/core`. Scaffold only as of 2026-09-16 —
 Astro + `@astrojs/react`, design tokens wired in. As of the same day it also
 has: a nav/page shell (`BaseLayout`/`SiteNav`, one stub page per IA section),
-and a first pass at wiring in real `design_system` React components (`Logo`,
-`Callout`, copied into `src/components/design-system/` — see below). Still
-no rule-page generator, and only those two components are wired in so far.
+Overview turned into a section-index landing (badges + a card grid linking
+the other six sections), and `design_system` React components wired in
+where real content maps to them (`Logo`, `Badge`, `Card`, `Callout`, copied
+into `src/components/design-system/` — see below). Still no rule-page
+generator, and only those four components are wired in so far.
 
 ## Where things come from (all sibling directories on this machine)
 
@@ -35,10 +37,12 @@ no rule-page generator, and only those two components are wired in so far.
   here (mirroring the same category subdirectories, so relative imports
   between components resolve unmodified) rather than depended on, same
   source-of-truth relationship as the tokens above. Only `brand/Logo`,
-  `brand/Icon` (a `Callout` dependency), and `feedback/Callout` are copied
-  in so far — the rest come in as pages actually need them, not speculatively.
-  `Badge`'s `tone` prop already speaks the engine's own outcome vocabulary
-  (`pass`/`fail`/`unknown`/`advisory`).
+  `brand/Icon` (a `Callout` dependency), `feedback/Callout`, `core/Badge`,
+  and `core/Card` are copied in so far — the rest come in as pages actually
+  need them, not speculatively. `Badge`'s `tone` prop already speaks the
+  engine's own outcome vocabulary (`pass`/`fail`/`unknown`/`advisory`), but
+  `Card`'s `accent` prop is reserved for result states in tables/reports and
+  must not appear on marketing/nav cards — see its own `.d.ts`.
 - `../design_system/CLAUDE.md` — locked brand decisions (voice, naming,
   color meanings, type). Site copy and any new components should follow it.
 
@@ -60,8 +64,9 @@ as structured data) is still the plan; Astro supports that natively.
    parsing the Markdown here — check whether that's landed in `core` before
    building a Markdown parser against it.
 3. Import and wire up more `design_system` React components in place of raw
-   HTML, as pages need them (`Badge`/`Tag` for rule pages, `Card` for
-   result/report examples, etc.) — `Logo` and `Callout` are done.
+   HTML, as pages need them (`Tag`/`ResultBadge` for rule pages, more `Card`
+   usage for result/report examples, etc.) — `Logo`, `Callout`, `Badge`, and
+   `Card` are done.
 4. The net-new content the design doc calls out: an Overview page, the
    "Usage" shared-concept subsection of Getting Started, and reader-facing
    adaptations of `RULE_TAXONOMY.md`/`I18N.md`/each binding's README.
