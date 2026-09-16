@@ -16,8 +16,8 @@ const highlighter = createHighlighterCoreSync({
 
 // CodeBlock always renders on the ink surface (see below), so token colors
 // are brightened and contrast-checked against this literal value rather
-// than the (browser-only) --ink-sunken custom property.
-const CODE_BG = "#0B100F";
+// than the (browser-only) --ink-raised custom property.
+const CODE_BG = "#161C1A";
 const MIN_TOKEN_CONTRAST = 4.5;
 
 function hexToRgb(hex) {
@@ -76,8 +76,8 @@ const brightenedColorCache = new Map();
 
 // Lifts vitesse-dark's deliberately muted token palette a bit brighter, then
 // keeps lightening (hue/saturation held) until the token clears AA contrast
-// against the ink-sunken background — vitesse-dark's own punctuation tone
-// falls just short of that (3.34:1) before this runs.
+// against the ink-raised background — vitesse-dark's own punctuation tone
+// falls short of that before this runs.
 function brightenTokenColor(hex) {
   if (!hex) return hex;
   const cached = brightenedColorCache.get(hex);
@@ -136,7 +136,7 @@ export function CodeBlock({ lines = [], prompt = "$", copyable = false, lang, st
       aria-label={defaultLabel}
       style={{
         position: "relative",
-        background: "var(--ink-sunken)",
+        background: "var(--ink-raised)",
         border: "1px solid var(--hairline-dark)",
         borderRadius: "var(--radius-sm)",
         padding: "var(--space-5) var(--space-6)",
