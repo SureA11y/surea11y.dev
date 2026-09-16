@@ -8,9 +8,10 @@ the other six sections), a real Rules catalog + 132 generated rule pages
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
 `src/components/design-system/` — see below). All seven IA sections have
-real content now. What's left is net-new prose no single source doc
-supplies verbatim: the real Overview page, and the "How rules are
-organized" page under Rules — see Next steps below.
+real content now, including both pieces of net-new prose the IA doc calls
+out (the real Overview page, and a "How rules are organized" page under
+Rules at `/rules/organization/`) — see "Where things come from" and
+"Next steps" below for how each was written.
 
 ## Where things come from (all sibling directories on this machine)
 
@@ -118,6 +119,37 @@ organized" page under Rules — see Next steps below.
   violations/passes/incomplete" differentiator, which every binding README
   repeats verbatim for its own standalone readers, is stated once in the
   shared "Usage" section instead of five times.
+- `../core/README.md` grounds the real Overview page
+  (`src/components/OverviewContent.jsx`) — the net-new content the IA doc
+  calls for turned out to already be mostly written: the README's tagline,
+  "Which package do I need?" table, outcome vocabulary, ACT-corpus
+  verification numbers (798 examples/58 rules/zero false positives), key
+  principles, and Philosophy section are adapted, not invented. Left out
+  deliberately: Installation/Quick Start (that's `/getting-started/`'s
+  job, already built), the Documentation table (a sitemap of `core`'s own
+  docs, redundant with this site's own nav), and everything
+  contributor-facing (Project Structure, Building, Contributing, Security,
+  Versioning, Maintainer, License). The four-outcome list uses
+  `ResultBadge`, not `Tag` — results need the five-state
+  colour+glyph+word treatment, `Tag` has no glyph and is documented for
+  categories/filters, not results; this was a real mistake caught and
+  fixed while writing the page, not a first-try decision.
+- `../core/docs/RULE_TAXONOMY.md` grounds `/rules/organization/`'s "How
+  rules are organized" (`src/components/RuleOrganizationContent.jsx`), the
+  other net-new piece. This one genuinely needed adaptation, not a
+  drop-in: the source is a rule-*authoring* doc (MUST/MUST NOT constraints,
+  internal field references like `meta.type`/`data.visibilityFilter.targetSet`).
+  Kept: automatic-vs-manual (what a reader needs to correctly weight a
+  `fail` vs a `cantTell`), the family+intent rule-id naming convention
+  (§1.2/1.3 — this is also literally the logic `computeRelated` in
+  `scripts/generate-rules-data.cjs` implements, so this page is the
+  reader-facing explanation of a mechanism the site already uses), and a
+  light pass on WCAG facets linking to Conformance's fuller treatment. Cut
+  entirely: target-set/tree-scope (§1.4) and mechanism-type (§1.5) — pure
+  rule-authoring internals with no reader-facing payoff, same reasoning
+  that keeps `RULE_AUTHORING.md` itself GitHub-only. Linked from
+  `/rules/`'s intro paragraph, since nothing else on the site pointed to
+  it.
 - `../design_system/tokens/*.css` — design tokens (colors, typography,
   spacing, motion, elevation, radius). Copied into `src/styles/tokens/`
   here; that's the source of truth, re-copy if it changes rather than
@@ -184,8 +216,16 @@ need a content-collection schema, just a build-time array.
    ~~Configuration~~, ~~Results & Reports~~, and ~~Getting Started~~ (the
    one page built from each binding's own README rather than a single
    `core` doc — see above).
-5. What's left: the net-new content the design doc calls out, not a
-   drop-in from any single source doc — the real Overview page (what
-   surea11y is, how it differs from other tools), and the "How rules are
-   organized" page under Rules (`RULE_TAXONOMY.md` needs adaptation for a
-   reader, not a verbatim drop-in — see the IA doc).
+5. ~~The net-new content the design doc calls out, not a drop-in from any
+   single source doc.~~ Done — the real Overview page
+   (`src/components/OverviewContent.jsx`, grounded in `../core/README.md`)
+   and `/rules/organization/`'s "How rules are organized"
+   (`src/components/RuleOrganizationContent.jsx`, adapted from
+   `RULE_TAXONOMY.md` — see above for both).
+
+Nothing from the original scope in this file is left open. Real follow-up
+work from here is either genuinely new scope (not yet asked for) or small
+maintenance items already noted inline above (e.g. re-running
+`docs:rules`/`docs:rule-catalog` if `core` moves on, wiring
+`docs:rules:check` into CI if one gets set up) — check `../internal-notes`
+for anything newer than this file before assuming there's nothing left.

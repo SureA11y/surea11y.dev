@@ -1,8 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { Callout } from "../components/design-system/feedback/Callout.jsx";
 import { Badge } from "../components/design-system/core/Badge.jsx";
 import { Card } from "../components/design-system/core/Card.jsx";
+import { OverviewContent } from "../components/OverviewContent.jsx";
 import { sections } from "../data/sections";
 
 const otherSections = sections.filter((section) => section.href !== "/");
@@ -15,11 +15,7 @@ const otherSections = sections.filter((section) => section.href !== "/");
 		<Badge label="engine" value="v1.7.0" tone="neutral" />
 		<Badge label="license" value="MPL-2.0" tone="neutral" />
 	</div>
-	<Callout tone="note">
-		Docs and rules site scaffold. The Overview page itself — what
-		surea11y is, the engine-plus-bindings model, how its results differ
-		from other tools — hasn't been written yet.
-	</Callout>
+	<OverviewContent />
 	<div class="section-grid">
 		{
 			otherSections.map((section) => (
@@ -44,6 +40,60 @@ const otherSections = sections.filter((section) => section.href !== "/");
 		display: flex;
 		gap: var(--space-2);
 		margin: var(--space-4) 0 var(--space-6);
+	}
+
+	:global(.tagline) {
+		font-family: var(--font-display);
+		font-size: var(--text-lg);
+		color: var(--text-strong);
+	}
+
+	:global(h2) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-lg);
+		margin-top: var(--space-10);
+	}
+
+	:global(h3) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-md);
+		margin-top: var(--space-8);
+	}
+
+	:global(p),
+	:global(li) {
+		line-height: var(--leading-relaxed);
+	}
+
+	:global(li) {
+		margin-bottom: var(--space-3);
+	}
+
+	:global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
+	}
+
+	:global(blockquote) {
+		margin: var(--space-4) 0;
+		padding-left: var(--space-5);
+		border-left: var(--stroke-accent-bar) solid var(--accent-2);
+		font-family: var(--font-display);
+		font-size: var(--text-md);
+		color: var(--text-strong);
+	}
+
+	:global(.outcome-list) {
+		list-style: none;
+		padding: 0;
+	}
+
+	:global(.outcome-list li) {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-2);
 	}
 
 	.section-grid {
