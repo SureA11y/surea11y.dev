@@ -351,7 +351,7 @@ export function EngineOptionsContent() {
 				— equivalent to <code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>.
 			</p>
 
-			<h3 id="filtering-by-wcag-version">Filtering by WCAG version (2.1 vs 2.2)</h3>
+			<h3 id="filtering-by-wcag-version">Filtering by WCAG version (2.0, 2.1, 2.2)</h3>
 			<p>
 				Every rule and composite carries exactly one WCAG-version-origin level tag:{" "}
 				<code>wcag2a</code>/<code>wcag2aa</code>/<code>wcag2aaa</code> for a Success Criterion
