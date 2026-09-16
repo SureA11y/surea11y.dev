@@ -1,30 +1,17 @@
 ---
-import "../styles/global.css";
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>surea11y</title>
-	</head>
-	<body>
-		<main>
-			<h1>surea11y</h1>
-			<p>Docs and rules site scaffold. Nothing published here yet.</p>
-		</main>
-	</body>
-</html>
+<BaseLayout title="Overview">
+	<h1>surea11y</h1>
+	<p>
+		Docs and rules site scaffold. The Overview page itself — what
+		surea11y is, the engine-plus-bindings model, how its results differ
+		from other tools — hasn't been written yet.
+	</p>
+</BaseLayout>
 
 <style>
-	body {
-		background: var(--surface);
-		color: var(--text-body);
-		font-family: var(--font-body);
-		margin: 0;
-		padding: 2rem;
-	}
-
 	h1 {
 		font-family: var(--font-display);
 		color: var(--text-strong);

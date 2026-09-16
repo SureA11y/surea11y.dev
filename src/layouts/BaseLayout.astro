@@ -1,0 +1,57 @@
+---
+import "../styles/global.css";
+import SiteNav from "../components/SiteNav.astro";
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="alternate icon" href="/favicon.ico" />
+		<title>{title} · surea11y</title>
+	</head>
+	<body>
+		<a class="skip-link" href="#main-content">Skip to content</a>
+		<SiteNav />
+		<main id="main-content">
+			<slot />
+		</main>
+	</body>
+</html>
+
+<style>
+	body {
+		background: var(--surface);
+		color: var(--text-body);
+		font-family: var(--font-body);
+		margin: 0;
+	}
+
+	main {
+		padding: var(--space-8) var(--space-6);
+	}
+
+	.skip-link {
+		position: absolute;
+		top: -100%;
+		left: var(--space-4);
+		background: var(--surface-raised);
+		color: var(--text-strong);
+		padding: var(--space-2) var(--space-4);
+		border-radius: var(--radius-md);
+		z-index: 10;
+	}
+
+	.skip-link:focus-visible {
+		top: var(--space-4);
+		outline: 2px solid var(--focus-ring);
+		outline-offset: 2px;
+	}
+</style>
