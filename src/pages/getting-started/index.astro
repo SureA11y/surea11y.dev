@@ -1,11 +1,13 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { GettingStartedContent } from "../../components/GettingStartedContent.jsx";
+import GettingStartedMenu from "../../components/GettingStartedMenu.astro";
 ---
 
 <BaseLayout title="Getting Started">
 	<h1>Getting Started</h1>
 	<GettingStartedContent />
+	<GettingStartedMenu />
 </BaseLayout>
 
 <style>
@@ -21,13 +23,6 @@ import { GettingStartedContent } from "../../components/GettingStartedContent.js
 		margin-top: var(--space-10);
 	}
 
-	:global(h3) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-		font-size: var(--text-md);
-		margin-top: var(--space-8);
-	}
-
 	:global(p) {
 		line-height: var(--leading-relaxed);
 	}
@@ -35,9 +30,5 @@ import { GettingStartedContent } from "../../components/GettingStartedContent.js
 	:global(code) {
 		font-family: var(--font-mono);
 		font-size: 0.9em;
-	}
-
-	:global(section) {
-		margin-top: var(--space-6);
 	}
 </style>

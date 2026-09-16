@@ -105,20 +105,44 @@ Rules at `/rules/organization/`) — see "Where things come from" and
 - `../core/docs/INTEGRATION.md` (Standalone section, Pattern 3) plus each
   binding's own `README.md` — `../cypress`, `../playwright`, `../puppeteer`,
   `../selenium`, `../webdriverio`, `../cli`, all sibling directories here
-  too — feed `/getting-started/`'s per-binding subsections
-  (`src/components/GettingStartedContent.jsx`). Unlike every other content
-  page, this one is **not** a near-verbatim drop-in: each binding README is
-  150-220 lines and the IA doc explicitly says to pull only "install +
-  minimal usage" from each, leaving the rest (advanced builder options,
-  TypeScript types, binding-internals sections) on that binding's own
-  README/GitHub. Real install-time gotchas were kept where they directly
-  affect the shown usage snippet (Playwright's separate browser-install
-  step, WebdriverIO's BiDi-vs-classic-WebDriver performance note tied to
-  the capability flag in its own example) — everything past "does this
-  work" was cut. The "results is the engine's own native shape, not
-  violations/passes/incomplete" differentiator, which every binding README
-  repeats verbatim for its own standalone readers, is stated once in the
-  shared "Usage" section instead of five times.
+  too — feed `/getting-started/`'s per-binding pages. Unlike every other
+  content page, this one is **not** a near-verbatim drop-in: each binding
+  README is 150-220 lines and the IA doc explicitly says to pull only
+  "install + minimal usage" from each, leaving the rest (advanced builder
+  options, TypeScript types, binding-internals sections) on that binding's
+  own README/GitHub. Real install-time gotchas were kept where they
+  directly affect the shown usage snippet (Playwright's separate
+  browser-install step, WebdriverIO's BiDi-vs-classic-WebDriver performance
+  note tied to the capability flag in its own example) — everything past
+  "does this work" was cut. The "results is the engine's own native shape,
+  not violations/passes/incomplete" differentiator, which every binding
+  README repeats verbatim for its own standalone readers, is stated once
+  on the `/getting-started/` index instead of seven times.
+
+  **Page shape corrected after launch**: this started as one flowing page
+  with anchor-linked subsections — the internal IA doc's stated reason was
+  "closer to alfa's actual pattern," but checking the real
+  `alfa.siteimprove.com/code-checker/getting-started/usage` page directly
+  showed that premise was wrong: alfa uses a separate URL per framework,
+  linked from a plain list, not one long page. Rebuilt to match: `/getting-started/`
+  is now an index (Installation + shared Usage intro + a picker menu,
+  `src/components/GettingStartedContent.jsx` + `GettingStartedMenu.astro`),
+  and each binding gets its own route
+  (`/getting-started/{cypress,playwright,puppeteer,selenium,webdriverio,cli,standalone}/`).
+  `GettingStartedMenu.astro` repeats on every one of those pages (not just
+  the index, unlike alfa) so switching bindings never dead-ends back
+  through the index — confirmed with the user as a deliberate improvement,
+  not an oversight. Data lives in `src/data/gettingStartedSections.ts`
+  (menu entries) and `src/data/bindingUsage.jsx` (the 5 true bindings'
+  install/usage/note content, spread as props into
+  `src/components/UsageBindingSection.jsx` per page); CLI and Standalone
+  don't fit that shape (extra output-sample block; several standalone
+  paragraphs) and keep their own bespoke `CliUsageContent.jsx`/
+  `StandaloneUsageContent.jsx`. The menu itself is plain Astro/semantic
+  HTML, same reasoning as `SiteNav` — no design-system nav component fits
+  a plain link list — and uses the exact same non-color-only active-state
+  cue (`aria-current` + bottom border, no font-weight) `SiteNav` was fixed
+  to use earlier, not a fresh copy of the original color-only mistake.
 - `../core/README.md` grounds the real Overview page
   (`src/components/OverviewContent.jsx`) — the net-new content the IA doc
   calls for turned out to already be mostly written: the README's tagline,

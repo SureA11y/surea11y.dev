@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import GettingStartedMenu from "../../../components/GettingStartedMenu.astro";
+import { StandaloneUsageContent } from "../../../components/StandaloneUsageContent.jsx";
+---
+
+<BaseLayout title="Standalone">
+	<h1>Standalone</h1>
+	<GettingStartedMenu />
+	<StandaloneUsageContent />
+</BaseLayout>
+
+<style>
+	h1 {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+	}
+
+	:global(p) {
+		line-height: var(--leading-relaxed);
+	}
+
+	:global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
+	}
+</style>
