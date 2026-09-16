@@ -8,8 +8,9 @@ export function GettingStartedContent() {
 				There's no single install command — surea11y is a core engine plus a family of
 				separately-published bindings, so which package(s) you install depends on how you already
 				run tests or scripts. Pick your stack below: Cypress, Playwright, Puppeteer, Selenium,
-				WebdriverIO, the CLI, or standalone (installing <code>@surea11y/core</code> directly, or
-				the browser bundle).
+				WebdriverIO, <a href="/getting-started/test-matchers/">test-matchers</a> for Jest/Vitest
+				unit and component tests, the CLI, or standalone (installing <code>@surea11y/core</code>{" "}
+				directly, or the browser bundle).
 			</p>
 
 			<h2>Usage</h2>

@@ -5,7 +5,9 @@ export const bindingUsage = {
 		intro: (
 			<p>
 				<a href="https://www.cypress.io/">Cypress</a> is a JavaScript end-to-end testing framework
-				that runs your tests inside the browser itself, alongside the app under test.
+				that runs your tests inside the browser itself, alongside the app under test. surea11y
+				integrates through the{" "}
+				<a href="https://github.com/SureA11y/cypress"><code>@surea11y/cypress</code></a> binding.
 			</p>
 		),
 		install: ["npm install @surea11y/cypress cypress"],
@@ -51,6 +53,9 @@ export const bindingUsage = {
 			<p>
 				<a href="https://playwright.dev/">Playwright</a> is a cross-browser end-to-end testing
 				framework from Microsoft, driving real Chromium, Firefox, and WebKit engines from Node.js.
+				surea11y integrates through the{" "}
+				<a href="https://github.com/SureA11y/playwright"><code>@surea11y/playwright</code></a>{" "}
+				binding.
 			</p>
 		),
 		install: [
@@ -95,7 +100,9 @@ export const bindingUsage = {
 			<p>
 				<a href="https://pptr.dev/">Puppeteer</a> is a Node.js library for driving headless or full
 				Chrome/Chromium via the DevTools protocol — browser automation and scripting, often used
-				for testing but not a test framework on its own.
+				for testing but not a test framework on its own. surea11y integrates through the{" "}
+				<a href="https://github.com/SureA11y/puppeteer"><code>@surea11y/puppeteer</code></a>{" "}
+				binding.
 			</p>
 		),
 		install: ["npm install @surea11y/puppeteer puppeteer"],
@@ -132,7 +139,9 @@ export const bindingUsage = {
 			<p>
 				<a href="https://www.selenium.dev/">Selenium WebDriver</a> is the long-standing standard
 				for driving real browsers from any language — the most established cross-browser
-				automation tool, commonly used for end-to-end testing.
+				automation tool, commonly used for end-to-end testing. surea11y integrates through the{" "}
+				<a href="https://github.com/SureA11y/selenium"><code>@surea11y/selenium</code></a>{" "}
+				binding.
 			</p>
 		),
 		install: ["npm install @surea11y/selenium selenium-webdriver"],
@@ -178,6 +187,9 @@ export const bindingUsage = {
 			<p>
 				<a href="https://webdriver.io/">WebdriverIO</a> is a Node.js test automation framework
 				built on the WebDriver protocol, supporting both end-to-end and component testing.
+				surea11y integrates through the{" "}
+				<a href="https://github.com/SureA11y/webdriverio"><code>@surea11y/webdriverio</code></a>{" "}
+				binding.
 			</p>
 		),
 		install: ["npm install @surea11y/webdriverio webdriverio"],
