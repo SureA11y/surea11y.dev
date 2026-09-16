@@ -2,6 +2,12 @@ import React from "react";
 
 export const bindingUsage = {
 	cypress: {
+		intro: (
+			<p>
+				<a href="https://www.cypress.io/">Cypress</a> is a JavaScript end-to-end testing framework
+				that runs your tests inside the browser itself, alongside the app under test.
+			</p>
+		),
 		install: ["npm install @surea11y/cypress cypress"],
 		installNote: (
 			<p>
@@ -41,6 +47,12 @@ export const bindingUsage = {
 	},
 
 	playwright: {
+		intro: (
+			<p>
+				<a href="https://playwright.dev/">Playwright</a> is a cross-browser end-to-end testing
+				framework from Microsoft, driving real Chromium, Firefox, and WebKit engines from Node.js.
+			</p>
+		),
 		install: [
 			"npm install @surea11y/playwright playwright",
 			"npx playwright install chromium",
@@ -79,6 +91,13 @@ export const bindingUsage = {
 	},
 
 	puppeteer: {
+		intro: (
+			<p>
+				<a href="https://pptr.dev/">Puppeteer</a> is a Node.js library for driving headless or full
+				Chrome/Chromium via the DevTools protocol — browser automation and scripting, often used
+				for testing but not a test framework on its own.
+			</p>
+		),
 		install: ["npm install @surea11y/puppeteer puppeteer"],
 		installNote: (
 			<p>
@@ -109,6 +128,13 @@ export const bindingUsage = {
 	},
 
 	selenium: {
+		intro: (
+			<p>
+				<a href="https://www.selenium.dev/">Selenium WebDriver</a> is the long-standing standard
+				for driving real browsers from any language — the most established cross-browser
+				automation tool, commonly used for end-to-end testing.
+			</p>
+		),
 		install: ["npm install @surea11y/selenium selenium-webdriver"],
 		installNote: (
 			<p>
@@ -148,6 +174,12 @@ export const bindingUsage = {
 	},
 
 	webdriverio: {
+		intro: (
+			<p>
+				<a href="https://webdriver.io/">WebdriverIO</a> is a Node.js test automation framework
+				built on the WebDriver protocol, supporting both end-to-end and component testing.
+			</p>
+		),
 		install: ["npm install @surea11y/webdriverio webdriverio"],
 		installNote: (
 			<p>
