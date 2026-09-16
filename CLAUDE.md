@@ -46,16 +46,33 @@ Rules at `/rules/organization/`) — see "Where things come from" and
 - **Configuration, Results & Reports, Conformance, and Troubleshooting are
   each split into per-topic subpages**, not one long page: every section
   index (`/configuration/`, `/results-reports/`, `/conformance/`,
-  `/troubleshooting/`) is a short intro + `SectionMenu.astro` (a generic
+  `/troubleshooting/`) has its own real intro content — one `.jsx`
+  component per section (`ConfigurationContent.jsx`,
+  `ResultsReportsContent.jsx`, `ConformanceContent.jsx`,
+  `TroubleshootingContent.jsx`, distinct from and much shorter than the
+  per-topic subpage components below, same naming convention as
+  `GettingStartedContent.jsx`), one `<h2>` per subtopic with a real
+  paragraph explaining what it covers and why a reader would want it, not
+  just a link teaser — plus `SectionMenu.astro` underneath (a generic
   `sections: {href, label}[]` local-nav menu, repeated on every subpage of
   that section so switching topics never dead-ends back through the index
   — same reasoning and the same non-color-only active-state cue,
   `aria-current` + bottom border, no font-weight, as `SiteNav` and the
-  Getting Started menu below). Each subpage's content lives in its own
-  `.jsx` component (never raw `.astro` markup — see the whitespace-bug note
-  below) with the section's original H2 becoming that page's `<h1>` and
-  every descendant heading promoted one level (H3→H2, H4→H3) to keep a
-  valid hierarchy. Section data lives in `src/data/{section}Sections.ts`.
+  Getting Started menu below). This started as a one-line teaser + menu
+  and nothing else; the user flagged that as too bare — an index page
+  that's just a menu under one sentence doesn't orient or sell the section,
+  it just routes. Rewritten with real per-topic paragraphs, and pushed to
+  explain the *value* of each topic (why you'd reach for it, what it saves
+  you), not just describe its contents — per explicit voice feedback: this
+  site is also selling the tool, not just documenting it, so index prose
+  shouldn't read cold. Stayed inside the locked brand voice doing it
+  (`../design_system/CLAUDE.md`): plain and certain, sells through
+  specificity and confidence, never through hype words like "empower" or
+  "solutions." Each subpage's content lives in its own `.jsx` component
+  (never raw `.astro` markup — see the whitespace-bug note below) with the
+  section's original H2 becoming that page's `<h1>` and every descendant
+  heading promoted one level (H3→H2, H4→H3) to keep a valid hierarchy.
+  Section data lives in `src/data/{section}Sections.ts`.
   This started as one long page per section (each built as a near-verbatim
   drop-in from source docs, described below); split later once the pages
   were confirmed too long to navigate, same alfa.siteimprove.com-inspired

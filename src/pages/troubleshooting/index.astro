@@ -2,14 +2,12 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionMenu from "../../components/SectionMenu.astro";
 import { troubleshootingSections } from "../../data/troubleshootingSections";
+import { TroubleshootingContent } from "../../components/TroubleshootingContent.jsx";
 ---
 
 <BaseLayout title="Troubleshooting">
 	<h1>Troubleshooting</h1>
-	<p>
-		Answers to common questions, and what this engine deliberately does not attempt — pick a topic
-		below.
-	</p>
+	<TroubleshootingContent />
 	<SectionMenu sections={troubleshootingSections} />
 </BaseLayout>
 
@@ -19,7 +17,19 @@ import { troubleshootingSections } from "../../data/troubleshootingSections";
 		color: var(--text-strong);
 	}
 
-	p {
+	:global(h2) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-lg);
+		margin-top: var(--space-10);
+	}
+
+	:global(p) {
 		line-height: var(--leading-relaxed);
+	}
+
+	:global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
 	}
 </style>

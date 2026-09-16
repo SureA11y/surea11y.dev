@@ -2,13 +2,12 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionMenu from "../../components/SectionMenu.astro";
 import { configurationSections } from "../../data/configurationSections";
+import { ConfigurationContent } from "../../components/ConfigurationContent.jsx";
 ---
 
 <BaseLayout title="Configuration">
 	<h1>Configuration</h1>
-	<p>
-		Engine options, CI integration, and locales — pick a topic below.
-	</p>
+	<ConfigurationContent />
 	<SectionMenu sections={configurationSections} />
 </BaseLayout>
 
@@ -18,7 +17,19 @@ import { configurationSections } from "../../data/configurationSections";
 		color: var(--text-strong);
 	}
 
-	p {
+	:global(h2) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-lg);
+		margin-top: var(--space-10);
+	}
+
+	:global(p) {
 		line-height: var(--leading-relaxed);
+	}
+
+	:global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
 	}
 </style>

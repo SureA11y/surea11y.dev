@@ -2,14 +2,12 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionMenu from "../../components/SectionMenu.astro";
 import { conformanceSections } from "../../data/conformanceSections";
+import { ConformanceContent } from "../../components/ConformanceContent.jsx";
 ---
 
 <BaseLayout title="Conformance">
 	<h1>Conformance</h1>
-	<p>
-		How rule results map to WCAG, and how to gate CI on known, reviewed violations — pick a topic
-		below.
-	</p>
+	<ConformanceContent />
 	<SectionMenu sections={conformanceSections} />
 </BaseLayout>
 
@@ -19,7 +17,19 @@ import { conformanceSections } from "../../data/conformanceSections";
 		color: var(--text-strong);
 	}
 
-	p {
+	:global(h2) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-lg);
+		margin-top: var(--space-10);
+	}
+
+	:global(p) {
 		line-height: var(--leading-relaxed);
+	}
+
+	:global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
 	}
 </style>
