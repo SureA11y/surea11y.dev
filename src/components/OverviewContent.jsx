@@ -20,8 +20,8 @@ export function OverviewContent() {
 		<>
 			<p className="tagline">Accessibility testing that tells you what it can't tell you.</p>
 			<p>
-				surea11y is a WCAG accessibility testing engine you run in your own test suite, CI
-				pipeline, or from the command line.
+				<a href="https://github.com/SureA11y/core">@surea11y/core</a> is an <strong>accessibility testing engine</strong> you run in your own
+				test suite, CI pipeline, or from the command line.
 			</p>
 			<p>
 				What sets it apart is what it does with the cases automated testing can't settle. It
