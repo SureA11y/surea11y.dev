@@ -31,10 +31,16 @@ export function AccessibilityStatementContent() {
 				fixed, not explained away. That scan has real, honest limits of its own (see{" "}
 				<a href="/troubleshooting/known-limitations/">Known limitations</a>): it can't run against
 				this site's actual computed CSS the way a real browser would, so contrast findings from
-				that particular scan mode are not meaningful evidence either way. Automated scanning is
-				only ever a floor, not a ceiling — it's supplemented with manual keyboard testing and
-				screen reader spot-checks, the same "automated tools can't tell you everything" position
-				this whole project is built on.
+				that particular scan mode are not meaningful evidence either way.
+			</p>
+			<p>
+				Automated scanning is only ever a floor, not a ceiling, so it isn't the only check this
+				site gets. Every change also goes through a complete manual accessibility audit — full
+				keyboard-only navigation, a screen reader pass, and a check of the things no automated
+				tool can judge at all (whether a heading actually describes what follows it, whether focus
+				order matches visual order, whether content that only appears after an interaction is
+				still reachable) — the same "automated tools can't tell you everything" position this
+				whole project is built on.
 			</p>
 
 			<h2>Known gaps</h2>
