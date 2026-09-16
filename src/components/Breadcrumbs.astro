@@ -15,7 +15,14 @@ const child = section?.children.find((c) => currentPath === c.href);
 
 <nav aria-label="Breadcrumb" class="breadcrumbs">
 	<ol>
-		<li><a href="/">Home</a></li>
+		<li>
+			<a href="/" aria-label="Home" class="home-link">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path>
+					<path d="M9 22V12h6v10"></path>
+				</svg>
+			</a>
+		</li>
 		{
 			section && section.href !== "/" && (
 				<li>
@@ -67,6 +74,11 @@ const child = section?.children.find((c) => currentPath === c.href);
 	.breadcrumbs a {
 		color: var(--text-muted);
 		text-decoration: none;
+	}
+
+	.breadcrumbs .home-link {
+		display: inline-flex;
+		align-items: center;
 	}
 
 	.breadcrumbs a:hover {
