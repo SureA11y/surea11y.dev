@@ -1,24 +1,43 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { Callout } from "../../components/design-system/feedback/Callout.jsx";
+import { RulesTable } from "../../components/RulesTable.jsx";
+import rules from "../../data/rules.generated.json";
+
+const automatic = rules.filter((r) => r.type === "automatic");
+const manual = rules.filter((r) => r.type === "manual");
 ---
 
 <BaseLayout title="Rules">
 	<h1>Rules</h1>
-	<Callout tone="note">
-		The catalog and individual rule pages aren't generated yet — they'll
-		come from <code>RULE_CATALOG.md</code> and <code>RULE_EXAMPLES.md</code>,
-		plus an organization page adapted from <code>RULE_TAXONOMY.md</code>.
-	</Callout>
+	<p>
+		The 34 composite WCAG Success Criterion rollups aren't listed here —
+		they aren't individually configurable rules, they belong under <a href="/conformance/">Conformance</a> instead.
+	</p>
+
+	<h2>Automatic ({automatic.length}), can return <code>fail</code></h2>
+	<RulesTable caption={`${automatic.length} automatic rules`} rows={automatic} />
+
+	<h2>Manual ({manual.length}), advisory, capped at <code>cantTell</code></h2>
+	<RulesTable caption={`${manual.length} manual rules`} rows={manual} />
 </BaseLayout>
 
 <style>
-	h1 {
+	h1,
+	h2 {
 		font-family: var(--font-display);
 		color: var(--text-strong);
 	}
 
+	h2 {
+		font-size: var(--text-lg);
+		margin-top: var(--space-10);
+	}
+
 	code {
 		font-family: var(--font-mono);
+	}
+
+	a {
+		color: var(--link);
 	}
 </style>
