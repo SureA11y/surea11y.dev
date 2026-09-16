@@ -14,6 +14,91 @@ const highlighter = createHighlighterCoreSync({
   engine: createJavaScriptRegexEngine(),
 });
 
+// CodeBlock always renders on the ink surface (see below), so token colors
+// are brightened and contrast-checked against this literal value rather
+// than the (browser-only) --ink-sunken custom property.
+const CODE_BG = "#0B100F";
+const MIN_TOKEN_CONTRAST = 4.5;
+
+function hexToRgb(hex) {
+  const n = parseInt(hex.replace("#", ""), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+function rgbToHex([r, g, b]) {
+  return "#" + [r, g, b].map((v) => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, "0")).join("");
+}
+function rgbToHsl([r, g, b]) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s;
+  const l = (max + min) / 2;
+  if (max === min) { h = s = 0; } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      default: h = (r - g) / d + 4;
+    }
+    h /= 6;
+  }
+  return [h, s, l];
+}
+function hslToRgb([h, s, l]) {
+  if (s === 0) return [l * 255, l * 255, l * 255];
+  const hue2rgb = (p, q, t) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  return [hue2rgb(p, q, h + 1 / 3) * 255, hue2rgb(p, q, h) * 255, hue2rgb(p, q, h - 1 / 3) * 255];
+}
+function relativeLuminance([r, g, b]) {
+  const a = [r, g, b].map((v) => {
+    v /= 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+}
+function contrastRatio(hexA, hexB) {
+  const lA = relativeLuminance(hexToRgb(hexA));
+  const lB = relativeLuminance(hexToRgb(hexB));
+  const [hi, lo] = lA > lB ? [lA, lB] : [lB, lA];
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+const brightenedColorCache = new Map();
+
+// Lifts vitesse-dark's deliberately muted token palette a bit brighter, then
+// keeps lightening (hue/saturation held) until the token clears AA contrast
+// against the ink-sunken background — vitesse-dark's own punctuation tone
+// falls just short of that (3.34:1) before this runs.
+function brightenTokenColor(hex) {
+  if (!hex) return hex;
+  const cached = brightenedColorCache.get(hex);
+  if (cached) return cached;
+
+  const [h, s, l] = rgbToHsl(hexToRgb(hex));
+  let nextL = Math.min(0.92, l + 0.08);
+  const nextS = Math.min(1, s * 1.08);
+  let result = rgbToHex(hslToRgb([h, nextS, nextL]));
+
+  let guard = 0;
+  while (contrastRatio(result, CODE_BG) < MIN_TOKEN_CONTRAST && nextL < 0.95 && guard < 40) {
+    nextL += 0.02;
+    result = rgbToHex(hslToRgb([h, nextS, nextL]));
+    guard++;
+  }
+
+  brightenedColorCache.set(hex, result);
+  return result;
+}
+
 /* Terminal and code output. Lines may carry a result state, which tints the
    whole line — the only place colour appears in code, unless `lang` is set:
    a language-tagged block is syntax-highlighted instead, and per-line
@@ -86,7 +171,7 @@ export function CodeBlock({ lines = [], prompt = "$", copyable = false, lang, st
                 {tokens.length === 0
                   ? " "
                   : tokens.map((t, j) => (
-                      <span key={j} style={{ color: t.color }}>{t.content}</span>
+                      <span key={j} style={{ color: brightenTokenColor(t.color) }}>{t.content}</span>
                     ))}
               </div>
             ))
