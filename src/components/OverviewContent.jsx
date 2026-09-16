@@ -18,7 +18,6 @@ const packageRows = [
 export function OverviewContent() {
 	return (
 		<>
-			<p className="tagline">Accessibility testing that tells you what it can't tell you.</p>
 			<p>
 				<a href="https://github.com/SureA11y/core">@surea11y/core</a> is an <strong>accessibility testing engine</strong> you run in your own
 				test suite, CI pipeline, or from the command line.
@@ -34,7 +33,8 @@ export function OverviewContent() {
 				results are auditable rather than reassuring.
 			</p>
 			<p>
-				<em>Sure</em> means certainty about what is known, and honesty about what isn't.
+				<em>Sure</em> means certainty about what is known, and honesty about what isn't. It tells you what it
+				can't tell you.
 			</p>
 
 			<h2>Not a single product</h2>

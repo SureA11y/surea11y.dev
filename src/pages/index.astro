@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { Badge } from "../components/design-system/core/Badge.jsx";
 import { Card } from "../components/design-system/core/Card.jsx";
-import { Tag } from "../components/design-system/core/Tag.jsx";
+import { Logo } from "../components/design-system/brand/Logo.jsx";
 import { OverviewContent } from "../components/OverviewContent.jsx";
 import { sections } from "../data/sections";
 
@@ -10,7 +10,7 @@ const otherSections = sections.filter((section) => section.href !== "/");
 ---
 
 <BaseLayout title="Overview">
-	<h1><Tag tone="accent">@surea11y/core</Tag></h1>
+	<h1><Logo variant="tag" size={32} product="core" label="@surea11y/core" /></h1>
 	<div class="badges">
 		{/* mirrors ../core/package.json — re-copy if it changes */}
 		<Badge label="engine" value="v1.7.0" tone="neutral" />
