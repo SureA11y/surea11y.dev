@@ -181,7 +181,7 @@ export function KnownLimitationsContent() {
 					incidence; not prioritized, not structurally impossible.
 				</li>
 				<li>
-					<strong><code>img-alt-decorative</code>'s two ACT e88epe edge cases</strong> — an{" "}
+					<strong><code>img-alt-decorative</code>'s two ACT edge cases</strong> — an{" "}
 					<code>&lt;img&gt;</code> whose current network request state isn't "completely
 					available" (still loading, or broken), and a <code>&lt;canvas&gt;</code> that is fully
 					transparent (nothing actually drawn on it), are both exempt from ACT's own

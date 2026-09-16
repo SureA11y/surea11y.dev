@@ -188,11 +188,11 @@ const optionRows = [
 			<>
 				Suppresses the engine's automatic <code>selector</code>/<code>html</code> fill-in. Since
 				every rule was migrated to report its element rather than build occurrences by hand
-				(1.5.0), that fill-in is the path almost all of them take: setting{" "}
-				<code>includeSelector: false</code> strips selectors from 117 of the 130 rules, and{" "}
-				<code>includeHtml: false</code> strips HTML snippets from 122. The remainder still
-				assemble those fields themselves inside <code>runInPage</code> and are unaffected — among
-				them <code>contrast-minimum</code>/<code>contrast-enhanced</code> (whose findings are text
+				(1.5.0), that fill-in is the path almost all of the engine's 132 rules take: setting{" "}
+				<code>includeSelector: false</code> / <code>includeHtml: false</code> strips selectors and
+				HTML snippets from the large majority of them. A handful still assemble those fields
+				themselves inside <code>runInPage</code> and are unaffected — among them{" "}
+				<code>contrast-minimum</code>/<code>contrast-enhanced</code> (whose findings are text
 				runs, not elements), <code>page-title-present</code> and{" "}
 				<code>identical-links-same-purpose</code>. So this narrows output substantially but is
 				still not a guarantee of <em>no</em> selectors or HTML anywhere in the result.

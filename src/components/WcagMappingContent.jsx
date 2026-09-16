@@ -53,7 +53,7 @@ export function WcagMappingContent() {
 				<li>
 					<strong>Atomic rules</strong> (<code>checksResults[]</code>) — one normative decision
 					each, e.g. "does this <code>&lt;img&gt;</code> have an <code>alt</code> attribute." See{" "}
-					<a href="/rules/">the rule catalog</a> for all 130.
+					<a href="/rules/">the rule catalog</a> for all 132.
 				</li>
 				<li>
 					<strong>Facets</strong> — a WCAG SC is usually bigger than any one rule can decide
@@ -74,7 +74,7 @@ export function WcagMappingContent() {
 					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-34`}>
 						the full list
 					</a>{" "}
-					(e.g. <code>wcag-1.1.1-non-text-content</code> rolls up 22 atomic rules).
+					(e.g. <code>wcag-1.1.1-non-text-content</code> rolls up 21 atomic rules).
 				</li>
 			</ol>
 

@@ -361,6 +361,8 @@ export function OutputSchemaContent() {
 					"    ruleVersion: string,",
 					"    normative: boolean,",
 					"    atomic: boolean,",
+					"    deprecated: boolean,",
+					"    deprecation: object | null,",
 					'    category: "perceivable" | "operable" | "understandable" | "robust" | null,',
 					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel: string }>,",
 					"    standard: string | null,",
@@ -418,11 +420,14 @@ export function OutputSchemaContent() {
 					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtering by WCAG version</a>.
 				</li>
 				<li>
-					<strong><code>error</code></strong>: only present if the rule implementation threw an
-					uncaught exception, or if the manual-fail coercion above fired. A thrown rule always
-					surfaces as <code>outcome: "cantTell"</code> with <code>occurrences: []</code> and{" "}
-					<code>error</code> set to the exception message — the engine never lets one broken rule
-					crash the whole scan.
+					<strong><code>error</code></strong>: only present in three cases — the rule implementation
+					threw an uncaught exception, the manual-fail coercion above fired, or every occurrence
+					of a <code>fail</code> result had its ancestor walk hit an internal depth limit (so the
+					engine couldn't confirm the flagged content is actually exposed) and the whole result
+					was coerced to <code>cantTell</code> the same way. A thrown rule always surfaces as{" "}
+					<code>outcome: "cantTell"</code> with <code>occurrences: []</code> and <code>error</code>{" "}
+					set to the exception message — the engine never lets one broken rule crash the whole
+					scan.
 				</li>
 				<li>
 					<strong><code>engineOptions</code></strong> on each result is the <em>resolved</em>{" "}
@@ -518,7 +523,7 @@ export function OutputSchemaContent() {
 			<h2 id="composite-result">A composite result (<code>rulesResults[i]</code>)</h2>
 			<p>
 				Composites roll multiple atomic rules up to one WCAG Success Criterion (e.g.{" "}
-				<code>wcag-1.1.1-non-text-content</code> rolls up 22 atomic rules). Shape is the same
+				<code>wcag-1.1.1-non-text-content</code> rolls up 21 atomic rules). Shape is the same
 				envelope as a check result, with composite-specific <code>data.details</code>:
 			</p>
 			<CodeBlock

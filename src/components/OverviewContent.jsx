@@ -11,6 +11,7 @@ const packageRows = [
 	{ id: "cypress", want: "…Cypress", install: <code>@surea11y/cypress</code> },
 	{ id: "webdriverio", want: "…WebdriverIO", install: <code>@surea11y/webdriverio</code> },
 	{ id: "cli", want: "Scan static HTML from a terminal or CI pipeline", install: <code>@surea11y/cli</code> },
+	{ id: "test-matchers", want: "Assert accessibility in Jest/Vitest component or unit tests", install: <code>@surea11y/test-matchers</code> },
 	{ id: "core", want: "Run the engine against a DOM you already have", install: <code>@surea11y/core</code> },
 ];
 

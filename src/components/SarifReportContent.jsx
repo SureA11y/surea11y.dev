@@ -25,7 +25,7 @@ const sarifFieldRows = [
 			</>
 		),
 	},
-	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code></>, source: <><code>checksResults[i].severity</code> / <code>.confidence</code> — informational, not part of SARIF's own schema.</> },
+	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>The result's own <code>severity</code>/<code>confidence</code>, plus the same <code>reasonCode</code> and <code>html</code> snippet the fingerprint above is keyed on — informational, not part of SARIF's own schema.</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, and a <code>wcag-&lt;SC&gt;</code> tag per <code>meta.normativeMappings[].requirement</code>.</> },
 ];
 

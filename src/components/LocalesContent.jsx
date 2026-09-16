@@ -5,10 +5,10 @@ import { DataTable } from "./design-system/data/DataTable.jsx";
 const core = "https://github.com/SureA11y/core/blob/main";
 
 const localeCoverageRows = [
-	{ id: "en", locale: <code>en</code>, name: "English", file: <code>src/i18n/en.json</code>, keys: "666", untranslated: "— (the canonical/fallback set)" },
-	{ id: "fr", locale: <code>fr</code>, name: "French", file: <code>src/i18n/fr.json</code>, keys: "666", untranslated: "1" },
-	{ id: "de", locale: <code>de</code>, name: "German", file: <code>src/i18n/de.json</code>, keys: "666", untranslated: "0" },
-	{ id: "es", locale: <code>es</code>, name: "Spanish", file: <code>src/i18n/es.json</code>, keys: "666", untranslated: "0" },
+	{ id: "en", locale: <code>en</code>, name: "English", file: <code>src/i18n/en.json</code>, keys: "692", untranslated: "— (the canonical/fallback set)" },
+	{ id: "fr", locale: <code>fr</code>, name: "French", file: <code>src/i18n/fr.json</code>, keys: "692", untranslated: "7" },
+	{ id: "de", locale: <code>de</code>, name: "German", file: <code>src/i18n/de.json</code>, keys: "692", untranslated: "6" },
+	{ id: "es", locale: <code>es</code>, name: "Spanish", file: <code>src/i18n/es.json</code>, keys: "692", untranslated: "6" },
 ];
 
 const localeReasonRows = [
