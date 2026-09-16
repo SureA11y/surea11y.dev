@@ -61,7 +61,14 @@ still stub pages.
   speculatively. `Badge`'s `tone` prop already speaks the engine's own
   outcome vocabulary (`pass`/`fail`/`unknown`/`advisory`), but `Card`'s
   `accent` prop is reserved for result states in tables/reports and must
-  not appear on marketing/nav cards — see its own `.d.ts`. `DataTable`
+  not appear on marketing/nav cards — see its own `.d.ts`. `Badge`'s
+  `neutral`/`accent`/`accent2` tones always pair a white value-cell text
+  with a *semantic* token (`--text-muted`/`--accent`/`--accent-2`), which
+  resolves to a light, on-dark-surface color by default here — white-on-light
+  fails contrast badly (as low as 2.05:1). Those tones read correctly only
+  under `data-surface="light"` (wrap the usage in that, don't edit the
+  copied component); `pass`/`fail`/`unknown`/`advisory` are unaffected,
+  they pin fixed `-on-light` colors regardless of surface. `DataTable`
   ("runs, pages, packages, rules") is for static listings; `ResultsTable`
   is the wrong component for the rule catalog — its `state` column means a
   scan *outcome*, not a property of the rule itself. `src/components/RulesTable.jsx`

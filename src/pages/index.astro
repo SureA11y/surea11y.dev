@@ -10,7 +10,7 @@ const otherSections = sections.filter((section) => section.href !== "/");
 
 <BaseLayout title="Overview">
 	<h1>surea11y</h1>
-	<div class="badges">
+	<div class="badges" data-surface="light">
 		{/* mirrors ../core/package.json — re-copy if it changes */}
 		<Badge label="engine" value="v1.7.0" tone="neutral" />
 		<Badge label="license" value="MPL-2.0" tone="neutral" />
@@ -73,7 +73,6 @@ const otherSections = sections.filter((section) => section.href !== "/");
 		margin: 0 0 var(--space-2);
 		font-family: var(--font-display);
 		font-size: var(--text-md);
-		font-weight: var(--weight-medium);
 		color: var(--text-strong);
 	}
 

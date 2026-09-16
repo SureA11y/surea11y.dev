@@ -8,3 +8,18 @@
 @import "./tokens/radius.css";
 @import "./tokens/spacing.css";
 @import "./tokens/typography.css";
+
+/* Unscoped on purpose: a page-local <style> can't reach links rendered
+   inside a nested React component (e.g. DataTable's cell renderers)
+   without :global(), which is easy to forget per-page. Scoped selectors
+   elsewhere (SiteNav's nav a, the Overview cards' .section-card) already
+   carry a higher-specificity astro-cid attribute, so they still win over
+   this base rule without needing !important. */
+a {
+	color: var(--link);
+}
+
+a:focus-visible {
+	outline: 2px solid var(--focus-ring);
+	outline-offset: 2px;
+}

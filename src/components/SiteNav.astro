@@ -60,6 +60,7 @@ const isActive = (href: string) =>
 		min-height: var(--target-min);
 		padding: 0 var(--space-3);
 		border-radius: var(--radius-sm);
+		border-bottom: 2px solid transparent;
 		color: var(--text-body);
 		font-family: var(--font-body);
 		font-size: var(--text-sm);
@@ -72,11 +73,6 @@ const isActive = (href: string) =>
 
 	nav a[aria-current="page"] {
 		color: var(--accent);
-		font-weight: var(--weight-medium);
-	}
-
-	a:focus-visible {
-		outline: 2px solid var(--focus-ring);
-		outline-offset: 2px;
+		border-bottom-color: var(--accent);
 	}
 </style>
