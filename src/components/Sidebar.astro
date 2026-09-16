@@ -78,6 +78,14 @@ const isSectionActive = (href: string) =>
 		color: var(--text-strong);
 	}
 
+	.tree-section-head a:focus-visible {
+		/* Inset, not outset: this sits inside a scrolling column, so an
+		   outward ring on the first/last row or either side edge would get
+		   clipped by the container's own overflow. */
+		outline: 2px solid var(--focus-ring);
+		outline-offset: -2px;
+	}
+
 	.tree-section-head a[aria-current="page"] {
 		color: var(--accent);
 		border-bottom-color: var(--accent);
@@ -115,7 +123,7 @@ const isSectionActive = (href: string) =>
 
 	.tree-section-head summary:focus-visible {
 		outline: 2px solid var(--focus-ring);
-		outline-offset: 2px;
+		outline-offset: -2px;
 	}
 
 	.tree-children {
@@ -146,6 +154,11 @@ const isSectionActive = (href: string) =>
 
 	.tree-children a:hover {
 		color: var(--text-strong);
+	}
+
+	.tree-children a:focus-visible {
+		outline: 2px solid var(--focus-ring);
+		outline-offset: -2px;
 	}
 
 	.tree-children a[aria-current="page"] {
