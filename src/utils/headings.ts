@@ -4,10 +4,6 @@ export interface HeadingEntry {
 	depth: 2 | 3;
 }
 
-export interface NestedHeading extends HeadingEntry {
-	children: HeadingEntry[];
-}
-
 const HEADING_RE = /<h([23])((?:\s+[a-zA-Z-:]+(?:="[^"]*")?)*)\s*>([\s\S]*?)<\/h\1>/g;
 const ID_ATTR_RE = /\sid="([^"]+)"/;
 
@@ -66,17 +62,4 @@ export function processHeadings(html: string): { html: string; headings: Heading
 	});
 
 	return { html: outHtml, headings };
-}
-
-/** Groups H3s under their preceding H2 for two-level TOC rendering. */
-export function nestHeadings(flat: HeadingEntry[]): NestedHeading[] {
-	const result: NestedHeading[] = [];
-	for (const h of flat) {
-		if (h.depth === 2) {
-			result.push({ ...h, children: [] });
-		} else if (result.length > 0) {
-			result[result.length - 1].children.push(h);
-		}
-	}
-	return result;
 }

@@ -1,31 +1,22 @@
 ---
-import { nestHeadings, type HeadingEntry } from "../utils/headings";
+import type { HeadingEntry } from "../utils/headings";
 
 interface Props {
 	headings: HeadingEntry[];
 }
 
 const { headings } = Astro.props;
-const tree = nestHeadings(headings);
+const topLevel = headings.filter((h) => h.depth === 2);
 ---
 
 {
-	tree.length > 0 && (
+	topLevel.length > 0 && (
 		<nav aria-label="On this page" class="toc">
 			<span class="toc-label">On this page</span>
 			<ul>
-				{tree.map((h) => (
+				{topLevel.map((h) => (
 					<li>
 						<a href={`#${h.id}`}>{h.text}</a>
-						{h.children.length > 0 && (
-							<ul>
-								{h.children.map((c) => (
-									<li>
-										<a href={`#${c.id}`}>{c.text}</a>
-									</li>
-								))}
-							</ul>
-						)}
 					</li>
 				))}
 			</ul>
@@ -60,11 +51,6 @@ const tree = nestHeadings(headings);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-1);
-	}
-
-	ul ul {
-		padding-left: var(--space-4);
-		margin-top: var(--space-1);
 	}
 
 	a {
