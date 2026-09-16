@@ -7,10 +7,10 @@ Overview turned into a section-index landing (badges + a card grid linking
 the other six sections), a real Rules catalog + 132 generated rule pages
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
-`src/components/design-system/` — see below). Troubleshooting and
-Conformance have their real content too (near-verbatim from their source
-docs per the IA doc). Getting Started, Configuration, and Results & Reports
-are still stub pages.
+`src/components/design-system/` — see below). Troubleshooting, Conformance,
+and Configuration have their real content too (near-verbatim from their
+source docs per the IA doc). Getting Started and Results & Reports are
+still stub pages.
 
 ## Where things come from (all sibling directories on this machine)
 
@@ -61,9 +61,9 @@ are still stub pages.
   (`<a>`/`<code>`) that starts the next line, instead of collapsing it to a
   space the way HTML/JSX normally would — invisible until you read the
   rendered text closely. JSX doesn't have this bug. Any future page with
-  this much inline-linked prose (Configuration, Results & Reports,
-  Conformance) should go straight to a `.jsx` content component rather
-  than risk it in `.astro` markup.
+  this much inline-linked prose (Results & Reports is what's left) should
+  go straight to a `.jsx` content component rather than risk it in `.astro`
+  markup.
 - `../core/docs/WCAG_CONFORMANCE.md` + `BASELINE.md` — dropped in near-
   verbatim as `/conformance/`'s two sections
   (`src/components/ConformanceContent.jsx`), same cross-reference
@@ -78,6 +78,20 @@ are still stub pages.
   heading currently reads "(34)" — the source doc's own link had gone
   stale. Check a doc's live heading before reusing one of its internal
   anchors, don't assume it's still accurate.
+- `../core/docs/ENGINE_OPTIONS.md` + `CI_INTEGRATIONS.md` + `I18N.md` —
+  dropped in near-verbatim as `/configuration/`'s three sections
+  (`src/components/ConfigurationContent.jsx`). One deliberate deviation
+  from the IA doc's literal text: it names only `I18N.md`'s "Adding your
+  language" section as excluded (contributor-facing), but the very next H2,
+  "Maintaining the locales" (`npm run i18n:sync`/`i18n:check`/`i18n:report`
+  as repo-maintainer commands), is the same class of content — nothing an
+  `@surea11y/core` *consumer* could run without `core`'s own source
+  checked out — so it's left off the site too, on the same reasoning the
+  IA doc used for its neighbor, not because the IA doc said to. Worth
+  confirming this reading is right. Also referenced from `ENGINE_OPTIONS.md`
+  but never classified anywhere in the IA doc: `API_STABILITY.md` — not
+  imported, linked to GitHub as a fallback; flagging here since it's a gap
+  in the IA doc itself, not a decision already made for it.
 - `../design_system/tokens/*.css` — design tokens (colors, typography,
   spacing, motion, elevation, radius). Copied into `src/styles/tokens/`
   here; that's the source of truth, re-copy if it changes rather than
@@ -137,15 +151,15 @@ need a content-collection schema, just a build-time array.
    index, `/rules/<id>/` × 132.
 3. Import and wire up more `design_system` React components in place of raw
    HTML, as pages need them — done so far: `Logo`, `Callout`, `Badge`,
-   `Card`, `Tag`, `CodeBlock`, `ResultBadge`, `DataTable`. Configuration and
-   Results & Reports are still stub pages that will need more of these
-   (e.g. more `CodeBlock` for CI-config/report-format examples).
+   `Card`, `Tag`, `CodeBlock`, `ResultBadge`, `DataTable`. Results &
+   Reports is the last stub page that will need more of these (e.g. more
+   `CodeBlock` for report-format examples).
 4. Fill in the remaining stub pages with real content, source doc per
    section: Getting Started (`OUTPUT_SCHEMA.md` for the shared "Usage"
-   subsection, plus each binding's README), Configuration
-   (`ENGINE_OPTIONS.md`/`CI_INTEGRATIONS.md`/`I18N.md`), Results & Reports
-   (`OUTPUT_SCHEMA.md`/`REPORT.md`/`SARIF.md`/`EARL.md`).
-   ~~Troubleshooting~~ and ~~Conformance~~ are done.
+   subsection, plus each binding's README — check those sibling repos
+   exist locally before starting), Results & Reports
+   (`OUTPUT_SCHEMA.md`/`REPORT.md`/`SARIF.md`/`EARL.md`). ~~Troubleshooting~~,
+   ~~Conformance~~, and ~~Configuration~~ are done.
 5. The net-new content the design doc calls out, not a drop-in from any
    single source doc: the real Overview page (what surea11y is, how it
    differs from other tools), and the "How rules are organized" page under
