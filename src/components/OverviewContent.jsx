@@ -67,8 +67,8 @@ export function OverviewContent() {
 					Reserved for objective, normative cases.
 				</li>
 				<li>
-					<ResultBadge state="pass" /> (<code>pass</code>) — this rule's specific condition is met.
-					Not a claim that the page is accessible.
+					<ResultBadge state="pass" /> (<code>pass</code>) — this rule's specific condition is met.{" "}
+					<strong>Not a claim that the page is accessible.</strong>
 				</li>
 				<li>
 					<ResultBadge state="unknown" /> (<code>cantTell</code>) — a human has to decide this, and
@@ -81,7 +81,7 @@ export function OverviewContent() {
 			</ul>
 			<p>
 				<code>cantTell</code> is the point of the project. An engine that quietly discards what it
-				cannot determine produces a shorter report and a false sense of coverage. See{" "}
+				cannot determine <strong>produces a shorter report and a false sense of coverage</strong>. See{" "}
 				<a href="/results-reports/output-schema/">Results &amp; Reports</a> for the full result shape, and{" "}
 				<a href="/conformance/wcag-mapping/">Conformance</a> for how individual results roll up into a WCAG
 				verdict — including how a target WCAG version (2.0/2.1/2.2) is resolved and applied.

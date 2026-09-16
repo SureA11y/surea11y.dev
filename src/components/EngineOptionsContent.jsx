@@ -27,8 +27,9 @@ const optionRows = [
 			<>
 				<code>'2.0'</code>, <code>'2.1'</code> or <code>'2.2'</code> — which version of WCAG the
 				run is conformance-testing against. Defaults to whatever your version-origin tags imply,
-				and to <code>'2.2'</code> when they imply nothing. The only thing it currently changes is
-				SC 4.1.1 Parsing, removed in 2.2: under a 2.2 target a rule tagged{" "}
+				and to <code>'2.2'</code> when they imply nothing.{" "}
+				<strong>The only thing it currently changes is SC 4.1.1 Parsing, removed in 2.2</strong>:
+				under a 2.2 target a rule tagged{" "}
 				<code>wcag22-removed</code> still runs and still reports its occurrences, but cannot{" "}
 				<code>fail</code> — see{" "}
 				<a href="#filtering-by-wcag-version">"Filtering by WCAG version"</a> above. Any other
@@ -69,8 +70,9 @@ const optionRows = [
 		meaning: (
 			<>
 				Default <code>true</code>: rules using <code>helpers.queryAllSmart</code> traverse into
-				open shadow roots. Set <code>false</code> to scan only the light DOM. Closed shadow roots
-				are never reachable either way (no DOM API exposes them).
+				open shadow roots. Set <code>false</code> to scan only the light DOM.{" "}
+				<strong>Closed shadow roots are never reachable either way</strong> — no DOM API exposes
+				them.
 			</>
 		),
 	},
@@ -194,8 +196,9 @@ const optionRows = [
 				themselves inside <code>runInPage</code> and are unaffected — among them{" "}
 				<code>contrast-minimum</code>/<code>contrast-enhanced</code> (whose findings are text
 				runs, not elements), <code>page-title-present</code> and{" "}
-				<code>identical-links-same-purpose</code>. So this narrows output substantially but is
-				still not a guarantee of <em>no</em> selectors or HTML anywhere in the result.
+				<code>identical-links-same-purpose</code>.{" "}
+				<strong>So this narrows output substantially but is still not a guarantee of <em>no</em>{" "}
+				selectors or HTML anywhere in the result.</strong>
 			</>
 		),
 	},
@@ -221,7 +224,7 @@ const optionRows = [
 				An optional, JSON-safe evidence object your host application can supply (depth- and
 				size-capped by the engine before rules see it, via <code>ctx.inputs.probes</code>) — for
 				future rules that might accept externally-supplied signals (e.g. real layout measurements
-				a static DOM scan can't compute itself). Not consumed by any current rule.
+				a static DOM scan can't compute itself). <strong>Not consumed by any current rule.</strong>
 			</>
 		),
 	},
@@ -237,8 +240,9 @@ const optionRows = [
 				Debug-only. <code>perfStats: true</code> returns internal counters on the result's{" "}
 				<code>perfStats</code> field; <code>profileRules: true</code> <strong>additionally</strong>{" "}
 				adds a per-rule timing breakdown there. <code>profileRules</code> on its own does nothing
-				— <code>perfStats</code> is what creates the object the breakdown lives in. Shape is not
-				part of the stable output contract — don't build on it. Note also that{" "}
+				— <code>perfStats</code> is what creates the object the breakdown lives in.{" "}
+				<strong>Shape is not part of the stable output contract — don't build on it.</strong> Note
+				also that{" "}
 				<code>profileRules</code> is the one option that makes output non-deterministic: counters
 				are stable across identical runs, wall-clock timings are not. Leave it off if you diff
 				results between runs.
@@ -280,8 +284,8 @@ export function EngineOptionsContent() {
 				There are <strong>two independent ways</strong> to select rules — the 4th argument (
 				<code>runOnly</code>), or <code>engineOptions.rules</code>/<code>.tags</code>/
 				<code>.tests</code>/<code>.includeMode</code>. If <code>runOnly</code> contains any
-				filter, it wins outright; otherwise the engine falls back to <code>engineOptions</code>.
-				Don't mix them expecting both to apply — pick one.
+				filter, it wins outright; otherwise the engine falls back to <code>engineOptions</code>.{" "}
+				<strong>Don't mix them expecting both to apply — pick one.</strong>
 			</p>
 
 			<h3>Via <code>runOnly</code> (4th argument)</h3>

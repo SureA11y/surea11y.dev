@@ -196,9 +196,9 @@ export function KnownLimitationsContent() {
 			<p>
 				None of the above is unique to surea11y — every static-analysis accessibility tool (other
 				established engines included) shares the structural limitations, and most share the
-				judgment-call ones too. The reason to state it explicitly here: a <code>pass</code> from
+				judgment-call ones too. The reason to state it explicitly here: <strong>a <code>pass</code> from
 				this engine (or any automated tool) is never a substitute for the manual review WCAG
-				itself requires for the criteria above. See{" "}
+				itself requires for the criteria above.</strong> See{" "}
 				<a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a> for exactly what a{" "}
 				<code>pass</code>/composite <code>pass</code> does and doesn't claim.
 			</p>

@@ -156,7 +156,7 @@ export function WcagMappingContent() {
 
 			<h2>What this engine cannot tell you</h2>
 			<p>
-				No automated tool — this one included — can certify full WCAG conformance. That's not a
+				<strong>No automated tool — this one included — can certify full WCAG conformance.</strong> That's not a
 				limitation specific to surea11y; it's inherent to WCAG itself; a meaningful fraction of
 				Success Criteria require human judgment (is this alt text <em>accurate</em>, not just{" "}
 				<em>present</em>; is this error message <em>understandable</em>) or dynamic testing this

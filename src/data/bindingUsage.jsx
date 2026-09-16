@@ -40,9 +40,9 @@ export const bindingUsage = {
 			<p>
 				No <code>{"{ page }"}</code>/<code>{"{ browser }"}</code>/<code>{"{ driver }"}</code>{" "}
 				constructor argument, unlike the driver-based bindings — there's no such handle in
-				Cypress. <code>cy</code> is ambient in every spec file and <em>is</em> the driver. Note
-				that <code>analyze()</code> returns a Cypress chainable, not a Promise — don't{" "}
-				<code>await</code> it; call <code>.then()</code> as shown.
+				Cypress. <code>cy</code> is ambient in every spec file and <em>is</em> the driver.{" "}
+				<strong><code>analyze()</code> returns a Cypress chainable, not a Promise — don't{" "}
+				<code>await</code> it</strong>; call <code>.then()</code> as shown.
 			</p>
 		),
 		exampleHref: "https://github.com/SureA11y/cypress/blob/main/examples/basic-scan.cy.js",

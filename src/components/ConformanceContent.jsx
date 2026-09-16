@@ -4,8 +4,8 @@ export function ConformanceContent() {
 	return (
 		<>
 			<p>
-				A clean scan is not, on its own, a WCAG conformance claim — and pretending otherwise is
-				exactly the kind of overreach this engine refuses to make. This section covers how
+				<strong>A clean scan is not, on its own, a WCAG conformance claim</strong> — and pretending
+				otherwise is exactly the kind of overreach this engine refuses to make. This section covers how
 				individual rule results actually roll up to a Success Criterion verdict, what that verdict
 				honestly does and doesn't cover, and how to gate a real CI pipeline on known, already-reviewed
 				violations instead of blocking every build until everything is fixed at once.

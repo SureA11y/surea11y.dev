@@ -71,8 +71,8 @@ export function CiIntegrationContent() {
 
 			<h3>Uploading SARIF to GitHub Code Scanning</h3>
 			<p>
-				<code>upload-sarif</code> needs <code>security-events: write</code> permission and does
-				not fail the job itself — pair it with a separate gating step (or{" "}
+				<code>upload-sarif</code> needs <code>security-events: write</code> permission and{" "}
+				<strong>does not fail the job itself</strong> — pair it with a separate gating step (or{" "}
 				<code>continue-on-error</code> + your own check) if you also want the build to fail on
 				new violations.
 			</p>

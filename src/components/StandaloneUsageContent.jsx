@@ -31,7 +31,7 @@ export function StandaloneUsageContent() {
 				<code>require</code>/a module system, not to add a separate API surface.
 			</p>
 			<p>
-				The bundle carries English only. Every other locale ships beside it as its own file — load
+				<strong>The bundle carries English only.</strong> Every other locale ships beside it as its own file — load
 				one after the bundle and that language becomes available:
 			</p>
 			<CodeBlock
@@ -49,7 +49,7 @@ export function StandaloneUsageContent() {
 				<a href="/configuration/locales/">Locales</a>.
 			</p>
 			<p>
-				Deliberately excluded from the bundle: <code>runa11yCoreAcrossFrames</code>/
+				<strong>Deliberately excluded from the bundle</strong>: <code>runa11yCoreAcrossFrames</code>/
 				<code>a11yCoreEnableFrameResponder</code> (cross-frame scanning needs the embedded frame to
 				load the engine and opt in too — not a fit for a single dropped-in script tag). Use the npm
 				package directly if you need it — see{" "}

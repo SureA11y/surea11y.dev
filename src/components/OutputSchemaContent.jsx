@@ -27,8 +27,9 @@ const topLevelRows = [
 				<code>engineOptions.locale</code> after trimming (<code>"en"</code> if you passed nothing
 				or a non-string); <code>resolved</code> is the locale whose dictionary was used;{" "}
 				<code>reason</code> explains the pairing. Because locale fallback is graceful and
-				per-string, asking for a language the build does not carry produces English text rather
-				than an error — this field is how you find that out without reading the strings. Reported
+				per-string, <strong>asking for a language the build does not carry produces English text
+				rather than an error</strong> — this field is how you find that out without reading the
+				strings. Reported
 				once per result: a run uses one dictionary throughout.
 			</>
 		),
@@ -57,8 +58,8 @@ const topLevelRows = [
 			<>
 				Which version of WCAG this run was conformance-tested against: your{" "}
 				<code>engineOptions.wcagVersion</code>, or what your version-origin tags implied, or the
-				default <code>"2.2"</code>. It affects one thing today — a rule mapped only to SC 4.1.1
-				Parsing cannot <code>fail</code> under a 2.2 target (see{" "}
+				default <code>"2.2"</code>. It affects one thing today — <strong>a rule mapped only to SC
+				4.1.1 Parsing cannot <code>fail</code> under a 2.2 target</strong> (see{" "}
 				<code>checksResults[i].wcagVersionScope</code> below). Reported once per result: a run has
 				one target throughout.
 			</>
@@ -146,9 +147,9 @@ const occurrenceRows = [
 				reported element before using it. The exception is a rule whose finding <em>is</em> an
 				absent element: <code>page-title-present</code> reports <code>head &gt; title</code> with
 				an <code>html</code> of <code>&lt;title&gt;(missing)&lt;/title&gt;</code>, neither of which
-				is on the page. Both are constants, so the fingerprint they feed stays stable, but do not
-				treat <code>selector</code> as resolvable or <code>html</code> as real markup without
-				checking the rule reported something that exists.
+				is on the page. Both are constants, so the fingerprint they feed stays stable, but{" "}
+				<strong>do not treat <code>selector</code> as resolvable or <code>html</code> as real
+				markup without checking the rule reported something that exists</strong>.
 			</>
 		),
 	},
@@ -172,8 +173,8 @@ const occurrenceRows = [
 				(e.g. <code>[1, 0, 2]</code>) — <code>[]</code> if the element <em>is</em>{" "}
 				<code>documentElement</code>, <code>null</code> if it couldn't be determined. A more
 				robust element-identity mechanism than <code>selector</code> alone: it survives DOM
-				changes a selector string wouldn't (an id/class rename, for instance), at the cost of not
-				being usable as an actual CSS selector.
+				changes a selector string wouldn't (an id/class rename, for instance), at{" "}
+				<strong>the cost of not being usable as an actual CSS selector</strong>.
 			</>
 		),
 	},
@@ -449,9 +450,9 @@ export function OutputSchemaContent() {
 				attach a single occurrence saying why, and the contrast rules do exactly that when no text
 				had a computable background — the difference between "checked, nothing to flag" and
 				"could not check" is one this engine reports rather than hides. Such an occurrence
-				describes the scan, not an element, so its <code>selector</code> is empty. Do not read{" "}
-				<code>occurrences.length</code> as a violation count without checking <code>outcome</code>{" "}
-				first.
+				describes the scan, not an element, so its <code>selector</code> is empty.{" "}
+				<strong>Do not read <code>occurrences.length</code> as a violation count without checking{" "}
+				<code>outcome</code> first.</strong>
 			</p>
 			<CodeBlock
 				lines={[
@@ -508,8 +509,8 @@ export function OutputSchemaContent() {
 				establish, so the reviewer starts from the engine's work rather than repeating it; its
 				shape is rule-specific and, like <code>data.details</code>, not a stable contract. The{" "}
 				<code>code</code> is: new codes may be added in a minor release, but an existing one does
-				not change meaning, so branch on the codes you know and treat an unrecognised one as
-				"needs review" rather than an error.
+				not change meaning, so branch on the codes you know and{" "}
+				<strong>treat an unrecognised one as "needs review" rather than an error</strong>.
 			</p>
 			<p>
 				Every automatic rule that can report <code>cantTell</code> carries this, and a test holds
@@ -567,8 +568,8 @@ export function OutputSchemaContent() {
 			/>
 			<p>
 				<code>fail</code> is intentionally the narrowest, highest-bar outcome in this engine:
-				reserved for deterministic, normative violations; chasing rule coverage must never dilute
-				this.
+				reserved for deterministic, normative violations;{" "}
+				<strong>chasing rule coverage must never dilute this</strong>.
 			</p>
 
 			<h2>Severity and confidence values</h2>
@@ -586,8 +587,8 @@ export function OutputSchemaContent() {
 				</li>
 			</ul>
 			<p>
-				A <code>fail</code> is not always <code>confidence: "high"</code>, and that is not a
-				contradiction. The outcome describes the decision procedure — it resolved the question
+				<strong>A <code>fail</code> is not always <code>confidence: "high"</code>, and that is not
+				a contradiction.</strong> The outcome describes the decision procedure — it resolved the question
 				without guessing — while <code>confidence</code> describes the model that decision was
 				made against. A handful of automatic rules decide deterministically against something that
 				is itself an approximation (the curated WAI-ARIA role tables, the native-role mappings, an

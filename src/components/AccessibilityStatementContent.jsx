@@ -34,7 +34,7 @@ export function AccessibilityStatementContent() {
 				that particular scan mode are not meaningful evidence either way.
 			</p>
 			<p>
-				Automated scanning is only ever a floor, not a ceiling, so it isn't the only check this
+				<strong>Automated scanning is only ever a floor, not a ceiling</strong>, so it isn't the only check this
 				site gets. Every change also goes through a complete manual accessibility audit — full
 				keyboard-only navigation, a screen reader pass, and a check of the things no automated
 				tool can judge at all (whether a heading actually describes what follows it, whether focus

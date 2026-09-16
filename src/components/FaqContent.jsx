@@ -9,7 +9,7 @@ export function FaqContent() {
 			<article>
 				<h2>"I passed <code>runOnly: ['some-rule-id']</code> but every rule still ran"</h2>
 				<p>
-					<code>runOnly</code> must be an object, not a bare array —{" "}
+					<strong><code>runOnly</code> must be an object, not a bare array.</strong>{" "}
 					<code>runOnly: ['img-alt-present']</code> is silently ignored (the engine falls
 					through to "run everything"), because that shape has none of the fields the engine
 					actually checks (<code>includeRuleIds</code>, <code>tags</code>, etc.). A bare array is
@@ -45,8 +45,8 @@ export function FaqContent() {
 				</h2>
 				<p>
 					Plain jsdom (no real browser) doesn't implement CSS layout —{" "}
-					<code>getBoundingClientRect()</code> always returns zero geometry. Rules that need real
-					layout report <code>notApplicable</code> under jsdom rather than guess. Run through a
+					<code>getBoundingClientRect()</code> always returns zero geometry. <strong>Rules that need real
+					layout report <code>notApplicable</code> under jsdom rather than guess.</strong> Run through a
 					real browser instead (Puppeteer/Playwright — see{" "}
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> Pattern 2) to
 					get real findings from these rules. See{" "}
@@ -60,8 +60,8 @@ export function FaqContent() {
 					elements that passed?"
 				</h2>
 				<p>
-					By design, this engine never enumerates the elements a rule <em>passed</em> — only the
-					ones it flagged. A rule's overall <code>outcome: 'pass'</code> means "applicable
+					<strong>By design, this engine never enumerates the elements a rule <em>passed</em> — only the
+					ones it flagged.</strong> A rule's overall <code>outcome: 'pass'</code> means "applicable
 					target(s) existed and none were flagged," but <code>occurrences</code> is{" "}
 					<code>[]</code> either way. If you need to know which specific elements were checked and
 					considered fine, that's not currently exposed — see{" "}
@@ -103,8 +103,8 @@ export function FaqContent() {
 			<article>
 				<h2>"Does a clean scan (<code>pass</code> everywhere) mean the page is WCAG conformant?"</h2>
 				<p>
-					No — see <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>. A{" "}
-					<code>pass</code> means every <em>automatable</em> check came back clean. A meaningful
+					No — see <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
+					<strong>A <code>pass</code> means every <em>automatable</em> check came back clean.</strong> A meaningful
 					fraction of WCAG requires human judgment (accurate alt text, understandable error
 					messages) or dynamic testing this engine's architecture can't do at all (keyboard traps,
 					reflow at zoom) — see <a href="/troubleshooting/known-limitations/"><code>LIMITATIONS.md</code></a> for
@@ -115,7 +115,7 @@ export function FaqContent() {
 			<article>
 				<h2>"Should I treat <code>cantTell</code> as a failure?"</h2>
 				<p>
-					Treat it as "needs a human to look" — it's neither pass nor fail by design. Most teams
+					<strong>Treat it as "needs a human to look" — it's neither pass nor fail by design.</strong> Most teams
 					log <code>cantTell</code> findings without failing CI on them, since failing a build on
 					something the engine explicitly couldn't determine tends to train people to ignore the
 					gate. See <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> if you want to
@@ -130,8 +130,8 @@ export function FaqContent() {
 			<article>
 				<h2>"What happens if a locale is only partially translated?"</h2>
 				<p>
-					Missing keys fall back to English per-string (never a blank or broken result), so a
-					partial locale degrades gracefully rather than failing outright — see{" "}
+					<strong>Missing keys fall back to English per-string (never a blank or broken result), so a
+					partial locale degrades gracefully rather than failing outright.</strong> See{" "}
 					<a href="/configuration/locales/"><code>I18N.md</code></a> for the mechanism and current
 					coverage. Key parity is enforced rather than hoped for: <code>npm run i18n:sync</code>{" "}
 					carries any new or renamed <code>en.json</code> key into every other locale file, and

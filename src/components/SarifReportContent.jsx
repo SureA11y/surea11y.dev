@@ -50,14 +50,15 @@ export function SarifReportContent() {
 				this engine's own contract, versioned and stable per{" "}
 				<a href={`${core}/docs/API_STABILITY.md`}><code>API_STABILITY.md</code></a>. SARIF is a
 				different, externally-defined contract purpose-built for code-scanning dashboards — a{" "}
-				<code>checksResults[]</code> entry and a SARIF <code>result</code> don't map 1:1, so this
-				is a real conversion, not a re-serialization.
+				<code>checksResults[]</code> entry and a SARIF <code>result</code> don't map 1:1, so{" "}
+				<strong>this is a real conversion, not a re-serialization</strong>.
 			</p>
 
 			<h2>What becomes a SARIF result</h2>
 			<p>
-				Only <code>fail</code>/<code>cantTell</code> occurrences produce SARIF results (same
-				"violations only" framing as the <a href="/results-reports/html-report/">HTML report</a>).
+				<strong>Only <code>fail</code>/<code>cantTell</code> occurrences produce SARIF results</strong>{" "}
+				(same "violations only" framing as the{" "}
+				<a href="/results-reports/html-report/">HTML report</a>).
 			</p>
 			<p>
 				A <code>notApplicable</code> check is not always empty: a rule may attach one occurrence
@@ -86,9 +87,9 @@ export function SarifReportContent() {
 				]}
 			/>
 			<p>
-				That keeps a SARIF-only pipeline from reading silence as a clean bill of health: no
-				contrast alerts can mean the page is fine, or that contrast was never computable, and only
-				the notice separates the two. The block is emitted only when there is something to say, so
+				<strong>That keeps a SARIF-only pipeline from reading silence as a clean bill of
+				health</strong>: no contrast alerts can mean the page is fine, or that contrast was never
+				computable, and only the notice separates the two. The block is emitted only when there is something to say, so
 				a run with nothing to report has no <code>invocations</code> key at all.
 			</p>
 			<DataTable
@@ -147,8 +148,9 @@ export function SarifReportContent() {
 			<h2>Combining with <code>--baseline</code></h2>
 			<p>
 				A generic SARIF consumer has no "known, don't gate on this" concept of its own — the only
-				faithful way to honor a baseline in SARIF output is to omit already-known <code>fail</code>{" "}
-				occurrences entirely, rather than downgrade them to <code>warning</code>:
+				faithful way to honor a baseline in SARIF output is to{" "}
+				<strong>omit already-known <code>fail</code> occurrences entirely, rather than downgrade
+				them to <code>warning</code></strong>:
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --baseline baseline.json --sarif results.sarif", command: true }]} />
 			<p>

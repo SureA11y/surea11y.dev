@@ -202,7 +202,7 @@ export function TestMatchersUsageContent() {
 
 			<h2>What it checks and doesn't</h2>
 			<p>
-				Only <code>fail</code> outcomes gate the assertion — matching every other surea11y binding's
+				<strong>Only <code>fail</code> outcomes gate the assertion</strong> — matching every other surea11y binding's
 				convention that <code>cantTell</code> results are advisory, not failures. A vague link like{" "}
 				<code>&lt;a href="/pricing"&gt;Click here&lt;/a&gt;</code> is <code>cantTell</code>, not{" "}
 				<code>fail</code>, so it never breaks a passing test on its own — though when an assertion{" "}

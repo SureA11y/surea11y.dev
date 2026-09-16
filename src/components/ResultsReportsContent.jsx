@@ -42,8 +42,8 @@ export function ResultsReportsContent() {
 
 			<h2>EARL report</h2>
 			<p>
-				A W3C EARL/JSON-LD implementation report asserting every rule's outcome, not just the
-				failures — the format the ACT Rules community group accepts as evidence an engine actually
+				A W3C EARL/JSON-LD implementation report <strong>asserting every rule's outcome, not
+				just the failures</strong> — the format the ACT Rules community group accepts as evidence an engine actually
 				implements what it claims to. Useful proof when a claim of ACT conformance needs to be
 				checkable, not just stated. See <a href="/results-reports/earl-report/">EARL report</a>.
 			</p>

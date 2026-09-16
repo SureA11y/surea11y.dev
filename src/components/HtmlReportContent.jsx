@@ -48,8 +48,9 @@ export function HtmlReportContent() {
 			<p>
 				The meta bar under the header carries the rule count, occurrence count, engine tag, schema
 				version, and the locale the scan resolved to. Locale fallback is per-string and invisible
-				in the text itself, so a report requested in a language the engine does not carry reads as
-				an ordinary English one — the chip names the requested locale alongside the resolved one
+				in the text itself, so{" "}
+				<strong>a report requested in a language the engine does not carry reads as an ordinary
+				English one</strong> — the chip names the requested locale alongside the resolved one
 				when the two differ. See <a href="/configuration/locales/">Locales</a>.
 			</p>
 
@@ -67,15 +68,16 @@ export function HtmlReportContent() {
 				]}
 			/>
 			<p>
-				<code>renderHtmlReport(result, options)</code> is a pure function — it returns a string, it
-				never touches the filesystem itself (the CLI's <code>--html</code> flag does the writing).{" "}
+				<code>renderHtmlReport(result, options)</code> is a pure function — it returns a string,{" "}
+				<strong>it never touches the filesystem itself</strong> (the CLI's <code>--html</code>{" "}
+				flag does the writing).{" "}
 				<code>options.title</code> is optional (defaults to <code>"surea11y scan report"</code>).
 			</p>
 
 			<h2>Scope</h2>
 			<p>
-				This is a single-scan report — one point-in-time snapshot, not a dashboard tracking
-				results across many scans over time. Tracking results across many runs is a separate,
+				<strong>This is a single-scan report — one point-in-time snapshot, not a dashboard
+				tracking results across many scans over time.</strong> Tracking results across many runs is a separate,
 				larger concern and isn't part of this tool: keep the JSON from each scan and diff it
 				yourself, or feed SARIF to a dashboard that already does history (see{" "}
 				<a href="/results-reports/sarif-report/">SARIF report</a> below).

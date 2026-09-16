@@ -102,7 +102,7 @@ export function LocalesContent() {
 
 			<h2>Selecting a locale</h2>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { locale: 'fr' }, null);"]} />
-			<p>Default is <code>'en'</code> if omitted. Any string is accepted; an unrecognized locale is never an error.</p>
+			<p>Default is <code>'en'</code> if omitted. Any string is accepted; <strong>an unrecognized locale is never an error</strong>.</p>
 
 			<h2>How a locale is chosen</h2>
 			<p>
@@ -137,16 +137,17 @@ export function LocalesContent() {
 				</li>
 			</ol>
 			<p>
-				The result is never a blank, an <code>undefined</code>, or a thrown error. A
-				half-finished translation renders in your language where it exists and in English
+				<strong>The result is never a blank, an <code>undefined</code>, or a thrown error.</strong>{" "}
+				A half-finished translation renders in your language where it exists and in English
 				everywhere else.
 			</p>
 
 			<h2>Knowing which locale you actually got</h2>
 			<p>
-				Graceful fallback has one drawback: ask for a language the build doesn't carry and you get
-				fluent English back, with nothing in the strings to say so. Every result therefore reports
-				the resolution once, at the top:
+				Graceful fallback has one drawback:{" "}
+				<strong>ask for a language the build doesn't carry and you get fluent English back, with
+				nothing in the strings to say so</strong>. Every result therefore reports the resolution
+				once, at the top:
 			</p>
 			<CodeBlock
 				lang="json"

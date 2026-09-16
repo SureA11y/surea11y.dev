@@ -97,7 +97,7 @@ export function BaselineContent() {
 				"Alternative" below.
 			</p>
 			<p>
-				Matching counts occurrences, not just presence: if a page has 3 elements that produce
+				<strong>Matching counts occurrences, not just presence.</strong> If a page has 3 elements that produce
 				byte-identical <code>ruleId</code>+<code>reasonCode</code>+<code>html</code> (e.g. the
 				same broken component repeated 3 times) and the baseline recorded only 1 of them, a fresh
 				scan reports 1 known and 2 new — not all 3 as known.

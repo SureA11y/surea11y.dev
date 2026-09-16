@@ -41,10 +41,10 @@ export function RuleOrganizationContent() {
 				</li>
 			</ul>
 			<p>
-				A manual rule reporting <code>cantTell</code> is not the same event as an automatic rule
-				reporting <code>cantTell</code>, even though the value is identical: the automatic rule has
-				decided and is telling you what it found; the manual rule is telling you the question isn't
-				decidable from markup at all. See <a href="/results-reports/output-schema/">Results &amp; Reports</a> for
+				<strong>A manual rule reporting <code>cantTell</code> is not the same event as an automatic
+				rule reporting <code>cantTell</code>, even though the value is identical</strong>: the
+				automatic rule has decided and is telling you what it found; the manual rule is telling you
+				the question isn't decidable from markup at all. See <a href="/results-reports/output-schema/">Results &amp; Reports</a> for
 				the full outcome/severity/confidence reference.
 			</p>
 
@@ -99,8 +99,8 @@ export function RuleOrganizationContent() {
 			<p>
 				This matters when reading a composite (WCAG-SC rollup) result: a composite{" "}
 				<ResultBadge state="pass" size="sm" /> means every automated check for that SC came back
-				clean, but if a facet has no automated coverage at all, the composite is silent about that
-				facet rather than asserting it's fine. See{" "}
+				clean, but <strong>if a facet has no automated coverage at all, the composite is silent
+				about that facet rather than asserting it's fine</strong>. See{" "}
 				<a href="/conformance/wcag-mapping/">Conformance</a> for the three layers (atomic rules, facets,
 				composites) and how a composite's outcome is actually computed.
 			</p>

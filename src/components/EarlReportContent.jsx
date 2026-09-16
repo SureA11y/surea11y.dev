@@ -59,9 +59,10 @@ export function EarlReportContent() {
 			<p>
 				<a href="/results-reports/sarif-report/">SARIF report</a> and <a href="/results-reports/html-report/">HTML report</a> both
 				carry <strong>violations only</strong>: they report <code>fail</code> and{" "}
-				<code>cantTell</code> occurrences and drop everything else. EARL is the opposite. Every
-				rule that ran becomes an assertion, <code>pass</code> and <code>inapplicable</code>{" "}
-				included, because an implementation report is a claim about what the engine decided{" "}
+				<code>cantTell</code> occurrences and drop everything else. EARL is the opposite.{" "}
+				<strong>Every rule that ran becomes an assertion, <code>pass</code> and{" "}
+				<code>inapplicable</code> included</strong>, because an implementation report is a claim
+				about what the engine decided{" "}
 				<em>everywhere</em>. A rule that stayed silent because it found nothing applicable is
 				evidence, not noise — it is how a reader distinguishes "this engine checked and found
 				nothing to check" from "this engine does not implement that rule at all."
@@ -162,8 +163,9 @@ export function EarlReportContent() {
 			<p>
 				Results sharing a URL merge into one subject — a caller scanning the same page under
 				different <code>engineOptions</code> is still describing one resource, and the context has
-				no way to express two subjects with the same source. Where two results assert on the same
-				rule for the same URL, the last one wins.
+				no way to express two subjects with the same source.{" "}
+				<strong>Where two results assert on the same rule for the same URL, the last one
+				wins.</strong>
 			</p>
 			<p>
 				Output is deterministic: subjects sort by source, assertions by rule id, and the same
