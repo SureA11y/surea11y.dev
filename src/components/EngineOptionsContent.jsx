@@ -286,6 +286,7 @@ export function EngineOptionsContent() {
 
 			<h3>Via <code>runOnly</code> (4th argument)</h3>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"runDomRulesInPage(url, null, {}, {",
 					"  includeRuleIds: ['img-alt-present', 'button-name-present'],",
@@ -369,6 +370,7 @@ export function EngineOptionsContent() {
 				<code>tags</code> (any one match includes the rule) does the rest:
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"// WCAG 2.0 AA only (excludes every 2.1/2.2-introduced SC, even at level AA):",
 					"{ tags: ['wcag2a', 'wcag2aa'] }",
@@ -417,6 +419,7 @@ export function EngineOptionsContent() {
 				</li>
 			</ol>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"// Nothing to declare: a plain run already targets 2.2, so a duplicate id",
 					"// comes back cantTell rather than fail.",
@@ -438,6 +441,7 @@ export function EngineOptionsContent() {
 				still there for exactly that:
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"// WCAG 2.2 AA conformance, with the removed criterion left out entirely:",
 					"{",
@@ -456,6 +460,7 @@ export function EngineOptionsContent() {
 			<h3>Via <code>engineOptions</code> (no <code>runOnly</code>)</h3>
 			<p>Same filtering, expressed as comma-separated strings (or arrays) nested in <code>engineOptions</code>:</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"runDomRulesInPage(url, null, {",
 					"  rules: { include: 'img-alt-present, button-name-present', exclude: 'region' },",
@@ -474,6 +479,7 @@ export function EngineOptionsContent() {
 
 			<h2><code>engineOptions</code> — the rest</h2>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"const engineOptions = {",
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
@@ -536,6 +542,7 @@ export function EngineOptionsContent() {
 				<strong>that one rule only</strong>, on top of (never instead of) the global list.
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"const engineOptions = {",
 					"  excludeSelectors: ['#cookie-banner'],   // applies to every rule, as always",
@@ -589,6 +596,7 @@ export function EngineOptionsContent() {
 				<strong>CI gate: WCAG 2.2 AA only, ignore a third-party widget you don't control</strong>
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"runDomRulesInPage(url, null, {",
 					"  excludeSelectors: ['#cookie-banner', '.intercom-launcher'],",
@@ -605,6 +613,7 @@ export function EngineOptionsContent() {
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>:
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"const result = await page.evaluate(runa11yCoreInPage, url, null, {",
 					"  contrast: { mode: 'auditorAssist' },",
@@ -617,6 +626,7 @@ export function EngineOptionsContent() {
 				useful in a component-level test where you only care about the widget you just changed:
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"runDomRulesInPage(url, '#checkout-form', {",
 					"  includeShadowDom: false",
@@ -629,6 +639,7 @@ export function EngineOptionsContent() {
 				breakdown:
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"runDomRulesInPage(url, null, {",
 					"  timestamp: '2026-01-01T00:00:00Z',",
@@ -642,6 +653,7 @@ export function EngineOptionsContent() {
 				call:
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"runDomRulesInPage(url, null, {",
 					"  customRules: [{",
@@ -655,6 +667,7 @@ export function EngineOptionsContent() {
 					"        summary: 'Inline onclick handler found.',",
 					"        hint: 'Move event handling into an external script.'",
 					"      }));",
+					"",
 					"      return { ruleId: ctx.rule.ruleId, outcome: occurrences.length ? 'fail' : 'pass', severity: 'moderate', occurrences };",
 					"    }",
 					"  }]",
@@ -685,6 +698,7 @@ export function EngineOptionsContent() {
 				already know how to write a rule file for this engine, you already know this API:
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"{",
 					"  id: 'my-org-custom-rule',          // required",

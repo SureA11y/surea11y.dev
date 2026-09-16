@@ -55,12 +55,14 @@ export function HtmlReportContent() {
 
 			<h2>Library usage</h2>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"const { renderHtmlReport } = require('@surea11y/core/report');",
 					"const { runDomRulesInPage } = require('@surea11y/core');",
 					"",
 					"const result = runDomRulesInPage(url, null, {}, null);",
 					"const html = renderHtmlReport(result, { title: 'My scan report' });",
+					"",
 					"require('fs').writeFileSync('report.html', html);",
 				]}
 			/>

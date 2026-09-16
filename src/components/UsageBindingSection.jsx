@@ -7,7 +7,7 @@ export function UsageBindingSection({ intro, install, installNote, usage, note, 
 			{intro}
 			<CodeBlock lines={install.map((text) => ({ text, command: true }))} />
 			{installNote}
-			<CodeBlock lines={usage} />
+			<CodeBlock lang="js" lines={usage} />
 			{note}
 			{exampleHref ? (
 				<p>

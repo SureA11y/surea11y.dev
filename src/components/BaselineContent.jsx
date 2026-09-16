@@ -111,6 +111,7 @@ export function BaselineContent() {
 
 			<h2>File format</h2>
 			<CodeBlock
+				lang="json"
 				lines={[
 					"{",
 					'  "version": 1,',

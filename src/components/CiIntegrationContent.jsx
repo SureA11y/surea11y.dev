@@ -26,6 +26,7 @@ export function CiIntegrationContent() {
 			<h2>GitHub Actions</h2>
 			<h3>Basic: gate on exit code</h3>
 			<CodeBlock
+				lang="yaml"
 				lines={[
 					"name: Accessibility scan",
 					"on: [pull_request]",
@@ -57,6 +58,7 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<CodeBlock
+				lang="yaml"
 				lines={[
 					"      - run: npm ci && npm run build",
 					"      - run: npx @surea11y/cli scan ./dist/index.html --baseline a11y-baseline.json",
@@ -75,6 +77,7 @@ export function CiIntegrationContent() {
 				new violations.
 			</p>
 			<CodeBlock
+				lang="yaml"
 				lines={[
 					"name: Accessibility scan",
 					"on: [pull_request]",
@@ -119,6 +122,7 @@ export function CiIntegrationContent() {
 				pipeline artifact) is the practical integration point rather than <code>--sarif</code>.
 			</p>
 			<CodeBlock
+				lang="yaml"
 				lines={[
 					"pipelines:",
 					"  pull-requests:",

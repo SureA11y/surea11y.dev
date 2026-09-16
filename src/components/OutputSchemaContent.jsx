@@ -612,6 +612,7 @@ export function OutputSchemaContent() {
 				<a href="/configuration/engine-options/">Engine options</a> — this is <strong>not</strong> a bare array):
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"const result = runDomRulesInPage(",
 					"  'https://example.test/',",
@@ -622,6 +623,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<CodeBlock
+				lang="json"
 				lines={[
 					"{",
 					'  "engine": {',

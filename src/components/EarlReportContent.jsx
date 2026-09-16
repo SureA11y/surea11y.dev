@@ -22,6 +22,7 @@ export function EarlReportContent() {
 				an implementation report.
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"const { renderEarlReport } = require('@surea11y/core/earl');",
 					"",
@@ -69,6 +70,7 @@ export function EarlReportContent() {
 			<h2>Shape</h2>
 			<p>The graph groups by subject rather than being a flat list of assertions:</p>
 			<CodeBlock
+				lang="json"
 				lines={[
 					"{",
 					'  "@context": "https://www.w3.org/WAI/content-assets/wcag-act-rules/earl-context.json",',
@@ -156,7 +158,7 @@ export function EarlReportContent() {
 				<code>renderEarlReport</code> takes an array as readily as a single result, because a
 				report covering many pages is the normal case:
 			</p>
-			<CodeBlock lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
+			<CodeBlock lang="js" lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
 			<p>
 				Results sharing a URL merge into one subject — a caller scanning the same page under
 				different <code>engineOptions</code> is still describing one resource, and the context has

@@ -16,7 +16,7 @@ export function FaqContent() {
 					easy to reach for, so this is worth checking first.
 				</p>
 				<p>Fix:</p>
-				<CodeBlock lines={["runOnly: { includeRuleIds: ['img-alt-present'] }"]} />
+				<CodeBlock lang="js" lines={["runOnly: { includeRuleIds: ['img-alt-present'] }"]} />
 				<p>
 					See <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a> for the full shape.
 				</p>

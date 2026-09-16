@@ -38,7 +38,7 @@ export function RulePage({ rule }) {
 			{rule.examples.map((example) => (
 				<div className="example" key={example.outcome}>
 					<ResultBadge state={example.state} />
-					<CodeBlock lines={example.html.split("\n")} />
+					<CodeBlock lang="html" lines={example.html.split("\n")} />
 					<p>{example.explanation}</p>
 				</div>
 			))}

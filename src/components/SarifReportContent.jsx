@@ -69,6 +69,7 @@ export function SarifReportContent() {
 				from via <code>associatedRule.id</code>:
 			</p>
 			<CodeBlock
+				lang="json"
 				lines={[
 					'"invocations": [',
 					"  {",

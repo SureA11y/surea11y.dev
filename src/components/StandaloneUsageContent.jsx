@@ -16,6 +16,7 @@ export function StandaloneUsageContent() {
 				defines one global, <code>a11ycore</code>:
 			</p>
 			<CodeBlock
+				lang="html"
 				lines={[
 					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
 					"<script>",
@@ -34,6 +35,7 @@ export function StandaloneUsageContent() {
 				one after the bundle and that language becomes available:
 			</p>
 			<CodeBlock
+				lang="html"
 				lines={[
 					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
 					'<script src="node_modules/@surea11y/core/surea11y.i18n.de.js"></script>',

@@ -101,7 +101,7 @@ export function LocalesContent() {
 			</p>
 
 			<h2>Selecting a locale</h2>
-			<CodeBlock lines={["runDomRulesInPage(url, null, { locale: 'fr' }, null);"]} />
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { locale: 'fr' }, null);"]} />
 			<p>Default is <code>'en'</code> if omitted. Any string is accepted; an unrecognized locale is never an error.</p>
 
 			<h2>How a locale is chosen</h2>
@@ -149,6 +149,7 @@ export function LocalesContent() {
 				the resolution once, at the top:
 			</p>
 			<CodeBlock
+				lang="json"
 				lines={[
 					'"engine": {',
 					'  "tag": "a11ycore",',
@@ -201,6 +202,7 @@ export function LocalesContent() {
 				changes: the Node package and the bindings are unaffected.
 			</p>
 			<CodeBlock
+				lang="html"
 				lines={[
 					'<script src="surea11y.browser.js"></script>',
 					'<script src="surea11y.i18n.de.js"></script>',
@@ -219,6 +221,7 @@ export function LocalesContent() {
 				overriding a handful of strings, or for a language you maintain privately:
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"runDomRulesInPage(url, null, {",
 					"  locale: 'de',",

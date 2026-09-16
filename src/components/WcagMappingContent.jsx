@@ -111,6 +111,7 @@ export function WcagMappingContent() {
 				level tags you want:
 			</p>
 			<CodeBlock
+				lang="js"
 				lines={[
 					"// WCAG 2.0 A and AA. Both tags are required: they are not cumulative.",
 					"runDomRulesInPage(url, null, {}, { tags: ['wcag2a', 'wcag2aa'] });",
