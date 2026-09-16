@@ -301,7 +301,7 @@ export function ResultsReportsContent() {
 				<a href="#cross-frame-result">Cross-frame result</a> below.
 			</p>
 
-			<h3>Top-level result</h3>
+			<h3 id="top-level-result">Top-level result</h3>
 			<CodeBlock
 				lines={[
 					"{",
