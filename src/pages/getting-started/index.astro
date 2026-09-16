@@ -1,16 +1,17 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Callout } from "../../components/design-system/feedback/Callout.jsx";
 ---
 
 <BaseLayout title="Getting Started">
 	<h1>Getting Started</h1>
-	<p>
+	<Callout tone="note">
 		One flowing page, anchor-linked by binding, isn't built yet:
 		installation, the shared "Usage" concept from
 		<code>OUTPUT_SCHEMA.md</code>, per-binding usage adapted from each
 		binding's own README, and the standalone/browser-bundle path from
 		<code>INTEGRATION.md</code>.
-	</p>
+	</Callout>
 </BaseLayout>
 
 <style>

@@ -1,4 +1,6 @@
 ---
+import { Logo } from "./design-system/brand/Logo.jsx";
+
 const sections = [
 	{ href: "/", label: "Overview" },
 	{ href: "/getting-started/", label: "Getting Started" },
@@ -16,7 +18,7 @@ const isActive = (href: string) =>
 
 <header class="site-header">
 	<a class="wordmark" href="/">
-		<span class="sure">sure</span><span class="a11y">a11y</span>
+		<Logo variant="lockup" case="lower" size={28} />
 	</a>
 	<nav aria-label="Primary">
 		<ul>
@@ -48,20 +50,8 @@ const isActive = (href: string) =>
 	}
 
 	.wordmark {
-		font-family: var(--font-display);
-		font-size: var(--text-lg);
+		display: inline-flex;
 		text-decoration: none;
-		white-space: nowrap;
-	}
-
-	.wordmark .sure {
-		font-weight: var(--weight-regular);
-		color: var(--text-muted);
-	}
-
-	.wordmark .a11y {
-		font-weight: var(--weight-bold);
-		color: var(--text-strong);
 	}
 
 	nav ul {

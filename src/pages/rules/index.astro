@@ -1,14 +1,15 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Callout } from "../../components/design-system/feedback/Callout.jsx";
 ---
 
 <BaseLayout title="Rules">
 	<h1>Rules</h1>
-	<p>
+	<Callout tone="note">
 		The catalog and individual rule pages aren't generated yet — they'll
 		come from <code>RULE_CATALOG.md</code> and <code>RULE_EXAMPLES.md</code>,
 		plus an organization page adapted from <code>RULE_TAXONOMY.md</code>.
-	</p>
+	</Callout>
 </BaseLayout>
 
 <style>

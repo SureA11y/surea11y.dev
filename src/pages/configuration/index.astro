@@ -1,15 +1,16 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Callout } from "../../components/design-system/feedback/Callout.jsx";
 ---
 
 <BaseLayout title="Configuration">
 	<h1>Configuration</h1>
-	<p>
+	<Callout tone="note">
 		Engine options, CI integration, and locales aren't written up yet —
 		they'll come from <code>ENGINE_OPTIONS.md</code>,
 		<code>CI_INTEGRATIONS.md</code>, and the end-user portion of
 		<code>I18N.md</code>.
-	</p>
+	</Callout>
 </BaseLayout>
 
 <style>

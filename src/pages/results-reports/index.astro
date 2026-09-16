@@ -1,14 +1,15 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Callout } from "../../components/design-system/feedback/Callout.jsx";
 ---
 
 <BaseLayout title="Results & Reports">
 	<h1>Results & Reports</h1>
-	<p>
+	<Callout tone="note">
 		The output schema and each report format aren't documented yet —
 		they'll come from <code>OUTPUT_SCHEMA.md</code>, <code>REPORT.md</code>,
 		<code>SARIF.md</code>, and <code>EARL.md</code>.
-	</p>
+	</Callout>
 </BaseLayout>
 
 <style>
