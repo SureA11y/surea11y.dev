@@ -7,9 +7,10 @@ Overview turned into a section-index landing (badges + a card grid linking
 the other six sections), a real Rules catalog + 132 generated rule pages
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
-`src/components/design-system/` — see below). Getting Started,
-Configuration, Results & Reports, Conformance, and Troubleshooting are
-still stub pages.
+`src/components/design-system/` — see below). Troubleshooting has its real
+content too (`TROUBLESHOOTING.md`/`LIMITATIONS.md`, near-verbatim per the IA
+doc). Getting Started, Configuration, Results & Reports, and Conformance
+are still stub pages.
 
 ## Where things come from (all sibling directories on this machine)
 
@@ -41,6 +42,28 @@ still stub pages.
   regenerate, `npm run docs:rules:check` to verify it's current — same
   committed-artifact relationship as the tokens/components below. Requires
   `../core/src/core.js` to be built and current.
+- `../core/docs/TROUBLESHOOTING.md` + `LIMITATIONS.md` — dropped in near-
+  verbatim as `/troubleshooting/`'s FAQ and Known limitations sections
+  (`src/components/TroubleshootingContent.jsx`). Cross-references were
+  retargeted, not left as-is: a link to a doc that maps to one of our own
+  IA sections (`ENGINE_OPTIONS.md`/`I18N.md` → `/configuration/`,
+  `OUTPUT_SCHEMA.md` → `/results-reports/`, `WCAG_CONFORMANCE.md` →
+  `/conformance/`) points at that page with its anchor fragment stripped,
+  since the target page doesn't have that anchor yet; a link to a doc the
+  IA doc marks GitHub-only (`INTEGRATION.md`, `RULE_AUTHORING.md`,
+  `POLICY.md`, `ACT_RULE_MAPPING.md`) points at
+  `https://github.com/SureA11y/core/blob/main/docs/<file>.md` instead,
+  keeping its anchor since GitHub renders those; `LIMITATIONS.md`
+  references become an in-page `#known-limitations` anchor, since that
+  content lives on the same page. This content lives in a `.jsx` file, not
+  the `.astro` page directly, for a real reason: a plain `.astro` template
+  silently drops the whitespace between a line of text and an inline tag
+  (`<a>`/`<code>`) that starts the next line, instead of collapsing it to a
+  space the way HTML/JSX normally would — invisible until you read the
+  rendered text closely. JSX doesn't have this bug. Any future page with
+  this much inline-linked prose (Configuration, Results & Reports,
+  Conformance) should go straight to a `.jsx` content component rather
+  than risk it in `.astro` markup.
 - `../design_system/tokens/*.css` — design tokens (colors, typography,
   spacing, motion, elevation, radius). Copied into `src/styles/tokens/`
   here; that's the source of truth, re-copy if it changes rather than
@@ -103,8 +126,14 @@ need a content-collection schema, just a build-time array.
    `Card`, `Tag`, `CodeBlock`, `ResultBadge`, `DataTable`. Configuration,
    Results & Reports, and Conformance are still stub pages that will need
    more of these (e.g. `CodeBlock` for CI-config/report-format examples).
-4. The net-new content the design doc calls out: an Overview page, the
-   "Usage" shared-concept subsection of Getting Started, reader-facing
-   adaptations of `RULE_TAXONOMY.md`/`I18N.md`/each binding's README, and
-   the "How rules are organized" page under Rules (`RULE_TAXONOMY.md`
-   needs adaptation, not a verbatim drop-in — see the IA doc).
+4. Fill in the remaining stub pages with real content, source doc per
+   section: Getting Started (`OUTPUT_SCHEMA.md` for the shared "Usage"
+   subsection, plus each binding's README), Configuration
+   (`ENGINE_OPTIONS.md`/`CI_INTEGRATIONS.md`/`I18N.md`), Results & Reports
+   (`OUTPUT_SCHEMA.md`/`REPORT.md`/`SARIF.md`/`EARL.md`), Conformance
+   (`WCAG_CONFORMANCE.md`/`BASELINE.md`). ~~Troubleshooting~~ is done.
+5. The net-new content the design doc calls out, not a drop-in from any
+   single source doc: the real Overview page (what surea11y is, how it
+   differs from other tools), and the "How rules are organized" page under
+   Rules (`RULE_TAXONOMY.md` needs adaptation for a reader, not a verbatim
+   drop-in — see the IA doc).
