@@ -4,6 +4,7 @@ import SiteNav from "../components/SiteNav.astro";
 import Sidebar from "../components/Sidebar.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TableOfContents from "../components/TableOfContents.astro";
+import Footer from "../components/Footer.astro";
 import { processHeadings } from "../utils/headings";
 
 interface Props {
@@ -44,6 +45,7 @@ const { html, headings } = processHeadings(rawHtml);
 				<TableOfContents headings={headings} />
 			</aside>
 		</div>
+		<Footer />
 	</body>
 </html>
 
@@ -53,6 +55,13 @@ const { html, headings } = processHeadings(rawHtml);
 		color: var(--text-body);
 		font-family: var(--font-body);
 		margin: 0;
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.shell {
+		flex: 1;
 	}
 
 	.skip-link {
