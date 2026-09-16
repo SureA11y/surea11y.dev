@@ -21,7 +21,7 @@ export function GettingStartedContent() {
 				<code>violations</code>/<code>passes</code>/<code>incomplete</code>/<code>inapplicable</code>{" "}
 				shape used by other popular accessibility testing tools — each binding's method names are
 				modeled on common conventions in this space for migration familiarity, but the richer
-				result schema is kept as-is. See <a href="/results-reports/">Results &amp; Reports</a> for
+				result schema is kept as-is. See <a href="/results-reports/output-schema/">Results &amp; Reports</a> for
 				the full schema.
 			</p>
 		</>

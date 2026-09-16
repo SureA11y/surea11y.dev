@@ -1,14 +1,23 @@
 ---
-import { gettingStartedSections } from "../data/gettingStartedSections";
+interface Section {
+	href: string;
+	label: string;
+}
 
+interface Props {
+	sections: Section[];
+	label?: string;
+}
+
+const { sections, label = "On this page" } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
-<nav aria-label="Usage guides" class="usage-menu">
-	<span class="usage-menu-label">Usage guides</span>
+<nav aria-label={label} class="section-menu">
+	<span class="section-menu-label">{label}</span>
 	<ul>
 		{
-			gettingStartedSections.map((section) => (
+			sections.map((section) => (
 				<li>
 					<a href={section.href} aria-current={currentPath === section.href ? "page" : undefined}>
 						{section.label}
@@ -20,7 +29,7 @@ const currentPath = Astro.url.pathname;
 </nav>
 
 <style>
-	.usage-menu {
+	.section-menu {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
@@ -31,7 +40,7 @@ const currentPath = Astro.url.pathname;
 		border-radius: var(--radius-md);
 	}
 
-	.usage-menu-label {
+	.section-menu-label {
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
 		letter-spacing: var(--tracking-label);

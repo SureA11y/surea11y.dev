@@ -44,7 +44,7 @@ export function StandaloneUsageContent() {
 			/>
 			<p>
 				Ask for a locale whose file you haven't loaded and you get English, not an error — see{" "}
-				<a href="/configuration/#locales">Locales</a>.
+				<a href="/configuration/locales/">Locales</a>.
 			</p>
 			<p>
 				Deliberately excluded from the bundle: <code>runa11yCoreAcrossFrames</code>/

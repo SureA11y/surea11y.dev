@@ -89,7 +89,7 @@ const topLevelRows = [
 		meaning: (
 			<>
 				The (trimmed) <code>contextSelector</code> argument you passed — a string, an array of
-				strings (multi-region scanning, see <a href="/configuration/">Engine options</a>), or{" "}
+				strings (multi-region scanning, see <a href="/configuration/engine-options/">Engine options</a>), or{" "}
 				<code>null</code> if none/empty.
 			</>
 		),
@@ -100,7 +100,7 @@ const topLevelRows = [
 		meaning: (
 			<>
 				One entry per <strong>atomic rule</strong> that ran (every rule not filtered out by{" "}
-				<code>runOnly</code> — see <a href="/configuration/">Engine options</a>).{" "}
+				<code>runOnly</code> — see <a href="/configuration/engine-options/">Engine options</a>).{" "}
 				<strong>Every loaded rule produces an entry, even ones that outcome{" "}
 				<code>notApplicable</code></strong> — this is not a "violations only" list.
 			</>
@@ -113,7 +113,7 @@ const topLevelRows = [
 			<>
 				One entry per <strong>composite (WCAG-SC rollup) rule</strong> that ran — see{" "}
 				<a href="#composite-result">A composite result</a> and{" "}
-				<a href="/conformance/">Conformance</a>. Empty array if no composite matched the current{" "}
+				<a href="/conformance/wcag-mapping/">Conformance</a>. Empty array if no composite matched the current{" "}
 				<code>runOnly</code>/tag filter.
 			</>
 		),
@@ -125,7 +125,7 @@ const topLevelRows = [
 			<>
 				Rule ids where an <code>engineOptions.customRules</code> entry shared its <code>id</code>{" "}
 				with a built-in rule, so the custom implementation replaced the built-in one for this scan
-				(see <a href="/configuration/">Engine options</a>). Always an array; empty when no
+				(see <a href="/configuration/engine-options/">Engine options</a>). Always an array; empty when no
 				collision occurred. Also logged via <code>console.warn</code> at scan time, since a
 				same-named custom rule is as likely to be an accidental collision as a deliberate
 				override.
@@ -255,42 +255,9 @@ const outcomeRows = [
 	{ id: "notApplicable", outcome: <code>notApplicable</code>, meaning: "The rule found no elements it applies to on this page/scope.", manual: "Yes" },
 ];
 
-const sarifLevelRows = [
-	{ id: "fail", outcome: <code>fail</code>, level: <code>error</code>, meaning: "Deterministic violation — the CI-gating case." },
-	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "Needs human review — surfaced, but shouldn't block a build on its own." },
-];
-
-const sarifFieldRows = [
-	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
-	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code></> },
-	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>The scanned target — see <a href="#sarif-locations">Locations</a> below.</> },
-	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, when present.</> },
-	{
-		id: "fingerprint",
-		field: <code>results[].partialFingerprints["surea11y/violation/v1"]</code>,
-		source: (
-			<>
-				The same <code>ruleId + reasonCode + html</code> identity key used by{" "}
-				<a href="/conformance/#baseline">Baseline / allowlist</a> (<code>computeBaselineKey</code>)
-				— a stable, content-based fingerprint rather than a position-based one.
-			</>
-		),
-	},
-	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code></>, source: <><code>checksResults[i].severity</code> / <code>.confidence</code> — informational, not part of SARIF's own schema.</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, and a <code>wcag-&lt;SC&gt;</code> tag per <code>meta.normativeMappings[].requirement</code>.</> },
-];
-
-const earlOutcomeRows = [
-	{ id: "pass", engine: <code>pass</code>, earl: <code>earl:passed</code> },
-	{ id: "fail", engine: <code>fail</code>, earl: <code>earl:failed</code> },
-	{ id: "cantTell", engine: <code>cantTell</code>, earl: <code>earl:cantTell</code> },
-	{ id: "notApplicable", engine: <code>notApplicable</code>, earl: <code>earl:inapplicable</code> },
-];
-
-export function ResultsReportsContent() {
+export function OutputSchemaContent() {
 	return (
 		<>
-			<h2 id="output-schema">Output schema</h2>
 			<p>
 				This is the exact shape of the object returned by <code>runDomRulesInPage(...)</code> /{" "}
 				<code>runa11yCoreInPage(...)</code> (see{" "}
@@ -301,7 +268,7 @@ export function ResultsReportsContent() {
 				<a href="#cross-frame-result">Cross-frame result</a> below.
 			</p>
 
-			<h3 id="top-level-result">Top-level result</h3>
+			<h2 id="top-level-result">Top-level result</h2>
 			<CodeBlock
 				lines={[
 					"{",
@@ -331,7 +298,7 @@ export function ResultsReportsContent() {
 				rows={topLevelRows}
 			/>
 
-			<h3 id="cross-frame-result">Cross-frame result (<code>runa11yCoreAcrossFrames</code>)</h3>
+			<h2 id="cross-frame-result">Cross-frame result (<code>runa11yCoreAcrossFrames</code>)</h2>
 			<p>
 				<code>runa11yCoreAcrossFrames</code> (see{" "}
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>
@@ -374,7 +341,7 @@ export function ResultsReportsContent() {
 				</li>
 			</ul>
 
-			<h3>A check result (<code>checksResults[i]</code>)</h3>
+			<h2>A check result (<code>checksResults[i]</code>)</h2>
 			<CodeBlock
 				lines={[
 					"{",
@@ -436,7 +403,7 @@ export function ResultsReportsContent() {
 					<strong><code>meta.normativeMappings</code></strong> is how a check result ties back to
 					a WCAG Success Criterion — <code>[]</code> for rules with no formal WCAG mapping (this
 					engine calls them advisory <code>type: "manual"</code> rules). See{" "}
-					<a href="/conformance/">Conformance</a> for how these roll up.
+					<a href="/conformance/wcag-mapping/">Conformance</a> for how these roll up.
 				</li>
 				<li>
 					<strong><code>wcagVersionScope</code></strong>: only present when the run's target WCAG
@@ -448,7 +415,7 @@ export function ResultsReportsContent() {
 					the rule's own, unchanged — nothing was dropped, only the conformance verdict was.
 					Absent on every other result, and <strong>never</strong> reported through{" "}
 					<code>error</code>: nothing went wrong. See{" "}
-					<a href="/configuration/#filtering-by-wcag-version">Filtering by WCAG version</a>.
+					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtering by WCAG version</a>.
 				</li>
 				<li>
 					<strong><code>error</code></strong>: only present if the rule implementation threw an
@@ -466,7 +433,7 @@ export function ResultsReportsContent() {
 				</li>
 			</ul>
 
-			<h3>An occurrence (<code>occurrences[i]</code>)</h3>
+			<h2>An occurrence (<code>occurrences[i]</code>)</h2>
 			<p>
 				Normally present only when <code>outcome</code> is <code>fail</code> or{" "}
 				<code>cantTell</code>: a <code>pass</code> result has <code>occurrences: []</code>, since
@@ -513,7 +480,7 @@ export function ResultsReportsContent() {
 				rows={occurrenceRows}
 			/>
 
-			<h4 id="uncertainty-codes">Uncertainty codes</h4>
+			<h3 id="uncertainty-codes">Uncertainty codes</h3>
 			<p>
 				A <code>cantTell</code> says the engine did not decide. <code>uncertainty</code> says{" "}
 				<strong>why</strong>, from a closed vocabulary, so a consumer can branch on the reason
@@ -548,7 +515,7 @@ export function ResultsReportsContent() {
 				repeating it per occurrence would say nothing the result does not.
 			</p>
 
-			<h3 id="composite-result">A composite result (<code>rulesResults[i]</code>)</h3>
+			<h2 id="composite-result">A composite result (<code>rulesResults[i]</code>)</h2>
 			<p>
 				Composites roll multiple atomic rules up to one WCAG Success Criterion (e.g.{" "}
 				<code>wcag-1.1.1-non-text-content</code> rolls up 22 atomic rules). Shape is the same
@@ -579,11 +546,11 @@ export function ResultsReportsContent() {
 				<code>missingCount &gt; 0</code>) → composite <code>cantTell</code></strong>; else{" "}
 				<strong>all contributors <code>notApplicable</code> → composite{" "}
 				<code>notApplicable</code></strong>; else <strong><code>pass</code></strong>. See{" "}
-				<a href="/conformance/">Conformance</a> for what this means for an overall conformance
+				<a href="/conformance/wcag-mapping/">Conformance</a> for what this means for an overall conformance
 				claim.
 			</p>
 
-			<h3>Outcome values</h3>
+			<h2>Outcome values</h2>
 			<DataTable
 				rowKey="id"
 				columns={[
@@ -599,7 +566,7 @@ export function ResultsReportsContent() {
 				this.
 			</p>
 
-			<h3>Severity and confidence values</h3>
+			<h2>Severity and confidence values</h2>
 			<ul>
 				<li>
 					<code>severity</code>: <code>minor</code> &lt; <code>moderate</code> &lt;{" "}
@@ -632,12 +599,12 @@ export function ResultsReportsContent() {
 				<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>).
 			</p>
 
-			<h3>Worked example</h3>
+			<h2>Worked example</h2>
 			<p>
 				Scanning <code>&lt;img src="logo.png"&gt;</code> (no <code>alt</code>) and{" "}
 				<code>&lt;button&gt;&lt;/button&gt;</code> (no accessible name), scoped to just those two
 				rules via <code>runOnly: {"{ includeRuleIds: [...] }"}</code> (see{" "}
-				<a href="/configuration/">Engine options</a> — this is <strong>not</strong> a bare array):
+				<a href="/configuration/engine-options/">Engine options</a> — this is <strong>not</strong> a bare array):
 			</p>
 			<CodeBlock
 				lines={[
@@ -713,396 +680,6 @@ export function ResultsReportsContent() {
 				<code>runOnly.includeRuleIds</code> scoped the scan to two atomic rules and no composite's
 				own ID was included.)
 			</p>
-
-			<h2 id="html-report">HTML report</h2>
-			<p>
-				A self-contained HTML report you can open in a browser after a scan — no server, no
-				external assets, no network requests. Built for QA/manual testers who want a browsable
-				view of a scan's results rather than raw JSON or a terminal summary.
-			</p>
-			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
-			<p>
-				Open <code>report.html</code> directly from disk. Works alongside any other output mode —{" "}
-				<code>--html</code> doesn't replace <code>--json</code>/the default summary, it's an
-				additional artifact written to the given path.
-			</p>
-
-			<h3>What it shows</h3>
-			<ul>
-				<li>
-					<strong>Hero</strong>: one plain-language headline ("N of M applicable checks passed")
-					plus a stacked bar and legend (icon + label + count — status is never color-only)
-					broken down by outcome (<code>fail</code>/<code>cantTell</code>/<code>pass</code>/
-					<code>notApplicable</code>).
-				</li>
-				<li>
-					<strong>Worth reviewing</strong>: one card per rule with <code>fail</code>/
-					<code>cantTell</code> occurrences (not one per occurrence — a rule with many identical
-					occurrences is one thing worth attention, not many), each showing severity, WCAG SC
-					chip(s), a representative occurrence, and the total occurrence count. Capped at the 24
-					highest-priority rules with an overflow note past that.
-				</li>
-				<li>
-					<strong>WCAG rollup</strong>: grouped by conformance level (A / AA / AAA), sourced
-					directly from the engine's own <code>rulesResults[]</code> composite rollups (see{" "}
-					<a href="/conformance/">Conformance</a>) — one row per Success Criterion, its outcome, a
-					pass/fail/needs-review/n/a breakdown, and which atomic rules contributed. This is real
-					engine data, not an invented grouping — the same rollup you'd get from the raw JSON's{" "}
-					<code>rulesResults</code>.
-				</li>
-				<li>
-					<strong>Full technical data</strong> (collapsed by default): a scorecard (tiles per
-					outcome) and a searchable, filterable (by outcome), paginated table of every individual
-					occurrence across the whole scan.
-				</li>
-			</ul>
-			<p>
-				The meta bar under the header carries the rule count, occurrence count, engine tag, schema
-				version, and the locale the scan resolved to. Locale fallback is per-string and invisible
-				in the text itself, so a report requested in a language the engine does not carry reads as
-				an ordinary English one — the chip names the requested locale alongside the resolved one
-				when the two differ. See <a href="/configuration/#locales">Locales</a>.
-			</p>
-
-			<h3>Library usage</h3>
-			<CodeBlock
-				lines={[
-					"const { renderHtmlReport } = require('@surea11y/core/report');",
-					"const { runDomRulesInPage } = require('@surea11y/core');",
-					"",
-					"const result = runDomRulesInPage(url, null, {}, null);",
-					"const html = renderHtmlReport(result, { title: 'My scan report' });",
-					"require('fs').writeFileSync('report.html', html);",
-				]}
-			/>
-			<p>
-				<code>renderHtmlReport(result, options)</code> is a pure function — it returns a string, it
-				never touches the filesystem itself (the CLI's <code>--html</code> flag does the writing).{" "}
-				<code>options.title</code> is optional (defaults to <code>"surea11y scan report"</code>).
-			</p>
-
-			<h3>Scope</h3>
-			<p>
-				This is a single-scan report — one point-in-time snapshot, not a dashboard tracking
-				results across many scans over time. Tracking results across many runs is a separate,
-				larger concern and isn't part of this tool: keep the JSON from each scan and diff it
-				yourself, or feed SARIF to a dashboard that already does history (see{" "}
-				<a href="#sarif-report">SARIF report</a> below).
-			</p>
-
-			<h2 id="sarif-report">SARIF report</h2>
-			<p>
-				<code>--sarif &lt;path&gt;</code> writes a{" "}
-				<a href="https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html">SARIF 2.1.0</a>{" "}
-				log — the standard format GitHub Code Scanning (and other SARIF-consuming dashboards)
-				expect — instead of, or alongside, <code>--json</code>'s raw engine result.
-			</p>
-			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --sarif results.sarif", command: true }]} />
-			<p>
-				See <a href="/configuration/">CI integration</a> for a ready-to-paste GitHub Actions
-				workflow that runs a scan and uploads <code>results.sarif</code> to the "Security" tab.
-			</p>
-
-			<h3>Why a separate format from <code>--json</code></h3>
-			<p>
-				<code>--json</code>'s raw result (see <a href="#output-schema">Output schema</a> above) is
-				this engine's own contract, versioned and stable per{" "}
-				<a href={`${core}/docs/API_STABILITY.md`}><code>API_STABILITY.md</code></a>. SARIF is a
-				different, externally-defined contract purpose-built for code-scanning dashboards — a{" "}
-				<code>checksResults[]</code> entry and a SARIF <code>result</code> don't map 1:1, so this
-				is a real conversion, not a re-serialization.
-			</p>
-
-			<h3>What becomes a SARIF result</h3>
-			<p>
-				Only <code>fail</code>/<code>cantTell</code> occurrences produce SARIF results (same
-				"violations only" framing as the <a href="#html-report">HTML report</a> above).
-			</p>
-			<p>
-				A <code>notApplicable</code> check is not always empty: a rule may attach one occurrence
-				explaining why it had nothing to judge, which the contrast rules do when no text had a
-				computable background. Those never become results — a consumer treats every result as an
-				alert, and "this was not evaluated" is not one — but they are not dropped either. They are
-				carried as <code>note</code>-level entries in{" "}
-				<code>runs[0].invocations[0].toolExecutionNotices</code>, each naming the rule it came
-				from via <code>associatedRule.id</code>:
-			</p>
-			<CodeBlock
-				lines={[
-					'"invocations": [',
-					"  {",
-					'    "executionSuccessful": true,',
-					'    "toolExecutionNotices": [',
-					"      {",
-					'        "level": "note",',
-					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
-					'        "associatedRule": { "id": "contrast-minimum" }',
-					"      }",
-					"    ]",
-					"  }",
-					"]",
-				]}
-			/>
-			<p>
-				That keeps a SARIF-only pipeline from reading silence as a clean bill of health: no
-				contrast alerts can mean the page is fine, or that contrast was never computable, and only
-				the notice separates the two. The block is emitted only when there is something to say, so
-				a run with nothing to report has no <code>invocations</code> key at all.
-			</p>
-			<DataTable
-				rowKey="id"
-				columns={[
-					{ key: "outcome", label: "Engine outcome", width: "22%" },
-					{ key: "level", label: "SARIF level", width: "18%" },
-					{ key: "meaning", label: "Meaning", wrap: true },
-				]}
-				rows={sarifLevelRows}
-			/>
-			<p>
-				Every rule that ran (regardless of whether it produced a result) is listed once in{" "}
-				<code>runs[0].tool.driver.rules</code>, with <code>defaultConfiguration.level</code> set
-				from the rule's <code>type</code>: <code>automatic</code> (fail-capable) →{" "}
-				<code>error</code>, <code>manual</code> (capped at <code>cantTell</code>) →{" "}
-				<code>warning</code>.
-			</p>
-
-			<h3>Field mapping</h3>
-			<DataTable
-				rowKey="id"
-				columns={[
-					{ key: "field", label: "SARIF field", width: "36%", wrap: true },
-					{ key: "source", label: "Source", wrap: true },
-				]}
-				rows={sarifFieldRows}
-			/>
-
-			<h3 id="sarif-locations">Locations</h3>
-			<p>
-				DOM-based scanning has no line/column to report, so{" "}
-				<code>physicalLocation.artifactLocation.uri</code> is the scanned target itself, not a
-				source-file position:
-			</p>
-			<ul>
-				<li>
-					<strong>Local file scans</strong>: a path relative to the current working directory
-					(forward-slashed). If this matches a real file in your repository, GitHub Code Scanning
-					can render the finding as an inline annotation.
-				</li>
-				<li>
-					<strong>URL scans</strong>: the scanned URL itself. GitHub Code Scanning will still list
-					the finding, but can't attach an inline annotation to a URL that isn't a file in the
-					repository — this is inherent to how SARIF/Code Scanning associate findings with
-					source, not a surea11y limitation. If you need inline annotations, scan the rendered
-					HTML file (e.g. a build output artifact) rather than a live URL.
-				</li>
-			</ul>
-			<p>
-				<code>occurrence.selector</code> is additionally carried as a{" "}
-				<code>logicalLocations[].fullyQualifiedName</code>, so a consumer that reads logical
-				locations still gets the "which element" signal even without a usable physical location.
-			</p>
-
-			<h3>Combining with <code>--baseline</code></h3>
-			<p>
-				A generic SARIF consumer has no "known, don't gate on this" concept of its own — the only
-				faithful way to honor a baseline in SARIF output is to omit already-known <code>fail</code>{" "}
-				occurrences entirely, rather than downgrade them to <code>warning</code>:
-			</p>
-			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --baseline baseline.json --sarif results.sarif", command: true }]} />
-			<p>
-				<code>cantTell</code> occurrences are never filtered by a baseline — the baseline mechanism
-				only ever tracks <code>fail</code> occurrences (matching <code>--write-baseline</code>, see{" "}
-				<a href="/conformance/#baseline">Baseline / allowlist</a>).
-			</p>
-
-			<h3>Combining with <code>--html</code>/<code>--json</code></h3>
-			<p>
-				<code>--sarif</code>, <code>--html</code>, and <code>--json</code> are independent output
-				flags — pass any combination in one run; each writes/prints its own report from the same
-				single scan.
-			</p>
-
-			<h2 id="earl-report">EARL report</h2>
-			<p>
-				<code>@surea11y/core/earl</code> renders scan results as{" "}
-				<a href="https://www.w3.org/TR/EARL10-Schema/">EARL 1.0</a> in JSON-LD — the vocabulary the
-				W3C publishes for stating "this tool tested this thing and got this result," and the
-				format the <a href="https://act-rules.github.io/">ACT Rules</a> community group accepts as
-				an implementation report.
-			</p>
-			<CodeBlock
-				lines={[
-					"const { renderEarlReport } = require('@surea11y/core/earl');",
-					"",
-					"const report = renderEarlReport(result, {",
-					"  assertor: { name: 'surea11y', version: '1.7.0' },",
-					"  mode: 'earl:automatic'",
-					"});",
-					"",
-					"fs.writeFileSync('earl.jsonld', JSON.stringify(report, null, 2));",
-				]}
-			/>
-
-			<h3>What it is for</h3>
-			<p>Two audiences, and they want the same document for different reasons.</p>
-			<p>
-				An <strong>implementation report</strong> tells the ACT Rules community group how this
-				engine behaves against their test cases, which is what gets an engine listed alongside the
-				other implementations. Listing is not endorsement and the W3C does not verify the data —
-				the accurate phrasing is <em>"listed as an ACT implementation,"</em> never{" "}
-				<em>"W3C certified."</em> This engine's own report is published at{" "}
-				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
-					https://surea11y.github.io/act-report/act-report.jsonld
-				</a>{" "}
-				and regenerated by <code>scripts/act-report.js</code>.
-			</p>
-			<p>
-				A <strong>consumer</strong> gets an interchange format. EARL is what accessibility tooling
-				reads when it has to combine results from more than one source — an automated scan and a
-				manual audit, say, or several engines — because every assertion carries who asserted it and
-				how. That is worth having whether or not anything is ever submitted anywhere.
-			</p>
-
-			<h3>How it differs from the other reporters</h3>
-			<p>
-				<a href="#sarif-report">SARIF report</a> and <a href="#html-report">HTML report</a> both
-				carry <strong>violations only</strong>: they report <code>fail</code> and{" "}
-				<code>cantTell</code> occurrences and drop everything else. EARL is the opposite. Every
-				rule that ran becomes an assertion, <code>pass</code> and <code>inapplicable</code>{" "}
-				included, because an implementation report is a claim about what the engine decided{" "}
-				<em>everywhere</em>. A rule that stayed silent because it found nothing applicable is
-				evidence, not noise — it is how a reader distinguishes "this engine checked and found
-				nothing to check" from "this engine does not implement that rule at all."
-			</p>
-
-			<h3>Shape</h3>
-			<p>The graph groups by subject rather than being a flat list of assertions:</p>
-			<CodeBlock
-				lines={[
-					"{",
-					'  "@context": "https://www.w3.org/WAI/content-assets/wcag-act-rules/earl-context.json",',
-					'  "@graph": [',
-					"    {",
-					'      "@type": "TestSubject",',
-					'      "source": "https://example.test/",',
-					'      "assertions": [',
-					"        {",
-					'          "@type": "Assertion",',
-					'          "test": { "title": "img-alt-present", "isPartOf": ["WCAG2:non-text-content"] },',
-					'          "result": { "outcome": "earl:failed" },',
-					'          "assertedBy": {',
-					'            "@type": "Assertor",',
-					'            "name": "surea11y",',
-					'            "release": { "@type": "Version", "revision": "1.7.0" }',
-					"          },",
-					'          "mode": "earl:automatic"',
-					"        }",
-					"      ]",
-					"    }",
-					"  ]",
-					"}",
-				]}
-			/>
-			<ul>
-				<li>
-					<strong><code>source</code></strong> is the scanned URL, or <code>about:blank</code>{" "}
-					when a result carries none.
-				</li>
-				<li>
-					<strong><code>test.title</code></strong> is the engine's own rule id. In ACT terms a rule
-					is the <em>procedure</em> the implementation ran, which is exactly what a rule id names.
-				</li>
-				<li>
-					<strong><code>test.isPartOf</code></strong> lists the Success Criteria that rule maps
-					to, as <code>WCAG2:&lt;criterion-id&gt;</code>. Omitted entirely for a rule claiming no
-					criterion — <code>aria-allowed-role</code> is the engine's one automatic rule in that
-					position, and asserting an empty list would read as "maps to nothing we could find"
-					rather than "deliberately maps to none."
-				</li>
-				<li>
-					<strong><code>assertedBy</code></strong> and <strong><code>mode</code></strong> appear
-					only when you supply them.
-				</li>
-			</ul>
-			<p>
-				Criterion ids are derived from the criterion's own title (<code>Non-text Content</code> →{" "}
-				<code>non-text-content</code>). <code>normativeMappings</code> also carries
-				Understanding-document references and non-WCAG standards, which share{" "}
-				<code>standard: "WCAG"</code> and a <code>requirement</code> with the real thing; a Success
-				Criterion is the entry that states a conformance level and claims no other document type,
-				and only those are read.
-			</p>
-
-			<h3>Outcomes</h3>
-			<DataTable
-				rowKey="id"
-				columns={[
-					{ key: "engine", label: "Engine", width: "30%" },
-					{ key: "earl", label: "EARL", wrap: true },
-				]}
-				rows={earlOutcomeRows}
-			/>
-			<p>
-				<code>earl:untested</code> has no counterpart: a rule that did not run produces no result
-				to assert on, so it contributes no assertion rather than an untested one.
-			</p>
-			<p>
-				<strong><code>cantTell</code> does not cost conformance credit.</strong> ACT's own
-				consistency rules allow an automated implementation to report "cannot tell" on some —
-				though not all — examples and still count as consistent. What a partially consistent
-				implementation may <em>not</em> do is produce a false positive: failing an example the rule
-				says should pass, or that is inapplicable. That is the gate worth watching, and it is a
-				property of the rules rather than of this reporter. As of the last full run the engine
-				produces <strong>zero false positives</strong> across the 798 ACT examples covering its 58
-				matched rules — see{" "}
-				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>, and
-				re-run <code>scripts/act-testcase-check.js</code> for the live figure rather than trusting
-				this one indefinitely.
-			</p>
-
-			<h3>Several results, one report</h3>
-			<p>
-				<code>renderEarlReport</code> takes an array as readily as a single result, because a
-				report covering many pages is the normal case:
-			</p>
-			<CodeBlock lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
-			<p>
-				Results sharing a URL merge into one subject — a caller scanning the same page under
-				different <code>engineOptions</code> is still describing one resource, and the context has
-				no way to express two subjects with the same source. Where two results assert on the same
-				rule for the same URL, the last one wins.
-			</p>
-			<p>
-				Output is deterministic: subjects sort by source, assertions by rule id, and the same
-				inputs produce byte-identical output in any order. That is what makes a diff between two
-				engine versions meaningful.
-			</p>
-
-			<h3>Options</h3>
-			<DataTable
-				rowKey="id"
-				columns={[
-					{ key: "option", label: "Option", width: "22%" },
-					{ key: "meaning", label: "Meaning", wrap: true },
-				]}
-				rows={[
-					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Defaults the name to <code>surea11y</code>; pass <code>null</code> to omit <code>assertedBy</code> entirely.</> },
-					{ id: "mode", option: <code>mode</code>, meaning: <>An EARL test mode such as <code>'earl:automatic'</code>. Omitted when not supplied.</> },
-				]}
-			/>
-
-			<h3>See also</h3>
-			<ul>
-				<li><a href="#output-schema">Output schema</a> — the result this reads</li>
-				<li>
-					<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a> — which
-					ACT rules the engine's rules correspond to
-				</li>
-				<li>
-					<a href={`${core}/docs/API_STABILITY.md`}><code>API_STABILITY.md</code></a> — what is
-					covered by semver
-				</li>
-			</ul>
 		</>
 	);
 }

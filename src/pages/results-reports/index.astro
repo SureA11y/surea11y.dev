@@ -1,11 +1,15 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { ResultsReportsContent } from "../../components/ResultsReportsContent.jsx";
+import SectionMenu from "../../components/SectionMenu.astro";
+import { resultsReportsSections } from "../../data/resultsReportsSections";
 ---
 
 <BaseLayout title="Results & Reports">
 	<h1>Results & Reports</h1>
-	<ResultsReportsContent />
+	<p>
+		The raw output schema, and the three report formats built on top of it — pick a topic below.
+	</p>
+	<SectionMenu sections={resultsReportsSections} />
 </BaseLayout>
 
 <style>
@@ -14,38 +18,7 @@ import { ResultsReportsContent } from "../../components/ResultsReportsContent.js
 		color: var(--text-strong);
 	}
 
-	:global(h2) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-		font-size: var(--text-lg);
-		margin-top: var(--space-10);
-	}
-
-	:global(h3) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-		font-size: var(--text-md);
-		margin-top: var(--space-8);
-	}
-
-	:global(h4) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-		font-size: var(--text-base);
-		margin-top: var(--space-6);
-	}
-
-	:global(p),
-	:global(li) {
+	p {
 		line-height: var(--leading-relaxed);
-	}
-
-	:global(li) {
-		margin-bottom: var(--space-3);
-	}
-
-	:global(code) {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
 	}
 </style>

@@ -43,65 +43,91 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   regenerate, `npm run docs:rules:check` to verify it's current — same
   committed-artifact relationship as the tokens/components below. Requires
   `../core/src/core.js` to be built and current.
-- `../core/docs/TROUBLESHOOTING.md` + `LIMITATIONS.md` — dropped in near-
-  verbatim as `/troubleshooting/`'s FAQ and Known limitations sections
-  (`src/components/TroubleshootingContent.jsx`). Cross-references were
-  retargeted, not left as-is: a link to a doc that maps to one of our own
-  IA sections (`ENGINE_OPTIONS.md`/`I18N.md` → `/configuration/`,
-  `OUTPUT_SCHEMA.md` → `/results-reports/`, `WCAG_CONFORMANCE.md` →
-  `/conformance/`) points at that page with its anchor fragment stripped,
-  since the target page doesn't have that anchor yet; a link to a doc the
-  IA doc marks GitHub-only (`INTEGRATION.md`, `RULE_AUTHORING.md`,
-  `POLICY.md`, `ACT_RULE_MAPPING.md`) points at
-  `https://github.com/SureA11y/core/blob/main/docs/<file>.md` instead,
-  keeping its anchor since GitHub renders those; `LIMITATIONS.md`
-  references become an in-page `#known-limitations` anchor, since that
-  content lives on the same page. This content lives in a `.jsx` file, not
-  the `.astro` page directly, for a real reason: a plain `.astro` template
-  silently drops the whitespace between a line of text and an inline tag
-  (`<a>`/`<code>`) that starts the next line, instead of collapsing it to a
-  space the way HTML/JSX normally would — invisible until you read the
-  rendered text closely. JSX doesn't have this bug. Any future page with
-  this much inline-linked prose (Results & Reports is what's left) should
-  go straight to a `.jsx` content component rather than risk it in `.astro`
-  markup.
-- `../core/docs/WCAG_CONFORMANCE.md` + `BASELINE.md` — dropped in near-
-  verbatim as `/conformance/`'s two sections
-  (`src/components/ConformanceContent.jsx`), same cross-reference
-  retargeting rules as Troubleshooting above; the "How a composite's
-  outcome is computed" table is a `DataTable`, and the baseline CLI
-  transcript is a `CodeBlock` with the two real `surea11y scan` lines
-  marked `command: true` (the `#` comment lines aren't — `CodeBlock` has
-  no comment styling of its own, so they're just plain text, matching the
-  source). One correction made while retargeting, not just relinking:
-  `WCAG_CONFORMANCE.md`'s own link to `RULE_CATALOG.md`'s composite table
-  used the anchor `#composite-wcag-sc-rollup-rules-33`, but that file's
-  heading currently reads "(34)" — the source doc's own link had gone
-  stale. Check a doc's live heading before reusing one of its internal
-  anchors, don't assume it's still accurate.
-- `../core/docs/ENGINE_OPTIONS.md` + `CI_INTEGRATIONS.md` + `I18N.md` —
-  dropped in near-verbatim as `/configuration/`'s three sections
-  (`src/components/ConfigurationContent.jsx`). One deliberate deviation
-  from the IA doc's literal text: it names only `I18N.md`'s "Adding your
-  language" section as excluded (contributor-facing), but the very next H2,
-  "Maintaining the locales" (`npm run i18n:sync`/`i18n:check`/`i18n:report`
-  as repo-maintainer commands), is the same class of content — nothing an
-  `@surea11y/core` *consumer* could run without `core`'s own source
-  checked out — so it's left off the site too, on the same reasoning the
-  IA doc used for its neighbor, not because the IA doc said to. Worth
-  confirming this reading is right. Also referenced from `ENGINE_OPTIONS.md`
-  but never classified anywhere in the IA doc: `API_STABILITY.md` — not
-  imported, linked to GitHub as a fallback; flagging here since it's a gap
-  in the IA doc itself, not a decision already made for it.
-- `../core/docs/OUTPUT_SCHEMA.md` + `REPORT.md` + `SARIF.md` + `EARL.md` —
-  dropped in near-verbatim as `/results-reports/`'s four sections
-  (`src/components/ResultsReportsContent.jsx`), the biggest of these pages
-  by far (~10 `DataTable`s, most of `OUTPUT_SCHEMA.md`'s type blocks as
-  `CodeBlock`). Since all four source docs cross-reference each other and
-  now share one page, those became in-page anchors
-  (`#output-schema`/`#html-report`/`#sarif-report`/`#earl-report`, plus a
-  few more specific ones like `#composite-result`/`#uncertainty-codes`)
-  instead of the cross-page retargeting the other pages needed.
+- **Configuration, Results & Reports, Conformance, and Troubleshooting are
+  each split into per-topic subpages**, not one long page: every section
+  index (`/configuration/`, `/results-reports/`, `/conformance/`,
+  `/troubleshooting/`) is a short intro + `SectionMenu.astro` (a generic
+  `sections: {href, label}[]` local-nav menu, repeated on every subpage of
+  that section so switching topics never dead-ends back through the index
+  — same reasoning and the same non-color-only active-state cue,
+  `aria-current` + bottom border, no font-weight, as `SiteNav` and the
+  Getting Started menu below). Each subpage's content lives in its own
+  `.jsx` component (never raw `.astro` markup — see the whitespace-bug note
+  below) with the section's original H2 becoming that page's `<h1>` and
+  every descendant heading promoted one level (H3→H2, H4→H3) to keep a
+  valid hierarchy. Section data lives in `src/data/{section}Sections.ts`.
+  This started as one long page per section (each built as a near-verbatim
+  drop-in from source docs, described below); split later once the pages
+  were confirmed too long to navigate, same alfa.siteimprove.com-inspired
+  pattern as Getting Started's own split.
+  - `/configuration/` ← `ENGINE_OPTIONS.md` + `CI_INTEGRATIONS.md` +
+    `I18N.md` → `EngineOptionsContent.jsx` (`/configuration/engine-options/`),
+    `CiIntegrationContent.jsx` (`/configuration/ci-integration/`),
+    `LocalesContent.jsx` (`/configuration/locales/`). One deliberate
+    deviation from the IA doc's literal text: it names only `I18N.md`'s
+    "Adding your language" section as excluded (contributor-facing), but
+    the very next H2, "Maintaining the locales" (`npm run
+    i18n:sync`/`i18n:check`/`i18n:report` as repo-maintainer commands), is
+    the same class of content — nothing an `@surea11y/core` *consumer*
+    could run without `core`'s own source checked out — so it's left off
+    the site too, on the same reasoning the IA doc used for its neighbor,
+    not because the IA doc said to. Worth confirming this reading is
+    right. Also referenced from `ENGINE_OPTIONS.md` but never classified
+    anywhere in the IA doc: `API_STABILITY.md` — not imported, linked to
+    GitHub as a fallback; flagging here since it's a gap in the IA doc
+    itself, not a decision already made for it.
+  - `/results-reports/` ← `OUTPUT_SCHEMA.md` + `REPORT.md` + `SARIF.md` +
+    `EARL.md` → `OutputSchemaContent.jsx` (`/results-reports/output-schema/`),
+    `HtmlReportContent.jsx` (`/results-reports/html-report/`),
+    `SarifReportContent.jsx` (`/results-reports/sarif-report/`),
+    `EarlReportContent.jsx` (`/results-reports/earl-report/`) — the biggest
+    of these pages by far (~10 `DataTable`s, most of `OUTPUT_SCHEMA.md`'s
+    type blocks as `CodeBlock`). The four source docs cross-reference each
+    other; what were in-page anchors while this was one page
+    (`#output-schema`/`#html-report`/`#sarif-report`/`#earl-report`) are now
+    cross-page links to the corresponding subpage.
+  - `/conformance/` ← `WCAG_CONFORMANCE.md` + `BASELINE.md` →
+    `WcagMappingContent.jsx` (`/conformance/wcag-mapping/`),
+    `BaselineContent.jsx` (`/conformance/baseline/`); the "How a
+    composite's outcome is computed" table is a `DataTable`, and the
+    baseline CLI transcript is a `CodeBlock` with the two real `surea11y
+    scan` lines marked `command: true` (the `#` comment lines aren't —
+    `CodeBlock` has no comment styling of its own, so they're just plain
+    text, matching the source). One correction made while adapting, not
+    just relinking: `WCAG_CONFORMANCE.md`'s own link to `RULE_CATALOG.md`'s
+    composite table used the anchor `#composite-wcag-sc-rollup-rules-33`,
+    but that file's heading currently reads "(34)" — the source doc's own
+    link had gone stale. Check a doc's live heading before reusing one of
+    its internal anchors, don't assume it's still accurate.
+  - `/troubleshooting/` ← `TROUBLESHOOTING.md` + `LIMITATIONS.md` →
+    `FaqContent.jsx` (`/troubleshooting/faq/`), `KnownLimitationsContent.jsx`
+    (`/troubleshooting/known-limitations/`); each FAQ entry's own `<h3>`
+    promoted to `<h2>` on the split. What was an in-page
+    `#known-limitations` anchor while both lived on one page is now a
+    cross-page link from the FAQ subpage to the Known Limitations subpage.
+  - Cross-reference rule used throughout every split above and reused for
+    every other page's incoming links: a link into a doc that now maps to
+    one of our own subpages points directly at that subpage, with a
+    `#anchor` only if the subpage actually carries that `id`; a link into a
+    doc the IA doc marks GitHub-only (`INTEGRATION.md`, `RULE_AUTHORING.md`,
+    `POLICY.md`, `ACT_RULE_MAPPING.md`, `API_STABILITY.md`) points at
+    `https://github.com/SureA11y/core/blob/main/docs/<file>.md` instead,
+    keeping its anchor since GitHub renders those.
+  - This content lives in `.jsx` files, not `.astro` pages directly, for a
+    real reason: a plain `.astro` template silently drops the whitespace
+    between a line of text and an inline tag (`<a>`/`<code>`) that starts
+    the next line, instead of collapsing it to a space the way HTML/JSX
+    normally would — invisible until you read the rendered text closely.
+    JSX doesn't have this bug. Any future page with this much inline-linked
+    prose should go straight to a `.jsx` content component rather than risk
+    it in `.astro` markup.
+  - Verification after every section split: `npm run build`, then a
+    Node script (walk `dist/`, build the route set from
+    `index.html`-containing directories, build an `id="..."` set per
+    route, confirm every `<a href>` resolves to a real route and, if it
+    carries a `#anchor`, that the anchor exists on the target route) — run
+    per section, not just once at the end, since a mistake here is silent
+    until audited.
 - `../core/docs/INTEGRATION.md` (Standalone section, Pattern 3) plus each
   binding's own `README.md` — `../cypress`, `../playwright`, `../puppeteer`,
   `../selenium`, `../webdriverio`, `../cli`, all sibling directories here
@@ -126,23 +152,20 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   showed that premise was wrong: alfa uses a separate URL per framework,
   linked from a plain list, not one long page. Rebuilt to match: `/getting-started/`
   is now an index (Installation + shared Usage intro + a picker menu,
-  `src/components/GettingStartedContent.jsx` + `GettingStartedMenu.astro`),
+  `src/components/GettingStartedContent.jsx` + `SectionMenu.astro`),
   and each binding gets its own route
   (`/getting-started/{cypress,playwright,puppeteer,selenium,webdriverio,cli,standalone}/`).
-  `GettingStartedMenu.astro` repeats on every one of those pages (not just
-  the index, unlike alfa) so switching bindings never dead-ends back
-  through the index — confirmed with the user as a deliberate improvement,
-  not an oversight. Data lives in `src/data/gettingStartedSections.ts`
-  (menu entries) and `src/data/bindingUsage.jsx` (the 5 true bindings'
-  install/usage/note content, spread as props into
-  `src/components/UsageBindingSection.jsx` per page); CLI and Standalone
-  don't fit that shape (extra output-sample block; several standalone
-  paragraphs) and keep their own bespoke `CliUsageContent.jsx`/
-  `StandaloneUsageContent.jsx`. The menu itself is plain Astro/semantic
-  HTML, same reasoning as `SiteNav` — no design-system nav component fits
-  a plain link list — and uses the exact same non-color-only active-state
-  cue (`aria-current` + bottom border, no font-weight) `SiteNav` was fixed
-  to use earlier, not a fresh copy of the original color-only mistake.
+  `SectionMenu.astro` (the generic component the other four sections'
+  splits later reused — see above) repeats on every one of those pages
+  (not just the index, unlike alfa) so switching bindings never dead-ends
+  back through the index — confirmed with the user as a deliberate
+  improvement, not an oversight. Data lives in
+  `src/data/gettingStartedSections.ts` (menu entries) and
+  `src/data/bindingUsage.jsx` (the 5 true bindings' install/usage/note
+  content, spread as props into `src/components/UsageBindingSection.jsx`
+  per page); CLI and Standalone don't fit that shape (extra output-sample
+  block; several standalone paragraphs) and keep their own bespoke
+  `CliUsageContent.jsx`/`StandaloneUsageContent.jsx`.
 - `../core/README.md` grounds the real Overview page
   (`src/components/OverviewContent.jsx`) — the net-new content the IA doc
   calls for turned out to already be mostly written: the README's tagline,

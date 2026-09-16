@@ -1,13 +1,14 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { GettingStartedContent } from "../../components/GettingStartedContent.jsx";
-import GettingStartedMenu from "../../components/GettingStartedMenu.astro";
+import SectionMenu from "../../components/SectionMenu.astro";
+import { gettingStartedSections } from "../../data/gettingStartedSections";
 ---
 
 <BaseLayout title="Getting Started">
 	<h1>Getting Started</h1>
 	<GettingStartedContent />
-	<GettingStartedMenu />
+	<SectionMenu sections={gettingStartedSections} label="Usage guides" />
 </BaseLayout>
 
 <style>

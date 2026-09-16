@@ -1,13 +1,14 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import GettingStartedMenu from "../../../components/GettingStartedMenu.astro";
+import SectionMenu from "../../../components/SectionMenu.astro";
+import { gettingStartedSections } from "../../../data/gettingStartedSections";
 import { UsageBindingSection } from "../../../components/UsageBindingSection.jsx";
 import { bindingUsage } from "../../../data/bindingUsage.jsx";
 ---
 
 <BaseLayout title="Usage with WebdriverIO">
 	<h1>Usage with WebdriverIO</h1>
-	<GettingStartedMenu />
+	<SectionMenu sections={gettingStartedSections} label="Usage guides" />
 	<UsageBindingSection {...bindingUsage.webdriverio} />
 </BaseLayout>
 

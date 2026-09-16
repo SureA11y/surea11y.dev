@@ -52,7 +52,7 @@ export function CliUsageContent() {
 			<p>
 				Full flag reference, custom-rule contract, and CI recipes:{" "}
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md"><code>docs/CLI.md</code></a>.
-				For CI-pipeline templates specifically, see <a href="/configuration/">CI integration</a>.
+				For CI-pipeline templates specifically, see <a href="/configuration/ci-integration/">CI integration</a>.
 			</p>
 		</>
 	);

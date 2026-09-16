@@ -1,12 +1,13 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import GettingStartedMenu from "../../../components/GettingStartedMenu.astro";
+import SectionMenu from "../../../components/SectionMenu.astro";
+import { gettingStartedSections } from "../../../data/gettingStartedSections";
 import { StandaloneUsageContent } from "../../../components/StandaloneUsageContent.jsx";
 ---
 
 <BaseLayout title="Standalone">
 	<h1>Standalone</h1>
-	<GettingStartedMenu />
+	<SectionMenu sections={gettingStartedSections} label="Usage guides" />
 	<StandaloneUsageContent />
 </BaseLayout>
 

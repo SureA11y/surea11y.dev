@@ -77,8 +77,8 @@ export function OverviewContent() {
 			<p>
 				<code>cantTell</code> is the point of the project. An engine that quietly discards what it
 				cannot determine produces a shorter report and a false sense of coverage. See{" "}
-				<a href="/results-reports/">Results &amp; Reports</a> for the full result shape, and{" "}
-				<a href="/conformance/">Conformance</a> for how individual results roll up into a WCAG
+				<a href="/results-reports/output-schema/">Results &amp; Reports</a> for the full result shape, and{" "}
+				<a href="/conformance/wcag-mapping/">Conformance</a> for how individual results roll up into a WCAG
 				verdict — including how a target WCAG version (2.0/2.1/2.2) is resolved and applied.
 			</p>
 
@@ -98,7 +98,7 @@ export function OverviewContent() {
 				</a>{" "}
 				records the outcome for every one of those cases, passes and inapplicable results
 				included, so a rule that stayed silent because nothing applied is distinguishable from one
-				that isn't implemented at all. See <a href="/results-reports/#earl-report">EARL report</a>{" "}
+				that isn't implemented at all. See <a href="/results-reports/earl-report/">EARL report</a>{" "}
 				for the format.
 			</p>
 
@@ -135,7 +135,7 @@ export function OverviewContent() {
 			<p>
 				These are the cases where the engine reports <code>cantTell</code>, and where a human
 				reviewer's judgement remains necessary. See{" "}
-				<a href="/troubleshooting/#known-limitations">Known limitations</a> for the complete list.
+				<a href="/troubleshooting/known-limitations/">Known limitations</a> for the complete list.
 			</p>
 		</>
 	);
