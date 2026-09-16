@@ -12,8 +12,18 @@ export function CodeBlock({ lines = [], prompt = "$", copyable = false, style, .
     accent: "var(--green-on-dark)",
     muted: "var(--text-muted)",
   };
+  const joinedText = lines
+    .map((l) => (typeof l === "string" ? l : l.text))
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const defaultLabel = joinedText ? `Code sample: ${joinedText.slice(0, 120)}` : "Code sample";
   return (
     <div
+      tabIndex={0}
+      role="region"
+      aria-label={defaultLabel}
       style={{
         position: "relative",
         background: "var(--ink-sunken)",
