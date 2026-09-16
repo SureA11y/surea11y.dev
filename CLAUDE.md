@@ -7,9 +7,9 @@ Overview turned into a section-index landing (badges + a card grid linking
 the other six sections), a real Rules catalog + 132 generated rule pages
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
-`src/components/design-system/` — see below). Troubleshooting has its real
-content too (`TROUBLESHOOTING.md`/`LIMITATIONS.md`, near-verbatim per the IA
-doc). Getting Started, Configuration, Results & Reports, and Conformance
+`src/components/design-system/` — see below). Troubleshooting and
+Conformance have their real content too (near-verbatim from their source
+docs per the IA doc). Getting Started, Configuration, and Results & Reports
 are still stub pages.
 
 ## Where things come from (all sibling directories on this machine)
@@ -64,6 +64,20 @@ are still stub pages.
   this much inline-linked prose (Configuration, Results & Reports,
   Conformance) should go straight to a `.jsx` content component rather
   than risk it in `.astro` markup.
+- `../core/docs/WCAG_CONFORMANCE.md` + `BASELINE.md` — dropped in near-
+  verbatim as `/conformance/`'s two sections
+  (`src/components/ConformanceContent.jsx`), same cross-reference
+  retargeting rules as Troubleshooting above; the "How a composite's
+  outcome is computed" table is a `DataTable`, and the baseline CLI
+  transcript is a `CodeBlock` with the two real `surea11y scan` lines
+  marked `command: true` (the `#` comment lines aren't — `CodeBlock` has
+  no comment styling of its own, so they're just plain text, matching the
+  source). One correction made while retargeting, not just relinking:
+  `WCAG_CONFORMANCE.md`'s own link to `RULE_CATALOG.md`'s composite table
+  used the anchor `#composite-wcag-sc-rollup-rules-33`, but that file's
+  heading currently reads "(34)" — the source doc's own link had gone
+  stale. Check a doc's live heading before reusing one of its internal
+  anchors, don't assume it's still accurate.
 - `../design_system/tokens/*.css` — design tokens (colors, typography,
   spacing, motion, elevation, radius). Copied into `src/styles/tokens/`
   here; that's the source of truth, re-copy if it changes rather than
@@ -123,15 +137,15 @@ need a content-collection schema, just a build-time array.
    index, `/rules/<id>/` × 132.
 3. Import and wire up more `design_system` React components in place of raw
    HTML, as pages need them — done so far: `Logo`, `Callout`, `Badge`,
-   `Card`, `Tag`, `CodeBlock`, `ResultBadge`, `DataTable`. Configuration,
-   Results & Reports, and Conformance are still stub pages that will need
-   more of these (e.g. `CodeBlock` for CI-config/report-format examples).
+   `Card`, `Tag`, `CodeBlock`, `ResultBadge`, `DataTable`. Configuration and
+   Results & Reports are still stub pages that will need more of these
+   (e.g. more `CodeBlock` for CI-config/report-format examples).
 4. Fill in the remaining stub pages with real content, source doc per
    section: Getting Started (`OUTPUT_SCHEMA.md` for the shared "Usage"
    subsection, plus each binding's README), Configuration
    (`ENGINE_OPTIONS.md`/`CI_INTEGRATIONS.md`/`I18N.md`), Results & Reports
-   (`OUTPUT_SCHEMA.md`/`REPORT.md`/`SARIF.md`/`EARL.md`), Conformance
-   (`WCAG_CONFORMANCE.md`/`BASELINE.md`). ~~Troubleshooting~~ is done.
+   (`OUTPUT_SCHEMA.md`/`REPORT.md`/`SARIF.md`/`EARL.md`).
+   ~~Troubleshooting~~ and ~~Conformance~~ are done.
 5. The net-new content the design doc calls out, not a drop-in from any
    single source doc: the real Overview page (what surea11y is, how it
    differs from other tools), and the "How rules are organized" page under

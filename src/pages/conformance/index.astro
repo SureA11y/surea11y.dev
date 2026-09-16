@@ -1,15 +1,11 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { Callout } from "../../components/design-system/feedback/Callout.jsx";
+import { ConformanceContent } from "../../components/ConformanceContent.jsx";
 ---
 
 <BaseLayout title="Conformance">
 	<h1>Conformance</h1>
-	<Callout tone="note">
-		The WCAG conformance mapping and baseline/allowlist pages aren't
-		written yet — they'll come from <code>WCAG_CONFORMANCE.md</code> and
-		<code>BASELINE.md</code>.
-	</Callout>
+	<ConformanceContent />
 </BaseLayout>
 
 <style>
@@ -18,7 +14,31 @@ import { Callout } from "../../components/design-system/feedback/Callout.jsx";
 		color: var(--text-strong);
 	}
 
-	code {
+	:global(h2) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-lg);
+		margin-top: var(--space-10);
+	}
+
+	:global(h3) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-md);
+		margin-top: var(--space-8);
+	}
+
+	:global(p),
+	:global(li) {
+		line-height: var(--leading-relaxed);
+	}
+
+	:global(li) {
+		margin-bottom: var(--space-3);
+	}
+
+	:global(code) {
 		font-family: var(--font-mono);
+		font-size: 0.9em;
 	}
 </style>
