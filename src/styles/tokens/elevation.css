@@ -1,0 +1,7 @@
+:root {
+  /* This system is flat. Depth comes from surface value and hairlines,
+     not from shadow. These two exist only for things that genuinely float. */
+  --shadow-none: none;
+  --shadow-overlay: 0 12px 32px rgba(4, 21, 14, 0.38);
+  --shadow-popover: 0 4px 14px rgba(4, 21, 14, 0.26);
+}

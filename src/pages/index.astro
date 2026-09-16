@@ -1,17 +1,32 @@
 ---
-
+import "../styles/global.css";
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>surea11y</title>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<main>
+			<h1>surea11y</h1>
+			<p>Docs and rules site scaffold. Nothing published here yet.</p>
+		</main>
 	</body>
 </html>
+
+<style>
+	body {
+		background: var(--surface);
+		color: var(--text-body);
+		font-family: var(--font-body);
+		margin: 0;
+		padding: 2rem;
+	}
+
+	h1 {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+	}
+</style>

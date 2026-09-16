@@ -1,0 +1,17 @@
+:root {
+  /* Motion is functional: state changes and disclosure. Nothing bounces,
+     nothing decorates. All of it collapses under prefers-reduced-motion. */
+  --duration-instant: 80ms;
+  --duration-fast: 140ms;
+  --duration-base: 200ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0.13, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 1ms;
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+  }
+}

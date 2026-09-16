@@ -1,0 +1,6 @@
+/* SureA11y webfonts.
+   All three families are Google Fonts. No binaries are vendored in this project —
+   consumers load them from the Google CDN via the @import below.
+   If you need self-hosted files, drop the .woff2 binaries in assets/fonts/ and
+   replace this @import with real @font-face rules pointing at them. */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:ital,wght@0,400;0,600;1,400&display=swap");

@@ -1,0 +1,93 @@
+:root {
+  /* ---- Brand ---------------------------------------------------------- */
+  /* Green means PASS. It is diagnostic, never decorative. */
+  --green-on-dark: #3BC98F;
+  --green-on-light: #0B6E4C;
+  --green-deep: #04150E;
+
+  /* Ultraviolet carries everything that is NOT a result:
+     services, editorial, data, links. */
+  --violet-on-dark: #C4A6FF;
+  --violet-on-light: #5B39C4;
+  --violet-deep: #170A2E;
+
+  /* ---- Neutrals -------------------------------------------------------- */
+  --ink: #101413;          /* primary dark surface */
+  --ink-sunken: #0B100F;   /* panels on ink */
+  --ink-raised: #161C1A;   /* toolbars, table headers on ink */
+  --hairline-dark: #232927;
+  --hairline-dark-strong: #3A4441;
+
+  --paper: #F7F8F6;        /* primary light surface */
+  --paper-pure: #FFFFFF;   /* cards on paper */
+  --paper-sunken: #F2F3F0;
+  --hairline-light: #E3E5DF;
+  --hairline-light-strong: #B9BFB8;
+
+  --graphite: #4E5651;     /* the "sure" half of the wordmark on light */
+  --slate: #9BA69F;        /* muted on dark */
+  --slate-ink: #5F6660;    /* muted on light */
+
+  /* ---- Result states — five, and only five ----------------------------- */
+  --pass-on-dark: #3BC98F;
+  --pass-on-light: #0B6E4C;
+  --fail-on-dark: #FF8A7A;
+  --fail-on-light: #B3271A;
+  --unknown-on-dark: #E8C15C;   /* "can't tell" */
+  --unknown-on-light: #7A5A08;
+  --advisory-on-dark: #C4A6FF;
+  --advisory-on-light: #5B39C4;
+  --na-on-dark: #9BA69F;
+  --na-on-light: #5F6660;
+
+  /* ---- Semantic aliases · dark surface (the default) -------------------- */
+  --surface: var(--ink);
+  --surface-sunken: var(--ink-sunken);
+  --surface-raised: var(--ink-raised);
+  --border: var(--hairline-dark);
+  --border-strong: var(--hairline-dark-strong);
+  --text-strong: #F7F8F6;
+  --text-body: #C7D2CB;
+  --text-muted: var(--slate);
+  --accent: var(--green-on-dark);
+  --accent-contrast: var(--green-deep);
+  --accent-2: var(--violet-on-dark);
+  --accent-2-contrast: var(--violet-deep);
+  --link: var(--violet-on-dark);
+  --focus-ring: var(--green-on-dark);
+}
+
+/* Light surface. Apply to any subtree: <div data-surface="light"> */
+[data-surface="light"] {
+  --surface: var(--paper);
+  --surface-sunken: var(--paper-sunken);
+  --surface-raised: var(--paper-pure);
+  --border: var(--hairline-light);
+  --border-strong: var(--hairline-light-strong);
+  --text-strong: var(--ink);
+  --text-body: #31352F;
+  --text-muted: var(--slate-ink);
+  --accent: var(--green-on-light);
+  --accent-contrast: #FFFFFF;
+  --accent-2: var(--violet-on-light);
+  --accent-2-contrast: #FFFFFF;
+  --link: var(--violet-on-light);
+  --focus-ring: var(--green-on-light);
+}
+
+[data-surface="dark"] {
+  --surface: var(--ink);
+  --surface-sunken: var(--ink-sunken);
+  --surface-raised: var(--ink-raised);
+  --border: var(--hairline-dark);
+  --border-strong: var(--hairline-dark-strong);
+  --text-strong: #F7F8F6;
+  --text-body: #C7D2CB;
+  --text-muted: var(--slate);
+  --accent: var(--green-on-dark);
+  --accent-contrast: var(--green-deep);
+  --accent-2: var(--violet-on-dark);
+  --accent-2-contrast: var(--violet-deep);
+  --link: var(--violet-on-dark);
+  --focus-ring: var(--green-on-dark);
+}
