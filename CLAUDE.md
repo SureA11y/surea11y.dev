@@ -7,11 +7,10 @@ Overview turned into a section-index landing (badges + a card grid linking
 the other six sections), a real Rules catalog + 132 generated rule pages
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
-`src/components/design-system/` — see below). Troubleshooting, Conformance,
-Configuration, and Results & Reports have their real content too
-(near-verbatim from their source docs per the IA doc). Getting Started is
-the only stub page left, and the real Overview prose / "How rules are
-organized" page are still net-new content to write.
+`src/components/design-system/` — see below). All seven IA sections have
+real content now. What's left is net-new prose no single source doc
+supplies verbatim: the real Overview page, and the "How rules are
+organized" page under Rules — see Next steps below.
 
 ## Where things come from (all sibling directories on this machine)
 
@@ -102,6 +101,23 @@ organized" page are still net-new content to write.
   (`#output-schema`/`#html-report`/`#sarif-report`/`#earl-report`, plus a
   few more specific ones like `#composite-result`/`#uncertainty-codes`)
   instead of the cross-page retargeting the other pages needed.
+- `../core/docs/INTEGRATION.md` (Standalone section, Pattern 3) plus each
+  binding's own `README.md` — `../cypress`, `../playwright`, `../puppeteer`,
+  `../selenium`, `../webdriverio`, `../cli`, all sibling directories here
+  too — feed `/getting-started/`'s per-binding subsections
+  (`src/components/GettingStartedContent.jsx`). Unlike every other content
+  page, this one is **not** a near-verbatim drop-in: each binding README is
+  150-220 lines and the IA doc explicitly says to pull only "install +
+  minimal usage" from each, leaving the rest (advanced builder options,
+  TypeScript types, binding-internals sections) on that binding's own
+  README/GitHub. Real install-time gotchas were kept where they directly
+  affect the shown usage snippet (Playwright's separate browser-install
+  step, WebdriverIO's BiDi-vs-classic-WebDriver performance note tied to
+  the capability flag in its own example) — everything past "does this
+  work" was cut. The "results is the engine's own native shape, not
+  violations/passes/incomplete" differentiator, which every binding README
+  repeats verbatim for its own standalone readers, is stated once in the
+  shared "Usage" section instead of five times.
 - `../design_system/tokens/*.css` — design tokens (colors, typography,
   spacing, motion, elevation, radius). Copied into `src/styles/tokens/`
   here; that's the source of truth, re-copy if it changes rather than
@@ -160,21 +176,16 @@ need a content-collection schema, just a build-time array.
    rule.~~ Done — `scripts/generate-rules-data.cjs`, `/rules/` catalog
    index, `/rules/<id>/` × 132.
 3. ~~Import and wire up more `design_system` React components in place of
-   raw HTML, as pages need them.~~ Done for every page that exists so far
-   — `Logo`, `Callout`, `Badge`, `Card`, `Tag`, `CodeBlock`, `ResultBadge`,
-   `DataTable`. Getting Started, once written, will likely need at least
-   `CodeBlock` for per-binding install/usage snippets.
-4. Getting Started is the only stub page left: `OUTPUT_SCHEMA.md` for the
-   shared "Usage" subsection, plus each binding's own README for a
-   "Usage with X" subsection per binding (Cypress/Playwright/Puppeteer/
-   Selenium/WebdriverIO/CLI) and `INTEGRATION.md` for the Standalone
-   subsection — check those sibling repos actually exist locally (e.g.
-   `../cypress`, `../playwright`) before starting; this page can't be
-   written from `core` alone the way the others were.
-   ~~Troubleshooting~~, ~~Conformance~~, ~~Configuration~~, and
-   ~~Results & Reports~~ are done.
-5. The net-new content the design doc calls out, not a drop-in from any
-   single source doc: the real Overview page (what surea11y is, how it
-   differs from other tools), and the "How rules are organized" page under
-   Rules (`RULE_TAXONOMY.md` needs adaptation for a reader, not a verbatim
-   drop-in — see the IA doc).
+   raw HTML, as pages need them.~~ Done — `Logo`, `Callout`, `Badge`,
+   `Card`, `Tag`, `CodeBlock`, `ResultBadge`, `DataTable`, used across
+   every page that exists.
+4. ~~Fill in every stub page with real content.~~ Done — all seven IA
+   sections now have real content: ~~Troubleshooting~~, ~~Conformance~~,
+   ~~Configuration~~, ~~Results & Reports~~, and ~~Getting Started~~ (the
+   one page built from each binding's own README rather than a single
+   `core` doc — see above).
+5. What's left: the net-new content the design doc calls out, not a
+   drop-in from any single source doc — the real Overview page (what
+   surea11y is, how it differs from other tools), and the "How rules are
+   organized" page under Rules (`RULE_TAXONOMY.md` needs adaptation for a
+   reader, not a verbatim drop-in — see the IA doc).
