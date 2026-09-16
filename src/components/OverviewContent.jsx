@@ -19,8 +19,12 @@ export function OverviewContent() {
 		<>
 			<p className="tagline">Accessibility testing that tells you what it can't tell you.</p>
 			<p>
-				surea11y is an accessibility engine for teams that need to know what automated testing{" "}
-				<em>can't</em> establish. It implements the W3C's open{" "}
+				surea11y is a WCAG accessibility testing engine you run in your own test suite, CI
+				pipeline, or from the command line.
+			</p>
+			<p>
+				What sets it apart is what it does with the cases automated testing can't settle. It
+				implements the W3C's open{" "}
 				<a href="https://www.w3.org/TR/act-rules-format/">
 					Accessibility Conformance Testing (ACT) Rules Format
 				</a>
