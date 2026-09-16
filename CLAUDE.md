@@ -8,9 +8,10 @@ the other six sections), a real Rules catalog + 132 generated rule pages
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
 `src/components/design-system/` — see below). Troubleshooting, Conformance,
-and Configuration have their real content too (near-verbatim from their
-source docs per the IA doc). Getting Started and Results & Reports are
-still stub pages.
+Configuration, and Results & Reports have their real content too
+(near-verbatim from their source docs per the IA doc). Getting Started is
+the only stub page left, and the real Overview prose / "How rules are
+organized" page are still net-new content to write.
 
 ## Where things come from (all sibling directories on this machine)
 
@@ -92,6 +93,15 @@ still stub pages.
   but never classified anywhere in the IA doc: `API_STABILITY.md` — not
   imported, linked to GitHub as a fallback; flagging here since it's a gap
   in the IA doc itself, not a decision already made for it.
+- `../core/docs/OUTPUT_SCHEMA.md` + `REPORT.md` + `SARIF.md` + `EARL.md` —
+  dropped in near-verbatim as `/results-reports/`'s four sections
+  (`src/components/ResultsReportsContent.jsx`), the biggest of these pages
+  by far (~10 `DataTable`s, most of `OUTPUT_SCHEMA.md`'s type blocks as
+  `CodeBlock`). Since all four source docs cross-reference each other and
+  now share one page, those became in-page anchors
+  (`#output-schema`/`#html-report`/`#sarif-report`/`#earl-report`, plus a
+  few more specific ones like `#composite-result`/`#uncertainty-codes`)
+  instead of the cross-page retargeting the other pages needed.
 - `../design_system/tokens/*.css` — design tokens (colors, typography,
   spacing, motion, elevation, radius). Copied into `src/styles/tokens/`
   here; that's the source of truth, re-copy if it changes rather than
@@ -149,17 +159,20 @@ need a content-collection schema, just a build-time array.
 2. ~~A generator turning the rule catalog + examples into one page per
    rule.~~ Done — `scripts/generate-rules-data.cjs`, `/rules/` catalog
    index, `/rules/<id>/` × 132.
-3. Import and wire up more `design_system` React components in place of raw
-   HTML, as pages need them — done so far: `Logo`, `Callout`, `Badge`,
-   `Card`, `Tag`, `CodeBlock`, `ResultBadge`, `DataTable`. Results &
-   Reports is the last stub page that will need more of these (e.g. more
-   `CodeBlock` for report-format examples).
-4. Fill in the remaining stub pages with real content, source doc per
-   section: Getting Started (`OUTPUT_SCHEMA.md` for the shared "Usage"
-   subsection, plus each binding's README — check those sibling repos
-   exist locally before starting), Results & Reports
-   (`OUTPUT_SCHEMA.md`/`REPORT.md`/`SARIF.md`/`EARL.md`). ~~Troubleshooting~~,
-   ~~Conformance~~, and ~~Configuration~~ are done.
+3. ~~Import and wire up more `design_system` React components in place of
+   raw HTML, as pages need them.~~ Done for every page that exists so far
+   — `Logo`, `Callout`, `Badge`, `Card`, `Tag`, `CodeBlock`, `ResultBadge`,
+   `DataTable`. Getting Started, once written, will likely need at least
+   `CodeBlock` for per-binding install/usage snippets.
+4. Getting Started is the only stub page left: `OUTPUT_SCHEMA.md` for the
+   shared "Usage" subsection, plus each binding's own README for a
+   "Usage with X" subsection per binding (Cypress/Playwright/Puppeteer/
+   Selenium/WebdriverIO/CLI) and `INTEGRATION.md` for the Standalone
+   subsection — check those sibling repos actually exist locally (e.g.
+   `../cypress`, `../playwright`) before starting; this page can't be
+   written from `core` alone the way the others were.
+   ~~Troubleshooting~~, ~~Conformance~~, ~~Configuration~~, and
+   ~~Results & Reports~~ are done.
 5. The net-new content the design doc calls out, not a drop-in from any
    single source doc: the real Overview page (what surea11y is, how it
    differs from other tools), and the "How rules are organized" page under

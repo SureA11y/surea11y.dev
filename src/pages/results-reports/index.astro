@@ -1,15 +1,11 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { Callout } from "../../components/design-system/feedback/Callout.jsx";
+import { ResultsReportsContent } from "../../components/ResultsReportsContent.jsx";
 ---
 
 <BaseLayout title="Results & Reports">
 	<h1>Results & Reports</h1>
-	<Callout tone="note">
-		The output schema and each report format aren't documented yet —
-		they'll come from <code>OUTPUT_SCHEMA.md</code>, <code>REPORT.md</code>,
-		<code>SARIF.md</code>, and <code>EARL.md</code>.
-	</Callout>
+	<ResultsReportsContent />
 </BaseLayout>
 
 <style>
@@ -18,7 +14,38 @@ import { Callout } from "../../components/design-system/feedback/Callout.jsx";
 		color: var(--text-strong);
 	}
 
-	code {
+	:global(h2) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-lg);
+		margin-top: var(--space-10);
+	}
+
+	:global(h3) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-md);
+		margin-top: var(--space-8);
+	}
+
+	:global(h4) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-base);
+		margin-top: var(--space-6);
+	}
+
+	:global(p),
+	:global(li) {
+		line-height: var(--leading-relaxed);
+	}
+
+	:global(li) {
+		margin-bottom: var(--space-3);
+	}
+
+	:global(code) {
 		font-family: var(--font-mono);
+		font-size: 0.9em;
 	}
 </style>
