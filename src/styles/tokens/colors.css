@@ -40,25 +40,7 @@
   --na-on-dark: #9BA69F;
   --na-on-light: #5F6660;
 
-  /* ---- Semantic aliases · dark surface (the default) -------------------- */
-  --surface: var(--ink);
-  --surface-sunken: var(--ink-sunken);
-  --surface-raised: var(--ink-raised);
-  --border: var(--hairline-dark);
-  --border-strong: var(--hairline-dark-strong);
-  --text-strong: #F7F8F6;
-  --text-body: #C7D2CB;
-  --text-muted: var(--slate);
-  --accent: var(--green-on-dark);
-  --accent-contrast: var(--green-deep);
-  --accent-2: var(--violet-on-dark);
-  --accent-2-contrast: var(--violet-deep);
-  --link: var(--violet-on-dark);
-  --focus-ring: var(--green-on-dark);
-}
-
-/* Light surface. Apply to any subtree: <div data-surface="light"> */
-[data-surface="light"] {
+  /* ---- Semantic aliases · light surface (the default) -------------------- */
   --surface: var(--paper);
   --surface-sunken: var(--paper-sunken);
   --surface-raised: var(--paper-pure);
@@ -75,6 +57,7 @@
   --focus-ring: var(--green-on-light);
 }
 
+/* Dark surface. Apply to any subtree: <div data-surface="dark"> */
 [data-surface="dark"] {
   --surface: var(--ink);
   --surface-sunken: var(--ink-sunken);
@@ -90,4 +73,23 @@
   --accent-2-contrast: var(--violet-deep);
   --link: var(--violet-on-dark);
   --focus-ring: var(--green-on-dark);
+}
+
+/* Redundant with :root — exists only for explicit nesting back to light
+   inside a dark subtree: <div data-surface="dark"><div data-surface="light"> */
+[data-surface="light"] {
+  --surface: var(--paper);
+  --surface-sunken: var(--paper-sunken);
+  --surface-raised: var(--paper-pure);
+  --border: var(--hairline-light);
+  --border-strong: var(--hairline-light-strong);
+  --text-strong: var(--ink);
+  --text-body: #31352F;
+  --text-muted: var(--slate-ink);
+  --accent: var(--green-on-light);
+  --accent-contrast: #FFFFFF;
+  --accent-2: var(--violet-on-light);
+  --accent-2-contrast: #FFFFFF;
+  --link: var(--violet-on-light);
+  --focus-ring: var(--green-on-light);
 }

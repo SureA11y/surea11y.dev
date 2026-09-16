@@ -14,7 +14,7 @@ function Mark({ size, tile, check }) {
 
 export function Logo({
   variant = "lockup",
-  surface = "dark",
+  surface = "light",
   mono = false,
   case: casing = "lower",
   size = 32,

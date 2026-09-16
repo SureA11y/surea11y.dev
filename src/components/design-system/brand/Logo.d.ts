@@ -15,7 +15,7 @@ import * as React from "react";
 export interface LogoProps extends React.HTMLAttributes<HTMLSpanElement> {
   /** @default "lockup" */
   variant?: "lockup" | "stacked" | "mark" | "wordmark";
-  /** Which surface the logo sits on. @default "dark" */
+  /** Which surface the logo sits on. @default "light" */
   surface?: "dark" | "light";
   /** Single-colour rendition for print, fax and laser. @default false */
   mono?: boolean;

@@ -4,7 +4,7 @@ import { RESULT_STATES } from "./resultStates.js";
 /* Colour + glyph + word, always all three. */
 export function ResultBadge({
   state = "pass",
-  surface = "dark",
+  surface = "light",
   size = "md",
   count,
   variant = "text",

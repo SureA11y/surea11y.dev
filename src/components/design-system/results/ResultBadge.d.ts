@@ -15,7 +15,7 @@ export type ResultState = "pass" | "fail" | "unknown" | "advisory" | "na";
 export interface ResultBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   /** @default "pass" */
   state?: ResultState;
-  /** @default "dark" */
+  /** @default "light" */
   surface?: "dark" | "light";
   /** @default "md" */
   size?: "sm" | "md";

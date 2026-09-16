@@ -217,7 +217,12 @@ Rules at `/rules/organization/`) — see "Where things come from" and
 - `../design_system/tokens/*.css` — design tokens (colors, typography,
   spacing, motion, elevation, radius). Copied into `src/styles/tokens/`
   here; that's the source of truth, re-copy if it changes rather than
-  editing the copies in this repo.
+  editing the copies in this repo. `colors.css` was re-copied after
+  design_system flipped its locked "dark is primary surface" brand
+  decision to light-primary — see its `CLAUDE.md`'s Direction/Colour
+  bullets. `:root` now carries the light-surface values by default;
+  `[data-surface="dark"]` is the opt-in override (the terminal/`CodeBlock`
+  stays on it unconditionally, deliberately, not via that attribute).
 - `../design_system/components/` — 18 React (JSX) components (`Badge`,
   `Button`, `Card`, `CodeBlock`, `Tag`, etc.), organized by category
   (brand/core/data/disclosure/feedback/forms/navigation/results). No
@@ -237,11 +242,14 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   not appear on marketing/nav cards — see its own `.d.ts`. `Badge`'s
   `neutral`/`accent`/`accent2` tones always pair a white value-cell text
   with a *semantic* token (`--text-muted`/`--accent`/`--accent-2`), which
-  resolves to a light, on-dark-surface color by default here — white-on-light
-  fails contrast badly (as low as 2.05:1). Those tones read correctly only
-  under `data-surface="light"` (wrap the usage in that, don't edit the
-  copied component); `pass`/`fail`/`unknown`/`advisory` are unaffected,
-  they pin fixed `-on-light` colors regardless of surface. `DataTable`
+  resolves to a dark, on-light-surface color by default here (light is the
+  default surface — see below) — that pairing is correct out of the box, no
+  wrapper needed. Wrapping in `data-surface="dark"` flips those tokens back
+  to their pale on-dark tones, which then fails the same white-on-pale
+  contrast the old dark-default used to; avoid that wrapper for `Badge`
+  unless the value cell's text color is also darkened to match.
+  `pass`/`fail`/`unknown`/`advisory` are unaffected, they pin fixed
+  `-on-light` colors regardless of surface. `DataTable`
   ("runs, pages, packages, rules") is for static listings; `ResultsTable`
   is the wrong component for the rule catalog — its `state` column means a
   scan *outcome*, not a property of the rule itself. `src/components/RulesTable.jsx`
