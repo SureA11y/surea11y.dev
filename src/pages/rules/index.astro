@@ -21,20 +21,3 @@ const manual = rules.filter((r) => r.type === "manual");
 	<h2>Manual ({manual.length}), advisory, capped at <code>cantTell</code></h2>
 	<RulesTable caption={`${manual.length} manual rules`} rows={manual} />
 </BaseLayout>
-
-<style>
-	h1,
-	h2 {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-	}
-
-	h2 {
-		font-size: var(--text-lg);
-		margin-top: var(--space-10);
-	}
-
-	code {
-		font-family: var(--font-mono);
-	}
-</style>

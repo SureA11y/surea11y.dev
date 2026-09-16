@@ -14,7 +14,7 @@ interface Props {
 const { rule } = Astro.props;
 ---
 
-<BaseLayout title={rule.title}>
+<BaseLayout title={rule.title} breadcrumbLabel={rule.title}>
 	<RulePage rule={rule} />
 </BaseLayout>
 
@@ -27,16 +27,7 @@ const { rule } = Astro.props;
 	}
 
 	:global(article h1) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
 		margin-top: var(--space-1);
-	}
-
-	:global(article h2) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-		font-size: var(--text-lg);
-		margin-top: var(--space-10);
 	}
 
 	:global(.tag-row) {

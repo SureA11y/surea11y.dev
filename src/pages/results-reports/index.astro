@@ -1,35 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import SectionMenu from "../../components/SectionMenu.astro";
-import { resultsReportsSections } from "../../data/resultsReportsSections";
 import { ResultsReportsContent } from "../../components/ResultsReportsContent.jsx";
 ---
 
 <BaseLayout title="Results & Reports">
 	<h1>Results & Reports</h1>
 	<ResultsReportsContent />
-	<SectionMenu sections={resultsReportsSections} />
 </BaseLayout>
-
-<style>
-	h1 {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-	}
-
-	:global(h2) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-		font-size: var(--text-lg);
-		margin-top: var(--space-10);
-	}
-
-	:global(p) {
-		line-height: var(--leading-relaxed);
-	}
-
-	:global(code) {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
-	}
-</style>

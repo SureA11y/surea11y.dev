@@ -1,0 +1,155 @@
+---
+import { siteTree } from "../data/siteTree";
+
+const currentPath = Astro.url.pathname;
+const isSectionActive = (href: string) =>
+	href === "/" ? currentPath === "/" : currentPath.startsWith(href);
+---
+
+<nav aria-label="Site" class="tree">
+	<ul class="tree-root">
+		{
+			siteTree.map((section) => {
+				const hasChildren = section.children.length > 0;
+				const onIndex = currentPath === section.href;
+				const open = isSectionActive(section.href);
+				return (
+					<li class="tree-section">
+						<div class="tree-section-head">
+							<a href={section.href} aria-current={onIndex ? "page" : undefined}>
+								{section.label}
+							</a>
+							{hasChildren && (
+								<details open={open}>
+									<summary aria-label={`${section.label} subpages`} />
+								</details>
+							)}
+						</div>
+						{hasChildren && (
+							<ul class="tree-children">
+								{section.children.map((child) => (
+									<li>
+										<a href={child.href} aria-current={currentPath === child.href ? "page" : undefined}>
+											{child.label}
+										</a>
+									</li>
+								))}
+							</ul>
+						)}
+					</li>
+				);
+			})
+		}
+	</ul>
+</nav>
+
+<style>
+	.tree-root {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+	}
+
+	.tree-section-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-2);
+	}
+
+	.tree-section-head a {
+		display: inline-flex;
+		align-items: center;
+		min-height: var(--target-min);
+		padding: 0 var(--space-3);
+		border-radius: var(--radius-sm);
+		border-bottom: 2px solid transparent;
+		color: var(--text-body);
+		font-family: var(--font-body);
+		font-size: var(--text-sm);
+		text-decoration: none;
+		flex: 1;
+	}
+
+	.tree-section-head a:hover {
+		color: var(--text-strong);
+	}
+
+	.tree-section-head a[aria-current="page"] {
+		color: var(--accent);
+		border-bottom-color: var(--accent);
+	}
+
+	.tree-section-head details {
+		flex: none;
+	}
+
+	.tree-section-head summary {
+		list-style: none;
+		cursor: pointer;
+		width: var(--target-min);
+		height: var(--target-min);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: var(--radius-sm);
+	}
+
+	.tree-section-head summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.tree-section-head summary::before {
+		content: "▸";
+		display: inline-block;
+		color: var(--text-muted);
+		transition: transform var(--duration-fast) var(--ease-standard);
+	}
+
+	.tree-section-head details[open] summary::before {
+		transform: rotate(90deg);
+	}
+
+	.tree-section-head summary:focus-visible {
+		outline: 2px solid var(--focus-ring);
+		outline-offset: 2px;
+	}
+
+	.tree-children {
+		display: none;
+		list-style: none;
+		margin: var(--space-1) 0 0;
+		padding-left: var(--space-4);
+	}
+
+	.tree-section:has(details[open]) .tree-children {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+	}
+
+	.tree-children a {
+		display: inline-flex;
+		align-items: center;
+		min-height: var(--target-min);
+		padding: 0 var(--space-3);
+		border-radius: var(--radius-sm);
+		border-bottom: 2px solid transparent;
+		color: var(--text-muted);
+		font-family: var(--font-body);
+		font-size: var(--text-sm);
+		text-decoration: none;
+	}
+
+	.tree-children a:hover {
+		color: var(--text-strong);
+	}
+
+	.tree-children a[aria-current="page"] {
+		color: var(--accent);
+		border-bottom-color: var(--accent);
+	}
+</style>

@@ -1,12 +1,21 @@
 ---
 import "../styles/global.css";
 import SiteNav from "../components/SiteNav.astro";
+import Sidebar from "../components/Sidebar.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import TableOfContents from "../components/TableOfContents.astro";
+import { processHeadings } from "../utils/headings";
 
 interface Props {
 	title: string;
+	/** Only needed for generated pages whose URL isn't in siteTree (rule detail pages). */
+	breadcrumbLabel?: string;
 }
 
-const { title } = Astro.props;
+const { title, breadcrumbLabel } = Astro.props;
+
+const rawHtml = await Astro.slots.render("default");
+const { html, headings } = processHeadings(rawHtml);
 ---
 
 <html lang="en">
@@ -20,9 +29,21 @@ const { title } = Astro.props;
 	<body>
 		<a class="skip-link" href="#main-content">Skip to content</a>
 		<SiteNav />
-		<main id="main-content">
-			<slot />
-		</main>
+		<div class="shell">
+			<details class="sidebar-toggle" open>
+				<summary>Site menu</summary>
+				<div class="sidebar-body"><Sidebar /></div>
+			</details>
+			<div class="content-col">
+				<Breadcrumbs breadcrumbLabel={breadcrumbLabel} />
+				<main id="main-content">
+					<div class="prose" set:html={html} />
+				</main>
+			</div>
+			<aside class="toc-rail">
+				<TableOfContents headings={headings} />
+			</aside>
+		</div>
 	</body>
 </html>
 
@@ -32,10 +53,6 @@ const { title } = Astro.props;
 		color: var(--text-body);
 		font-family: var(--font-body);
 		margin: 0;
-	}
-
-	main {
-		padding: var(--space-8) var(--space-6);
 	}
 
 	.skip-link {
@@ -53,5 +70,113 @@ const { title } = Astro.props;
 		top: var(--space-4);
 		outline: 2px solid var(--focus-ring);
 		outline-offset: 2px;
+	}
+
+	.shell {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--space-8);
+		align-items: start;
+		padding: var(--space-8) var(--space-6);
+	}
+
+	@media (min-width: 900px) {
+		.shell {
+			grid-template-columns: 240px minmax(0, 1fr);
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.shell {
+			grid-template-columns: 240px minmax(0, 1fr) 220px;
+		}
+	}
+
+	.sidebar-toggle {
+		border: 1px solid var(--border);
+		border-radius: var(--radius-md);
+	}
+
+	.sidebar-toggle > summary {
+		cursor: pointer;
+		list-style: none;
+		padding: var(--space-3) var(--space-4);
+		font-family: var(--font-body);
+		font-size: var(--text-sm);
+		color: var(--text-strong);
+	}
+
+	.sidebar-toggle > summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.sidebar-toggle .sidebar-body {
+		padding: 0 var(--space-3) var(--space-3);
+	}
+
+	@media (min-width: 900px) {
+		.sidebar-toggle {
+			border: none;
+			position: sticky;
+			top: var(--space-6);
+			align-self: start;
+			max-height: calc(100vh - var(--space-12));
+			overflow-y: auto;
+		}
+
+		.sidebar-toggle > summary {
+			display: none;
+		}
+
+		.sidebar-toggle .sidebar-body {
+			display: block !important;
+			padding: 0;
+		}
+	}
+
+	.toc-rail {
+		display: none;
+	}
+
+	@media (min-width: 1200px) {
+		.toc-rail {
+			display: block;
+			position: sticky;
+			top: var(--space-6);
+			align-self: start;
+		}
+	}
+
+	.prose :global(h1) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+	}
+
+	.prose :global(h2) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-lg);
+		margin-top: var(--space-10);
+	}
+
+	.prose :global(h3) {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-md);
+		margin-top: var(--space-8);
+	}
+
+	.prose :global(p),
+	.prose :global(li) {
+		line-height: var(--leading-relaxed);
+	}
+
+	.prose :global(li) {
+		margin-bottom: var(--space-3);
+	}
+
+	.prose :global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
 	}
 </style>

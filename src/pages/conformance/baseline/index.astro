@@ -1,47 +1,9 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import SectionMenu from "../../../components/SectionMenu.astro";
-import { conformanceSections } from "../../../data/conformanceSections";
 import { BaselineContent } from "../../../components/BaselineContent.jsx";
 ---
 
 <BaseLayout title="Baseline / allowlist">
 	<h1>Baseline / allowlist</h1>
-	<SectionMenu sections={conformanceSections} />
 	<BaselineContent />
 </BaseLayout>
-
-<style>
-	h1 {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-	}
-
-	:global(h2) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-		font-size: var(--text-lg);
-		margin-top: var(--space-10);
-	}
-
-	:global(h3) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-		font-size: var(--text-md);
-		margin-top: var(--space-8);
-	}
-
-	:global(p),
-	:global(li) {
-		line-height: var(--leading-relaxed);
-	}
-
-	:global(li) {
-		margin-bottom: var(--space-3);
-	}
-
-	:global(code) {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
-	}
-</style>

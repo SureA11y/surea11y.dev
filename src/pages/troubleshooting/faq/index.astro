@@ -1,44 +1,15 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import SectionMenu from "../../../components/SectionMenu.astro";
-import { troubleshootingSections } from "../../../data/troubleshootingSections";
 import { FaqContent } from "../../../components/FaqContent.jsx";
 ---
 
 <BaseLayout title="FAQ">
 	<h1>FAQ</h1>
-	<SectionMenu sections={troubleshootingSections} />
 	<FaqContent />
 </BaseLayout>
 
 <style>
-	h1 {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-	}
-
-	:global(h2) {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-		font-size: var(--text-lg);
-		margin-top: var(--space-10);
-	}
-
 	:global(article) {
 		margin-top: var(--space-6);
-	}
-
-	:global(p),
-	:global(li) {
-		line-height: var(--leading-relaxed);
-	}
-
-	:global(li) {
-		margin-bottom: var(--space-3);
-	}
-
-	:global(code) {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
 	}
 </style>

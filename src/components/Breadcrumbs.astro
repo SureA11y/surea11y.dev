@@ -1,0 +1,85 @@
+---
+import { siteTree } from "../data/siteTree";
+
+interface Props {
+	breadcrumbLabel?: string;
+}
+
+const { breadcrumbLabel } = Astro.props;
+const currentPath = Astro.url.pathname;
+const section = siteTree.find(
+	(s) => currentPath === s.href || (s.href !== "/" && currentPath.startsWith(s.href))
+);
+const child = section?.children.find((c) => currentPath === c.href);
+---
+
+<nav aria-label="Breadcrumb" class="breadcrumbs">
+	<ol>
+		<li><a href="/">Home</a></li>
+		{
+			section && section.href !== "/" && (
+				<li>
+					{child || breadcrumbLabel ? (
+						<a href={section.href}>{section.label}</a>
+					) : (
+						<span aria-current="page">{section.label}</span>
+					)}
+				</li>
+			)
+		}
+		{child && (
+			<li>
+				<span aria-current="page">{child.label}</span>
+			</li>
+		)}
+		{!child && breadcrumbLabel && (
+			<li>
+				<span aria-current="page">{breadcrumbLabel}</span>
+			</li>
+		)}
+	</ol>
+</nav>
+
+<style>
+	.breadcrumbs ol {
+		list-style: none;
+		margin: 0 0 var(--space-6);
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2);
+		font-family: var(--font-body);
+		font-size: var(--text-sm);
+	}
+
+	.breadcrumbs li {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+	}
+
+	.breadcrumbs li:not(:first-child)::before {
+		content: "/";
+		color: var(--text-muted);
+	}
+
+	.breadcrumbs a {
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+
+	.breadcrumbs a:hover {
+		color: var(--text-strong);
+	}
+
+	.breadcrumbs a:focus-visible {
+		outline: 2px solid var(--focus-ring);
+		outline-offset: 2px;
+		border-radius: var(--radius-sm);
+	}
+
+	.breadcrumbs [aria-current="page"] {
+		color: var(--text-body);
+	}
+</style>

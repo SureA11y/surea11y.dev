@@ -261,6 +261,62 @@ Rules at `/rules/organization/`) — see "Where things come from" and
 - `../design_system/CLAUDE.md` — locked brand decisions (voice, naming,
   color meanings, type). Site copy and any new components should follow it.
 
+## Navigation and layout
+
+Rebuilt to match `alfa.siteimprove.com/code-checker`'s layout (not just its
+per-topic content structure, matched earlier — the actual page shell): a
+persistent left sidebar showing the full site tree, a right-hand "on this
+page" table of contents, and breadcrumbs, replacing the earlier top-nav-bar +
+horizontal-pill-menu-under-`<h1>` pattern (`SiteNav`'s section list and the
+whole `SectionMenu.astro` component are gone).
+
+- `src/data/siteTree.ts` — composes `sections.ts` (the 7 top-level entries)
+  with the five existing per-section arrays
+  (`gettingStartedSections`/`configurationSections`/`resultsReportsSections`/
+  `conformanceSections`/`troubleshootingSections`) as children, keyed by
+  section href. No new source-of-truth data. `Rules` gets one hand-picked
+  child (`/rules/organization/`) rather than enumerating all 132 generated
+  rule pages.
+- `src/components/Sidebar.astro` — one `<details>` per top section used
+  purely as a **toggle-state holder** (its `<summary>` carries no visible
+  content, just an `aria-label`); the real `<ul>` of child links is an
+  ordinary sibling shown via `.tree-section:has(details[open])
+  .tree-children`, not nested inside `<summary>` (nesting an `<a>` inside
+  `<summary>` is invalid interactive-content nesting). `open` is computed
+  server-side from `Astro.url.pathname.startsWith(section.href)` — zero JS,
+  consistent with the rest of this site.
+- `src/utils/headings.ts` — `processHeadings(html)` runs on every page's
+  rendered content (via `Astro.slots.render("default")` in `BaseLayout`,
+  a real, current Astro API — verify the version in `package.json` before
+  assuming otherwise if this ever looks stale) and regex-slugifies every
+  `<h2>`/`<h3>` that doesn't already carry an `id`. Existing hand-authored
+  ids (`filtering-by-wcag-version`, `rule-scoped-excludeselectors`,
+  `top-level-result`, etc. — targets of real cross-page links elsewhere on
+  the site) pass through completely unchanged; only headings with no id get
+  one. `src/components/TableOfContents.astro` renders the result as a
+  static link list — no scroll-spy/active-heading highlighting, since that
+  needs `IntersectionObserver` and this site ships zero client-side JS by
+  design.
+- `src/components/Breadcrumbs.astro` — derived from `siteTree` and the
+  current URL for every hand-written page automatically. The 132 generated
+  `/rules/[slug]/` pages aren't (and shouldn't be) in `siteTree`, so
+  `rules/[slug]/index.astro` is the one call site that passes an explicit
+  `breadcrumbLabel={rule.title}` prop.
+- `src/layouts/BaseLayout.astro` now captures each page's own slotted
+  content as an HTML string (`Astro.slots.render`), runs it through
+  `processHeadings`, and re-renders it via `set:html` alongside `Sidebar`/
+  `Breadcrumbs`/`TableOfContents` in a responsive CSS grid (`.shell`,
+  single column below 900px with a native `<details>` drawer for the
+  sidebar, sidebar column from 900px, TOC rail added from 1200px — no JS
+  at any width). The repeated `h1`/`h2`/`h3`/`p`/`li`/`code` style block
+  every page used to carry is centralized here under `.prose :global(...)`
+  — **any selector in `BaseLayout`'s own `<style>` that targets content
+  arriving through `set:html` must use `:global()`**, since Astro's
+  `data-astro-cid-*` scoping is baked in per source file before
+  `slots.render()` ever captures the string; a page's own scoped selectors
+  (e.g. `index.astro`'s `.section-card`) still work unmodified since their
+  scope attribute travels with the markup.
+
 ## Why Astro without Starlight
 
 Decided over Starlight specifically because `design_system/components/`

@@ -1,29 +1,10 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import SectionMenu from "../../../components/SectionMenu.astro";
-import { gettingStartedSections } from "../../../data/gettingStartedSections";
 import { UsageBindingSection } from "../../../components/UsageBindingSection.jsx";
 import { bindingUsage } from "../../../data/bindingUsage.jsx";
 ---
 
 <BaseLayout title="Usage with Puppeteer">
 	<h1>Usage with Puppeteer</h1>
-	<SectionMenu sections={gettingStartedSections} label="Usage guides" />
 	<UsageBindingSection {...bindingUsage.puppeteer} />
 </BaseLayout>
-
-<style>
-	h1 {
-		font-family: var(--font-display);
-		color: var(--text-strong);
-	}
-
-	:global(p) {
-		line-height: var(--leading-relaxed);
-	}
-
-	:global(code) {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
-	}
-</style>
