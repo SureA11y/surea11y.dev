@@ -50,7 +50,7 @@ export function FaqContent() {
 					real browser instead (Puppeteer/Playwright — see{" "}
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> Pattern 2) to
 					get real findings from these rules. See{" "}
-					<a href="/troubleshooting/known-limitations/"><code>LIMITATIONS.md</code></a>.
+					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>.
 				</p>
 			</article>
 
@@ -107,7 +107,7 @@ export function FaqContent() {
 					<strong>A <code>pass</code> means every <em>automatable</em> check came back clean.</strong> A meaningful
 					fraction of WCAG requires human judgment (accurate alt text, understandable error
 					messages) or dynamic testing this engine's architecture can't do at all (keyboard traps,
-					reflow at zoom) — see <a href="/troubleshooting/known-limitations/"><code>LIMITATIONS.md</code></a> for
+					reflow at zoom) — see <a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a> for
 					the explicit, non-exhaustive-on-purpose list.
 				</p>
 			</article>
