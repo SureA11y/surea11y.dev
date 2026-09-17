@@ -9,11 +9,18 @@ import { processHeadings } from "../utils/headings";
 
 interface Props {
 	title: string;
+	/** Falls back to a sitewide default when a page doesn't pass one. */
+	description?: string;
 	/** Only needed for generated pages whose URL isn't in siteTree (rule detail pages). */
 	breadcrumbLabel?: string;
 }
 
-const { title, breadcrumbLabel } = Astro.props;
+const DEFAULT_DESCRIPTION =
+	"Deterministic WCAG 2.2 accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI.";
+
+const { title, description = DEFAULT_DESCRIPTION, breadcrumbLabel } = Astro.props;
+const pageTitle = `${title} · surea11y`;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 
 const rawHtml = await Astro.slots.render("default");
 const { html, headings } = processHeadings(rawHtml);
@@ -25,7 +32,17 @@ const { html, headings } = processHeadings(rawHtml);
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="alternate icon" href="/favicon.ico" />
-		<title>{title} · surea11y</title>
+		<title>{pageTitle}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalUrl} />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="surea11y" />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={description} />
 	</head>
 	<body>
 		<a class="skip-link" href="#main-content">Skip to content</a>

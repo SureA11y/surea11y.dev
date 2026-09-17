@@ -361,3 +361,41 @@ maintenance items already noted inline above (e.g. re-running
 `docs:rules`/`docs:rule-catalog` if `core` moves on, wiring
 `docs:rules:check` into CI if one gets set up) — check `../internal-notes`
 for anything newer than this file before assuming there's nothing left.
+
+## Post-launch hardening (site is now public at surea11y.dev)
+
+Done after an external review of the live site flagged gaps:
+
+- **Homepage hero**: `src/pages/index.astro` now has a tagline, a
+  Get started/View on GitHub CTA pair, and a compact ACT-corpus stat line
+  (linking to `OverviewContent.jsx`'s own `#checked-against-the-act-corpus`
+  section) above the existing technical content, which is otherwise
+  unchanged. Pulled in `design_system`'s `Button` component for the CTAs
+  (`src/components/design-system/core/Button.jsx` + `.d.ts`) — first use on
+  this site. Deliberately used `variant="secondary"` and `variant="outline"`,
+  never `variant="primary"`: the design system reserves the green primary
+  variant for the single main action on a results-bearing view, since green
+  already means `pass` everywhere else on this site — spending it on a
+  marketing CTA would blur that meaning. `getting-started/`'s own structure
+  (one full page per binding rather than inline tabs on the index) was
+  reviewed and kept as-is — it's a prior deliberate choice matching
+  alfa.siteimprove.com's real pattern, not an oversight the review caught.
+- **SEO baseline**: `astro.config.mjs` sets `site: 'https://surea11y.dev'`
+  and adds `@astrojs/sitemap` (emits `sitemap-index.xml` at build);
+  `public/robots.txt` points at it. `BaseLayout.astro` takes an optional
+  `description` prop (sitewide default otherwise) and now emits
+  `meta[name=description]`, `link[rel=canonical]`, `og:*`, and
+  `twitter:card` (`summary`, not `summary_large_image` — no OG image exists
+  yet, see below). Per-page descriptions set so far: the homepage and the
+  six other top-level section indexes, reusing `sections.ts`'s existing
+  one-line descriptions where one already existed. Still open: submitting
+  the sitemap to Google Search Console / Bing Webmaster Tools once the
+  domain has settled, and a real Open Graph image (1200×630) — no such
+  asset exists in `design_system` yet, so `og:image`/`twitter:image` are
+  omitted rather than pointing at nothing.
+- **Accessibility statement wording**: "Every change also goes through a
+  complete manual accessibility audit" (`AccessibilityStatementContent.jsx`)
+  overstated what actually happens — there's no process guaranteeing a full
+  keyboard + screen-reader + WCAG audit on every single change. Weakened to
+  "Changes are also subject to manual accessibility testing" instead, which
+  is what's actually true and still says manual testing happens.

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://surea11y.dev/sitemap-index.xml

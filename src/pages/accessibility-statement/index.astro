@@ -3,7 +3,11 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { AccessibilityStatementContent } from "../../components/AccessibilityStatementContent.jsx";
 ---
 
-<BaseLayout title="Accessibility statement" breadcrumbLabel="Accessibility statement">
+<BaseLayout
+	title="Accessibility statement"
+	breadcrumbLabel="Accessibility statement"
+	description="How surea11y.dev itself is tested for WCAG 2.2 AA conformance — automated scanning with @surea11y/core plus manual keyboard and screen-reader testing."
+>
 	<h1>Accessibility statement</h1>
 	<AccessibilityStatementContent />
 </BaseLayout>
