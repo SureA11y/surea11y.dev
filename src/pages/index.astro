@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { Badge } from "../components/design-system/core/Badge.jsx";
+import { Button } from "../components/design-system/core/Button.jsx";
 import { Card } from "../components/design-system/core/Card.jsx";
 import { Logo } from "../components/design-system/brand/Logo.jsx";
 import { OverviewContent } from "../components/OverviewContent.jsx";
@@ -9,13 +10,36 @@ import { sections } from "../data/sections";
 const otherSections = sections.filter((section) => section.href !== "/");
 ---
 
-<BaseLayout title="Overview">
+<BaseLayout
+	title="Overview"
+	description="Deterministic WCAG 2.2 accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI — verified against the W3C ACT rules corpus, and honest about what it can't tell you."
+>
 	<h1><Logo variant="tag" size={32} product="core" label="@surea11y/core" /></h1>
 	<div class="badges">
 		{/* mirrors ../core/package.json — re-copy if it changes */}
 		<Badge label="engine" value="v1.7.0" tone="neutral" />
 		<Badge label="license" value="MPL-2.0" tone="neutral" />
 	</div>
+
+	<p class="tagline">Accessibility testing that tells you what it can't tell you.</p>
+	<p class="hero-sub">
+		Deterministic WCAG 2.2 testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO,
+		Jest/Vitest, and CI pipelines.
+	</p>
+	<div class="hero-actions">
+		<Button as="a" href="/getting-started/" variant="secondary">
+			Get started
+		</Button>
+		<Button as="a" href="https://github.com/SureA11y/core" variant="outline">
+			View on GitHub
+		</Button>
+	</div>
+	<p class="hero-stats">
+		<a href="#checked-against-the-act-corpus">
+			58 ACT rules · 798 reference cases · deterministic results · explicit uncertainty
+		</a>
+	</p>
+
 	<OverviewContent />
 	<nav aria-label="Explore other sections">
 		<ul class="section-grid">
@@ -46,6 +70,24 @@ const otherSections = sections.filter((section) => section.href !== "/");
 		font-family: var(--font-display);
 		font-size: var(--text-lg);
 		color: var(--text-strong);
+	}
+
+	.hero-sub {
+		max-width: 60ch;
+		color: var(--text-body);
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+		margin: var(--space-4) 0;
+	}
+
+	.hero-stats {
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--text-muted);
 	}
 
 	:global(blockquote) {
