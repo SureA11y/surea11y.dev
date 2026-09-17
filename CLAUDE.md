@@ -380,6 +380,15 @@ Done after an external review of the live site flagged gaps:
   (one full page per binding rather than inline tabs on the index) was
   reviewed and kept as-is — it's a prior deliberate choice matching
   alfa.siteimprove.com's real pattern, not an oversight the review caught.
+  **H1 changed on a second review pass**: was `<Logo variant="tag" product="core" label="@surea11y/core" />`
+  (a decision made explicitly a few commits earlier), swapped for a plain
+  `<Logo variant="lockup" />` (same "surea11y" mark the header itself uses,
+  just larger) once the hero's tagline and family-wide positioning made the
+  `@surea11y/core` tag chip read as a mismatch — the page was pitching the
+  whole project one line below a heading naming one package. Engine
+  version/license `Badge`s moved below the hero (after the CTAs and ACT
+  stat line, before `OverviewContent`) as secondary metadata rather than
+  the first thing under the heading.
 - **SEO baseline**: `astro.config.mjs` sets `site: 'https://surea11y.dev'`
   and adds `@astrojs/sitemap` (emits `sitemap-index.xml` at build);
   `public/robots.txt` points at it. `BaseLayout.astro` takes an optional
@@ -392,7 +401,11 @@ Done after an external review of the live site flagged gaps:
   the sitemap to Google Search Console / Bing Webmaster Tools once the
   domain has settled, and a real Open Graph image (1200×630) — no such
   asset exists in `design_system` yet, so `og:image`/`twitter:image` are
-  omitted rather than pointing at nothing.
+  omitted rather than pointing at nothing. Deployment to surea11y.dev is
+  a manual step outside this repo (`wrangler.jsonc` configures the
+  Cloudflare target, but nothing here runs `wrangler deploy` — no CI
+  workflow, no deploy script in `package.json`), so a merged commit isn't
+  live until that's run separately.
 - **Accessibility statement wording**: "Every change also goes through a
   complete manual accessibility audit" (`AccessibilityStatementContent.jsx`)
   overstated what actually happens — there's no process guaranteeing a full
