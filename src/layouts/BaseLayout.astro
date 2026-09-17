@@ -36,7 +36,7 @@ const { html, headings } = processHeadings(rawHtml);
 				<div class="sidebar-body"><Sidebar /></div>
 			</details>
 			<div class="content-col">
-				<Breadcrumbs breadcrumbLabel={breadcrumbLabel} />
+				{Astro.url.pathname !== "/" && <Breadcrumbs breadcrumbLabel={breadcrumbLabel} />}
 				<main id="main-content">
 					<div class="prose" set:html={html} />
 				</main>
