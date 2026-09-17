@@ -14,15 +14,10 @@ const otherSections = sections.filter((section) => section.href !== "/");
 	title="Overview"
 	description="Deterministic WCAG 2.2 accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI — verified against the W3C ACT rules corpus, and honest about what it can't tell you."
 >
-	<h1><Logo variant="tag" size={32} product="core" label="@surea11y/core" /></h1>
-	<div class="badges">
-		{/* mirrors ../core/package.json — re-copy if it changes */}
-		<Badge label="engine" value="v1.7.0" tone="neutral" />
-		<Badge label="license" value="MPL-2.0" tone="neutral" />
-	</div>
+	<h1><Logo variant="lockup" size={40} /></h1>
 
 	<p class="tagline">Accessibility testing that tells you what it can't tell you.</p>
-	<p class="hero-sub">
+	<p>
 		Deterministic WCAG 2.2 testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO,
 		Jest/Vitest, and CI pipelines.
 	</p>
@@ -39,6 +34,11 @@ const otherSections = sections.filter((section) => section.href !== "/");
 			58 ACT rules · 798 reference cases · deterministic results · explicit uncertainty
 		</a>
 	</p>
+	<div class="badges">
+		{/* mirrors ../core/package.json — re-copy if it changes */}
+		<Badge label="engine" value="v1.7.0" tone="neutral" />
+		<Badge label="license" value="MPL-2.0" tone="neutral" />
+	</div>
 
 	<OverviewContent />
 	<nav aria-label="Explore other sections">
