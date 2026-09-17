@@ -43,13 +43,13 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   regenerate, `npm run docs:rules:check` to verify it's current — same
   committed-artifact relationship as the tokens/components below. Requires
   `../core/src/core.js` to be built and current.
-- **Configuration, Results & Reports, Conformance, and Troubleshooting are
+- **Configuration, Results & Reports, Conformance, and Help are
   each split into per-topic subpages**, not one long page: every section
   index (`/configuration/`, `/results-reports/`, `/conformance/`,
-  `/troubleshooting/`) has its own real intro content — one `.jsx`
+  `/help/`) has its own real intro content — one `.jsx`
   component per section (`ConfigurationContent.jsx`,
   `ResultsReportsContent.jsx`, `ConformanceContent.jsx`,
-  `TroubleshootingContent.jsx`, distinct from and much shorter than the
+  `HelpContent.jsx`, distinct from and much shorter than the
   per-topic subpage components below, same naming convention as
   `GettingStartedContent.jsx`), one `<h2>` per subtopic with a real
   paragraph explaining what it covers and why a reader would want it, not
@@ -116,12 +116,15 @@ Rules at `/rules/organization/`) — see "Where things come from" and
     but that file's heading currently reads "(34)" — the source doc's own
     link had gone stale. Check a doc's live heading before reusing one of
     its internal anchors, don't assume it's still accurate.
-  - `/troubleshooting/` ← `TROUBLESHOOTING.md` + `LIMITATIONS.md` →
-    `FaqContent.jsx` (`/troubleshooting/faq/`), `KnownLimitationsContent.jsx`
-    (`/troubleshooting/known-limitations/`); each FAQ entry's own `<h3>`
+  - `/help/` ← `TROUBLESHOOTING.md` + `LIMITATIONS.md` →
+    `FaqContent.jsx` (`/help/faq/`), `KnownLimitationsContent.jsx`
+    (`/help/known-limitations/`); each FAQ entry's own `<h3>`
     promoted to `<h2>` on the split. What was an in-page
     `#known-limitations` anchor while both lived on one page is now a
     cross-page link from the FAQ subpage to the Known Limitations subpage.
+    Section renamed from the IA doc's "Troubleshooting" to "Help" (route
+    `/help/`, component `HelpContent.jsx`) — "Troubleshooting" reads as
+    something-is-wrong even though half the content (FAQ) isn't.
   - Cross-reference rule used throughout every split above and reused for
     every other page's incoming links: a link into a doc that now maps to
     one of our own subpages points directly at that subpage, with a
@@ -273,7 +276,7 @@ whole `SectionMenu.astro` component are gone).
 - `src/data/siteTree.ts` — composes `sections.ts` (the 7 top-level entries)
   with the five existing per-section arrays
   (`gettingStartedSections`/`configurationSections`/`resultsReportsSections`/
-  `conformanceSections`/`troubleshootingSections`) as children, keyed by
+  `conformanceSections`/`helpSections`) as children, keyed by
   section href. No new source-of-truth data. `Rules` gets one hand-picked
   child (`/rules/organization/`) rather than enumerating all 132 generated
   rule pages.
@@ -340,7 +343,8 @@ need a content-collection schema, just a build-time array.
    `Card`, `Tag`, `CodeBlock`, `ResultBadge`, `DataTable`, used across
    every page that exists.
 4. ~~Fill in every stub page with real content.~~ Done — all seven IA
-   sections now have real content: ~~Troubleshooting~~, ~~Conformance~~,
+   sections now have real content: ~~Help~~ (formerly Troubleshooting),
+   ~~Conformance~~,
    ~~Configuration~~, ~~Results & Reports~~, and ~~Getting Started~~ (the
    one page built from each binding's own README rather than a single
    `core` doc — see above).

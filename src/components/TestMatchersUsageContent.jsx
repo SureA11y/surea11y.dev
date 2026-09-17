@@ -208,7 +208,7 @@ export function TestMatchersUsageContent() {
 				<code>fail</code>, so it never breaks a passing test on its own — though when an assertion{" "}
 				<em>does</em> fail for other reasons, any <code>cantTell</code> results are appended to the
 				failure message as a separate note, so they stay visible. See{" "}
-				<a href="/troubleshooting/known-limitations/">Known limitations</a> for what this engine
+				<a href="/help/known-limitations/">Known limitations</a> for what this engine
 				won't automate at all.
 			</p>
 			<p>

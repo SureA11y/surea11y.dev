@@ -164,7 +164,7 @@ const optionRows = [
 				layout rather than just computed style; under plain jsdom (<code>runDomRulesInPage</code>
 				) there's no real layout engine, so <code>'styleAndGeometry'</code> mostly just adds{" "}
 				<code>getBoundingClientRect()</code> zero-size checks, not true clipping/overflow
-				detection — see <a href="/troubleshooting/known-limitations/">known limitations</a>.
+				detection — see <a href="/help/known-limitations/">known limitations</a>.
 			</>
 		),
 	},
@@ -305,7 +305,7 @@ export function EngineOptionsContent() {
 				<strong><code>runOnly</code> must be this object shape, not a bare array.</strong>{" "}
 				<code>runOnly: ['img-alt-present']</code> (a plain array) is{" "}
 				<strong>silently ignored</strong>; the engine runs every rule instead. This is the single
-				most common integration mistake — see <a href="/troubleshooting/faq/">the FAQ</a>.
+				most common integration mistake — see <a href="/help/faq/">the FAQ</a>.
 			</p>
 			<DataTable
 				rowKey="field"

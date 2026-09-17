@@ -3,7 +3,7 @@ import { gettingStartedSections } from "./gettingStartedSections";
 import { configurationSections } from "./configurationSections";
 import { resultsReportsSections } from "./resultsReportsSections";
 import { conformanceSections } from "./conformanceSections";
-import { troubleshootingSections } from "./troubleshootingSections";
+import { helpSections } from "./helpSections";
 
 export interface TreeLeaf {
 	href: string;
@@ -23,7 +23,7 @@ const childrenByHref: Record<string, TreeLeaf[]> = {
 	"/configuration/": configurationSections,
 	"/results-reports/": resultsReportsSections,
 	"/conformance/": conformanceSections,
-	"/troubleshooting/": troubleshootingSections,
+	"/help/": helpSections,
 };
 
 export const siteTree: TreeSection[] = sections.map((s) => ({

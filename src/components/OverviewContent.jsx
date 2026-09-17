@@ -140,7 +140,7 @@ export function OverviewContent() {
 			<p>
 				These are the cases where the engine reports <code>cantTell</code>, and where a human
 				reviewer's judgement remains necessary. See{" "}
-				<a href="/troubleshooting/known-limitations/">Known limitations</a> for the complete list.
+				<a href="/help/known-limitations/">Known limitations</a> for the complete list.
 			</p>
 		</>
 	);

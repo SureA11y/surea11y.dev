@@ -29,7 +29,7 @@ export function AccessibilityStatementContent() {
 				periodically scanned with <code>@surea11y/core</code> itself — the same static-DOM-scan
 				engine documented throughout this site — and every real finding that scan turns up gets
 				fixed, not explained away. That scan has real, honest limits of its own (see{" "}
-				<a href="/troubleshooting/known-limitations/">Known limitations</a>): it can't run against
+				<a href="/help/known-limitations/">Known limitations</a>): it can't run against
 				this site's actual computed CSS the way a real browser would, so contrast findings from
 				that particular scan mode are not meaningful evidence either way.
 			</p>

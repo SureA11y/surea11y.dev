@@ -1,6 +1,6 @@
 import React from "react";
 
-export function TroubleshootingContent() {
+export function HelpContent() {
 	return (
 		<>
 			<p>
@@ -17,7 +17,7 @@ export function TroubleshootingContent() {
 				<code>cantTell</code> with no obvious cause, why a geometry-dependent rule reports{" "}
 				<code>notApplicable</code> under jsdom, and what a clean scan actually does and doesn't
 				mean. Fifteen minutes here saves most of the debugging most people end up doing anyway. See{" "}
-				<a href="/troubleshooting/faq/">FAQ</a>.
+				<a href="/help/faq/">FAQ</a>.
 			</p>
 
 			<h2>Known limitations</h2>
@@ -27,7 +27,7 @@ export function TroubleshootingContent() {
 				environment you run it in, and what it deliberately declines to guess at because a wrong
 				guess would be worse than an honest <code>cantTell</code>. Knowing these up front is what
 				lets you trust the rest of the results. See{" "}
-				<a href="/troubleshooting/known-limitations/">Known limitations</a>.
+				<a href="/help/known-limitations/">Known limitations</a>.
 			</p>
 		</>
 	);

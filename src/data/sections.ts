@@ -39,8 +39,8 @@ export const sections: Section[] = [
 		description: "How atomic rules roll up into a WCAG conformance verdict.",
 	},
 	{
-		href: "/troubleshooting/",
-		label: "Troubleshooting",
+		href: "/help/",
+		label: "Help",
 		description: "Common questions and known limitations.",
 	},
 ];

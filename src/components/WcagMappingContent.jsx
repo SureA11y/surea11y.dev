@@ -162,7 +162,7 @@ export function WcagMappingContent() {
 				<em>present</em>; is this error message <em>understandable</em>) or dynamic testing this
 				engine's static-DOM-scan architecture cannot do at all (keyboard-trap detection, real
 				layout/reflow at zoom). See{" "}
-				<a href="/troubleshooting/known-limitations/">the known limitations</a> for the full,
+				<a href="/help/known-limitations/">the known limitations</a> for the full,
 				explicit list of what's out of scope and why.
 			</p>
 			<p>What surea11y <em>can</em> give you, honestly:</p>
