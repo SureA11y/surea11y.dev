@@ -22,7 +22,13 @@ export interface TreeSection {
 
 const childrenByHref: Record<string, TreeLeaf[]> = {
 	"/getting-started/": gettingStartedSections,
-	"/rules/": [{ href: "/rules/organization/", label: "How rules are organized" }],
+	"/rules/": [
+		{
+			href: "/rules/organization/",
+			label: "How rules are organized",
+			i18n: { es: { label: "Cómo se organizan las reglas" } },
+		},
+	],
 	"/configuration/": configurationSections,
 	"/results-reports/": resultsReportsSections,
 	"/conformance/": conformanceSections,

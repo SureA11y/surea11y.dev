@@ -7,6 +7,10 @@ export interface HelpSection {
 }
 
 export const helpSections: HelpSection[] = [
-	{ href: "/help/faq/", label: "FAQ" },
-	{ href: "/help/known-limitations/", label: "Known limitations" },
+	{ href: "/help/faq/", label: "FAQ", i18n: { es: { label: "Preguntas frecuentes" } } },
+	{
+		href: "/help/known-limitations/",
+		label: "Known limitations",
+		i18n: { es: { label: "Limitaciones conocidas" } },
+	},
 ];

@@ -4,7 +4,7 @@ import { Badge } from "../../components/design-system/core/Badge.jsx";
 import { Button } from "../../components/design-system/core/Button.jsx";
 import { Card } from "../../components/design-system/core/Card.jsx";
 import { Logo } from "../../components/design-system/brand/Logo.jsx";
-import { OverviewContent } from "../../components/OverviewContent.jsx";
+import { OverviewContent } from "../../components/OverviewContent.es.jsx";
 import { sections } from "../../data/sections";
 import { localize } from "../../data/localize";
 import { t } from "../../i18n/t";
@@ -15,15 +15,15 @@ const otherSections = sections.filter((section) => section.href !== "/");
 ---
 
 <BaseLayout
-	title="Overview"
-	description="Deterministic WCAG 2.2 accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI — verified against the W3C ACT rules corpus, and honest about what it can't tell you."
+	title="Resumen"
+	description="Testing de accesibilidad WCAG 2.2 determinista para Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest y CI — verificado contra el corpus de reglas ACT del W3C, y honesto sobre lo que no puede decirte."
 >
 	<h1><Logo variant="lockup" size={40} /></h1>
 
-	<p class="tagline">Accessibility testing that tells you what it can't tell you.</p>
+	<p class="tagline">El testing de accesibilidad que te dice lo que no puede decirte.</p>
 	<p>
-		Deterministic accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO,
-		Jest/Vitest, and CI pipelines.
+		Testing de accesibilidad determinista para Playwright, Cypress, Puppeteer, Selenium, WebdriverIO,
+		Jest/Vitest y pipelines de CI.
 	</p>
 	<div class="hero-actions">
 		<Button as="a" href="/es/getting-started/" variant="secondary">
@@ -35,7 +35,7 @@ const otherSections = sections.filter((section) => section.href !== "/");
 	</div>
 	<p class="hero-stats">
 		<a href="#checked-against-the-act-corpus">
-			58 ACT rules · 798 reference cases · deterministic results · explicit uncertainty
+			58 reglas ACT · 798 casos de referencia · resultados deterministas · incertidumbre explícita
 		</a>
 	</p>
 	<div class="badges">
@@ -48,13 +48,13 @@ const otherSections = sections.filter((section) => section.href !== "/");
 		<ul class="section-grid">
 			{
 				otherSections.map((section) => {
-					const { label } = localize(section, locale);
+					const { label, description } = localize(section, locale);
 					return (
 						<li>
 							<a class="section-card" href={`/es${section.href}`}>
 								<Card>
 									<p class="section-card-title">{label}</p>
-									<p>{section.description}</p>
+									<p>{description}</p>
 								</Card>
 							</a>
 						</li>
