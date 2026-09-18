@@ -148,7 +148,7 @@ const occurrenceRows = [
 				Un selector CSS construido con el mejor esfuerzo posible para resolver de vuelta al
 				elemento señalado (ver <code>helpers.buildSelector</code> en <code>RULE_AUTHORING.md</code>).
 				No se garantiza que sea único en estructuras de DOM adversas, pero el motor verifica
-				activamente que resuelva al elemento reportado antes de usarlo. La excepción es una regla
+				activamente que resuelva al elemento identificado antes de usarlo. La excepción es una regla
 				cuyo hallazgo <em>es</em> un elemento ausente: <code>page-title-present</code> devuelve{" "}
 				<code>head &gt; title</code> con un <code>html</code> de{" "}
 				<code>&lt;title&gt;(missing)&lt;/title&gt;</code>, ninguno de los cuales está en la

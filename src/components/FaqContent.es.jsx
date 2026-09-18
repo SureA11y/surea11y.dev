@@ -45,10 +45,10 @@ export function FaqContent() {
 					indica <code>notApplicable</code>"
 				</h2>
 				<p>
-					jsdom puro (sin un navegador real) no implementa el layout de CSS —{" "}
+					jsdom puro (sin un navegador real) no implementa un motor de diseño CSS —{" "}
 					<code>getBoundingClientRect()</code> siempre devuelve una geometría de cero. <strong>Las
-					reglas que necesitan un layout real informan <code>notApplicable</code> bajo jsdom en lugar
-					de adivinar.</strong> Ejecuta en su lugar a través de un navegador real (Puppeteer/Playwright — consulta{" "}
+					reglas que necesitan información real de maquetación devuelven <code>notApplicable</code> al
+					ejecutarse con jsdom en lugar de adivinar.</strong> Ejecuta en su lugar a través de un navegador real (Puppeteer/Playwright — consulta{" "}
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> Patrón 2) para
 					obtener hallazgos reales de estas reglas. Consulta{" "}
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>.
