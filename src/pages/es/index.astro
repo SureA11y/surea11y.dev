@@ -4,14 +4,16 @@ import { Badge } from "../../components/design-system/core/Badge.jsx";
 import { Button } from "../../components/design-system/core/Button.jsx";
 import { Card } from "../../components/design-system/core/Card.jsx";
 import { Logo } from "../../components/design-system/brand/Logo.jsx";
-import { OverviewContent } from "../../components/OverviewContent.es.jsx";
+import { OverviewLead, OverviewContent } from "../../components/OverviewContent.es.jsx";
 import { sections } from "../../data/sections";
 import { localize } from "../../data/localize";
 import { t } from "../../i18n/t";
 import engine from "../../data/engine.generated.json";
+import rules from "../../data/rules.generated.json";
 
 const locale = "es";
 const otherSections = sections.filter((section) => section.href !== "/");
+const core = "https://github.com/SureA11y/core/blob/main";
 ---
 
 <BaseLayout
@@ -25,6 +27,7 @@ const otherSections = sections.filter((section) => section.href !== "/");
 		Pruebas de accesibilidad deterministas para Playwright, Cypress, Puppeteer, Selenium, WebdriverIO,
 		Jest/Vitest y pipelines de CI.
 	</p>
+	<OverviewLead />
 	<div class="hero-actions">
 		<Button as="a" href="/es/getting-started/" variant="secondary">
 			{t("homepage.getStarted", locale)}
@@ -35,13 +38,14 @@ const otherSections = sections.filter((section) => section.href !== "/");
 	</div>
 	<p class="hero-stats">
 		<a href="#checked-against-the-act-corpus">
-			58 reglas ACT · 798 casos de referencia · resultados deterministas · incertidumbre explícita
+			{rules.length} reglas de accesibilidad · 58 validadas contra el corpus ACT · 798 casos de referencia · resultados deterministas · incertidumbre explícita
 		</a>
 	</p>
 	<div class="badges">
 		<Badge label="engine" value={`v${engine.version}`} tone="neutral" />
 		<Badge label="license" value={engine.license} tone="neutral" />
 	</div>
+	<p><a href={`${core}/CHANGELOG.md`}>Ver qué cambió en la última versión</a></p>
 
 	<OverviewContent />
 	<nav aria-label={t("homepage.exploreSections", locale)}>

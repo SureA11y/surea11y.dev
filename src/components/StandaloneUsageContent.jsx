@@ -6,10 +6,13 @@ const core = "https://github.com/SureA11y/core/blob/main";
 export function StandaloneUsageContent() {
 	return (
 		<>
+			<h2>When to use it</h2>
 			<p>
 				For a manual check against a page open in a real browser, a bookmarklet, or any other
 				context with no automation driver and no build step to reach for.
 			</p>
+
+			<h2>Usage</h2>
 			<p>
 				<code>@surea11y/core</code> ships <code>surea11y.browser.js</code> at the package root, a
 				bundle generated from the same rule sources as the Node package. Loading it directly

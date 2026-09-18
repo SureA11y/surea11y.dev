@@ -1,6 +1,7 @@
 import React from "react";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
+import rules from "../data/rules.generated.json";
 
 const core = "https://github.com/SureA11y/core/blob/main";
 
@@ -15,7 +16,7 @@ const packageRows = [
 	{ id: "core", want: "Run the engine against a DOM you already have", install: <code>@surea11y/core</code> },
 ];
 
-export function OverviewContent() {
+export function OverviewLead() {
 	return (
 		<>
 			<p>
@@ -36,7 +37,13 @@ export function OverviewContent() {
 				<em>Sure</em> means certainty about what is known, and honesty about what isn't. It tells you what it
 				can't tell you.
 			</p>
+		</>
+	);
+}
 
+export function OverviewContent() {
+	return (
+		<>
 			<h2>Not a single product</h2>
 			<p>
 				surea11y is a family of packages sharing one engine, not one tool with one install
@@ -89,8 +96,9 @@ export function OverviewContent() {
 
 			<h3>Checked against the ACT corpus</h3>
 			<p>
-				Every rule with a <a href="https://act-rules.github.io/">W3C ACT Rules</a> counterpart runs
-				against ACT's own published test cases: 798 examples across 58 rules. The engine fails
+				The engine ships {rules.length} rules. Fifty-eight of them have a{" "}
+				<a href="https://act-rules.github.io/">W3C ACT Rules</a> counterpart and run against
+				ACT's own published test cases — 798 examples across those 58 rules. The engine fails
 				none of the examples ACT marks passed or inapplicable, so it reports no false positives
 				against that corpus. Thirty-one examples ACT marks failed go unflagged — mostly judgement
 				calls, such as whether a heading describes the content under it — see{" "}
