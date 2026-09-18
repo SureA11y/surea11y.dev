@@ -1,6 +1,7 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import engine from "../data/engine.generated.json";
 
 const core = "https://github.com/SureA11y/core/blob/main";
 
@@ -27,7 +28,7 @@ export function EarlReportContent() {
 					"const { renderEarlReport } = require('@surea11y/core/earl');",
 					"",
 					"const report = renderEarlReport(result, {",
-					"  assertor: { name: 'surea11y', version: '1.7.0' },",
+					`  assertor: { name: 'surea11y', version: '${engine.version}' },`,
 					"  mode: 'earl:automatic'",
 					"});",
 					"",
@@ -87,7 +88,7 @@ export function EarlReportContent() {
 					'          "assertedBy": {',
 					'            "@type": "Assertor",',
 					'            "name": "surea11y",',
-					'            "release": { "@type": "Version", "revision": "1.7.0" }',
+					`            "release": { "@type": "Version", "revision": "${engine.version}" }`,
 					"          },",
 					'          "mode": "earl:automatic"',
 					"        }",
