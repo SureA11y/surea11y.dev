@@ -7,10 +7,10 @@ export function BaselineContent() {
 	return (
 		<>
 			<p>
-				Una compuerta estricta en CI ("fallar la compilación ante cualquier resultado <code>fail</code>")
+				Un control estricto en CI ("fallar la compilación ante cualquier resultado <code>fail</code>")
 				es un obstáculo para la adopción por parte de un equipo que analiza por primera vez un sitio
-				existente e imperfecto — no pueden publicar nada hasta corregir cada violación preexistente.
-				Un baseline permite que un equipo diga "estas N ya se conocen — no bloquees por ellas, pero
+				existente e imperfecto: no pueden publicar nada hasta corregir cada violación preexistente.
+				Un baseline permite que un equipo diga "estas N ya se conocen, no bloquees por ellas, pero
 				falla en cuanto aparezca una genuinamente nueva".
 			</p>
 			<CodeBlock
@@ -26,9 +26,9 @@ export function BaselineContent() {
 			/>
 			<p>
 				El archivo de baseline está pensado para incorporarse a git, de modo que aceptar más deuda de
-				accesibilidad se convierta en una decisión explícita y revisable — una violación nueva
+				accesibilidad se convierta en una decisión explícita y revisable: una violación nueva
 				aparece como una fila nueva en el diff del archivo en un PR, no como un cambio silencioso en
-				un conteo.
+				un recuento.
 			</p>
 
 			<h2>Cuándo es útil</h2>
@@ -36,13 +36,13 @@ export function BaselineContent() {
 				<li>
 					<strong>Adoptar el análisis en un sitio existente.</strong> El caso motivador anterior: un
 					primer análisis en un sitio maduro puede revelar cientos de violaciones preexistentes.
-					Registrarlas en el baseline una sola vez desbloquea la compuerta de inmediato en lugar de
+					Registrarlas en el baseline una sola vez elimina el bloqueo de inmediato en lugar de
 					exigir "corregir todo primero".
 				</li>
 				<li>
 					<strong>Remediación incremental con un avance visible.</strong> Corrige violaciones por
 					lotes, y luego regenera periódicamente el baseline con <code>--write-baseline</code>. El
-					diff de git de cada regeneración se <em>reduce</em> a medida que desaparecen entradas — el
+					diff de git de cada regeneración se <em>reduce</em> a medida que desaparecen entradas: el
 					propio archivo se convierte en un rastreador de progreso, y un PR que corrige un lote de
 					problemas muestra exactamente qué se limpió.
 				</li>
@@ -55,7 +55,7 @@ export function BaselineContent() {
 					<a href="/configuration/engine-options/#rule-scoped-excludeselectors">
 						la guía de opciones del motor
 					</a>
-					) — los problemas nuevos introducidos en cualquier otro lugar cercano, incluido tu propio
+					); los problemas nuevos introducidos en cualquier otro lugar cercano, incluido tu propio
 					código, siguen bloqueando con normalidad.
 				</li>
 				<li>
@@ -64,14 +64,14 @@ export function BaselineContent() {
 					formas ya rastreadas y en proceso de corrección a lo largo de muchos PR. Registrar en el
 					baseline el conjunto conocido y en curso sigue detectando regresiones nuevas{" "}
 					<em>no relacionadas</em> provenientes de otros PR durante la misma ventana, en lugar de
-					desactivar la compuerta por completo o bloquear cada PR con ella.
+					desactivar el control por completo o bloquear cada PR con él.
 				</li>
 				<li>
 					<strong>Despliegue escalonado de una regla nueva o más estricta.</strong> Activar una
 					regla (o un nivel completo de WCAG) contra el que la base de código aún no está limpia:
-					registra en el baseline los huecos existentes, activa la compuerta de inmediato, y evita
+					registra en el baseline los huecos existentes, activa el control de inmediato, y evita
 					cualquier violación <em>nueva</em> de esa regla mientras el trabajo pendiente se limpia por
-					separado — en lugar de esperar a activar la regla hasta que la base de código ya cumpla.
+					separado, en lugar de esperar a activar la regla hasta que la base de código ya cumpla.
 				</li>
 			</ul>
 
@@ -94,25 +94,25 @@ export function BaselineContent() {
 				marcado se mueva por la página (un reordenamiento, un elemento hermano no relacionado
 				añadido o eliminado) siempre que el propio marcado del elemento marcado no cambie. El{" "}
 				<code>selector</code> sigue registrándose en el archivo de baseline, pero únicamente como
-				contexto para una persona que lea un diff — nunca se usa para la coincidencia.
+				contexto para una persona que lea un diff; nunca se usa para la coincidencia.
 			</p>
 			<p>
 				<strong>Limitación conocida</strong>: un elemento cuyo propio marcado incluye contenido
 				dinámico (una marca de tiempo, un contador en vivo, un <code>id</code> generado aleatoriamente) nunca
 				coincidirá consigo mismo entre dos análisis, ya que su fragmento <code>html</code> difiere
 				cada vez. Si tus páginas presentan este caso, el mecanismo de baseline no ayudará para esas
-				reglas o elementos específicos — ver "Alternativa" más abajo.
+				reglas o elementos específicos (ver "Alternativa" más abajo).
 			</p>
 			<p>
 				<strong>La coincidencia cuenta ocurrencias, no solo presencia.</strong> Si una página tiene 3
 				elementos que producen una combinación idéntica byte a byte de{" "}
 				<code>ruleId</code>+<code>reasonCode</code>+<code>html</code> (por ejemplo, el mismo
 				componente defectuoso repetido 3 veces) y el baseline solo registró 1 de ellos, un análisis
-				nuevo devuelve 1 conocido y 2 nuevos — no los 3 como conocidos.
+				nuevo devuelve 1 conocido y 2 nuevos, no los 3 como conocidos.
 			</p>
 			<p>
 				Las entradas de baseline que no coinciden con nada en un análisis nuevo se indican como{" "}
-				<strong>obsoletas</strong> (la violación presumiblemente se corrigió) — esto es solo
+				<strong>obsoletas</strong> (la violación presumiblemente se corrigió); esto es solo
 				informativo y nunca bloquea la compilación; regenera el baseline con <code>--write-baseline</code>{" "}
 				periódicamente para limpiarlas.
 			</p>
@@ -142,7 +142,7 @@ export function BaselineContent() {
 			<p>
 				Cuando <code>--baseline</code> o <code>--write-baseline</code> se usa junto con{" "}
 				<code>--json</code>, el objeto impreso gana una clave <code>baseline</code> junto al
-				resultado normal del motor (esto es exclusivo de la salida del CLI — no forma parte del
+				resultado normal del motor (esto es exclusivo de la salida de la CLI, no forma parte del
 				contrato de resultado propio del motor descrito en el esquema de salida):
 			</p>
 			<ul>
@@ -162,7 +162,7 @@ export function BaselineContent() {
 			<p>
 				Si tus páginas no encajan en este modelo (contenido dinámico intenso dentro de los propios
 				elementos marcados), la alternativa siempre disponible es comparar tú mismo dos salidas
-				completas de <code>--json</code> — ver{" "}
+				completas de <code>--json</code>. Consulta{" "}
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
 					<code>INTEGRATION.md</code>
 				</a>

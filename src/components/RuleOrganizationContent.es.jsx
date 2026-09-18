@@ -12,7 +12,7 @@ export function RuleOrganizationContent() {
 	return (
 		<>
 			<p>
-				Esto describe cómo están estructuradas las 132 reglas del <a href="/rules/">catálogo</a> — útil
+				Esto describe cómo están estructuradas las 132 reglas del <a href="/rules/">catálogo</a>, útil
 				para interpretar un resultado o para encontrar la regla que buscas. Refleja lo que ya existe en
 				el conjunto de reglas, no un diseño abstracto.
 			</p>
@@ -20,11 +20,11 @@ export function RuleOrganizationContent() {
 			<h2>Automáticas frente a manuales</h2>
 			<p>
 				Cada regla tiene uno de dos valores en la propiedad <code>type</code>, y la diferencia está en
-				lo que la regla es <em>capaz de decidir</em> — no en qué resultado informa:
+				lo que la regla es <em>capaz de decidir</em>, no en qué resultado informa:
 			</p>
 			<ul>
 				<li>
-					<strong>automática</strong> — decide de forma determinista, sin heurísticas y sin adivinar.
+					<strong>automática</strong>: decide de forma determinista, sin heurísticas y sin adivinar.
 					Puede informar <code>fail</code>. <code>cantTell</code> igual aparece aquí, en tres
 					situaciones: existe una violación real pero por sí sola no establece que el criterio de
 					WCAG asignado falle (un requisito de autoría de ARIA cuyo nombre/rol/valor expuesto sigue
@@ -35,9 +35,9 @@ export function RuleOrganizationContent() {
 					<code>aria-required-children</code>, emparejada con <code>aria-prohibited-children</code>).
 				</li>
 				<li>
-					<strong>manual</strong> — indica que una persona tiene que decidir; la regla no puede
+					<strong>manual</strong>: indica que una persona tiene que decidir; la regla no puede
 					resolver la cuestión a partir del marcado en absoluto. Limitada a{" "}
-					<code>cantTell</code>/<code>notApplicable</code> — nunca <code>fail</code>.
+					<code>cantTell</code>/<code>notApplicable</code>, nunca <code>fail</code>.
 				</li>
 			</ul>
 			<p>
@@ -66,25 +66,25 @@ export function RuleOrganizationContent() {
 				rows={familyRows}
 			/>
 			<ul>
-				<li><code>present</code> — verifica que exista un mecanismo requerido. Normalmente automática.</li>
-				<li><code>quality</code> — verifica idoneidad, corrección o significado. Siempre manual.</li>
-				<li><code>decorative</code> — verifica el tratamiento correcto de contenido puramente decorativo. Siempre manual.</li>
+				<li><code>present</code>: verifica que exista un mecanismo requerido. Normalmente automática.</li>
+				<li><code>quality</code>: verifica idoneidad, corrección o significado. Siempre manual.</li>
+				<li><code>decorative</code>: verifica el tratamiento correcto de contenido puramente decorativo. Siempre manual.</li>
 			</ul>
 			<p>
 				La intención determina si una regla <em>puede</em> ser automática: "¿algo está presente?" suele
 				ser decidible solo a partir del marcado, mientras que "¿es bueno?" casi nunca lo es. Esta es
 				también la lógica detrás de los enlaces de <strong>Reglas relacionadas</strong> en cada página
-				de regla — las reglas que comparten una familia (todo lo anterior al último segmento{" "}
+				de regla: las reglas que comparten una familia (todo lo anterior al último segmento{" "}
 				<code>-</code> del ID) son las que se agrupan ahí. El conjunto de reglas abarca docenas de
-				familias además de <code>img</code> — <code>aria-*</code>,{" "}
+				familias además de <code>img</code>: <code>aria-*</code>,{" "}
 				<code>contrast-*</code>, <code>dialog-*</code>, <code>iframe-*</code>, <code>label-*</code>,{" "}
-				<code>link-*</code>, <code>list-*</code>, <code>landmark-*</code>, y más — el{" "}
+				<code>link-*</code>, <code>list-*</code>, <code>landmark-*</code>, y más; el{" "}
 				<a href="/rules/">catálogo</a> es la lista actual y generada.
 			</p>
 			<p>
 				Las reglas nunca mezclan familias: cada una consulta un tipo de elemento, usando las funciones
 				auxiliares apropiadas para él. Por eso también el conjunto de reglas tiene 132 reglas específicas en lugar
-				de una docena de reglas amplias — dos comprobaciones que difieren en lo que deciden, a qué
+				de una docena de reglas amplias: dos comprobaciones que difieren en lo que deciden, a qué
 				apuntan o qué faceta de WCAG cubren se mantienen como reglas separadas en lugar de fusionarse,
 				de modo que un resultado nunca tiene que desambiguarse posteriormente para decir qué se
 				encontró exactamente.
@@ -93,11 +93,11 @@ export function RuleOrganizationContent() {
 			<h2>Facetas de WCAG</h2>
 			<p>
 				Un Criterio de Éxito de WCAG suele ser más grande de lo que una sola regla puede decidir de
-				forma determinista. Internamente, cada SC se descompone en "facetas" con nombre — para 1.1.1
+				forma determinista. Internamente, cada SC se descompone en "facetas" con nombre: para 1.1.1
 				Contenido no textual, eso incluye cosas como si un atributo <code>alt</code> está presente, si
 				su texto es significativo, y si las imágenes decorativas están correctamente marcadas como
 				nulas. Una regla se asigna a una o más facetas, y varias reglas comúnmente cubren distintas
-				facetas del mismo SC — que es exactamente lo que hace arriba la familia img-alt para 1.1.1.
+				facetas del mismo SC, que es exactamente lo que hace arriba la familia img-alt para 1.1.1.
 			</p>
 			<p>
 				Esto importa al leer un resultado compuesto (resultado agregado por WCAG-SC): un resultado

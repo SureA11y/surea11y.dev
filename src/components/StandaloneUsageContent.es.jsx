@@ -9,7 +9,7 @@ export function StandaloneUsageContent() {
 			<h2>Cuándo usarla</h2>
 			<p>
 				Para una comprobación manual contra una página abierta en un navegador real, un
-				bookmarklet, o cualquier otro contexto sin driver de automatización y sin paso de
+				bookmarklet o cualquier otro contexto sin driver de automatización y sin paso de
 				compilación al que recurrir.
 			</p>
 
@@ -37,7 +37,7 @@ export function StandaloneUsageContent() {
 			</p>
 			<p>
 				<strong>El bundle solo lleva inglés.</strong> Cualquier otro idioma se distribuye junto a
-				él como su propio archivo — carga uno después del bundle y ese idioma queda disponible:
+				él como su propio archivo. Carga uno después del bundle y ese idioma queda disponible:
 			</p>
 			<CodeBlock
 				lang="html"
@@ -50,24 +50,24 @@ export function StandaloneUsageContent() {
 				]}
 			/>
 			<p>
-				Pide un idioma cuyo archivo no hayas cargado y obtienes inglés, no un error — ver{" "}
-				<a href="/configuration/locales/">Locales</a>.
+				Pide un idioma cuyo archivo no hayas cargado y obtienes inglés, no un error (consulta{" "}
+				<a href="/configuration/locales/">Locales</a>).
 			</p>
 			<p>
 				<strong>Excluido deliberadamente del bundle</strong>: <code>runa11yCoreAcrossFrames</code>/
 				<code>a11yCoreEnableFrameResponder</code> (el análisis entre frames necesita que el frame
 				incrustado también cargue el motor y se adhiera. No puede resolverse con una única etiqueta{" "}
-				<code>&lt;script&gt;</code> aislada). Usa el paquete npm directamente si lo necesitas — ver{" "}
+				<code>&lt;script&gt;</code> aislada). Usa el paquete npm directamente si lo necesitas (consulta{" "}
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>
 					<code>INTEGRATION.md</code>
 				</a>
-				.
+				).
 			</p>
 			<p>
 				<code>require('@surea11y/core')</code> directamente, sin ninguna integración (<code>binding</code>),
 				es la otra vía independiente. Esto es el Patrón 1/Patrón 2 en{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom en Node sin
-				navegador real, o manejar tú mismo Puppeteer/Playwright en lugar de pasar por una integración.
+				navegador real, o bien manejar tú mismo Puppeteer/Playwright en lugar de pasar por una integración.
 			</p>
 		</>
 	);

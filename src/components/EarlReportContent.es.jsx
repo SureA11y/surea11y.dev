@@ -17,7 +17,7 @@ export function EarlReportContent() {
 		<>
 			<p>
 				<code>@surea11y/core/earl</code> convierte los resultados de un análisis en{" "}
-				<a href="https://www.w3.org/TR/EARL10-Schema/">EARL 1.0</a> en JSON-LD — el vocabulario que
+				<a href="https://www.w3.org/TR/EARL10-Schema/">EARL 1.0</a> en JSON-LD: el vocabulario que
 				publica el W3C para declarar "esta herramienta probó esto y obtuvo este resultado", y el
 				formato que el grupo comunitario <a href="https://act-rules.github.io/">ACT Rules</a> acepta
 				como informe de implementación.
@@ -42,7 +42,7 @@ export function EarlReportContent() {
 				Un <strong>informe de implementación</strong> le dice al grupo comunitario ACT Rules cómo se
 				comporta este motor frente a sus casos de prueba, que es lo que permite que un motor aparezca
 				listado junto a las demás implementaciones. Estar listado no es un aval y el W3C no verifica
-				los datos — la formulación correcta es <em>"listado como implementación ACT"</em>, nunca{" "}
+				los datos: la formulación correcta es <em>"listado como implementación ACT"</em>, nunca{" "}
 				<em>"certificado por el W3C"</em>. El informe propio de este motor se publica en{" "}
 				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
 					https://surea11y.github.io/act-report/act-report.jsonld
@@ -51,8 +51,8 @@ export function EarlReportContent() {
 			</p>
 			<p>
 				Un <strong>consumidor</strong> obtiene un formato de intercambio. EARL es lo que lee una
-				herramienta de accesibilidad cuando tiene que combinar resultados de más de una fuente — un
-				análisis automatizado y una auditoría manual, por ejemplo, o varios motores — porque cada
+				herramienta de accesibilidad cuando tiene que combinar resultados de más de una fuente (un
+				análisis automatizado y una auditoría manual, por ejemplo, o varios motores), porque cada
 				aserción indica quién la hizo y cómo. Eso tiene valor aunque nunca se envíe a ningún sitio.
 			</p>
 
@@ -68,7 +68,7 @@ export function EarlReportContent() {
 				</strong>
 				, porque un informe de implementación es una afirmación sobre lo que decidió el motor{" "}
 				<em>en todos los casos</em>. Una regla que no dijo nada porque no encontró nada aplicable es
-				evidencia, no ruido — es lo que permite distinguir "este motor comprobó y no encontró nada
+				evidencia, no ruido: es lo que permite distinguir "este motor comprobó y no encontró nada
 				que comprobar" de "este motor no implementa esa regla en absoluto".
 			</p>
 
@@ -106,7 +106,7 @@ export function EarlReportContent() {
 					<strong>
 						<code>source</code>
 					</strong>{" "}
-					es la URL analizada, o <code>about:blank</code> cuando un resultado no lleva ninguna.
+					es la URL analizada, o bien <code>about:blank</code> cuando un resultado no lleva ninguna.
 				</li>
 				<li>
 					<strong>
@@ -122,7 +122,7 @@ export function EarlReportContent() {
 					</strong>{" "}
 					enumera los Criterios de Éxito a los que se asocia esa regla, como{" "}
 					<code>WCAG2:&lt;criterion-id&gt;</code>. Se omite por completo para una regla que no
-					reclama ningún criterio — <code>aria-allowed-role</code> es la única regla automática del
+					reclama ningún criterio: <code>aria-allowed-role</code> es la única regla automática del
 					motor en esa situación, y afirmar una lista vacía se leería como "no encontramos a qué se
 					asocia" en lugar de "deliberadamente no se asocia a ninguno".
 				</li>
@@ -165,13 +165,13 @@ export function EarlReportContent() {
 					<code>cantTell</code> no le resta crédito de conformidad.
 				</strong>{" "}
 				Las propias reglas de consistencia de ACT permiten que una implementación automatizada
-				indique "no se puede determinar" en algunos ejemplos — aunque no en todos — y aun así cuente
+				indique "no se puede determinar" en algunos ejemplos (aunque no en todos) y aun así cuente
 				como consistente. Lo que una implementación parcialmente consistente <em>no</em> puede hacer
-				es producir un falso positivo: fallar un ejemplo que la regla dice que debería pasar, o que
+				es producir un falso positivo: fallar un ejemplo que la regla dice que debería pasar o que
 				es inaplicable. Esa es la condición que vale la pena vigilar, y es una propiedad de las
 				reglas, no de este informe. Según la última ejecución completa, el motor produce{" "}
 				<strong>cero falsos positivos</strong> entre los 798 ejemplos ACT que cubren sus 58 reglas
-				asociadas — ver{" "}
+				asociadas. Ver{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}>
 					<code>ACT_RULE_MAPPING.md</code>
 				</a>
@@ -186,7 +186,7 @@ export function EarlReportContent() {
 			</p>
 			<CodeBlock lang="js" lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
 			<p>
-				Los resultados que comparten una URL se fusionan en un solo sujeto — quien llama y analiza
+				Los resultados que comparten una URL se fusionan en un solo sujeto: quien llama y analiza
 				la misma página con distintas <code>engineOptions</code> sigue describiendo un único recurso,
 				y el contexto no tiene forma de expresar dos sujetos con la misma fuente.{" "}
 				<strong>
@@ -216,20 +216,18 @@ export function EarlReportContent() {
 			<h2>Ver también</h2>
 			<ul>
 				<li>
-					<a href="/results-reports/output-schema/">Esquema de salida</a> — el resultado que este
+					<a href="/results-reports/output-schema/">Esquema de salida</a>: el resultado que este
 					informe lee
 				</li>
 				<li>
 					<a href={`${core}/docs/ACT_RULE_MAPPING.md`}>
 						<code>ACT_RULE_MAPPING.md</code>
-					</a>{" "}
-					— a qué reglas ACT corresponden las reglas del motor
+					</a>: a qué reglas ACT corresponden las reglas del motor
 				</li>
 				<li>
 					<a href={`${core}/docs/API_STABILITY.md`}>
 						<code>API_STABILITY.md</code>
-					</a>{" "}
-					— qué está cubierto por el versionado semántico
+					</a>: qué está cubierto por el versionado semántico
 				</li>
 			</ul>
 		</>

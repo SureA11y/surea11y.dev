@@ -56,24 +56,24 @@ export function WcagMappingContent() {
 			<h2>Las tres capas</h2>
 			<ol>
 				<li>
-					<strong>Reglas atómicas</strong> (<code>checksResults[]</code>) — una decisión normativa
+					<strong>Reglas atómicas</strong> (<code>checksResults[]</code>): una decisión normativa
 					cada una, por ejemplo "¿tiene este <code>&lt;img&gt;</code> un atributo{" "}
 					<code>alt</code>?". Ver <a href="/rules/">el catálogo de reglas</a> para las 132.
 				</li>
 				<li>
-					<strong>Facetas</strong> — un SC de WCAG suele ser más grande de lo que una sola regla
+					<strong>Facetas</strong>: un SC de WCAG suele ser más grande de lo que una sola regla
 					puede decidir de forma determinista. Internamente, cada SC se divide en "facetas"
 					nombradas (por ejemplo, 1.1.1 Non-text Content tiene facetas como{" "}
 					<code>img-alt-attr-present</code>, <code>text-alternative-quality</code>,{" "}
 					<code>decorative-null</code>) registradas en <code>src/coverage/wcag-facets.js</code>,
 					cada una marcada como <code>full</code> (una regla la decide con alta confianza),{" "}
-					<code>partial</code> (una regla decide <em>parte</em> de ella — ver las notas de alcance
+					<code>partial</code> (una regla decide <em>parte</em> de ella; ver las notas de alcance
 					de cada regla) o <code>manual</code> (no existe ninguna heurística automatizada segura).
 					Ejecuta <code>npm run coverage</code> para regenerar{" "}
 					<code>coverage/coverage-report.md</code>, el desglose de facetas por SC.
 				</li>
 				<li>
-					<strong>Reglas compuestas (resultado agregado por SC de WCAG)</strong> (<code>rulesResults[]</code>) —
+					<strong>Reglas compuestas (resultado agregado por SC de WCAG)</strong> (<code>rulesResults[]</code>):
 					un agregado generado de cada regla atómica asociada a un SC, que da un único veredicto{" "}
 					<code>pass</code>/<code>fail</code>/<code>cantTell</code>/<code>notApplicable</code> por SC en
 					lugar de tener que combinar tú mismo docenas de resultados atómicos. Ver{" "}
@@ -97,7 +97,7 @@ export function WcagMappingContent() {
 			/>
 			<p>
 				Esto significa: <strong>un compuesto en <code>pass</code> es un "todas las comprobaciones
-				automatizadas aplicables a este SC salieron limpias" real y determinista — pero no es, por
+				automatizadas aplicables a este SC salieron limpias" real y determinista, pero no es, por
 				sí solo, una declaración de conformidad WCAG.</strong> Si alguna faceta de ese SC no tiene
 				ninguna cobertura automatizada (ver <code>coverage-report.md</code>), un compuesto en{" "}
 				<code>pass</code> guarda silencio sobre esa faceta, no está afirmando que esté bien. Verifica
@@ -107,7 +107,7 @@ export function WcagMappingContent() {
 			<p>
 				El array <code>data.details.contributors</code> de un compuesto (ver{" "}
 				<a href="/results-reports/output-schema/">el esquema de salida</a>) enumera cada regla
-				atómica y su resultado individual — úsalo para ver exactamente qué faceta o facetas
+				atómica y su resultado individual: úsalo para ver exactamente qué faceta o facetas
 				provocaron un <code>fail</code>/<code>cantTell</code>, en lugar de tratar el compuesto como
 				una caja negra.
 			</p>
@@ -135,8 +135,8 @@ export function WcagMappingContent() {
 				aproximadamente 100 que forman un objetivo A + AA. Enumera cada nivel que quieras.
 			</p>
 			<p>
-				Lo mismo aplica entre versiones de WCAG — un criterio introducido en 2.1 o 2.2 lleva solo su
-				propia etiqueta de origen — así que un objetivo de conformidad completo es una unión de
+				Lo mismo aplica entre versiones de WCAG (un criterio introducido en 2.1 o 2.2 lleva solo su
+				propia etiqueta de origen), así que un objetivo de conformidad completo es una unión de
 				conjuntos de etiquetas. Ver{" "}
 				<a href="/configuration/engine-options/#filtering-by-wcag-version">
 					la guía de opciones del motor
@@ -149,7 +149,7 @@ export function WcagMappingContent() {
 				una versión de WCAG objetivo (<code>engineOptions.wcagVersion</code>, si no, lo que
 				impliquen tus etiquetas de versión, si no, <code>2.2</code>) y la devuelve como{" "}
 				<code>engine.wcagVersion</code>. Bajo un objetivo 2.2, una regla asociada solo al SC 4.1.1
-				Parsing no puede devolver <code>fail</code> — se ejecuta, informa de sus ocurrencias, y vuelve
+				Parsing no puede devolver <code>fail</code>: se ejecuta, informa de sus ocurrencias, y vuelve
 				como <code>cantTell</code> con un campo <code>wcagVersionScope</code> que explica la
 				coerción. Así, un análisis por defecto nunca bloquea por un criterio que WCAG 2.2 no
 				contiene, y un análisis 2.0/2.1 sigue obteniendo un veredicto real para el 4.1.1.
@@ -171,7 +171,7 @@ export function WcagMappingContent() {
 			<h2>Lo que este motor no puede decirte</h2>
 			<p>
 				<strong>
-					Ninguna herramienta automatizada — esta incluida — puede certificar la conformidad WCAG
+					Ninguna herramienta automatizada, esta incluida, puede certificar la conformidad WCAG
 					completa.
 				</strong>{" "}
 				Esa no es una limitación específica de surea11y; es inherente a WCAG en sí; una fracción
@@ -187,7 +187,7 @@ export function WcagMappingContent() {
 			<ul>
 				<li>
 					Cada <code>fail</code> es una violación normativa real, determinista, bajo la versión que
-					elegiste como objetivo — nunca una suposición.
+					elegiste como objetivo, nunca una suposición.
 				</li>
 				<li>
 					Cada <code>cantTell</code> es una señal explícita para revisión humana, no una
@@ -202,7 +202,7 @@ export function WcagMappingContent() {
 			<p>
 				Un compuesto en <code>pass</code> en cada SC de tu nivel objetivo significa:{" "}
 				<em>cada comprobación automatizable para ese nivel salió limpia.</em> Es el subconjunto
-				automatizable de la conformidad, declarado con precisión — no un sustituto de la revisión
+				automatizable de la conformidad, declarado con precisión, no un sustituto de la revisión
 				manual que la propia WCAG exige.
 			</p>
 		</>
