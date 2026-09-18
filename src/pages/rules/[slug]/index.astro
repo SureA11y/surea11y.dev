@@ -14,7 +14,7 @@ interface Props {
 const { rule } = Astro.props;
 ---
 
-<BaseLayout title={rule.title} breadcrumbLabel={rule.title}>
+<BaseLayout title={rule.title} breadcrumbLabel={rule.ruleId}>
 	<RulePage rule={rule} />
 </BaseLayout>
 

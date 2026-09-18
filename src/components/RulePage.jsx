@@ -3,6 +3,36 @@ import { Tag } from "./design-system/core/Tag.jsx";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
 
+function LabeledRichText({ label, text }) {
+	const blocks = text
+		.split("\n\n")
+		.map((block) => block.trim())
+		.filter(Boolean);
+	return blocks.map((block, i) => {
+		const lines = block
+			.split("\n")
+			.map((line) => line.trim())
+			.filter(Boolean);
+		const isList = lines.length > 0 && lines.every((line) => line.startsWith("- "));
+		if (isList) {
+			return (
+				<ul key={i}>
+					{lines.map((line, j) => (
+						<li key={j}>{line.slice(2)}</li>
+					))}
+				</ul>
+			);
+		}
+		return (
+			<p key={i}>
+				{i === 0 ? <strong>{label}</strong> : null}
+				{i === 0 ? " " : ""}
+				{block}
+			</p>
+		);
+	});
+}
+
 export function RulePage({ rule }) {
 	return (
 		<article>
@@ -23,16 +53,8 @@ export function RulePage({ rule }) {
 
 			{rule.description ? <p className="rule-description">{rule.description}</p> : null}
 
-			{rule.applicability ? (
-				<p>
-					<strong>Applies to.</strong> {rule.applicability}
-				</p>
-			) : null}
-			{rule.expectation ? (
-				<p>
-					<strong>Expectation.</strong> {rule.expectation}
-				</p>
-			) : null}
+			{rule.applicability ? <LabeledRichText label="Applies to." text={rule.applicability} /> : null}
+			{rule.expectation ? <LabeledRichText label="Expectation." text={rule.expectation} /> : null}
 
 			<h2>Examples</h2>
 			{rule.examples.map((example) => (
