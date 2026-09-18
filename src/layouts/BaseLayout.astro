@@ -6,6 +6,7 @@ import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TableOfContents from "../components/TableOfContents.astro";
 import Footer from "../components/Footer.astro";
 import { processHeadings } from "../utils/headings";
+import { localizeLinks } from "../utils/localizeLinks";
 import { resolveLocale } from "../i18n/t";
 
 interface Props {
@@ -29,7 +30,8 @@ const enUrl = new URL(pathNoLocale, Astro.site);
 const esUrl = new URL(`/es${pathNoLocale}`, Astro.site);
 
 const rawHtml = await Astro.slots.render("default");
-const { html, headings } = processHeadings(rawHtml);
+const { html: headedHtml, headings } = processHeadings(rawHtml);
+const html = localizeLinks(headedHtml, locale);
 ---
 
 <html lang={locale}>
