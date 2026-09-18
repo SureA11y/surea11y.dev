@@ -1,0 +1,39 @@
+---
+import { t, type Locale } from "../i18n/t";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const otherLocale: Locale = locale === "en" ? "es" : "en";
+const pathNoLocale = Astro.url.pathname.replace(/^\/es(?=\/|$)/, "") || "/";
+const targetHref = otherLocale === "es" ? `/es${pathNoLocale}` : pathNoLocale;
+---
+
+<a href={targetHref} class="language-switcher" hreflang={otherLocale} lang={otherLocale}>
+	{t(`languageSwitcher.switchTo.${otherLocale}`, locale)}
+</a>
+
+<style>
+	.language-switcher {
+		display: inline-flex;
+		align-items: center;
+		min-height: var(--target-min);
+		padding: 0 var(--space-3);
+		border-radius: var(--radius-sm);
+		color: var(--text-muted);
+		font-family: var(--font-body);
+		font-size: var(--text-sm);
+		text-decoration: none;
+	}
+
+	.language-switcher:hover {
+		color: var(--text-strong);
+	}
+
+	.language-switcher:focus-visible {
+		outline: 2px solid var(--focus-ring);
+		outline-offset: 2px;
+	}
+</style>

@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { UsageBindingSection } from "../../../../components/UsageBindingSection.jsx";
+import { bindingUsage } from "../../../../data/bindingUsage.es.jsx";
+---
+
+<BaseLayout title="Uso con WebdriverIO">
+	<h1>Uso con WebdriverIO</h1>
+	<UsageBindingSection {...bindingUsage.webdriverio} locale="es" />
+</BaseLayout>
