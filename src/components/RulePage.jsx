@@ -2,6 +2,7 @@ import React from "react";
 import { Tag } from "./design-system/core/Tag.jsx";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 function LabeledRichText({ label, text }) {
 	const blocks = text
@@ -40,6 +41,7 @@ export function RulePage({ rule }) {
 			<h1>{rule.title}</h1>
 			<div className="tag-row">
 				<Tag>{rule.type}</Tag>
+				{rule.deprecated ? <Tag tone="accent">deprecated</Tag> : null}
 				{rule.wcagSc.length ? (
 					<Tag tone="accent2">
 						WCAG {rule.wcagSc.join(", ")}
@@ -50,6 +52,34 @@ export function RulePage({ rule }) {
 				<Tag>severity: {rule.severity}</Tag>
 				{rule.category ? <Tag>{rule.category}</Tag> : null}
 			</div>
+
+			{rule.deprecated ? (
+				<Callout tone="note" title="Deprecated">
+					<p>
+						{rule.deprecation?.replacedBy ? (
+							<>
+								Replaced by{" "}
+								<a href={`/rules/${rule.deprecation.replacedBy}/`}>
+									<code>{rule.deprecation.replacedBy}</code>
+								</a>
+								{rule.deprecation?.sinceVersion ? ` since ${rule.deprecation.sinceVersion}` : ""}.
+							</>
+						) : (
+							"This rule is deprecated."
+						)}
+						{rule.deprecation?.reason ? ` ${rule.deprecation.reason}` : ""}
+					</p>
+					<p>
+						The id stays in the catalog and keeps running, but its result is
+						fixed rather than decided per page — see{" "}
+						<a href="https://github.com/SureA11y/core/blob/main/docs/API_STABILITY.md">
+							the rule-ID deprecation policy
+						</a>{" "}
+						for what that means for a stored baseline or a <code>runOnly</code> list
+						that still names it.
+					</p>
+				</Callout>
+			) : null}
 
 			{rule.description ? <p className="rule-description">{rule.description}</p> : null}
 

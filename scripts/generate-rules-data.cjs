@@ -251,6 +251,8 @@ function main() {
         category: r.category || '',
         confidence: r.defaultConfidence,
         severity: r.defaultSeverity,
+        deprecated: !!r.deprecated,
+        deprecation: r.deprecation || null,
         applicability: m.applicability,
         expectation: m.expectation,
         sourcePath: m.sourcePath,
