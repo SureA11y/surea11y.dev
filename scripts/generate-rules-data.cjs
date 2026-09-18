@@ -3,7 +3,9 @@
 /**
  * Generate src/data/rules.generated.json from ../core's compiled catalog
  * (getChecksCatalog) plus its rule-module JSDoc headers and
- * ../core/docs/RULE_EXAMPLES.md's hand-authored example pairs.
+ * ../core/docs/RULE_EXAMPLES.md's hand-authored example pairs. Also writes
+ * src/data/engine.generated.json (version/license) from ../core/package.json,
+ * so pages that display those values never drift from the actual package.
  *
  * The applicability/expectation JSDoc parsing (jsdocTag/reflow/readRuleMeta
  * below) mirrors ../core/scripts/generate-rule-catalog.js -- that logic
@@ -19,6 +21,7 @@ const path = require('path');
 
 const CORE_DIR = path.join(__dirname, '..', '..', 'core');
 const OUT_PATH = path.join(__dirname, '..', 'src', 'data', 'rules.generated.json');
+const ENGINE_OUT_PATH = path.join(__dirname, '..', 'src', 'data', 'engine.generated.json');
 
 function parseArgs(argv) {
   const out = {};
@@ -264,19 +267,32 @@ function main() {
 
   const json = JSON.stringify(rules, null, 2) + '\n';
 
+  const corePkg = require(path.join(CORE_DIR, 'package.json'));
+  const engine = { version: corePkg.version, license: corePkg.license };
+  const engineJson = JSON.stringify(engine, null, 2) + '\n';
+
   if (args.check) {
     const current = fs.existsSync(OUT_PATH) ? fs.readFileSync(OUT_PATH, 'utf8') : null;
+    const engineCurrent = fs.existsSync(ENGINE_OUT_PATH) ? fs.readFileSync(ENGINE_OUT_PATH, 'utf8') : null;
+    let stale = false;
     if (current !== json) {
       console.error(`[generate-rules-data] ${OUT_PATH} is stale. Run: npm run docs:rules`);
-      process.exit(1);
+      stale = true;
     }
+    if (engineCurrent !== engineJson) {
+      console.error(`[generate-rules-data] ${ENGINE_OUT_PATH} is stale. Run: npm run docs:rules`);
+      stale = true;
+    }
+    if (stale) process.exit(1);
     console.log('[generate-rules-data] rules data is up to date.');
     return;
   }
 
   fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   fs.writeFileSync(OUT_PATH, json);
+  fs.writeFileSync(ENGINE_OUT_PATH, engineJson);
   console.log(`[generate-rules-data] wrote ${OUT_PATH} (${rules.length} rules)`);
+  console.log(`[generate-rules-data] wrote ${ENGINE_OUT_PATH} (v${engine.version}, ${engine.license})`);
 }
 
 main();

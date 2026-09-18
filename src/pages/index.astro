@@ -6,6 +6,7 @@ import { Card } from "../components/design-system/core/Card.jsx";
 import { Logo } from "../components/design-system/brand/Logo.jsx";
 import { OverviewContent } from "../components/OverviewContent.jsx";
 import { sections } from "../data/sections";
+import engine from "../data/engine.generated.json";
 
 const otherSections = sections.filter((section) => section.href !== "/");
 ---
@@ -35,9 +36,8 @@ const otherSections = sections.filter((section) => section.href !== "/");
 		</a>
 	</p>
 	<div class="badges">
-		{/* mirrors ../core/package.json — re-copy if it changes */}
-		<Badge label="engine" value="v1.7.0" tone="neutral" />
-		<Badge label="license" value="MPL-2.0" tone="neutral" />
+		<Badge label="engine" value={`v${engine.version}`} tone="neutral" />
+		<Badge label="license" value={engine.license} tone="neutral" />
 	</div>
 
 	<OverviewContent />
