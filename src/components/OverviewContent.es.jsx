@@ -5,13 +5,13 @@ import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
 const core = "https://github.com/SureA11y/core/blob/main";
 
 const packageRows = [
-	{ id: "playwright", want: "Agregar comprobaciones de accesibilidad a los tests de Playwright", install: <code>@surea11y/playwright</code> },
+	{ id: "playwright", want: "Agregar comprobaciones de accesibilidad a las pruebas de Playwright", install: <code>@surea11y/playwright</code> },
 	{ id: "puppeteer", want: "…Puppeteer", install: <code>@surea11y/puppeteer</code> },
 	{ id: "selenium", want: "…Selenium", install: <code>@surea11y/selenium</code> },
 	{ id: "cypress", want: "…Cypress", install: <code>@surea11y/cypress</code> },
 	{ id: "webdriverio", want: "…WebdriverIO", install: <code>@surea11y/webdriverio</code> },
 	{ id: "cli", want: "Analizar HTML estático desde una terminal o una canalización de CI", install: <code>@surea11y/cli</code> },
-	{ id: "test-matchers", want: "Verificar la accesibilidad en tests de componentes o unitarios con Jest/Vitest", install: <code>@surea11y/test-matchers</code> },
+	{ id: "test-matchers", want: "Verificar la accesibilidad en pruebas de componentes o unitarias con Jest/Vitest", install: <code>@surea11y/test-matchers</code> },
 	{ id: "core", want: "Ejecutar el motor sobre un DOM que ya tengas", install: <code>@surea11y/core</code> },
 ];
 

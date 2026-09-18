@@ -1200,7 +1200,7 @@
     ]
   },
   "landmark-one-main": {
-    "title": "La página debería tener un landmark main",
+    "title": "La página debería tener una región de referencia main",
     "description": "Comprueba que la página tiene al menos una región de referencia main (role=\"main\" o <main>).",
     "applicability": "Siempre se aplica a cualquier documento HTML con un elemento <body>: \"¿tiene la página una región de referencia main?\" es una cuestión de toda la página, siguiendo el mismo patrón de bypass-blocks-present de evaluar el documento directamente.",
     "expectation": "Existe en la página al menos una región de referencia main (role=\"main\" o <main>) expuesta a la tecnología de asistencia. Una página sin ninguna no da a los usuarios de TA ninguna región de referencia a la que saltar directamente para llegar al contenido principal.",
@@ -1615,7 +1615,7 @@
     "title": "Los campos de autenticación no deben bloquear el pegado",
     "description": "Comprueba que un campo de contraseña o de código de un solo uso no tenga un manejador de pegado en línea que cancele el pegado, lo cual eliminaría el gestor de contraseñas o el portapapeles en el que WCAG 3.3.8 se basa como mecanismo de asistencia.",
     "applicability": "Se aplica a cualquier control cuyo token de autocomplete sea current-password, new-password o one-time-code, y a <input type=\"password\"> a menos que su autocomplete nombre otro propósito. Un campo disabled o readonly no acepta entrada que bloquear, y uno fuera del árbol de accesibilidad no está siendo solicitado, así que ninguno de los dos entra en el alcance.",
-    "expectation": "Un revisor confirma que todavía se puede pegar en el campo. Recordar una contraseña es un test de función cognitiva, y 3.3.8 pide un mecanismo que ayude al usuario a superarla; un gestor de contraseñas, o el portapapeles para un código de un solo uso, es ese mecanismo.",
+    "expectation": "Un revisor confirma que todavía se puede pegar en el campo. Recordar una contraseña es una prueba de función cognitiva, y 3.3.8 pide un mecanismo que ayude al usuario a superarla; un gestor de contraseñas, o el portapapeles para un código de un solo uso, es ese mecanismo.",
     "examples": [
       {
         "state": "unknown",

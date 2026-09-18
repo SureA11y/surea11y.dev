@@ -209,7 +209,7 @@ export function EarlReportContent() {
 				]}
 				rows={[
 					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. El nombre por defecto es <code>surea11y</code>; pasa <code>null</code> para omitir <code>assertedBy</code> por completo.</> },
-					{ id: "mode", option: <code>mode</code>, meaning: <>Un modo de test EARL como <code>'earl:automatic'</code>. Se omite cuando no se proporciona.</> },
+					{ id: "mode", option: <code>mode</code>, meaning: <>Un modo de prueba EARL como <code>'earl:automatic'</code>. Se omite cuando no se proporciona.</> },
 				]}
 			/>
 
