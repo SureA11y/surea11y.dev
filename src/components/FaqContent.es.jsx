@@ -12,8 +12,8 @@ export function FaqContent() {
 					<strong><code>runOnly</code> debe ser un objeto, no un array simple.</strong>{" "}
 					<code>runOnly: ['img-alt-present']</code> se ignora silenciosamente (el motor termina
 					ejecutando "todas las reglas"), porque esa forma no tiene ninguno de los campos que el motor
-					realmente comprueba (<code>includeRuleIds</code>, <code>tags</code>, etc.). Es fácil recurrir
-					a un array simple, así que vale la pena comprobar esto primero.
+					realmente comprueba (<code>includeRuleIds</code>, <code>tags</code>, etc.). Es fácil utilizar
+					por error un array simple, así que vale la pena comprobar esto primero.
 				</p>
 				<p>Solución:</p>
 				<CodeBlock lang="js" lines={["runOnly: { includeRuleIds: ['img-alt-present'] }"]} />
@@ -25,13 +25,13 @@ export function FaqContent() {
 			<article>
 				<h2>"Mi regla personalizada siempre devuelve <code>cantTell</code> sin un motivo claro"</h2>
 				<p>
-					Primero revisa el campo <code>error</code> del resultado — si dice{" "}
+					Primero revisa el campo <code>error</code> del resultado: si dice{" "}
 					<code>"&lt;something&gt; is not defined"</code>, tu <code>runInPage</code> hace referencia
 					a una variable definida fuera del cuerpo de la función (un <code>const</code> de ámbito de
 					módulo, un helper importado, cualquier cosa a la que no se llegue a través de{" "}
 					<code>ctx.*</code>). Esta es una trampa real y común: <code>runInPage</code> se serializa a
 					texto fuente y se vuelve a evaluar más tarde en el contexto de la página, así que{" "}
-					<strong>la compilación nunca detecta esto — solo lo hace ejecutar la
+					<strong>la compilación nunca detecta esto: el problema solo aparece cuando se ejecuta la
 					regla</strong>, y el fallo parece un resultado normal (aunque poco informativo), no un error
 					de ejecución. Consulta <a href={`${core}/docs/RULE_AUTHORING.md`}><code>RULE_AUTHORING.md</code></a>{" "}
 					§1.1 para ver la explicación completa y la solución (mueve el valor dentro de{" "}
@@ -108,7 +108,7 @@ export function FaqContent() {
 					No — consulta <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
 					<strong>Un <code>pass</code> significa que toda comprobación <em>automatizable</em> salió
 					limpia.</strong> Una fracción considerable de WCAG requiere juicio humano (texto alternativo
-					preciso, mensajes de error comprensibles) o testing dinámico que la arquitectura de este
+					preciso, mensajes de error comprensibles) o pruebas dinámicas que la arquitectura de este
 					motor no puede hacer en absoluto (trampas de teclado, reflow al hacer zoom) — consulta{" "}
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a> para ver la lista
 					explícita, deliberadamente no exhaustiva.
@@ -132,17 +132,19 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2>"¿Qué pasa si un locale solo está parcialmente traducido?"</h2>
+				<h2>"¿Qué pasa si una configuración regional solo está parcialmente traducida?"</h2>
 				<p>
 					<strong>Las claves faltantes recurren al inglés por cadena (nunca a un resultado en blanco
-					o roto), de modo que un locale parcial se degrada con elegancia en lugar de fallar por
-					completo.</strong> Consulta <a href="/configuration/locales/"><code>I18N.md</code></a> para
+					o roto), de modo que una configuración regional parcial recurre de forma gradual al inglés
+					sin dejar textos vacíos, en lugar de fallar por completo.</strong> Consulta{" "}
+					<a href="/configuration/locales/"><code>I18N.md</code></a> para
 					ver el mecanismo y la cobertura actual. La paridad de claves se hace cumplir en lugar de
 					darse por hecha: <code>npm run i18n:sync</code>{" "}
 					traslada cualquier clave nueva o renombrada de <code>en.json</code> a los demás archivos de
-					locale, y la compilación falla si alguno queda desincronizado. Una clave que agrega
-					conserva el texto en inglés hasta que alguien la traduce, de modo que un locale puede ir
-					atrasado en la redacción sin ir nunca atrasado en las claves.
+					configuración regional, y la compilación falla si alguno queda desincronizado. Una clave
+					que agrega conserva el texto en inglés hasta que alguien la traduce, de modo que una
+					configuración regional puede ir atrasada en la redacción sin ir nunca atrasada en las
+					claves.
 				</p>
 			</article>
 

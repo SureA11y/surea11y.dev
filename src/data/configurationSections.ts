@@ -17,5 +17,9 @@ export const configurationSections: ConfigurationSection[] = [
 		label: "CI integration",
 		i18n: { es: { label: "Integración con CI" } },
 	},
-	{ href: "/configuration/locales/", label: "Locales" },
+	{
+		href: "/configuration/locales/",
+		label: "Locales",
+		i18n: { es: { label: "Configuración regional" } },
+	},
 ];

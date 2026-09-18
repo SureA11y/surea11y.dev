@@ -12,7 +12,7 @@ const topLevelRows = [
 		meaning: (
 			<>
 				La versión del esquema de resultados (<code>"1.0.0"</code>). Sujeta a incrementarse si la
-				forma de este documento cambia alguna vez de manera incompatible — ánclate a ella si
+				estructura de este documento cambia alguna vez de manera incompatible — ánclate a ella si
 				analizas la salida de forma programática. Consulta{" "}
 				<a href={`${core}/docs/API_STABILITY.md`}><code>API_STABILITY.md</code></a> para ver la
 				lista completa de campos estables/inestables y la política de incremento de versión.
@@ -85,7 +85,7 @@ const topLevelRows = [
 	{
 		id: "perfStats",
 		field: <code>perfStats</code>,
-		meaning: <><code>null</code> a menos que <code>engineOptions.perfStats: true</code>. Temporizaciones/contadores internos — su forma no está cubierta por este documento, trátalo como solo para depuración.</>,
+		meaning: <><code>null</code> a menos que <code>engineOptions.perfStats: true</code>. Temporizaciones/contadores internos — su estructura no está cubierta por este documento, trátalo como solo para depuración.</>,
 	},
 	{
 		id: "contextSelector",
@@ -147,14 +147,14 @@ const occurrenceRows = [
 			<>
 				Un selector CSS construido con el mejor esfuerzo posible para resolver de vuelta al
 				elemento señalado (ver <code>helpers.buildSelector</code> en <code>RULE_AUTHORING.md</code>).
-				No se garantiza que sea único en formas de DOM adversas, pero el motor verifica
+				No se garantiza que sea único en estructuras de DOM adversas, pero el motor verifica
 				activamente que resuelva al elemento reportado antes de usarlo. La excepción es una regla
-				cuyo hallazgo <em>es</em> un elemento ausente: <code>page-title-present</code> reporta{" "}
+				cuyo hallazgo <em>es</em> un elemento ausente: <code>page-title-present</code> devuelve{" "}
 				<code>head &gt; title</code> con un <code>html</code> de{" "}
 				<code>&lt;title&gt;(missing)&lt;/title&gt;</code>, ninguno de los cuales está en la
 				página. Ambos son constantes, así que la huella que alimentan se mantiene estable, pero{" "}
 				<strong>no trates <code>selector</code> como resoluble ni <code>html</code> como marcado
-				real sin comprobar antes que la regla reportó algo que existe</strong>.
+				real sin comprobar antes que la regla devolvió algo que existe</strong>.
 			</>
 		),
 	},
@@ -179,7 +179,7 @@ const occurrenceRows = [
 				<em>es</em> <code>documentElement</code>, <code>null</code> si no pudo determinarse. Un
 				mecanismo de identidad de elemento más robusto que <code>selector</code> por sí solo:
 				sobrevive a cambios en el DOM que una cadena de selector no soportaría (un cambio de
-				id/clase, por ejemplo), a costa de{" "}
+				<code>id</code>/clase, por ejemplo), a costa de{" "}
 				<strong>no poder usarse como un selector CSS real</strong>.
 			</>
 		),
@@ -221,7 +221,7 @@ const occurrenceRows = [
 				Datos estructurados específicos de la regla (métricas calculadas, referencias resueltas)
 				— <strong>no normativos</strong>: útiles para construir una interfaz más rica o para
 				depurar, pero nunca cambian lo que significan <code>outcome</code>/<code>severity</code>.
-				La forma varía según la regla; trátalo como contexto adicional de mejor esfuerzo, no como
+				La estructura varía según la regla; trátalo como contexto adicional de mejor esfuerzo, no como
 				un contrato estable. La única excepción es{" "}
 				<code>data.details.reasonCode</code>, que <strong>sí</strong> es estable: identifica{" "}
 				<em>cuál</em> de los hallazgos de una regla es este, y junto con <code>ruleId</code> y{" "}
@@ -258,7 +258,7 @@ const uncertaintyRows = [
 ];
 
 const outcomeRows = [
-	{ id: "fail", outcome: <code>fail</code>, meaning: "Violación determinista y normativa — el procedimiento de decisión no adivina nada.", manual: "No (se fuerza a cantTell)" },
+	{ id: "fail", outcome: <code>fail</code>, meaning: "Violación determinista y normativa — el procedimiento de decisión no adivina nada.", manual: <>No (se fuerza a <code>cantTell</code>)</> },
 	{ id: "pass", outcome: <code>pass</code>, meaning: "El/los objetivo(s) aplicable(s) de la regla existen y ninguno fue señalado.", manual: "Sí" },
 	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "Requiere juicio humano — ya sea genuinamente ambiguo, o el hallazgo de carácter consultivo de una regla manual.", manual: "Sí" },
 	{ id: "notApplicable", outcome: <code>notApplicable</code>, meaning: "La regla no encontró elementos a los que aplicarse en esta página/ámbito.", manual: "Sí" },
@@ -268,12 +268,12 @@ export function OutputSchemaContent() {
 	return (
 		<>
 			<p>
-				Esta es la forma exacta del objeto que devuelven <code>runDomRulesInPage(...)</code> /{" "}
+				Esta es la estructura exacta del objeto que devuelven <code>runDomRulesInPage(...)</code> /{" "}
 				<code>runa11yCoreInPage(...)</code> (consulta{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> para saber cuál
 				llamar). Todos los ejemplos de esta página son salida real del motor actual (
 				<code>schemaVersion: "1.0.0"</code>), no están escritos a mano. <code>runa11yCoreAcrossFrames</code>{" "}
-				devuelve una forma distinta y recursiva que envuelve esta — ver{" "}
+				devuelve una estructura distinta y recursiva que envuelve esta — ver{" "}
 				<a href="#cross-frame-result">Resultado entre frames</a> más abajo.
 			</p>
 
@@ -313,7 +313,7 @@ export function OutputSchemaContent() {
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>
 					<code>INTEGRATION.md</code>
 				</a>
-				) devuelve una forma distinta y recursiva en lugar de un resultado de nivel superior
+				) devuelve una estructura distinta y recursiva en lugar de un resultado de nivel superior
 				simple:
 			</p>
 			<CodeBlock
@@ -329,7 +329,7 @@ export function OutputSchemaContent() {
 			/>
 			<ul>
 				<li>
-					<code>topFrame</code> es exactamente la forma del{" "}
+					<code>topFrame</code> es exactamente la estructura del{" "}
 					<a href="#top-level-result">resultado de nivel superior</a>, para el frame en el que se
 					llamó a la función.
 				</li>
@@ -405,7 +405,7 @@ export function OutputSchemaContent() {
 					que puedas ajustarte a tu propio vocabulario o al vocabulario interno del motor.
 				</li>
 				<li>
-					<strong>Las reglas <code>type: "manual"</code> nunca pueden reportar{" "}
+					<strong>Las reglas <code>type: "manual"</code> nunca pueden devolver{" "}
 					<code>outcome: "fail"</code>.</strong>{" "}
 					Si la lógica propia de una regla manual hubiera dicho <code>fail</code>, el motor la
 					fuerza a <code>cantTell</code> y añade una nota explicativa a <code>error</code> — esto
@@ -429,15 +429,15 @@ export function OutputSchemaContent() {
 					<code>duplicate-id</code>) bajo el objetivo 2.2 predeterminado, ya que 2.2 eliminó ese
 					criterio. <code>removedSc</code> enumera los criterios que dejaron de existir,{" "}
 					<code>target</code> es la versión que los eliminó, y <code>coercedFrom</code> es el
-					outcome que la propia regla reportó. Las occurrences son las propias de la regla, sin
+					outcome que la propia regla devolvió. Las occurrences son las propias de la regla, sin
 					cambios — no se descartó nada, solo cambió el veredicto de conformidad. Ausente en
-					cualquier otro resultado, y <strong>nunca</strong> se reporta a través de{" "}
+					cualquier otro resultado, y <strong>nunca</strong> se indica a través de{" "}
 					<code>error</code>: no salió nada mal. Consulta{" "}
 					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtrado por versión de WCAG</a>.
 				</li>
 				<li>
 					<strong><code>error</code></strong>: presente solo en tres casos — la implementación de
-					la regla lanzó una excepción no capturada, se activó la coerción de fail manual descrita
+					la regla lanzó una excepción no capturada, se activó la coerción de <code>fail</code> manual descrita
 					arriba, o cada occurrence de un resultado <code>fail</code> tuvo su recorrido de
 					ancestros topando con un límite de profundidad interno (así que el motor no pudo
 					confirmar que el contenido señalado esté realmente expuesto) y todo el resultado se
@@ -465,7 +465,7 @@ export function OutputSchemaContent() {
 				<code>notApplicable</code> es la única excepción. Una regla que no tuvo nada que juzgar
 				puede adjuntar una única occurrence explicando por qué, y las reglas de contraste hacen
 				exactamente eso cuando ningún texto tenía un fondo calculable — la diferencia entre «se
-				comprobó, nada que señalar» y «no se pudo comprobar» es algo que este motor reporta en
+				comprobó, nada que señalar» y «no se pudo comprobar» es algo que este motor indica en
 				lugar de ocultar. Una occurrence así describe el análisis, no un elemento, así que su{" "}
 				<code>selector</code> está vacío.{" "}
 				<strong>No interpretes <code>occurrences.length</code> como un recuento de violaciones
@@ -524,14 +524,14 @@ export function OutputSchemaContent() {
 				<code>needed</code> indica, en una frase, qué resolvería la cuestión — lo que un revisor
 				tiene que ir a comprobar. <code>evidence</code> lleva lo que la regla <em>sí</em> llegó a
 				establecer, para que el revisor parta del trabajo del motor en lugar de repetirlo; su
-				forma es específica de cada regla y, como <code>data.details</code>, no es un contrato
+				estructura es específica de cada regla y, como <code>data.details</code>, no es un contrato
 				estable. En cuanto a <code>code</code>: pueden añadirse códigos nuevos en una versión
 				menor, pero uno existente no cambia de significado, así que ramifica según los códigos que
 				conoces y{" "}
 				<strong>trata uno no reconocido como «necesita revisión» en lugar de como un error</strong>.
 			</p>
 			<p>
-				Toda regla automática que puede reportar <code>cantTell</code> lleva esto, y un test
+				Toda regla automática que puede devolver <code>cantTell</code> lleva esto, y una prueba
 				mantiene esa línea para que no pueda llegar una nueva sin ello. El código{" "}
 				<code>out-of-scope</code> lo adjunta el motor, no una regla, en las mismas occurrences que
 				producen un <code>wcagVersionScope</code> a nivel de resultado. Las reglas manuales no lo
@@ -543,8 +543,8 @@ export function OutputSchemaContent() {
 			<h2 id="composite-result">Un resultado compuesto (<code>rulesResults[i]</code>)</h2>
 			<p>
 				Los compuestos agregan varias reglas atómicas en un solo criterio de éxito de WCAG (por
-				ejemplo, <code>wcag-1.1.1-non-text-content</code> agrega 21 reglas atómicas). La forma es
-				el mismo sobre que un resultado de comprobación, con un <code>data.details</code>{" "}
+				ejemplo, <code>wcag-1.1.1-non-text-content</code> agrega 21 reglas atómicas). La estructura es
+				la misma que la de un resultado de comprobación, con un <code>data.details</code>{" "}
 				específico de compuestos:
 			</p>
 			<CodeBlock
@@ -614,7 +614,7 @@ export function OutputSchemaContent() {
 				que se tomó esa decisión. Un puñado de reglas automáticas deciden de forma determinista
 				contra algo que en sí mismo es una aproximación (las tablas curadas de roles WAI-ARIA, los
 				mapeos de roles nativos, un árbol de accesibilidad inferido a partir de marcado estático) y
-				reportan <code>medium</code>: <code>aria-required-children</code>,{" "}
+				devuelven <code>medium</code>: <code>aria-required-children</code>,{" "}
 				<code>aria-prohibited-children</code>, <code>aria-required-parent</code>,{" "}
 				<code>aria-allowed-attr</code>, <code>form-control-programmatic-label-present</code>,{" "}
 				<code>identical-iframes-same-purpose</code>,{" "}
@@ -707,7 +707,7 @@ export function OutputSchemaContent() {
 			<p>
 				(Recortado por legibilidad — el resultado real también incluye{" "}
 				<code>title</code>/<code>description</code>/<code>i18n</code>/<code>meta</code>/
-				<code>engineOptions</code>/<code>schemaVersion</code> en cada entrada, según la forma
+				<code>engineOptions</code>/<code>schemaVersion</code> en cada entrada, según la estructura
 				completa mostrada arriba. <code>rulesResults</code> está vacío aquí porque{" "}
 				<code>runOnly.includeRuleIds</code> limitó el análisis a dos reglas atómicas y no se
 				incluyó el ID propio de ningún compuesto.)

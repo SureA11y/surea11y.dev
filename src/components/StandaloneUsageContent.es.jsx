@@ -27,8 +27,8 @@ export function StandaloneUsageContent() {
 				]}
 			/>
 			<p>
-				<code>a11ycore.runa11yCoreInPage</code> es exactamente la misma función que llaman los
-				bindings por debajo — el bundle existe solo para resolver el problema de <em>cargarla</em>{" "}
+				<code>a11ycore.runa11yCoreInPage</code> es exactamente la misma función que utilizan
+				internamente las integraciones. El bundle existe solo para resolver el problema de <em>cargarla</em>{" "}
 				sin <code>require</code>/un sistema de módulos, no para añadir una superficie de API
 				separada.
 			</p>
@@ -53,18 +53,18 @@ export function StandaloneUsageContent() {
 			<p>
 				<strong>Excluido deliberadamente del bundle</strong>: <code>runa11yCoreAcrossFrames</code>/
 				<code>a11yCoreEnableFrameResponder</code> (el análisis entre frames necesita que el frame
-				incrustado también cargue el motor y se adhiera — no encaja con una sola etiqueta de script
-				suelta). Usa el paquete npm directamente si lo necesitas — ver{" "}
+				incrustado también cargue el motor y se adhiera. No puede resolverse con una única etiqueta{" "}
+				<code>&lt;script&gt;</code> aislada). Usa el paquete npm directamente si lo necesitas — ver{" "}
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>
 					<code>INTEGRATION.md</code>
 				</a>
 				.
 			</p>
 			<p>
-				<code>require('@surea11y/core')</code> directamente, sin ningún binding, es la otra vía
-				independiente — esto es el Patrón 1/Patrón 2 en{" "}
+				<code>require('@surea11y/core')</code> directamente, sin ninguna integración (<code>binding</code>),
+				es la otra vía independiente. Esto es el Patrón 1/Patrón 2 en{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom en Node sin
-				navegador real, o manejar tú mismo Puppeteer/Playwright en lugar de pasar por un binding.
+				navegador real, o manejar tú mismo Puppeteer/Playwright en lugar de pasar por una integración.
 			</p>
 		</>
 	);

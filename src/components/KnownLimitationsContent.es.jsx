@@ -6,9 +6,10 @@ export function KnownLimitationsContent() {
 	return (
 		<>
 			<p>
-				Expresado con claridad y desde el principio, no algo que debas descubrir por tu cuenta.
-				Cada elemento aquí es una decisión deliberada y razonada, no un descuido — pero
-				"deliberada" no significa "sin importancia antes de confiar en esta herramienta".
+				Estas limitaciones se exponen con claridad desde el principio para que no tengas que
+				descubrirlas por tu cuenta. Cada elemento aquí es una decisión deliberada y razonada, no un
+				descuido, pero "deliberada" no significa "sin importancia antes de confiar en esta
+				herramienta".
 			</p>
 
 			<h2>Estructurales — esta arquitectura no puede hacer esto en absoluto</h2>
@@ -16,7 +17,7 @@ export function KnownLimitationsContent() {
 				surea11y es un <strong>análisis estático del DOM</strong>: lee el árbol DOM y los estilos
 				calculados en un instante determinado, sin capacidad de simular la interacción del
 				usuario, esperar cambios de estado asíncronos ni medir el diseño real en tamaños de
-				viewport arbitrarios. No se trata de reglas faltantes — ninguna implementación de regla,
+				viewport arbitrarios. No se trata de reglas faltantes: ninguna implementación de regla,
 				por ingeniosa que sea, puede resolver esto sin una arquitectura fundamentalmente distinta
 				(automatización de navegador real que genere eventos de teclado/puntero reales a lo largo
 				del tiempo):
@@ -104,7 +105,7 @@ export function KnownLimitationsContent() {
 						del mismo elemento.
 					</strong>{" "}
 					Confirmado en jsdom 29.1.1: leer un valor calculado de <code>text-shadow</code> por
-					segunda vez en el mismo elemento — mediante cualquier accesor, desde cualquier{" "}
+					segunda vez en el mismo elemento — mediante cualquier propiedad de acceso, desde cualquier{" "}
 					<code>CSSStyleDeclaration</code> recién solicitado para ese elemento, sin importar el
 					caché — devuelve de forma silenciosa un valor distinto e incorrecto de "sin sombra" en
 					lugar del valor realmente declarado. La primera lectura siempre es correcta. Este motor
@@ -121,8 +122,8 @@ export function KnownLimitationsContent() {
 						con el número de elementos.
 					</strong>{" "}
 					jsdom resuelve el CSS heredado recorriendo la cadena de ancestros de un elemento en cada
-					llamada a <code>getComputedStyle</code>, así que una llamada por elemento cuesta O(elementos
-					x profundidad). Medido en jsdom 29.1.1 sin código del motor involucrado: 4000 elementos
+					llamada a <code>getComputedStyle</code>, así que una llamada por elemento cuesta O(número de
+					elementos × profundidad). Medido en jsdom 29.1.1 sin código del motor involucrado: 4000 elementos
 					en una sola cadena tardan 8,3s solo en <code>getComputedStyle</code>, frente a 0,25s para
 					esos mismos 4000 como hermanos. Los propios recorridos de ancestros del motor están
 					acotados y se mantienen lineales, así que este es un coste de jsdom y no de las reglas.
@@ -134,7 +135,7 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>Marcado estático frente a estado del DOM en vivo o posterior a la hidratación.</strong>{" "}
-					La lógica de las reglas en sí es agnóstica respecto al origen del DOM — evalúa cualquier
+					La lógica de las reglas en sí es agnóstica respecto al origen del DOM: evalúa cualquier
 					DOM que reciba, ya sea HTML estático analizado por jsdom (Patrón 1) o una pestaña de
 					navegador real ya cargada e hidratada (Patrón 2, consulta{" "}
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
@@ -159,7 +160,7 @@ export function KnownLimitationsContent() {
 				</li>
 			</ul>
 
-			<h2>No intentado: decisiones de criterio que no se pueden automatizar de forma segura</h2>
+			<h2>Comprobaciones no implementadas: decisiones que no pueden automatizarse de forma segura</h2>
 			<p>
 				Estos no cuentan con una heurística comparablemente segura para el nivel de exigencia de
 				este motor (<code>fail</code> debe seguir reservado exclusivamente para violaciones

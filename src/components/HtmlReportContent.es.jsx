@@ -6,9 +6,9 @@ export function HtmlReportContent() {
 		<>
 			<p>
 				Un informe HTML autocontenido que puedes abrir en un navegador después de un análisis — sin
-				servidor, sin recursos externos, sin peticiones de red. Pensado para testers de QA/manuales
-				que quieren una vista navegable de los resultados de un análisis en lugar de JSON crudo o un
-				resumen de terminal.
+				servidor, sin recursos externos, sin peticiones de red. Pensado para quienes hacen pruebas de
+				control de calidad (QA) o revisión manual y quieren una vista navegable de los resultados de
+				un análisis en lugar de JSON crudo o un resumen de terminal.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
 			<p>
@@ -35,11 +35,11 @@ export function HtmlReportContent() {
 				</li>
 				<li>
 					<strong>Resumen por WCAG</strong>: agrupado por nivel de conformidad (A / AA / AAA),
-					obtenido directamente de los rollups compuestos <code>rulesResults[]</code> propios del
+					obtenido directamente de los resultados agregados compuestos <code>rulesResults[]</code> propios del
 					motor (ver <a href="/conformance/wcag-mapping/">Conformidad</a>) — una fila por Criterio
 					de Éxito, su resultado, un desglose de aprobado/fallido/necesita revisión/n.a. y qué
 					reglas atómicas contribuyeron. Son datos reales del motor, no una agrupación inventada —
-					el mismo rollup que obtendrías del <code>rulesResults</code> del JSON crudo.
+					el mismo resultado agregado que obtendrías del <code>rulesResults</code> del JSON crudo.
 				</li>
 				<li>
 					<strong>Datos técnicos completos</strong> (contraído por defecto): una tarjeta resumen
@@ -50,7 +50,7 @@ export function HtmlReportContent() {
 			<p>
 				La barra de metadatos bajo la cabecera lleva el recuento de reglas, el recuento de
 				ocurrencias, la etiqueta del motor, la versión del esquema y el idioma al que se resolvió el
-				análisis. El fallback de idioma es por cadena de texto e invisible en el propio texto, así
+				análisis. El mecanismo de reserva de idioma es por cadena de texto e invisible en el propio texto, así
 				que <strong>un informe solicitado en un idioma que el motor no soporta se lee como uno en
 				inglés normal</strong> — el chip nombra el idioma solicitado junto al resuelto cuando ambos
 				difieren. Ver <a href="/configuration/locales/">Locales</a>.

@@ -7,7 +7,7 @@ export function BaselineContent() {
 	return (
 		<>
 			<p>
-				Una compuerta estricta en CI ("fallar el build ante cualquier resultado <code>fail</code>")
+				Una compuerta estricta en CI ("fallar la compilación ante cualquier resultado <code>fail</code>")
 				es un obstáculo para la adopción por parte de un equipo que analiza por primera vez un sitio
 				existente e imperfecto — no pueden publicar nada hasta corregir cada violación preexistente.
 				Un baseline permite que un equipo diga "estas N ya se conocen — no bloquees por ellas, pero
@@ -77,7 +77,7 @@ export function BaselineContent() {
 
 			<h2>Cómo funciona la coincidencia</h2>
 			<p>
-				Nada en la forma de una ocurrencia es una identidad perfecta e independiente de la posición
+				Nada en la estructura de una ocurrencia es una identidad perfecta e independiente de la posición
 				en la página (ver <a href="/results-reports/output-schema/">el esquema de salida</a>):{" "}
 				<code>selector</code> y <code>structuralPath</code> se derivan ambos de la posición del
 				elemento en el DOM, así que cualquiera de los dos puede cambiar cuando se modifica marcado{" "}
@@ -98,7 +98,7 @@ export function BaselineContent() {
 			</p>
 			<p>
 				<strong>Limitación conocida</strong>: un elemento cuyo propio marcado incluye contenido
-				dinámico (una marca de tiempo, un contador en vivo, un id generado aleatoriamente) nunca
+				dinámico (una marca de tiempo, un contador en vivo, un <code>id</code> generado aleatoriamente) nunca
 				coincidirá consigo mismo entre dos análisis, ya que su fragmento <code>html</code> difiere
 				cada vez. Si tus páginas presentan este caso, el mecanismo de baseline no ayudará para esas
 				reglas o elementos específicos — ver "Alternativa" más abajo.
@@ -108,12 +108,12 @@ export function BaselineContent() {
 				elementos que producen una combinación idéntica byte a byte de{" "}
 				<code>ruleId</code>+<code>reasonCode</code>+<code>html</code> (por ejemplo, el mismo
 				componente defectuoso repetido 3 veces) y el baseline solo registró 1 de ellos, un análisis
-				nuevo reporta 1 conocido y 2 nuevos — no los 3 como conocidos.
+				nuevo devuelve 1 conocido y 2 nuevos — no los 3 como conocidos.
 			</p>
 			<p>
-				Las entradas de baseline que no coinciden con nada en un análisis nuevo se reportan como{" "}
+				Las entradas de baseline que no coinciden con nada en un análisis nuevo se indican como{" "}
 				<strong>obsoletas</strong> (la violación presumiblemente se corrigió) — esto es solo
-				informativo y nunca bloquea el build; regenera el baseline con <code>--write-baseline</code>{" "}
+				informativo y nunca bloquea la compilación; regenera el baseline con <code>--write-baseline</code>{" "}
 				periódicamente para limpiarlas.
 			</p>
 

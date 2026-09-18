@@ -7,8 +7,9 @@ export function CliUsageContent() {
 	return (
 		<>
 			<p>
-				Un comando en lugar de código — no requiere framework de testing ni script de Node, bueno
-				para un paso de pipeline o una comprobación rápida contra un artefacto de build.
+				Un comando en lugar de código. No requiere un framework de pruebas ni un script de Node y
+				resulta adecuado para un paso del pipeline de CI o para una comprobación rápida de un
+				artefacto de compilación.
 			</p>
 			<CodeBlock
 				lines={[
@@ -42,12 +43,13 @@ export function CliUsageContent() {
 				]}
 			/>
 			<p>
-				<code>cantTell</code> nunca afecta al código de salida: <code>0</code> limpio, <code>1</code>{" "}
-				al menos un <code>fail</code> (el caso que condiciona CI), <code>2</code> un error de uso o
-				de análisis. La CLI solo lee <strong>HTML estático</strong> — un archivo local, o el cuerpo
-				crudo de un GET HTTP(S) — y nunca ejecuta el JavaScript de la página. Para páginas
-				renderizadas en cliente, usa uno de los bindings en su lugar, o llama al motor directamente
-				contra un navegador real y manejado (ver{" "}
+				<code>cantTell</code> nunca afecta al código de salida. El código <code>0</code> indica que
+				no se han encontrado fallos; <code>1</code>, que existe al menos un resultado{" "}
+				<code>fail</code> (el caso que condiciona CI); y <code>2</code>, que se ha producido un error
+				de uso o de análisis. La CLI solo lee <strong>HTML estático</strong> — un archivo local, o el
+				cuerpo crudo de un GET HTTP(S) — y nunca ejecuta el JavaScript de la página. Para páginas
+				renderizadas en cliente, usa una de las integraciones (<code>bindings</code>) en su lugar, o
+				llama al motor directamente contra un navegador real y manejado (ver{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> Patrón 2).
 			</p>
 			<p>

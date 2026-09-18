@@ -35,7 +35,12 @@ const precedenceRows = [
 	},
 	{
 		id: "pass",
-		condition: "En cualquier otro caso (todos se ejecutaron, ninguno falló ni quedó en cantTell, no todos son N/A)",
+		condition: (
+			<>
+				En cualquier otro caso (todos se ejecutaron, ninguno falló ni quedó en <code>cantTell</code>, no
+				todos son N/A)
+			</>
+		),
 		outcome: <code>pass</code>,
 	},
 ];
@@ -68,10 +73,10 @@ export function WcagMappingContent() {
 					<code>coverage/coverage-report.md</code>, el desglose de facetas por SC.
 				</li>
 				<li>
-					<strong>Reglas compuestas (rollup de SC de WCAG)</strong> (<code>rulesResults[]</code>) —
-					un agregado generado de cada regla atómica asociada a un SC, que da un único veredicto
-					pass/fail/cantTell/notApplicable por SC en lugar de tener que combinar tú mismo docenas
-					de resultados atómicos. Ver{" "}
+					<strong>Reglas compuestas (resultado agregado por SC de WCAG)</strong> (<code>rulesResults[]</code>) —
+					un agregado generado de cada regla atómica asociada a un SC, que da un único veredicto{" "}
+					<code>pass</code>/<code>fail</code>/<code>cantTell</code>/<code>notApplicable</code> por SC en
+					lugar de tener que combinar tú mismo docenas de resultados atómicos. Ver{" "}
 					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-34`}>
 						la lista completa
 					</a>{" "}
@@ -142,9 +147,9 @@ export function WcagMappingContent() {
 			<p>
 				<strong>El criterio eliminado se maneja automáticamente.</strong> Cada ejecución resuelve
 				una versión de WCAG objetivo (<code>engineOptions.wcagVersion</code>, si no, lo que
-				impliquen tus etiquetas de versión, si no, <code>2.2</code>) y la reporta de vuelta como{" "}
+				impliquen tus etiquetas de versión, si no, <code>2.2</code>) y la devuelve como{" "}
 				<code>engine.wcagVersion</code>. Bajo un objetivo 2.2, una regla asociada solo al SC 4.1.1
-				Parsing no puede reportar <code>fail</code> — se ejecuta, reporta sus ocurrencias, y vuelve
+				Parsing no puede devolver <code>fail</code> — se ejecuta, informa de sus ocurrencias, y vuelve
 				como <code>cantTell</code> con un campo <code>wcagVersionScope</code> que explica la
 				coerción. Así, un análisis por defecto nunca bloquea por un criterio que WCAG 2.2 no
 				contiene, y un análisis 2.0/2.1 sigue obteniendo un veredicto real para el 4.1.1.
@@ -172,7 +177,7 @@ export function WcagMappingContent() {
 				Esa no es una limitación específica de surea11y; es inherente a WCAG en sí; una fracción
 				importante de los Criterios de Éxito requiere criterio humano (¿es este texto alternativo{" "}
 				<em>exacto</em>, y no solo <em>presente</em>?; ¿es este mensaje de error{" "}
-				<em>comprensible</em>?) o testing dinámico que la arquitectura de análisis estático del DOM
+				<em>comprensible</em>?) o pruebas dinámicas que la arquitectura de análisis estático del DOM
 				de este motor no puede realizar en absoluto (detección de trampas de teclado, disposición y
 				reflujo real con zoom). Ver{" "}
 				<a href="/help/known-limitations/">las limitaciones conocidas</a> para la lista completa y

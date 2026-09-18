@@ -6,7 +6,7 @@ const core = "https://github.com/SureA11y/core/blob/main";
 
 const sarifLevelRows = [
 	{ id: "fail", outcome: <code>fail</code>, level: <code>error</code>, meaning: "Violación determinista — el caso de bloqueo en CI." },
-	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "Requiere revisión humana — se muestra, pero no debería bloquear un build por sí sola." },
+	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "Requiere revisión humana — se muestra, pero no debería bloquear una compilación por sí sola." },
 ];
 
 const sarifFieldRows = [
@@ -102,7 +102,7 @@ export function SarifReportContent() {
 				</strong>
 				: que no haya alertas de contraste puede significar que la página está bien, o que el
 				contraste nunca fue calculable, y solo la notificación distingue entre ambos casos. El
-				bloque se emite solo cuando hay algo que decir, así que una ejecución sin nada que reportar
+				bloque se emite solo cuando hay algo que decir, así que una ejecución sin nada que indicar
 				no tiene ninguna clave <code>invocations</code>.
 			</p>
 			<DataTable
@@ -134,7 +134,7 @@ export function SarifReportContent() {
 
 			<h2 id="sarif-locations">Ubicaciones</h2>
 			<p>
-				El análisis basado en el DOM no tiene línea/columna que reportar, así que{" "}
+				El análisis basado en el DOM no tiene línea/columna que indicar, así que{" "}
 				<code>physicalLocation.artifactLocation.uri</code> es el propio objetivo analizado, no una
 				posición en un archivo fuente:
 			</p>
@@ -149,7 +149,7 @@ export function SarifReportContent() {
 					listando el hallazgo, pero no puede adjuntar una anotación en línea a una URL que no es un
 					archivo del repositorio — esto es inherente a cómo SARIF/Code Scanning asocian los
 					hallazgos con el código fuente, no una limitación de surea11y. Si necesitas anotaciones en
-					línea, analiza el archivo HTML renderizado (por ejemplo, un artefacto de salida del build)
+					línea, analiza el archivo HTML renderizado (por ejemplo, un artefacto de compilación)
 					en lugar de una URL en vivo.
 				</li>
 			</ul>

@@ -40,29 +40,29 @@ export function TestMatchersUsageContent() {
 	return (
 		<>
 			<p>
-				Para tests unitarios y de componentes — verifica la accesibilidad directamente dentro de
-				una suite de Jest o Vitest, contra el DOM que el test ya tiene, en lugar de manejar un
+				Para pruebas unitarias y de componentes — verifica la accesibilidad directamente dentro de
+				una suite de Jest o Vitest, contra el DOM que la prueba ya tiene, en lugar de manejar un
 				navegador real o headless. Si en cambio estás probando páginas completamente renderizadas,
 				consulta{" "}
-				<a href="/getting-started/">los bindings basados en navegador</a>.
+				<a href="/getting-started/">las integraciones (<code>binding</code>) basadas en navegador</a>.
 			</p>
 			<p>
 				<a href="https://github.com/SureA11y/test-matchers"><code>@surea11y/test-matchers</code></a>{" "}
 				es un único matcher, <code>toHaveNoA11yViolations()</code>,
 				que se conecta al <code>expect.extend()</code> de cualquiera de los dos frameworks sin
-				modificaciones — no tiene código propio específico de ningún framework. Analiza cualquier
-				entorno basado en jsdom bajo el que ya se ejecute tu test; no depende de <code>jsdom</code>{" "}
+				modificaciones. No tiene código propio específico de ningún framework. Analiza cualquier
+				entorno basado en jsdom bajo el que ya se ejecute tu prueba; no depende de <code>jsdom</code>{" "}
 				en sí ni lo configura por ti. El motor de surea11y es síncrono, así que este matcher también
-				lo es — sin <code>await</code>, sin el riesgo de olvidarlo y que el test pase en silencio
-				sobre una promesa resuelta.
+				lo es — sin <code>await</code>, sin el riesgo de olvidarlo y que la prueba se dé por superada
+				sin esperar a que se resuelva la promesa.
 			</p>
 			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/test-matchers", command: true }]} />
 
 			<h2>Configuración</h2>
 			<p>
-				Tu entorno de testing ya debe estar basado en jsdom — este matcher analiza cualquier{" "}
+				Tu entorno de pruebas ya debe estar basado en jsdom. Este matcher analiza cualquier{" "}
 				<code>document</code>/<code>window</code> que proporcione. Registra el matcher una vez, en
-				el archivo de configuración que tu ejecutor de tests ya cargue:
+				el archivo de configuración que tu ejecutor de pruebas ya cargue:
 			</p>
 			<h3>Jest</h3>
 			<CodeBlock
@@ -136,7 +136,7 @@ export function TestMatchersUsageContent() {
 				]}
 			/>
 			<p>
-				Esto también es agnóstico respecto al ejecutor de tests — los fragmentos anteriores son
+				Esto también es agnóstico respecto al ejecutor de pruebas: los fragmentos anteriores son
 				idénticos tanto si se ejecutan bajo Jest como bajo Vitest, una vez registrado el matcher.
 			</p>
 
@@ -170,7 +170,7 @@ export function TestMatchersUsageContent() {
 
 			<h2>Filtrar y configurar análisis</h2>
 			<p>
-				El segundo argumento acepta cualquier cosa que acepte <code>@surea11y/core</code> — consulta{" "}
+				El segundo argumento acepta cualquier cosa que acepte <code>@surea11y/core</code>. Consulta{" "}
 				<a href="/configuration/engine-options/">Opciones del motor</a> para ver la superficie completa. Algunos casos
 				comunes:
 			</p>
@@ -207,20 +207,20 @@ export function TestMatchersUsageContent() {
 			<h2>Qué comprueba y qué no</h2>
 			<p>
 				<strong>Solo los resultados <code>fail</code> condicionan la aserción</strong> — coincidiendo con
-				la convención del resto de bindings de surea11y de que los resultados <code>cantTell</code>{" "}
+				la convención del resto de integraciones de surea11y de que los resultados <code>cantTell</code>{" "}
 				son informativos, no fallos. Un enlace vago como{" "}
 				<code>&lt;a href="/pricing"&gt;Click here&lt;/a&gt;</code> es <code>cantTell</code>, no{" "}
-				<code>fail</code>, así que nunca rompe por sí solo un test que pasa — aunque cuando una
+				<code>fail</code>, así que nunca rompe por sí solo una prueba que pasa — aunque cuando una
 				aserción <em>sí</em> falla por otros motivos, cualquier resultado <code>cantTell</code>{" "}
 				se añade al mensaje de fallo como una nota aparte, para que siga siendo visible. Consulta{" "}
 				<a href="/help/known-limitations/">Limitaciones conocidas</a> para saber qué no
 				automatiza en absoluto este motor.
 			</p>
 			<p>
-				<strong>Limitar el alcance a un elemento solo informa de lo que hay dentro de él</strong> — un
+				<strong>Limitar el alcance a un elemento solo informa de lo que hay dentro de él</strong>. Un
 				fallo en otra parte de la página nunca hace fallar una aserción limitada a un{" "}
 				<code>container</code>. Internamente, el elemento analizado se marca temporalmente con un
-				atributo único y se analiza mediante ese selector, de forma invisible para tu test.
+				atributo único y se analiza mediante ese selector, de forma invisible para tu prueba.
 			</p>
 			<p>
 				<strong>Un puñado de reglas comprueban un hecho de toda la página</strong>, no algo en un
@@ -230,11 +230,11 @@ export function TestMatchersUsageContent() {
 				un fragmento de componente arbitrario. Pasar un <code>Element</code> (un{" "}
 				<code>container</code> de testing-library, <code>document.body</code>) informa estas{" "}
 				<code>notApplicable</code> en lugar de <code>fail</code>, así que un{" "}
-				<code>&lt;title&gt;</code> faltante nunca rompe un test a nivel de componente; pasar el
+				<code>&lt;title&gt;</code> faltante nunca rompe una prueba a nivel de componente; pasar el
 				propio <code>document</code> sí las evalúa de verdad. Si analizas{" "}
 				<code>document</code> directamente, define una vez el <code>lang</code> de{" "}
 				<code>document.title</code>/<code>document.documentElement</code> en tu archivo de
-				configuración en lugar de en cada test.
+				configuración en lugar de en cada prueba.
 			</p>
 
 			<h2>Mensajes de fallo</h2>
@@ -253,7 +253,7 @@ export function TestMatchersUsageContent() {
 				]}
 			/>
 			<p>
-				Cualquier resultado <code>cantTell</code> junto a los fallos se añade como una nota aparte,
+				Los resultados <code>cantTell</code> que acompañen a los fallos se añaden como una nota aparte,
 				para que siga siendo visible sin afectar a <code>pass</code>/<code>fail</code>:
 			</p>
 			<CodeBlock lines={["2 rule(s) need manual review (cantTell, not counted as failures): link-name-quality-manual, color-contrast-computable"]} />

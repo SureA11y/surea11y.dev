@@ -31,7 +31,7 @@ const localeReasonRows = [
 	{
 		id: "dictionary-not-loaded",
 		reason: <code>dictionary-not-loaded</code>,
-		meaning: "El proyecto incluye ese idioma, pero esta copia del motor no lo trae incorporado y no se proporcionó ninguno. En la práctica: el paquete independiente para navegador sin su archivo lateral de locale.",
+		meaning: "El proyecto incluye ese idioma, pero esta copia del motor no lo trae incorporado y no se proporcionó ninguno. En la práctica: el paquete independiente para navegador sin su archivo lateral de configuración regional.",
 	},
 	{
 		id: "unknown-locale",
@@ -51,8 +51,16 @@ const localeReasonRows = [
 ];
 
 const dictionaryLocationRows = [
-	{ id: "require", how: <code>require('@surea11y/core')</code>, what: "Todos los locales, incorporados. Nada que configurar." },
-	{ id: "binding", how: "Un binding (Playwright, Cypress, …)", what: "Todos los locales, incorporados. Nada que configurar." },
+	{ id: "require", how: <code>require('@surea11y/core')</code>, what: "Toda la configuración regional, incorporada. Nada que configurar." },
+	{
+		id: "binding",
+		how: (
+			<>
+				Una integración (<code>binding</code>) (Playwright, Cypress, …)
+			</>
+		),
+		what: "Toda la configuración regional, incorporada. Nada que configurar.",
+	},
 	{
 		id: "browser",
 		how: <code>surea11y.browser.js</code>,
@@ -74,11 +82,11 @@ export function LocalesContent() {
 				fija por idioma.
 			</p>
 
-			<h2>Cobertura actual de locales</h2>
+			<h2>Cobertura actual de configuración regional</h2>
 			<DataTable
 				rowKey="id"
 				columns={[
-					{ key: "locale", label: "Locale", width: "18%" },
+					{ key: "locale", label: "Configuración regional", width: "18%" },
 					{ key: "file", label: "Archivo", width: "24%" },
 					{ key: "keys", label: "Claves", width: "12%" },
 					{ key: "untranslated", label: "Valores que siguen en inglés", wrap: true },
@@ -93,24 +101,24 @@ export function LocalesContent() {
 				}))}
 			/>
 			<p>
-				Los archivos de locale son JSON simples: un mapa plano de clave a cadena traducida, en el
+				Los archivos de configuración regional son JSON simples: un mapa plano de clave a cadena traducida, en el
 				mismo orden de claves que <code>en.json</code>. No contienen nada más, así que contribuir
 				con un idioma significa editar texto y nunca tocar código.
 			</p>
 			<p>
-				Cada locale contiene todas las claves que tiene <code>en.json</code>. Mantenerlo así es
+				Cada configuración regional contiene todas las claves que tiene <code>en.json</code>. Mantenerlo así es
 				tarea de <code>npm run i18n:sync</code>: ejecútalo después de cualquier cambio en{" "}
-				<code>en.json</code> y reescribe cada archivo de locale no inglés para que coincida —
+				<code>en.json</code> y reescribe cada archivo de configuración regional no inglés para que coincida —
 				añadiendo claves nuevas, eliminando claves que <code>en.json</code> ya no tiene, y dejando
 				intactas las traducciones existentes. Una clave que añade se inicializa con el texto en
 				inglés, lo cual cuenta como no traducido hasta que alguien lo reemplace.
 			</p>
 
-			<h2>Seleccionar un locale</h2>
+			<h2>Seleccionar una configuración regional</h2>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { locale: 'fr' }, null);"]} />
-			<p>El valor predeterminado es <code>'en'</code> si se omite. Se acepta cualquier cadena; <strong>un locale no reconocido nunca es un error</strong>.</p>
+			<p>El valor predeterminado es <code>'en'</code> si se omite. Se acepta cualquier cadena; <strong>una configuración regional no reconocida nunca es un error</strong>.</p>
 
-			<h2>Cómo se elige un locale</h2>
+			<h2>Cómo se elige una configuración regional</h2>
 			<p>
 				Ocurren dos cosas, en este orden. Confundirlas es la fuente habitual de confusión, así que
 				se describen por separado.
@@ -148,7 +156,7 @@ export function LocalesContent() {
 				Una traducción a medias se muestra en tu idioma donde existe y en inglés en todo lo demás.
 			</p>
 
-			<h2>Saber qué locale obtuviste realmente</h2>
+			<h2>Saber qué configuración regional obtuviste realmente</h2>
 			<p>
 				El respaldo elegante tiene un inconveniente:{" "}
 				<strong>pide un idioma que la compilación no incluye y obtienes inglés fluido de vuelta,
@@ -208,7 +216,7 @@ export function LocalesContent() {
 				El paquete está dividido porque viaja por la red a cada página que lo usa, y ninguna página
 				necesita los cuatro idiomas. Mantener el inglés incorporado y el resto como opcional redujo
 				unos 280 KB de la descarga y evita que siga creciendo a medida que se añaden idiomas. Nada
-				más cambia: el paquete de Node y los bindings no se ven afectados.
+				más cambia: el paquete de Node y las integraciones no se ven afectados.
 			</p>
 			<CodeBlock
 				lang="html"
@@ -258,7 +266,7 @@ export function LocalesContent() {
 			</ul>
 			<p>
 				Ambas se incluyen en el resultado junto con el texto ya resuelto, así que puedes volver a
-				renderizar en un locale distinto a partir de un resultado guardado sin volver a analizar.
+				renderizar en una configuración regional distinta a partir de un resultado guardado sin volver a analizar.
 			</p>
 		</>
 	);
