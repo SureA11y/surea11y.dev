@@ -4,9 +4,9 @@ export const bindingUsage = {
 	cypress: {
 		intro: (
 			<p>
-				<a href="https://www.cypress.io/">Cypress</a> es un framework de testing end-to-end en
-				JavaScript que ejecuta tus tests dentro del propio navegador, junto a la aplicación bajo
-				test. surea11y se integra a través del binding{" "}
+				<a href="https://www.cypress.io/">Cypress</a> es un framework de pruebas end-to-end en
+				JavaScript que ejecuta tus pruebas dentro del propio navegador, junto a la aplicación
+				sometida a prueba. surea11y se integra mediante la integración (<code>binding</code>){" "}
 				<a href="https://github.com/SureA11y/cypress"><code>@surea11y/cypress</code></a>.
 			</p>
 		),
@@ -15,7 +15,7 @@ export const bindingUsage = {
 			<p>
 				<code>cypress</code> es una entrada de <code>peerDependencies</code>: necesitas tu propia
 				instalación de Cypress para que los tipos/runtime se resuelvan, igual que al escribir
-				cualquier spec de Cypress.
+				cualquier archivo de prueba de Cypress.
 			</p>
 		),
 		usage: [
@@ -41,9 +41,10 @@ export const bindingUsage = {
 			<p>
 				Sin argumento de constructor <code>{"{ page }"}</code>/<code>{"{ browser }"}</code>/
 				<code>{"{ driver }"}</code>{" "}
-				, a diferencia de los bindings basados en driver: en Cypress no existe ese tipo de handle.{" "}
-				<code>cy</code> está disponible de forma ambiental en cada spec y <em>es</em> el driver.{" "}
-				<strong><code>analyze()</code> devuelve un chainable de Cypress, no una Promise: no le hagas{" "}
+				, a diferencia de las integraciones basadas en driver: en Cypress no existe ese tipo de
+				referencia.{" "}
+				<code>cy</code> está disponible de forma ambiental en cada archivo de prueba y <em>es</em> el driver.{" "}
+				<strong><code>analyze()</code> devuelve un objeto encadenable de Cypress, no una Promise: no le hagas{" "}
 				<code>await</code></strong>; llama a <code>.then()</code> como se muestra arriba.
 			</p>
 		),
@@ -53,9 +54,9 @@ export const bindingUsage = {
 	playwright: {
 		intro: (
 			<p>
-				<a href="https://playwright.dev/">Playwright</a> es un framework de testing end-to-end
+				<a href="https://playwright.dev/">Playwright</a> es un framework de pruebas end-to-end
 				multinavegador de Microsoft, que controla motores reales de Chromium, Firefox y WebKit desde
-				Node.js. surea11y se integra a través del binding{" "}
+				Node.js. surea11y se integra mediante la integración (<code>binding</code>){" "}
 				<a href="https://github.com/SureA11y/playwright"><code>@surea11y/playwright</code></a>.
 			</p>
 		),
@@ -65,7 +66,7 @@ export const bindingUsage = {
 		],
 		installNote: (
 			<p>
-				El segundo comando es importante: cada test lanza un navegador real, y{" "}
+				El segundo comando es importante: cada prueba lanza un navegador real, y{" "}
 				<code>npm install</code> por sí solo no lo descarga.
 			</p>
 		),
@@ -99,10 +100,11 @@ export const bindingUsage = {
 	puppeteer: {
 		intro: (
 			<p>
-				<a href="https://pptr.dev/">Puppeteer</a> es una librería de Node.js para controlar Chrome/
-				Chromium en modo headless o completo mediante el protocolo DevTools: automatización y
-				scripting de navegador, usado a menudo para testing pero sin ser en sí mismo un framework de
-				testing. surea11y se integra a través del binding{" "}
+				<a href="https://pptr.dev/">Puppeteer</a> es una librería de Node.js para controlar
+				Chrome/Chromium en modo headless o completo mediante el protocolo DevTools. Se utiliza
+				para automatizar navegadores y ejecutar scripts. A menudo se emplea en pruebas, aunque no
+				es en sí mismo un framework de pruebas. surea11y se integra mediante la integración
+				(<code>binding</code>){" "}
 				<a href="https://github.com/SureA11y/puppeteer"><code>@surea11y/puppeteer</code></a>.
 			</p>
 		),
@@ -140,8 +142,8 @@ export const bindingUsage = {
 			<p>
 				<a href="https://www.selenium.dev/">Selenium WebDriver</a> es el estándar histórico para
 				controlar navegadores reales desde cualquier lenguaje: la herramienta de automatización
-				multinavegador más consolidada, usada habitualmente para testing end-to-end. surea11y se
-				integra a través del binding{" "}
+				multinavegador más consolidada, usada habitualmente para pruebas end-to-end. surea11y se
+				integra mediante la integración (<code>binding</code>){" "}
 				<a href="https://github.com/SureA11y/selenium"><code>@surea11y/selenium</code></a>.
 			</p>
 		),
@@ -149,7 +151,7 @@ export const bindingUsage = {
 		installNote: (
 			<p>
 				<code>selenium-webdriver</code> incluye Selenium Manager, que descarga y gestiona
-				automáticamente el <code>chromedriver</code> correspondiente la primera vez que construyes
+				automáticamente la versión correspondiente de ChromeDriver la primera vez que construyes
 				un driver: no hace falta un servidor Selenium aparte ni instalar el driver manualmente (Chrome
 				sí debe estar ya instalado en la máquina).
 			</p>
@@ -186,9 +188,9 @@ export const bindingUsage = {
 	webdriverio: {
 		intro: (
 			<p>
-				<a href="https://webdriver.io/">WebdriverIO</a> es un framework de automatización de tests
-				de Node.js construido sobre el protocolo WebDriver, que soporta tanto testing end-to-end
-				como testing de componentes. surea11y se integra a través del binding{" "}
+				<a href="https://webdriver.io/">WebdriverIO</a> es un framework de automatización de pruebas
+				de Node.js construido sobre el protocolo WebDriver, que soporta tanto pruebas end-to-end
+				como pruebas de componentes. surea11y se integra mediante la integración (<code>binding</code>){" "}
 				<a href="https://github.com/SureA11y/webdriverio"><code>@surea11y/webdriverio</code></a>.
 			</p>
 		),
@@ -227,9 +229,9 @@ export const bindingUsage = {
 			<p>
 				<strong>Fuerza el WebDriver clásico, no BiDi, para esta carga de trabajo.</strong>{" "}
 				WebdriverIO v9 usa el protocolo BiDi por defecto; una sesión de larga duración que emite
-				muchas llamadas a <code>browser.execute()</code> (exactamente lo que hace un análisis) se
-				degradó gravemente con BiDi en testing: la latencia por análisis pasó de ~2s a varios
-				minutos. Forzando el WebDriver clásico con{" "}
+				muchas llamadas a <code>browser.execute()</code> (exactamente lo que hace un análisis)
+				mostró una degradación grave del rendimiento con BiDi durante las pruebas: la latencia por
+				análisis pasó de ~2s a varios minutos. Forzando el WebDriver clásico con{" "}
 				<code>'wdio:enforceWebDriverClassic': true</code>, como se muestra arriba, se obtuvo un
 				~150ms estable por análisis.
 			</p>

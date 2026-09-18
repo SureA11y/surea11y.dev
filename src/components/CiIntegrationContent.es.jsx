@@ -15,12 +15,12 @@ export function CiIntegrationContent() {
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
 					<code>INTEGRATION.md</code>
 				</a>{" "}
-				— esta página trata específicamente sobre el CLI como paso de la canalización.
+				— esta página trata específicamente sobre el CLI como paso del pipeline de CI.
 			</p>
 			<p>
-				Todos estos se basan en los propios códigos de salida del CLI (<code>0</code> limpio,{" "}
+				Todas estas plantillas utilizan los códigos de salida de la CLI (<code>0</code> limpio,{" "}
 				<code>1</code> al menos un resultado — o uno <em>nuevo</em>, con <code>--baseline</code> —{" "}
-				<code>fail</code>, <code>2</code> un error de uso o de análisis) para controlar la canalización;
+				<code>fail</code>, <code>2</code> un error de uso o de análisis) para controlar el pipeline de CI;
 				no se necesita scripting adicional para un control básico de aprobado/fallido.
 			</p>
 
@@ -45,7 +45,7 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				Esto hace fallar el job en el momento en que se encuentra cualquier resultado <code>fail</code>.
+				Esto hace que el <code>job</code> falle en el momento en que se encuentra cualquier resultado <code>fail</code>.
 				Para un sitio existente con violaciones preexistentes, consulta la variante con baseline más
 				abajo en lugar de deshabilitar el paso.
 			</p>
@@ -73,7 +73,7 @@ export function CiIntegrationContent() {
 			<h3>Subir SARIF a GitHub Code Scanning</h3>
 			<p>
 				<code>upload-sarif</code> necesita el permiso <code>security-events: write</code> y{" "}
-				<strong>no hace fallar el job por sí mismo</strong> — combínalo con un paso de control
+				<strong>no hace fallar el <code>job</code> por sí mismo</strong> — combínalo con un paso de control
 				independiente (o <code>continue-on-error</code> + tu propia comprobación) si también quieres
 				que la compilación falle ante violaciones nuevas.
 			</p>
@@ -121,7 +121,7 @@ export function CiIntegrationContent() {
 			<p>
 				Bitbucket Pipelines no tiene un panel integrado que consuma SARIF equivalente a GitHub Code
 				Scanning, así que el código de salida del CLI (más, opcionalmente, <code>--html</code> como
-				artefacto descargable de la canalización) es el punto de integración práctico en lugar de{" "}
+				artefacto descargable del pipeline de CI) es el punto de integración práctico en lugar de{" "}
 				<code>--sarif</code>.
 			</p>
 			<CodeBlock
@@ -142,7 +142,7 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				El paso hace fallar la canalización según el código de salida del CLI, exactamente igual que
+				El paso hace fallar el pipeline de CI según el código de salida del CLI, exactamente igual que
 				cualquier otra entrada de <code>script</code>; <code>a11y-report.html</code> (consulta{" "}
 				<a href="/results-reports/html-report/">el informe HTML</a>) se adjunta como artefacto de
 				compilación descargable para que quien revise pueda abrirlo sin volver a ejecutar el análisis
@@ -151,7 +151,7 @@ export function CiIntegrationContent() {
 
 			<h2>Límites de minutos en el nivel gratuito/repos privados</h2>
 			<p>
-				Si el nivel gratuito de tu proveedor de canalizaciones tiene un límite de minutos (el nivel
+				Si el nivel gratuito de tu proveedor de pipelines de CI tiene un límite de minutos (el nivel
 				gratuito de Bitbucket Pipelines es de 50 minutos de compilación al mes en workspaces privados,
 				por ejemplo), un análisis basado en <code>jsdom</code> de HTML estático/renderizado en el
 				servidor (lo que hace el CLI) es mucho más económico que manejar un navegador real — consulta{" "}

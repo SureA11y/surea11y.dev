@@ -14,5 +14,5 @@ export const gettingStartedSections: GettingStartedSection[] = [
 	{ href: "/getting-started/webdriverio/", label: "WebdriverIO" },
 	{ href: "/getting-started/test-matchers/", label: "test-matchers" },
 	{ href: "/getting-started/cli/", label: "CLI" },
-	{ href: "/getting-started/standalone/", label: "Standalone", i18n: { es: { label: "Independiente" } } },
+	{ href: "/getting-started/standalone/", label: "Standalone", i18n: { es: { label: "Uso independiente" } } },
 ];

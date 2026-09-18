@@ -8,7 +8,7 @@ export function ResultsReportsContent() {
 				volver a derivar. Los tres formatos de informe siguientes se construyen directamente sobre
 				ese mismo objeto, cada uno pensado para un lector distinto: una persona revisando una
 				pestaña del navegador, un panel de CI que solo entiende SARIF, o el propio formato de
-				reporte de implementación del W3C. Elige la forma que se ajuste a quién va a mirarlo
+				informe de implementación del W3C. Elige la forma que se ajuste a quién va a mirarlo
 				realmente.
 			</p>
 
@@ -18,9 +18,9 @@ export function ResultsReportsContent() {
 				informe: un envoltorio de resultado de nivel superior, una entrada por regla (incluyendo
 				cada <code>pass</code> y <code>notApplicable</code> — nunca una lista de solo violaciones),
 				detalle por ocurrencia hasta el elemento marcado, códigos explícitos de incertidumbre para
-				todo lo que una regla no pudo decidir, y rollups compuestos por SC de WCAG. Vale la pena
+				todo lo que una regla no pudo decidir, y resultados agregados compuestos por SC de WCAG. Vale la pena
 				leerlo una vez si estás construyendo algo sobre un resultado crudo. Ver{" "}
-				<a href="/results-reports/output-schema/">Esquema de salida</a> para la forma completa.
+				<a href="/results-reports/output-schema/">Esquema de salida</a> para la estructura completa.
 			</p>
 
 			<h2>Informe HTML</h2>

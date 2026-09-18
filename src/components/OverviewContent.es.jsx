@@ -19,17 +19,17 @@ export function OverviewContent() {
 	return (
 		<>
 			<p>
-				<a href="https://github.com/SureA11y/core">@surea11y/core</a> es un <strong>motor de testing de accesibilidad</strong> que ejecutas en tu propia
-				suite de tests, canalización de CI o desde la línea de comandos.
+				<a href="https://github.com/SureA11y/core">@surea11y/core</a> es un <strong>motor de pruebas de accesibilidad</strong> que ejecutas en tu propia
+				suite de pruebas, canalización de CI o desde la línea de comandos.
 			</p>
 			<p>
-				Lo que lo distingue es lo que hace con los casos que el testing automatizado no puede resolver. Implementa
+				Lo que lo distingue es lo que hace con los casos que las pruebas automatizadas no pueden resolver. Implementa
 				el{" "}
 				<a href="https://www.w3.org/TR/act-rules-format/">
 					Accessibility Conformance Testing (ACT) Rules Format
 				</a>{" "}
-				abierto del W3C, verificado contra el propio corpus de tests publicado por ACT en lugar de juzgarse
-				solo contra sí mismo. Informa hallazgos, ausencia de hallazgos y —de forma poco habitual—
+				abierto del W3C, validado con el corpus público de casos de prueba de ACT, en lugar de evaluarse
+				únicamente con sus propias pruebas. Informa hallazgos, ausencia de hallazgos y —de forma poco habitual—
 				incertidumbre explícita, de modo que los resultados son auditables en lugar de tranquilizadores.
 			</p>
 			<p>
@@ -40,8 +40,7 @@ export function OverviewContent() {
 			<h2>No es un único producto</h2>
 			<p>
 				surea11y es una familia de paquetes que comparten un mismo motor, no una única herramienta con un
-				único comando de instalación. Instala el que coincida con cómo ya pruebas —
-				cada uno incorpora{" "}
+				único comando de instalación. Instala el que coincida con cómo ya pruebas. Cada uno incorpora{" "}
 				<code>@surea11y/core</code> por ti:
 			</p>
 			<DataTable
@@ -53,14 +52,14 @@ export function OverviewContent() {
 				rows={packageRows}
 			/>
 			<p>
-				Consulta <a href="/getting-started/">Primeros pasos</a> para ver la instalación y el uso de cada binding.
+				Consulta <a href="/getting-started/">Primeros pasos</a> para ver la instalación y el uso de cada integración (<code>binding</code>).
 			</p>
 
 			<h2>En qué se diferencian sus resultados</h2>
 			<p>
-				Cada regla toma una decisión determinista, a partir de un vocabulario fijo de cuatro resultados —
+				Cada regla toma una decisión determinista, a partir de un vocabulario fijo de cuatro resultados,
 				no la forma <code>violations</code>/<code>passes</code>/<code>incomplete</code>/
-				<code>inapplicable</code> que usan otras herramientas populares de testing de accesibilidad:
+				<code>inapplicable</code> que usan otras herramientas populares de pruebas de accesibilidad:
 			</p>
 			<ul className="outcome-list">
 				<li>
@@ -81,12 +80,12 @@ export function OverviewContent() {
 				</li>
 			</ul>
 			<p>
-				<code>cantTell</code> es el sentido del proyecto. Un motor que descarta en silencio lo que no puede
+				<code>cantTell</code> expresa uno de los principios centrales del proyecto. Un motor que descarta en silencio lo que no puede
 				determinar <strong>produce un informe más corto y una falsa sensación de cobertura</strong>. Consulta{" "}
-				<a href="/results-reports/output-schema/">Resultados e informes</a> para conocer la forma completa
+				<a href="/results-reports/output-schema/">Resultados e informes</a> para conocer la estructura completa
 				del resultado, y{" "}
 				<a href="/conformance/wcag-mapping/">Conformidad</a> para ver cómo los resultados individuales se
-				combinan en un veredicto de WCAG — incluida la forma en que se resuelve y aplica una versión de
+				combinan en un veredicto de WCAG, incluida la forma en que se resuelve y aplica una versión de
 				WCAG objetivo (2.0/2.1/2.2).
 			</p>
 
@@ -94,7 +93,7 @@ export function OverviewContent() {
 			<p>
 				Cada regla con una contraparte en{" "}
 				<a href="https://act-rules.github.io/">W3C ACT Rules</a> se ejecuta contra los propios casos de
-				test publicados por ACT: 798 ejemplos en 58 reglas. El motor no falla en ninguno de los ejemplos
+				prueba publicados por ACT: 798 ejemplos en 58 reglas. El motor no falla en ninguno de los ejemplos
 				que ACT marca como aprobados o no aplicables, por lo que no informa falsos positivos frente a ese
 				corpus. Treinta y un ejemplos que ACT marca como fallidos quedan sin señalar — en su mayoría son
 				juicios de valor, como si un encabezado describe el contenido que tiene debajo — consulta{" "}
@@ -129,8 +128,8 @@ export function OverviewContent() {
 			</blockquote>
 			<p>
 				Algunos requisitos de WCAG se pueden comprobar con total confianza. Otros necesitan juicio humano,
-				conocimiento del contexto o una evaluación de usabilidad. Una puntuación única o un veredicto de
-				aprobado/fallido aplana esa diferencia; surea11y la informa. Por eso existen <code>cantTell</code>{" "}
+				conocimiento del contexto o una evaluación de usabilidad. Una puntuación única o un veredicto
+				binario borra esa diferencia; surea11y la informa. Por eso existen <code>cantTell</code>{" "}
 				y <code>notApplicable</code> como resultados, y eso da forma a cada regla del motor.
 			</p>
 

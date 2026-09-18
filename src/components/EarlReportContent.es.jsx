@@ -40,7 +40,7 @@ export function EarlReportContent() {
 			<p>Dos audiencias, y ambas quieren el mismo documento por razones distintas.</p>
 			<p>
 				Un <strong>informe de implementación</strong> le dice al grupo comunitario ACT Rules cómo se
-				comporta este motor frente a sus casos de test, que es lo que permite que un motor aparezca
+				comporta este motor frente a sus casos de prueba, que es lo que permite que un motor aparezca
 				listado junto a las demás implementaciones. Estar listado no es un aval y el W3C no verifica
 				los datos — la formulación correcta es <em>"listado como implementación ACT"</em>, nunca{" "}
 				<em>"certificado por el W3C"</em>. El informe propio de este motor se publica en{" "}
@@ -60,7 +60,7 @@ export function EarlReportContent() {
 			<p>
 				El <a href="/results-reports/sarif-report/">informe SARIF</a> y el{" "}
 				<a href="/results-reports/html-report/">informe HTML</a> llevan{" "}
-				<strong>solo las violaciones</strong>: reportan las ocurrencias <code>fail</code> y{" "}
+				<strong>solo las violaciones</strong>: informan de las ocurrencias <code>fail</code> y{" "}
 				<code>cantTell</code> y descartan todo lo demás. EARL es lo contrario.{" "}
 				<strong>
 					Cada regla que se ejecutó se convierte en una aserción, incluidas <code>pass</code> e{" "}
@@ -112,9 +112,9 @@ export function EarlReportContent() {
 					<strong>
 						<code>test.title</code>
 					</strong>{" "}
-					es el id de regla propio del motor. En términos ACT, una regla es el{" "}
+					es el ID de regla propio del motor. En términos ACT, una regla es el{" "}
 					<em>procedimiento</em> que ejecutó la implementación, que es exactamente lo que nombra un
-					id de regla.
+					ID de regla.
 				</li>
 				<li>
 					<strong>
@@ -165,7 +165,7 @@ export function EarlReportContent() {
 					<code>cantTell</code> no le resta crédito de conformidad.
 				</strong>{" "}
 				Las propias reglas de consistencia de ACT permiten que una implementación automatizada
-				reporte "no se puede determinar" en algunos ejemplos — aunque no en todos — y aun así cuente
+				indique "no se puede determinar" en algunos ejemplos — aunque no en todos — y aun así cuente
 				como consistente. Lo que una implementación parcialmente consistente <em>no</em> puede hacer
 				es producir un falso positivo: fallar un ejemplo que la regla dice que debería pasar, o que
 				es inaplicable. Esa es la condición que vale la pena vigilar, y es una propiedad de las
@@ -195,7 +195,7 @@ export function EarlReportContent() {
 				</strong>
 			</p>
 			<p>
-				La salida es determinista: los sujetos se ordenan por fuente, las aserciones por id de regla,
+				La salida es determinista: los sujetos se ordenan por fuente, las aserciones por ID de regla,
 				y las mismas entradas producen una salida idéntica byte a byte sin importar el orden. Eso es
 				lo que hace útil una comparación entre dos versiones del motor.
 			</p>

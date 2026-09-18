@@ -19,8 +19,8 @@ export function RuleOrganizationContent() {
 
 			<h2>Automáticas frente a manuales</h2>
 			<p>
-				El <code>type</code> de cada regla es uno de dos tipos, y la diferencia está en lo que la regla
-				es <em>capaz de decidir</em> — no en qué resultado reporta:
+				Cada regla tiene uno de dos valores en la propiedad <code>type</code>, y la diferencia está en
+				lo que la regla es <em>capaz de decidir</em> — no en qué resultado informa:
 			</p>
 			<ul>
 				<li>
@@ -36,7 +36,7 @@ export function RuleOrganizationContent() {
 				</li>
 				<li>
 					<strong>manual</strong> — indica que una persona tiene que decidir; la regla no puede
-					resolver la cuestión a partir del markup en absoluto. Limitada a{" "}
+					resolver la cuestión a partir del marcado en absoluto. Limitada a{" "}
 					<code>cantTell</code>/<code>notApplicable</code> — nunca <code>fail</code>.
 				</li>
 			</ul>
@@ -44,14 +44,14 @@ export function RuleOrganizationContent() {
 				<strong>Que una regla manual informe <code>cantTell</code> no es el mismo evento que una regla
 				automática informe <code>cantTell</code>, aunque el valor sea idéntico</strong>: la regla
 				automática ya decidió y te está diciendo lo que encontró; la regla manual te está diciendo que
-				la cuestión no es decidible a partir del markup en absoluto. Consulta{" "}
+				la cuestión no es decidible a partir del marcado en absoluto. Consulta{" "}
 				<a href="/results-reports/output-schema/">Resultados e informes</a> para ver la referencia
 				completa de resultado/gravedad/confianza.
 			</p>
 
 			<h2>Cómo están estructurados los ID de regla</h2>
 			<p>
-				Un id de regla generalmente es <code>&lt;family&gt;-&lt;intent&gt;</code>: qué elementos/mecanismo
+				Un ID de regla generalmente es <code>&lt;family&gt;-&lt;intent&gt;</code>: qué elementos/mecanismo
 				apunta la regla, y luego qué pregunta hace sobre ellos. La familia de alternativas de imagen
 				(WCAG 1.1.1) es el ejemplo más claro:
 			</p>
@@ -72,21 +72,21 @@ export function RuleOrganizationContent() {
 			</ul>
 			<p>
 				La intención determina si una regla <em>puede</em> ser automática: "¿algo está presente?" suele
-				ser decidible solo a partir del markup, mientras que "¿es bueno?" casi nunca lo es. Esta es
+				ser decidible solo a partir del marcado, mientras que "¿es bueno?" casi nunca lo es. Esta es
 				también la lógica detrás de los enlaces de <strong>Reglas relacionadas</strong> en cada página
 				de regla — las reglas que comparten una familia (todo lo anterior al último segmento{" "}
-				<code>-</code> del id) son las que se agrupan ahí. El conjunto de reglas abarca docenas de
+				<code>-</code> del ID) son las que se agrupan ahí. El conjunto de reglas abarca docenas de
 				familias además de <code>img</code> — <code>aria-*</code>,{" "}
 				<code>contrast-*</code>, <code>dialog-*</code>, <code>iframe-*</code>, <code>label-*</code>,{" "}
 				<code>link-*</code>, <code>list-*</code>, <code>landmark-*</code>, y más — el{" "}
 				<a href="/rules/">catálogo</a> es la lista actual y generada.
 			</p>
 			<p>
-				Las reglas nunca mezclan familias: cada una consulta un tipo de elemento, usando los helpers
-				apropiados para él. Por eso también el conjunto de reglas tiene 132 reglas específicas en lugar
+				Las reglas nunca mezclan familias: cada una consulta un tipo de elemento, usando las funciones
+				auxiliares apropiadas para él. Por eso también el conjunto de reglas tiene 132 reglas específicas en lugar
 				de una docena de reglas amplias — dos comprobaciones que difieren en lo que deciden, a qué
 				apuntan o qué faceta de WCAG cubren se mantienen como reglas separadas en lugar de fusionarse,
-				de modo que un resultado nunca tiene que desenredarse después del hecho para decir qué se
+				de modo que un resultado nunca tiene que desambiguarse posteriormente para decir qué se
 				encontró exactamente.
 			</p>
 
@@ -100,10 +100,11 @@ export function RuleOrganizationContent() {
 				facetas del mismo SC — que es exactamente lo que hace arriba la familia img-alt para 1.1.1.
 			</p>
 			<p>
-				Esto importa al leer un resultado compuesto (rollup de WCAG-SC): un compuesto{" "}
-				<ResultBadge state="pass" size="sm" /> significa que toda comprobación automatizada para ese SC
-				salió limpia, pero <strong>si una faceta no tiene ninguna cobertura automatizada, el compuesto
-				guarda silencio sobre esa faceta en lugar de afirmar que está bien</strong>. Consulta{" "}
+				Esto importa al leer un resultado compuesto (resultado agregado por WCAG-SC): un resultado
+				agregado con estado{" "}
+				<ResultBadge state="pass" size="sm" /> significa que ninguna comprobación automatizada de ese
+				criterio detectó fallos, pero <strong>si una faceta no tiene ninguna cobertura automatizada, el
+				compuesto guarda silencio sobre esa faceta en lugar de afirmar que está bien</strong>. Consulta{" "}
 				<a href="/conformance/wcag-mapping/">Conformidad</a> para ver las tres capas (reglas atómicas,
 				facetas, compuestos) y cómo se calcula realmente el resultado de un compuesto.
 			</p>

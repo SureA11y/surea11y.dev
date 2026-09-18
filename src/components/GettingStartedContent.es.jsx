@@ -5,9 +5,9 @@ export function GettingStartedContent() {
 		<>
 			<h2>Instalación</h2>
 			<p>
-				No hay un único comando de instalación — surea11y es un motor central más una familia de
-				bindings publicados por separado, así que qué paquete(s) instalas depende de cómo ya
-				ejecutas tus tests o scripts. Elige tu stack:
+				No existe un único comando de instalación. surea11y combina un motor central con varias
+				integraciones publicadas por separado, por lo que el paquete que debes instalar depende de
+				cómo ejecutes actualmente tus pruebas o scripts. Elige la opción que corresponda a tu entorno:
 			</p>
 			<ul>
 				<li>
@@ -27,7 +27,7 @@ export function GettingStartedContent() {
 					<a href="/getting-started/cli/">CLI</a>.
 				</li>
 				<li>
-					<strong>Sin framework de testing ni paso de compilación:</strong>{" "}
+					<strong>Sin framework de pruebas ni paso de compilación:</strong>{" "}
 					<a href="/getting-started/standalone/">standalone</a> — instala{" "}
 					<code>@surea11y/core</code> directamente, o incorpora el bundle de navegador.
 				</li>
@@ -36,14 +36,16 @@ export function GettingStartedContent() {
 			<h2>Uso</h2>
 			<p>
 				Sea cual sea la forma en que ejecutes un análisis — jsdom, un navegador real, cualquier
-				binding, la CLI — devuelve la misma forma de resultado nativa: <code>checksResults</code>{" "}
+				integración (<code>binding</code>), la CLI — devuelve un resultado con la misma estructura
+				nativa: <code>checksResults</code>{" "}
 				(una entrada por regla, incluyendo cada <code>pass</code>/<code>notApplicable</code> — no
-				una lista de "solo violaciones") y <code>rulesResults</code> (rollups por SC de WCAG). Esta{" "}
-				<strong>no</strong> es la forma{" "}
+				una lista de "solo violaciones") y <code>rulesResults</code> (resultados agregados por SC de
+				WCAG). Esta{" "}
+				<strong>no</strong> es la estructura{" "}
 				<code>violations</code>/<code>passes</code>/<code>incomplete</code>/<code>inapplicable</code>{" "}
-				que usan otras herramientas populares de testing de accesibilidad — los nombres de método de
-				cada binding están modelados sobre convenciones comunes en este espacio por familiaridad de
-				migración, pero el esquema de resultado más rico se mantiene tal cual. Ver{" "}
+				que usan otras herramientas populares de pruebas de accesibilidad. Los métodos de cada
+				integración siguen convenciones habituales del ecosistema para facilitar la migración, pero
+				el esquema de resultado más rico se mantiene tal cual. Ver{" "}
 				<a href="/results-reports/output-schema/">Resultados e informes</a> para el esquema
 				completo.
 			</p>

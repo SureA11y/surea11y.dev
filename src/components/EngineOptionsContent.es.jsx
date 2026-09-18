@@ -17,7 +17,7 @@ const optionRows = [
 				parcialmente traducida nunca produce texto faltante. Todo esto es silencioso en las
 				propias cadenas, así que el resultado informa lo que realmente ocurrió en{" "}
 				<code>engine.locale</code> — compruébalo si necesitas saber si obtuviste el idioma que
-				pediste. Consulta <a href="/configuration/locales/">Locales</a>.
+				pediste. Consulta <a href="/configuration/locales/">Configuración regional</a>.
 			</>
 		),
 	},
@@ -29,7 +29,7 @@ const optionRows = [
 				<code>'2.0'</code>, <code>'2.1'</code> o <code>'2.2'</code> — qué versión de WCAG está
 				probando la conformidad de la ejecución. El valor predeterminado es el que implican tus
 				etiquetas de origen de versión, y <code>'2.2'</code> cuando no implican ninguna.{" "}
-				<strong>Lo único que cambia actualmente es el SC 4.1.1 Parsing, eliminado en 2.2</strong>:
+				<strong>Lo único que cambia actualmente es el criterio de éxito 4.1.1 Parsing, eliminado en 2.2</strong>:
 				bajo un objetivo 2.2, una regla etiquetada{" "}
 				<code>wcag22-removed</code> sigue ejecutándose y sigue informando sus ocurrencias, pero
 				no puede <code>fail</code> — consulta{" "}
@@ -50,7 +50,7 @@ const optionRows = [
 				paquete independiente para navegador recibe un archivo lateral de configuración
 				regional, y es la única forma de introducir un diccionario en un contexto de página, ya
 				que el ejecutor en la página está serializado y no puede leer archivos. Consulta{" "}
-				<a href="/configuration/locales/">Locales</a>.
+				<a href="/configuration/locales/">Configuración regional</a>.
 			</>
 		),
 	},
@@ -305,9 +305,9 @@ export function EngineOptionsContent() {
 				argumento (
 				<code>runOnly</code>), o <code>engineOptions.rules</code>/<code>.tags</code>/
 				<code>.tests</code>/<code>.includeMode</code>. Si <code>runOnly</code> contiene algún
-				filtro, gana directamente; de lo contrario, el motor recurre a{" "}
+				filtro, tiene prioridad; de lo contrario, el motor recurre a{" "}
 				<code>engineOptions</code>.{" "}
-				<strong>No los mezcles esperando que ambos se apliquen — elige uno.</strong>
+				<strong>No combines ambos mecanismos: no se aplican simultáneamente. Elige uno.</strong>
 			</p>
 
 			<h3>Mediante <code>runOnly</code> (4.º argumento)</h3>
@@ -386,14 +386,14 @@ export function EngineOptionsContent() {
 			<p>
 				Cada regla y compuesto lleva exactamente una etiqueta de nivel de versión de origen de
 				WCAG:{" "}
-				<code>wcag2a</code>/<code>wcag2aa</code>/<code>wcag2aaa</code> para un Criterio de Éxito
+				<code>wcag2a</code>/<code>wcag2aa</code>/<code>wcag2aaa</code> para un Criterio de Éxito (SC)
 				que sea línea base de WCAG 2.0, <code>wcag21a</code>/<code>wcag21aa</code>/<code>wcag21aaa</code>{" "}
-				para uno introducido recientemente en WCAG 2.1 (por ejemplo, <code>1.3.5</code> Identify
+				para uno introducido en WCAG 2.1 (por ejemplo, <code>1.3.5</code> Identify
 				Input Purpose),{" "}
 				<code>wcag22a</code>/<code>wcag22aa</code>/<code>wcag22aaa</code> para uno introducido
-				recientemente en WCAG 2.2 (por ejemplo, <code>2.5.8</code> Target Size Minimum). Una
+				en WCAG 2.2 (por ejemplo, <code>2.5.8</code> Target Size Minimum). Una
 				regla obtiene{" "}
-				<strong>solo</strong> la etiqueta de la versión de origen real de su SC — un SC
+				<strong>solo</strong> la etiqueta de la versión de origen real de su criterio de éxito — un criterio de éxito
 				introducido en 2.1 nunca lleva también la etiqueta <code>wcag2aa</code>, ya que no
 				existe bajo un objetivo de conformidad de WCAG 2.0.
 			</p>
@@ -420,7 +420,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Un SC va en sentido contrario.</strong> WCAG 2.2 eliminó el SC 4.1.1 Parsing —
+				<strong>Un criterio de éxito va en sentido contrario.</strong> WCAG 2.2 eliminó el criterio de éxito 4.1.1 Parsing —
 				el único criterio que se ha eliminado alguna vez en lugar de añadirse. Una regla mapeada
 				a él lleva su etiqueta de origen 2.0 (
 				<code>wcag2a</code>) como cualquier otra regla de línea base, más{" "}
@@ -451,7 +451,7 @@ export function EngineOptionsContent() {
 					<code>wcag21a</code>/<code>wcag21aa</code> se interpreta como objetivo 2.1, uno que
 					contiene cualquier{" "}
 					<code>wcag22*</code> etiqueta como 2.2, uno con solo etiquetas <code>wcag2*</code>{" "}
-					como 2.0. Solo cuentan esas nueve etiquetas — una etiqueta de SC (
+					como 2.0. Solo cuentan esas nueve etiquetas — una etiqueta de criterio de éxito (
 					<code>wcag411</code>) o <code>best-practice</code>{" "}
 					no dice nada sobre una versión.
 				</li>
@@ -474,7 +474,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				El objetivo resuelto se informa de vuelta en cada resultado como{" "}
+				La versión de destino resuelta se incluye en cada resultado como{" "}
 				<code>engine.wcagVersion</code>, así puedes confirmar cuál usó realmente una ejecución.
 			</p>
 			<p>
@@ -632,11 +632,11 @@ export function EngineOptionsContent() {
 				<code>'mat-select, mat-stepper'</code>).
 			</p>
 			<p>
-				Si estás usando un paquete de binding (<code>@surea11y/binding-base</code> y sus
-				wrappers de Playwright/Puppeteer), consulta el propio README de ese binding para ver si
+				Si estás usando un paquete de integración (<code>binding</code>) (<code>@surea11y/binding-base</code> y sus
+				wrappers de Playwright/Puppeteer), consulta el propio README de esa integración para ver si
 				su método constructor{" "}
 				<code>.exclude()</code> ya tiene una forma por regla — esta es una forma de{" "}
-				<code>engineOptions</code> documentada aquí a nivel del motor; no todos los bindings la
+				<code>engineOptions</code> documentada aquí a nivel del motor; no todas las integraciones la
 				han incorporado todavía.
 			</p>
 
@@ -674,7 +674,7 @@ export function EngineOptionsContent() {
 			/>
 			<p>
 				<strong>Reanálisis delimitado de una región tras un cambio de interfaz, omitiendo el
-				shadow DOM</strong> — útil en un test a nivel de componente donde solo te importa el
+				shadow DOM</strong> — útil en una prueba a nivel de componente donde solo te importa el
 				widget que acabas de cambiar:
 			</p>
 			<CodeBlock
@@ -686,7 +686,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Salida reproducible para testing de snapshot</strong> — fija un{" "}
+				<strong>Salida reproducible para pruebas de snapshot</strong> — fija un{" "}
 				<code>timestamp</code>{" "}
 				para que dos ejecuciones del mismo HTML produzcan un JSON idéntico byte a byte, y
 				solicita el desglose de tiempos de depuración:
