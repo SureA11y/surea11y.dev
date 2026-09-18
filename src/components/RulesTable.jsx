@@ -10,7 +10,22 @@ const columns = [
 		width: "26ch",
 		render: (value) => <a href={`/rules/${value}/`}>{value}</a>,
 	},
-	{ key: "title", label: "Title", wrap: true },
+	{
+		key: "title",
+		label: "Title",
+		wrap: true,
+		render: (value, row) => (
+			<>
+				{value}
+				{row.deprecated ? (
+					<>
+						{" "}
+						<Tag tone="accent">deprecated</Tag>
+					</>
+				) : null}
+			</>
+		),
+	},
 	{
 		key: "wcagSc",
 		label: "WCAG SC",
