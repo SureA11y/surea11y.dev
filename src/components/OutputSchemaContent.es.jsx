@@ -5,14 +5,14 @@ import { DataTable } from "./design-system/data/DataTable.jsx";
 const core = "https://github.com/SureA11y/core/blob/main";
 
 const topLevelRows = [
-	{ id: "engine.tag", field: <code>engine.tag</code>, meaning: <>La etiqueta de identidad propia del motor, actualmente <code>"a11ycore"</code>. Cada regla (integrada o personalizada) la lleva en <code>meta.tags</code> — los <code>ruleId</code> de las reglas en sí son simples (sin prefijo).</> },
+	{ id: "engine.tag", field: <code>engine.tag</code>, meaning: <>La etiqueta de identidad propia del motor, actualmente <code>"a11ycore"</code>. Cada regla (integrada o personalizada) la lleva en <code>meta.tags</code>: los <code>ruleId</code> de las reglas en sí son simples (sin prefijo).</> },
 	{
 		id: "engine.schemaVersion",
 		field: <code>engine.schemaVersion</code>,
 		meaning: (
 			<>
 				La versión del esquema de resultados (<code>"1.0.0"</code>). Sujeta a incrementarse si la
-				estructura de este documento cambia alguna vez de manera incompatible — ánclate a ella si
+				estructura de este documento cambia alguna vez de manera incompatible: ánclate a ella si
 				analizas la salida de forma programática. Consulta{" "}
 				<a href={`${core}/docs/API_STABILITY.md`}><code>API_STABILITY.md</code></a> para ver la
 				lista completa de campos estables/inestables y la política de incremento de versión.
@@ -30,7 +30,7 @@ const topLevelRows = [
 				diccionario se usó; <code>reason</code> explica el porqué de ese emparejamiento. Como el
 				mecanismo de reserva de idioma es gradual y se aplica cadena por cadena,{" "}
 				<strong>pedir un idioma que la compilación no incluye produce texto en inglés en lugar de
-				un error</strong> — este campo es cómo te enteras de eso sin leer las cadenas. Se informa
+				un error</strong>: este campo es cómo te enteras de eso sin leer las cadenas. Se informa
 				una vez por resultado: una ejecución usa un solo diccionario en todo momento.
 			</>
 		),
@@ -40,13 +40,13 @@ const topLevelRows = [
 		field: <code>engine.locale.reason</code>,
 		meaning: (
 			<>
-				<code>"ok"</code> — obtuviste el diccionario que pediste, y contiene todas las claves.{" "}
-				<code>"primary-subtag"</code> — tu código tenía un subtag sin diccionario propio, así que
+				<code>"ok"</code>: obtuviste el diccionario que pediste, y contiene todas las claves.{" "}
+				<code>"primary-subtag"</code>: tu código tenía un subtag sin diccionario propio, así que
 				se usó su idioma base: <code>"de-DE"</code> se resuelve a <code>"de"</code>.{" "}
-				<code>"dictionary-not-loaded"</code> — el proyecto incluye ese idioma, pero esta
+				<code>"dictionary-not-loaded"</code>: el proyecto incluye ese idioma, pero esta
 				compilación no lo lleva y no se suministró ninguno (el paquete independiente para
-				navegador, sin su archivo lateral de idioma). <code>"unknown-locale"</code> — el proyecto
-				no tiene ninguna traducción de ese tipo. <code>"partial-dictionary"</code> — se usó el
+				navegador, sin su archivo lateral de idioma). <code>"unknown-locale"</code>: el proyecto
+				no tiene ninguna traducción de ese tipo. <code>"partial-dictionary"</code>: se usó el
 				diccionario, pero le faltan claves que el inglés sí tiene, así que esas cadenas
 				recurrieron al inglés. Trata este conjunto como abierto; versiones posteriores pueden
 				añadir más.
@@ -60,7 +60,7 @@ const topLevelRows = [
 			<>
 				Contra qué versión de WCAG se evaluó la conformidad en esta ejecución: tu{" "}
 				<code>engineOptions.wcagVersion</code>, o lo que implicaban tus etiquetas de origen de
-				versión, o el valor predeterminado <code>"2.2"</code>. Hoy afecta a una sola cosa —{" "}
+				versión, o el valor predeterminado <code>"2.2"</code>. Hoy afecta a una sola cosa:{" "}
 				<strong>una regla mapeada únicamente al SC 4.1.1 Parsing no puede dar <code>fail</code>{" "}
 				bajo un objetivo 2.2</strong> (ver{" "}
 				<code>checksResults[i].wcagVersionScope</code> más abajo). Se informa una vez por
@@ -69,14 +69,14 @@ const topLevelRows = [
 		),
 	},
 	{ id: "url", field: <code>url</code>, meaning: <>El argumento <code>pageUrl</code> que pasaste, o <code>document.location.href</code> si pasaste <code>null</code>/lo omitiste, o <code>null</code> si ninguno está disponible.</> },
-	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> en el momento del análisis, o <code>null</code>.</> },
+	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> en el momento del análisis o <code>null</code>.</> },
 	{
 		id: "timestamp",
 		field: <code>timestamp</code>,
 		meaning: (
 			<>
 				<strong>No se genera automáticamente.</strong> Solo se establece si pasas{" "}
-				<code>engineOptions.timestamp</code> como una cadena no vacía — el motor no tiene reloj
+				<code>engineOptions.timestamp</code> como una cadena no vacía: el motor no tiene reloj
 				integrado (es determinista por diseño). Si quieres una marca de tiempo del análisis en el
 				resultado, súplela tú mismo.
 			</>
@@ -85,14 +85,14 @@ const topLevelRows = [
 	{
 		id: "perfStats",
 		field: <code>perfStats</code>,
-		meaning: <><code>null</code> a menos que <code>engineOptions.perfStats: true</code>. Temporizaciones/contadores internos — su estructura no está cubierta por este documento, trátalo como solo para depuración.</>,
+		meaning: <><code>null</code> a menos que <code>engineOptions.perfStats: true</code>. Temporizaciones/contadores internos: su estructura no está cubierta por este documento, trátalo como solo para depuración.</>,
 	},
 	{
 		id: "contextSelector",
 		field: <code>contextSelector</code>,
 		meaning: (
 			<>
-				El argumento (recortado) <code>contextSelector</code> que pasaste — una cadena, un array
+				El argumento (recortado) <code>contextSelector</code> que pasaste: una cadena, un array
 				de cadenas (análisis multi-región, ver <a href="/configuration/engine-options/">Opciones del motor</a>), o{" "}
 				<code>null</code> si no hay ninguno o está vacío.
 			</>
@@ -104,9 +104,9 @@ const topLevelRows = [
 		meaning: (
 			<>
 				Una entrada por cada <strong>regla atómica</strong> que se ejecutó (toda regla no
-				filtrada por <code>runOnly</code> — ver <a href="/configuration/engine-options/">Opciones del motor</a>).{" "}
+				filtrada por <code>runOnly</code>, ver <a href="/configuration/engine-options/">Opciones del motor</a>).{" "}
 				<strong>Cada regla cargada produce una entrada, incluso las que dan como outcome{" "}
-				<code>notApplicable</code></strong> — esto no es una lista de «solo violaciones».
+				<code>notApplicable</code></strong>: esto no es una lista de «solo violaciones».
 			</>
 		),
 	},
@@ -116,7 +116,7 @@ const topLevelRows = [
 		meaning: (
 			<>
 				Una entrada por cada <strong>regla compuesta (agregación por SC de WCAG)</strong> que se
-				ejecutó — ver <a href="#composite-result">Un resultado compuesto</a> y{" "}
+				ejecutó. Ver <a href="#composite-result">Un resultado compuesto</a> y{" "}
 				<a href="/conformance/wcag-mapping/">Conformidad</a>. Array vacío si ningún compuesto
 				coincidió con el filtro <code>runOnly</code>/etiqueta actual.
 			</>
@@ -163,7 +163,7 @@ const occurrenceRows = [
 		field: <code>html</code>,
 		meaning: (
 			<>
-				Un fragmento de outer-HTML del elemento señalado — úsalo como tu señal principal de «qué
+				Un fragmento de outer-HTML del elemento señalado: úsalo como tu señal principal de «qué
 				elemento es» cuando <code>includeShadowDom: true</code> (los selectores no atraviesan los
 				límites de shadow DOM).
 			</>
@@ -175,7 +175,7 @@ const occurrenceRows = [
 		meaning: (
 			<>
 				La ruta de índices de hermanos del elemento señalado, desde <code>documentElement</code>{" "}
-				hasta él (por ejemplo, <code>[1, 0, 2]</code>) — <code>[]</code> si el elemento{" "}
+				hasta él (por ejemplo, <code>[1, 0, 2]</code>): <code>[]</code> si el elemento{" "}
 				<em>es</em> <code>documentElement</code>, <code>null</code> si no pudo determinarse. Un
 				mecanismo de identidad de elemento más robusto que <code>selector</code> por sí solo:
 				sobrevive a cambios en el DOM que una cadena de selector no soportaría (un cambio de
@@ -205,7 +205,7 @@ const occurrenceRows = [
 				Presente en la mayoría de las ocurrencias: por qué el motor consideró este elemento
 				elegible (o no) según el modelo de elegibilidad que usó la regla. <code>eligible</code>{" "}
 				es ese resultado; <code>targetSet</code> indica qué modelo lo produjo (<code>'dom'</code>:
-				visibilidad de DOM/CSS en bruto — la mayoría de las reglas; <code>'acc'</code>:
+				visibilidad de DOM/CSS en bruto, la mayoría de las reglas; <code>'acc'</code>:
 				elegibilidad del árbol de accesibilidad). <code>accEligible</code> refleja{" "}
 				<code>eligible</code> solo cuando <code>targetSet</code> es <code>'acc'</code>; en caso
 				contrario es <code>null</code>. <code>reasons</code> es una lista de códigos de exclusión
@@ -218,8 +218,8 @@ const occurrenceRows = [
 		field: <code>data.details</code>,
 		meaning: (
 			<>
-				Datos estructurados específicos de la regla (métricas calculadas, referencias resueltas)
-				— <strong>no normativos</strong>: útiles para construir una interfaz más rica o para
+				Datos estructurados específicos de la regla (métricas calculadas, referencias resueltas),
+				<strong>no normativos</strong>: útiles para construir una interfaz más rica o para
 				depurar, pero nunca cambian lo que significan <code>outcome</code>/<code>severity</code>.
 				La estructura varía según la regla; trátalo como contexto adicional de mejor esfuerzo, no como
 				un contrato estable. La única excepción es{" "}
@@ -245,7 +245,7 @@ const occurrenceRows = [
 			</>
 		),
 	},
-	{ id: "uncertainty", field: <code>uncertainty</code>, meaning: <>Por qué no se pudo decidir este hallazgo — ver <a href="#uncertainty-codes">Códigos de incertidumbre</a> más abajo.</> },
+	{ id: "uncertainty", field: <code>uncertainty</code>, meaning: <>Por qué no se pudo decidir este hallazgo (ver <a href="#uncertainty-codes">Códigos de incertidumbre</a> más abajo).</> },
 ];
 
 const uncertaintyRows = [
@@ -258,9 +258,9 @@ const uncertaintyRows = [
 ];
 
 const outcomeRows = [
-	{ id: "fail", outcome: <code>fail</code>, meaning: "Violación determinista y normativa — el procedimiento de decisión no adivina nada.", manual: <>No (se fuerza a <code>cantTell</code>)</> },
+	{ id: "fail", outcome: <code>fail</code>, meaning: "Violación determinista y normativa: el procedimiento de decisión no adivina nada.", manual: <>No (se fuerza a <code>cantTell</code>)</> },
 	{ id: "pass", outcome: <code>pass</code>, meaning: "El/los objetivo(s) aplicable(s) de la regla existen y ninguno fue señalado.", manual: "Sí" },
-	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "Requiere juicio humano — ya sea genuinamente ambiguo, o el hallazgo de carácter consultivo de una regla manual.", manual: "Sí" },
+	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "Requiere juicio humano: ya sea genuinamente ambiguo o el hallazgo de carácter consultivo de una regla manual.", manual: "Sí" },
 	{ id: "notApplicable", outcome: <code>notApplicable</code>, meaning: "La regla no encontró elementos a los que aplicarse en esta página/ámbito.", manual: "Sí" },
 ];
 
@@ -273,7 +273,7 @@ export function OutputSchemaContent() {
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> para saber cuál
 				llamar). Todos los ejemplos de esta página son salida real del motor actual (
 				<code>schemaVersion: "1.0.0"</code>), no están escritos a mano. <code>runa11yCoreAcrossFrames</code>{" "}
-				devuelve una estructura distinta y recursiva que envuelve esta — ver{" "}
+				devuelve una estructura distinta y recursiva que envuelve esta. Ver{" "}
 				<a href="#cross-frame-result">Resultado entre frames</a> más abajo.
 			</p>
 
@@ -337,15 +337,15 @@ export function OutputSchemaContent() {
 					<code>frames</code> tiene una entrada por cada <code>&lt;iframe&gt;</code>/
 					<code>&lt;frame&gt;</code> hijo directo dentro del ámbito analizado. Un hijo alcanzable
 					(uno que llamó a <code>a11yCoreEnableFrameResponder()</code>) aporta su propio{" "}
-					<code>{"{ url, topFrame, frames }"}</code> completo — incluyendo{" "}
+					<code>{"{ url, topFrame, frames }"}</code> completo: incluyendo{" "}
 					<em>sus propios</em> <code>frames</code> anidados, de forma recursiva, ya que un nieto
 					anidado más profundo solo es alcanzable a través de su padre inmediato. Un hijo
-					inalcanzable (el caso común para la mayoría de los embebidos de terceros — sin
-					responder cooperante, o que agotó el tiempo de espera) aporta{" "}
+					inalcanzable (el caso común para la mayoría de los embebidos de terceros, sin
+					responder cooperante o que agotó el tiempo de espera) aporta{" "}
 					<code>{"{ url, error }"}</code> en su lugar, y no aborta el resto del análisis.
 				</li>
 				<li>
-					Esto es un <strong>árbol, no una lista plana</strong> — una diferencia deliberada
+					Esto es un <strong>árbol, no una lista plana</strong>: una diferencia deliberada
 					respecto a <code>@surea11y/playwright</code>'s <code>.frames(true)</code>, que{" "}
 					<em>sí</em> puede aplanar porque <code>page.frames()</code> de Playwright ya entrega
 					todos los frames sin importar la profundidad de anidamiento; un relé por{" "}
@@ -408,7 +408,7 @@ export function OutputSchemaContent() {
 					<strong>Las reglas <code>type: "manual"</code> nunca pueden devolver{" "}
 					<code>outcome: "fail"</code>.</strong>{" "}
 					Si la lógica propia de una regla manual hubiera dicho <code>fail</code>, el motor la
-					fuerza a <code>cantTell</code> y añade una nota explicativa a <code>error</code> — esto
+					fuerza a <code>cantTell</code> y añade una nota explicativa a <code>error</code>: esto
 					se aplica de forma centralizada (<code>policy.coerceManualFailToCantTell</code>,
 					activado por defecto bajo el contrato de política <code>a11y</code>; consulta{" "}
 					<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>), no es algo que cada
@@ -417,7 +417,7 @@ export function OutputSchemaContent() {
 				</li>
 				<li>
 					<strong><code>meta.normativeMappings</code></strong> es cómo un resultado de
-					comprobación se vincula de vuelta a un criterio de éxito de WCAG — <code>[]</code> para
+					comprobación se vincula de vuelta a un criterio de éxito de WCAG: <code>[]</code> para
 					reglas sin mapeo formal a WCAG (este motor las llama reglas consultivas{" "}
 					<code>type: "manual"</code>). Consulta{" "}
 					<a href="/conformance/wcag-mapping/">Conformidad</a> para ver cómo se agregan.
@@ -425,31 +425,31 @@ export function OutputSchemaContent() {
 				<li>
 					<strong><code>wcagVersionScope</code></strong>: presente solo cuando la versión de WCAG
 					objetivo de la ejecución convirtió el <code>fail</code> de esta regla en un{" "}
-					<code>cantTell</code> — hoy eso significa una regla mapeada al SC 4.1.1 Parsing (
+					<code>cantTell</code>: hoy eso significa una regla mapeada al SC 4.1.1 Parsing (
 					<code>duplicate-id</code>) bajo el objetivo 2.2 predeterminado, ya que 2.2 eliminó ese
 					criterio. <code>removedSc</code> enumera los criterios que dejaron de existir,{" "}
 					<code>target</code> es la versión que los eliminó, y <code>coercedFrom</code> es el
 					outcome que la propia regla devolvió. Las occurrences son las propias de la regla, sin
-					cambios — no se descartó nada, solo cambió el veredicto de conformidad. Ausente en
+					cambios: no se descartó nada, solo cambió el veredicto de conformidad. Ausente en
 					cualquier otro resultado, y <strong>nunca</strong> se indica a través de{" "}
 					<code>error</code>: no salió nada mal. Consulta{" "}
 					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtrado por versión de WCAG</a>.
 				</li>
 				<li>
-					<strong><code>error</code></strong>: presente solo en tres casos — la implementación de
+					<strong><code>error</code></strong>: presente solo en tres casos: la implementación de
 					la regla lanzó una excepción no capturada, se activó la coerción de <code>fail</code> manual descrita
-					arriba, o cada occurrence de un resultado <code>fail</code> tuvo su recorrido de
+					arriba o cada occurrence de un resultado <code>fail</code> tuvo su recorrido de
 					ancestros topando con un límite de profundidad interno (así que el motor no pudo
 					confirmar que el contenido señalado esté realmente expuesto) y todo el resultado se
 					forzó a <code>cantTell</code> del mismo modo. Una regla que lanza una excepción siempre
 					aparece como <code>outcome: "cantTell"</code> con <code>occurrences: []</code> y{" "}
-					<code>error</code> establecido al mensaje de la excepción — el motor nunca deja que una
+					<code>error</code> establecido al mensaje de la excepción: el motor nunca deja que una
 					regla rota haga fallar todo el análisis.
 				</li>
 				<li>
 					<strong><code>engineOptions</code></strong> en cada resultado es el objeto de opciones{" "}
 					<em>resuelto</em> (después de aplicar los valores predeterminados de locale/contrast),
-					no literalmente lo que pasaste — útil para confirmar qué vio realmente una regla dada,
+					no literalmente lo que pasaste: útil para confirmar qué vio realmente una regla dada,
 					especialmente el <code>locale</code> resuelto y <code>contrast.mode</code>/
 					<code>contrast.rootCanvasFallback</code>.
 				</li>
@@ -464,7 +464,7 @@ export function OutputSchemaContent() {
 			<p>
 				<code>notApplicable</code> es la única excepción. Una regla que no tuvo nada que juzgar
 				puede adjuntar una única occurrence explicando por qué, y las reglas de contraste hacen
-				exactamente eso cuando ningún texto tenía un fondo calculable — la diferencia entre «se
+				exactamente eso cuando ningún texto tenía un fondo calculable: la diferencia entre «se
 				comprobó, nada que señalar» y «no se pudo comprobar» es algo que este motor indica en
 				lugar de ocultar. Una occurrence así describe el análisis, no un elemento, así que su{" "}
 				<code>selector</code> está vacío.{" "}
@@ -521,7 +521,7 @@ export function OutputSchemaContent() {
 				rows={uncertaintyRows}
 			/>
 			<p>
-				<code>needed</code> indica, en una frase, qué resolvería la cuestión — lo que un revisor
+				<code>needed</code> indica, en una frase, qué resolvería la cuestión: lo que un revisor
 				tiene que ir a comprobar. <code>evidence</code> lleva lo que la regla <em>sí</em> llegó a
 				establecer, para que el revisor parta del trabajo del motor en lugar de repetirlo; su
 				estructura es específica de cada regla y, como <code>data.details</code>, no es un contrato
@@ -597,20 +597,20 @@ export function OutputSchemaContent() {
 			<ul>
 				<li>
 					<code>severity</code>: <code>minor</code> &lt; <code>moderate</code> &lt;{" "}
-					<code>serious</code> &lt; <code>critical</code> — la evaluación del autor de la regla
+					<code>serious</code> &lt; <code>critical</code>: la evaluación del autor de la regla
 					sobre el impacto en el usuario, independiente de <code>confidence</code>.
 				</li>
 				<li>
 					<code>confidence</code>: <code>low</code> &lt; <code>medium</code> &lt;{" "}
-					<code>high</code> — cuán seguro está el motor de que un veredicto{" "}
+					<code>high</code>: cuán seguro está el motor de que un veredicto{" "}
 					<code>fail</code>/<code>cantTell</code> es correcto. Ambos son metadatos informativos
 					para priorizar; ninguno cambia el significado de <code>outcome</code>.
 				</li>
 			</ul>
 			<p>
 				<strong>Un <code>fail</code> no siempre tiene <code>confidence: "high"</code>, y eso no es
-				una contradicción.</strong> El outcome describe el procedimiento de decisión — resolvió la
-				cuestión sin adivinar — mientras que <code>confidence</code> describe el modelo contra el
+				una contradicción.</strong> El outcome describe el procedimiento de decisión (resolvió la
+				cuestión sin adivinar), mientras que <code>confidence</code> describe el modelo contra el
 				que se tomó esa decisión. Un puñado de reglas automáticas deciden de forma determinista
 				contra algo que en sí mismo es una aproximación (las tablas curadas de roles WAI-ARIA, los
 				mapeos de roles nativos, un árbol de accesibilidad inferido a partir de marcado estático) y
@@ -633,7 +633,7 @@ export function OutputSchemaContent() {
 				Analizando <code>&lt;img src="logo.png"&gt;</code> (sin <code>alt</code>) y{" "}
 				<code>&lt;button&gt;&lt;/button&gt;</code> (sin nombre accesible), limitado a esas dos
 				reglas mediante <code>runOnly: {"{ includeRuleIds: [...] }"}</code> (ver{" "}
-				<a href="/configuration/engine-options/">Opciones del motor</a> — esto{" "}
+				<a href="/configuration/engine-options/">Opciones del motor</a>; esto{" "}
 				<strong>no</strong> es un array simple):
 			</p>
 			<CodeBlock
@@ -705,7 +705,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<p>
-				(Recortado por legibilidad — el resultado real también incluye{" "}
+				(Recortado por legibilidad: el resultado real también incluye{" "}
 				<code>title</code>/<code>description</code>/<code>i18n</code>/<code>meta</code>/
 				<code>engineOptions</code>/<code>schemaVersion</code> en cada entrada, según la estructura
 				completa mostrada arriba. <code>rulesResults</code> está vacío aquí porque{" "}

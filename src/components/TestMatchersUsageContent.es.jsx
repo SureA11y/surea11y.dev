@@ -10,7 +10,7 @@ const apiRows = [
 		param: <code>received</code>,
 		type: (
 			<>
-				<code>Element</code>, <code>Document</code>, o un resultado de análisis
+				<code>Element</code>, <code>Document</code> o un resultado de análisis
 			</>
 		),
 		meaning: (
@@ -28,7 +28,7 @@ const apiRows = [
 		type: "objeto (opcional)",
 		meaning: (
 			<>
-				Se pasa directamente al análisis de <code>@surea11y/core</code> — el mismo objeto de
+				Se pasa directamente al análisis de <code>@surea11y/core</code>: el mismo objeto de
 				opciones usado en el resto del ecosistema (consulta <a href="/configuration/engine-options/">Opciones del motor</a>). Se ignora
 				cuando <code>received</code> ya es un resultado de análisis.
 			</>
@@ -40,7 +40,7 @@ export function TestMatchersUsageContent() {
 	return (
 		<>
 			<p>
-				Para pruebas unitarias y de componentes — verifica la accesibilidad directamente dentro de
+				Para pruebas unitarias y de componentes: verifica la accesibilidad directamente dentro de
 				una suite de Jest o Vitest, contra el DOM que la prueba ya tiene, en lugar de manejar un
 				navegador real o headless. Si en cambio estás probando páginas completamente renderizadas,
 				consulta{" "}
@@ -53,7 +53,7 @@ export function TestMatchersUsageContent() {
 				modificaciones. No tiene código propio específico de ningún framework. Analiza cualquier
 				entorno basado en jsdom bajo el que ya se ejecute tu prueba; no depende de <code>jsdom</code>{" "}
 				en sí ni lo configura por ti. El motor de surea11y es síncrono, así que este matcher también
-				lo es — sin <code>await</code>, sin el riesgo de olvidarlo y que la prueba se dé por superada
+				lo es: sin <code>await</code>, sin el riesgo de olvidarlo y que la prueba se dé por superada
 				sin esperar a que se resuelva la promesa.
 			</p>
 			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/test-matchers", command: true }]} />
@@ -102,7 +102,7 @@ export function TestMatchersUsageContent() {
 			<p>
 				El <code>.d.ts</code> incluido amplía tanto la interfaz global <code>jest.Matchers</code>{" "}
 				de Jest como las interfaces <code>@vitest/expect</code> de Vitest, sin necesitar ningún{" "}
-				import de <code>@types/jest</code> o <code>vitest</code> para distribuirlo — sea cual sea
+				import de <code>@types/jest</code> o <code>vitest</code> para distribuirlo: sea cual sea
 				el framework realmente instalado, solo se activa la ampliación correspondiente.
 			</p>
 
@@ -119,9 +119,9 @@ export function TestMatchersUsageContent() {
 				]}
 			/>
 			<p>
-				...o cualquier <code>container</code> de testing-library — el de React Testing Library, el{" "}
+				...o cualquier <code>container</code> de testing-library: el de React Testing Library, el{" "}
 				<code>wrapper.element</code> de Vue Test Utils, el de Angular Testing Library, el de Svelte
-				Testing Library — ya que todos exponen un elemento DOM renderizado de la misma manera:
+				Testing Library, ya que todos exponen un elemento DOM renderizado de la misma manera:
 			</p>
 			<CodeBlock
 				lang="js"
@@ -154,8 +154,8 @@ export function TestMatchersUsageContent() {
 
 			<h3>Reutilizar un análisis en varias aserciones</h3>
 			<p>
-				Si ya estás calculando tú mismo un resultado de análisis de surea11y — para verificar
-				reglas específicas en varios bloques <code>it()</code> sin volver a analizar cada vez —
+				Si ya estás calculando tú mismo un resultado de análisis de surea11y (para verificar
+				reglas específicas en varios bloques <code>it()</code> sin volver a analizar cada vez),
 				pasa el objeto de resultado directamente en lugar de un nodo DOM:
 			</p>
 			<CodeBlock
@@ -200,17 +200,17 @@ export function TestMatchersUsageContent() {
 			/>
 			<p>
 				Devuelve la forma <code>{"{ pass, message }"}</code> que el <code>expect.extend()</code>{" "}
-				de ambos frameworks espera — nunca llamas a esto directamente; se conecta una vez mediante{" "}
+				de ambos frameworks espera: nunca llamas a esto directamente; se conecta una vez mediante{" "}
 				<code>expect.extend()</code> como se muestra en Configuración más arriba.
 			</p>
 
 			<h2>Qué comprueba y qué no</h2>
 			<p>
-				<strong>Solo los resultados <code>fail</code> condicionan la aserción</strong> — coincidiendo con
+				<strong>Solo los resultados <code>fail</code> condicionan la aserción</strong>: coincidiendo con
 				la convención del resto de integraciones de surea11y de que los resultados <code>cantTell</code>{" "}
 				son informativos, no fallos. Un enlace vago como{" "}
 				<code>&lt;a href="/pricing"&gt;Click here&lt;/a&gt;</code> es <code>cantTell</code>, no{" "}
-				<code>fail</code>, así que nunca rompe por sí solo una prueba que pasa — aunque cuando una
+				<code>fail</code>, así que nunca rompe por sí solo una prueba que pasa, aunque cuando una
 				aserción <em>sí</em> falla por otros motivos, cualquier resultado <code>cantTell</code>{" "}
 				se añade al mensaje de fallo como una nota aparte, para que siga siendo visible. Consulta{" "}
 				<a href="/help/known-limitations/">Limitaciones conocidas</a> para saber qué no
@@ -224,7 +224,7 @@ export function TestMatchersUsageContent() {
 			</p>
 			<p>
 				<strong>Un puñado de reglas comprueban un hecho de toda la página</strong>, no algo en un
-				subárbol concreto — <code>page-title-present</code>, <code>html-lang-attr-present</code>, y
+				subárbol concreto: <code>page-title-present</code>, <code>html-lang-attr-present</code>, y
 				algunas otras comprueban <code>document.title</code>/<code>document.documentElement</code>{" "}
 				directamente, ya que preguntar si <em>la página</em> tiene un título no tiene sentido para
 				un fragmento de componente arbitrario. Pasar un <code>Element</code> (un{" "}
@@ -239,7 +239,7 @@ export function TestMatchersUsageContent() {
 
 			<h2>Mensajes de fallo</h2>
 			<p>
-				Enumera cada ocurrencia, no solo cada regla — una regla puede marcar varios elementos — con
+				Enumera cada ocurrencia, no solo cada regla (una regla puede marcar varios elementos), con
 				el ID de la regla, la gravedad, un resumen legible, el selector del elemento que falla, y
 				una pista de corrección cuando está disponible:
 			</p>
@@ -267,7 +267,7 @@ export function TestMatchersUsageContent() {
 				</a>
 				. Para la superficie completa de <code>engineOptions</code> (locale, modos de contraste,
 				shadow DOM, reglas personalizadas, combinaciones de etiquetas de versión de WCAG), consulta{" "}
-				<a href={`${core}/docs/ENGINE_OPTIONS.md`}><code>ENGINE_OPTIONS.md</code></a> — este
+				<a href={`${core}/docs/ENGINE_OPTIONS.md`}><code>ENGINE_OPTIONS.md</code></a>. Este
 				paquete reenvía todo lo que le pasas en lugar de duplicar esa referencia.
 			</p>
 		</>

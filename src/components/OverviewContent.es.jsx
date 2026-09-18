@@ -30,7 +30,7 @@ export function OverviewLead() {
 					Accessibility Conformance Testing (ACT) Rules Format
 				</a>{" "}
 				abierto del W3C, validado con el corpus público de casos de prueba de ACT, en lugar de evaluarse
-				únicamente con sus propias pruebas. Informa hallazgos, ausencia de hallazgos y —de forma poco habitual—
+				únicamente con sus propias pruebas. Informa hallazgos, ausencia de hallazgos y, de forma poco habitual,
 				incertidumbre explícita, de modo que los resultados son auditables en lugar de tranquilizadores.
 			</p>
 			<p>
@@ -70,19 +70,19 @@ export function OverviewContent() {
 			</p>
 			<ul className="outcome-list">
 				<li>
-					<ResultBadge state="fail" /> (<code>fail</code>) — una violación demostrable a partir del DOM.
+					<ResultBadge state="fail" /> (<code>fail</code>): una violación demostrable a partir del DOM.
 					Reservado para casos objetivos y normativos.
 				</li>
 				<li>
-					<ResultBadge state="pass" /> (<code>pass</code>) — se cumple la condición específica de esta regla.{" "}
+					<ResultBadge state="pass" /> (<code>pass</code>): se cumple la condición específica de esta regla.{" "}
 					<strong>No es una afirmación de que la página sea accesible.</strong>
 				</li>
 				<li>
-					<ResultBadge state="unknown" /> (<code>cantTell</code>) — una persona tiene que decidir esto, y
+					<ResultBadge state="unknown" /> (<code>cantTell</code>): una persona tiene que decidir esto, y
 					el resultado indica qué era ambiguo.
 				</li>
 				<li>
-					<ResultBadge state="na" /> (<code>notApplicable</code>) — la precondición de la regla no está
+					<ResultBadge state="na" /> (<code>notApplicable</code>): la precondición de la regla no está
 					presente.
 				</li>
 			</ul>
@@ -102,8 +102,8 @@ export function OverviewContent() {
 				<a href="https://act-rules.github.io/">W3C ACT Rules</a> y se ejecutan contra los propios
 				casos de prueba publicados por ACT: 798 ejemplos en esas 58 reglas. El motor no falla en ninguno de los ejemplos
 				que ACT marca como aprobados o no aplicables, por lo que no informa falsos positivos frente a ese
-				corpus. Treinta y un ejemplos que ACT marca como fallidos quedan sin señalar — en su mayoría son
-				juicios de valor, como si un encabezado describe el contenido que tiene debajo — consulta{" "}
+				corpus. Treinta y un ejemplos que ACT marca como fallidos quedan sin señalar (en su mayoría son
+				juicios de valor, como si un encabezado describe el contenido que tiene debajo). Consulta{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a> para ver cada
 				uno, con el razonamiento.
 			</p>
@@ -126,7 +126,7 @@ export function OverviewContent() {
 				<li><strong>Salida estable y legible por máquina.</strong> Los identificadores de regla permanecen estables sin importar el idioma.</li>
 				<li><strong>Independiente del framework.</strong> Se ejecuta dentro de jsdom o de cualquier framework de automatización de navegador.</li>
 				<li><strong>Extensible.</strong> Agrega reglas personalizadas, registra políticas y filtra análisis por ID de regla, etiquetas o versión de WCAG.</li>
-				<li><strong>Informes localizados.</strong> Los mensajes legibles por humanos se pueden traducir sin afectar los datos legibles por máquina — hoy incluye <code>en</code>, <code>fr</code>, <code>de</code> y <code>es</code>.</li>
+				<li><strong>Informes localizados.</strong> Los mensajes legibles por humanos se pueden traducir sin afectar los datos legibles por máquina: hoy incluye <code>en</code>, <code>fr</code>, <code>de</code> y <code>es</code>.</li>
 			</ul>
 
 			<h2>Filosofía</h2>

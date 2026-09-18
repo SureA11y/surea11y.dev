@@ -42,7 +42,8 @@
 	"usageBinding.runnableExample": "un ejemplo ejecutable",
 	"usageBinding.inRepo": "en el propio repositorio del paquete.",
 	"usageBinding.nextSteps": "Siguiente:",
-	"usageBinding.engineOptions": "acota qué reglas se ejecutan",
-	"usageBinding.ciIntegration": "intégralo en tu CI",
-	"usageBinding.resultsSchema": "la forma completa del resultado"
+	"usageBinding.engineOptions": "elige qué reglas se ejecutan",
+	"usageBinding.ciIntegration": "integra el análisis en CI",
+	"usageBinding.resultsSchema": "consulta la estructura completa del resultado",
+	"usageBinding.and": "y"
 }

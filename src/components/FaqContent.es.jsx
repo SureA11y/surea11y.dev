@@ -35,7 +35,7 @@ export function FaqContent() {
 					regla</strong>, y el fallo parece un resultado normal (aunque poco informativo), no un error
 					de ejecución. Consulta <a href={`${core}/docs/RULE_AUTHORING.md`}><code>RULE_AUTHORING.md</code></a>{" "}
 					§1.1 para ver la explicación completa y la solución (mueve el valor dentro de{" "}
-					<code>runInPage</code>, o enrútalo a través de <code>ctx.rule</code>/<code>ctx.helpers</code>).
+					<code>runInPage</code> o enrútalo a través de <code>ctx.rule</code>/<code>ctx.helpers</code>).
 				</p>
 			</article>
 
@@ -45,10 +45,10 @@ export function FaqContent() {
 					indica <code>notApplicable</code>"
 				</h2>
 				<p>
-					jsdom puro (sin un navegador real) no implementa un motor de diseño CSS —{" "}
+					jsdom puro (sin un navegador real) no implementa un motor de diseño CSS:{" "}
 					<code>getBoundingClientRect()</code> siempre devuelve una geometría de cero. <strong>Las
 					reglas que necesitan información real de maquetación devuelven <code>notApplicable</code> al
-					ejecutarse con jsdom en lugar de adivinar.</strong> Ejecuta en su lugar a través de un navegador real (Puppeteer/Playwright — consulta{" "}
+					ejecutarse con jsdom en lugar de adivinar.</strong> Ejecuta en su lugar a través de un navegador real (Puppeteer/Playwright, consulta{" "}
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> Patrón 2) para
 					obtener hallazgos reales de estas reglas. Consulta{" "}
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>.
@@ -57,15 +57,15 @@ export function FaqContent() {
 
 			<article>
 				<h2>
-					"Solo veo apariciones de <code>fail</code>/<code>cantTell</code> — ¿dónde está la lista de
+					"Solo veo apariciones de <code>fail</code>/<code>cantTell</code>. ¿Dónde está la lista de
 					elementos que aprobaron?"
 				</h2>
 				<p>
-					<strong>Por diseño, este motor nunca enumera los elementos que una regla <em>aprobó</em> —
+					<strong>Por diseño, este motor nunca enumera los elementos que una regla <em>aprobó</em>,
 					solo los que señaló.</strong> El <code>outcome: 'pass'</code> general de una regla significa
 					"existían uno o más objetivos aplicables y ninguno fue señalado", pero{" "}
 					<code>occurrences</code> es <code>[]</code> en ambos casos. Si necesitas saber qué elementos
-					concretos se comprobaron y se consideraron correctos, eso actualmente no se expone — consulta{" "}
+					concretos se comprobaron y se consideraron correctos, eso actualmente no se expone. Consulta{" "}
 					<a href="/results-reports/output-schema/"><code>OUTPUT_SCHEMA.md</code></a>.
 				</p>
 			</article>
@@ -78,23 +78,23 @@ export function FaqContent() {
 				<p>Dos causas comunes, en orden de probabilidad:</p>
 				<ol>
 					<li>
-						<strong>El elemento está excluido del árbol de accesibilidad</strong> —{" "}
+						<strong>El elemento está excluido del árbol de accesibilidad</strong>:{" "}
 						<code>aria-hidden="true"</code>, <code>display: none</code>,{" "}
-						<code>visibility: hidden</code>, <code>hidden</code>, o un ancestro <code>inert</code>.
+						<code>visibility: hidden</code>, <code>hidden</code> o un ancestro <code>inert</code>.
 						La mayoría de las reglas omiten contenido que ya es invisible para la tecnología de
 						asistencia, ya que comprobar un elemento oculto no tendría sentido y podría producir un{" "}
 						<code>fail</code> engañoso sobre contenido que ningún usuario encuentra. Algunas reglas
 						se excluyen explícitamente de este filtro cuando no tendría sentido aplicarlo (por
-						ejemplo, <code>no-autoplay-audio</code> — el audio oculto sigue sonando) — revisa el
+						ejemplo, <code>no-autoplay-audio</code>: el audio oculto sigue sonando). Revisa el
 						comentario de encabezado del archivo de la regla específica (
 						<code>@applicability</code>) en <code>src/checks/</code>.
 					</li>
 					<li>
-						<strong><code>excludeSelectors</code></strong> — si has configurado esto (directamente
+						<strong><code>excludeSelectors</code></strong>: si has configurado esto (directamente
 						o heredado de una configuración compartida), confirma que el elemento en cuestión no
 						coincide con él. Recuerda que esto también se puede limitar a una sola regla mediante{" "}
 						<code>engineOptions.rules[ruleId].excludeSelectors</code> (consulta{" "}
-						<a href="/configuration/engine-options/#rule-scoped-excludeselectors"><code>ENGINE_OPTIONS.md</code></a>) — si una regla que
+						<a href="/configuration/engine-options/#rule-scoped-excludeselectors"><code>ENGINE_OPTIONS.md</code></a>). Si una regla que
 						esperas que se active sigue devolviendo <code>notApplicable</code>/<code>pass</code>{" "}
 						solo para un elemento, comprueba si esa regla en particular tiene su propia lista de
 						exclusión configurada, no solo la global.
@@ -105,11 +105,11 @@ export function FaqContent() {
 			<article>
 				<h2>"¿Un análisis limpio (<code>pass</code> en todo) significa que la página es conforme con WCAG?"</h2>
 				<p>
-					No — consulta <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
+					No. Consulta <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
 					<strong>Un <code>pass</code> significa que toda comprobación <em>automatizable</em> salió
 					limpia.</strong> Una fracción considerable de WCAG requiere juicio humano (texto alternativo
 					preciso, mensajes de error comprensibles) o pruebas dinámicas que la arquitectura de este
-					motor no puede hacer en absoluto (trampas de teclado, reflow al hacer zoom) — consulta{" "}
+					motor no puede hacer en absoluto (trampas de teclado, reflow al hacer zoom). Consulta{" "}
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a> para ver la lista
 					explícita, deliberadamente no exhaustiva.
 				</p>
@@ -118,7 +118,7 @@ export function FaqContent() {
 			<article>
 				<h2>"¿Debo tratar <code>cantTell</code> como un fallo?"</h2>
 				<p>
-					<strong>Trátalo como "necesita que lo revise una persona" — por diseño no es ni aprobado ni
+					<strong>Trátalo como "necesita que lo revise una persona": por diseño no es ni aprobado ni
 					fallido.</strong> La mayoría de los equipos registran los hallazgos de <code>cantTell</code>{" "}
 					sin hacer fallar la CI por ellos, ya que hacer fallar una compilación por algo que el motor
 					explícitamente no pudo determinar tiende a enseñar a la gente a ignorar la validación.
@@ -150,12 +150,12 @@ export function FaqContent() {
 
 			<article>
 				<h2>
-					"<code>runDomRulesInPage</code> frente a <code>runa11yCoreInPage</code> — ¿cuál necesito?"
+					"<code>runDomRulesInPage</code> frente a <code>runa11yCoreInPage</code>: ¿cuál necesito?"
 				</h2>
 				<p>
 					<code>runDomRulesInPage</code> si la llamas directamente en el mismo proceso de Node (jsdom,
 					un content script de extensión de navegador). <code>runa11yCoreInPage</code> si le entregas
-					la <em>función en sí</em> a un realm de JS diferente — casi siempre{" "}
+					la <em>función en sí</em> a un realm de JS diferente: casi siempre{" "}
 					<code>page.evaluate</code> en Puppeteer/Playwright, que serializa la función a texto fuente
 					y la vuelve a ejecutar dentro de la pestaña del navegador (que no tiene acceso al ámbito de
 					tus módulos de Node). Consulta <a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>{" "}

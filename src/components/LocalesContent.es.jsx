@@ -21,7 +21,7 @@ const localeReasonRows = [
 		reason: <code>primary-subtag</code>,
 		meaning: (
 			<>
-				Tu código incluía una subetiqueta sin diccionario propio, así que se usó su idioma base —
+				Tu código incluía una subetiqueta sin diccionario propio, así que se usó su idioma base:
 				pediste <code>de-DE</code> y obtuviste <code>de</code>. Es normal y esperado; no hay nada
 				que corregir. Una diferencia solo de mayúsculas/minúsculas no es esto: <code>DE</code>{" "}
 				informa <code>ok</code>.
@@ -78,7 +78,7 @@ export function LocalesContent() {
 		<>
 			<p>
 				El título/descripción de cada regla, y el resumen/pista de cada ocurrencia, se localizan
-				mediante una búsqueda en un diccionario basado en claves — no están codificados de forma
+				mediante una búsqueda en un diccionario basado en claves: no están codificados de forma
 				fija por idioma.
 			</p>
 
@@ -108,7 +108,7 @@ export function LocalesContent() {
 			<p>
 				Cada configuración regional contiene todas las claves que tiene <code>en.json</code>. Mantenerlo así es
 				tarea de <code>npm run i18n:sync</code>: ejecútalo después de cualquier cambio en{" "}
-				<code>en.json</code> y reescribe cada archivo de configuración regional no inglés para que coincida —
+				<code>en.json</code> y reescribe cada archivo de configuración regional no inglés para que coincida:
 				añadiendo claves nuevas, eliminando claves que <code>en.json</code> ya no tiene, y dejando
 				intactas las traducciones existentes. Una clave que añade se inicializa con el texto en
 				inglés, lo cual cuenta como no traducido hasta que alguien lo reemplace.
@@ -123,11 +123,11 @@ export function LocalesContent() {
 				Ocurren dos cosas, en este orden. Confundirlas es la fuente habitual de confusión, así que
 				se describen por separado.
 			</p>
-			<h3>Paso 1 — elegir un diccionario (una vez por análisis)</h3>
+			<h3>Paso 1: elegir un diccionario (una vez por análisis)</h3>
 			<ol>
 				<li>
 					Usa el diccionario que coincide con tu código. <code>de</code> encuentra{" "}
-					<code>de.json</code>. Las mayúsculas/minúsculas no importan — <code>pt-br</code>,{" "}
+					<code>de.json</code>. Las mayúsculas/minúsculas no importan: <code>pt-br</code>,{" "}
 					<code>pt-BR</code> y <code>PT-BR</code> encuentran todos <code>pt-BR.json</code>.
 				</li>
 				<li>
@@ -141,14 +141,14 @@ export function LocalesContent() {
 				realmente debe leerse de forma distinta. Publica <code>de.json</code> y toda variante de
 				alemán queda cubierta.
 			</p>
-			<h3>Paso 2 — resolver cada cadena (por cadena)</h3>
+			<h3>Paso 2: resolver cada cadena (por cadena)</h3>
 			<p>Dentro del diccionario elegido, cada cadena se busca de forma individual:</p>
 			<ol>
 				<li>Toma el valor de la clave del diccionario elegido.</li>
 				<li>Si esa clave falta, toma la inglesa.</li>
 				<li>
-					Si el inglés tampoco la tiene — algo que no debería ocurrir con una clave incorporada,
-					pero puede pasar con una escrita a mano — usa el texto literal que la propia regla lleva.
+					Si el inglés tampoco la tiene (algo que no debería ocurrir con una clave incorporada,
+					pero puede pasar con una escrita a mano), usa el texto literal que la propia regla lleva.
 				</li>
 			</ol>
 			<p>
@@ -187,7 +187,7 @@ export function LocalesContent() {
 				rows={localeReasonRows}
 			/>
 			<p>
-				Trata la lista como abierta — una versión posterior puede añadir un valor, así que compara
+				Trata la lista como abierta: una versión posterior puede añadir un valor, así que compara
 				solo con los que te interesan y deja que el resto caiga en un valor por defecto.
 			</p>
 			<p>
@@ -227,7 +227,7 @@ export function LocalesContent() {
 			/>
 			<p>
 				Pide un idioma cuyo archivo no cargaste y obtienes inglés, con{" "}
-				<code>engine.locale.reason</code> establecido en <code>dictionary-not-loaded</code> —
+				<code>engine.locale.reason</code> establecido en <code>dictionary-not-loaded</code>,
 				distinto de <code>unknown-locale</code>, que significa que el proyecto no tiene esa
 				traducción en absoluto.
 			</p>
@@ -236,7 +236,7 @@ export function LocalesContent() {
 			<p>
 				<code>engineOptions.messages</code> acepta <code>{"{ [locale]: { key: value } }"}</code>{" "}
 				y tiene prioridad sobre cualquier cosa incorporada o cargada desde un archivo lateral. Útil
-				para sobrescribir un puñado de cadenas, o para un idioma que mantienes de forma privada:
+				para sobrescribir un puñado de cadenas o para un idioma que mantienes de forma privada:
 			</p>
 			<CodeBlock
 				lang="js"
@@ -253,13 +253,13 @@ export function LocalesContent() {
 			<p>Dos espacios de nombres de claves independientes, ambos resueltos de la misma manera:</p>
 			<ul>
 				<li>
-					<strong>A nivel de regla</strong>: <code>meta.i18n.titleKey</code> / <code>meta.i18n.descriptionKey</code>{" "}
-					— resuelven el <code>title</code>/<code>description</code> de una regla en cada entrada
+					<strong>A nivel de regla</strong>: <code>meta.i18n.titleKey</code> / <code>meta.i18n.descriptionKey</code>,{" "}
+					resuelven el <code>title</code>/<code>description</code> de una regla en cada entrada
 					de <code>checksResults[]</code>.
 				</li>
 				<li>
 					<strong>A nivel de ocurrencia</strong>: <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,
-					con <code>i18n.params</code> para la interpolación de <code>{"{{placeholder}}"}</code> —
+					con <code>i18n.params</code> para la interpolación de <code>{"{{placeholder}}"}</code>,
 					resuelven el <code>summary</code>/<code>hint</code> de una ocurrencia. Consulta{" "}
 					<a href="/results-reports/output-schema/">el esquema de salida</a>.
 				</li>

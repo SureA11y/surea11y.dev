@@ -5,7 +5,7 @@ export function ConformanceContent() {
 		<>
 			<p>
 				<strong>Un análisis limpio no es, por sí solo, una declaración de conformidad con
-				WCAG</strong> — y pretender lo contrario es exactamente el tipo de exceso que este motor se
+				WCAG</strong>. Pretender lo contrario es exactamente el tipo de exceso que este motor se
 				niega a cometer. Esta sección cubre cómo los resultados de reglas individuales realmente se
 				agregan en un veredicto de Criterio de Éxito, qué cubre honestamente ese veredicto y qué no,
 				y cómo condicionar un pipeline de CI real a violaciones conocidas y ya revisadas en lugar de
@@ -26,7 +26,7 @@ export function ConformanceContent() {
 			<h2>Baseline / allowlist</h2>
 			<p>
 				No dejes que un primer análisis de un sitio existente e imperfecto bloquee cada compilación
-				futura — registra una sola vez lo que ya se conoce, y condiciona la CI solo a violaciones
+				futura: registra una sola vez lo que ya se conoce, y condiciona la CI solo a violaciones
 				genuinamente nuevas. Es la diferencia entre "no podemos publicar nada hasta que esto sea
 				perfecto" y "podemos detectar regresiones a partir de hoy", y es lo que de verdad hace que
 				un equipo active la puerta de control. Ver{" "}

@@ -16,7 +16,7 @@ const optionRows = [
 				texto literal en inglés de la regla), por lo que una configuración regional
 				parcialmente traducida nunca produce texto faltante. Todo esto es silencioso en las
 				propias cadenas, así que el resultado informa lo que realmente ocurrió en{" "}
-				<code>engine.locale</code> — compruébalo si necesitas saber si obtuviste el idioma que
+				<code>engine.locale</code>: compruébalo si necesitas saber si obtuviste el idioma que
 				pediste. Consulta <a href="/configuration/locales/">Configuración regional</a>.
 			</>
 		),
@@ -26,13 +26,13 @@ const optionRows = [
 		option: <code>wcagVersion</code>,
 		meaning: (
 			<>
-				<code>'2.0'</code>, <code>'2.1'</code> o <code>'2.2'</code> — qué versión de WCAG está
+				<code>'2.0'</code>, <code>'2.1'</code> o <code>'2.2'</code>: qué versión de WCAG está
 				probando la conformidad de la ejecución. El valor predeterminado es el que implican tus
 				etiquetas de origen de versión, y <code>'2.2'</code> cuando no implican ninguna.{" "}
 				<strong>Lo único que cambia actualmente es el criterio de éxito 4.1.1 Parsing, eliminado en 2.2</strong>:
 				bajo un objetivo 2.2, una regla etiquetada{" "}
 				<code>wcag22-removed</code> sigue ejecutándose y sigue informando sus ocurrencias, pero
-				no puede <code>fail</code> — consulta{" "}
+				no puede <code>fail</code>. Consulta{" "}
 				<a href="#filtering-by-wcag-version">"Filtrado por versión de WCAG"</a> más arriba.
 				Cualquier otro valor se ignora y se aplica el valor predeterminado.
 			</>
@@ -76,7 +76,7 @@ const optionRows = [
 				Predeterminado <code>true</code>: las reglas que usan <code>helpers.queryAllSmart</code>{" "}
 				atraviesan las raíces shadow abiertas. Configura <code>false</code> para analizar solo
 				el DOM ligero (light DOM).{" "}
-				<strong>Las raíces shadow cerradas nunca son alcanzables de todos modos</strong> —
+				<strong>Las raíces shadow cerradas nunca son alcanzables de todos modos</strong>:
 				ninguna API del DOM las expone.
 			</>
 		),
@@ -87,14 +87,14 @@ const optionRows = [
 		meaning: (
 			<>
 				Predeterminado <code>false</code>. Un puñado de reglas comprueba la presencia de una
-				propiedad que existe una vez por página real — <code>page-title-present</code>,{" "}
+				propiedad que existe una vez por página real: <code>page-title-present</code>,{" "}
 				<code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code>,{" "}
 				<code>aria-hidden-body</code>, <code>css-orientation-lock</code>,{" "}
 				<code>meta-refresh-no-exceptions</code>, <code>meta-refresh-timing-absent</code>,{" "}
 				<code>meta-viewport-zoom-enabled</code>, <code>meta-viewport-large</code>,{" "}
 				<code>page-title-patterns</code>, <code>region</code>,{" "}
 				<code>bypass-blocks-present</code>, <code>landmark-one-main</code>,{" "}
-				<code>page-has-heading-one</code> — e informa correctamente <code>notApplicable</code>{" "}
+				<code>page-has-heading-one</code>, e informa correctamente <code>notApplicable</code>{" "}
 				para estas en cuanto <code>contextSelector</code> ha delimitado una ejecución más
 				estrecha que el documento completo (<code>document.documentElement</code> ya no está
 				entre las raíces resueltas), ya que nunca se esperó que un subárbol delimitado llevara
@@ -103,7 +103,7 @@ const optionRows = [
 				<code>fragment: true</code> para el caso que la delimitación por sí sola no puede
 				detectar: un objetivo de análisis que es el documento <em>completo</em> dado pero que
 				nunca pretendió representar una página real (por ejemplo, un fragmento de componente
-				aislado analizado por sí solo) — esto fuerza la misma{" "}
+				aislado analizado por sí solo): esto fuerza la misma{" "}
 				<code>notApplicable</code> restringida incluso sin delimitar.
 			</>
 		),
@@ -114,8 +114,8 @@ const optionRows = [
 		meaning: (
 			<>
 				Los elementos que coinciden con cualquiera de estos selectores (y sus descendientes) se
-				omiten por completo, para <strong>todas</strong> las reglas — útil para banners de
-				cookies, contenidos incrustados de terceros, o widgets conocidos por generar ruido que
+				omiten por completo, para <strong>todas</strong> las reglas: útil para banners de
+				cookies, contenidos incrustados de terceros o widgets conocidos por generar ruido que
 				no controlas. Para excluir algo de una sola regla específica en su lugar, usa{" "}
 				<code>rules[ruleId].excludeSelectors</code> más abajo.
 			</>
@@ -151,7 +151,7 @@ const optionRows = [
 		option: <code>contrast.rootCanvasFallback</code>,
 		meaning: (
 			<>
-				El color de fondo de página que se asume cuando no se puede calcular en absoluto — solo
+				El color de fondo de página que se asume cuando no se puede calcular en absoluto: solo
 				importa en el modo <code>auditorAssist</code>.
 			</>
 		),
@@ -165,19 +165,19 @@ const optionRows = [
 				<code>contrast-enhanced</code>, <code>contrast-computable</code>) al decidir si un nodo
 				de texto es realmente elegible para comprobar. <strong>No lo lee ninguna otra
 				regla.</strong>{" "}
-				<code>'styleOnly'</code> (predeterminado): la elegibilidad es solo CSS —{" "}
+				<code>'styleOnly'</code> (predeterminado): la elegibilidad es solo CSS:{" "}
 				<code>display</code>, <code>visibility</code>, <code>opacity</code>, ocultamiento por
 				ancestro, etc. <code>'styleAndGeometry'</code>: añade comprobaciones reales de diseño (
-				<code>getClientRects()</code>/<code>getBoundingClientRect()</code>) encima de eso — el
-				texto sin rects de cliente, o con ancho/alto cero, también se excluye. Recurre a{" "}
+				<code>getClientRects()</code>/<code>getBoundingClientRect()</code>) encima de eso: el
+				texto sin rects de cliente o con ancho/alto cero también se excluye. Recurre a{" "}
 				<code>'styleAndGeometry'</code> cuando se ejecuta bajo un navegador real/Playwright-Puppeteer (
 				<code>runa11yCoreInPage</code>) y quieres que los hallazgos de contraste reflejen el
 				diseño realmente renderizado en lugar de solo el estilo calculado; bajo jsdom puro (
 				<code>runDomRulesInPage</code>
 				) no hay un motor de diseño real, así que <code>'styleAndGeometry'</code> básicamente
 				solo añade comprobaciones de tamaño cero de{" "}
-				<code>getBoundingClientRect()</code>, no una detección real de recorte/desbordamiento —
-				consulta <a href="/help/known-limitations/">limitaciones conocidas</a>.
+				<code>getBoundingClientRect()</code>, no una detección real de recorte/desbordamiento.
+				Consulta <a href="/help/known-limitations/">limitaciones conocidas</a>.
 			</>
 		),
 	},
@@ -186,7 +186,7 @@ const optionRows = [
 		option: <code>policyContract</code> ,
 		meaning: (
 			<>
-				Consulta <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> — controla qué
+				Consulta <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>: controla qué
 				valores de resultado/confianza están permitidos y si los <code>fail</code>{" "}
 				que emitirían las reglas manuales se fuerzan a <code>cantTell</code>.
 			</>
@@ -207,7 +207,7 @@ const optionRows = [
 				todas las 132 reglas del motor: configurar{" "}
 				<code>includeSelector: false</code> / <code>includeHtml: false</code> elimina selectores
 				y fragmentos de HTML de la gran mayoría de ellas. Un puñado todavía ensambla esos campos
-				por sí mismo dentro de <code>runInPage</code> y no se ve afectado — entre ellas{" "}
+				por sí mismo dentro de <code>runInPage</code> y no se ve afectado: entre ellas{" "}
 				<code>contrast-minimum</code>/<code>contrast-enhanced</code> (cuyos hallazgos son
 				fragmentos de texto, no elementos), <code>page-title-present</code> e{" "}
 				<code>identical-links-same-purpose</code>.{" "}
@@ -222,8 +222,8 @@ const optionRows = [
 		option: <code>rules[ruleId]</code>,
 		meaning: (
 			<>
-				Se pasa a esa regla como <code>ctx.config</code>, y — específicamente para{" "}
-				<code>excludeSelectors</code> — el propio motor lo lee antes de que la regla se ejecute.
+				Se pasa a esa regla como <code>ctx.config</code>, y, específicamente para{" "}
+				<code>excludeSelectors</code>, el propio motor lo lee antes de que la regla se ejecute.
 				Consulta{" "}
 				<a href="#rule-scoped-excludeselectors">"excludeSelectors por regla"</a> más abajo.
 				Cualquier otra clave es solo de paso: <strong>actualmente ninguna regla distribuida lee{" "}
@@ -238,7 +238,7 @@ const optionRows = [
 			<>
 				Un objeto de evidencia opcional, seguro para JSON, que tu aplicación anfitriona puede
 				proporcionar (con límites de profundidad y tamaño impuestos por el motor antes de que
-				las reglas lo vean, vía <code>ctx.inputs.probes</code>) — pensado para futuras reglas
+				las reglas lo vean, vía <code>ctx.inputs.probes</code>): pensado para futuras reglas
 				que puedan aceptar señales suministradas externamente (por ejemplo, mediciones reales de
 				diseño que un análisis estático del DOM no puede calcular por sí mismo).{" "}
 				<strong>Ninguna regla actual lo consume.</strong>
@@ -258,8 +258,8 @@ const optionRows = [
 				campo <code>perfStats</code> del resultado; <code>profileRules: true</code>{" "}
 				<strong>además</strong>{" "}
 				añade allí un desglose de tiempos por regla. <code>profileRules</code> por sí solo no
-				hace nada — <code>perfStats</code> es lo que crea el objeto donde vive el desglose.{" "}
-				<strong>La forma no es parte del contrato de salida estable — no construyas nada sobre
+				hace nada: <code>perfStats</code> es lo que crea el objeto donde vive el desglose.{" "}
+				<strong>La forma no es parte del contrato de salida estable: no construyas nada sobre
 				ella.</strong> Ten en cuenta también que{" "}
 				<code>profileRules</code> es la única opción que hace que la salida sea no determinista:
 				los contadores son estables entre ejecuciones idénticas, los tiempos de reloj no lo son.
@@ -280,7 +280,7 @@ const optionRows = [
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>
 					<code>INTEGRATION.md</code>
 				</a>
-				) — cuánto tiempo esperar a que un frame hijo responda a un ping (predeterminado{" "}
+				): cuánto tiempo esperar a que un frame hijo responda a un ping (predeterminado{" "}
 				<code>500</code>ms) y a una solicitud de ejecución completa (predeterminado{" "}
 				<code>60000</code>ms) antes de tratarlo como inalcanzable. Lo ignoran{" "}
 				<code>runDomRulesInPage</code>/<code>runa11yCoreInPage</code>.
@@ -301,9 +301,9 @@ export function EngineOptionsContent() {
 
 			<h2>Seleccionar qué reglas se ejecutan</h2>
 			<p>
-				Hay <strong>dos formas independientes</strong> de seleccionar reglas — el cuarto
+				Hay <strong>dos formas independientes</strong> de seleccionar reglas: el cuarto
 				argumento (
-				<code>runOnly</code>), o <code>engineOptions.rules</code>/<code>.tags</code>/
+				<code>runOnly</code>), o bien <code>engineOptions.rules</code>/<code>.tags</code>/
 				<code>.tests</code>/<code>.includeMode</code>. Si <code>runOnly</code> contiene algún
 				filtro, tiene prioridad; de lo contrario, el motor recurre a{" "}
 				<code>engineOptions</code>.{" "}
@@ -328,7 +328,7 @@ export function EngineOptionsContent() {
 				simple.</strong>{" "}
 				<code>runOnly: ['img-alt-present']</code> (un array simple) se{" "}
 				<strong>ignora silenciosamente</strong>; el motor ejecuta todas las reglas en su lugar.
-				Este es el error de integración más común con diferencia — consulta{" "}
+				Este es el error de integración más común con diferencia. Consulta{" "}
 				<a href="/help/faq/">las preguntas frecuentes</a>.
 			</p>
 			<DataTable
@@ -348,7 +348,7 @@ export function EngineOptionsContent() {
 							</>
 						),
 						type: <code>string[]</code>,
-						meaning: 'Misma coincidencia que arriba — se mantiene como un campo separado porque las reglas se llaman internamente "tests" (la unidad ejecutable atómica); funcionalmente idéntico a includeRuleIds/excludeRuleIds hoy en día.',
+						meaning: 'Misma coincidencia que arriba: se mantiene como un campo separado porque las reglas se llaman internamente "tests" (la unidad ejecutable atómica); funcionalmente idéntico a includeRuleIds/excludeRuleIds hoy en día.',
 					},
 					{ field: <code>tags</code>, type: <code>string[]</code>, meaning: "Ejecuta solo las reglas que llevan al menos una de estas etiquetas (por ejemplo, wcag412, wcag2aa, best-practice)." },
 					{ field: <code>excludeTags</code>, type: <code>string[]</code>, meaning: "Nunca ejecuta reglas que lleven cualquiera de estas etiquetas, se aplica después de la inclusión." },
@@ -365,7 +365,7 @@ export function EngineOptionsContent() {
 			/>
 			<p>
 				Cada uno de estos acepta un array o una cadena separada por comas, igual que la forma de{" "}
-				<code>engineOptions</code> de más abajo — <code>includeRuleIds: 'img-alt-present, button-name-present'</code>{" "}
+				<code>engineOptions</code> de más abajo: <code>includeRuleIds: 'img-alt-present, button-name-present'</code>{" "}
 				y <code>includeRuleIds: ['img-alt-present', 'button-name-present']</code> son
 				equivalentes.
 			</p>
@@ -378,8 +378,8 @@ export function EngineOptionsContent() {
 			<p>
 				También se acepta una <strong>forma heredada de filtro por etiqueta</strong> como valor
 				completo de{" "}
-				<code>runOnly</code>: <code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>{" "}
-				— equivalente a <code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>.
+				<code>runOnly</code>: <code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>,{" "}
+				equivalente a <code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>.
 			</p>
 
 			<h3 id="filtering-by-wcag-version">Filtrado por versión de WCAG (2.0, 2.1, 2.2)</h3>
@@ -393,14 +393,14 @@ export function EngineOptionsContent() {
 				<code>wcag22a</code>/<code>wcag22aa</code>/<code>wcag22aaa</code> para uno introducido
 				en WCAG 2.2 (por ejemplo, <code>2.5.8</code> Target Size Minimum). Una
 				regla obtiene{" "}
-				<strong>solo</strong> la etiqueta de la versión de origen real de su criterio de éxito — un criterio de éxito
+				<strong>solo</strong> la etiqueta de la versión de origen real de su criterio de éxito: un criterio de éxito
 				introducido en 2.1 nunca lleva también la etiqueta <code>wcag2aa</code>, ya que no
 				existe bajo un objetivo de conformidad de WCAG 2.0.
 			</p>
 			<p>
 				Dado que las versiones son acumulativas (2.1 = 2.0 + nuevo; 2.2 = 2.0 + 2.1 + nuevo),
 				selecciona un objetivo de conformidad de versión de WCAG combinando conjuntos de
-				etiquetas — la coincidencia OR del motor sobre{" "}
+				etiquetas: la coincidencia OR del motor sobre{" "}
 				<code>tags</code> (cualquier coincidencia incluye la regla) hace el resto:
 			</p>
 			<CodeBlock
@@ -420,7 +420,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Un criterio de éxito va en sentido contrario.</strong> WCAG 2.2 eliminó el criterio de éxito 4.1.1 Parsing —
+				<strong>Un criterio de éxito va en sentido contrario.</strong> WCAG 2.2 eliminó el criterio de éxito 4.1.1 Parsing:
 				el único criterio que se ha eliminado alguna vez en lugar de añadirse. Una regla mapeada
 				a él lleva su etiqueta de origen 2.0 (
 				<code>wcag2a</code>) como cualquier otra regla de línea base, más{" "}
@@ -442,7 +442,7 @@ export function EngineOptionsContent() {
 			<p>La versión objetivo se resuelve en este orden:</p>
 			<ol>
 				<li>
-					<code>engineOptions.wcagVersion</code> — <code>'2.0'</code>, <code>'2.1'</code> o{" "}
+					<code>engineOptions.wcagVersion</code>: <code>'2.0'</code>, <code>'2.1'</code> o{" "}
 					<code>'2.2'</code>, si lo configuras.
 				</li>
 				<li>
@@ -451,7 +451,7 @@ export function EngineOptionsContent() {
 					<code>wcag21a</code>/<code>wcag21aa</code> se interpreta como objetivo 2.1, uno que
 					contiene cualquier{" "}
 					<code>wcag22*</code> etiqueta como 2.2, uno con solo etiquetas <code>wcag2*</code>{" "}
-					como 2.0. Solo cuentan esas nueve etiquetas — una etiqueta de criterio de éxito (
+					como 2.0. Solo cuentan esas nueve etiquetas: una etiqueta de criterio de éxito (
 					<code>wcag411</code>) o <code>best-practice</code>{" "}
 					no dice nada sobre una versión.
 				</li>
@@ -478,7 +478,7 @@ export function EngineOptionsContent() {
 				<code>engine.wcagVersion</code>, así puedes confirmar cuál usó realmente una ejecución.
 			</p>
 			<p>
-				Si prefieres no ver la regla en absoluto bajo 2.2, exclúyela directamente — la etiqueta
+				Si prefieres no ver la regla en absoluto bajo 2.2, exclúyela directamente: la etiqueta
 				está ahí precisamente para eso:
 			</p>
 			<CodeBlock
@@ -493,8 +493,8 @@ export function EngineOptionsContent() {
 			/>
 			<p>
 				<code>duplicate-id</code> es la única regla que lleva esa etiqueta hoy en día. Si se
-				deja, sigue informando algo real — un id duplicado rompe <code>&lt;label for&gt;</code>,
-				los enlaces de fragmento y <code>getElementById</code> diga lo que diga el estándar —
+				deja, sigue informando algo real (un id duplicado rompe <code>&lt;label for&gt;</code>,
+				los enlaces de fragmento y <code>getElementById</code> diga lo que diga el estándar),
 				simplemente no es un fallo de conformidad 2.2.
 			</p>
 
@@ -519,7 +519,7 @@ export function EngineOptionsContent() {
 				tokens vacíos se descartan automáticamente.
 			</p>
 
-			<h2><code>engineOptions</code> — el resto</h2>
+			<h2><code>engineOptions</code>: el resto</h2>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -578,8 +578,8 @@ export function EngineOptionsContent() {
 
 			<h3 id="rule-scoped-excludeselectors"><code>excludeSelectors</code> por regla</h3>
 			<p>
-				El <code>excludeSelectors</code> de nivel superior se aplica a <em>todas</em> las reglas
-				— no hay forma de excluir un elemento de una sola regla mientras se siguen ejecutando
+				El <code>excludeSelectors</code> de nivel superior se aplica a <em>todas</em> las reglas:
+				no hay forma de excluir un elemento de una sola regla mientras se siguen ejecutando
 				todas las demás reglas sobre él. <code>rules[ruleId].excludeSelectors</code> llena ese
 				vacío: reduce los candidatos para{" "}
 				<strong>solo esa regla</strong>, además de (nunca en lugar de) la lista global.
@@ -605,7 +605,7 @@ export function EngineOptionsContent() {
 				su estructura ARIA interna de una manera que dispara un falso positivo específicamente
 				en <code>aria-required-children</code>, aunque el componente por lo demás esté bien. Con
 				solo el <code>excludeSelectors</code> global, la única forma de silenciar ese falso
-				positivo es <code>excludeSelectors: ['mat-select']</code> — lo cual también oculta{" "}
+				positivo es <code>excludeSelectors: ['mat-select']</code>: lo cual también oculta{" "}
 				<code>mat-select</code> a <em>todas las demás reglas</em>, incluidas{" "}
 				<code>contrast-minimum</code> y <code>aria-allowed-attr</code>, eliminando
 				silenciosamente cobertura real con la que esas comprobaciones nunca tuvieron problema.
@@ -615,11 +615,11 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				Las exclusiones efectivas para una regla dada son la <strong>unión</strong> de la lista
-				global y la lista propia de esa regla — un elemento que coincide con cualquiera de las
+				global y la lista propia de esa regla: un elemento que coincide con cualquiera de las
 				dos se elimina de los candidatos de esa regla. Una regla cuyos únicos elementos que
 				fallarían quedan todos excluidos de esta manera informa{" "}
 				<code>outcome: 'pass'</code> o <code>'notApplicable'</code> (siguiendo la convención
-				propia de esa regla para el caso sin candidatos), con <code>occurrences: []</code> —
+				propia de esa regla para el caso sin candidatos), con <code>occurrences: []</code>;
 				nunca{" "}
 				<code>outcome: 'fail'</code> con un array <code>occurrences</code> vacío, ya que esa
 				forma exacta está reservada en otra parte del esquema para significar "esta regla lanzó
@@ -635,12 +635,12 @@ export function EngineOptionsContent() {
 				Si estás usando un paquete de integración (<code>binding</code>) (<code>@surea11y/binding-base</code> y sus
 				wrappers de Playwright/Puppeteer), consulta el propio README de esa integración para ver si
 				su método constructor{" "}
-				<code>.exclude()</code> ya tiene una forma por regla — esta es una forma de{" "}
+				<code>.exclude()</code> ya tiene una forma por regla: esta es una forma de{" "}
 				<code>engineOptions</code> documentada aquí a nivel del motor; no todas las integraciones la
 				han incorporado todavía.
 			</p>
 
-			<h2>Recetas — combinar opciones para escenarios reales</h2>
+			<h2>Recetas: combinar opciones para escenarios reales</h2>
 			<p>
 				<strong>Puerta de CI: solo WCAG 2.2 AA, ignorando un widget de terceros que no
 				controlas</strong>
@@ -656,11 +656,11 @@ export function EngineOptionsContent() {
 			/>
 			<p>
 				<strong>Auditor humano haciendo una pasada de contraste en profundidad en un navegador
-				real</strong> — sacrifica algo de protección contra falsos positivos a cambio de más
+				real</strong>: sacrifica algo de protección contra falsos positivos a cambio de más
 				hallazgos, y comprueba el diseño real (no solo el estilo calculado) ya que se está
 				controlando una página real. Se muestra con el <code>page.evaluate</code> de Puppeteer
 				(acepta múltiples argumentos); si estás en Playwright, primero envuelve los cuatro
-				argumentos posicionales en un solo objeto — consulta{" "}
+				argumentos posicionales en un solo objeto; consulta{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>:
 			</p>
 			<CodeBlock
@@ -674,7 +674,7 @@ export function EngineOptionsContent() {
 			/>
 			<p>
 				<strong>Reanálisis delimitado de una región tras un cambio de interfaz, omitiendo el
-				shadow DOM</strong> — útil en una prueba a nivel de componente donde solo te importa el
+				shadow DOM</strong>: útil en una prueba a nivel de componente donde solo te importa el
 				widget que acabas de cambiar:
 			</p>
 			<CodeBlock
@@ -686,7 +686,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Salida reproducible para pruebas de snapshot</strong> — fija un{" "}
+				<strong>Salida reproducible para pruebas de snapshot</strong>: fija un{" "}
 				<code>timestamp</code>{" "}
 				para que dos ejecuciones del mismo HTML produzcan un JSON idéntico byte a byte, y
 				solicita el desglose de tiempos de depuración:
@@ -728,11 +728,11 @@ export function EngineOptionsContent() {
 				]}
 			/>
 
-			<h2><code>customRules</code> — reglas registradas en tiempo de ejecución</h2>
+			<h2><code>customRules</code>: reglas registradas en tiempo de ejecución</h2>
 			<p>
 				Todas las reglas distribuidas están incorporadas en <code>src/core.js</code> en tiempo
 				de compilación. <code>engineOptions.customRules</code> es la vía de escape en tiempo de
-				ejecución: un array de descriptores de regla registrados solo para esa llamada — no se
+				ejecución: un array de descriptores de regla registrados solo para esa llamada; no se
 				añade nada al catálogo estático, y nada persiste entre llamadas. Esto es deliberado, no
 				una limitación que sortear: surea11y ya toma <code>engineOptions</code> nuevas en cada
 				llamada sin configuración global mutable (a diferencia de otros motores, que necesitan
@@ -742,7 +742,7 @@ export function EngineOptionsContent() {
 			<p>
 				Llamar a la biblioteca directamente es una forma de acceder; la CLI también expone esto
 				vía <code>--custom-rules &lt;path&gt;</code> (un archivo local, cargado una vez por
-				análisis) — consulta{" "}
+				análisis). Consulta{" "}
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#custom-rules">
 					la documentación de la CLI
 				</a>
@@ -750,7 +750,7 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				Un descriptor tiene la <em>misma forma que la propia exportación de un módulo de regla
-				interno</em> — si ya sabes cómo escribir un archivo de regla para este motor, ya conoces
+				interno</em>: si ya sabes cómo escribir un archivo de regla para este motor, ya conoces
 				esta API:
 			</p>
 			<CodeBlock
@@ -772,7 +772,7 @@ export function EngineOptionsContent() {
 					<strong>cadena con el código fuente de la función</strong> (es decir,{" "}
 					<code>fn.toString()</code>). Pasa una función real cuando <code>engineOptions</code>{" "}
 					nunca sale del ámbito de JS actual (uso normal en Node/jsdom). Pasa una cadena cuando
-					sí lo hace — por ejemplo, una llamada de Playwright{" "}
+					sí lo hace: por ejemplo, una llamada de Playwright{" "}
 					<code>page.evaluate(runa11yCoreInPage, {"{ engineOptions }"})</code>, donde{" "}
 					<code>engineOptions</code> cruza un límite de JSON/clonación estructurada que no
 					puede llevar una referencia <code>Function</code> viva pero sí puede llevar una
@@ -782,7 +782,7 @@ export function EngineOptionsContent() {
 				</li>
 				<li>
 					<code>meta</code> recibe los mismos valores predeterminados/validación que una regla
-					en tiempo de compilación — omite lo que no necesites; <code>severity</code> tiene
+					en tiempo de compilación: omite lo que no necesites; <code>severity</code> tiene
 					como predeterminado <code>moderate</code>, <code>confidence</code> tiene como
 					predeterminado{" "}
 					<code>medium</code>, <code>type</code> tiene como predeterminado{" "}
@@ -795,14 +795,14 @@ export function EngineOptionsContent() {
 					accidental como una sobrescritura deliberada, cada colisión se muestra de dos formas:
 					un <code>console.warn</code> que nombra el/los id(s), y un array{" "}
 					<code>overriddenBuiltinIds</code> de nivel superior en el resultado (vacío cuando no
-					hay colisión) — consulta <a href="/results-reports/output-schema/">el esquema de
+					hay colisión). Consulta <a href="/results-reports/output-schema/">el esquema de
 					salida</a>.
 				</li>
 				<li>
-					Un descriptor inválido (<code>id</code> ausente/no-string, o un{" "}
+					Un descriptor inválido (<code>id</code> ausente/no-string, o bien un{" "}
 					<code>runInPage</code>{" "}
 					que no es una función ni una cadena de código fuente reconstruible) se omite
-					silenciosamente — el resto del análisis, incluidas todas las reglas integradas, sigue
+					silenciosamente: el resto del análisis, incluidas todas las reglas integradas, sigue
 					ejecutándose con normalidad. Esto no es un vacío de validación por corregir: una
 					regla personalizada es código arbitrario proporcionado por quien la llama, así que
 					"fallar cerrado en esta sola entrada, sin abortar el análisis" es el comportamiento
@@ -830,18 +830,18 @@ export function EngineOptionsContent() {
 			<ul>
 				<li>
 					<strong>Una sola cadena</strong> puede ser en sí misma una lista de selectores
-					separados por comas (semántica de unión CSS habitual) —{" "}
+					separados por comas (semántica de unión CSS habitual):{" "}
 					<code>'#a, #b'</code> analiza tanto <code>#a</code> como{" "}
 					<code>#b</code>.
 				</li>
 				<li>
 					<strong>Un array de cadenas</strong> analiza la unión de las coincidencias de cada
-					selector —{" "}
+					selector:{" "}
 					<code>['#a', '.card']</code> se comporta igual que <code>'#a, .card'</code>; la forma
 					de array existe para quienes construyen la lista de forma programática.
 				</li>
 				<li>
-					Las regiones superpuestas/anidadas se deduplican automáticamente — un elemento
+					Las regiones superpuestas/anidadas se deduplican automáticamente: un elemento
 					alcanzable desde más de una raíz coincidente solo se informa una vez, no una vez por
 					región.
 				</li>

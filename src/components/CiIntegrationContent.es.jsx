@@ -7,19 +7,19 @@ export function CiIntegrationContent() {
 	return (
 		<>
 			<p>
-				Plantillas listas para pegar que envuelven el{" "}
+				Plantillas listas para pegar que envuelven la{" "}
 				<a href="https://github.com/SureA11y/cli#readme">CLI</a> (
 				<code>npx @surea11y/cli scan ...</code>) en GitHub Actions y Bitbucket Pipelines. Si llamas a la
-				librería directamente desde tu propio script de Node en lugar de usar el CLI, consulta en su
+				librería directamente desde tu propio script de Node en lugar de usar la CLI, consulta en su
 				lugar{" "}
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
 					<code>INTEGRATION.md</code>
 				</a>{" "}
-				— esta página trata específicamente sobre el CLI como paso del pipeline de CI.
+				: esta página trata específicamente sobre la CLI como paso del pipeline de CI.
 			</p>
 			<p>
 				Todas estas plantillas utilizan los códigos de salida de la CLI (<code>0</code> limpio,{" "}
-				<code>1</code> al menos un resultado — o uno <em>nuevo</em>, con <code>--baseline</code> —{" "}
+				<code>1</code> al menos un resultado (o uno <em>nuevo</em>, con <code>--baseline</code>){" "}
 				<code>fail</code>, <code>2</code> un error de uso o de análisis) para controlar el pipeline de CI;
 				no se necesita scripting adicional para un control básico de aprobado/fallido.
 			</p>
@@ -73,7 +73,7 @@ export function CiIntegrationContent() {
 			<h3>Subir SARIF a GitHub Code Scanning</h3>
 			<p>
 				<code>upload-sarif</code> necesita el permiso <code>security-events: write</code> y{" "}
-				<strong>no hace fallar el <code>job</code> por sí mismo</strong> — combínalo con un paso de control
+				<strong>no hace fallar el <code>job</code> por sí mismo</strong>: combínalo con un paso de control
 				independiente (o <code>continue-on-error</code> + tu propia comprobación) si también quieres
 				que la compilación falle ante violaciones nuevas.
 			</p>
@@ -120,7 +120,7 @@ export function CiIntegrationContent() {
 			<h2>Bitbucket Pipelines</h2>
 			<p>
 				Bitbucket Pipelines no tiene un panel integrado que consuma SARIF equivalente a GitHub Code
-				Scanning, así que el código de salida del CLI (más, opcionalmente, <code>--html</code> como
+				Scanning, así que el código de salida de la CLI (más, opcionalmente, <code>--html</code> como
 				artefacto descargable del pipeline de CI) es el punto de integración práctico en lugar de{" "}
 				<code>--sarif</code>.
 			</p>
@@ -142,7 +142,7 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				El paso hace fallar el pipeline de CI según el código de salida del CLI, exactamente igual que
+				El paso hace fallar el pipeline de CI según el código de salida de la CLI, exactamente igual que
 				cualquier otra entrada de <code>script</code>; <code>a11y-report.html</code> (consulta{" "}
 				<a href="/results-reports/html-report/">el informe HTML</a>) se adjunta como artefacto de
 				compilación descargable para que quien revise pueda abrirlo sin volver a ejecutar el análisis
@@ -154,9 +154,9 @@ export function CiIntegrationContent() {
 				Si el nivel gratuito de tu proveedor de pipelines de CI tiene un límite de minutos (el nivel
 				gratuito de Bitbucket Pipelines es de 50 minutos de compilación al mes en workspaces privados,
 				por ejemplo), un análisis basado en <code>jsdom</code> de HTML estático/renderizado en el
-				servidor (lo que hace el CLI) es mucho más económico que manejar un navegador real — consulta{" "}
+				servidor (lo que hace la CLI) es mucho más económico que manejar un navegador real. Consulta{" "}
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#what-it-can-and-cant-scan">
-					la documentación del CLI
+					la documentación de la CLI
 				</a>{" "}
 				para ver qué se sacrifica con eso (sin contenido renderizado en el cliente ni un motor de
 				diseño CSS real).

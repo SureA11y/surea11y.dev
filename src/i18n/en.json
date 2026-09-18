@@ -42,7 +42,8 @@
 	"usageBinding.runnableExample": "a runnable example",
 	"usageBinding.inRepo": "in the package's own repo.",
 	"usageBinding.nextSteps": "Next:",
-	"usageBinding.engineOptions": "scope which rules run",
-	"usageBinding.ciIntegration": "wire it into CI",
-	"usageBinding.resultsSchema": "the full result shape"
+	"usageBinding.engineOptions": "choose which rules run",
+	"usageBinding.ciIntegration": "integrate the scan into CI",
+	"usageBinding.resultsSchema": "review the full result schema",
+	"usageBinding.and": "and"
 }
