@@ -14,13 +14,14 @@ export function CiIntegrationContent() {
 				lugar{" "}
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
 					<code>INTEGRATION.md</code>
-				</a>{" "}
+				</a>
 				: esta página trata específicamente sobre la CLI como paso del pipeline de CI.
 			</p>
 			<p>
-				Todas estas plantillas utilizan los códigos de salida de la CLI (<code>0</code> limpio,{" "}
-				<code>1</code> al menos un resultado (o uno <em>nuevo</em>, con <code>--baseline</code>){" "}
-				<code>fail</code>, <code>2</code> un error de uso o de análisis) para controlar el pipeline de CI;
+				Todas estas plantillas utilizan los códigos de salida de la CLI (<code>0</code> si no se encuentran
+				fallos, <code>1</code> si existe al menos un resultado <code>fail</code> (o uno{" "}
+				<em>nuevo</em> al utilizar <code>--baseline</code>) y <code>2</code> si se produce un error de uso
+				o de análisis) para controlar el pipeline de CI;
 				no se necesita scripting adicional para un control básico de aprobado/fallido.
 			</p>
 
@@ -154,7 +155,8 @@ export function CiIntegrationContent() {
 				Si el nivel gratuito de tu proveedor de pipelines de CI tiene un límite de minutos (el nivel
 				gratuito de Bitbucket Pipelines es de 50 minutos de compilación al mes en workspaces privados,
 				por ejemplo), un análisis basado en <code>jsdom</code> de HTML estático/renderizado en el
-				servidor (lo que hace la CLI) es mucho más económico que manejar un navegador real. Consulta{" "}
+				servidor (lo que hace la CLI) es mucho más económico que controlar un navegador real mediante
+				automatización. Consulta{" "}
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#what-it-can-and-cant-scan">
 					la documentación de la CLI
 				</a>{" "}
