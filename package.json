@@ -11,7 +11,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "docs:rules": "node scripts/generate-rules-data.cjs",
-    "docs:rules:check": "node scripts/generate-rules-data.cjs --check"
+    "docs:rules:check": "node scripts/generate-rules-data.cjs --check",
+    "docs:locales": "node scripts/generate-locale-data.cjs",
+    "docs:locales:check": "node scripts/generate-locale-data.cjs --check"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",

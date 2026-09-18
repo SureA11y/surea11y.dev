@@ -1,15 +1,18 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import localeData from "../data/locales.generated.json";
 
 const core = "https://github.com/SureA11y/core/blob/main";
 
-const localeCoverageRows = [
-	{ id: "en", locale: <code>en</code>, name: "English", file: <code>src/i18n/en.json</code>, keys: "692", untranslated: "— (the canonical/fallback set)" },
-	{ id: "fr", locale: <code>fr</code>, name: "French", file: <code>src/i18n/fr.json</code>, keys: "692", untranslated: "7" },
-	{ id: "de", locale: <code>de</code>, name: "German", file: <code>src/i18n/de.json</code>, keys: "692", untranslated: "6" },
-	{ id: "es", locale: <code>es</code>, name: "Spanish", file: <code>src/i18n/es.json</code>, keys: "692", untranslated: "6" },
-];
+const localeCoverageRows = localeData.locales.map((l) => ({
+	id: l.id,
+	locale: <code>{l.id}</code>,
+	name: l.name,
+	file: <code>{l.file}</code>,
+	keys: String(l.keys),
+	untranslated: l.canonical ? "— (the canonical/fallback set)" : String(l.stillEnglish),
+}));
 
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "You got exactly what you asked for, and that dictionary carries every key." },

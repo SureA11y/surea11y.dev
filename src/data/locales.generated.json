@@ -1,0 +1,45 @@
+{
+  "totalKeys": 692,
+  "locales": [
+    {
+      "id": "en",
+      "name": "English",
+      "file": "src/i18n/en.json",
+      "keys": 692,
+      "stillEnglish": null,
+      "missing": 0,
+      "orphaned": 0,
+      "canonical": true
+    },
+    {
+      "id": "de",
+      "name": "German",
+      "file": "src/i18n/de.json",
+      "keys": 692,
+      "stillEnglish": 0,
+      "missing": 0,
+      "orphaned": 0,
+      "canonical": false
+    },
+    {
+      "id": "es",
+      "name": "Spanish",
+      "file": "src/i18n/es.json",
+      "keys": 692,
+      "stillEnglish": 0,
+      "missing": 0,
+      "orphaned": 0,
+      "canonical": false
+    },
+    {
+      "id": "fr",
+      "name": "French",
+      "file": "src/i18n/fr.json",
+      "keys": 692,
+      "stillEnglish": 0,
+      "missing": 0,
+      "orphaned": 0,
+      "canonical": false
+    }
+  ]
+}
