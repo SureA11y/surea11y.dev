@@ -1,0 +1,112 @@
+import React from "react";
+import { DataTable } from "./design-system/data/DataTable.jsx";
+import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
+
+const familyRows = [
+	{ id: "present", ruleId: <code>img-alt-present</code>, family: <code>img</code>, intent: <code>present</code>, type: "automática" },
+	{ id: "quality", ruleId: <code>img-alt-quality</code>, family: <code>img</code>, intent: <code>quality</code>, type: "manual" },
+	{ id: "decorative", ruleId: <code>img-alt-decorative</code>, family: <code>img</code>, intent: <code>decorative</code>, type: "manual" },
+];
+
+export function RuleOrganizationContent() {
+	return (
+		<>
+			<p>
+				Esto describe cómo están estructuradas las 132 reglas del <a href="/rules/">catálogo</a> — útil
+				para interpretar un resultado o para encontrar la regla que buscas. Refleja lo que ya existe en
+				el conjunto de reglas, no un diseño abstracto.
+			</p>
+
+			<h2>Automáticas frente a manuales</h2>
+			<p>
+				El <code>type</code> de cada regla es uno de dos tipos, y la diferencia está en lo que la regla
+				es <em>capaz de decidir</em> — no en qué resultado reporta:
+			</p>
+			<ul>
+				<li>
+					<strong>automática</strong> — decide de forma determinista, sin heurísticas y sin adivinar.
+					Puede informar <code>fail</code>. <code>cantTell</code> igual aparece aquí, en tres
+					situaciones: existe una violación real pero por sí sola no establece que el criterio de
+					WCAG asignado falle (un requisito de autoría de ARIA cuyo nombre/rol/valor expuesto sigue
+					siendo válido); la regla decide de forma determinista pero no reclama ningún Criterio de
+					Éxito en absoluto (<code>aria-allowed-role</code>, etiquetada como buena práctica); o la
+					regla solo puede confirmar que un mecanismo está <em>presente</em>, mientras que si lo que
+					está presente es realmente válido le corresponde a una regla hermana (
+					<code>aria-required-children</code>, emparejada con <code>aria-prohibited-children</code>).
+				</li>
+				<li>
+					<strong>manual</strong> — indica que una persona tiene que decidir; la regla no puede
+					resolver la cuestión a partir del markup en absoluto. Limitada a{" "}
+					<code>cantTell</code>/<code>notApplicable</code> — nunca <code>fail</code>.
+				</li>
+			</ul>
+			<p>
+				<strong>Que una regla manual informe <code>cantTell</code> no es el mismo evento que una regla
+				automática informe <code>cantTell</code>, aunque el valor sea idéntico</strong>: la regla
+				automática ya decidió y te está diciendo lo que encontró; la regla manual te está diciendo que
+				la cuestión no es decidible a partir del markup en absoluto. Consulta{" "}
+				<a href="/results-reports/output-schema/">Resultados e informes</a> para ver la referencia
+				completa de resultado/gravedad/confianza.
+			</p>
+
+			<h2>Cómo están estructurados los ID de regla</h2>
+			<p>
+				Un id de regla generalmente es <code>&lt;family&gt;-&lt;intent&gt;</code>: qué elementos/mecanismo
+				apunta la regla, y luego qué pregunta hace sobre ellos. La familia de alternativas de imagen
+				(WCAG 1.1.1) es el ejemplo más claro:
+			</p>
+			<DataTable
+				rowKey="id"
+				columns={[
+					{ key: "ruleId", label: "ID de regla", mono: true },
+					{ key: "family", label: "Familia", mono: true },
+					{ key: "intent", label: "Intención", mono: true },
+					{ key: "type", label: "Tipo" },
+				]}
+				rows={familyRows}
+			/>
+			<ul>
+				<li><code>present</code> — verifica que exista un mecanismo requerido. Normalmente automática.</li>
+				<li><code>quality</code> — verifica idoneidad, corrección o significado. Siempre manual.</li>
+				<li><code>decorative</code> — verifica el tratamiento correcto de contenido puramente decorativo. Siempre manual.</li>
+			</ul>
+			<p>
+				La intención determina si una regla <em>puede</em> ser automática: "¿algo está presente?" suele
+				ser decidible solo a partir del markup, mientras que "¿es bueno?" casi nunca lo es. Esta es
+				también la lógica detrás de los enlaces de <strong>Reglas relacionadas</strong> en cada página
+				de regla — las reglas que comparten una familia (todo lo anterior al último segmento{" "}
+				<code>-</code> del id) son las que se agrupan ahí. El conjunto de reglas abarca docenas de
+				familias además de <code>img</code> — <code>aria-*</code>,{" "}
+				<code>contrast-*</code>, <code>dialog-*</code>, <code>iframe-*</code>, <code>label-*</code>,{" "}
+				<code>link-*</code>, <code>list-*</code>, <code>landmark-*</code>, y más — el{" "}
+				<a href="/rules/">catálogo</a> es la lista actual y generada.
+			</p>
+			<p>
+				Las reglas nunca mezclan familias: cada una consulta un tipo de elemento, usando los helpers
+				apropiados para él. Por eso también el conjunto de reglas tiene 132 reglas específicas en lugar
+				de una docena de reglas amplias — dos comprobaciones que difieren en lo que deciden, a qué
+				apuntan o qué faceta de WCAG cubren se mantienen como reglas separadas en lugar de fusionarse,
+				de modo que un resultado nunca tiene que desenredarse después del hecho para decir qué se
+				encontró exactamente.
+			</p>
+
+			<h2>Facetas de WCAG</h2>
+			<p>
+				Un Criterio de Éxito de WCAG suele ser más grande de lo que una sola regla puede decidir de
+				forma determinista. Internamente, cada SC se descompone en "facetas" con nombre — para 1.1.1
+				Contenido no textual, eso incluye cosas como si un atributo <code>alt</code> está presente, si
+				su texto es significativo, y si las imágenes decorativas están correctamente marcadas como
+				nulas. Una regla se asigna a una o más facetas, y varias reglas comúnmente cubren distintas
+				facetas del mismo SC — que es exactamente lo que hace arriba la familia img-alt para 1.1.1.
+			</p>
+			<p>
+				Esto importa al leer un resultado compuesto (rollup de WCAG-SC): un compuesto{" "}
+				<ResultBadge state="pass" size="sm" /> significa que toda comprobación automatizada para ese SC
+				salió limpia, pero <strong>si una faceta no tiene ninguna cobertura automatizada, el compuesto
+				guarda silencio sobre esa faceta en lugar de afirmar que está bien</strong>. Consulta{" "}
+				<a href="/conformance/wcag-mapping/">Conformidad</a> para ver las tres capas (reglas atómicas,
+				facetas, compuestos) y cómo se calcula realmente el resultado de un compuesto.
+			</p>
+		</>
+	);
+}

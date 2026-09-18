@@ -6,6 +6,8 @@ import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TableOfContents from "../components/TableOfContents.astro";
 import Footer from "../components/Footer.astro";
 import { processHeadings } from "../utils/headings";
+import { localizeLinks } from "../utils/localizeLinks";
+import { t, resolveLocale } from "../i18n/t";
 
 interface Props {
 	title: string;
@@ -15,54 +17,63 @@ interface Props {
 	breadcrumbLabel?: string;
 }
 
-const DEFAULT_DESCRIPTION =
-	"Deterministic WCAG 2.2 accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI.";
-
-const { title, description = DEFAULT_DESCRIPTION, breadcrumbLabel } = Astro.props;
+const { title, description, breadcrumbLabel } = Astro.props;
 const pageTitle = `${title} · surea11y`;
+const locale = resolveLocale(Astro.currentLocale);
+const pageDescription = description ?? t("layout.defaultDescription", locale);
+
+const pathNoLocale = Astro.url.pathname.replace(/^\/es(?=\/|$)/, "") || "/";
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const enUrl = new URL(pathNoLocale, Astro.site);
+const esUrl = new URL(`/es${pathNoLocale}`, Astro.site);
 
 const rawHtml = await Astro.slots.render("default");
-const { html, headings } = processHeadings(rawHtml);
+const { html: headedHtml, headings } = processHeadings(rawHtml);
+const html = localizeLinks(headedHtml, locale);
 ---
 
-<html lang="en">
+<html lang={locale}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="alternate icon" href="/favicon.ico" />
 		<title>{pageTitle}</title>
-		<meta name="description" content={description} />
+		<meta name="description" content={pageDescription} />
 		<link rel="canonical" href={canonicalUrl} />
+		<link rel="alternate" hreflang="en" href={enUrl} />
+		<link rel="alternate" hreflang="es" href={esUrl} />
+		<link rel="alternate" hreflang="x-default" href={enUrl} />
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="surea11y" />
 		<meta property="og:title" content={pageTitle} />
-		<meta property="og:description" content={description} />
+		<meta property="og:description" content={pageDescription} />
 		<meta property="og:url" content={canonicalUrl} />
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content={pageTitle} />
-		<meta name="twitter:description" content={description} />
+		<meta name="twitter:description" content={pageDescription} />
 	</head>
 	<body>
-		<a class="skip-link" href="#main-content">Skip to content</a>
-		<SiteNav />
+		<a class="skip-link" href="#main-content">{t("layout.skipToContent", locale)}</a>
+		<SiteNav locale={locale} />
 		<div class="shell">
 			<details class="sidebar-toggle">
-				<summary>Site menu</summary>
-				<div class="sidebar-body"><Sidebar /></div>
+				<summary>{t("layout.siteMenu", locale)}</summary>
+				<div class="sidebar-body"><Sidebar locale={locale} /></div>
 			</details>
 			<div class="content-col">
-				{Astro.url.pathname !== "/" && <Breadcrumbs breadcrumbLabel={breadcrumbLabel} />}
+				{Astro.url.pathname !== "/" && Astro.url.pathname !== "/es/" && (
+					<Breadcrumbs locale={locale} breadcrumbLabel={breadcrumbLabel} />
+				)}
 				<main id="main-content">
 					<div class="prose" set:html={html} />
 				</main>
 			</div>
 			<aside class="toc-rail">
-				<TableOfContents headings={headings} />
+				<TableOfContents headings={headings} locale={locale} />
 			</aside>
 		</div>
-		<Footer />
+		<Footer locale={locale} />
 	</body>
 </html>
 

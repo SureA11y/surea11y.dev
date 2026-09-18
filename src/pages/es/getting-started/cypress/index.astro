@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { UsageBindingSection } from "../../../../components/UsageBindingSection.jsx";
+import { bindingUsage } from "../../../../data/bindingUsage.es.jsx";
+---
+
+<BaseLayout title="Uso con Cypress">
+	<h1>Uso con Cypress</h1>
+	<UsageBindingSection {...bindingUsage.cypress} locale="es" />
+</BaseLayout>
