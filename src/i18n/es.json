@@ -34,5 +34,11 @@
 	"homepage.viewOnGitHub": "Ver en GitHub",
 	"homepage.exploreSections": "Explorar otras secciones",
 	"siteNav.githubLabel": "@surea11y/core en GitHub",
-	"siteNav.npmLabel": "@surea11y/core en npm"
+	"siteNav.npmLabel": "@surea11y/core en npm",
+	"layout.skipToContent": "Saltar al contenido",
+	"layout.siteMenu": "Menú del sitio",
+	"layout.defaultDescription": "Testing de accesibilidad WCAG 2.2 determinista para Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest y CI.",
+	"usageBinding.seeExample": "Consulta también",
+	"usageBinding.runnableExample": "un ejemplo ejecutable",
+	"usageBinding.inRepo": "en el propio repositorio del paquete."
 }
