@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { FaqContent } from "../../../../components/FaqContent.jsx";
+---
+
+<BaseLayout title="FAQ">
+	<h1>FAQ</h1>
+	<FaqContent />
+</BaseLayout>
+
+<style>
+	:global(article) {
+		margin-top: var(--space-6);
+	}
+</style>

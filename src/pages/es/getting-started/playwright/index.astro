@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { UsageBindingSection } from "../../../../components/UsageBindingSection.jsx";
+import { bindingUsage } from "../../../../data/bindingUsage.jsx";
+---
+
+<BaseLayout title="Usage with Playwright">
+	<h1>Usage with Playwright</h1>
+	<UsageBindingSection {...bindingUsage.playwright} />
+</BaseLayout>

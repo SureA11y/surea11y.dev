@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { RulesTable } from "../../../components/RulesTable.jsx";
+import rules from "../../../data/rules.generated.json";
+import { t } from "../../../i18n/t";
+
+const locale = "es";
+const automatic = rules.filter((r) => r.type === "automatic");
+const manual = rules.filter((r) => r.type === "manual");
+---
+
+<BaseLayout
+	title="Rules"
+	description="Browse all rules — what each one checks, and a pass/fail example."
+>
+	<h1>Rules</h1>
+	<p>
+		The 34 composite WCAG Success Criterion rollups aren't listed here —
+		they aren't individually configurable rules, they belong under <a href="/conformance/wcag-mapping/">Conformance</a> instead.
+		See <a href="/rules/organization/">how rules are organized</a> for automatic vs. manual, how rule IDs are structured, and WCAG facets.
+	</p>
+
+	<h2>{t("rulesIndex.automaticHeading", locale, { n: automatic.length })} <code>fail</code></h2>
+	<RulesTable caption={`${automatic.length} automatic rules`} rows={automatic} locale={locale} />
+
+	<h2>{t("rulesIndex.manualHeading", locale, { n: manual.length })} <code>cantTell</code></h2>
+	<RulesTable caption={`${manual.length} manual rules`} rows={manual} locale={locale} />
+</BaseLayout>

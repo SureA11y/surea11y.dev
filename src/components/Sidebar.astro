@@ -1,39 +1,56 @@
 ---
 import { siteTree } from "../data/siteTree";
+import { localize } from "../data/localize";
+import { t, type Locale } from "../i18n/t";
 
-const currentPath = Astro.url.pathname;
+interface Props {
+	locale?: Locale;
+}
+
+const { locale = "en" } = Astro.props;
+const localePrefix = locale === "es" ? "/es" : "";
+const withLocale = (href: string) => `${localePrefix}${href}`;
+const currentPath =
+	locale === "es" ? Astro.url.pathname.replace(/^\/es(?=\/|$)/, "") || "/" : Astro.url.pathname;
 const isSectionActive = (href: string) =>
 	href === "/" ? currentPath === "/" : currentPath.startsWith(href);
 ---
 
-<nav aria-label="Site" class="tree">
+<nav aria-label={t("sidebar.nav", locale)} class="tree">
 	<ul class="tree-root">
 		{
 			siteTree.map((section) => {
+				const { label } = localize(section, locale);
 				const hasChildren = section.children.length > 0;
 				const onIndex = currentPath === section.href;
 				const open = isSectionActive(section.href);
 				return (
 					<li class="tree-section">
 						<div class="tree-section-head">
-							<a href={section.href} aria-current={onIndex ? "page" : undefined}>
-								{section.label}
+							<a href={withLocale(section.href)} aria-current={onIndex ? "page" : undefined}>
+								{label}
 							</a>
 							{hasChildren && (
 								<details open={open}>
-									<summary aria-label={`${section.label} subpages`} />
+									<summary aria-label={`${label} ${t("sidebar.subpages", locale)}`} />
 								</details>
 							)}
 						</div>
 						{hasChildren && (
 							<ul class="tree-children">
-								{section.children.map((child) => (
-									<li>
-										<a href={child.href} aria-current={currentPath === child.href ? "page" : undefined}>
-											{child.label}
-										</a>
-									</li>
-								))}
+								{section.children.map((child) => {
+									const { label: childLabel } = localize(child, locale);
+									return (
+										<li>
+											<a
+												href={withLocale(child.href)}
+												aria-current={currentPath === child.href ? "page" : undefined}
+											>
+												{childLabel}
+											</a>
+										</li>
+									);
+								})}
 							</ul>
 						)}
 					</li>

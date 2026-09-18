@@ -1,6 +1,9 @@
+import type { LocalizedOverride } from "./localize";
+
 export interface ResultsReportsSection {
 	href: string;
 	label: string;
+	i18n?: { es?: LocalizedOverride };
 }
 
 export const resultsReportsSections: ResultsReportsSection[] = [
