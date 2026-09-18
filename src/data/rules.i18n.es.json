@@ -370,7 +370,7 @@
   "binary-control-name-present": {
     "title": "Los controles binarios tienen un nombre accesible",
     "description": "Comprueba que los controles checkbox, radio y switch expongan un nombre accesible no vacío.",
-    "applicability": "Se aplica a elementos con role=\"checkbox\", role=\"radio\" o role=\"switch\" (el atributo debe nombrar únicamente uno de esos roles, no una lista de alternativas) que están incluidos en el árbol de accesibilidad. Un <input type=\"checkbox\">/<input type=\"radio\"> nativo entra en el alcance solo cuando lleva explícitamente uno de esos roles; sin un atributo role, pertenece a form-control-programmatic-label-present.",
+    "applicability": "Se aplica a elementos con role=\"checkbox\", role=\"radio\" o role=\"switch\" (el atributo debe nombrar únicamente uno de esos roles, no una lista de reserva) que están incluidos en el árbol de accesibilidad. Un <input type=\"checkbox\">/<input type=\"radio\"> nativo entra en el alcance solo cuando lleva explícitamente uno de esos roles; sin un atributo role, pertenece a form-control-programmatic-label-present.",
     "expectation": "El control tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. Un checkbox o radio nativo acepta además un <label> asociado, la API labels, un <label> envolvente, o label[for], leyendo como máximo cuatro etiquetas por determinismo; cualquier otro elemento acepta el texto de su propio subárbol, ya que esos roles son name-from-content.",
     "examples": [
       {
@@ -379,7 +379,7 @@
       },
       {
         "state": "fail",
-        "explanation": "El switch no tiene nombre proveniente de ningún mecanismo admitido."
+        "explanation": "El switch no tiene nombre procedente de ningún mecanismo admitido."
       }
     ]
   },
@@ -418,7 +418,7 @@
   "canvas-text-alternative-present": {
     "title": "<canvas> debe proporcionar una alternativa textual",
     "description": "Comprueba que los elementos <canvas> proporcionen una alternativa textual mediante contenido de reserva o un nombre accesible.",
-    "applicability": "Se aplica a elementos <canvas> incluidos en el árbol de accesibilidad. Los elementos ocultos quedan excluidos, sean o no focusables.",
+    "applicability": "Se aplica a elementos <canvas> incluidos en el árbol de accesibilidad. Los elementos ocultos quedan excluidos, sean o no enfocables.",
     "expectation": "Cada <canvas> aplicable proporciona una alternativa textual mediante contenido de reserva o un nombre accesible.",
     "examples": [
       {
@@ -434,7 +434,7 @@
   "canvas-text-alternative-quality": {
     "title": "La alternativa textual de <canvas> debe ser adecuada (revisión manual)",
     "description": "Señala los elementos <canvas> con una alternativa textual detectada para que una persona revise su equivalencia e idoneidad.",
-    "applicability": "Se aplica a elementos <canvas> que ya tienen una alternativa textual: contenido de reserva dentro del elemento, un nombre ARIA o un title. Un <canvas> que no tenga nada de eso no tiene alternativa cuya calidad pueda juzgarse; ese caso es un fallo de canvas-text-alternative-present. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo saca del alcance a menos que sea focusable, lo que restablece su rol.",
+    "applicability": "Se aplica a elementos <canvas> que ya tienen una alternativa textual: contenido de reserva dentro del elemento, un nombre ARIA o un title. Un <canvas> que no tenga nada de eso no tiene alternativa cuya calidad pueda juzgarse; ese caso es un fallo de canvas-text-alternative-present. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo saca del alcance a menos que sea enfocable, lo que restablece su rol.",
     "expectation": "Se requiere revisión humana para confirmar que la alternativa textual proporcionada es precisa y adecuada.",
     "examples": [
       {
@@ -450,7 +450,7 @@
   "combobox-name-present": {
     "title": "Los comboboxes tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"combobox\" expongan un nombre accesible no vacío.",
-    "applicability": "Se aplica a elementos con role=\"combobox\" (el atributo debe nombrar únicamente ese rol, no una lista de alternativas) que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera del alcance.",
+    "applicability": "Se aplica a elementos con role=\"combobox\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera del alcance.",
     "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"combobox\" es name-from-author-only, por lo que el texto del subárbol nunca se acepta: el texto situado dentro de un widget combobox personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<input role=\"combobox\">) un <label> asociado también cuenta.",
     "examples": [
       {
@@ -459,7 +459,7 @@
       },
       {
         "state": "fail",
-        "explanation": "No hay nombre accesible proveniente de ningún mecanismo admitido."
+        "explanation": "No hay nombre accesible procedente de ningún mecanismo admitido."
       }
     ]
   },
@@ -528,10 +528,10 @@
     ]
   },
   "css-hidden-focus": {
-    "title": "Los elementos focusables no deben estar ocultos visualmente",
-    "description": "Comprueba que los elementos focusables por teclado no estén ocultos visualmente mediante técnicas CSS que puedan dejarlos en el orden de tabulación.",
-    "applicability": "Se aplica a elementos que son tabulables (focusables por teclado) pero están ocultos visualmente mediante técnicas CSS que pueden dejarlos en el orden de tabulación.",
-    "expectation": "Ningún elemento debe ser tabulable mientras está oculto visualmente (por ejemplo, opacity:0, recortado, fuera de pantalla). Notas:\n\n- Esta regla se dirige intencionadamente a técnicas CSS que *pueden* mantener focusable a un elemento.\n- Los elementos eliminados del renderizado (display:none, visibility:hidden, [hidden]) quedan excluidos.\n- La regla usa heurísticas deterministas (análisis del estilo calculado) y no depende de la geometría del layout.",
+    "title": "Los elementos enfocables no deben estar ocultos visualmente",
+    "description": "Comprueba que los elementos enfocables por teclado no estén ocultos visualmente mediante técnicas CSS que puedan dejarlos en el orden de tabulación.",
+    "applicability": "Se aplica a elementos que son tabulables (enfocables por teclado) pero están ocultos visualmente mediante técnicas CSS que pueden dejarlos en el orden de tabulación.",
+    "expectation": "Ningún elemento debe ser tabulable mientras está oculto visualmente (por ejemplo, opacity:0, recortado, fuera de pantalla). Notas:\n\n- Esta regla se dirige intencionadamente a técnicas CSS que *pueden* mantener enfocable a un elemento.\n- Los elementos eliminados del renderizado (display:none, visibility:hidden, [hidden]) quedan excluidos.\n- La regla usa heurísticas deterministas (análisis del estilo calculado) y no depende de la geometría del layout.",
     "examples": [
       {
         "state": "unknown",
@@ -539,7 +539,7 @@
       },
       {
         "state": "na",
-        "explanation": "El enlace es a la vez focusable y visible — no hay nada que señalar."
+        "explanation": "El enlace es a la vez enfocable y visible — no hay nada que señalar."
       }
     ]
   },
@@ -594,7 +594,7 @@
   "dialog-name-present": {
     "title": "Los diálogos tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"dialog\" o role=\"alertdialog\" expongan un nombre accesible no vacío.",
-    "applicability": "Se aplica a elementos con role=\"dialog\" o role=\"alertdialog\" (el atributo debe nombrar únicamente uno de esos roles, no una lista de alternativas) que están incluidos en el árbol de accesibilidad. Un <dialog> nativo sin un rol explícito queda fuera del alcance.",
+    "applicability": "Se aplica a elementos con role=\"dialog\" o role=\"alertdialog\" (el atributo debe nombrar únicamente uno de esos roles, no una lista de reserva) que están incluidos en el árbol de accesibilidad. Un <dialog> nativo sin un rol explícito queda fuera del alcance.",
     "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. Ambos roles son name-from-author-only, por lo que el encabezado o el texto del cuerpo dentro del diálogo no se acepta como su nombre a menos que aria-labelledby apunte a él.",
     "examples": [
       {
@@ -658,7 +658,7 @@
   "embed-text-alternative-present": {
     "title": "<embed> debe proporcionar una alternativa textual",
     "description": "Comprueba que los elementos <embed> proporcionen una alternativa textual mediante un nombre accesible.",
-    "applicability": "Se aplica a los elementos <embed> que se exponen a las tecnologías de asistencia. Los elementos que de otro modo estarían ocultos del árbol de accesibilidad siguen siendo aplicables si son alcanzables con tabulación o son referenciados mediante relaciones IDREF (según las comprobaciones de elegibilidad del motor). role=\"presentation\"/role=\"none\" se excluyen solo cuando no son focalizables.",
+    "applicability": "Se aplica a los elementos <embed> que se exponen a las tecnologías de asistencia. Los elementos que de otro modo estarían ocultos del árbol de accesibilidad siguen siendo aplicables si son alcanzables con tabulación o son referenciados mediante relaciones IDREF (según las comprobaciones de elegibilidad del motor). role=\"presentation\"/role=\"none\" se excluyen solo cuando no son enfocables.",
     "expectation": "Cada <embed> aplicable proporciona una alternativa textual mediante:\n\n- un nombre accesible (aria-labelledby/aria-label), O\n- un atributo title (alternativa de mejor esfuerzo).\n\nNota: <embed> no admite contenido de reserva en HTML, por lo que esta regla no comprueba los elementos hijos.",
     "examples": [
       {
@@ -674,7 +674,7 @@
   "embed-text-alternative-quality": {
     "title": "La alternativa textual de <embed> debe ser adecuada (revisión manual)",
     "description": "Marca los elementos <embed> con un nombre detectado para revisión humana de su idoneidad.",
-    "applicability": "Se aplica a los elementos <embed> que ya tienen una alternativa textual: un aria-label no vacío, un aria-labelledby que se resuelve en texto no vacío, o un title no vacío. Un aria-labelledby que apunta a un id inexistente no se resuelve en nada y, por lo tanto, no es una alternativa textual que revisar; ese elemento es un fallo de embed-text-alternative-present. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo saca del alcance salvo que sea focalizable, lo que restaura su rol.",
+    "applicability": "Se aplica a los elementos <embed> que ya tienen una alternativa textual: un aria-label no vacío, un aria-labelledby que se resuelve en texto no vacío, o un title no vacío. Un aria-labelledby que apunta a un id inexistente no se resuelve en nada y, por lo tanto, no es una alternativa textual que revisar; ese elemento es un fallo de embed-text-alternative-present. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo saca del alcance salvo que sea enfocable, lo que restaura su rol.",
     "expectation": "Se requiere revisión humana para confirmar que la alternativa textual proporcionada es precisa y adecuada.",
     "examples": [
       {
@@ -723,15 +723,15 @@
     "title": "Los elementos añadidos al orden de tabulación deben tener semántica interactiva",
     "description": "Marca los elementos con tabindex >= 0 cuyo rol explícito es un rol estructural/de documento no interactivo (por ejemplo, heading, list, region, presentation), para revisión manual.",
     "applicability": "Elementos con un `tabindex` explícito de `0` o superior (en el orden de tabulación) Y un atributo `role` explícito que forma parte de un conjunto seleccionado de roles claramente no interactivos, estructurales/de documento.",
-    "expectation": "Un elemento colocado deliberadamente en el orden de tabulación debe comunicar por qué es focalizable: un rol como `heading`, `list`, `region` o `presentation` no le da a la tecnología de asistencia ninguna semántica interactiva que anunciar, lo cual resulta confuso para los usuarios de teclado que llegan a él y no reciben ninguna indicación de qué ocurriría (si algo) al activarlo.",
+    "expectation": "Un elemento colocado deliberadamente en el orden de tabulación debe comunicar por qué es enfocable: un rol como `heading`, `list`, `region` o `presentation` no le da a la tecnología de asistencia ninguna semántica interactiva que anunciar, lo cual resulta confuso para los usuarios de teclado que llegan a él y no reciben ninguna indicación de qué ocurriría (si algo) al activarlo.",
     "examples": [
       {
         "state": "unknown",
-        "explanation": "Un rol heading no tiene comportamiento interactivo, así que hacerlo focalizable con tabulación es inusual y merece revisión."
+        "explanation": "Un rol heading no tiene comportamiento interactivo, así que hacerlo enfocable con tabulación es inusual y merece revisión."
       },
       {
         "state": "na",
-        "explanation": "`role=\"button\"` es un rol interactivo, por lo que ser focalizable con tabulación es lo esperado."
+        "explanation": "`role=\"button\"` es un rol interactivo, por lo que ser enfocable con tabulación es lo esperado."
       }
     ]
   },
@@ -754,7 +754,7 @@
   "form-control-programmatic-label-present": {
     "title": "Los controles de formulario deben tener una etiqueta programática",
     "description": "Comprueba que los controles de formulario tengan una etiqueta programática mediante <label>, aria-label, aria-labelledby, title o placeholder.",
-    "applicability": "Se aplica a los elementos <input>, <select> y <textarea> incluidos en el árbol de accesibilidad, excluyendo los tipos de input hidden, submit, reset, button e image, que toman su nombre de un atributo value o alt en lugar de una etiqueta. Un control con un rol de widget ARIA explícito queda fuera del alcance: button, checkbox, combobox, listbox, textbox, slider y el resto de ROLE_OWNED_ELSEWHERE tienen cada uno su propia regla de nomenclatura, y role=\"presentation\"/\"none\" elimina un control salvo que siga siendo focalizable con tabulación.",
+    "applicability": "Se aplica a los elementos <input>, <select> y <textarea> incluidos en el árbol de accesibilidad, excluyendo los tipos de input hidden, submit, reset, button e image, que toman su nombre de un atributo value o alt en lugar de una etiqueta. Un control con un rol de widget ARIA explícito queda fuera del alcance: button, checkbox, combobox, listbox, textbox, slider y el resto de ROLE_OWNED_ELSEWHERE tienen cada uno su propia regla de nomenclatura, y role=\"presentation\"/\"none\" elimina un control salvo que siga siendo enfocable con tabulación.",
     "expectation": "Cada control aplicable tiene una etiqueta programática mediante uno de los mecanismos que resuelve helpers.getLabelMethod, en su orden de prioridad: un <label> asociado, aria-labelledby, aria-label, title y luego placeholder. Cualquiera de los cinco satisface esta regla. Si los dos mecanismos más débiles son una etiqueta principal adecuada es una cuestión distinta, planteada por form-control-programmatic-label-quality.",
     "examples": [
       {
@@ -770,7 +770,7 @@
   "form-control-programmatic-label-quality": {
     "title": "Los controles de formulario no deben depender de placeholder o title como etiqueta principal",
     "description": "Marca los controles de formulario cuyo nombre accesible calculado depende de placeholder o title como método de etiquetado principal. Se prefiere <label> o aria-labelledby.",
-    "applicability": "Se aplica a los controles de formulario nativos etiquetables expuestos a las tecnologías de asistencia:\n\n- input (excluyendo type=hidden|submit|reset|button|image)\n- select\n- textarea\n\nrole=\"presentation\"/\"none\" se excluyen solo cuando no son focalizables.",
+    "applicability": "Se aplica a los controles de formulario nativos etiquetables expuestos a las tecnologías de asistencia:\n\n- input (excluyendo type=hidden|submit|reset|button|image)\n- select\n- textarea\n\nrole=\"presentation\"/\"none\" se excluyen solo cuando no son enfocables.",
     "expectation": "Si un control tiene un nombre programático, no debe depender ÚNICAMENTE de:\n\n- placeholder (no vacío)\n- title (no vacío)\n\nSe prefiere un <label> asociado o aria-labelledby.",
     "examples": [
       {
@@ -896,14 +896,14 @@
     ]
   },
   "iframe-focusable-content": {
-    "title": "Los marcos con tabindex=\"-1\" no deben contener contenido focalizable",
-    "description": "Comprueba que los elementos <iframe>/<frame> del mismo origen con tabindex=\"-1\" no contengan contenido focalizable, ya que los navegadores no propagan esa restricción al documento incrustado del marco.",
+    "title": "Los marcos con tabindex=\"-1\" no deben contener contenido enfocable",
+    "description": "Comprueba que los elementos <iframe>/<frame> del mismo origen con tabindex=\"-1\" no contengan contenido enfocable, ya que los navegadores no propagan esa restricción al documento incrustado del marco.",
     "applicability": "Se aplica a los elementos <iframe>/<frame> con un tabindex negativo explícito, cuyo documento incrustado es del mismo origen y accesible mediante contentDocument (los marcos de origen cruzado o inaccesibles no afirman nada, véanse las notas de implementación).",
-    "expectation": "El documento incrustado del marco no contiene ningún elemento focalizable. Los navegadores no propagan tabindex=\"-1\" del <iframe> anfitrión a su documento incrustado: la tecla Tab puede seguir alcanzando el contenido focalizable de su interior, aunque el propio marco se omita. Un autor que fijó tabindex=\"-1\" con la intención de sacar el marco del orden de tabulación en realidad no lo ha conseguido si el documento incrustado contiene contenido focalizable. Excepción: un iframe con un atributo HTML `width` y `height` de 2px o menos (un patrón habitual de \"píxel de seguimiento\") no puede renderizar ningún contenido perceptible, por lo que el contenido focalizable en su interior nunca cumple el requisito de \"visible\" de ACT akn7bn y no cuenta.",
+    "expectation": "El documento incrustado del marco no contiene ningún elemento enfocable. Los navegadores no propagan tabindex=\"-1\" del <iframe> anfitrión a su documento incrustado: la tecla Tab puede seguir alcanzando el contenido enfocable de su interior, aunque el propio marco se omita. Un autor que fijó tabindex=\"-1\" con la intención de sacar el marco del orden de tabulación en realidad no lo ha conseguido si el documento incrustado contiene contenido enfocable. Excepción: un iframe con un atributo HTML `width` y `height` de 2px o menos (un patrón habitual de \"píxel de seguimiento\") no puede renderizar ningún contenido perceptible, por lo que el contenido enfocable en su interior nunca cumple el requisito de \"visible\" de ACT akn7bn y no cuenta.",
     "examples": [
       {
         "state": "pass",
-        "explanation": "`tabindex=\"-1\"` saca el marco del orden de tabulación, y tampoco hay nada focalizable en su interior."
+        "explanation": "`tabindex=\"-1\"` saca el marco del orden de tabulación, y tampoco hay nada enfocable en su interior."
       },
       {
         "state": "fail",
@@ -962,7 +962,7 @@
   "img-alt-decorative": {
     "title": "Los elementos <img>/<canvas>/<svg> excluidos deben ser decorativos (revisión manual)",
     "description": "Marca los elementos <img>, <canvas> y <svg> excluidos del árbol de accesibilidad (aria-hidden, role=\"none\"/\"presentation\", alt vacío, o un svg/canvas sin etiquetar) para revisión humana de que son puramente decorativos.",
-    "applicability": "Se aplica a los elementos <img>, <canvas> o <svg> visibles excluidos del árbol de accesibilidad por cualquiera de los siguientes motivos: un ancestro (o el propio elemento) con aria-hidden, un role=\"none\"/\"presentation\" explícito no anulado por ser focalizable, un <img alt=\"\"> (el marcador decorativo nativo, con la misma anulación por focalizabilidad), un <svg> sin etiquetar cuyo role implícito es graphics-document (sin una redeclaración de role img/graphics-symbol, aria-name, <title>/<desc> ni focalizabilidad), o un <canvas> sin etiquetar y sin ningún role explícito. Según ACT e88epe, un elemento se omite por completo cuando algún ancestro ya tiene un nombre proporcionado por el autor (aria-label, aria-labelledby, title, o un <label> asociado); lo que importa entonces es el nombre de ese ancestro, no la exclusión de este elemento (el caso real habitual: un botón de solo icono ya nombrado mediante aria-label).",
+    "applicability": "Se aplica a los elementos <img>, <canvas> o <svg> visibles excluidos del árbol de accesibilidad por cualquiera de los siguientes motivos: un ancestro (o el propio elemento) con aria-hidden, un role=\"none\"/\"presentation\" explícito no anulado por ser enfocable, un <img alt=\"\"> (el marcador decorativo nativo, con la misma anulación por focalizabilidad), un <svg> sin etiquetar cuyo role implícito es graphics-document (sin una redeclaración de role img/graphics-symbol, aria-name, <title>/<desc> ni focalizabilidad), o un <canvas> sin etiquetar y sin ningún role explícito. Según ACT e88epe, un elemento se omite por completo cuando algún ancestro ya tiene un nombre proporcionado por el autor (aria-label, aria-labelledby, title, o un <label> asociado); lo que importa entonces es el nombre de ese ancestro, no la exclusión de este elemento (el caso real habitual: un botón de solo icono ya nombrado mediante aria-label).",
     "expectation": "Se requiere revisión humana para confirmar que el elemento excluido es puramente decorativo y no transmite ninguna información que un usuario echaría en falta de otro modo.",
     "examples": [
       {
@@ -978,7 +978,7 @@
   "img-alt-present": {
     "title": "<img> debe tener un atributo alt",
     "description": "Comprueba que los elementos <img> proporcionan un atributo alt como mecanismo de texto alternativo.",
-    "applicability": "Se aplica a los elementos <img> incluidos en el árbol de accesibilidad. Las imágenes con role=\"presentation\" o role=\"none\" se excluyen solo cuando no son focalizables, ya que una imagen focalizable recupera el role img según la resolución de conflictos de roles presentacionales. Las imágenes ocultas se excluyen sean o no focalizables.",
+    "applicability": "Se aplica a los elementos <img> incluidos en el árbol de accesibilidad. Las imágenes con role=\"presentation\" o role=\"none\" se excluyen solo cuando no son enfocables, ya que una imagen enfocable recupera el role img según la resolución de conflictos de roles presentacionales. Las imágenes ocultas se excluyen sean o no enfocables.",
     "expectation": "Cada elemento <img> aplicable tiene un atributo alt. El atributo alt puede estar vacío (alt=\"\").",
     "examples": [
       {
@@ -994,7 +994,7 @@
   "img-alt-quality": {
     "title": "El texto alternativo de <img> debe ser apropiado (revisión manual)",
     "description": "Marca los elementos <img> con texto alternativo no vacío para revisión humana de su idoneidad.",
-    "applicability": "Se aplica a los elementos <img> cuyo atributo alt está presente y no vacío. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo deja fuera del ámbito salvo que sea focalizable, en cuyo caso recupera su role. Un <img> sin ningún alt es un fallo de img-alt-present, y uno con alt=\"\" es la revisión de img-alt-decorative.",
+    "applicability": "Se aplica a los elementos <img> cuyo atributo alt está presente y no vacío. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo deja fuera del alcance salvo que sea enfocable, en cuyo caso recupera su role. Un <img> sin ningún alt es un fallo de img-alt-present, y uno con alt=\"\" es la revisión de img-alt-decorative.",
     "expectation": "Se requiere revisión humana para confirmar que el texto alternativo proporcionado es preciso y apropiado.",
     "examples": [
       {
@@ -1010,7 +1010,7 @@
   "input-image-alt-decorative": {
     "title": "<input type=\"image\"> con alt=\"\" debe ser apropiado (revisión manual)",
     "description": "Marca los elementos <input type=\"image\"> con alt vacío para revisión humana (normalmente no apropiado en controles funcionales).",
-    "applicability": "Se aplica a los elementos <input type=\"image\"> cuyo atributo alt está presente pero vacío una vez recortado, y que aun así tienen un nombre procedente de otra fuente: un nombre ARIA que resuelve a texto no vacío, o un title. Sin ese otro nombre no hay nada frente a lo que contrastar el alt vacío, y el control pasa a ser en cambio un fallo de input-image-alt-present. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo deja fuera del ámbito salvo que sea focalizable, en cuyo caso recupera su role.",
+    "applicability": "Se aplica a los elementos <input type=\"image\"> cuyo atributo alt está presente pero vacío una vez recortado, y que aun así tienen un nombre procedente de otra fuente: un nombre ARIA que resuelve a texto no vacío, o un title. Sin ese otro nombre no hay nada frente a lo que contrastar el alt vacío, y el control pasa a ser en cambio un fallo de input-image-alt-present. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo deja fuera del alcance salvo que sea enfocable, en cuyo caso recupera su role.",
     "expectation": "Se requiere revisión humana para confirmar que el texto alternativo proporcionado es preciso y apropiado.",
     "examples": [
       {
@@ -1042,7 +1042,7 @@
   "input-image-alt-quality": {
     "title": "El texto alternativo de <input type=\"image\"> debe ser apropiado (revisión manual)",
     "description": "Marca los elementos <input type=\"image\"> con texto alternativo no vacío para revisión humana de su idoneidad.",
-    "applicability": "Se aplica a los elementos <input type=\"image\"> cuyo atributo alt está presente y no vacío: un botón de imagen cuyo alt es su etiqueta. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo deja fuera del ámbito salvo que sea focalizable, en cuyo caso recupera su role.",
+    "applicability": "Se aplica a los elementos <input type=\"image\"> cuyo atributo alt está presente y no vacío: un botón de imagen cuyo alt es su etiqueta. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo deja fuera del alcance salvo que sea enfocable, en cuyo caso recupera su role.",
     "expectation": "Se requiere revisión humana para confirmar que el texto alternativo proporcionado es preciso y apropiado.",
     "examples": [
       {
@@ -1298,7 +1298,7 @@
   "listbox-name-present": {
     "title": "Los listbox tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"listbox\" expongan un nombre accesible no vacío.",
-    "applicability": "Se aplica a elementos que llevan role=\"listbox\" (el atributo debe nombrar únicamente ese rol, no una lista de alternativas) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance.",
+    "applicability": "Se aplica a elementos que llevan role=\"listbox\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance.",
     "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"listbox\" es name-from-author-only, por lo que el texto del subárbol nunca se acepta: el texto que se encuentra dentro de un widget listbox personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<select multiple role=\"listbox\">) un <label> asociado también cuenta.",
     "examples": [
       {
@@ -1358,7 +1358,7 @@
   "menuitem-name-present": {
     "title": "Los elementos de menú tienen un nombre accesible",
     "description": "Comprueba que los elementos de menú (role=\"menuitem*\", incluidas las variantes checkbox/radio) expongan un nombre accesible no vacío.",
-    "applicability": "Se aplica a elementos que llevan role=\"menuitem\", role=\"menuitemcheckbox\" o role=\"menuitemradio\" (el atributo debe nombrar únicamente uno de esos roles, no una lista de alternativas) y que están incluidos en el árbol de accesibilidad.",
+    "applicability": "Se aplica a elementos que llevan role=\"menuitem\", role=\"menuitemcheckbox\" o role=\"menuitemradio\" (el atributo debe nombrar únicamente uno de esos roles, no una lista de reserva) y que están incluidos en el árbol de accesibilidad.",
     "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, de title, o, dado que los tres roles son name-from-content, del texto de su propio subárbol, donde el nombre propio de un descendiente (un <img alt>, aria-label o title) cuenta como la contribución de ese descendiente en lugar de solo sus nodos de texto.",
     "examples": [
       {
@@ -1438,7 +1438,7 @@
   "meter-name-present": {
     "title": "Los meter tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"meter\" expongan un nombre accesible no vacío.",
-    "applicability": "Se aplica a elementos que llevan role=\"meter\" (el atributo debe nombrar únicamente ese rol, no una lista de alternativas) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance.",
+    "applicability": "Se aplica a elementos que llevan role=\"meter\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance.",
     "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"meter\" es name-from-author-only, por lo que el texto del subárbol nunca se acepta: el texto que se encuentra dentro de un widget meter personalizado no se expone de forma fiable como su nombre.",
     "examples": [
       {
@@ -1470,7 +1470,7 @@
   "nested-interactive-controls-absent": {
     "title": "Los controles interactivos no deben anidarse",
     "description": "Comprueba que un control interactivo (enlace, botón, control de formulario o rol de widget ARIA) no contenga otro control interactivo.",
-    "applicability": "Se aplica a elementos que coinciden con el conjunto de controles interactivos (a[href] nativo, button, input (no hidden), select, textarea; o un rol de widget ARIA explícito: button, link, checkbox, radio, switch, tab, textbox, combobox, listbox, menuitem, menuitemcheckbox, menuitemradio, option, slider, spinbutton, searchbox, treeitem). El contenedor es aplicable independientemente de si él mismo es focalizable; la focalizabilidad solo se usa para decidir si un *descendiente* anida un control interactivo.",
+    "applicability": "Se aplica a elementos que coinciden con el conjunto de controles interactivos (a[href] nativo, button, input (no hidden), select, textarea; o un rol de widget ARIA explícito: button, link, checkbox, radio, switch, tab, textbox, combobox, listbox, menuitem, menuitemcheckbox, menuitemradio, option, slider, spinbutton, searchbox, treeitem). El contenedor es aplicable independientemente de si él mismo es enfocable; la focalizabilidad solo se usa para decidir si un *descendiente* anida un control interactivo.",
     "expectation": "El elemento no contiene, como descendiente, otro control interactivo *operable* (por ejemplo, un <button> que envuelve un <select>, o un enlace que contiene un checkbox). Los controles interactivos anidados no se anuncian ni se operan de forma fiable mediante tecnología de asistencia; activar el control externo y el interno se vuelve ambiguo, y algunas AT solo exponen uno de los dos.",
     "examples": [
       {
@@ -1479,7 +1479,7 @@
       },
       {
         "state": "fail",
-        "explanation": "Un `<button>` contiene anidado un `<input type=\"checkbox\">`, otro control focalizable."
+        "explanation": "Un `<button>` contiene anidado un `<input type=\"checkbox\">`, otro control enfocable."
       }
     ]
   },
@@ -1502,7 +1502,7 @@
   "object-text-alternative-present": {
     "title": "<object> debe proporcionar una alternativa textual",
     "description": "Comprueba que los elementos <object> proporcionen una alternativa textual mediante contenido de reserva o un nombre accesible.",
-    "applicability": "Se aplica a elementos <object> incluidos en el árbol de accesibilidad. Los objetos ocultos quedan excluidos sean o no focalizables. role=\"presentation\"/role=\"none\" quedan excluidos solo cuando no son focalizables.",
+    "applicability": "Se aplica a elementos <object> incluidos en el árbol de accesibilidad. Los objetos ocultos quedan excluidos sean o no enfocables. role=\"presentation\"/role=\"none\" quedan excluidos solo cuando no son enfocables.",
     "expectation": "Cada <object> aplicable proporciona una alternativa textual mediante:\n\n- contenido de reserva (contenido de texto no vacío dentro de <object>), O\n- un nombre accesible (aria-labelledby/aria-label), O\n- un atributo title (alternativa de mejor esfuerzo).",
     "examples": [
       {
@@ -1518,7 +1518,7 @@
   "object-text-alternative-quality": {
     "title": "El texto alternativo de <object> debe ser apropiado (revisión manual)",
     "description": "Marca elementos <object> con contenido de reserva o nombre detectado para revisión humana de equivalencia e idoneidad.",
-    "applicability": "Se aplica a elementos <object> que ya tienen un texto alternativo: contenido de texto de reserva, un aria-label no vacío, un aria-labelledby que resuelve a texto no vacío, o un title no vacío. Un <object> sin ninguno de estos es un fallo de object-text-alternative-present, no una cuestión de calidad. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo excluye del alcance a menos que sea enfocable, lo que restaura su rol.",
+    "applicability": "Se aplica a elementos <object> que ya tienen una alternativa textual: contenido de texto de reserva, un aria-label no vacío, un aria-labelledby que resuelve a texto no vacío, o un title no vacío. Un <object> sin ninguno de estos es un fallo de object-text-alternative-present, no una cuestión de calidad. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo excluye del alcance a menos que sea enfocable, lo que restaura su rol.",
     "expectation": "Se requiere revisión humana para confirmar que el texto alternativo proporcionado es preciso y apropiado.",
     "examples": [
       {
@@ -1535,7 +1535,7 @@
     "title": "Las opciones tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"option\" expongan un nombre accesible no vacío.",
     "applicability": "Se aplica a elementos que tienen role=\"option\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance.",
-    "expectation": "El elemento tiene un nombre accesible no vacío proveniente de aria-label, de un aria-labelledby que resuelve a texto no vacío, de title, o bien, dado que role=\"option\" obtiene su nombre del contenido (name-from-content), del texto de su propio subárbol, donde el nombre propio de un descendiente (un <img alt>, aria-label o title) cuenta como la contribución de ese descendiente en lugar de solo sus nodos de texto.",
+    "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, de title, o bien, dado que role=\"option\" obtiene su nombre del contenido (name-from-content), del texto de su propio subárbol, donde el nombre propio de un descendiente (un <img alt>, aria-label o title) cuenta como la contribución de ese descendiente en lugar de solo sus nodos de texto.",
     "examples": [
       {
         "state": "pass",
@@ -1663,7 +1663,7 @@
     "title": "Las barras de progreso tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"progressbar\" expongan un nombre accesible no vacío.",
     "applicability": "Se aplica a elementos que tienen role=\"progressbar\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance.",
-    "expectation": "El elemento tiene un nombre accesible no vacío proveniente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"progressbar\" obtiene su nombre solo del autor (name-from-author-only), así que el texto del subárbol nunca se acepta: el texto que está dentro de un widget progressbar personalizado no se expone de forma fiable como su nombre.",
+    "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"progressbar\" obtiene su nombre solo del autor (name-from-author-only), así que el texto del subárbol nunca se acepta: el texto que está dentro de un widget progressbar personalizado no se expone de forma fiable como su nombre.",
     "examples": [
       {
         "state": "pass",
@@ -1671,7 +1671,7 @@
       },
       {
         "state": "fail",
-        "explanation": "Sin nombre accesible proveniente de ningún mecanismo compatible."
+        "explanation": "Sin nombre accesible procedente de ningún mecanismo compatible."
       }
     ]
   },
@@ -1743,7 +1743,7 @@
     "title": "Los cuadros de búsqueda tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"searchbox\" expongan un nombre accesible no vacío.",
     "applicability": "Se aplica a elementos que tienen role=\"searchbox\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance.",
-    "expectation": "El elemento tiene un nombre accesible no vacío proveniente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"searchbox\" obtiene su nombre solo del autor (name-from-author-only), así que el texto del subárbol nunca se acepta: el texto que está dentro de un widget searchbox personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<input role=\"searchbox\">) un <label> asociado también cuenta.",
+    "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"searchbox\" obtiene su nombre solo del autor (name-from-author-only), así que el texto del subárbol nunca se acepta: el texto que está dentro de un widget searchbox personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<input role=\"searchbox\">) un <label> asociado también cuenta.",
     "examples": [
       {
         "state": "pass",
@@ -1751,7 +1751,7 @@
       },
       {
         "state": "fail",
-        "explanation": "Sin nombre accesible proveniente de ningún mecanismo compatible."
+        "explanation": "Sin nombre accesible procedente de ningún mecanismo compatible."
       }
     ]
   },
@@ -1791,7 +1791,7 @@
     "title": "Los controles deslizantes tienen un nombre accesible",
     "description": "Comprueba que los controles deslizantes (input[type=\"range\"] y role=\"slider\") expongan un nombre accesible no vacío.",
     "applicability": "Se aplica a elementos que tienen role=\"slider\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance. Un <input type=\"range\"> nativo sin el rol pertenece a form-control-programmatic-label-present.",
-    "expectation": "El elemento tiene un nombre accesible no vacío proveniente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"slider\" obtiene su nombre solo del autor (name-from-author-only), así que el texto del subárbol nunca se acepta: el texto que está dentro de un widget slider personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<input role=\"slider\">) un <label> asociado también cuenta.",
+    "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"slider\" obtiene su nombre solo del autor (name-from-author-only), así que el texto del subárbol nunca se acepta: el texto que está dentro de un widget slider personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<input role=\"slider\">) un <label> asociado también cuenta.",
     "examples": [
       {
         "state": "pass",
@@ -1799,7 +1799,7 @@
       },
       {
         "state": "fail",
-        "explanation": "Sin nombre accesible proveniente de ningún mecanismo compatible."
+        "explanation": "Sin nombre accesible procedente de ningún mecanismo compatible."
       }
     ]
   },
@@ -1807,7 +1807,7 @@
     "title": "Los controles numéricos tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"spinbutton\" expongan un nombre accesible no vacío.",
     "applicability": "Se aplica a elementos que tienen role=\"spinbutton\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance.",
-    "expectation": "El elemento tiene un nombre accesible no vacío proveniente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"spinbutton\" obtiene su nombre solo del autor (name-from-author-only), así que el texto del subárbol nunca se acepta: el texto que está dentro de un widget spinbutton personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<input role=\"spinbutton\">) un <label> asociado también cuenta.",
+    "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"spinbutton\" obtiene su nombre solo del autor (name-from-author-only), así que el texto del subárbol nunca se acepta: el texto que está dentro de un widget spinbutton personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<input role=\"spinbutton\">) un <label> asociado también cuenta.",
     "examples": [
       {
         "state": "pass",
@@ -1815,7 +1815,7 @@
       },
       {
         "state": "fail",
-        "explanation": "Sin nombre accesible proveniente de ningún mecanismo compatible."
+        "explanation": "Sin nombre accesible procedente de ningún mecanismo compatible."
       }
     ]
   },
@@ -1886,7 +1886,7 @@
   "tab-name-present": {
     "title": "Las pestañas tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"tab\" exponen un nombre accesible no vacío.",
-    "applicability": "Se aplica a los elementos que llevan role=\"tab\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera de alcance.",
+    "applicability": "Se aplica a los elementos que llevan role=\"tab\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera del alcance.",
     "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, de title, o bien, dado que role=\"tab\" obtiene su nombre del contenido, del texto de su propio subárbol, donde el nombre propio de un descendiente (un <img alt>, aria-label o title) cuenta como la contribución de ese descendiente y no solo sus nodos de texto.",
     "examples": [
       {
@@ -2014,7 +2014,7 @@
   "textbox-name-present": {
     "title": "Los cuadros de texto tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"textbox\" exponen un nombre accesible no vacío.",
-    "applicability": "Se aplica a los elementos que llevan role=\"textbox\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera de alcance.",
+    "applicability": "Se aplica a los elementos que llevan role=\"textbox\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera del alcance.",
     "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"textbox\" obtiene su nombre únicamente del autor, así que el texto del subárbol nunca se acepta: el texto situado dentro de un widget de cuadro de texto personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<input role=\"textbox\">) un <label> asociado también cuenta.",
     "examples": [
       {
@@ -2030,7 +2030,7 @@
   "tooltip-name-present": {
     "title": "Los tooltips tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"tooltip\" exponen un nombre accesible no vacío.",
-    "applicability": "Se aplica a los elementos que llevan role=\"tooltip\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera de alcance.",
+    "applicability": "Se aplica a los elementos que llevan role=\"tooltip\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera del alcance.",
     "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, de title, o bien, dado que role=\"tooltip\" obtiene su nombre del contenido, del texto de su propio subárbol, donde el nombre propio de un descendiente (un <img alt>, aria-label o title) cuenta como la contribución de ese descendiente y no solo sus nodos de texto.",
     "examples": [
       {
@@ -2046,7 +2046,7 @@
   "treeitem-name-present": {
     "title": "Los elementos de árbol tienen un nombre accesible",
     "description": "Comprueba que los elementos con role=\"treeitem\" exponen un nombre accesible no vacío.",
-    "applicability": "Se aplica a los elementos que llevan role=\"treeitem\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera de alcance.",
+    "applicability": "Se aplica a los elementos que llevan role=\"treeitem\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) y que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito equivalente pero sin atributo role queda fuera del alcance.",
     "expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, de title, o bien, dado que role=\"treeitem\" obtiene su nombre del contenido, del texto de su propio subárbol, donde el nombre propio de un descendiente (un <img alt>, aria-label o title) cuenta como la contribución de ese descendiente y no solo sus nodos de texto.",
     "examples": [
       {
