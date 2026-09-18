@@ -158,6 +158,15 @@ const { html, headings } = processHeadings(rawHtml);
 			display: block !important;
 			padding: 0;
 		}
+
+		/* Chromium collapses a closed <details>'s content into an internal
+		   ::details-content box (content-visibility: hidden, height: 0)
+		   that overriding the child's own display can't undo. */
+		.sidebar-toggle::details-content {
+			content-visibility: visible !important;
+			height: auto !important;
+			overflow: visible !important;
+		}
 	}
 
 	.toc-rail {
