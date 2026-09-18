@@ -1,6 +1,9 @@
+import type { LocalizedOverride } from "./localize";
+
 export interface GettingStartedSection {
 	href: string;
 	label: string;
+	i18n?: { es?: LocalizedOverride };
 }
 
 export const gettingStartedSections: GettingStartedSection[] = [

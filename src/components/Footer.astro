@@ -1,16 +1,24 @@
 ---
+import { t, type Locale } from "../i18n/t";
+
+interface Props {
+	locale?: Locale;
+}
+
+const { locale = "en" } = Astro.props;
 const year = new Date().getFullYear();
+const localePrefix = locale === "es" ? "/es" : "";
 ---
 
 <footer class="site-footer">
 	<p>
-		© {year} SureA11y — built by{" "}
+		{t("footer.copyright", locale, { year })}{" "}
 		<a href="https://www.linkedin.com/in/jorgerumoroso/">Jorge Rumoroso</a>
 	</p>
 	<nav aria-label="Footer">
 		<ul>
-			<li><a href="https://github.com/SureA11y/core/issues">Report an issue</a></li>
-			<li><a href="/accessibility-statement/">Accessibility statement</a></li>
+			<li><a href="https://github.com/SureA11y/core/issues">{t("footer.reportIssue", locale)}</a></li>
+			<li><a href={`${localePrefix}/accessibility-statement/`}>{t("footer.a11yStatement", locale)}</a></li>
 		</ul>
 	</nav>
 </footer>

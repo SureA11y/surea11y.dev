@@ -3,6 +3,7 @@ import { Tag } from "./design-system/core/Tag.jsx";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
 import { Callout } from "./design-system/feedback/Callout.jsx";
+import { t } from "../i18n/t";
 
 function LabeledRichText({ label, text }) {
 	const blocks = text
@@ -34,38 +35,41 @@ function LabeledRichText({ label, text }) {
 	});
 }
 
-export function RulePage({ rule }) {
+export function RulePage({ rule, locale = "en" }) {
 	return (
 		<article>
 			<p className="rule-kicker">{rule.ruleId}</p>
 			<h1>{rule.title}</h1>
 			<div className="tag-row">
 				<Tag>{rule.type}</Tag>
-				{rule.deprecated ? <Tag tone="accent">deprecated</Tag> : null}
+				{rule.deprecated ? <Tag tone="accent">{t("common.deprecated", locale)}</Tag> : null}
 				{rule.wcagSc.length ? (
 					<Tag tone="accent2">
 						WCAG {rule.wcagSc.join(", ")}
 						{rule.level ? ` (${rule.level})` : ""}
 					</Tag>
 				) : null}
-				<Tag>confidence: {rule.confidence}</Tag>
-				<Tag>severity: {rule.severity}</Tag>
+				<Tag>{t("rulePage.confidenceLabel", locale)} {rule.confidence}</Tag>
+				<Tag>{t("rulePage.severityLabel", locale)} {rule.severity}</Tag>
 				{rule.category ? <Tag>{rule.category}</Tag> : null}
 			</div>
 
 			{rule.deprecated ? (
-				<Callout tone="note" title="Deprecated">
+				<Callout tone="note" title={t("rulePage.deprecatedTitle", locale)}>
 					<p>
 						{rule.deprecation?.replacedBy ? (
 							<>
-								Replaced by{" "}
+								{t("rulePage.replacedBy", locale)}{" "}
 								<a href={`/rules/${rule.deprecation.replacedBy}/`}>
 									<code>{rule.deprecation.replacedBy}</code>
 								</a>
-								{rule.deprecation?.sinceVersion ? ` since ${rule.deprecation.sinceVersion}` : ""}.
+								{rule.deprecation?.sinceVersion
+									? ` ${t("rulePage.since", locale)} ${rule.deprecation.sinceVersion}`
+									: ""}
+								.
 							</>
 						) : (
-							"This rule is deprecated."
+							t("rulePage.deprecatedFallback", locale)
 						)}
 						{rule.deprecation?.reason ? ` ${rule.deprecation.reason}` : ""}
 					</p>
@@ -83,21 +87,29 @@ export function RulePage({ rule }) {
 
 			{rule.description ? <p className="rule-description">{rule.description}</p> : null}
 
-			{rule.applicability ? <LabeledRichText label="Applies to." text={rule.applicability} /> : null}
-			{rule.expectation ? <LabeledRichText label="Expectation." text={rule.expectation} /> : null}
+			{rule.applicability ? (
+				<LabeledRichText label={t("rulePage.appliesTo", locale)} text={rule.applicability} />
+			) : null}
+			{rule.expectation ? (
+				<LabeledRichText label={t("rulePage.expectation", locale)} text={rule.expectation} />
+			) : null}
 
-			<h2>Examples</h2>
+			<h2>{t("rulePage.examples", locale)}</h2>
 			{rule.examples.map((example) => (
 				<div className="example" key={example.outcome}>
 					<ResultBadge state={example.state} />
-					<CodeBlock lang="html" lines={example.html.split("\n")} />
+					<CodeBlock
+						lang="html"
+						lines={example.html.split("\n")}
+						aria-label={t("rulePage.exampleCodeLabel", locale, { ruleId: rule.ruleId })}
+					/>
 					<p>{example.explanation}</p>
 				</div>
 			))}
 
 			{rule.relatedRuleIds.length ? (
 				<>
-					<h2>Related rules</h2>
+					<h2>{t("rulePage.relatedRules", locale)}</h2>
 					<ul className="related-rules">
 						{rule.relatedRuleIds.map((id) => (
 							<li key={id}>
@@ -110,7 +122,7 @@ export function RulePage({ rule }) {
 
 			<p className="view-source">
 				<a href={`https://github.com/SureA11y/core/blob/main/${rule.sourcePath}`}>
-					View source
+					{t("rulePage.viewSource", locale)}
 				</a>
 			</p>
 		</article>

@@ -4,16 +4,19 @@ import { configurationSections } from "./configurationSections";
 import { resultsReportsSections } from "./resultsReportsSections";
 import { conformanceSections } from "./conformanceSections";
 import { helpSections } from "./helpSections";
+import type { LocalizedOverride } from "./localize";
 
 export interface TreeLeaf {
 	href: string;
 	label: string;
+	i18n?: { es?: LocalizedOverride };
 }
 
 export interface TreeSection {
 	href: string;
 	label: string;
 	description: string;
+	i18n?: { es?: LocalizedOverride };
 	children: TreeLeaf[];
 }
 

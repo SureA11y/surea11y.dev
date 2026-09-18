@@ -1,7 +1,10 @@
+import type { LocalizedOverride } from "./localize";
+
 export interface Section {
 	href: string;
 	label: string;
 	description: string;
+	i18n?: { es?: LocalizedOverride };
 }
 
 export const sections: Section[] = [
