@@ -158,8 +158,8 @@ export function CiIntegrationContent() {
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#what-it-can-and-cant-scan">
 					la documentación del CLI
 				</a>{" "}
-				para ver qué se sacrifica con eso (sin contenido renderizado en el cliente, sin layout de CSS
-				real).
+				para ver qué se sacrifica con eso (sin contenido renderizado en el cliente ni un motor de
+				diseño CSS real).
 			</p>
 		</>
 	);
