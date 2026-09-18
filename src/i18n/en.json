@@ -40,5 +40,9 @@
 	"layout.defaultDescription": "Deterministic WCAG 2.2 accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI.",
 	"usageBinding.seeExample": "Also see",
 	"usageBinding.runnableExample": "a runnable example",
-	"usageBinding.inRepo": "in the package's own repo."
+	"usageBinding.inRepo": "in the package's own repo.",
+	"usageBinding.nextSteps": "Next:",
+	"usageBinding.engineOptions": "scope which rules run",
+	"usageBinding.ciIntegration": "wire it into CI",
+	"usageBinding.resultsSchema": "the full result shape"
 }

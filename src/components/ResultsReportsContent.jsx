@@ -1,4 +1,12 @@
 import React from "react";
+import { DataTable } from "./design-system/data/DataTable.jsx";
+
+const formatRows = [
+	{ format: <code>JSON</code>, use: "Integration, storage, and your own processing", audience: "Developers and platforms" },
+	{ format: "HTML", use: "Human review of one concrete scan", audience: "QA and audit" },
+	{ format: "SARIF", use: "Integration with code-analysis tooling", audience: "Development and security teams" },
+	{ format: "EARL", use: "Interoperability and ACT-conformance evidence", audience: "Standards, research, and conformance" },
+];
 
 export function ResultsReportsContent() {
 	return (
@@ -10,6 +18,15 @@ export function ResultsReportsContent() {
 				only speaks SARIF, or the W3C's own implementation-reporting format. Pick the shape that
 				matches who's actually going to look at it.
 			</p>
+			<DataTable
+				rowKey="format"
+				columns={[
+					{ key: "format", label: "Format" },
+					{ key: "use", label: "Primary use", wrap: true },
+					{ key: "audience", label: "Audience" },
+				]}
+				rows={formatRows}
+			/>
 
 			<h2>Output schema</h2>
 			<p>
@@ -35,7 +52,8 @@ export function ResultsReportsContent() {
 			<p>
 				Feed a scan straight into GitHub Code Scanning or any other SARIF-consuming dashboard,
 				without writing a converter yourself. Violations map to SARIF results with a stable,
-				content-based fingerprint, so a baseline still filters cleanly and a dashboard can track a
+				content-based fingerprint, so a <a href="/conformance/baseline/">baseline / allowlist</a>{" "}
+				still filters cleanly and a dashboard can track a
 				finding across commits instead of losing it every time a line number shifts. See{" "}
 				<a href="/results-reports/sarif-report/">SARIF report</a>.
 			</p>

@@ -17,6 +17,12 @@ export function UsageBindingSection({ intro, install, installNote, usage, note, 
 					{t("usageBinding.inRepo", locale)}
 				</p>
 			) : null}
+			<p>
+				{t("usageBinding.nextSteps", locale)}{" "}
+				<a href="/configuration/engine-options/">{t("usageBinding.engineOptions", locale)}</a>,{" "}
+				<a href="/configuration/ci-integration/">{t("usageBinding.ciIntegration", locale)}</a>,{" "}
+				<a href="/results-reports/output-schema/">{t("usageBinding.resultsSchema", locale)}</a>.
+			</p>
 		</>
 	);
 }

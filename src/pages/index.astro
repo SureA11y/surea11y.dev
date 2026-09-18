@@ -4,11 +4,13 @@ import { Badge } from "../components/design-system/core/Badge.jsx";
 import { Button } from "../components/design-system/core/Button.jsx";
 import { Card } from "../components/design-system/core/Card.jsx";
 import { Logo } from "../components/design-system/brand/Logo.jsx";
-import { OverviewContent } from "../components/OverviewContent.jsx";
+import { OverviewLead, OverviewContent } from "../components/OverviewContent.jsx";
 import { sections } from "../data/sections";
 import engine from "../data/engine.generated.json";
+import rules from "../data/rules.generated.json";
 
 const otherSections = sections.filter((section) => section.href !== "/");
+const core = "https://github.com/SureA11y/core/blob/main";
 ---
 
 <BaseLayout
@@ -22,6 +24,7 @@ const otherSections = sections.filter((section) => section.href !== "/");
 		Deterministic accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO,
 		Jest/Vitest, and CI pipelines.
 	</p>
+	<OverviewLead />
 	<div class="hero-actions">
 		<Button as="a" href="/getting-started/" variant="secondary">
 			Get started
@@ -32,13 +35,14 @@ const otherSections = sections.filter((section) => section.href !== "/");
 	</div>
 	<p class="hero-stats">
 		<a href="#checked-against-the-act-corpus">
-			58 ACT rules · 798 reference cases · deterministic results · explicit uncertainty
+			{rules.length} accessibility rules · 58 validated against the ACT corpus · 798 reference cases · deterministic results · explicit uncertainty
 		</a>
 	</p>
 	<div class="badges">
 		<Badge label="engine" value={`v${engine.version}`} tone="neutral" />
 		<Badge label="license" value={engine.license} tone="neutral" />
 	</div>
+	<p><a href={`${core}/CHANGELOG.md`}>See what changed in the latest release</a></p>
 
 	<OverviewContent />
 	<nav aria-label="Explore other sections">

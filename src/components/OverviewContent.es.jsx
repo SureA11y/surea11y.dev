@@ -1,6 +1,7 @@
 import React from "react";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
+import rules from "../data/rules.generated.json";
 
 const core = "https://github.com/SureA11y/core/blob/main";
 
@@ -15,7 +16,7 @@ const packageRows = [
 	{ id: "core", want: "Ejecutar el motor sobre un DOM que ya tengas", install: <code>@surea11y/core</code> },
 ];
 
-export function OverviewContent() {
+export function OverviewLead() {
 	return (
 		<>
 			<p>
@@ -36,7 +37,13 @@ export function OverviewContent() {
 				<em>Sure</em> significa certeza sobre lo que se sabe, y honestidad sobre lo que no. Te dice lo que
 				no te puede decir.
 			</p>
+		</>
+	);
+}
 
+export function OverviewContent() {
+	return (
+		<>
 			<h2>No es un único producto</h2>
 			<p>
 				surea11y es una familia de paquetes que comparten un mismo motor, no una única herramienta con un
@@ -91,9 +98,9 @@ export function OverviewContent() {
 
 			<h3>Verificado contra el corpus de ACT</h3>
 			<p>
-				Cada regla con una contraparte en{" "}
-				<a href="https://act-rules.github.io/">W3C ACT Rules</a> se ejecuta contra los propios casos de
-				prueba publicados por ACT: 798 ejemplos en 58 reglas. El motor no falla en ninguno de los ejemplos
+				El motor incluye {rules.length} reglas. Cincuenta y ocho de ellas tienen una contraparte en{" "}
+				<a href="https://act-rules.github.io/">W3C ACT Rules</a> y se ejecutan contra los propios
+				casos de prueba publicados por ACT: 798 ejemplos en esas 58 reglas. El motor no falla en ninguno de los ejemplos
 				que ACT marca como aprobados o no aplicables, por lo que no informa falsos positivos frente a ese
 				corpus. Treinta y un ejemplos que ACT marca como fallidos quedan sin señalar — en su mayoría son
 				juicios de valor, como si un encabezado describe el contenido que tiene debajo — consulta{" "}

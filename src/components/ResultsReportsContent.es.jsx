@@ -1,4 +1,12 @@
 import React from "react";
+import { DataTable } from "./design-system/data/DataTable.jsx";
+
+const formatRows = [
+	{ format: <code>JSON</code>, use: "Integración, almacenamiento y procesamiento propio", audience: "Desarrollo y plataformas" },
+	{ format: "HTML", use: "Revisión humana de un análisis concreto", audience: "QA y auditoría" },
+	{ format: "SARIF", use: "Integración con herramientas de análisis de código", audience: "Equipos de desarrollo y seguridad" },
+	{ format: "EARL", use: "Interoperabilidad y evidencia de conformidad con ACT", audience: "Estándares, investigación y conformidad" },
+];
 
 export function ResultsReportsContent() {
 	return (
@@ -11,6 +19,15 @@ export function ResultsReportsContent() {
 				informe de implementación del W3C. Elige la forma que se ajuste a quién va a mirarlo
 				realmente.
 			</p>
+			<DataTable
+				rowKey="format"
+				columns={[
+					{ key: "format", label: "Formato" },
+					{ key: "use", label: "Uso principal", wrap: true },
+					{ key: "audience", label: "Audiencia" },
+				]}
+				rows={formatRows}
+			/>
 
 			<h2>Esquema de salida</h2>
 			<p>
@@ -37,7 +54,8 @@ export function ResultsReportsContent() {
 			<p>
 				Envía un análisis directamente a GitHub Code Scanning o a cualquier otro panel que consuma
 				SARIF, sin tener que escribir tú mismo un conversor. Las violaciones se mapean a resultados
-				SARIF con una huella estable basada en contenido, así que una línea base sigue filtrando con
+				SARIF con una huella estable basada en contenido, así que un{" "}
+				<a href="/conformance/baseline/">Baseline / allowlist</a> sigue filtrando con
 				limpieza y un panel puede seguir un hallazgo a través de commits en lugar de perderlo cada
 				vez que cambia un número de línea. Ver{" "}
 				<a href="/results-reports/sarif-report/">Informe SARIF</a>.

@@ -133,6 +133,21 @@ Rules at `/rules/organization/`) — see "Where things come from" and
     `POLICY.md`, `ACT_RULE_MAPPING.md`, `API_STABILITY.md`) points at
     `https://github.com/SureA11y/core/blob/main/docs/<file>.md` instead,
     keeping its anchor since GitHub renders those.
+  - **Canonical source, formalized**: the site owns adoption, product
+    usage, concepts, decisions, recipes, and stable reference for
+    consumers; GitHub owns contribution, internal architecture, rule
+    authorship, development process, and repo policy. The
+    cross-reference rule above is this principle applied at the link
+    level — a topic that stays on GitHub gets a real link plus a short
+    description of what's there, never a bare filename standing alone.
+    Audited the four highest-traffic entry points to a GitHub-only doc
+    (`EngineOptionsContent.jsx`, `CiIntegrationContent.jsx`,
+    `LocalesContent.jsx`, `FaqContent.jsx`, both languages) against this:
+    every `${core}/docs/*.md` link in those eight files already carries
+    an adjacent description, so no fix was needed there. Didn't extend
+    the audit to the remaining ~15 files x 2 languages using the same
+    `${core}` link convention — disproportionate for what a full sweep
+    would likely find, given the sampled files were already consistent.
   - This content lives in `.jsx` files, not `.astro` pages directly, for a
     real reason: a plain `.astro` template silently drops the whitespace
     between a line of text and an inline tag (`<a>`/`<code>`) that starts
@@ -412,3 +427,42 @@ Done after an external review of the live site flagged gaps:
   keyboard + screen-reader + WCAG audit on every single change. Weakened to
   "Changes are also subject to manual accessibility testing" instead, which
   is what's actually true and still says manual testing happens.
+
+## Content/structure review implementation
+
+Implemented most of `Revision_general_contenidos_estructura_surea11y.docx`
+(a Spanish-language content/structure audit), excluding two items that
+share a "no client-side JS" conflict with this site's deliberate zero-JS
+design (`TableOfContents.astro` already skips scroll-spy for the same
+reason): the rules-catalog search/filter, and global site search. Both
+are explicitly deferred, not built.
+
+Done: the 132-vs-58-ACT-rules stat framing (now reads `{rules.length}
+accessibility rules · 58 validated against the ACT corpus`, sourced from
+`rules.generated.json`'s length rather than a second hardcoded number);
+a "not sure where to start?" `Callout` on Getting Started; baseline/
+allowlist cross-links added to CLI usage and Results & Reports (CI
+integration already had one); a changelog link on the homepage
+(`../core/CHANGELOG.md` is genuinely maintained); the homepage split into
+`OverviewLead`/`OverviewContent` so the value-prop paragraphs sit with the
+hero before the CTA, completing the review's proposed block order; a
+choice-matrix `DataTable` and a real, CLI-captured 5-minute quickstart
+example (one `fail`, one `cantTell`, one `notApplicable` —
+`target-size-minimum`, which the CLI's own static-HTML limitation makes
+`notApplicable`) added to Getting Started; a shared "next steps" paragraph
+added once to `UsageBindingSection.jsx` (covers all 5 driver bindings ×
+2 languages); light heading-only structure added to CLI and Standalone
+(still bespoke, per the reasoning above — just no longer headingless);
+an output-format comparison `DataTable` on Results & Reports; and the
+canonical-source principle formalized above.
+
+**Deferred, not built — record for later:**
+- ACT-equivalent / reason-codes per rule page: `scripts/generate-rules-data.cjs`
+  has no ACT-linkage field today, and `../core/docs/ACT_RULE_MAPPING.md` is
+  unstructured prose — but it references a machine-readable companion,
+  `../core/scripts/data/act-rule-map.json`, which is the real source to
+  reach for if this is ever built. Not built now — matches the review's
+  own "optional" framing and this repo's no-speculative-build convention.
+- Audience-specific tracks (separate onboarding paths for QA, a11y
+  specialists, leadership, platform teams): the review itself says only
+  build these on demonstrated demand. No design work done.

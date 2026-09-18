@@ -11,6 +11,8 @@ export function CliUsageContent() {
 				resulta adecuado para un paso del pipeline de CI o para una comprobación rápida de un
 				artefacto de compilación.
 			</p>
+
+			<h2>Primer análisis</h2>
 			<CodeBlock
 				lines={[
 					{ text: "npm install -g @surea11y/cli", command: true },
@@ -42,10 +44,14 @@ export function CliUsageContent() {
 					"manual-review, page-title-patterns",
 				]}
 			/>
+			<h2>Limitaciones</h2>
 			<p>
 				<code>cantTell</code> nunca afecta al código de salida. El código <code>0</code> indica que
 				no se han encontrado fallos; <code>1</code>, que existe al menos un resultado{" "}
-				<code>fail</code> (el caso que condiciona CI); y <code>2</code>, que se ha producido un error
+				<code>fail</code> — o, analizando con <code>--baseline</code>, un resultado <code>fail</code>{" "}
+				<em>nuevo</em> — (el caso que condiciona CI; ver{" "}
+				<a href="/conformance/baseline/">Baseline / allowlist</a> para saber qué cuenta como
+				"conocido" frente a "nuevo"); y <code>2</code>, que se ha producido un error
 				de uso o de análisis. La CLI solo lee <strong>HTML estático</strong> — un archivo local, o el
 				cuerpo crudo de un GET HTTP(S) — y nunca ejecuta el JavaScript de la página. Para páginas
 				renderizadas en cliente, usa una de las integraciones (<code>bindings</code>) en su lugar, o

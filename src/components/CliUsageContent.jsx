@@ -10,6 +10,8 @@ export function CliUsageContent() {
 				A command instead of code — no test framework or Node script required, good for a
 				pipeline step or a quick check against a build artifact.
 			</p>
+
+			<h2>First scan</h2>
 			<CodeBlock
 				lines={[
 					{ text: "npm install -g @surea11y/cli", command: true },
@@ -41,9 +43,12 @@ export function CliUsageContent() {
 					"manual-review, page-title-patterns",
 				]}
 			/>
+			<h2>Limitations</h2>
 			<p>
 				<code>cantTell</code> never affects the exit code: <code>0</code> clean, <code>1</code>{" "}
-				at least one <code>fail</code> (the CI-gating case), <code>2</code> a usage/scan error.
+				at least one — or, scanning with <code>--baseline</code>, one <em>new</em> — <code>fail</code>{" "}
+				(the CI-gating case; see <a href="/conformance/baseline/">Baseline / allowlist</a> for what
+				counts as "known" vs. "new"), <code>2</code> a usage/scan error.
 				The CLI reads <strong>static HTML only</strong> — a local file, or the raw body of an
 				HTTP(S) GET — and never executes page JavaScript. For client-rendered pages, use one of
 				the bindings instead, or call the engine directly against a real, driven browser (see{" "}
