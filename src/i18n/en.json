@@ -34,5 +34,11 @@
 	"homepage.viewOnGitHub": "View on GitHub",
 	"homepage.exploreSections": "Explore other sections",
 	"siteNav.githubLabel": "@surea11y/core on GitHub",
-	"siteNav.npmLabel": "@surea11y/core on npm"
+	"siteNav.npmLabel": "@surea11y/core on npm",
+	"layout.skipToContent": "Skip to content",
+	"layout.siteMenu": "Site menu",
+	"layout.defaultDescription": "Deterministic WCAG 2.2 accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI.",
+	"usageBinding.seeExample": "Also see",
+	"usageBinding.runnableExample": "a runnable example",
+	"usageBinding.inRepo": "in the package's own repo."
 }

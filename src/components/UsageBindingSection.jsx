@@ -1,7 +1,8 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
+import { t } from "../i18n/t";
 
-export function UsageBindingSection({ intro, install, installNote, usage, note, exampleHref }) {
+export function UsageBindingSection({ intro, install, installNote, usage, note, exampleHref, locale = "en" }) {
 	return (
 		<>
 			{intro}
@@ -11,7 +12,9 @@ export function UsageBindingSection({ intro, install, installNote, usage, note, 
 			{note}
 			{exampleHref ? (
 				<p>
-					Also see <a href={exampleHref}>a runnable example</a> in the package's own repo.
+					{t("usageBinding.seeExample", locale)}{" "}
+					<a href={exampleHref}>{t("usageBinding.runnableExample", locale)}</a>{" "}
+					{t("usageBinding.inRepo", locale)}
 				</p>
 			) : null}
 		</>

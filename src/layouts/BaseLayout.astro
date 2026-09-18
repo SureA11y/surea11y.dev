@@ -7,7 +7,7 @@ import TableOfContents from "../components/TableOfContents.astro";
 import Footer from "../components/Footer.astro";
 import { processHeadings } from "../utils/headings";
 import { localizeLinks } from "../utils/localizeLinks";
-import { resolveLocale } from "../i18n/t";
+import { t, resolveLocale } from "../i18n/t";
 
 interface Props {
 	title: string;
@@ -17,12 +17,10 @@ interface Props {
 	breadcrumbLabel?: string;
 }
 
-const DEFAULT_DESCRIPTION =
-	"Deterministic WCAG 2.2 accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI.";
-
-const { title, description = DEFAULT_DESCRIPTION, breadcrumbLabel } = Astro.props;
+const { title, description, breadcrumbLabel } = Astro.props;
 const pageTitle = `${title} · surea11y`;
 const locale = resolveLocale(Astro.currentLocale);
+const pageDescription = description ?? t("layout.defaultDescription", locale);
 
 const pathNoLocale = Astro.url.pathname.replace(/^\/es(?=\/|$)/, "") || "/";
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
@@ -41,7 +39,7 @@ const html = localizeLinks(headedHtml, locale);
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="alternate icon" href="/favicon.ico" />
 		<title>{pageTitle}</title>
-		<meta name="description" content={description} />
+		<meta name="description" content={pageDescription} />
 		<link rel="canonical" href={canonicalUrl} />
 		<link rel="alternate" hreflang="en" href={enUrl} />
 		<link rel="alternate" hreflang="es" href={esUrl} />
@@ -49,18 +47,18 @@ const html = localizeLinks(headedHtml, locale);
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="surea11y" />
 		<meta property="og:title" content={pageTitle} />
-		<meta property="og:description" content={description} />
+		<meta property="og:description" content={pageDescription} />
 		<meta property="og:url" content={canonicalUrl} />
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content={pageTitle} />
-		<meta name="twitter:description" content={description} />
+		<meta name="twitter:description" content={pageDescription} />
 	</head>
 	<body>
-		<a class="skip-link" href="#main-content">Skip to content</a>
+		<a class="skip-link" href="#main-content">{t("layout.skipToContent", locale)}</a>
 		<SiteNav locale={locale} />
 		<div class="shell">
 			<details class="sidebar-toggle">
-				<summary>Site menu</summary>
+				<summary>{t("layout.siteMenu", locale)}</summary>
 				<div class="sidebar-body"><Sidebar locale={locale} /></div>
 			</details>
 			<div class="content-col">
