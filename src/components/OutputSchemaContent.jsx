@@ -596,6 +596,7 @@ export function OutputSchemaContent() {
 				<code>aria-required-children</code>, <code>aria-prohibited-children</code>,{" "}
 				<code>aria-required-parent</code>, <code>aria-allowed-attr</code>,{" "}
 				<code>form-control-programmatic-label-present</code>,{" "}
+				<code>identical-iframes-same-purpose</code>,{" "}
 				<code>svg-image-text-alternative-present</code>,{" "}
 				<code>video-poster-text-alternative-present</code> and <code>target-size-minimum</code>.{" "}
 				<code>confidence</code> is on every result, so a consumer that wants only the most certain
