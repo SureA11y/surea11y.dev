@@ -1,0 +1,152 @@
+import React from "react";
+import { DataTable } from "./design-system/data/DataTable.jsx";
+import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
+
+const core = "https://github.com/SureA11y/core/blob/main";
+
+const packageRows = [
+	{ id: "playwright", want: "Agregar comprobaciones de accesibilidad a los tests de Playwright", install: <code>@surea11y/playwright</code> },
+	{ id: "puppeteer", want: "…Puppeteer", install: <code>@surea11y/puppeteer</code> },
+	{ id: "selenium", want: "…Selenium", install: <code>@surea11y/selenium</code> },
+	{ id: "cypress", want: "…Cypress", install: <code>@surea11y/cypress</code> },
+	{ id: "webdriverio", want: "…WebdriverIO", install: <code>@surea11y/webdriverio</code> },
+	{ id: "cli", want: "Analizar HTML estático desde una terminal o una canalización de CI", install: <code>@surea11y/cli</code> },
+	{ id: "test-matchers", want: "Verificar la accesibilidad en tests de componentes o unitarios con Jest/Vitest", install: <code>@surea11y/test-matchers</code> },
+	{ id: "core", want: "Ejecutar el motor sobre un DOM que ya tengas", install: <code>@surea11y/core</code> },
+];
+
+export function OverviewContent() {
+	return (
+		<>
+			<p>
+				<a href="https://github.com/SureA11y/core">@surea11y/core</a> es un <strong>motor de testing de accesibilidad</strong> que ejecutas en tu propia
+				suite de tests, canalización de CI o desde la línea de comandos.
+			</p>
+			<p>
+				Lo que lo distingue es lo que hace con los casos que el testing automatizado no puede resolver. Implementa
+				el{" "}
+				<a href="https://www.w3.org/TR/act-rules-format/">
+					Accessibility Conformance Testing (ACT) Rules Format
+				</a>{" "}
+				abierto del W3C, verificado contra el propio corpus de tests publicado por ACT en lugar de juzgarse
+				solo contra sí mismo. Informa hallazgos, ausencia de hallazgos y —de forma poco habitual—
+				incertidumbre explícita, de modo que los resultados son auditables en lugar de tranquilizadores.
+			</p>
+			<p>
+				<em>Sure</em> significa certeza sobre lo que se sabe, y honestidad sobre lo que no. Te dice lo que
+				no te puede decir.
+			</p>
+
+			<h2>No es un único producto</h2>
+			<p>
+				surea11y es una familia de paquetes que comparten un mismo motor, no una única herramienta con un
+				único comando de instalación. Instala el que coincida con cómo ya pruebas —
+				cada uno incorpora{" "}
+				<code>@surea11y/core</code> por ti:
+			</p>
+			<DataTable
+				rowKey="id"
+				columns={[
+					{ key: "want", label: "Quiero…", wrap: true },
+					{ key: "install", label: "Instalar", width: "26%" },
+				]}
+				rows={packageRows}
+			/>
+			<p>
+				Consulta <a href="/getting-started/">Primeros pasos</a> para ver la instalación y el uso de cada binding.
+			</p>
+
+			<h2>En qué se diferencian sus resultados</h2>
+			<p>
+				Cada regla toma una decisión determinista, a partir de un vocabulario fijo de cuatro resultados —
+				no la forma <code>violations</code>/<code>passes</code>/<code>incomplete</code>/
+				<code>inapplicable</code> que usan otras herramientas populares de testing de accesibilidad:
+			</p>
+			<ul className="outcome-list">
+				<li>
+					<ResultBadge state="fail" /> (<code>fail</code>) — una violación demostrable a partir del DOM.
+					Reservado para casos objetivos y normativos.
+				</li>
+				<li>
+					<ResultBadge state="pass" /> (<code>pass</code>) — se cumple la condición específica de esta regla.{" "}
+					<strong>No es una afirmación de que la página sea accesible.</strong>
+				</li>
+				<li>
+					<ResultBadge state="unknown" /> (<code>cantTell</code>) — una persona tiene que decidir esto, y
+					el resultado indica qué era ambiguo.
+				</li>
+				<li>
+					<ResultBadge state="na" /> (<code>notApplicable</code>) — la precondición de la regla no está
+					presente.
+				</li>
+			</ul>
+			<p>
+				<code>cantTell</code> es el sentido del proyecto. Un motor que descarta en silencio lo que no puede
+				determinar <strong>produce un informe más corto y una falsa sensación de cobertura</strong>. Consulta{" "}
+				<a href="/results-reports/output-schema/">Resultados e informes</a> para conocer la forma completa
+				del resultado, y{" "}
+				<a href="/conformance/wcag-mapping/">Conformidad</a> para ver cómo los resultados individuales se
+				combinan en un veredicto de WCAG — incluida la forma en que se resuelve y aplica una versión de
+				WCAG objetivo (2.0/2.1/2.2).
+			</p>
+
+			<h3>Verificado contra el corpus de ACT</h3>
+			<p>
+				Cada regla con una contraparte en{" "}
+				<a href="https://act-rules.github.io/">W3C ACT Rules</a> se ejecuta contra los propios casos de
+				test publicados por ACT: 798 ejemplos en 58 reglas. El motor no falla en ninguno de los ejemplos
+				que ACT marca como aprobados o no aplicables, por lo que no informa falsos positivos frente a ese
+				corpus. Treinta y un ejemplos que ACT marca como fallidos quedan sin señalar — en su mayoría son
+				juicios de valor, como si un encabezado describe el contenido que tiene debajo — consulta{" "}
+				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a> para ver cada
+				uno, con el razonamiento.
+			</p>
+			<p>
+				El{" "}
+				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
+					informe de implementación EARL
+				</a>{" "}
+				registra el resultado de cada uno de esos casos, incluidos los resultados aprobados y no aplicables,
+				de modo que una regla que permaneció en silencio porque nada le era aplicable se distingue de una
+				que directamente no está implementada. Consulta{" "}
+				<a href="/results-reports/earl-report/">Informe EARL</a> para conocer el formato.
+			</p>
+
+			<h2>Principios clave</h2>
+			<ul>
+				<li><strong>Ejecución determinista.</strong> La misma entrada siempre produce la misma salida.</li>
+				<li><strong>Conservador por diseño.</strong> <code>fail</code> se reserva para violaciones objetivas y normativas, minimizando las falsas alarmas.</li>
+				<li><strong>Trazabilidad frente a los estándares.</strong> Las reglas se asignan al Criterio de Éxito de WCAG aplicable siempre que corresponde.</li>
+				<li><strong>Salida estable y legible por máquina.</strong> Los identificadores de regla permanecen estables sin importar el idioma.</li>
+				<li><strong>Independiente del framework.</strong> Se ejecuta dentro de jsdom o de cualquier framework de automatización de navegador.</li>
+				<li><strong>Extensible.</strong> Agrega reglas personalizadas, registra políticas y filtra análisis por ID de regla, etiquetas o versión de WCAG.</li>
+				<li><strong>Informes localizados.</strong> Los mensajes legibles por humanos se pueden traducir sin afectar los datos legibles por máquina — hoy incluye <code>en</code>, <code>fr</code>, <code>de</code> y <code>es</code>.</li>
+			</ul>
+
+			<h2>Filosofía</h2>
+			<blockquote>
+				Automatiza lo que se puede determinar objetivamente. Nunca finjas automatizar lo que no se puede.
+			</blockquote>
+			<p>
+				Algunos requisitos de WCAG se pueden comprobar con total confianza. Otros necesitan juicio humano,
+				conocimiento del contexto o una evaluación de usabilidad. Una puntuación única o un veredicto de
+				aprobado/fallido aplana esa diferencia; surea11y la informa. Por eso existen <code>cantTell</code>{" "}
+				y <code>notApplicable</code> como resultados, y eso da forma a cada regla del motor.
+			</p>
+
+			<h3>Lo que surea11y no detecta</h3>
+			<p>Ser explícito sobre los límites de la automatización es parte de la misma filosofía. Por ejemplo, surea11y no:</p>
+			<ul>
+				<li>confirma que un texto alternativo sea <em>significativo</em>, solo que esté presente (un atributo alt con el valor <code>"image123.png"</code> aprueba la comprobación objetiva);</li>
+				<li>juzga si una elección de contraste de color es estéticamente apropiada, solo si cumple la relación de contraste aplicable;</li>
+				<li>determina si un mensaje de error realmente <em>explica</em> el problema, ya que eso depende de una lógica de validación que un análisis estático no puede ver;</li>
+				<li>detecta una trampa de foco de teclado o contenido recortado al 400% de zoom, ya que ambos requieren simular una interacción real del usuario a lo largo del tiempo, no solo leer el DOM en un instante.</li>
+			</ul>
+			<p>
+				Estos son los casos en los que el motor informa <code>cantTell</code>, y donde el juicio de una
+				persona revisora sigue siendo necesario. Consulta{" "}
+				<a href="/help/known-limitations/">Limitaciones conocidas</a> para ver la lista completa.
+			</p>
+		</>
+	);
+}

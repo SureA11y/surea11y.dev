@@ -2,6 +2,7 @@
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import { RulePage } from "../../../../components/RulePage.jsx";
 import rules from "../../../../data/rules.generated.json";
+import { localizeRule } from "../../../../data/localizeRule";
 
 export function getStaticPaths() {
 	return rules.map((rule) => ({ params: { slug: rule.ruleId }, props: { rule } }));
@@ -11,10 +12,8 @@ interface Props {
 	rule: (typeof rules)[number];
 }
 
-const { rule } = Astro.props;
 const locale = "es";
-// Future translation-overlay hook: merge a per-locale rule-content JSON into
-// `rule` here before it reaches RulePage, once translated rule content exists.
+const rule = localizeRule(Astro.props.rule, locale);
 ---
 
 <BaseLayout title={rule.title} breadcrumbLabel={rule.ruleId}>
