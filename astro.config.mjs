@@ -10,6 +10,7 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
+      filter: (page) => !page.includes('/from/'),
       i18n: {
         defaultLocale: 'en',
         locales: { en: 'en', es: 'es' }

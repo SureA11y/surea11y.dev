@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /from/
 
 Sitemap: https://surea11y.dev/sitemap-index.xml
