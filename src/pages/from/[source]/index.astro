@@ -1,0 +1,61 @@
+---
+import "../../../styles/global.css";
+import { referralSources } from "../../../data/referralSources";
+
+export function getStaticPaths() {
+	return referralSources.map((source) => ({
+		params: { source: source.id },
+		props: { target: source.target },
+	}));
+}
+
+interface Props {
+	target: string;
+}
+
+const { target } = Astro.props;
+const targetUrl = new URL(target, Astro.site);
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta http-equiv="refresh" content={`0;url=${targetUrl}`} />
+		<meta name="robots" content="noindex" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>Redirecting… · surea11y</title>
+	</head>
+	<body>
+		<main class="redirect">
+			<h1>Redirecting to surea11y</h1>
+			<p>
+				If you aren't redirected automatically, <a href={targetUrl}>continue to surea11y.dev</a>.
+			</p>
+		</main>
+	</body>
+</html>
+
+<style>
+	body {
+		background: var(--surface);
+		color: var(--text-body);
+		font-family: var(--font-body);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		margin: 0;
+	}
+
+	.redirect {
+		text-align: center;
+		padding: var(--space-6);
+	}
+
+	h1 {
+		font-family: var(--font-display);
+		color: var(--text-strong);
+		font-size: var(--text-lg);
+	}
+</style>
