@@ -12,11 +12,11 @@ const localePrefix = locale === "es" ? "/es" : "";
 
 <footer class="site-footer">
 	<p>
-		{t("footer.copyright", locale, { year })}{" "}
-		<a href="https://www.linkedin.com/in/jorgerumoroso/">Jorge Rumoroso</a>
+		{t("footer.copyright", locale, { year })}
 	</p>
 	<nav aria-label="Footer">
 		<ul>
+			<li><a href={`${localePrefix}/#about-the-project`}>{t("footer.about", locale)}</a></li>
 			<li><a href="https://github.com/SureA11y/core/issues">{t("footer.reportIssue", locale)}</a></li>
 			<li><a href={`${localePrefix}/accessibility-statement/`}>{t("footer.a11yStatement", locale)}</a></li>
 		</ul>

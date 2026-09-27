@@ -1,0 +1,97 @@
+/* The Overview's "About the project" section — shared by the EN and ES
+   homepages. Deliberately editorial rather than documentation-shaped: it
+   describes the people and stewardship behind the project, not the product,
+   so it steps out of the docs rhythm (eyebrow label instead of a heading,
+   display-type lead, a byline) while staying on brand — ultraviolet is the
+   brand's editorial accent, mono is its label face.
+
+   Every selector is prefixed with `.prose` because BaseLayout's
+   `.prose :global(h2)`/`(p)` compile to `.prose[data-astro-cid-*] h2`
+   (0,2,1); these need to outrank that without !important. */
+
+/* Sits after the Overview's documentation card grid, as the last thing
+   before the footer — the cards close the docs part of the page, this
+   closes the page itself. The top rule + large margin is the break from
+   the cards; no bottom rule, since the footer's own border-top follows. */
+.prose .stewardship {
+	margin-top: var(--space-16);
+	padding: var(--space-10) 0 var(--space-4);
+	border-top: 1px solid var(--border-strong);
+}
+
+.prose .stewardship .stewardship-label {
+	margin: 0 0 var(--space-5);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	font-weight: var(--weight-regular);
+	letter-spacing: var(--tracking-label);
+	text-transform: uppercase;
+	color: var(--accent-2);
+}
+
+.prose .stewardship .stewardship-lead {
+	margin: 0 0 var(--space-6);
+	font-family: var(--font-display);
+	font-size: var(--text-xl);
+	font-weight: var(--weight-regular);
+	line-height: var(--leading-snug);
+	letter-spacing: var(--tracking-heading);
+	color: var(--text-strong);
+	max-width: 32ch;
+	text-wrap: balance;
+}
+
+.prose .stewardship .stewardship-nowrap {
+	white-space: nowrap;
+}
+
+@media (min-width: 600px) {
+	.prose .stewardship .stewardship-lead {
+		font-size: var(--text-2xl);
+	}
+}
+
+.prose .stewardship .stewardship-body {
+	max-width: 60ch;
+	margin: 0 0 var(--space-10);
+	color: var(--text-body);
+}
+
+.prose .stewardship .stewardship-byline {
+	padding-left: var(--space-5);
+	border-left: var(--stroke-accent-bar) solid var(--accent-2);
+}
+
+.prose .stewardship .stewardship-byline p {
+	margin: 0;
+}
+
+.prose .stewardship .stewardship-credit-label {
+	display: block;
+	margin-bottom: var(--space-2);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	letter-spacing: var(--tracking-label);
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+
+.prose .stewardship .stewardship-name {
+	display: block;
+	font-family: var(--font-display);
+	font-size: var(--text-xl);
+	font-weight: var(--weight-bold);
+	line-height: var(--leading-tight);
+	letter-spacing: var(--tracking-heading);
+	color: var(--text-strong);
+}
+
+.prose .stewardship .stewardship-byline .stewardship-role {
+	max-width: 50ch;
+	margin: var(--space-3) 0;
+	color: var(--text-body);
+}
+
+.prose .stewardship .stewardship-link {
+	font-size: var(--text-base);
+}

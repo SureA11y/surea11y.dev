@@ -1,10 +1,11 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import "../../styles/stewardship.css";
 import { Badge } from "../../components/design-system/core/Badge.jsx";
 import { Button } from "../../components/design-system/core/Button.jsx";
 import { Card } from "../../components/design-system/core/Card.jsx";
 import { Logo } from "../../components/design-system/brand/Logo.jsx";
-import { OverviewLead, OverviewContent } from "../../components/OverviewContent.es.jsx";
+import { OverviewLead, OverviewContent, OverviewAbout } from "../../components/OverviewContent.es.jsx";
 import { sections } from "../../data/sections";
 import { localize } from "../../data/localize";
 import { t } from "../../i18n/t";
@@ -68,6 +69,7 @@ const core = "https://github.com/SureA11y/core/blob/main";
 			}
 		</ul>
 	</nav>
+	<OverviewAbout />
 </BaseLayout>
 
 <style>

@@ -96,7 +96,7 @@ export function OverviewContent() {
 				WCAG objetivo (2.0/2.1/2.2).
 			</p>
 
-			<h3>Verificado contra el corpus de ACT</h3>
+			<h3 id="checked-against-the-act-corpus">Verificado contra el corpus de ACT</h3>
 			<p>
 				El motor incluye {rules.length} reglas. Cincuenta y ocho de ellas tienen una contraparte en{" "}
 				<a href="https://act-rules.github.io/">W3C ACT Rules</a> y se ejecutan contra los propios
@@ -154,5 +154,39 @@ export function OverviewContent() {
 				<a href="/help/known-limitations/">Limitaciones conocidas</a> para ver la lista completa.
 			</p>
 		</>
+	);
+}
+
+export function OverviewAbout() {
+	return (
+		<section className="stewardship" aria-labelledby="about-the-project">
+			<h2 id="about-the-project" className="stewardship-label">Sobre el proyecto</h2>
+			<p className="stewardship-lead">
+				surea11y es un proyecto independiente de código abierto, desarrollado a la vista de todos.
+			</p>
+			<p className="stewardship-body">
+				<code>@surea11y/core</code> y todos los paquetes de integración están publicados en{" "}
+				<a href="https://www.npmjs.com/org/surea11y">npm</a>. Las incidencias, las conversaciones y
+				cada cambio son públicos en <a href="https://github.com/SureA11y">GitHub</a>, y las
+				contribuciones son bienvenidas. Consulta{" "}
+				<a href="https://github.com/SureA11y/core/blob/main/CONTRIBUTING.md">
+					<code>CONTRIBUTING.md</code>
+				</a>{" "}
+				(en inglés) para ver las pautas de contribución.
+			</p>
+			<div className="stewardship-byline">
+				<p className="stewardship-credit">
+					<span className="stewardship-credit-label">Creado y mantenido actualmente por</span>{" "}
+					<span className="stewardship-name">Jorge Rumoroso</span>
+				</p>
+				<p className="stewardship-role">
+					Especialista en accesibilidad digital, con experiencia profesional en auditoría,
+					estándares y gobernanza de la accesibilidad.
+				</p>
+				<p className="stewardship-link">
+					<a href="https://www.linkedin.com/in/jorgerumoroso/">Perfil en LinkedIn</a>
+				</p>
+			</div>
+		</section>
 	);
 }

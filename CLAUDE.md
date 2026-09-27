@@ -428,6 +428,32 @@ Done after an external review of the live site flagged gaps:
   "Changes are also subject to manual accessibility testing" instead, which
   is what's actually true and still says manual testing happens.
 
+- **Project stewardship ("About the project")**: a short `<h2 id="about-the-project">`
+  section, `OverviewAbout` in `OverviewContent.jsx`/`.es.jsx`, rendered by
+  both homepages *after* the six-card section grid, as the last thing before
+  the footer — the cards close the documentation part of the page, About
+  closes the page itself (moved there from above the cards; it read as part
+  of the docs flow when the cards came after it) (independent open source, npm +
+  GitHub links, contributions welcome via `CONTRIBUTING.md`, "created and
+  currently maintained by" Jorge Rumoroso with LinkedIn link), plus one footer
+  link to it (`footer.about`) so it's reachable from every page. The
+  footer's copyright line is just `© {year} SureA11y` — the personal
+  attribution moved into this section. Deliberately
+  not a separate About page or sidebar entry — two paragraphs didn't justify a
+  route. Visually it's deliberately *not* docs-shaped ("same identity,
+  different conceptual space" — it's about the people/stewardship, not the
+  product): wrapped in `<section class="stewardship">`, separated from the card grid by a
+  large top margin + full-width top rule (no bottom rule — the footer's own
+  border-top follows), `h2` restyled as a mono ultraviolet eyebrow (ultraviolet is the
+  brand's editorial accent), a display-type lead sentence, and a byline
+  (credit label → name → role → LinkedIn) behind the same violet accent bar
+  the Philosophy blockquote uses. Styles live in `src/styles/stewardship.css`,
+  imported by both homepages; selectors are `.prose`-prefixed to outrank
+  `BaseLayout`'s scoped `.prose :global(h2/p)`. The id is explicit and
+  identical in both languages because the footer link is shared and `localizeLinks` only rewrites the path, not the anchor;
+  the ES ACT-corpus `<h3>` got an explicit `id` for the same reason (the hero
+  stat link had been pointing at a slug that only existed in English).
+
 ## Content/structure review implementation
 
 Implemented most of `Revision_general_contenidos_estructura_surea11y.docx`
