@@ -153,3 +153,37 @@ export function OverviewContent() {
 		</>
 	);
 }
+
+export function OverviewAbout() {
+	return (
+		<section className="stewardship" aria-labelledby="about-the-project">
+			<h2 id="about-the-project" className="stewardship-label">About the project</h2>
+			<p className="stewardship-lead">
+				surea11y is an independent <span className="stewardship-nowrap">open-source</span> project, developed in the open.
+			</p>
+			<p className="stewardship-body">
+				<code>@surea11y/core</code> and every integration package are published on{" "}
+				<a href="https://www.npmjs.com/org/surea11y">npm</a>. Issues, discussion, and changes all
+				happen publicly on <a href="https://github.com/SureA11y">GitHub</a>, and contributions are
+				welcome. See{" "}
+				<a href="https://github.com/SureA11y/core/blob/main/CONTRIBUTING.md">
+					<code>CONTRIBUTING.md</code>
+				</a>{" "}
+				for contribution guidelines.
+			</p>
+			<div className="stewardship-byline">
+				<p className="stewardship-credit">
+					<span className="stewardship-credit-label">Created and currently maintained by</span>{" "}
+					<span className="stewardship-name">Jorge Rumoroso</span>
+				</p>
+				<p className="stewardship-role">
+					Digital accessibility specialist with professional experience in accessibility
+					auditing, standards, and governance.
+				</p>
+				<p className="stewardship-link">
+					<a href="https://www.linkedin.com/in/jorgerumoroso/">LinkedIn profile</a>
+				</p>
+			</div>
+		</section>
+	);
+}
