@@ -31,11 +31,21 @@ function stripTags(html: string): string {
 	return decodeEntities(html.replace(/<[^>]+>/g, ""));
 }
 
+/**
+ * Accents are folded ("configuración" -> "configuracion") and any other
+ * letter or digit is kept as-is, so headings in scripts without a Latin
+ * transliteration (Japanese, for one) still get a non-empty, unique id.
+ */
 function slugify(innerHtml: string): string {
 	const text = stripTags(innerHtml);
 	return text
+		.normalize("NFKD")
+		// Only Latin combining diacritics — stripping every mark would also
+		// strip Japanese dakuten (ガ -> カ).
+		.replace(/[\u0300-\u036f]/g, "")
+		.normalize("NFC")
 		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/[^\p{L}\p{N}]+/gu, "-")
 		.replace(/^-+|-+$/g, "");
 }
 

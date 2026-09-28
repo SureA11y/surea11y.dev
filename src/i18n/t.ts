@@ -1,24 +1,40 @@
-import en from "./en.json";
-import es from "./es.json";
+import { DEFAULT_LOCALE, localeCodes, type Locale } from "./locales";
 
-export type Locale = "en" | "es";
-export const DEFAULT_LOCALE: Locale = "en";
+export { DEFAULT_LOCALE, type Locale } from "./locales";
 
-const dictionaries: Record<Locale, Record<string, string>> = { en, es };
+// One JSON file per locale in this directory (en.json, es.json, …), picked
+// up automatically — a new locale's file needs no import added here.
+const files = import.meta.glob<Record<string, string>>("./*.json", { eager: true, import: "default" });
 
-/** Falls back to English on a missing key, mirroring ../core's per-string locale fallback. */
-export function t(key: string, locale: Locale, vars?: Record<string, string | number>): string {
-	const table = dictionaries[locale] ?? dictionaries[DEFAULT_LOCALE];
-	let value = table[key] ?? dictionaries[DEFAULT_LOCALE][key] ?? key;
-	if (vars) {
-		for (const [name, val] of Object.entries(vars)) {
-			value = value.replaceAll(`{${name}}`, String(val));
-		}
+const dictionaries = Object.fromEntries(
+	localeCodes.map((code) => [code, files[`./${code}.json`] ?? {}])
+) as Record<Locale, Record<string, string>>;
+
+function interpolate(value: string, vars?: Record<string, string | number>): string {
+	if (!vars) return value;
+	for (const [name, val] of Object.entries(vars)) {
+		value = value.replaceAll(`{${name}}`, String(val));
 	}
 	return value;
 }
 
-/** .jsx components have no Astro global, so callers resolve this once and pass it down as a prop. */
-export function resolveLocale(currentLocale: string | undefined): Locale {
-	return currentLocale === "es" ? "es" : DEFAULT_LOCALE;
+/** Falls back to English on a missing key, mirroring ../core's per-string locale fallback. */
+export function t(key: string, locale: Locale, vars?: Record<string, string | number>): string {
+	const value = dictionaries[locale]?.[key] ?? dictionaries[DEFAULT_LOCALE][key] ?? key;
+	return interpolate(value, vars);
+}
+
+/**
+ * For strings whose English source lives in site data rather than en.json
+ * (nav labels, page titles): the locale's dictionary entry if it has one,
+ * otherwise the English text passed in.
+ */
+export function tOr(key: string, locale: Locale, english: string): string {
+	if (locale === DEFAULT_LOCALE) return english;
+	return dictionaries[locale]?.[key] ?? english;
+}
+
+/** Whether a locale's own dictionary carries a key (no English fallback). */
+export function hasTranslation(key: string, locale: Locale): boolean {
+	return locale === DEFAULT_LOCALE || dictionaries[locale]?.[key] !== undefined;
 }

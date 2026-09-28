@@ -1,5 +1,4 @@
-import esOverrides from "./rules.i18n.es.json";
-import type { Locale } from "../i18n/t";
+import { DEFAULT_LOCALE, type Locale } from "../i18n/locales";
 
 type Example = { outcome: string; state: string; html: string; explanation: string };
 type Rule = {
@@ -11,16 +10,33 @@ type Rule = {
 	examples: Example[];
 	[key: string]: unknown;
 };
+type RuleOverlay = {
+	title: string;
+	description: string;
+	applicability: string;
+	expectation: string;
+	examples: { state: string; explanation: string }[];
+};
 
-const overrides: Record<
-	string,
-	{ title: string; description: string; applicability: string; expectation: string; examples: { state: string; explanation: string }[] }
-> = esOverrides;
+// One overlay per locale, rules.i18n.<locale>.json, picked up automatically.
+// Each maps a ruleId to that rule's translated prose; the generated catalog
+// (rules.generated.json) stays English-only and the source of every other field.
+const files = import.meta.glob<Record<string, RuleOverlay>>("./rules.i18n.*.json", {
+	eager: true,
+	import: "default",
+});
+const overlays: Partial<Record<string, Record<string, RuleOverlay>>> = Object.fromEntries(
+	Object.entries(files).map(([file, data]) => [file.match(/rules\.i18n\.([^.]+)\.json$/)![1], data])
+);
 
-/** Merges the Spanish rule-content overlay into a rule object; a no-op for locales without one yet. */
+/** Whether a rule has translated prose in a locale (always true for English). */
+export function isRuleTranslated(ruleId: string, locale: Locale): boolean {
+	return locale === DEFAULT_LOCALE || overlays[locale]?.[ruleId] !== undefined;
+}
+
+/** Merges a locale's rule-content overlay into a rule object; a no-op when there isn't one. */
 export function localizeRule<T extends Rule>(rule: T, locale: Locale): T {
-	if (locale !== "es") return rule;
-	const t = overrides[rule.ruleId];
+	const t = overlays[locale]?.[rule.ruleId];
 	if (!t) return rule;
 	return {
 		...rule,

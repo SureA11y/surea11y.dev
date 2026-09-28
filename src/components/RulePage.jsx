@@ -74,13 +74,12 @@ export function RulePage({ rule, locale = "en" }) {
 						{rule.deprecation?.reason ? ` ${rule.deprecation.reason}` : ""}
 					</p>
 					<p>
-						The id stays in the catalog and keeps running, but its result is
-						fixed rather than decided per page — see{" "}
+						{t("rulePage.deprecatedBodyBefore", locale)}{" "}
 						<a href="https://github.com/SureA11y/core/blob/main/docs/API_STABILITY.md">
-							the rule-ID deprecation policy
+							{t("rulePage.deprecatedPolicyLink", locale)}
 						</a>{" "}
-						for what that means for a stored baseline or a <code>runOnly</code> list
-						that still names it.
+						{t("rulePage.deprecatedBodyAfter", locale)} <code>runOnly</code>{" "}
+						{t("rulePage.deprecatedBodyEnd", locale)}
 					</p>
 				</Callout>
 			) : null}

@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { RulesTable } from "../../../components/RulesTable.jsx";
+import rules from "../../../data/rules.generated.json";
+import { sections } from "../../../data/sections";
+import { localize } from "../../../data/localize";
+import { isRuleTranslated, localizeRule } from "../../../data/localizeRule";
+import { localizedModule, translatedLocales } from "../../../i18n/content";
+import { localeStaticPaths } from "../../../i18n/paths";
+import { t, type Locale } from "../../../i18n/t";
+
+export const getStaticPaths = localeStaticPaths;
+
+interface Props {
+	locale: Locale;
+}
+
+// The intro paragraph decides the page's language; rule titles in the tables
+// are localized independently, per rule, as far as each locale's overlay goes.
+const { module, locale } = localizedModule("component", "RulesIntroContent", Astro.props.locale);
+const { RulesIntroContent } = module;
+const rulesSection = sections.find((s) => s.href === "/rules/")!;
+const { label, description } = localize(rulesSection, locale);
+
+const localizedRules = rules.map((r) => localizeRule(r, locale));
+const automatic = localizedRules.filter((r) => r.type === "automatic");
+const manual = localizedRules.filter((r) => r.type === "manual");
+const available = translatedLocales("component", "RulesIntroContent").filter((l) =>
+	rules.every((r) => isRuleTranslated(r.ruleId, l))
+);
+---
+
+<BaseLayout title={label} description={description} contentLocale={locale} translatedLocales={available}>
+	<h1>{label}</h1>
+	<RulesIntroContent />
+
+	<h2>{t("rulesIndex.automaticHeading", locale, { n: automatic.length })} <code>fail</code></h2>
+	<RulesTable caption={t("rulesIndex.automaticCaption", locale, { n: automatic.length })} rows={automatic} locale={locale} />
+
+	<h2>{t("rulesIndex.manualHeading", locale, { n: manual.length })} <code>cantTell</code></h2>
+	<RulesTable caption={t("rulesIndex.manualCaption", locale, { n: manual.length })} rows={manual} locale={locale} />
+</BaseLayout>
