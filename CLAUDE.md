@@ -434,10 +434,27 @@ Spanish. Conventions, so later edits stay consistent:
 - Link text naming another page uses that page's nav label from the
   locale's dictionary.
 
-Still open for Japanese specifically: a CJK-capable font fallback and
-`word-break: auto-phrase` under `:lang(ja)`. The engine itself has no `ja`
-locale (`src/data/locales.generated.json`: en/de/es/fr), so Japanese pages
-would document English engine output unless `core` gains one.
+**Japanese** was added the same day, also complete. What it needed beyond
+translation, and what to keep in mind when editing it:
+
+- `spaced: false` on its `locales.ts` entry; `wordSeparator()` returns ""
+  for it. Sentences containing links or code are whole-sentence templates
+  rendered by `src/i18n/Trans.jsx` ("See {policy} for…"), never fragments
+  joined with spaces, in every language.
+- JSX turns a line break between two lines of text into a space. In
+  Japanese content files, a paragraph's text stays on one line, lines break
+  only next to a tag, and there are no `{" "}` joins. No spaces between
+  Japanese and Latin text or code either; `text-autospace` adds the visual
+  gap. `npm run check:typography` catches violations in the build.
+- `:lang(ja)` in `global.css`: Japanese system fonts named after the brand
+  fonts, taller line height, strict line breaking, phrase-aware heading
+  breaks, bold instead of italic.
+- Style: です・ます, full-width punctuation, 「」 quotes, official WAIC names
+  for WCAG criteria. Terms: ルール, エンジン, スキャン, 判定結果, バインディング,
+  達成基準, 適合性, 複合ルール, 構成ルール, ファセット, アクセシブルな名前,
+  アクセシビリティツリー, 支援技術, 誤検出.
+- The engine itself has no `ja` locale (`locales.generated.json`:
+  en/de/es/fr), so Japanese pages document English engine output.
 
 ## Why Astro without Starlight
 
