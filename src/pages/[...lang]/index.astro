@@ -32,8 +32,9 @@ const core = "https://github.com/SureA11y/core/blob/main";
 	contentLocale={locale}
 	translatedLocales={translatedLocales("component", "OverviewContent")}
 >
-	<!--<h1><Logo variant="lockup" size={40} /></h1>-->
-	<h1>@surea11y/core</h1>
+	<!-- The page's visible lead is the tagline; the heading is there for
+	     screen-reader navigation and names the page like every other one. -->
+	<h1 class="visually-hidden">{localize(sections[0], locale).label}</h1>
 
 	<p class="tagline">{t("homepage.tagline", locale)}</p>
 	<p>{t("homepage.subtitle", locale)}</p>
