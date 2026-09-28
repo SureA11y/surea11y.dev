@@ -408,6 +408,32 @@ fallback for anything not yet translated.
 4. `src/data/rules.i18n.fr.json` for rule pages (same shape as the `es` one).
 5. `npm run build && npm run check:links && npm run i18n:check`.
 
+**French and German** were added on 2026-09-28, complete from the start
+(all interface strings, nav/page titles, 24 content pages, 132 rule pages;
+`i18n:check` shows no gaps). Translated from the English source, not the
+Spanish. Conventions, so later edits stay consistent:
+
+- Code, option/field names, rule ids, outcome values (`pass`, `fail`,
+  `cantTell`, …), CLI transcripts and code comments stay English; every
+  code block was verified byte-identical to the English page's.
+- French: "vous"; non-breaking space before `: ; ? !` and inside « » in
+  prose (not in code); typographic apostrophes. Terms: règle, moteur,
+  analyse, rapport, binding (m.), critère de succès, conformité, revue
+  manuelle, paramètres régionaux (page name) / `locale` (option), landmark,
+  arbre d'accessibilité, nom accessible, technologies d'assistance.
+- German: "Sie"; „…" quotes. Terms: Regel, Engine, Scan, Bericht, Binding
+  (das), Erfolgskriterium, Konformität, Barrierefreiheit, manuelle Prüfung,
+  Locales, Accessibility Tree, zugänglicher Name, Landmark, assistive
+  Technologien. Gender-neutral wording where a person is described
+  (Nutzende, Fachperson).
+- Official W3C French/German names are used for WCAG criterion titles
+  (e.g. 4.1.1 "Analyse syntaxique" / "Syntaxanalyse").
+- Sample page text inside examples ("Read more", "Save changes") and
+  engine output strings stay English, since they refer to the English
+  markup or real output.
+- Link text naming another page uses that page's nav label from the
+  locale's dictionary.
+
 Still open for Japanese specifically: a CJK-capable font fallback and
 `word-break: auto-phrase` under `:lang(ja)`. The engine itself has no `ja`
 locale (`src/data/locales.generated.json`: en/de/es/fr), so Japanese pages
