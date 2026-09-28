@@ -82,7 +82,6 @@ const isSectionActive = (href: string) =>
 		min-height: var(--target-min);
 		padding: 0 var(--space-3);
 		border-radius: var(--radius-sm);
-		border-bottom: 2px solid transparent;
 		color: var(--text-body);
 		font-family: var(--font-body);
 		font-size: var(--text-sm);
@@ -102,9 +101,18 @@ const isSectionActive = (href: string) =>
 		outline-offset: -2px;
 	}
 
-	.tree-section-head a[aria-current="page"] {
+	/* Current page: a very light accent tint plus a bar on the left edge.
+	   The bar is the cue that doesn't rely on colour, and as a real border
+	   (not a shadow) it survives Windows High Contrast mode, where
+	   backgrounds are dropped. Only the current link has a border at all,
+	   and its padding shrinks by the bar's width so the text doesn't shift. */
+	.tree-section-head a[aria-current="page"],
+	.tree-children a[aria-current="page"] {
 		color: var(--accent);
-		border-bottom-color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 8%, transparent);
+		border-left: 3px solid var(--accent);
+		border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+		padding-left: calc(var(--space-3) - 3px);
 	}
 
 	.tree-section-head details {
@@ -157,12 +165,11 @@ const isSectionActive = (href: string) =>
 	}
 
 	.tree-children a {
-		display: inline-flex;
+		display: flex;
 		align-items: center;
 		min-height: var(--target-min);
 		padding: 0 var(--space-3);
 		border-radius: var(--radius-sm);
-		border-bottom: 2px solid transparent;
 		color: var(--text-muted);
 		font-family: var(--font-body);
 		font-size: var(--text-sm);
@@ -178,8 +185,4 @@ const isSectionActive = (href: string) =>
 		outline-offset: -2px;
 	}
 
-	.tree-children a[aria-current="page"] {
-		color: var(--accent);
-		border-bottom-color: var(--accent);
-	}
 </style>
