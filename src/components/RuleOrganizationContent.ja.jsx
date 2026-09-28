@@ -127,7 +127,7 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				これは複合ルール（WCAG達成基準の集約）の結果を読むときに重要になります。複合ルールの
-				<ResultBadge state="pass" size="sm" />
+				<ResultBadge lang="en" state="pass" size="sm" />
 				は、その達成基準に対する自動チェックがすべて問題なしだったことを意味します。ただし、
 				<strong>自動化されたカバレッジがまったくないファセットについては、複合ルールは問題ないと主張するのではなく、そのファセットについて何も述べません</strong>
 				。3つの層（アトミックルール、ファセット、複合ルール）と、複合ルールの判定結果が実際にどう計算されるかについては

@@ -70,19 +70,19 @@ export function OverviewContent() {
 			</p>
 			<ul className="outcome-list">
 				<li>
-					<ResultBadge state="fail" /> (<code>fail</code>): una violación demostrable a partir del DOM.
+					<ResultBadge lang="en" state="fail" /> (<code>fail</code>): una violación demostrable a partir del DOM.
 					Reservado para casos objetivos y normativos.
 				</li>
 				<li>
-					<ResultBadge state="pass" /> (<code>pass</code>): se cumple la condición específica de esta regla.{" "}
+					<ResultBadge lang="en" state="pass" /> (<code>pass</code>): se cumple la condición específica de esta regla.{" "}
 					<strong>No es una afirmación de que la página sea accesible.</strong>
 				</li>
 				<li>
-					<ResultBadge state="unknown" /> (<code>cantTell</code>): una persona tiene que decidir esto, y
+					<ResultBadge lang="en" state="unknown" /> (<code>cantTell</code>): una persona tiene que decidir esto, y
 					el resultado indica qué era ambiguo.
 				</li>
 				<li>
-					<ResultBadge state="na" /> (<code>notApplicable</code>): la precondición de la regla no está
+					<ResultBadge lang="en" state="na" /> (<code>notApplicable</code>): la precondición de la regla no está
 					presente.
 				</li>
 			</ul>
