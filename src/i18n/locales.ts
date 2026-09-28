@@ -2,7 +2,7 @@
  * The one list of languages the site is built in. Adding a language starts
  * here — every route, the language switcher, hreflang tags, the sitemap and
  * Astro's own i18n config all read from this list. See "Adding a language"
- * in CLAUDE.md for the rest of the checklist.
+ * in README.md for the rest of the checklist.
  *
  * `name` is the language's own name for itself (shown in the switcher, so a
  * reader who can't read the current page's language can still find theirs).
