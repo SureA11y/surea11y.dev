@@ -35,7 +35,7 @@ npm run dev      # localhost:4321
 npm run build    # outputs to ./dist/
 npm run preview  # preview a production build locally
 npm run check:links  # after a build: broken internal links/anchors
-npm run i18n:check   # translation coverage per language
+npm run i18n:check   # translation coverage and outdated translations per language
 npm run check:typography  # after a build: stray spaces in Japanese pages
 ```
 
@@ -59,5 +59,27 @@ notice.
    and existing `id`s stay as they are.
 4. Add `src/data/rules.i18n.<code>.json` for the rule pages (same shape as
    the other `rules.i18n.*.json` files).
-5. Run `npm run build`, `npm run check:links`, `npm run i18n:check`, and
-   for Japanese `npm run check:typography`.
+5. Run `npm run build`, `npm run check:links`, `npm run i18n:check`,
+   `npm run check:lang`, and for Japanese `npm run check:typography`.
+6. Record the new translations as current:
+   `npm run i18n:mark -- --locale=<code> --stale`.
+
+### Keeping translations current
+
+`src/i18n/translation-sources.json` records, for every translated page,
+interface string and rule, a fingerprint of the English it was translated
+from. When the English changes, `npm run i18n:check` lists that
+translation as outdated in every language (whitespace-only edits don't
+count; regenerating the rules with `docs:rules` does, for the rules whose
+text changed).
+
+For each outdated item: see what changed in English (`git log -p` on the
+English file, `en.json`, or `rules.generated.json`), update the
+translation, then record it:
+
+```bash
+npm run i18n:mark -- --locale=fr content:components/FaqContent string:footer.about rule:accesskeys
+```
+
+`npm run i18n:check -- --strict` fails on outdated translations too, for
+use in CI.
