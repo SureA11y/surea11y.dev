@@ -14,69 +14,44 @@
  *   - a rule overlay entry for a rule that doesn't exist, or with a different
  *     number of examples than the rule has
  *
+ * Also lists outdated translations: ones whose English source has changed
+ * since the translation was written or last reviewed, per the fingerprints
+ * in src/i18n/translation-sources.json (see scripts/lib/i18n-units.mjs and
+ * scripts/i18n-mark.mjs).
+ *
  * Usage: node scripts/check-i18n.mjs [--strict] [--locale=fr]
+ *   --strict also fails on missing or outdated translations.
  */
 import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const rel = (...p) => path.join(ROOT, ...p);
-const readJson = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
-
-const { locales, DEFAULT_LOCALE } = await import(rel("src/i18n/locales.ts"));
-const { contentPages } = await import(rel("src/data/pages.ts"));
-const { sections } = await import(rel("src/data/sections.ts"));
-const navFiles = [
-	["gettingStartedSections", "gettingStartedSections.ts"],
-	["rulesSections", "rulesSections.ts"],
-	["configurationSections", "configurationSections.ts"],
-	["resultsReportsSections", "resultsReportsSections.ts"],
-	["conformanceSections", "conformanceSections.ts"],
-	["helpSections", "helpSections.ts"],
-];
-const navEntries = [...sections];
-for (const [name, file] of navFiles) {
-	navEntries.push(...(await import(rel("src/data", file)))[name]);
-}
+import {
+	contentModules,
+	dataKeys,
+	DEFAULT_LOCALE,
+	english,
+	loadManifest,
+	locales,
+	readJson,
+	rel,
+	rules,
+	staleUnits,
+	englishFingerprints,
+} from "./lib/i18n-units.mjs";
 
 const args = process.argv.slice(2);
 const strict = args.includes("--strict");
 const only = args.find((a) => a.startsWith("--locale="))?.split("=")[1];
 
-// Content modules the site renders per locale: every page's component, the
-// shared binding data, and the two route-specific components.
-const contentModules = [
-	...new Set([
-		...contentPages.filter((p) => p.content).map((p) => ["components", p.content]),
-		["data", "bindingUsage"],
-		["components", "OverviewContent"],
-		["components", "RulesIntroContent"],
-	].map(JSON.stringify)),
-].map(JSON.parse);
-
 const exportsOf = (file) =>
 	[...fs.readFileSync(file, "utf8").matchAll(/^export\s+(?:function|const|let)\s+(\w+)/gm)].map((m) => m[1]).sort();
 const placeholders = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(",");
 
-const english = readJson(rel("src/i18n", `${DEFAULT_LOCALE}.json`));
-const rules = readJson(rel("src/data/rules.generated.json"));
 const ruleIds = new Set(rules.map((r) => r.ruleId));
-
-// Keys a locale dictionary may carry beyond en.json's: translations of
-// English that lives in site data (nav labels, page titles/descriptions).
-const dataKeys = new Map();
-for (const e of navEntries) {
-	dataKeys.set(`nav:${e.href}`, e.label);
-	if (e.description) dataKeys.set(`nav:${e.href}:description`, e.description);
-}
-for (const p of contentPages) {
-	dataKeys.set(`page:${p.href}:title`, p.title);
-	if (p.description) dataKeys.set(`page:${p.href}:description`, p.description);
-}
+const manifest = loadManifest();
+const fingerprints = englishFingerprints();
 
 let errors = 0;
 let missingTotal = 0;
+let staleTotal = 0;
 
 for (const { code, name } of locales) {
 	if (code === DEFAULT_LOCALE || (only && code !== only)) continue;
@@ -139,17 +114,30 @@ for (const { code, name } of locales) {
 		const shown = list.slice(0, 15).join(", ");
 		console.log(`  missing ${kind}: ${shown}${list.length > 15 ? `, … (${list.length - 15} more)` : ""}`);
 	}
+	const { stale, untracked } = staleUnits(code, manifest, fingerprints);
+	const outdated = [...stale, ...untracked];
+	if (outdated.length) {
+		console.log(`  outdated: ${outdated.length} translation(s) whose English changed since they were written`);
+		for (const unit of outdated.slice(0, 25)) console.log(`    ${unit}${untracked.includes(unit) ? "  (never recorded)" : ""}`);
+		if (outdated.length > 25) console.log(`    … (${outdated.length - 25} more)`);
+	}
 	for (const e of errs) console.error(`  ERROR ${e}`);
 
 	errors += errs.length;
 	missingTotal += Object.values(missing).reduce((n, l) => n + l.length, 0);
+	staleTotal += outdated.length;
 }
 
 if (errors) {
 	console.error(`\n${errors} error(s).`);
 	process.exit(1);
 }
-if (strict && missingTotal) {
-	console.error(`\n${missingTotal} missing translation(s) (--strict).`);
+if (staleTotal) {
+	console.log(
+		`\n${staleTotal} outdated translation(s). Update each one to match the current English (git log -p on the English source shows what changed), then record it: npm run i18n:mark -- --locale=<code> <unit…>`
+	);
+}
+if (strict && (missingTotal || staleTotal)) {
+	console.error(`\n${missingTotal} missing, ${staleTotal} outdated translation(s) (--strict).`);
 	process.exit(1);
 }

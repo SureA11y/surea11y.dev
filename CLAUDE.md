@@ -390,6 +390,15 @@ fallback for anything not yet translated.
   mismatched `{placeholders}`, a translation whose exports differ from the
   English file, or a rule overlay that doesn't match the catalog.
   `--strict` also fails on anything missing; `--locale=fr` narrows it.
+- Outdated translations: `src/i18n/translation-sources.json` holds, per
+  locale and unit (`content:components/FaqContent`, `string:<key>`,
+  `rule:<id>`), a fingerprint of the English each translation was made
+  from; `i18n:check` lists units whose English has changed since, and
+  `npm run i18n:mark` records a unit as current after updating it (see
+  README "Keeping translations current"). Logic shared in
+  `scripts/lib/i18n-units.mjs`. Baseline recorded 2026-09-28 with every
+  translation current (git history showed no English-only change after any
+  Spanish file was written).
 - `npm run check:links` — the post-build link/anchor audit described
   above, now a script; also flags a localized page linking out of its own
   locale (links carrying `hreflang`, i.e. the switcher, are exempt).
