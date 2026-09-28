@@ -36,10 +36,28 @@ npm run build    # outputs to ./dist/
 npm run preview  # preview a production build locally
 npm run check:links  # after a build: broken internal links/anchors
 npm run i18n:check   # translation coverage per language
+npm run check:typography  # after a build: stray spaces in Japanese pages
 ```
 
 ## Languages
 
 English lives at the root, other languages under their own prefix
-(`/es/…`). The language list is `src/i18n/locales.ts`; the steps to add
-one are under "Adding a language" in `CLAUDE.md`.
+(`/es/…`, `/fr/…`, `/de/…`, `/ja/…`). The language list is
+`src/i18n/locales.ts`. A page that isn't translated yet still builds in
+every language, showing the English text marked `lang="en"` with a short
+notice.
+
+### Adding a language
+
+1. Add the language to `src/i18n/locales.ts` (code and its own name for
+   itself). Every page then builds under `/<code>/`, in English, with the
+   notice.
+2. Create `src/i18n/<code>.json`: every key from `en.json`, plus the
+   `nav:`/`page:` keys `npm run i18n:check -- --locale=<code>` lists.
+3. Add `Name.<code>.jsx` next to each content component, and
+   `src/data/bindingUsage.<code>.jsx`. Code, option names, outcome values
+   and existing `id`s stay as they are.
+4. Add `src/data/rules.i18n.<code>.json` for the rule pages (same shape as
+   the other `rules.i18n.*.json` files).
+5. Run `npm run build`, `npm run check:links`, `npm run i18n:check`, and
+   for Japanese `npm run check:typography`.
