@@ -36,7 +36,13 @@ const available = translatedLocales("component", "RulesIntroContent").filter((l)
 );
 ---
 
-<BaseLayout title={label} description={description} contentLocale={locale} translatedLocales={available}>
+<BaseLayout
+	title={label}
+	description={description}
+	contentLocale={locale}
+	translatedLocales={available}
+	toc={false}
+>
 	<h1>{label}</h1>
 	<RulesIntroContent />
 

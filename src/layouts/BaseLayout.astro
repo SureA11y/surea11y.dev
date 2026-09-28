@@ -27,9 +27,14 @@ interface Props {
 	contentLocale?: Locale;
 	/** Locales this page is actually translated into, for hreflang. Defaults to all. */
 	translatedLocales?: Locale[];
+	/**
+	 * Show the "on this page" rail (default). A page whose content needs the
+	 * width more than a short heading list (the rules catalog table) turns it off.
+	 */
+	toc?: boolean;
 }
 
-const { title, description, breadcrumbLabel, translatedLocales = localeCodes } = Astro.props;
+const { title, description, breadcrumbLabel, translatedLocales = localeCodes, toc = true } = Astro.props;
 const { locale, path } = splitLocale(Astro.url.pathname);
 const contentLocale = Astro.props.contentLocale ?? locale;
 const untranslated = contentLocale !== locale;
@@ -69,7 +74,7 @@ const html = localizeLinks(headedHtml, locale);
 	<body>
 		<a class="skip-link" href="#main-content">{t("layout.skipToContent", locale)}</a>
 		<SiteNav locale={locale} />
-		<div class="shell">
+		<div class:list={["shell", { "no-toc": !toc }]}>
 			<details class="sidebar-toggle">
 				<summary>{t("layout.siteMenu", locale)}</summary>
 				<div class="sidebar-body"><Sidebar locale={locale} /></div>
@@ -87,9 +92,11 @@ const html = localizeLinks(headedHtml, locale);
 					<div class="prose" lang={untranslated ? contentLocale : undefined} set:html={html} />
 				</main>
 			</div>
-			<aside class="toc-rail">
-				<TableOfContents headings={headings} locale={locale} />
-			</aside>
+			{toc && (
+				<aside class="toc-rail">
+					<TableOfContents headings={headings} locale={locale} />
+				</aside>
+			)}
 		</div>
 		<Footer locale={locale} />
 	</body>
@@ -144,6 +151,10 @@ const html = localizeLinks(headedHtml, locale);
 	@media (min-width: 1200px) {
 		.shell {
 			grid-template-columns: 240px minmax(0, 1fr) 220px;
+		}
+
+		.shell.no-toc {
+			grid-template-columns: 240px minmax(0, 1fr);
 		}
 	}
 
@@ -220,6 +231,15 @@ const html = localizeLinks(headedHtml, locale);
 		color: var(--text-strong);
 	}
 
+	/* A single word wider than the column (German compounds at heading size,
+	   "WCAG-Konformitätszuordnung" on a phone, or "aria-labelledby/
+	   aria-describedby" in rule text) breaks instead of pushing the page
+	   sideways. It only kicks in when the word can't fit, and code blocks
+	   don't wrap at all, so they keep scrolling inside their own box. */
+	.prose {
+		overflow-wrap: break-word;
+	}
+
 	.prose :global(h2) {
 		font-family: var(--font-display);
 		color: var(--text-strong);
@@ -246,5 +266,12 @@ const html = localizeLinks(headedHtml, locale);
 	.prose :global(code) {
 		font-family: var(--font-mono);
 		font-size: 0.9em;
+	}
+
+	/* Long inline identifiers (engineOptions.rules[ruleId].excludeSelectors)
+	   would otherwise push the page wider than a phone screen. Code blocks
+	   keep their own horizontal scrolling. */
+	.prose :global(:not(pre) > code) {
+		overflow-wrap: anywhere;
 	}
 </style>
