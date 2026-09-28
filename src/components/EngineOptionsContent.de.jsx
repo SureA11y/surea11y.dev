@@ -380,9 +380,9 @@ export function EngineOptionsContent() {
 				WCAG-Ursprungsversion: <code>wcag2a</code>/<code>wcag2aa</code>/<code>wcag2aaa</code>{" "}
 				für ein Erfolgskriterium, das schon zur Basis von WCAG 2.0 gehört,{" "}
 				<code>wcag21a</code>/<code>wcag21aa</code>/<code>wcag21aaa</code> für eines, das mit
-				WCAG 2.1 neu hinzukam (z. B. <code>1.3.5</code> Identify Input Purpose),{" "}
+				WCAG 2.1 neu hinzukam (z. B. <code>1.3.5</code> <span lang="en">Identify Input Purpose</span>),{" "}
 				<code>wcag22a</code>/<code>wcag22aa</code>/<code>wcag22aaa</code> für eines, das mit
-				WCAG 2.2 neu hinzukam (z. B. <code>2.5.8</code> Target Size Minimum). Eine Regel erhält{" "}
+				WCAG 2.2 neu hinzukam (z. B. <code>2.5.8</code> <span lang="en">Target Size Minimum</span>). Eine Regel erhält{" "}
 				<strong>nur</strong> das Tag der tatsächlichen Ursprungsversion ihres Kriteriums: Ein in
 				2.1 eingeführtes Kriterium trägt nie zusätzlich <code>wcag2aa</code>, da es bei einem
 				Konformitätsziel WCAG 2.0 gar nicht existiert.

@@ -43,7 +43,7 @@ export function SarifReportContent() {
 			<p>
 				Voir <a href="/configuration/ci-integration/">Intégration CI</a> pour un workflow GitHub
 				Actions prêt à copier qui lance une analyse et envoie <code>results.sarif</code> vers
-				l’onglet « Security ».
+				l’onglet « <span lang="en">Security</span> ».
 			</p>
 
 			<h2>Pourquoi un format distinct de <code>--json</code></h2>

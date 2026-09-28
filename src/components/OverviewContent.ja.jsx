@@ -28,12 +28,12 @@ export function OverviewLead() {
 			<p>
 				ほかと違うのは、自動テストでは決着がつかないケースの扱い方です。W3Cのオープンな
 				<a href="https://www.w3.org/TR/act-rules-format/">
-					Accessibility Conformance Testing (ACT) Rules Format
+					<span lang="en">Accessibility Conformance Testing (ACT) Rules Format</span>
 				</a>
 				を実装しており、自分自身の基準だけで判断するのではなく、ACTが公開しているテストコーパスで検証しています。報告するのは、見つかった問題、問題がなかったこと、そして珍しいことに、明示的な「判断できない」です。そのため結果は、安心させるためのものではなく、検証できるものになっています。
 			</p>
 			<p>
-				<em>Sure</em>
+				<em><span lang="en">Sure</span></em>
 				が意味するのは、わかっていることについての確かさと、わからないことについての誠実さです。わからないことは、わからないと伝えます。
 			</p>
 		</>

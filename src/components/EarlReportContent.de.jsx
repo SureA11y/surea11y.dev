@@ -143,12 +143,12 @@ export function EarlReportContent() {
 			<p>
 				<code>earl:untested</code> hat keine Entsprechung: Eine Regel, die nicht ausgeführt wurde,
 				liefert kein Ergebnis, über das sich etwas aussagen ließe; sie trägt also keine Aussage
-				bei statt einer „untested“-Aussage.
+				bei statt einer „<span lang="en">untested</span>“-Aussage.
 			</p>
 			<p>
 				<strong><code>cantTell</code> kostet keine Konformitätspunkte.</strong> Nach den
 				Konsistenzregeln von ACT darf eine automatische Implementierung bei manchen Beispielen,
-				wenn auch nicht bei allen, „cannot tell“ melden und trotzdem als konsistent gelten. Was
+				wenn auch nicht bei allen, „<span lang="en">cannot tell</span>“ melden und trotzdem als konsistent gelten. Was
 				eine teilweise konsistente Implementierung <em>nicht</em> darf, ist ein Falsch-Positiv
 				erzeugen: ein Beispiel scheitern lassen, das laut Regel bestehen soll oder nicht anwendbar
 				ist. Das ist die Schwelle, auf die es ankommt, und sie ist eine Eigenschaft der Regeln,

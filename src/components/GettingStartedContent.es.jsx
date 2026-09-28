@@ -106,7 +106,7 @@ export function GettingStartedContent() {
 			/>
 			<p>
 				Un <code>fail</code> del que el motor está seguro (contraste), una lista de{" "}
-				<code>cantTell</code> para que revise una persona (¿es "Click here" un buen nombre de
+				<code>cantTell</code> para que revise una persona (¿es "<span lang="en">Click here</span>" un buen nombre de
 				enlace?, ¿ese mismo texto de bajo contraste pasa otra comprobación distinta?, ¿hay algo aquí
 				que necesite una revisión manual?) y, entre los 114 resultados{" "}
 				<code>notApplicable</code>, <code>target-size-minimum</code>: no puede ejecutarse sin un

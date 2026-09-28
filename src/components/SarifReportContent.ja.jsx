@@ -47,7 +47,7 @@ export function SarifReportContent() {
 			<p>
 				スキャンを実行して
 				<code>results.sarif</code>
-				を「Security」タブにアップロードする、そのまま貼り付けて使えるGitHub Actionsのワークフローは
+				を「<span lang="en">Security</span>」タブにアップロードする、そのまま貼り付けて使えるGitHub Actionsのワークフローは
 				<a href="/configuration/ci-integration/">CI連携</a>
 				を参照してください。
 			</p>

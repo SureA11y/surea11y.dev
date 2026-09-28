@@ -61,7 +61,7 @@ const topLevelRows = [
 				Contra qué versión de WCAG se evaluó la conformidad en esta ejecución: tu{" "}
 				<code>engineOptions.wcagVersion</code>, o lo que implicaban tus etiquetas de origen de
 				versión, o el valor predeterminado <code>"2.2"</code>. Hoy afecta a una sola cosa:{" "}
-				<strong>una regla mapeada únicamente al SC 4.1.1 Parsing no puede dar <code>fail</code>{" "}
+				<strong>una regla mapeada únicamente al SC 4.1.1 <span lang="en">Parsing</span> no puede dar <code>fail</code>{" "}
 				bajo un objetivo 2.2</strong> (ver{" "}
 				<code>checksResults[i].wcagVersionScope</code> más abajo). Se informa una vez por
 				resultado: una ejecución tiene un solo objetivo en todo momento.
@@ -184,7 +184,7 @@ const occurrenceRows = [
 			</>
 		),
 	},
-	{ id: "summary", field: <code>summary</code>, meaning: 'Legible para humanos, ya localizado ("This button has no accessible name.").' },
+	{ id: "summary", field: <code>summary</code>, meaning: <>Legible para humanos, ya localizado ("<span lang="en">This button has no accessible name.</span>").</> },
 	{ id: "hint", field: <code>hint</code>, meaning: "Guía de corrección legible para humanos, ya localizada." },
 	{
 		id: "i18n",
@@ -425,7 +425,7 @@ export function OutputSchemaContent() {
 				<li>
 					<strong><code>wcagVersionScope</code></strong>: presente solo cuando la versión de WCAG
 					objetivo de la ejecución convirtió el <code>fail</code> de esta regla en un{" "}
-					<code>cantTell</code>: hoy eso significa una regla mapeada al SC 4.1.1 Parsing (
+					<code>cantTell</code>: hoy eso significa una regla mapeada al SC 4.1.1 <span lang="en">Parsing</span> (
 					<code>duplicate-id</code>) bajo el objetivo 2.2 predeterminado, ya que 2.2 eliminó ese
 					criterio. <code>removedSc</code> enumera los criterios que dejaron de existir,{" "}
 					<code>target</code> es la versión que los eliminó, y <code>coercedFrom</code> es el
