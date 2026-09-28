@@ -114,7 +114,7 @@ export function BaselineContent() {
 			</p>
 			<p>
 				Baseline-Einträge, die in einem neuen Scan auf nichts mehr passen, werden als{" "}
-				<strong>veraltet</strong> (stale) gemeldet (der Verstoß wurde vermutlich behoben) — das
+				<strong>veraltet</strong> (<span lang="en">stale</span>) gemeldet (der Verstoß wurde vermutlich behoben) — das
 				ist rein informativ und lässt den Build nie fehlschlagen; erzeugen Sie die Baseline
 				regelmäßig mit <code>--write-baseline</code> neu, um diese Einträge zu bereinigen.
 			</p>

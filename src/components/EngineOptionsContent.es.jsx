@@ -29,7 +29,7 @@ const optionRows = [
 				<code>'2.0'</code>, <code>'2.1'</code> o <code>'2.2'</code>: qué versión de WCAG está
 				probando la conformidad de la ejecución. El valor predeterminado es el que implican tus
 				etiquetas de origen de versión, y <code>'2.2'</code> cuando no implican ninguna.{" "}
-				<strong>Lo único que cambia actualmente es el criterio de éxito 4.1.1 Parsing, eliminado en 2.2</strong>:
+				<strong>Lo único que cambia actualmente es el criterio de éxito 4.1.1 <span lang="en">Parsing</span>, eliminado en 2.2</strong>:
 				bajo un objetivo 2.2, una regla etiquetada{" "}
 				<code>wcag22-removed</code> sigue ejecutándose y sigue informando sus ocurrencias, pero
 				no puede <code>fail</code>. Consulta{" "}
@@ -388,10 +388,10 @@ export function EngineOptionsContent() {
 				WCAG:{" "}
 				<code>wcag2a</code>/<code>wcag2aa</code>/<code>wcag2aaa</code> para un Criterio de Éxito (SC)
 				que sea línea base de WCAG 2.0, <code>wcag21a</code>/<code>wcag21aa</code>/<code>wcag21aaa</code>{" "}
-				para uno introducido en WCAG 2.1 (por ejemplo, <code>1.3.5</code> Identify
-				Input Purpose),{" "}
+				para uno introducido en WCAG 2.1 (por ejemplo, <code>1.3.5</code> <span lang="en">Identify
+				Input Purpose</span>),{" "}
 				<code>wcag22a</code>/<code>wcag22aa</code>/<code>wcag22aaa</code> para uno introducido
-				en WCAG 2.2 (por ejemplo, <code>2.5.8</code> Target Size Minimum). Una
+				en WCAG 2.2 (por ejemplo, <code>2.5.8</code> <span lang="en">Target Size Minimum</span>). Una
 				regla obtiene{" "}
 				<strong>solo</strong> la etiqueta de la versión de origen real de su criterio de éxito: un criterio de éxito
 				introducido en 2.1 nunca lleva también la etiqueta <code>wcag2aa</code>, ya que no
@@ -420,7 +420,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Un criterio de éxito va en sentido contrario.</strong> WCAG 2.2 eliminó el criterio de éxito 4.1.1 Parsing:
+				<strong>Un criterio de éxito va en sentido contrario.</strong> WCAG 2.2 eliminó el criterio de éxito 4.1.1 <span lang="en">Parsing</span>:
 				el único criterio que se ha eliminado alguna vez en lugar de añadirse. Una regla mapeada
 				a él lleva su etiqueta de origen 2.0 (
 				<code>wcag2a</code>) como cualquier otra regla de línea base, más{" "}

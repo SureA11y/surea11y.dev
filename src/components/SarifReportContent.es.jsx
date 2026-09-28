@@ -42,7 +42,7 @@ export function SarifReportContent() {
 			<p>
 				Ver <a href="/configuration/ci-integration/">integración con CI</a> para un flujo de trabajo
 				de GitHub Actions listo para usar que ejecuta un análisis y sube{" "}
-				<code>results.sarif</code> a la pestaña "Security".
+				<code>results.sarif</code> a la pestaña "<span lang="en">Security</span>".
 			</p>
 
 			<h2>

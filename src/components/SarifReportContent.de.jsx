@@ -42,7 +42,7 @@ export function SarifReportContent() {
 			<p>
 				Unter <a href="/configuration/ci-integration/">CI-Integration</a> finden Sie einen
 				GitHub-Actions-Workflow zum direkten Einfügen, der einen Scan ausführt und{" "}
-				<code>results.sarif</code> in den Tab „Security“ hochlädt.
+				<code>results.sarif</code> in den Tab „<span lang="en">Security</span>“ hochlädt.
 			</p>
 
 			<h2>Warum ein eigenes Format neben <code>--json</code></h2>

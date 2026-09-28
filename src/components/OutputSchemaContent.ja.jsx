@@ -124,7 +124,7 @@ const occurrenceRows = [
 			</>
 		),
 	},
-	{ id: "summary", field: <code>summary</code>, meaning: "人が読むための文で、ローカライズ済みです（「This button has no accessible name.」）。" },
+	{ id: "summary", field: <code>summary</code>, meaning: <>人が読むための文で、ローカライズ済みです（「<span lang="en">This button has no accessible name.</span>」）。</> },
 	{ id: "hint", field: <code>hint</code>, meaning: "人が読むための修正ガイダンスで、ローカライズ済みです。" },
 	{
 		id: "i18n",

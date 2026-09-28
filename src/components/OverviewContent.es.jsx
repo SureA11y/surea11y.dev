@@ -27,14 +27,14 @@ export function OverviewLead() {
 				Lo que lo distingue es lo que hace con los casos que las pruebas automatizadas no pueden resolver. Implementa
 				el{" "}
 				<a href="https://www.w3.org/TR/act-rules-format/">
-					Accessibility Conformance Testing (ACT) Rules Format
+					<span lang="en">Accessibility Conformance Testing (ACT) Rules Format</span>
 				</a>{" "}
 				abierto del W3C, validado con el corpus público de casos de prueba de ACT, en lugar de evaluarse
 				únicamente con sus propias pruebas. Informa hallazgos, ausencia de hallazgos y, de forma poco habitual,
 				incertidumbre explícita, de modo que los resultados son auditables en lugar de tranquilizadores.
 			</p>
 			<p>
-				<em>Sure</em> significa certeza sobre lo que se sabe, y honestidad sobre lo que no. Te dice lo que
+				<em><span lang="en">Sure</span></em> significa certeza sobre lo que se sabe, y honestidad sobre lo que no. Te dice lo que
 				no te puede decir.
 			</p>
 		</>

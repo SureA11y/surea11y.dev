@@ -108,7 +108,7 @@ export function GettingStartedContent() {
 				<code>fail</code>
 				が1つ（コントラスト）、人がレビューするための
 				<code>cantTell</code>
-				の一覧（「Click here」はリンク名として適切か、同じ低コントラストのテキストが別のチェックでは合格するか、手動で確認すべきものがないか）、そして114件の
+				の一覧（「<span lang="en">Click here</span>」はリンク名として適切か、同じ低コントラストのテキストが別のチェックでは合格するか、手動で確認すべきものがないか）、そして114件の
 				<code>notApplicable</code>
 				の中に
 				<code>target-size-minimum</code>

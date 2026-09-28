@@ -39,7 +39,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "La zone a un texte alt non vide dans une carte d’image utilisée ; il faut confirmer que « Room 12 » décrit correctement cette région."
+				"explanation": "La zone a un texte alt non vide dans une carte d’image utilisée ; il faut confirmer que « [[en:Room 12]] » décrit correctement cette région."
 			},
 			{
 				"state": "na",
@@ -87,7 +87,7 @@
 		"examples": [
 			{
 				"state": "pass",
-				"explanation": "Le libellé braille complète un vrai nom accessible (« Save changes ») ; les technologies d’assistance non braille obtiennent quand même un nom."
+				"explanation": "Le libellé braille complète un vrai nom accessible (« [[en:Save changes]] ») ; les technologies d’assistance non braille obtiennent quand même un nom."
 			},
 			{
 				"state": "unknown",
@@ -131,7 +131,7 @@
 		"title": "L’attribut role ne doit pas utiliser un rôle ARIA obsolète ou déconseillé aux auteurs",
 		"description": "Vérifie qu’un attribut role=\"\" explicite n’utilise pas un rôle rendu obsolète par la spécification WAI-ARIA, ni un rôle réservé à l’usage interne de l’agent utilisateur (p. ex. role=\"generic\").",
 		"applicability": "S’applique à tout élément dont le premier jeton (utilisé) de l’attribut role est un rôle ARIA valide et non abstrait que les auteurs ne devraient pas déclarer explicitement, soit parce que WAI-ARIA l’a rendu obsolète (p. ex. « directory », remplacé par role=\"list\"), soit parce qu’il est réservé à l’usage interne de l’agent utilisateur (role=\"generic\", que les auteurs NE DEVRAIENT PAS utiliser dans le contenu selon ARIA 1.2 §5.4).",
-		"expectation": "Le rôle utilisé n’est ni obsolète ni réservé. Le résultat dépend de la force de la règle formulée par ARIA :\n\n- `cantTell` pour SHOULD NOT (ne devrait pas), qui laisse l’usage conforme ; l’auteur décide donc si cela compte : un rôle obsolète (« directory ») ou réservé aux agents utilisateurs (« generic »).\n- `fail` pour MUST NOT (ne doit pas). Aucun rôle d’ARIA 1.2 ou 1.3 ne porte de MUST NOT destiné aux auteurs en dehors des rôles abstraits ; ce résultat est donc réservé à une future révision qui élèverait un rôle à ce niveau.\n\nDécision distincte et atomique par rapport à aria-roles-valid (existence/abstraction) : un rôle peut être valide et non abstrait tout en étant déconseillé dans un usage explicite par les auteurs.",
+		"expectation": "Le rôle utilisé n’est ni obsolète ni réservé. Le résultat dépend de la force de la règle formulée par ARIA :\n\n- `cantTell` pour [[en:SHOULD NOT]] (ne devrait pas), qui laisse l’usage conforme ; l’auteur décide donc si cela compte : un rôle obsolète (« directory ») ou réservé aux agents utilisateurs (« generic »).\n- `fail` pour [[en:MUST NOT]] (ne doit pas). Aucun rôle d’ARIA 1.2 ou 1.3 ne porte de [[en:MUST NOT]] destiné aux auteurs en dehors des rôles abstraits ; ce résultat est donc réservé à une future révision qui élèverait un rôle à ce niveau.\n\nDécision distincte et atomique par rapport à aria-roles-valid (existence/abstraction) : un rôle peut être valide et non abstrait tout en étant déconseillé dans un usage explicite par les auteurs.",
 		"examples": [
 			{
 				"state": "pass",
@@ -178,7 +178,7 @@
 	"aria-prohibited-attr": {
 		"title": "Les attributs de nommage ARIA ne doivent pas être utilisés sur les rôles qui les interdisent",
 		"description": "Vérifie qu’aria-label/aria-labelledby ne sont pas présents sur des rôles WAI-ARIA dont la spécification interdit explicitement le nommage ARIA (p. ex. generic, emphasis, strong, paragraph).",
-		"applicability": "S’applique (a) aux éléments dont le rôle explicite et valide est l’un des rôles ARIA 1.2 dotés d’une liste documentée « Prohibited ARIA States and Properties » pour les attributs de nommage (rôles de pure sémantique textuelle ou rôles structurels sans nommage : caption, code, deletion, emphasis, generic, insertion, mark, none, paragraph, presentation, strong, subscript, suggestion, superscript, time), et (b) aux éléments sans aucun rôle : un ensemble choisi de balises HTML natives dont on a vérifié qu’elles n’ont pas de rôle implicite (voir ROLELESS_NATIVE_TAGS ci-dessous), ou tout élément personnalisé autonome (une balise avec trait d’union, définie par l’auteur selon la spécification Custom Elements ; voir isRolelessCustomElementTag ci-dessous). Dans les deux cas, uniquement les éléments qui portent aussi aria-label ou aria-labelledby.",
+		"applicability": "S’applique (a) aux éléments dont le rôle explicite et valide est l’un des rôles ARIA 1.2 dotés d’une liste documentée « [[en:Prohibited ARIA States and Properties]] » pour les attributs de nommage (rôles de pure sémantique textuelle ou rôles structurels sans nommage : caption, code, deletion, emphasis, generic, insertion, mark, none, paragraph, presentation, strong, subscript, suggestion, superscript, time), et (b) aux éléments sans aucun rôle : un ensemble choisi de balises HTML natives dont on a vérifié qu’elles n’ont pas de rôle implicite (voir ROLELESS_NATIVE_TAGS ci-dessous), ou tout élément personnalisé autonome (une balise avec trait d’union, définie par l’auteur selon la spécification Custom Elements ; voir isRolelessCustomElementTag ci-dessous). Dans les deux cas, uniquement les éléments qui portent aussi aria-label ou aria-labelledby.",
 		"expectation": "Les attributs interdits ne doivent pas être présents sur (a) ; pour (b), l’attribut de nommage est au mieux peu fiable (rien qui tienne compte du nom accessible pour s’y rattacher) et au pire ignoré silencieusement par les technologies d’assistance. Voir la note d’implémentation de la branche sans rôle ci-dessous pour la répartition des niveaux de confiance qui en découle.",
 		"examples": [
 			{
@@ -194,7 +194,7 @@
 	"aria-prohibited-children": {
 		"title": "Les rôles conteneurs ne doivent pas posséder d’enfant au rôle non autorisé",
 		"description": "Vérifie que chaque enfant possédé dans l’arbre d’accessibilité par un rôle conteneur (list, listbox, menu, menubar, radiogroup, rowgroup, table, grid, treegrid, tablist, tree, row) a l’un des rôles possédés autorisés pour ce rôle.",
-		"applicability": "S’applique aux éléments dotés d’un rôle explicite et valide qui fait partie des rôles conteneurs ayant une entrée documentée « required owned elements » (la même table REQUIRED_OWNED_ROLES qu’utilise aria-required-children, voir src/core/aria-helpers.js).",
+		"applicability": "S’applique aux éléments dotés d’un rôle explicite et valide qui fait partie des rôles conteneurs ayant une entrée documentée « [[en:required owned elements]] » (la même table REQUIRED_OWNED_ROLES qu’utilise aria-required-children, voir src/core/aria-helpers.js).",
 		"expectation": "Chaque descendant possédé dans l’arbre d’accessibilité par le conteneur (après élagage des éléments role=\"none\"/\"presentation\" et de tout wrapper « group »/« rowgroup », tous deux toujours transparents pour la correspondance des éléments possédés selon WAI-ARIA, que « group »/« rowgroup » figure ou non dans l’ensemble des rôles possédés requis du conteneur) a un rôle de ce même ensemble requis. Rien d’autre n’est un enfant direct structurellement valide d’un rôle composite/conteneur, « autorisé » désignant les rôles possédés requis du conteneur plus le petit ensemble ALLOWED_EXTRA_OWNED_ROLES de rôles qu’il peut posséder sans y être obligé (un séparateur entre des éléments de menu, une légende sur une grille). L’analyse descend dans un wrapper sans rôle pour atteindre les éléments qu’une bibliothèque de composants y enfouit, mais dès qu’un élément y est trouvé, le reste du sous-arbre de ce wrapper est le contenu propre de l’élément et n’est pas évalué par rapport au conteneur.",
 		"examples": [
 			{
@@ -225,8 +225,8 @@
 	},
 	"aria-required-children": {
 		"title": "Les rôles conteneurs doivent posséder au moins un enfant au rôle requis",
-		"description": "Vérifie que les rôles conteneurs ayant une entrée documentée « required owned elements » (list, listbox, menu, radiogroup, table, grid, tablist, tree, row, ...) contiennent au moins un descendant, ou un élément référencé par aria-owns, doté d’un rôle possédé acceptable.",
-		"applicability": "S’applique aux éléments dotés d’un rôle explicite, valide et non abstrait qui fait aussi partie des rôles conteneurs ayant une entrée documentée « required owned elements » (list, listbox, menu, menubar, radiogroup, rowgroup, table, grid, treegrid, tablist, tree, row).",
+		"description": "Vérifie que les rôles conteneurs ayant une entrée documentée « [[en:required owned elements]] » (list, listbox, menu, radiogroup, table, grid, tablist, tree, row, ...) contiennent au moins un descendant, ou un élément référencé par aria-owns, doté d’un rôle possédé acceptable.",
+		"applicability": "S’applique aux éléments dotés d’un rôle explicite, valide et non abstrait qui fait aussi partie des rôles conteneurs ayant une entrée documentée « [[en:required owned elements]] » (list, listbox, menu, menubar, radiogroup, rowgroup, table, grid, treegrid, tablist, tree, row).",
 		"expectation": "Au moins un descendant, ou un élément référencé par aria-owns, a l’un des rôles possédés acceptables pour ce rôle conteneur. Signalé en `cantTell`, jamais en `fail` : cette règle vérifie seulement si le contenu requis est PRÉSENT, et un conteneur qui ne possède rien ne transmet rien de faux (un role=\"list\" vide est annoncé comme une liste sans éléments, ce qu’il est effectivement). Savoir si le contenu que possède un conteneur est VALIDE relève d’aria-prohibited-children, et cette règle-là échoue toujours : une structure réellement mal décrite (un role=\"button\" parmi des éléments de liste, un tablist de simples boutons) est donc détectée avec la même force qu’avant. Les équivalents HTML natifs fonctionnent déjà ainsi : aucune règle de cet ensemble ne fait échouer un <ul> vide, et list-children-valid n’évalue que les enfants qui existent.",
 		"examples": [
 			{
@@ -241,8 +241,8 @@
 	},
 	"aria-required-parent": {
 		"title": "Les rôles qui exigent un rôle de contexte précis doivent se trouver dans ce contexte",
-		"description": "Vérifie que les rôles ayant une entrée documentée « required context role » (listitem, option, tab, treeitem, row, cell, ...) ont un ancêtre ou un propriétaire aria-owns doté d’un rôle de contexte acceptable.",
-		"applicability": "S’applique aux éléments dotés d’un rôle explicite, valide et non abstrait qui fait aussi partie des rôles ayant une entrée « required context role » documentée et non vide (listitem, option, menuitem, menuitemcheckbox, menuitemradio, tab, treeitem, row, cell, gridcell, columnheader, rowheader, rowgroup).",
+		"description": "Vérifie que les rôles ayant une entrée documentée « [[en:required context role]] » (listitem, option, tab, treeitem, row, cell, ...) ont un ancêtre ou un propriétaire aria-owns doté d’un rôle de contexte acceptable.",
+		"applicability": "S’applique aux éléments dotés d’un rôle explicite, valide et non abstrait qui fait aussi partie des rôles ayant une entrée « [[en:required context role]] » documentée et non vide (listitem, option, menuitem, menuitemcheckbox, menuitemradio, tab, treeitem, row, cell, gridcell, columnheader, rowheader, rowgroup).",
 		"expectation": "L’élément a un ancêtre (inclusion dans le DOM) ou un propriétaire (via l’aria-owns de cet ancêtre/propriétaire) dont le rôle effectif est l’un des rôles de contexte acceptables pour le rôle de l’élément.",
 		"examples": [
 			{
@@ -258,7 +258,7 @@
 	"aria-role-name-present": {
 		"title": "Les rôles ARIA qui exigent un nom accessible en ont un",
 		"description": "Vérifie que les rôles ARIA pour lesquels WAI-ARIA exige un nom accessible en exposent un non vide.",
-		"applicability": "S’applique aux éléments dont l’attribut role vaut exactement grid, meter, progressbar, radiogroup ou tree, et qui sont inclus dans l’arbre d’accessibilité. L’appartenance est déterminée par la caractéristique propre de WAI-ARIA « Accessible Name Required: True », et non par le simple fait qu’un rôle autorise un nom : tablist, toolbar, menu, menubar et scrollbar sont des rôles à nom fourni par l’auteur pour lesquels la spécification n’exige pas de nom, et sont hors périmètre. meter et progressbar sont aussi couverts par meter-name-present et progressbar-name-present, associés au critère 1.1.1 ; c’est cette règle qui apporte à ces deux rôles leur couverture 4.1.2.",
+		"applicability": "S’applique aux éléments dont l’attribut role vaut exactement grid, meter, progressbar, radiogroup ou tree, et qui sont inclus dans l’arbre d’accessibilité. L’appartenance est déterminée par la caractéristique propre de WAI-ARIA « [[en:Accessible Name Required: True]] », et non par le simple fait qu’un rôle autorise un nom : tablist, toolbar, menu, menubar et scrollbar sont des rôles à nom fourni par l’auteur pour lesquels la spécification n’exige pas de nom, et sont hors périmètre. meter et progressbar sont aussi couverts par meter-name-present et progressbar-name-present, associés au critère 1.1.1 ; c’est cette règle qui apporte à ces deux rôles leur couverture 4.1.2.",
 		"expectation": "L’élément a un aria-label non vide, un aria-labelledby qui se résout en texte non vide, ou un title non vide. Tous les rôles de l’ensemble tirent leur nom uniquement de l’auteur, donc le texte des descendants n’est pas accepté : sinon, un enfant libellé à l’intérieur d’un widget composite ferait réussir le conteneur qui n’a pas de nom propre.",
 		"examples": [
 			{
@@ -275,7 +275,7 @@
 		"title": "L’attribut role doit être un rôle ARIA valide et non abstrait",
 		"description": "Vérifie qu’un attribut role=\"\" explicite correspond à un rôle WAI-ARIA réel et non abstrait.",
 		"applicability": "S’applique à tout élément doté d’un attribut role=\"\" non vide dans le DOM composé.",
-		"expectation": "Au moins un jeton de rôle désigne un rôle ARIA concret et non abstrait. Lorsque ce n’est pas le cas, le résultat dépend du rôle auquel l’élément se replie :\n\n- `fail` sur un hôte sans rôle (div, span, élément personnalisé), qui reste exposé comme generic : le rôle voulu par l’auteur n’atteint donc personne.\n- `cantTell` lorsque l’élément a un rôle natif (un <button>, <nav>, <a href>), que l’arbre d’accessibilité continue d’utiliser. ACT 674b10 ne liste 4.1.2 que comme exigence secondaire, « satisfied through the implicit role » ; le jeton erroné mérite donc d’être signalé, mais ce n’est pas en soi le critère en échec.",
+		"expectation": "Au moins un jeton de rôle désigne un rôle ARIA concret et non abstrait. Lorsque ce n’est pas le cas, le résultat dépend du rôle auquel l’élément se replie :\n\n- `fail` sur un hôte sans rôle (div, span, élément personnalisé), qui reste exposé comme generic : le rôle voulu par l’auteur n’atteint donc personne.\n- `cantTell` lorsque l’élément a un rôle natif (un <button>, <nav>, <a href>), que l’arbre d’accessibilité continue d’utiliser. ACT 674b10 ne liste 4.1.2 que comme exigence secondaire, « [[en:satisfied through the implicit role]] » ; le jeton erroné mérite donc d’être signalé, mais ce n’est pas en soi le critère en échec.",
 		"examples": [
 			{
 				"state": "pass",
@@ -307,7 +307,7 @@
 		"title": "Les attributs aria-* doivent être des attributs ARIA réels et définis",
 		"description": "Vérifie que chaque nom d’attribut aria-* présent dans le DOM est un attribut réel défini par la spécification WAI-ARIA.",
 		"applicability": "S’applique à tout élément du DOM composé qui porte au moins un attribut dont le nom commence par « aria- ».",
-		"expectation": "Chaque nom d’attribut aria-* est un attribut réel défini par la spécification WAI-ARIA (détecte les fautes de frappe et les noms d’attributs inventés, ignorés silencieusement par les technologies d’assistance et donc un défaut réel et déterministe). Signalé en `cantTell` plutôt qu’en `fail` : un attribut aria-* que la spécification ne définit pas est inerte, donc sa présence ne change rien au nom, au rôle ou à la valeur exposés de l’élément. Lorsque l’auteur visait un attribut réel et que l’élément se retrouve sans nom, cette absence relève des règles de nommage, pas de celle-ci. ACT 5f99a7 associe 1.3.1/4.1.2 comme exigences secondaires, « less strict » que la règle elle-même.",
+		"expectation": "Chaque nom d’attribut aria-* est un attribut réel défini par la spécification WAI-ARIA (détecte les fautes de frappe et les noms d’attributs inventés, ignorés silencieusement par les technologies d’assistance et donc un défaut réel et déterministe). Signalé en `cantTell` plutôt qu’en `fail` : un attribut aria-* que la spécification ne définit pas est inerte, donc sa présence ne change rien au nom, au rôle ou à la valeur exposés de l’élément. Lorsque l’auteur visait un attribut réel et que l’élément se retrouve sans nom, cette absence relève des règles de nommage, pas de celle-ci. ACT 5f99a7 associe 1.3.1/4.1.2 comme exigences secondaires, « [[en:less strict]] » que la règle elle-même.",
 		"examples": [
 			{
 				"state": "pass",
@@ -323,7 +323,7 @@
 		"title": "Les valeurs des attributs aria-* doivent correspondre à leur type déclaré",
 		"description": "Vérifie que chaque attribut aria-* reconnu a une valeur conforme au type de valeur déclaré par WAI-ARIA (booléen, tristate, jeton, entier, nombre ou référence d’ID).",
 		"applicability": "S’applique à tout élément portant au moins un attribut aria-* reconnu (les noms d’attributs non reconnus relèvent d’aria-valid-attr et ne sont pas évalués ici).",
-		"expectation": "La valeur de chaque attribut est conforme au type déclaré par WAI-ARIA : booléen (« true »/« false »), tristate (« true »/« false »/« mixed »), un jeton d’un ensemble énuméré fixe, un entier, un nombre réel, ou une référence d’ID (ou une liste de références) qui se résout vers un élément existant du document. Selon l’applicabilité même d’ACT 6a7281 (« any state or property that is NOT empty »), une valeur explicitement vide, y compris un attribut de style booléen sans aucun « =valeur », p. ex. `aria-checked` seul, est hors périmètre pour tous les types de valeur, et non une violation : c’est un motif courant et délibéré dans le balisage généré par des templates (p. ex. React qui rend conditionnellement `aria-describedby={hasError ? errorId : ''}`).",
+		"expectation": "La valeur de chaque attribut est conforme au type déclaré par WAI-ARIA : booléen (« true »/« false »), tristate (« true »/« false »/« mixed »), un jeton d’un ensemble énuméré fixe, un entier, un nombre réel, ou une référence d’ID (ou une liste de références) qui se résout vers un élément existant du document. Selon l’applicabilité même d’ACT 6a7281 (« [[en:any state or property that is NOT empty]] »), une valeur explicitement vide, y compris un attribut de style booléen sans aucun « =valeur », p. ex. `aria-checked` seul, est hors périmètre pour tous les types de valeur, et non une violation : c’est un motif courant et délibéré dans le balisage généré par des templates (p. ex. React qui rend conditionnellement `aria-describedby={hasError ? errorId : ''}`).",
 		"examples": [
 			{
 				"state": "pass",
@@ -387,7 +387,7 @@
 		"title": "Les boutons ont un nom accessible",
 		"description": "Vérifie que les boutons exposent un nom accessible non vide.",
 		"applicability": "S’applique à <button>, <input type=\"button\">, <input type=\"submit\">, <input type=\"reset\"> et aux éléments dotés de role=\"button\", lorsque l’élément est inclus dans l’arbre d’accessibilité. role=\"presentation\"/\"none\" exclut un élément du périmètre, sauf si un attribut ARIA global ou la capacité à recevoir le focus rétablit son rôle, selon la résolution des conflits des rôles de présentation.",
-		"expectation": "L’élément a un nom accessible non vide. Un nom programmatique est pris en premier (aria-labelledby, aria-label, un <label> associé, title). À défaut, un bouton <input> se rabat sur son attribut value, et type=\"submit\"/type=\"reset\" se rabattent sur la valeur par défaut « Submit »/« Reset » de l’agent utilisateur, ce qui explique que ces deux-là ne soient jamais sans nom. À défaut des deux, un bouton dont le rôle tire son nom du contenu se rabat sur le texte de son sous-arbre, en comptant le nom propre de chaque descendant (un <img alt>, aria-label ou title) et pas seulement les nœuds texte.",
+		"expectation": "L’élément a un nom accessible non vide. Un nom programmatique est pris en premier (aria-labelledby, aria-label, un <label> associé, title). À défaut, un bouton <input> se rabat sur son attribut value, et type=\"submit\"/type=\"reset\" se rabattent sur la valeur par défaut « [[en:Submit]] »/« [[en:Reset]] » de l’agent utilisateur, ce qui explique que ces deux-là ne soient jamais sans nom. À défaut des deux, un bouton dont le rôle tire son nom du contenu se rabat sur le texte de son sous-arbre, en comptant le nom propre de chaque descendant (un <img alt>, aria-label ou title) et pas seulement les nœuds texte.",
 		"examples": [
 			{
 				"state": "pass",
@@ -439,7 +439,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Le texte de repli « Bar chart » est présent mais générique ; il faut confirmer qu’il transmet les données réelles, et pas seulement le type de graphique."
+				"explanation": "Le texte de repli « [[en:Bar chart]] » est présent mais générique ; il faut confirmer qu’il transmet les données réelles, et pas seulement le type de graphique."
 			},
 			{
 				"state": "na",
@@ -737,13 +737,13 @@
 	},
 	"form-control-label-quality": {
 		"title": "Les libellés des champs de formulaire devraient être descriptifs et distinguables",
-		"description": "Signale un libellé visible de champ de formulaire qui est un texte générique de remplissage (« Label », « Field »), ou qui répète le libellé d’un autre champ sans contexte visible (titre, légende ou ligne) permettant de les distinguer.",
+		"description": "Signale un libellé visible de champ de formulaire qui est un texte générique de remplissage (« [[en:Label]] », « [[en:Field]] »), ou qui répète le libellé d’un autre champ sans contexte visible (titre, légende ou ligne) permettant de les distinguer.",
 		"applicability": "Champs de formulaire visibles : `input` natif (hors hidden et types de type bouton), `select`, `textarea`, ou élément doté de l’un des rôles de widget ARIA listés par ACT cc0f0a (checkbox, combobox, listbox, menuitemcheckbox, menuitemradio, radio, searchbox, slider, spinbutton, switch, textbox), qui portent un libellé programmatique visible : une association `<label>`, ou les éléments vers lesquels pointe `aria-labelledby`. Un champ nommé uniquement par `aria-label`/`title` n’a pas de libellé visible à évaluer et est hors périmètre ici (son mécanisme d’étiquetage relève de `form-control-programmatic-label-quality`, sa présence de `form-control-programmatic-label-present`).",
-		"expectation": "Le texte du libellé visible (a) n’est pas un texte de remplissage oublié dans le balisage (« label », « field », « enter text », ...), (b) n’est pas partagé avec un autre champ sans contexte visible pour les distinguer (le même « Name » deux fois, sans rien de visible à l’écran indiquant lequel correspond à la livraison et lequel à la facturation), et (c) constitue la totalité du libellé programmatique du champ, et non le fragment visible d’un libellé dont la partie descriptive est masquée.",
+		"expectation": "Le texte du libellé visible (a) n’est pas un texte de remplissage oublié dans le balisage (« [[en:label]] », « [[en:field]] », « [[en:enter text]] », ...), (b) n’est pas partagé avec un autre champ sans contexte visible pour les distinguer (le même « [[en:Name]] » deux fois, sans rien de visible à l’écran indiquant lequel correspond à la livraison et lequel à la facturation), et (c) constitue la totalité du libellé programmatique du champ, et non le fragment visible d’un libellé dont la partie descriptive est masquée.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Le texte du libellé est le mot de remplissage « Label » lui-même, pas une vraie description du champ."
+				"explanation": "Le texte du libellé est le mot de remplissage « [[en:Label]] » lui-même, pas une vraie description du champ."
 			},
 			{
 				"state": "na",
@@ -817,13 +817,13 @@
 	},
 	"heading-quality": {
 		"title": "Le texte des titres devrait être descriptif, pas un texte de remplissage",
-		"description": "Signale les titres dont le nom accessible est un texte de remplissage plutôt qu’une description du contenu qui suit : un mot générique (« Heading », « Untitled »), un emplacement de modèle numéroté (« Section 2 »), un nom de fichier ou une URL.",
+		"description": "Signale les titres dont le nom accessible est un texte de remplissage plutôt qu’une description du contenu qui suit : un mot générique (« [[en:Heading]] », « [[en:Untitled]] »), un emplacement de modèle numéroté (« [[en:Section 2]] »), un nom de fichier ou une URL.",
 		"applicability": "Éléments ayant un rôle de titre (<h1>-<h6> natifs, ou tout élément doté d’un role=\"heading\" explicite) inclus dans l’arbre d’accessibilité et dotés d’un nom accessible non vide. Un titre sans aucun nom relève d'`empty-heading`, pas de cette règle.",
-		"expectation": "Le nom accessible du titre, normalisé (espaces fusionnés, casse uniformisée, ponctuation finale supprimée), n’est pas un texte de remplissage oublié dans le balisage : un mot générique connu (« heading », « title », « untitled », « lorem ipsum », ...), un emplacement de modèle numéroté (« Heading 2 », « Section 3 »), un nom de fichier ou une URL. Aucun de ces textes ne décrit le sujet ni l’objet du contenu qu’ils introduisent.",
+		"expectation": "Le nom accessible du titre, normalisé (espaces fusionnés, casse uniformisée, ponctuation finale supprimée), n’est pas un texte de remplissage oublié dans le balisage : un mot générique connu (« [[en:heading]] », « [[en:title]] », « [[en:untitled]] », « lorem ipsum », ...), un emplacement de modèle numéroté (« [[en:Heading 2]] », « [[en:Section 3]] »), un nom de fichier ou une URL. Aucun de ces textes ne décrit le sujet ni l’objet du contenu qu’ils introduisent.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Le texte du titre est le mot de remplissage générique « Heading » lui-même, pas une description de la section."
+				"explanation": "Le texte du titre est le mot de remplissage générique « [[en:Heading]] » lui-même, pas une description de la section."
 			},
 			{
 				"state": "na",
@@ -871,7 +871,7 @@
 		"examples": [
 			{
 				"state": "pass",
-				"explanation": "Les deux cadres partagent le nom « Weather widget » et intègrent la même ressource."
+				"explanation": "Les deux cadres partagent le nom « [[en:Weather widget]] » et intègrent la même ressource."
 			},
 			{
 				"state": "unknown",
@@ -883,11 +883,11 @@
 		"title": "Les liens ayant le même nom accessible devraient mener à la même destination",
 		"description": "Signale, pour revue manuelle, les groupes de liens qui partagent le même nom accessible mais se résolvent vers plusieurs destinations distinctes, afin de vérifier s’ils ont la même fonction.",
 		"applicability": "Tout `a[href]` ou `[role=\"link\"]` doté d’un nom accessible non vide, regroupé par ce nom (rogné, espaces fusionnés, casse uniformisée).",
-		"expectation": "Dans une page, les liens qui partagent le même nom accessible sont censés avoir la même fonction (c.-à-d. se résoudre vers la même destination, l’URL complète résolue, fragment compris). Les liens au même texte mais à destination différente sont courants et souvent intentionnels sur les sites réels (p. ex. des liens « Read more » répétés sur chaque carte d’article) ; cette règle est donc écrite en `type: 'manual'` (plafonnée à cantTell, jamais fail) plutôt qu’en échec strict : elle signale une vraie discordance nom/destination au jugement humain au lieu de deviner l’intention.",
+		"expectation": "Dans une page, les liens qui partagent le même nom accessible sont censés avoir la même fonction (c.-à-d. se résoudre vers la même destination, l’URL complète résolue, fragment compris). Les liens au même texte mais à destination différente sont courants et souvent intentionnels sur les sites réels (p. ex. des liens « [[en:Read more]] » répétés sur chaque carte d’article) ; cette règle est donc écrite en `type: 'manual'` (plafonnée à cantTell, jamais fail) plutôt qu’en échec strict : elle signale une vraie discordance nom/destination au jugement humain au lieu de deviner l’intention.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Les deux liens partagent le nom accessible « Read more » mais se résolvent vers des destinations différentes."
+				"explanation": "Les deux liens partagent le nom accessible « [[en:Read more]] » mais se résolvent vers des destinations différentes."
 			},
 			{
 				"state": "na",
@@ -951,11 +951,11 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Le texte `alt` de l’image (« Home ») répète mot pour mot le texte visible du lien adjacent : un lecteur d’écran l’annonce deux fois."
+				"explanation": "Le texte `alt` de l’image (« [[en:Home]] ») répète mot pour mot le texte visible du lien adjacent : un lecteur d’écran l’annonce deux fois."
 			},
 			{
 				"state": "na",
-				"explanation": "Le texte `alt` (« Home icon ») diffère du texte adjacent (« Home »)."
+				"explanation": "Le texte `alt` (« [[en:Home icon]] ») diffère du texte adjacent (« [[en:Home]] »)."
 			}
 		]
 	},
@@ -999,7 +999,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Un alt non vide est présent, mais « image » répète le type d’élément au lieu de décrire ce que montre le graphique ; cela mérite l’avis d’un relecteur."
+				"explanation": "Un alt non vide est présent, mais « [[en:image]] » répète le type d’élément au lieu de décrire ce que montre le graphique ; cela mérite l’avis d’un relecteur."
 			},
 			{
 				"state": "na",
@@ -1047,7 +1047,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Un alt non vide est présent sur ce bouton image ; il faut confirmer que « Submit order » correspond à ce que fait réellement le bouton."
+				"explanation": "Un alt non vide est présent sur ce bouton image ; il faut confirmer que « [[en:Submit order]] » correspond à ce que fait réellement le bouton."
 			},
 			{
 				"state": "na",
@@ -1063,7 +1063,7 @@
 		"examples": [
 			{
 				"state": "pass",
-				"explanation": "Le nom accessible (« Save changes ») contient le texte visible (« Save »)."
+				"explanation": "Le nom accessible (« [[en:Save changes]] ») contient le texte visible (« [[en:Save]] »)."
 			},
 			{
 				"state": "fail",
@@ -1265,13 +1265,13 @@
 	},
 	"link-name-quality": {
 		"title": "Le texte des liens doit être descriptif, pas générique",
-		"description": "Signale les liens dont le nom accessible complet est une formule connue pour être peu descriptive (par exemple « click here », « read more », « more ») ou un simple nom de format de fichier (par exemple « HTML », « PDF ») sans contexte adjacent indiquant vers quoi ils mènent, pour une revue manuelle de la clarté de leur fonction.",
+		"description": "Signale les liens dont le nom accessible complet est une formule connue pour être peu descriptive (par exemple « [[en:click here]] », « [[en:read more]] », « [[en:more]] ») ou un simple nom de format de fichier (par exemple « HTML », « PDF ») sans contexte adjacent indiquant vers quoi ils mènent, pour une revue manuelle de la clarté de leur fonction.",
 		"applicability": "Éléments correspondant à `a[href], area[href], [role=\"link\"]` dont le nom accessible calculé n’est pas vide (nom programmatique d’abord, puis « nom issu du contenu », selon la même résolution en deux temps que `link-name-present`, avec le même sélecteur). Les liens sans aucun nom relèvent de `link-name-present`, pas de cette règle.",
-		"expectation": "Le nom accessible complet du lien, une fois normalisé (espaces retirés aux extrémités, casse neutralisée, ponctuation finale supprimée), ne correspond exactement ni à une formule connue pour être peu descriptive (« click here », « read more », « more », « here », « details », « link », etc., le motif d’échec connu de la technique WCAG F84 pour le critère 2.4.4), ni à un simple nom de format ou de type de fichier (« HTML », « PDF », « EPUB », ...) dépourvu de contexte adjacent (une cible aria-describedby, le texte propre de l’élément de liste, de la cellule de tableau ou du paragraphe englobant, ou, pour les noms de format uniquement, un en-tête de la première ligne d’un tableau) indiquant à quoi il se rapporte.",
+		"expectation": "Le nom accessible complet du lien, une fois normalisé (espaces retirés aux extrémités, casse neutralisée, ponctuation finale supprimée), ne correspond exactement ni à une formule connue pour être peu descriptive (« [[en:click here]] », « [[en:read more]] », « [[en:more]] », « [[en:here]] », « [[en:details]] », « [[en:link]] », etc., le motif d’échec connu de la technique WCAG F84 pour le critère 2.4.4), ni à un simple nom de format ou de type de fichier (« HTML », « PDF », « EPUB », ...) dépourvu de contexte adjacent (une cible aria-describedby, le texte propre de l’élément de liste, de la cellule de tableau ou du paragraphe englobant, ou, pour les noms de format uniquement, un en-tête de la première ligne d’un tableau) indiquant à quoi il se rapporte.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "« Click here » est une formule générique connue qui ne décrit pas la destination du lien hors contexte."
+				"explanation": "« [[en:Click here]] » est une formule générique connue qui ne décrit pas la destination du lien hors contexte."
 			},
 			{
 				"state": "na",
@@ -1404,7 +1404,7 @@
 		]
 	},
 	"meta-viewport-large": {
-		"title": "La balise meta viewport devrait autoriser un zoom jusqu’à 500 %",
+		"title": "La balise `meta viewport` devrait autoriser un zoom jusqu’à 500 %",
 		"description": "Vérifie que <meta name=\"viewport\"> ne définit ni user-scalable=no ni un maximum-scale inférieur à 5 (500 %).",
 		"applicability": "S’applique aux éléments <meta name=\"viewport\"> dotés d’un attribut content non vide.",
 		"expectation": "L’attribut content ne définit pas user-scalable à « no »/« 0 » et ne définit pas de maximum-scale inférieur à 5 (500 %). C’est l’équivalent plus strict, de niveau AAA, de meta-viewport-zoom-enabled (qui impose le minimum AA de 200 % comme un fail normatif WCAG strict) ; cette règle est une recommandation de bonne pratique, à titre indicatif, qui vise le seuil AAA plus élevé.",
@@ -1420,7 +1420,7 @@
 		]
 	},
 	"meta-viewport-zoom-enabled": {
-		"title": "La balise meta viewport ne doit pas désactiver le zoom",
+		"title": "La balise `meta viewport` ne doit pas désactiver le zoom",
 		"description": "Vérifie que <meta name=\"viewport\"> ne définit ni user-scalable=no ni un maximum-scale inférieur à 2 (200 %).",
 		"applicability": "S’applique aux éléments <meta name=\"viewport\"> dont l’attribut content définit maximum-scale ou user-scalable. Un contenu qui ne définit ni l’un ni l’autre ne peut pas restreindre le zoom.",
 		"expectation": "user-scalable est absent, vaut yes, device-width, device-height ou un nombre hors de l’intervalle -1 à 1 ; et maximum-scale est absent, vaut device-width, device-height, une valeur négative, ou 2 ou plus. Toute autre valeur empêche l’utilisateur d’agrandir le texte à 200 %, ce qu’exige le critère WCAG 1.4.4 (Redimensionnement du texte).",
@@ -1523,7 +1523,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Un texte de repli est présent : il faut vérifier que « Product brochure (PDF) » est réellement équivalent au document intégré, et pas une simple légende de remplissage."
+				"explanation": "Un texte de repli est présent : il faut vérifier que « [[en:Product brochure (PDF)]] » est réellement équivalent au document intégré, et pas une simple légende de remplissage."
 			},
 			{
 				"state": "na",
@@ -1583,11 +1583,11 @@
 		"title": "Motifs de titre de page potentiellement trop peu descriptifs",
 		"description": "Repère les motifs de titre de page qui peuvent indiquer un manque de précision, comme des titres génériques, dupliqués ou trop calqués sur un modèle. Cette règle fournit des signaux de revue et n’échoue jamais automatiquement.",
 		"applicability": "S’applique à une exécution portant sur un document entier dont le <title> se résout en texte non vide ; un titre absent ou vide relève de l’échec de page-title-present, pas d’un motif à examiner. Une exécution restreinte par contextSelector ou par engineOptions.fragment est notApplicable, tout comme un titre qui ne correspond à aucun des motifs ci-dessous.",
-		"expectation": "Le titre ne présente aucun des signaux prudents de faible pouvoir descriptif : l’un des titres génériques home, homepage, welcome, untitled, page ou document ; moins de huit caractères ; ou une forme de modèle qui associe un jeton générique à une marque, comme « Home | Brand ». Lorsque la sonde crawl.pageTitles fournit au moins dix pages, ce sont des signaux inter-pages qui sont utilisés : un même titre répété sur des URL distinctes, ou un préfixe ou suffixe de douze caractères ou plus partagé par l’ensemble. Chaque signal est signalé en cantTell : savoir si un titre décrit sa page relève du jugement, la règle n’échoue donc jamais sur la seule base d’un motif.",
+		"expectation": "Le titre ne présente aucun des signaux prudents de faible pouvoir descriptif : l’un des titres génériques [[en:home, homepage, welcome, untitled, page]] ou [[en:document]] ; moins de huit caractères ; ou une forme de modèle qui associe un jeton générique à une marque, comme « [[en:Home | Brand]] ». Lorsque la sonde crawl.pageTitles fournit au moins dix pages, ce sont des signaux inter-pages qui sont utilisés : un même titre répété sur des URL distinctes, ou un préfixe ou suffixe de douze caractères ou plus partagé par l’ensemble. Chaque signal est signalé en cantTell : savoir si un titre décrit sa page relève du jugement, la règle n’échoue donc jamais sur la seule base d’un motif.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "« Home » fait partie des signaux prudents de titre générique que cette règle examine."
+				"explanation": "« [[en:Home]] » fait partie des signaux prudents de titre générique que cette règle examine."
 			},
 			{
 				"state": "na",
@@ -1774,7 +1774,7 @@
 	"skip-link": {
 		"title": "Le lien d’évitement doit avoir une cible résoluble et utilisable",
 		"description": "Vérifie que le fragment de l’href d’un lien « aller à ... » se résout en un élément réel et actuellement utilisable du document.",
-		"applicability": "S’applique aux éléments <a href=\"#fragment\"> dont le nom accessible suit une convention de rédaction courante du type « skip to ... » / « jump to ... » (« skip » ou « jump to » dans le nom, sans distinction de casse), le motif reconnaissable d’un lien d’évitement, et non à tous les liens d’ancre internes de la page. « jump to » figure aux côtés de « skip », car les vrais liens d’évitement utilisent les deux conventions (par exemple un lien « Jump to section », qu’une correspondance purement positionnelle détecterait mais qu’un motif textuel limité à « skip » manquerait). La correspondance par motif textuel reste intentionnelle (voir implementation-notes) ; cela ne fait qu’élargir la liste des conventions connues.",
+		"applicability": "S’applique aux éléments <a href=\"#fragment\"> dont le nom accessible suit une convention de rédaction courante du type « [[en:skip to ...]] » / « [[en:jump to ...]] » (« [[en:skip]] » ou « [[en:jump to]] » dans le nom, sans distinction de casse), le motif reconnaissable d’un lien d’évitement, et non à tous les liens d’ancre internes de la page. « [[en:jump to]] » figure aux côtés de « [[en:skip]] », car les vrais liens d’évitement utilisent les deux conventions (par exemple un lien « [[en:Jump to section]] », qu’une correspondance purement positionnelle détecterait mais qu’un motif textuel limité à « [[en:skip]] » manquerait). La correspondance par motif textuel reste intentionnelle (voir implementation-notes) ; cela ne fait qu’élargir la liste des conventions connues.",
 		"expectation": "Le fragment du lien se résout en un élément réel du document (via un id correspondant, ou un ancien <a name=\"...\">), et cette cible est actuellement utilisable (non masquée de l’arbre d’accessibilité ; et, lorsque la géométrie du navigateur est disponible, ni de surface nulle ni dépourvue de rectangles). Un lien d’évitement dont la cible est absente ou inutilisable dans les faits ne fournit pas de destination de contournement fiable.",
 		"examples": [
 			{
@@ -1875,7 +1875,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Un `<title>` est présent : il faut vérifier que « Growth chart » décrit ce que montre réellement le graphique, et pas seulement qu’il s’agit d’un graphique."
+				"explanation": "Un `<title>` est présent : il faut vérifier que « [[en:Growth chart]] » décrit ce que montre réellement le graphique, et pas seulement qu’il s’agit d’un graphique."
 			},
 			{
 				"state": "na",

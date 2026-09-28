@@ -63,7 +63,7 @@ export function WcagMappingContent() {
 				<li>
 					<strong>Facetas</strong>: un SC de WCAG suele ser más grande de lo que una sola regla
 					puede decidir de forma determinista. Internamente, cada SC se divide en "facetas"
-					nombradas (por ejemplo, 1.1.1 Non-text Content tiene facetas como{" "}
+					nombradas (por ejemplo, 1.1.1 <span lang="en">Non-text Content</span> tiene facetas como{" "}
 					<code>img-alt-attr-present</code>, <code>text-alternative-quality</code>,{" "}
 					<code>decorative-null</code>) registradas en <code>src/coverage/wcag-facets.js</code>,
 					cada una marcada como <code>full</code> (una regla la decide con alta confianza),{" "}
@@ -149,7 +149,7 @@ export function WcagMappingContent() {
 				una versión de WCAG objetivo (<code>engineOptions.wcagVersion</code>, si no, lo que
 				impliquen tus etiquetas de versión, si no, <code>2.2</code>) y la devuelve como{" "}
 				<code>engine.wcagVersion</code>. Bajo un objetivo 2.2, una regla asociada solo al SC 4.1.1
-				Parsing no puede devolver <code>fail</code>: se ejecuta, informa de sus ocurrencias, y vuelve
+				<span lang="en">Parsing</span> no puede devolver <code>fail</code>: se ejecuta, informa de sus ocurrencias, y vuelve
 				como <code>cantTell</code> con un campo <code>wcagVersionScope</code> que explica la
 				coerción. Así, un análisis por defecto nunca bloquea por un criterio que WCAG 2.2 no
 				contiene, y un análisis 2.0/2.1 sigue obteniendo un veredicto real para el 4.1.1.

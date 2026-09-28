@@ -27,7 +27,7 @@ export function OverviewLead() {
 				Was sie unterscheidet, ist ihr Umgang mit den Fällen, die automatisierte Tests nicht
 				entscheiden können. Sie implementiert das offene{" "}
 				<a href="https://www.w3.org/TR/act-rules-format/">
-					Accessibility Conformance Testing (ACT) Rules Format
+					<span lang="en">Accessibility Conformance Testing (ACT) Rules Format</span>
 				</a>{" "}
 				des W3C und wird am veröffentlichten Testkorpus von ACT geprüft, statt sich nur an sich
 				selbst zu messen. Sie meldet Befunde, Nicht-Befunde und, was selten ist, ausdrückliche

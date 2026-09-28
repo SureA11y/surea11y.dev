@@ -27,7 +27,7 @@ export function OverviewLead() {
 				Ce qui le distingue, c’est ce qu’il fait des cas que les tests automatisés ne peuvent pas
 				trancher. Il implémente le format ouvert du W3C,{" "}
 				<a href="https://www.w3.org/TR/act-rules-format/">
-					Accessibility Conformance Testing (ACT) Rules Format
+					<span lang="en">Accessibility Conformance Testing (ACT) Rules Format</span>
 				</a>
 				, et il est vérifié sur le corpus de tests publié par ACT plutôt que jugé uniquement à
 				l’aune de ses propres tests. Il rapporte ce qu’il trouve, ce qu’il ne trouve pas et, chose
@@ -35,7 +35,7 @@ export function OverviewLead() {
 				rassurants.
 			</p>
 			<p>
-				<em>Sure</em>, c’est la certitude sur ce que l’on sait, et l’honnêteté sur ce que l’on ne
+				<em><span lang="en">Sure</span></em>, c’est la certitude sur ce que l’on sait, et l’honnêteté sur ce que l’on ne
 				sait pas. Il vous dit ce qu’il ne peut pas vous dire.
 			</p>
 		</>

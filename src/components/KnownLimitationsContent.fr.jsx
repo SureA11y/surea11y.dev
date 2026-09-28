@@ -206,8 +206,8 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>Les deux cas limites ACT de <code>img-alt-decorative</code></strong> : un{" "}
-					<code>&lt;img&gt;</code> dont la requête réseau n’est pas dans l’état « completely
-					available » (encore en chargement, ou cassée), et un <code>&lt;canvas&gt;</code>{" "}
+					<code>&lt;img&gt;</code> dont la requête réseau n’est pas dans l’état « <span lang="en">completely
+					available</span> » (encore en chargement, ou cassée), et un <code>&lt;canvas&gt;</code>{" "}
 					entièrement transparent (rien n’y est réellement dessiné) sont tous deux exclus de
 					l’applicabilité d’ACT. Aucun des deux n’est décidable par une analyse statique du DOM
 					(pas de décodage d’image, pas de lecture des pixels du canvas) ; ils restent donc dans

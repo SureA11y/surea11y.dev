@@ -191,7 +191,7 @@ const occurrenceRows = [
 			</>
 		),
 	},
-	{ id: "summary", field: <code>summary</code>, meaning: "Für Menschen lesbar, bereits lokalisiert („This button has no accessible name.“)." },
+	{ id: "summary", field: <code>summary</code>, meaning: <>Für Menschen lesbar, bereits lokalisiert („<span lang="en">This button has no accessible name.</span>“).</> },
 	{ id: "hint", field: <code>hint</code>, meaning: "Für Menschen lesbare Hinweise zur Behebung, bereits lokalisiert." },
 	{
 		id: "i18n",
