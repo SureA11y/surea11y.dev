@@ -102,7 +102,7 @@ export function RuleOrganizationContent() {
 			<p>
 				Esto importa al leer un resultado compuesto (resultado agregado por WCAG-SC): un resultado
 				agregado con estado{" "}
-				<ResultBadge state="pass" size="sm" /> significa que ninguna comprobación automatizada de ese
+				<ResultBadge lang="en" state="pass" size="sm" /> significa que ninguna comprobación automatizada de ese
 				criterio detectó fallos, pero <strong>si una faceta no tiene ninguna cobertura automatizada, el
 				compuesto guarda silencio sobre esa faceta en lugar de afirmar que está bien</strong>. Consulta{" "}
 				<a href="/conformance/wcag-mapping/">Conformidad</a> para ver las tres capas (reglas atómicas,

@@ -72,20 +72,20 @@ export function OverviewContent() {
 			</p>
 			<ul className="outcome-list">
 				<li>
-					<ResultBadge state="fail" /> (<code>fail</code>) : une violation démontrable à partir du
+					<ResultBadge lang="en" state="fail" /> (<code>fail</code>) : une violation démontrable à partir du
 					DOM. Réservé aux cas objectifs et normatifs.
 				</li>
 				<li>
-					<ResultBadge state="pass" /> (<code>pass</code>) : la condition précise de cette règle est
+					<ResultBadge lang="en" state="pass" /> (<code>pass</code>) : la condition précise de cette règle est
 					remplie.{" "}
 					<strong>Ce n’est pas une affirmation que la page est accessible.</strong>
 				</li>
 				<li>
-					<ResultBadge state="unknown" /> (<code>cantTell</code>) : une personne doit trancher, et le
+					<ResultBadge lang="en" state="unknown" /> (<code>cantTell</code>) : une personne doit trancher, et le
 					résultat indique ce qui était ambigu.
 				</li>
 				<li>
-					<ResultBadge state="na" /> (<code>notApplicable</code>) : la condition préalable de la
+					<ResultBadge lang="en" state="na" /> (<code>notApplicable</code>) : la condition préalable de la
 					règle n’est pas présente.
 				</li>
 			</ul>

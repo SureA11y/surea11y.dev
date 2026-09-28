@@ -106,7 +106,7 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				C’est important pour lire un résultat composite (agrégation par critère de succès WCAG) :
-				un <ResultBadge state="pass" size="sm" /> composite signifie que chaque vérification
+				un <ResultBadge lang="en" state="pass" size="sm" /> composite signifie que chaque vérification
 				automatisée de ce critère est revenue sans erreur, mais{" "}
 				<strong>si une facette n’a aucune couverture automatisée, le composite ne dit rien de
 				cette facette au lieu d’affirmer qu’elle est correcte</strong>. Voir{" "}

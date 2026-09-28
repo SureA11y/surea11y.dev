@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import { RulePage } from "../../../../components/RulePage.jsx";
+import { plainRuleText } from "../../../../components/RuleText.jsx";
 import rules from "../../../../data/rules.generated.json";
 import { isRuleTranslated, localizeRule } from "../../../../data/localizeRule";
 import { DEFAULT_LOCALE, localeCodes } from "../../../../i18n/locales";
@@ -24,7 +25,7 @@ const rule = localizeRule(Astro.props.rule, locale);
 const available = localeCodes.filter((l) => isRuleTranslated(ruleId, l));
 ---
 
-<BaseLayout title={rule.title} breadcrumbLabel={rule.ruleId} contentLocale={locale} translatedLocales={available}>
+<BaseLayout title={plainRuleText(rule.title)} breadcrumbLabel={rule.ruleId} contentLocale={locale} translatedLocales={available}>
 	<RulePage rule={rule} locale={locale} />
 </BaseLayout>
 

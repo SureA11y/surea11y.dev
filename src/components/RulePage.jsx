@@ -3,6 +3,7 @@ import { Tag } from "./design-system/core/Tag.jsx";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
 import { Callout } from "./design-system/feedback/Callout.jsx";
+import { RuleText } from "./RuleText.jsx";
 import { t } from "../i18n/t";
 import { Trans } from "../i18n/Trans.jsx";
 import { wordSeparator } from "../i18n/locales";
@@ -22,7 +23,9 @@ function LabeledRichText({ label, text, locale }) {
 			return (
 				<ul key={i}>
 					{lines.map((line, j) => (
-						<li key={j}>{line.slice(2)}</li>
+						<li key={j}>
+							<RuleText text={line.slice(2)} />
+						</li>
 					))}
 				</ul>
 			);
@@ -31,7 +34,7 @@ function LabeledRichText({ label, text, locale }) {
 			<p key={i}>
 				{i === 0 ? <strong>{label}</strong> : null}
 				{i === 0 ? wordSeparator(locale) : ""}
-				{block}
+				<RuleText text={block} />
 			</p>
 		);
 	});
@@ -40,10 +43,18 @@ function LabeledRichText({ label, text, locale }) {
 export function RulePage({ rule, locale = "en" }) {
 	return (
 		<article>
-			<p className="rule-kicker">{rule.ruleId}</p>
-			<h1>{rule.title}</h1>
+			<p className="rule-kicker" translate="no">
+				{rule.ruleId}
+			</p>
+			<h1>
+				<RuleText text={rule.title} />
+			</h1>
 			<div className="tag-row">
-				<Tag>{rule.type}</Tag>
+				{/* Engine vocabulary (type, confidence, severity, WCAG principle) stays
+				    English in every language, marked so screen readers read it as English. */}
+				<Tag>
+					<span lang="en">{rule.type}</span>
+				</Tag>
 				{rule.deprecated ? <Tag tone="accent">{t("common.deprecated", locale)}</Tag> : null}
 				{rule.wcagSc.length ? (
 					<Tag tone="accent2">
@@ -51,9 +62,17 @@ export function RulePage({ rule, locale = "en" }) {
 						{rule.level ? ` (${rule.level})` : ""}
 					</Tag>
 				) : null}
-				<Tag>{t("rulePage.confidence", locale, { value: rule.confidence })}</Tag>
-				<Tag>{t("rulePage.severity", locale, { value: rule.severity })}</Tag>
-				{rule.category ? <Tag>{rule.category}</Tag> : null}
+				<Tag>
+					<Trans k="rulePage.confidence" locale={locale} values={{ value: <span lang="en">{rule.confidence}</span> }} />
+				</Tag>
+				<Tag>
+					<Trans k="rulePage.severity" locale={locale} values={{ value: <span lang="en">{rule.severity}</span> }} />
+				</Tag>
+				{rule.category ? (
+					<Tag>
+						<span lang="en">{rule.category}</span>
+					</Tag>
+				) : null}
 			</div>
 
 			{rule.deprecated ? (
@@ -94,7 +113,11 @@ export function RulePage({ rule, locale = "en" }) {
 				</Callout>
 			) : null}
 
-			{rule.description ? <p className="rule-description">{rule.description}</p> : null}
+			{rule.description ? (
+				<p className="rule-description">
+					<RuleText text={rule.description} />
+				</p>
+			) : null}
 
 			{rule.applicability ? (
 				<LabeledRichText label={t("rulePage.appliesTo", locale)} text={rule.applicability} locale={locale} />
@@ -106,13 +129,15 @@ export function RulePage({ rule, locale = "en" }) {
 			<h2>{t("rulePage.examples", locale)}</h2>
 			{rule.examples.map((example) => (
 				<div className="example" key={example.outcome}>
-					<ResultBadge state={example.state} />
+					<ResultBadge lang="en" state={example.state} />
 					<CodeBlock
 						lang="html"
 						lines={example.html.split("\n")}
 						aria-label={t("rulePage.exampleCodeLabel", locale, { ruleId: rule.ruleId })}
 					/>
-					<p>{example.explanation}</p>
+					<p>
+						<RuleText text={example.explanation} />
+					</p>
 				</div>
 			))}
 
@@ -122,7 +147,9 @@ export function RulePage({ rule, locale = "en" }) {
 					<ul className="related-rules">
 						{rule.relatedRuleIds.map((id) => (
 							<li key={id}>
-								<a href={`/rules/${id}/`}>{id}</a>
+								<a href={`/rules/${id}/`} translate="no">
+									{id}
+								</a>
 							</li>
 						))}
 					</ul>

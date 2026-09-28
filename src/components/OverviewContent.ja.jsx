@@ -77,26 +77,26 @@ export function OverviewContent() {
 			</p>
 			<ul className="outcome-list">
 				<li>
-					<ResultBadge state="fail" />
+					<ResultBadge lang="en" state="fail" />
 					（
 					<code>fail</code>
 					）：DOMから証明できる違反です。客観的で規範的なケースだけに使います。
 				</li>
 				<li>
-					<ResultBadge state="pass" />
+					<ResultBadge lang="en" state="pass" />
 					（
 					<code>pass</code>
 					）：このルール固有の条件を満たしています。
 					<strong>ページがアクセシブルだという主張ではありません。</strong>
 				</li>
 				<li>
-					<ResultBadge state="unknown" />
+					<ResultBadge lang="en" state="unknown" />
 					（
 					<code>cantTell</code>
 					）：人間が判断する必要があります。何があいまいだったのかは結果に書かれています。
 				</li>
 				<li>
-					<ResultBadge state="na" />
+					<ResultBadge lang="en" state="na" />
 					（
 					<code>notApplicable</code>
 					）：ルールの前提条件が存在しません。

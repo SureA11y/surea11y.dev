@@ -2,6 +2,7 @@ import React from "react";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { Tag } from "./design-system/core/Tag.jsx";
 import { t } from "../i18n/t";
+import { RuleText } from "./RuleText.jsx";
 
 // Break long ids only at their hyphens ("presentational-children-…"), never
 // mid-word; <wbr> adds a break opportunity without changing the link text.
@@ -26,7 +27,11 @@ export function RulesTable({ caption, rows, locale = "en" }) {
 			mono: true,
 			wrap: true,
 			width: "12rem",
-			render: (value) => <a href={`/rules/${value}/`}>{breakableId(value)}</a>,
+			render: (value) => (
+				<a href={`/rules/${value}/`} translate="no">
+					{breakableId(value)}
+				</a>
+			),
 		},
 		{
 			key: "title",
@@ -34,7 +39,7 @@ export function RulesTable({ caption, rows, locale = "en" }) {
 			wrap: true,
 			render: (value, row) => (
 				<>
-					{value}
+					<RuleText text={value} />
 					{row.deprecated ? (
 						<>
 							{" "}
@@ -57,8 +62,19 @@ export function RulesTable({ caption, rows, locale = "en" }) {
 			width: "4.5rem",
 			render: (value) => (value ? <Tag tone="accent2">{value}</Tag> : "—"),
 		},
-		{ key: "confidence", label: t("rulesTable.confidence", locale), width: "7.5rem" },
-		{ key: "severity", label: t("rulesTable.severity", locale), width: "7.5rem" },
+		// Engine vocabulary, English in every language.
+		{
+			key: "confidence",
+			label: t("rulesTable.confidence", locale),
+			width: "7.5rem",
+			render: (value) => <span lang="en">{value}</span>,
+		},
+		{
+			key: "severity",
+			label: t("rulesTable.severity", locale),
+			width: "7.5rem",
+			render: (value) => <span lang="en">{value}</span>,
+		},
 	];
 
 	// The fixed columns above add up to 38rem; .rules-table in global.css gives

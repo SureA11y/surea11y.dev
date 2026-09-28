@@ -104,7 +104,7 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				Das ist wichtig beim Lesen des Ergebnisses einer zusammengesetzten Regel
-				(Zusammenfassung pro WCAG-Erfolgskriterium): Ein <ResultBadge state="pass" size="sm" />{" "}
+				(Zusammenfassung pro WCAG-Erfolgskriterium): Ein <ResultBadge lang="en" state="pass" size="sm" />{" "}
 				einer zusammengesetzten Regel bedeutet, dass jede automatisierte Prüfung für dieses
 				Erfolgskriterium sauber war, aber <strong>wenn eine Facette überhaupt keine automatisierte
 				Abdeckung hat, schweigt die zusammengesetzte Regel zu dieser Facette, statt zu behaupten,

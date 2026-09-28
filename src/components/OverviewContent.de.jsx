@@ -72,20 +72,20 @@ export function OverviewContent() {
 			</p>
 			<ul className="outcome-list">
 				<li>
-					<ResultBadge state="fail" /> (<code>fail</code>): ein Verstoß, der sich am DOM belegen
+					<ResultBadge lang="en" state="fail" /> (<code>fail</code>): ein Verstoß, der sich am DOM belegen
 					lässt. Objektiven, normativen Fällen vorbehalten.
 				</li>
 				<li>
-					<ResultBadge state="pass" /> (<code>pass</code>): Die konkrete Bedingung dieser Regel ist
+					<ResultBadge lang="en" state="pass" /> (<code>pass</code>): Die konkrete Bedingung dieser Regel ist
 					erfüllt.{" "}
 					<strong>Keine Aussage, dass die Seite barrierefrei ist.</strong>
 				</li>
 				<li>
-					<ResultBadge state="unknown" /> (<code>cantTell</code>): Das muss ein Mensch entscheiden,
+					<ResultBadge lang="en" state="unknown" /> (<code>cantTell</code>): Das muss ein Mensch entscheiden,
 					und das Ergebnis sagt, was unklar war.
 				</li>
 				<li>
-					<ResultBadge state="na" /> (<code>notApplicable</code>): Die Vorbedingung der Regel ist
+					<ResultBadge lang="en" state="na" /> (<code>notApplicable</code>): Die Vorbedingung der Regel ist
 					nicht gegeben.
 				</li>
 			</ul>

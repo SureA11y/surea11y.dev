@@ -53,8 +53,13 @@ const core = "https://github.com/SureA11y/core/blob/main";
 		</a>
 	</p>
 	<div class="badges">
-		<Badge label="engine" value={`v${engine.version}`} tone="neutral" />
-		<Badge label="license" value={engine.license} tone="neutral" />
+		{/* Package metadata labels, English in every language. */}
+		<span lang="en" translate="no">
+			<Badge label="engine" value={`v${engine.version}`} tone="neutral" />
+		</span>
+		<span lang="en" translate="no">
+			<Badge label="license" value={engine.license} tone="neutral" />
+		</span>
 	</div>
 	<p><a href={`${core}/CHANGELOG.md`}>{t("homepage.changelog", locale)}</a></p>
 

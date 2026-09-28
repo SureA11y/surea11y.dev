@@ -8,6 +8,7 @@ import Footer from "../components/Footer.astro";
 import { Callout } from "../components/design-system/feedback/Callout.jsx";
 import { processHeadings } from "../utils/headings";
 import { localizeLinks } from "../utils/localizeLinks";
+import { markCodeNoTranslate } from "../utils/noTranslate";
 import { t } from "../i18n/t";
 import { DEFAULT_LOCALE, localeCodes, type Locale } from "../i18n/locales";
 import { localizePath, splitLocale } from "../i18n/paths";
@@ -48,7 +49,7 @@ const defaultUrl = new URL(localizePath(path, DEFAULT_LOCALE), Astro.site);
 
 const rawHtml = await Astro.slots.render("default");
 const { html: headedHtml, headings } = processHeadings(rawHtml);
-const html = localizeLinks(headedHtml, locale);
+const html = markCodeNoTranslate(localizeLinks(headedHtml, locale));
 ---
 
 <html lang={locale}>
