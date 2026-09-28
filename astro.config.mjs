@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
+import { DEFAULT_LOCALE, localeCodes } from './src/i18n/locales.ts';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,14 +13,14 @@ export default defineConfig({
     sitemap({
       filter: (page) => !page.includes('/from/'),
       i18n: {
-        defaultLocale: 'en',
-        locales: { en: 'en', es: 'es' }
+        defaultLocale: DEFAULT_LOCALE,
+        locales: Object.fromEntries(localeCodes.map((code) => [code, code]))
       }
     })
   ],
   i18n: {
-    locales: ['en', 'es'],
-    defaultLocale: 'en',
+    locales: localeCodes,
+    defaultLocale: DEFAULT_LOCALE,
     routing: {
       prefixDefaultLocale: false
     }

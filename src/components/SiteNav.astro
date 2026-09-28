@@ -2,13 +2,14 @@
 import { Logo } from "./design-system/brand/Logo.jsx";
 import LanguageSwitcher from "./LanguageSwitcher.astro";
 import { t, type Locale } from "../i18n/t";
+import { localizePath } from "../i18n/paths";
 
 interface Props {
 	locale?: Locale;
 }
 
 const { locale = "en" } = Astro.props;
-const homeHref = locale === "es" ? "/es/" : "/";
+const homeHref = localizePath("/", locale);
 const githubLabel = t("siteNav.githubLabel", locale);
 const npmLabel = t("siteNav.npmLabel", locale);
 ---
