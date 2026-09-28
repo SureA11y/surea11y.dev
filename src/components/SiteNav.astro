@@ -16,7 +16,7 @@ const npmLabel = t("siteNav.npmLabel", locale);
 
 <header class="site-header">
 	<a class="wordmark" href={homeHref}>
-    	<Logo variant="lockup" size={32} product="core" label="@surea11y core" />
+		<Logo variant="lockup" size={32} product="core" />
 	</a>
 	<div class="external-links">
 		<LanguageSwitcher locale={locale} />
@@ -37,6 +37,10 @@ const npmLabel = t("siteNav.npmLabel", locale);
 <style>
 	.site-header {
 		display: flex;
+		/* On narrow screens the language switcher and icons wrap below the
+		   logo instead of pushing past the right edge of the page. */
+		flex-wrap: wrap;
+		gap: var(--space-2) var(--space-4);
 		align-items: center;
 		justify-content: space-between;
 		padding: var(--space-4) var(--space-6);
@@ -50,6 +54,9 @@ const npmLabel = t("siteNav.npmLabel", locale);
 
 	.external-links {
 		display: flex;
+		/* Stays right-aligned when it wraps to its own row, so the language
+		   menu's dropdown (anchored to its right edge) opens on screen. */
+		margin-left: auto;
 		gap: var(--space-1);
 	}
 
