@@ -65,6 +65,7 @@ export function Logo({
 
   const word = (
     <span
+      aria-hidden="true"
       style={{
         fontFamily: "var(--font-display)",
         fontSize: wordFontSize,
