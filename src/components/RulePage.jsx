@@ -4,8 +4,10 @@ import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
 import { Callout } from "./design-system/feedback/Callout.jsx";
 import { t } from "../i18n/t";
+import { Trans } from "../i18n/Trans.jsx";
+import { wordSeparator } from "../i18n/locales";
 
-function LabeledRichText({ label, text }) {
+function LabeledRichText({ label, text, locale }) {
 	const blocks = text
 		.split("\n\n")
 		.map((block) => block.trim())
@@ -28,7 +30,7 @@ function LabeledRichText({ label, text }) {
 		return (
 			<p key={i}>
 				{i === 0 ? <strong>{label}</strong> : null}
-				{i === 0 ? " " : ""}
+				{i === 0 ? wordSeparator(locale) : ""}
 				{block}
 			</p>
 		);
@@ -49,8 +51,8 @@ export function RulePage({ rule, locale = "en" }) {
 						{rule.level ? ` (${rule.level})` : ""}
 					</Tag>
 				) : null}
-				<Tag>{t("rulePage.confidenceLabel", locale)} {rule.confidence}</Tag>
-				<Tag>{t("rulePage.severityLabel", locale)} {rule.severity}</Tag>
+				<Tag>{t("rulePage.confidence", locale, { value: rule.confidence })}</Tag>
+				<Tag>{t("rulePage.severity", locale, { value: rule.severity })}</Tag>
 				{rule.category ? <Tag>{rule.category}</Tag> : null}
 			</div>
 
@@ -58,28 +60,36 @@ export function RulePage({ rule, locale = "en" }) {
 				<Callout tone="note" title={t("rulePage.deprecatedTitle", locale)}>
 					<p>
 						{rule.deprecation?.replacedBy ? (
-							<>
-								{t("rulePage.replacedBy", locale)}{" "}
-								<a href={`/rules/${rule.deprecation.replacedBy}/`}>
-									<code>{rule.deprecation.replacedBy}</code>
-								</a>
-								{rule.deprecation?.sinceVersion
-									? ` ${t("rulePage.since", locale)} ${rule.deprecation.sinceVersion}`
-									: ""}
-								.
-							</>
+							<Trans
+								k={rule.deprecation?.sinceVersion ? "rulePage.replacedBySince" : "rulePage.replacedBy"}
+								locale={locale}
+								values={{
+									rule: (
+										<a href={`/rules/${rule.deprecation.replacedBy}/`}>
+											<code>{rule.deprecation.replacedBy}</code>
+										</a>
+									),
+									version: rule.deprecation?.sinceVersion,
+								}}
+							/>
 						) : (
 							t("rulePage.deprecatedFallback", locale)
 						)}
-						{rule.deprecation?.reason ? ` ${rule.deprecation.reason}` : ""}
+						{rule.deprecation?.reason ? `${wordSeparator(locale)}${rule.deprecation.reason}` : ""}
 					</p>
 					<p>
-						{t("rulePage.deprecatedBodyBefore", locale)}{" "}
-						<a href="https://github.com/SureA11y/core/blob/main/docs/API_STABILITY.md">
-							{t("rulePage.deprecatedPolicyLink", locale)}
-						</a>{" "}
-						{t("rulePage.deprecatedBodyAfter", locale)} <code>runOnly</code>{" "}
-						{t("rulePage.deprecatedBodyEnd", locale)}
+						<Trans
+							k="rulePage.deprecatedBody"
+							locale={locale}
+							values={{
+								policy: (
+									<a href="https://github.com/SureA11y/core/blob/main/docs/API_STABILITY.md">
+										{t("rulePage.deprecatedPolicyLink", locale)}
+									</a>
+								),
+								runOnly: <code>runOnly</code>,
+							}}
+						/>
 					</p>
 				</Callout>
 			) : null}
@@ -87,10 +97,10 @@ export function RulePage({ rule, locale = "en" }) {
 			{rule.description ? <p className="rule-description">{rule.description}</p> : null}
 
 			{rule.applicability ? (
-				<LabeledRichText label={t("rulePage.appliesTo", locale)} text={rule.applicability} />
+				<LabeledRichText label={t("rulePage.appliesTo", locale)} text={rule.applicability} locale={locale} />
 			) : null}
 			{rule.expectation ? (
-				<LabeledRichText label={t("rulePage.expectation", locale)} text={rule.expectation} />
+				<LabeledRichText label={t("rulePage.expectation", locale)} text={rule.expectation} locale={locale} />
 			) : null}
 
 			<h2>{t("rulePage.examples", locale)}</h2>

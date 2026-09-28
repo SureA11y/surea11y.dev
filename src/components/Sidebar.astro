@@ -31,7 +31,7 @@ const isSectionActive = (href: string) =>
 							</a>
 							{hasChildren && (
 								<details open={open}>
-									<summary aria-label={`${label} ${t("sidebar.subpages", locale)}`} />
+									<summary aria-label={t("sidebar.subpages", locale, { section: label })} />
 								</details>
 							)}
 						</div>

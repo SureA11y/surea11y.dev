@@ -1,6 +1,7 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { t } from "../i18n/t";
+import { Trans } from "../i18n/Trans.jsx";
 
 const nextSteps = [
 	{ href: "/configuration/engine-options/", key: "usageBinding.engineOptions" },
@@ -37,13 +38,15 @@ export function UsageBindingSection({ intro, install, installNote, usage, note, 
 			{note}
 			{exampleHref ? (
 				<p>
-					{t("usageBinding.seeExample", locale)}{" "}
-					<a href={exampleHref}>{t("usageBinding.runnableExample", locale)}</a>{" "}
-					{t("usageBinding.inRepo", locale)}
+					<Trans
+						k="usageBinding.seeExample"
+						locale={locale}
+						values={{ link: <a href={exampleHref}>{t("usageBinding.runnableExample", locale)}</a> }}
+					/>
 				</p>
 			) : null}
 			<p>
-				{t("usageBinding.nextSteps", locale)} {formatLinkList(nextSteps, locale)}.
+				<Trans k="usageBinding.nextSteps" locale={locale} values={{ list: formatLinkList(nextSteps, locale) }} />
 			</p>
 		</>
 	);
