@@ -7,9 +7,12 @@
  * `name` is the language's own name for itself (shown in the switcher, so a
  * reader who can't read the current page's language can still find theirs).
  */
+// Ordered alphabetically by `name`, which is the order the switcher lists them in.
 export const locales = [
+	{ code: "de", name: "Deutsch" },
 	{ code: "en", name: "English" },
 	{ code: "es", name: "Español" },
+	{ code: "fr", name: "Français" },
 ] as const;
 
 export type Locale = (typeof locales)[number]["code"];
