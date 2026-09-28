@@ -224,9 +224,9 @@ export function WcagMappingContent() {
 				を参照してください。
 			</p>
 			<p>
-				surea11yが
-				<em>確実に</em>
-				提供できるのは次のことです。
+				そのうえでsurea11yが正直に
+				<em>提供できる</em>
+				のは、次のことです。
 			</p>
 			<ul>
 				<li>

@@ -9,7 +9,7 @@ const precedenceRows = [
 		id: "fail",
 		condition: (
 			<>
-				Irgendein Beitragender <code>fail</code>
+				Mindestens eine beitragende Regel ergibt <code>fail</code>
 			</>
 		),
 		outcome: <code>fail</code>,
@@ -18,8 +18,8 @@ const precedenceRows = [
 		id: "canttell",
 		condition: (
 			<>
-				Kein <code>fail</code>, aber irgendein Beitragender <code>cantTell</code> oder ein
-				gelisteter Beitragender wurde gar nicht ausgeführt
+				Kein <code>fail</code>, aber mindestens eine beitragende Regel ergibt <code>cantTell</code>{" "}
+				oder eine aufgeführte beitragende Regel wurde gar nicht ausgeführt
 			</>
 		),
 		outcome: <code>cantTell</code>,
@@ -28,14 +28,14 @@ const precedenceRows = [
 		id: "na",
 		condition: (
 			<>
-				Jeder Beitragende <code>notApplicable</code>
+				Alle beitragenden Regeln ergeben <code>notApplicable</code>
 			</>
 		),
 		outcome: <code>notApplicable</code>,
 	},
 	{
 		id: "pass",
-		condition: "Andernfalls (alle ausgeführt, keiner fail/cantTell, nicht alle N/A)",
+		condition: "Andernfalls (alle ausgeführt, keine ergibt fail/cantTell, nicht alle N/A)",
 		outcome: <code>pass</code>,
 	},
 ];
@@ -83,7 +83,7 @@ export function WcagMappingContent() {
 			</ol>
 
 			<h2>Wie das Ergebnis einer zusammengesetzten Regel berechnet wird</h2>
-			<p>Eine deterministische Rangfolge, ausgewertet über die atomaren Beitragenden dieser Regel:</p>
+			<p>Eine deterministische Rangfolge, ausgewertet über die beitragenden atomaren Regeln dieser zusammengesetzten Regel:</p>
 			<DataTable
 				caption="Rangfolge für das Ergebnis zusammengesetzter Regeln"
 				rowKey="id"
@@ -95,7 +95,7 @@ export function WcagMappingContent() {
 			/>
 			<p>
 				Das heißt: <strong>Ein zusammengesetztes <code>pass</code> ist ein echtes, deterministisches
-				„jede anwendbare automatische Prüfung für dieses SC war sauber“, aber für sich genommen
+				„jede anwendbare automatische Prüfung für dieses SC ist ohne Befund geblieben“, aber für sich genommen
 				keine Aussage über WCAG-Konformität.</strong> Hat eine Facette dieses SC gar keine
 				automatische Abdeckung (siehe <code>coverage-report.md</code>), schweigt ein
 				zusammengesetztes <code>pass</code> zu dieser Facette, statt zu behaupten, sie sei in
@@ -192,7 +192,7 @@ export function WcagMappingContent() {
 			</ul>
 			<p>
 				Ein zusammengesetztes <code>pass</code> für jedes SC Ihrer Zielstufe bedeutet: <em>Jede
-				automatisierbare Prüfung für diese Stufe war sauber.</em> Das ist der automatisierbare
+				automatisierbare Prüfung für diese Stufe ist ohne Befund geblieben.</em> Das ist der automatisierbare
 				Teil der Konformität, präzise benannt, kein Ersatz für die manuelle Prüfung, die WCAG
 				selbst verlangt.
 			</p>

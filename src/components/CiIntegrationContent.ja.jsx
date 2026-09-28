@@ -19,7 +19,7 @@ export function CiIntegrationContent() {
 			<p>
 				いずれのテンプレートも、パイプラインのゲートにはCLI自体の終了コードを使います（
 				<code>0</code>
-				は問題なし、
+				は失敗となる判定結果なし、
 				<code>1</code>
 				は
 				<code>fail</code>
@@ -55,7 +55,7 @@ export function CiIntegrationContent() {
 			/>
 			<p>
 				<code>fail</code>
-				の判定結果が1つでも見つかった時点でジョブが失敗します。既存の違反がある既存サイトでは、このステップを無効にするのではなく、以下のベースラインを使う例を参照してください。
+				の判定結果が1つでも見つかった時点でジョブが失敗します。すでに違反を抱えている既存サイトでは、このステップを無効にするのではなく、以下のベースラインを使う例を参照してください。
 			</p>
 
 			<h3>ベースラインを使う（既存サイトで、新しい違反だけをゲートの対象にする）</h3>
@@ -168,7 +168,7 @@ export function CiIntegrationContent() {
 
 			<h2>無料枠やプライベートリポジトリの実行時間制限</h2>
 			<p>
-				パイプラインサービスの無料枠に実行時間の制限がある場合（たとえば<span lang="en">Bitbucket Pipelines</span>の無料枠は、プライベートワークスペースで月50ビルド分です）、静的なHTMLやサーバーでレンダリングされたHTMLを
+				パイプラインサービスの無料枠に実行時間の制限がある場合（たとえば<span lang="en">Bitbucket Pipelines</span>の無料枠は、プライベートワークスペースで月50分のビルド時間です）、静的なHTMLやサーバーでレンダリングされたHTMLを
 				<code>jsdom</code>
 				ベースでスキャンする方法（CLIが行っていること）は、実際のブラウザーを操作するよりはるかに低コストです。その代わりに失うもの（クライアントサイドでレンダリングされるコンテンツと実際のCSSレイアウトは対象外）については
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#what-it-can-and-cant-scan">

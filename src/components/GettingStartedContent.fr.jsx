@@ -105,7 +105,7 @@ export function GettingStartedContent() {
 				]}
 			/>
 			<p>
-				Un <code>fail</code> dont le moteur est certain (le contraste), une liste{" "}
+				Un problème de contraste dont le moteur est certain (deux <code>fail</code>, aux seuils AA et AAA), une liste{" "}
 				<code>cantTell</code> à examiner par une personne (« <span lang="en">Click here</span> » est-il un bon nom de
 				lien, ce même texte à faible contraste passe-t-il une autre vérification, y a-t-il ici
 				quelque chose qui demande un examen manuel), et, parmi les 114 résultats{" "}
@@ -133,7 +133,7 @@ export function GettingStartedContent() {
 				</li>
 				<li>
 					<strong>Sans framework de test ni étape de build :</strong>{" "}
-					<a href="/getting-started/standalone/">standalone</a>, en installant directement{" "}
+					<a href="/getting-started/standalone/">autonome</a>, en installant directement{" "}
 					<code>@surea11y/core</code> ou en intégrant le bundle navigateur.
 				</li>
 			</ul>

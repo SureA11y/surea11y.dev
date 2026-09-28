@@ -39,7 +39,7 @@ export function EarlReportContent() {
 			<h2>À quoi il sert</h2>
 			<p>Deux publics, qui veulent le même document pour des raisons différentes.</p>
 			<p>
-				Un <strong>rapport d’implémentation</strong> indique au groupe communautaire <span lang="en">ACT Rules</span>
+				Un <strong>rapport d’implémentation</strong> indique au groupe communautaire <span lang="en">ACT Rules</span>{" "}
 				comment ce moteur se comporte sur ses cas de test, et c’est ce qui permet à un moteur
 				d’être listé aux côtés des autres implémentations. Être listé ne vaut pas approbation, et
 				le W3C ne vérifie pas les données : la formulation exacte est{" "}
@@ -147,13 +147,13 @@ export function EarlReportContent() {
 				plutôt qu’à une assertion « non testé ».
 			</p>
 			<p>
-				<strong><code>cantTell</code> ne coûte rien en matière de conformité.</strong> Les règles
+				<strong><code>cantTell</code> ne pénalise pas l’implémentation au regard d’ACT.</strong> Les règles
 				de cohérence d’ACT permettent à une implémentation automatisée de répondre « impossible à
 				déterminer » sur certains exemples (mais pas tous) tout en restant considérée comme
 				cohérente. Ce qu’une implémentation partiellement cohérente ne peut <em>pas</em> faire,
-				c’est produire un faux positif : échouer sur un exemple dont la règle dit qu’il doit
-				réussir, ou qu’il est inapplicable. C’est ce seuil qu’il faut surveiller, et il dépend des
-				règles, pas de ce rapport. Lors de la dernière exécution complète, le moteur produit{" "}
+				c’est produire un faux positif : échouer sur un exemple censé réussir selon la règle,
+				ou censé être inapplicable. C’est ce seuil qu’il faut surveiller, et il dépend des
+				règles, pas de ce rapport. Lors de la dernière exécution complète, le moteur a produit{" "}
 				<strong>zéro faux positif</strong> sur les 798 exemples ACT couvrant ses 58 règles
 				correspondantes ; voir{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>, et

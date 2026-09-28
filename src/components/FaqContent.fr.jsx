@@ -7,7 +7,7 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2>« J’ai passé <code>runOnly: ['some-rule-id']</code> mais toutes les règles ont quand même été exécutées »</h2>
+				<h2>« J’ai transmis <code>runOnly: ['some-rule-id']</code> mais toutes les règles ont quand même été exécutées »</h2>
 				<p>
 					<strong><code>runOnly</code> doit être un objet, pas un simple tableau.</strong>{" "}
 					<code>runOnly: ['img-alt-present']</code> est ignoré sans avertissement (le moteur
@@ -136,16 +136,16 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2>« Que se passe-t-il si une locale n’est que partiellement traduite ? »</h2>
+				<h2>« Que se passe-t-il si une langue n’est que partiellement traduite ? »</h2>
 				<p>
 					<strong>Les clés manquantes se replient sur l’anglais chaîne par chaîne (jamais de
-					résultat vide ou cassé) : une locale partielle se dégrade donc proprement au lieu
-					d’échouer.</strong> Voir <a href="/configuration/locales/"><code>I18N.md</code></a> pour
+					résultat vide ou cassé) : une langue partiellement traduite reste donc utilisable au
+					lieu d’échouer.</strong> Voir <a href="/configuration/locales/"><code>I18N.md</code></a> pour
 					le mécanisme et la couverture actuelle. La parité des clés est imposée, pas espérée :{" "}
 					<code>npm run i18n:sync</code> reporte toute clé nouvelle ou renommée de{" "}
-					<code>en.json</code> dans chaque autre fichier de locale, et le build échoue si l’un
+					<code>en.json</code> dans chaque autre fichier de langue, et le build échoue si l’un
 					d’eux est désynchronisé. Une clé ajoutée ainsi contient le texte anglais jusqu’à ce que
-					quelqu’un la traduise : une locale peut donc être en retard sur la formulation, jamais
+					quelqu’un la traduise : une langue peut donc être en retard sur la formulation, jamais
 					sur les clés.
 				</p>
 			</article>

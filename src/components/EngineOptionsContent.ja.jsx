@@ -531,7 +531,7 @@ export function EngineOptionsContent() {
 					カスタムルールの<code>id</code>が組み込みルールと重複した場合は、両方を実行するのではなく、<strong>そのスキャンでは組み込みルールを上書きします</strong>。同名のカスタムルールは、意図した上書きであるのと同じくらい偶然の衝突である可能性もあるため、衝突は必ず2つの方法で知らされます。該当するIDを示す<code>console.warn</code>と、結果のトップレベルにある<code>overriddenBuiltinIds</code>配列（衝突がなければ空）です。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照してください。
 				</li>
 				<li>
-					無効な記述子（<code>id</code>がない、または文字列でない、あるいは<code>runInPage</code>が関数でも関数に戻せるソース文字列でもない）は何の通知もなくスキップされ、組み込みルールを含むスキャンの残りは通常どおり実行されます。これは直すべき検証の抜けではありません。カスタムルールは呼び出し側が渡す任意のコードなので、「そのエントリだけを失敗として閉じ、スキャンは中断しない」ほうが安全なデフォルトです。例外を投げた<em>組み込み</em>ルールが、スキャン全体をクラッシュさせずにそのルールの<code>cantTell</code>にとどめられるのと同じ考え方です。
+					無効な記述子（<code>id</code>がない、または文字列でない、あるいは<code>runInPage</code>が関数でも関数に戻せるソース文字列でもない）は何の通知もなくスキップされ、組み込みルールを含むスキャンの残りは通常どおり実行されます。これは直すべき検証の抜けではありません。カスタムルールは呼び出し側が渡す任意のコードなので、「問題のあるエントリだけを安全側に倒して除外し、スキャンは中断しない」ほうが安全なデフォルトです。例外を投げた<em>組み込み</em>ルールが、スキャン全体をクラッシュさせずにそのルールの<code>cantTell</code>にとどめられるのと同じ考え方です。
 				</li>
 				<li>
 					結果は他のルールとまったく同じように<code>checksResults</code>に現れます。<code>{"{ __node }"}</code>だけを付けた<code>fail</code>/<code>cantTell</code>の検出箇所に対して<code>selector</code>/<code>html</code>/<code>structuralPath</code>が自動補完される点も同じです（<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）。

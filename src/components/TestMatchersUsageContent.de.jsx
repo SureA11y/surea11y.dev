@@ -43,7 +43,7 @@ export function TestMatchersUsageContent() {
 				Für Unit- und Komponententests: Prüfen Sie Barrierefreiheit direkt in einer Jest- oder
 				Vitest-Suite, gegen das DOM, das der Test ohnehin hat, statt einen echten oder
 				Headless-Browser zu steuern. Wenn Sie stattdessen vollständig gerenderte Seiten testen,
-				siehe{" "}
+				nutzen Sie{" "}
 				<a href="/getting-started/">die browsergesteuerten Bindings</a>.
 			</p>
 			<p>
@@ -120,7 +120,7 @@ export function TestMatchersUsageContent() {
 			/>
 			<p>
 				...oder mit jedem <code>container</code> einer <span lang="en">Testing Library</span>, ob von <span lang="en">React Testing
-				Library</span>, <code>wrapper.element</code> von <span lang="en">Vue Test Utils</span>, <span lang="en">Angular Testing Library</span> oder
+				Library</span>, <code>wrapper.element</code> von <span lang="en">Vue Test Utils</span>, <span lang="en">Angular Testing Library</span> oder{" "}
 				<span lang="en">Svelte Testing Library</span>, denn alle stellen ein gerendertes DOM-Element auf dieselbe Weise
 				bereit:
 			</p>
@@ -218,8 +218,8 @@ export function TestMatchersUsageContent() {
 				überhaupt nicht automatisiert.
 			</p>
 			<p>
-				<strong>Auf ein Element beschränkt, wird nur gemeldet, was darin liegt</strong>: Ein Fehler
-				an anderer Stelle der Seite lässt eine auf einen <code>container</code> beschränkte
+				<strong>Ein auf ein Element beschränkter Scan meldet nur, was darin liegt</strong>: Ein
+				Verstoß an anderer Stelle der Seite lässt eine auf einen <code>container</code> beschränkte
 				Assertion nie scheitern. Intern wird das gescannte Element vorübergehend mit einem
 				eindeutigen Attribut markiert und über diesen Selektor gescannt, für Ihren Test
 				unsichtbar.
@@ -230,7 +230,7 @@ export function TestMatchersUsageContent() {
 				<code>html-lang-attr-present</code> und ein paar weitere prüfen direkt{" "}
 				<code>document.title</code>/<code>document.documentElement</code>, weil die Frage, ob{" "}
 				<em>die Seite</em> einen Titel hat, für ein beliebiges Komponenten-Snippet keinen Sinn
-				ergibt. Übergeben Sie ein <code>Element</code> (einen <code>container</code> einer
+				ergibt. Übergeben Sie ein <code>Element</code> (einen <code>container</code> einer{" "}
 				<span lang="en">Testing Library</span>, <code>document.body</code>), melden diese Regeln{" "}
 				<code>notApplicable</code> statt <code>fail</code>, sodass ein fehlendes{" "}
 				<code>&lt;title&gt;</code> nie einen Test auf Komponentenebene scheitern lässt; übergeben

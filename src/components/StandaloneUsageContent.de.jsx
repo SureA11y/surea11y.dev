@@ -55,7 +55,7 @@ export function StandaloneUsageContent() {
 			<p>
 				<strong>Bewusst nicht im Bundle enthalten</strong>: <code>runa11yCoreAcrossFrames</code>/
 				<code>a11yCoreEnableFrameResponder</code> (frameübergreifendes Scannen setzt voraus, dass
-				auch der eingebettete Frame die Engine lädt und zustimmt — das passt nicht zu einem
+				auch der eingebettete Frame die Engine lädt und dies ausdrücklich aktiviert — das passt nicht zu einem
 				einzelnen eingefügten Script-Tag). Verwenden Sie direkt das npm-Paket, wenn Sie das
 				brauchen — siehe{" "}
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>

@@ -59,9 +59,9 @@ export function TestMatchersUsageContent() {
 				<a href="https://github.com/SureA11y/test-matchers"><code>@surea11y/test-matchers</code></a>
 				は
 				<code>toHaveNoA11yViolations()</code>
-				という1つのマッチャーで、どちらのフレームワークの
+				という1つのマッチャーで、手を加えずにそのまま、どちらのフレームワークの
 				<code>expect.extend()</code>
-				にも手を加えずに組み込めます。フレームワーク固有のコードは持っていません。テストがすでに動いているjsdomベースの環境をスキャンするもので、
+				にも組み込めます。フレームワーク固有のコードは持っていません。テストがすでに動いているjsdomベースの環境をスキャンするもので、
 				<code>jsdom</code>
 				自体に依存したり、環境を用意したりはしません。surea11yのエンジンは同期的に動くので、このマッチャーも同期的です。
 				<code>await</code>

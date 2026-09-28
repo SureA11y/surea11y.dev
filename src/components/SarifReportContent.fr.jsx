@@ -133,13 +133,13 @@ export function SarifReportContent() {
 			<ul>
 				<li>
 					<strong>Analyse de fichiers locaux</strong> : un chemin relatif au répertoire de travail
-					courant (avec des barres obliques). S’il correspond à un vrai fichier de votre dépôt,
+					courant (avec des barres obliques). S’il correspond à un vrai fichier de votre dépôt,{" "}
 					<span lang="en">GitHub Code Scanning</span> peut afficher le résultat sous forme d’annotation en ligne.
 				</li>
 				<li>
 					<strong>Analyse d’URL</strong> : l’URL analysée elle-même. <span lang="en">GitHub Code Scanning</span> listera
 					quand même le résultat, mais ne peut pas associer une annotation en ligne à une URL qui
-					n’est pas un fichier du dépôt : cela tient à la façon dont SARIF et <span lang="en">Code Scanning</span>
+					n’est pas un fichier du dépôt : cela tient à la façon dont SARIF et <span lang="en">Code Scanning</span>{" "}
 					rattachent les résultats au code source, ce n’est pas une limite de surea11y. Si vous
 					avez besoin d’annotations en ligne, analysez le fichier HTML rendu (par exemple un
 					artefact de build) plutôt qu’une URL en direct.
@@ -155,7 +155,7 @@ export function SarifReportContent() {
 			<h2>Combiner avec <code>--baseline</code></h2>
 			<p>
 				Un consommateur SARIF générique n’a pas de notion propre de « connu, ne pas bloquer
-				dessus » : la seule façon fidèle d’appliquer une baseline dans une sortie SARIF est d'
+				dessus » : la seule façon fidèle d’appliquer une baseline dans une sortie SARIF est d’
 				<strong>omettre entièrement les occurrences <code>fail</code> déjà connues, plutôt que de
 				les rétrograder en <code>warning</code></strong> :
 			</p>

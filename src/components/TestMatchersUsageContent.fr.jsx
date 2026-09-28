@@ -118,7 +118,7 @@ export function TestMatchersUsageContent() {
 			/>
 			<p>
 				… ou sur n’importe quel <code>container</code> de testing-library (celui de <span lang="en">React Testing
-				Library</span>, le <code>wrapper.element</code> de <span lang="en">Vue Test Utils</span>, ceux d’<span lang="en">Angular Testing Library</span>
+				Library</span>, le <code>wrapper.element</code> de <span lang="en">Vue Test Utils</span>, ceux d’<span lang="en">Angular Testing Library</span>{" "}
 				et de <span lang="en">Svelte Testing Library</span>), puisque tous exposent un élément DOM rendu de la même façon :
 			</p>
 			<CodeBlock
@@ -237,7 +237,7 @@ export function TestMatchersUsageContent() {
 			<h2>Messages d’échec</h2>
 			<p>
 				Le message liste chaque occurrence, pas seulement chaque règle (une règle peut signaler
-				plusieurs éléments), avec l’ID de la règle, la sévérité, un résumé lisible, le sélecteur
+				plusieurs éléments), avec l’ID de la règle, la gravité, un résumé lisible, le sélecteur
 				de l’élément en échec et une piste de correction lorsqu’elle existe :
 			</p>
 			<CodeBlock

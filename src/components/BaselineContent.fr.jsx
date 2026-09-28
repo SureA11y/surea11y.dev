@@ -11,7 +11,8 @@ export function BaselineContent() {
 				bloque l’adoption pour une équipe qui analyse pour la première fois un site existant et
 				imparfait : elle ne peut plus rien livrer tant que chaque violation préexistante n’est pas
 				corrigée. Une baseline permet à l’équipe de dire « ces N violations sont déjà connues, ne
-				bloquez pas dessus, mais échouez dès qu’une violation réellement nouvelle apparaît ».
+				bloquez pas le build pour elles, mais faites-le échouer dès qu’une violation réellement
+				nouvelle apparaît ».
 			</p>
 			<CodeBlock
 				lines={[
@@ -25,7 +26,7 @@ export function BaselineContent() {
 				]}
 			/>
 			<p>
-				Le fichier de baseline est fait pour être commité dans git, afin qu’accepter davantage de
+				Le fichier de baseline est fait pour être versionné dans git, afin qu’accepter davantage de
 				dette d’accessibilité devienne une décision explicite et relisible : une nouvelle violation
 				apparaît comme une nouvelle ligne dans le diff du fichier au sein d’une PR, et non comme un
 				changement silencieux dans un compteur.

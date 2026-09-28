@@ -45,7 +45,7 @@ export function RuleOrganizationContent() {
 					<strong>manual（手動）</strong>
 					：人が判断しなければならないことを示します。ルールはマークアップからこの問いにまったく決着をつけられません。判定結果は
 					<code>cantTell</code>
-					/
+					／
 					<code>notApplicable</code>
 					までで、
 					<code>fail</code>

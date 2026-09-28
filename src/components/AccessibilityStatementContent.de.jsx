@@ -18,15 +18,15 @@ export function AccessibilityStatementContent() {
 				denselben Markenregeln, die für jede Produktoberfläche von SureA11y gelten: Farbe ist nie
 				das einzige Signal (Status- und Aktiv-Zustände kombinieren Farbe immer mit einem zweiten
 				Hinweis — einer Unterstreichung, einem Symbol, einem Wort), jedes interaktive
-				Bedienelement hat einen sichtbaren Fokusrahmen und eine Zielgröße von mindestens 44px, und
+				Bedienelement hat einen sichtbaren Fokusrahmen und eine Zielgröße von mindestens 44 px, und
 				jedes Icon, das nicht rein dekorativ ist, hat eine Textalternative.
 			</p>
 
 			<h2>Wie diese Website getestet wird</h2>
 			<p>
 				Diese Website wird vom selben Team gebaut, das <code>@surea11y/core</code> entwickelt —
-				es wäre seltsam, gerade hier auf Tests mit der eigenen Engine zu verzichten. Die gesamte
-				gebaute Ausgabe wird regelmäßig mit <code>@surea11y/core</code> selbst gescannt —
+				es wäre seltsam, gerade hier auf Tests mit der eigenen Engine zu verzichten. Die vollständige
+				Build-Ausgabe wird regelmäßig mit <code>@surea11y/core</code> selbst gescannt —
 				derselben Engine für statische DOM-Scans, die auf dieser ganzen Website dokumentiert ist
 				—, und jeder echte Befund dieses Scans wird behoben, nicht wegdiskutiert. Dieser Scan hat
 				eigene, echte Grenzen (siehe{" "}
@@ -68,7 +68,7 @@ export function AccessibilityStatementContent() {
 				assistiven Technologie schwer bedienen lässt,{" "}
 				<a href={`${core}/issues`}>eröffnen Sie bitte ein Issue auf GitHub</a>. Geben Sie die URL
 				der Seite an, was Sie tun wollten und was stattdessen passiert ist — dieselben Details,
-				die Sie von jedem erwarten würden, der einen Fehler in der Engine selbst meldet.
+				die Sie von jeder Person erwarten würden, die einen Fehler in der Engine selbst meldet.
 			</p>
 		</>
 	);

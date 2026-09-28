@@ -9,7 +9,7 @@ export function CiIntegrationContent() {
 			<p>
 				Vorlagen zum direkten Einfügen, die die{" "}
 				<a href="https://github.com/SureA11y/cli#readme">CLI</a> (
-				<code>npx @surea11y/cli scan ...</code>) in <span lang="en">GitHub Actions</span> und <span lang="en">Bitbucket Pipelines</span>
+				<code>npx @surea11y/cli scan ...</code>) in <span lang="en">GitHub Actions</span> und <span lang="en">Bitbucket Pipelines</span>{" "}
 				einbinden. Wenn Sie die Bibliothek statt über die CLI direkt aus Ihrem eigenen
 				Node-Skript aufrufen, lesen Sie stattdessen{" "}
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
@@ -18,7 +18,7 @@ export function CiIntegrationContent() {
 				— diese Seite behandelt speziell die CLI als Pipeline-Schritt.
 			</p>
 			<p>
-				Alle Vorlagen nutzen die Exit-Codes der CLI (<code>0</code> sauber, <code>1</code>{" "}
+				Alle Vorlagen nutzen die Exit-Codes der CLI (<code>0</code> bestanden, <code>1</code>{" "}
 				mindestens ein — bzw. mit <code>--baseline</code> mindestens ein <em>neues</em> —{" "}
 				<code>fail</code>-Ergebnis, <code>2</code> ein Aufruf- oder Scan-Fehler), um die
 				Pipeline zu steuern; für ein einfaches Bestanden/Nicht-bestanden-Gating ist kein
@@ -153,7 +153,7 @@ export function CiIntegrationContent() {
 
 			<h2>Minutenlimits bei Free-Tier und privaten Repositories</h2>
 			<p>
-				Wenn das Free-Tier Ihres Pipeline-Anbieters minutenbegrenzt ist (das Free-Tier von
+				Wenn das Free-Tier Ihres Pipeline-Anbieters minutenbegrenzt ist (das Free-Tier von{" "}
 				<span lang="en">Bitbucket Pipelines</span> umfasst zum Beispiel 50 Build-Minuten pro Monat für private
 				Workspaces), ist ein <code>jsdom</code>-basierter Scan von statischem oder
 				serverseitig gerendertem HTML (das, was die CLI macht) deutlich günstiger, als einen

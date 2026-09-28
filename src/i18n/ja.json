@@ -8,7 +8,7 @@
 	"footer.nav": "フッター",
 	"footer.about": "このプロジェクトについて",
 	"footer.reportIssue": "問題を報告",
-	"footer.a11yStatement": "アクセシビリティ方針",
+	"footer.a11yStatement": "このサイトのアクセシビリティ",
 	"languageSwitcher.label": "言語",
 	"rulePage.appliesTo": "適用範囲：",
 	"rulePage.expectation": "期待される結果：",
@@ -69,10 +69,10 @@
 	"nav:/getting-started/cli/": "CLI",
 	"nav:/getting-started/standalone/": "スタンドアロン",
 	"nav:/rules/": "ルール",
-	"nav:/rules/:description": "すべてのルールと、それぞれが何を検査するか、合格と不合格の例。",
+	"nav:/rules/:description": "すべてのルールと、それぞれが何を検査するか、判定結果ごとの具体例。",
 	"nav:/rules/organization/": "ルールの構成",
 	"nav:/configuration/": "設定",
-	"nav:/configuration/:description": "実行するルールの選択、CIとの連携、ロケールの追加。",
+	"nav:/configuration/:description": "実行するルールの選択、CIとの連携、エンジンのロケールの追加。",
 	"nav:/configuration/engine-options/": "エンジンオプション",
 	"nav:/configuration/ci-integration/": "CI連携",
 	"nav:/configuration/locales/": "ロケール",
@@ -115,6 +115,6 @@
 	"page:/help/:title": "ヘルプ",
 	"page:/help/faq/:title": "よくある質問",
 	"page:/help/known-limitations/:title": "既知の制限事項",
-	"page:/accessibility-statement/:title": "アクセシビリティ方針",
-	"page:/accessibility-statement/:description": "surea11y.dev自体がWCAG 2.2 AAへの適合をどう検証しているか：@surea11y/coreによる自動スキャンと、キーボードおよびスクリーンリーダーによる手動テスト。"
+	"page:/accessibility-statement/:title": "このサイトのアクセシビリティ",
+	"page:/accessibility-statement/:description": "WCAG 2.2 AAへの適合を目指すsurea11y.dev自体を、どのようにテストしているか：@surea11y/coreによる自動スキャンと、キーボードおよびスクリーンリーダーによる手動テスト。"
 }

@@ -8,7 +8,7 @@ export function StandaloneUsageContent() {
 		<>
 			<h2>使いどころ</h2>
 			<p>
-				実際のブラウザーで開いているページを手動でチェックするとき、ブックマークレット、その他自動化ドライバーもビルド手順も使えない状況に向いています。
+				実際のブラウザーで開いているページの手動チェック、ブックマークレット、そのほか自動化ドライバーもビルド手順も使えない状況に向いています。
 			</p>
 
 			<h2>使い方</h2>
@@ -61,7 +61,7 @@ export function StandaloneUsageContent() {
 				<strong>バンドルから意図的に除外しているもの</strong>
 				：
 				<code>runa11yCoreAcrossFrames</code>
-				/
+				／
 				<code>a11yCoreEnableFrameResponder</code>
 				（フレームをまたぐスキャンには、埋め込まれたフレーム側でもエンジンを読み込んでオプトインする必要があり、scriptタグを1つ置くだけの使い方には合いません）。必要な場合はnpmパッケージを直接使ってください。
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>

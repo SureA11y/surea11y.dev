@@ -196,12 +196,12 @@ export function KnownLimitationsContent() {
 					plus spécifiques ne le sont pas, par choix.
 				</li>
 				<li>
-					<strong>Analyse du contenu des images de texte</strong> (WCAG 1.4.5/1.4.9) : il faudrait
+					<strong>Analyse du contenu des textes sous forme d’image</strong> (WCAG 1.4.5/1.4.9) : il faudrait
 					une compréhension d’image équivalente à de l’OCR ; hors du périmètre d’un moteur fondé
 					sur le balisage statique.
 				</li>
 				<li>
-					<strong>Commandes activées par le mouvement</strong> (WCAG 2.5.4) : cas de niche, peu
+					<strong>Activation par le mouvement</strong> (WCAG 2.5.4) : cas de niche, peu
 					fréquent en pratique ; non prioritaire, mais pas structurellement impossible.
 				</li>
 				<li>
@@ -212,7 +212,7 @@ export function KnownLimitationsContent() {
 					l’applicabilité d’ACT. Aucun des deux n’est décidable par une analyse statique du DOM
 					(pas de décodage d’image, pas de lecture des pixels du canvas) ; ils restent donc dans
 					le périmètre plutôt que d’être exclus : un faux positif rare, qu’un humain écarte d’un
-					coup d’œil, est plus sûr que de sous-déclarer en silence un vrai élément exclu ou non
+					coup d’œil, est plus sûr que de sous-signaler en silence un vrai élément exclu ou non
 					décoratif.
 				</li>
 			</ul>

@@ -6,8 +6,8 @@ export function HtmlReportContent() {
 		<>
 			<p>
 				Ein eigenständiger HTML-Bericht, den Sie nach einem Scan im Browser öffnen können — ohne
-				Server, ohne externe Ressourcen, ohne Netzwerkanfragen. Gedacht für QA und manuelle
-				Tester, die die Ergebnisse eines Scans durchblättern möchten, statt rohes JSON oder eine
+				Server, ohne externe Ressourcen, ohne Netzwerkanfragen. Gedacht für Personen in QA und
+				manueller Prüfung, die die Ergebnisse eines Scans durchblättern möchten, statt rohes JSON oder eine
 				Zusammenfassung im Terminal zu lesen.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />

@@ -231,13 +231,13 @@ export const bindingUsage = {
 		],
 		note: (
 			<p>
-				<strong>Erzwingen Sie für diese Last klassisches WebDriver, nicht BiDi.</strong>{" "}
+				<strong>Erzwingen Sie für diese Art von Last klassisches WebDriver, nicht BiDi.</strong>{" "}
 				WebdriverIO v9 verwendet standardmäßig das BiDi-Protokoll; eine langlebige Session mit
 				vielen <code>browser.execute()</code>-Aufrufen (genau das, was ein Scan tut) wurde in
-				Tests über BiDi stark langsamer — die Latenz pro Scan stieg von ~2s auf mehrere Minuten.
+				Tests über BiDi stark langsamer — die Latenz pro Scan stieg von ~2 s auf mehrere Minuten.
 				Mit erzwungenem klassischem WebDriver über{" "}
 				<code>'wdio:enforceWebDriverClassic': true</code>, wie oben gezeigt, lag sie konstant bei
-				~150ms pro Scan.
+				~150 ms pro Scan.
 			</p>
 		),
 		exampleHref: "https://github.com/SureA11y/webdriverio/blob/main/examples/basic-scan.js",

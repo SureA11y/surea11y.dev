@@ -45,8 +45,8 @@ export function CliUsageContent() {
 			/>
 			<h2>Limites</h2>
 			<p>
-				<code>cantTell</code> n’affecte jamais le code de sortie : <code>0</code> si tout est
-				propre, <code>1</code> s’il y a au moins un <code>fail</code> (ou, avec{" "}
+				<code>cantTell</code> n’affecte jamais le code de sortie : <code>0</code> si aucun{" "}
+				<code>fail</code>, <code>1</code> s’il y a au moins un <code>fail</code> (ou, avec{" "}
 				<code>--baseline</code>, au moins un <code>fail</code> <em>nouveau</em> : c’est le cas du
 				contrôle en CI ; voir <a href="/conformance/baseline/">Baseline / allowlist</a> pour ce
 				qui compte comme « connu » ou « nouveau »), <code>2</code> en cas d’erreur d’utilisation

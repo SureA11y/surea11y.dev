@@ -63,7 +63,7 @@ const topLevelRows = [
 				<code>engineOptions.wcagVersion</code>, die Version, die sich aus Ihren
 				Versionsursprungs-Tags ergab, oder der Standard <code>"2.2"</code>. Derzeit wirkt sich
 				das auf genau eine Sache aus:{" "}
-				<strong>Eine Regel, die nur auf Erfolgskriterium 4.1.1 Parsing abgebildet ist, kann bei
+				<strong>Eine Regel, die nur auf Erfolgskriterium 4.1.1 „Syntaxanalyse“ abgebildet ist, kann bei
 				einem 2.2-Ziel nicht <code>fail</code> ergeben</strong> (siehe{" "}
 				<code>checksResults[i].wcagVersionScope</code> unten). Wird einmal pro Ergebnis
 				gemeldet: Ein Lauf hat durchgehend ein Ziel.
@@ -109,8 +109,8 @@ const topLevelRows = [
 				Ein Eintrag pro <strong>atomarer Regel</strong>, die gelaufen ist (jede Regel, die nicht
 				durch <code>runOnly</code> herausgefiltert wurde, siehe{" "}
 				<a href="/configuration/engine-options/">Engine-Optionen</a>).{" "}
-				<strong>Jede geladene Regel erzeugt einen Eintrag, auch solche mit dem Outcome{" "}
-				<code>notApplicable</code></strong>. Das ist keine Liste nur mit Verstößen.
+				<strong>Jede geladene Regel erzeugt einen Eintrag, auch solche, die{" "}
+				<code>notApplicable</code> ergeben</strong>. Das ist keine Liste nur mit Verstößen.
 			</>
 		),
 	},
@@ -267,7 +267,7 @@ const uncertaintyRows = [
 const outcomeRows = [
 	{ id: "fail", outcome: <code>fail</code>, meaning: "Deterministischer, normativer Verstoß: Das Entscheidungsverfahren rät an keiner Stelle.", manual: "Nein (zu cantTell umgewandelt)" },
 	{ id: "pass", outcome: <code>pass</code>, meaning: "Die Ziele, auf die die Regel anwendbar ist, existieren, und keines wurde markiert.", manual: "Ja" },
-	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "Erfordert menschliches Urteil: entweder wirklich mehrdeutig oder der beratende Befund einer manuellen Regel.", manual: "Ja" },
+	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "Erfordert menschliches Urteil: entweder wirklich mehrdeutig oder ein Hinweis einer manuellen Regel.", manual: "Ja" },
 	{ id: "notApplicable", outcome: <code>notApplicable</code>, meaning: "Die Regel hat auf dieser Seite bzw. in diesem Bereich keine Elemente gefunden, auf die sie anwendbar ist.", manual: "Ja" },
 ];
 
@@ -426,17 +426,18 @@ export function OutputSchemaContent() {
 				</li>
 				<li>
 					<strong><code>meta.normativeMappings</code></strong> verknüpft ein Prüfergebnis mit einem
-					WCAG-Erfolgskriterium; <code>[]</code> bei Regeln ohne formale WCAG-Zuordnung (diese
-					Engine nennt sie beratende Regeln mit <code>type: "manual"</code>). Wie diese
+					WCAG-Erfolgskriterium; <code>[]</code> bei Regeln ohne formale WCAG-Zuordnung (das sind die
+					Hinweisregeln mit <code>type: "manual"</code> sowie die automatische Best-Practice-Regel{" "}
+					<code>aria-allowed-role</code>). Wie diese
 					zusammengefasst werden, steht unter <a href="/conformance/wcag-mapping/">Konformität</a>.
 				</li>
 				<li>
 					<strong><code>wcagVersionScope</code></strong>: nur vorhanden, wenn die WCAG-Zielversion
 					des Laufs das <code>fail</code> dieser Regel in ein <code>cantTell</code> verwandelt
-					hat. Derzeit betrifft das eine auf Erfolgskriterium 4.1.1 Parsing abgebildete Regel (
+					hat. Derzeit betrifft das eine auf Erfolgskriterium 4.1.1 „Syntaxanalyse“ abgebildete Regel (
 					<code>duplicate-id</code>) beim Standardziel 2.2, da 2.2 dieses Kriterium entfernt hat.{" "}
 					<code>removedSc</code> listet die Kriterien, die weggefallen sind, <code>target</code>{" "}
-					ist die Version, die sie entfernt hat, und <code>coercedFrom</code> ist das Outcome, das
+					ist die Version, die sie entfernt hat, und <code>coercedFrom</code> ist das Ergebnis, das
 					die Regel selbst gemeldet hat. Die Vorkommen sind die der Regel, unverändert: Nichts
 					wurde verworfen, nur das Konformitätsurteil. Fehlt bei jedem anderen Ergebnis und wird{" "}
 					<strong>nie</strong> über <code>error</code> gemeldet: Es ist nichts schiefgegangen.
@@ -590,23 +591,23 @@ export function OutputSchemaContent() {
 				<a href="/conformance/wcag-mapping/">Konformität</a>.
 			</p>
 
-			<h2>Outcome-Werte</h2>
+			<h2>Ergebniswerte</h2>
 			<DataTable
 				rowKey="id"
 				columns={[
-					{ key: "outcome", label: "Outcome", width: "16%" },
+					{ key: "outcome", label: "Ergebnis", width: "16%" },
 					{ key: "meaning", label: "Bedeutung", wrap: true },
 					{ key: "manual", label: 'Bei type: "manual" möglich?', width: "22%" },
 				]}
 				rows={outcomeRows}
 			/>
 			<p>
-				<code>fail</code> ist in dieser Engine bewusst das engste Outcome mit der höchsten Hürde:
+				<code>fail</code> ist in dieser Engine bewusst das engste Ergebnis mit der höchsten Hürde:
 				deterministischen, normativen Verstößen vorbehalten;{" "}
 				<strong>das Streben nach mehr Regelabdeckung darf es nie verwässern</strong>.
 			</p>
 
-			<h2>Werte für Severity und Confidence</h2>
+			<h2>Werte für Schweregrad und Konfidenz</h2>
 			<ul>
 				<li>
 					<code>severity</code>: <code>minor</code> &lt; <code>moderate</code> &lt;{" "}
@@ -623,7 +624,7 @@ export function OutputSchemaContent() {
 			</ul>
 			<p>
 				<strong>Ein <code>fail</code> hat nicht immer <code>confidence: "high"</code>, und das
-				ist kein Widerspruch.</strong> Das Outcome beschreibt das Entscheidungsverfahren (es hat
+				ist kein Widerspruch.</strong> Das Ergebnis beschreibt das Entscheidungsverfahren (es hat
 				die Frage ohne Raten beantwortet), während <code>confidence</code> das Modell
 				beschreibt, gegen das entschieden wurde. Einige automatische Regeln entscheiden
 				deterministisch gegen etwas, das selbst eine Näherung ist (die kuratierten
@@ -636,9 +637,9 @@ export function OutputSchemaContent() {
 				<code>svg-image-text-alternative-present</code>,{" "}
 				<code>video-poster-text-alternative-present</code> und <code>target-size-minimum</code>.{" "}
 				<code>confidence</code> steht in jedem Ergebnis, sodass ein Konsument, der nur die
-				sichersten Fehlschläge will, direkt danach filtern kann; <code>policy.allowedConfidence</code>{" "}
+				sichersten Verstöße will, direkt danach filtern kann; <code>policy.allowedConfidence</code>{" "}
 				erledigt das nicht für Sie, da ein nicht zulässiger Wert durch den{" "}
-				<code>defaultConfidence</code> der Regel ersetzt wird, statt das Outcome zu ändern
+				<code>defaultConfidence</code> der Regel ersetzt wird, statt das Ergebnis zu ändern
 				(siehe <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>).
 			</p>
 

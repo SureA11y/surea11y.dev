@@ -106,7 +106,7 @@ export function GettingStartedContent() {
 			<p>
 				エンジンが確信を持っている
 				<code>fail</code>
-				が1つ（コントラスト）、人がレビューするための
+				（コントラスト。AA基準とAAA基準の2つのルール）、人がレビューするための
 				<code>cantTell</code>
 				の一覧（「<span lang="en">Click here</span>」はリンク名として適切か、同じ低コントラストのテキストが別のチェックでは合格するか、手動で確認すべきものがないか）、そして114件の
 				<code>notApplicable</code>
@@ -156,17 +156,17 @@ export function GettingStartedContent() {
 				<code>checksResults</code>
 				（ルールごとに1件のエントリー。
 				<code>pass</code>
-				/
+				／
 				<code>notApplicable</code>
 				もすべて含み、「違反だけ」のリストではありません）と
 				<code>rulesResults</code>
 				（WCAG達成基準の集約）です。これはほかの広く使われているアクセシビリティテストツールの
 				<code>violations</code>
-				/
+				／
 				<code>passes</code>
-				/
+				／
 				<code>incomplete</code>
-				/
+				／
 				<code>inapplicable</code>
 				という形とは
 				<strong>異なります</strong>

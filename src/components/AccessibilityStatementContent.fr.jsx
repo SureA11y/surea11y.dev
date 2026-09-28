@@ -40,7 +40,7 @@ export function AccessibilityStatementContent() {
 				tests d’accessibilité manuels : navigation au clavier seul, un passage avec un lecteur
 				d’écran, et une vérification des points qu’aucun outil automatisé ne peut juger (un titre
 				décrit-il vraiment ce qui suit, l’ordre du focus correspond-il à l’ordre visuel, un
-				contenu qui n’apparaît qu’après une interaction reste-t-il accessible). C’est la même
+				contenu qui n’apparaît qu’après une interaction reste-t-il atteignable). C’est la même
 				position, « les outils automatisés ne peuvent pas tout vous dire », sur laquelle repose
 				tout ce projet.
 			</p>

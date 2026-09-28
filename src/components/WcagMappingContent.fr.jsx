@@ -48,7 +48,7 @@ export function WcagMappingContent() {
 				ce que surea11y peut et ne peut pas vous dire sur la conformité globale.
 			</p>
 
-			<h2>Les trois niveaux</h2>
+			<h2>Les trois couches</h2>
 			<ol>
 				<li>
 					<strong>Règles atomiques</strong> (<code>checksResults[]</code>) : chacune porte une

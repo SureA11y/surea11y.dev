@@ -5,7 +5,7 @@ import { DataTable } from "./design-system/data/DataTable.jsx";
 const core = "https://github.com/SureA11y/core/blob/main";
 
 const topLevelRows = [
-	{ id: "engine.tag", field: <code>engine.tag</code>, meaning: <>Le tag d'identité propre au moteur, actuellement <code>"a11ycore"</code>. Chaque règle (intégrée ou personnalisée) le porte dans <code>meta.tags</code> ; les <code>ruleId</code> des règles, eux, sont nus (sans préfixe).</> },
+	{ id: "engine.tag", field: <code>engine.tag</code>, meaning: <>Le tag d’identité propre au moteur, actuellement <code>"a11ycore"</code>. Chaque règle (intégrée ou personnalisée) le porte dans <code>meta.tags</code> ; les <code>ruleId</code> des règles, eux, sont nus (sans préfixe).</> },
 	{
 		id: "engine.schemaVersion",
 		field: <code>engine.schemaVersion</code>,
@@ -15,7 +15,7 @@ const topLevelRows = [
 				ici évolue un jour de façon incompatible : fixez-vous dessus si vous analysez la sortie
 				par programme. Voir{" "}
 				<a href={`${core}/docs/API_STABILITY.md`}><code>API_STABILITY.md</code></a> pour la liste
-				complète des champs stables et instables et la politique d'incrément de version.
+				complète des champs stables et instables et la politique d’incrément de version.
 			</>
 		),
 	},
@@ -24,12 +24,12 @@ const topLevelRows = [
 		field: <code>engine.locale</code>,
 		meaning: (
 			<>
-				Le dictionnaire que l'exécution a réellement utilisé. <code>requested</code> est votre{" "}
+				Le dictionnaire que l’exécution a réellement utilisé. <code>requested</code> est votre{" "}
 				<code>engineOptions.locale</code> après suppression des espaces (<code>"en"</code> si vous
-				n'avez rien passé ou autre chose qu'une chaîne) ; <code>resolved</code> est la locale dont
+				n’avez rien passé ou autre chose qu’une chaîne) ; <code>resolved</code> est la locale dont
 				le dictionnaire a été utilisé ; <code>reason</code> explique la correspondance entre les
-				deux. Comme le repli de locale se fait en douceur et chaîne par chaîne,{" "}
-				<strong>demander une langue que le build n'embarque pas produit du texte en anglais, et
+				deux. Comme le repli vers une autre langue se fait en douceur et chaîne par chaîne,{" "}
+				<strong>demander une langue que le build n’embarque pas produit du texte en anglais, et
 				non une erreur</strong> : ce champ vous permet de le savoir sans lire les chaînes.
 				Indiqué une fois par résultat : une exécution utilise un seul dictionnaire du début à la
 				fin.
@@ -45,11 +45,11 @@ const topLevelRows = [
 				clés. <code>"primary-subtag"</code> : votre code comportait une sous-étiquette sans
 				dictionnaire propre, donc sa langue de base a été utilisée : <code>"de-DE"</code> se
 				résout en <code>"de"</code>. <code>"dictionary-not-loaded"</code> : le projet fournit
-				cette langue, mais ce build ne l'embarque pas et aucune n'a été fournie (le bundle
-				navigateur autonome, sans son fichier de locale séparé). <code>"unknown-locale"</code> :
-				le projet n'a aucune traduction de ce type. <code>"partial-dictionary"</code> : le
+				cette langue, mais ce build ne l’embarque pas et aucune n’a été fournie (le bundle
+				navigateur autonome, sans son fichier de langue séparé). <code>"unknown-locale"</code> :
+				le projet n’a aucune traduction de ce type. <code>"partial-dictionary"</code> : le
 				dictionnaire a été utilisé, mais il lui manque des clés présentes en anglais, si bien que
-				ces chaînes se sont rabattues sur l'anglais. Considérez cet ensemble comme ouvert : de
+				ces chaînes se sont rabattues sur l’anglais. Considérez cet ensemble comme ouvert : de
 				futures versions pourront le compléter.
 			</>
 		),
@@ -60,8 +60,8 @@ const topLevelRows = [
 		meaning: (
 			<>
 				La version de WCAG par rapport à laquelle cette exécution a testé la conformité : votre{" "}
-				<code>engineOptions.wcagVersion</code>, ou ce qu'impliquaient vos tags d'origine de
-				version, ou la valeur par défaut <code>"2.2"</code>. Elle n'a aujourd'hui qu'un effet :{" "}
+				<code>engineOptions.wcagVersion</code>, ou ce qu’impliquaient vos tags d’origine de
+				version, ou la valeur par défaut <code>"2.2"</code>. Elle n’a aujourd’hui qu’un effet :{" "}
 				<strong>une règle associée uniquement au critère 4.1.1 Analyse syntaxique ne peut pas
 				renvoyer <code>fail</code> avec une cible 2.2</strong> (voir{" "}
 				<code>checksResults[i].wcagVersionScope</code> ci-dessous). Indiquée une fois par
@@ -69,16 +69,16 @@ const topLevelRows = [
 			</>
 		),
 	},
-	{ id: "url", field: <code>url</code>, meaning: <>L'argument <code>pageUrl</code> que vous avez passé, ou <code>document.location.href</code> si vous avez passé <code>null</code> ou l'avez omis, ou <code>null</code> si ni l'un ni l'autre n'est disponible.</> },
-	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> au moment de l'analyse, ou <code>null</code>.</> },
+	{ id: "url", field: <code>url</code>, meaning: <>L’argument <code>pageUrl</code> que vous avez passé, ou <code>document.location.href</code> si vous avez passé <code>null</code> ou l’avez omis, ou <code>null</code> si ni l’un ni l’autre n’est disponible.</> },
+	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> au moment de l’analyse, ou <code>null</code>.</> },
 	{
 		id: "timestamp",
 		field: <code>timestamp</code>,
 		meaning: (
 			<>
 				<strong>Non généré automatiquement.</strong> Défini uniquement si vous passez{" "}
-				<code>engineOptions.timestamp</code> sous forme de chaîne non vide : le moteur n'a pas
-				d'horloge intégrée (déterministe par conception). Si vous voulez un horodatage d'analyse
+				<code>engineOptions.timestamp</code> sous forme de chaîne non vide : le moteur n’a pas
+				d’horloge intégrée (déterministe par conception). Si vous voulez un horodatage d’analyse
 				dans le résultat, fournissez-le vous-même.
 			</>
 		),
@@ -93,9 +93,9 @@ const topLevelRows = [
 		field: <code>contextSelector</code>,
 		meaning: (
 			<>
-				L'argument <code>contextSelector</code> que vous avez passé (sans espaces superflus) : une
+				L’argument <code>contextSelector</code> que vous avez passé (sans espaces superflus) : une
 				chaîne, un tableau de chaînes (analyse multizone, voir{" "}
-				<a href="/configuration/engine-options/">Options du moteur</a>), ou <code>null</code> s'il
+				<a href="/configuration/engine-options/">Options du moteur</a>), ou <code>null</code> s’il
 				est absent ou vide.
 			</>
 		),
@@ -108,7 +108,7 @@ const topLevelRows = [
 				Une entrée par <strong>règle atomique</strong> exécutée (toute règle non écartée par{" "}
 				<code>runOnly</code>, voir <a href="/configuration/engine-options/">Options du moteur</a>).{" "}
 				<strong>Chaque règle chargée produit une entrée, même celles dont le résultat est{" "}
-				<code>notApplicable</code></strong> : ce n'est pas une liste limitée aux violations.
+				<code>notApplicable</code></strong> : ce n’est pas une liste limitée aux violations.
 			</>
 		),
 	},
@@ -130,12 +130,12 @@ const topLevelRows = [
 		meaning: (
 			<>
 				Les ids de règle pour lesquels une entrée de <code>engineOptions.customRules</code>{" "}
-				partageait son <code>id</code> avec une règle intégrée, si bien que l'implémentation
+				partageait son <code>id</code> avec une règle intégrée, si bien que l’implémentation
 				personnalisée a remplacé la règle intégrée pour cette analyse (voir{" "}
 				<a href="/configuration/engine-options/">Options du moteur</a>). Toujours un tableau ;
-				vide en l'absence de collision. Également journalisé via <code>console.warn</code> au
-				moment de l'analyse, puisqu'une règle personnalisée homonyme a autant de chances d'être
-				une collision accidentelle qu'un remplacement délibéré.
+				vide en l’absence de collision. Également journalisé via <code>console.warn</code> au
+				moment de l’analyse, puisqu’une règle personnalisée homonyme a autant de chances d’être
+				une collision accidentelle qu’un remplacement délibéré.
 			</>
 		),
 	},
@@ -147,14 +147,14 @@ const occurrenceRows = [
 		field: <code>selector</code>,
 		meaning: (
 			<>
-				Un sélecteur CSS construit au mieux pour retrouver l'élément signalé (voir{" "}
+				Un sélecteur CSS construit au mieux pour retrouver l’élément signalé (voir{" "}
 				<code>helpers.buildSelector</code> dans <code>RULE_AUTHORING.md</code>). Son unicité
-				n'est pas garantie face à des structures DOM hostiles, mais le moteur vérifie activement
-				qu'il résout bien vers l'élément signalé avant de l'utiliser. L'exception est une règle
+				n’est pas garantie face à des structures DOM hostiles, mais le moteur vérifie activement
+				qu’il résout bien vers l’élément signalé avant de l’utiliser. L’exception est une règle
 				dont le constat <em>est</em> un élément absent : <code>page-title-present</code> signale{" "}
 				<code>head &gt; title</code> avec un <code>html</code> valant{" "}
-				<code>&lt;title&gt;(missing)&lt;/title&gt;</code>, dont aucun n'existe sur la page. Ce
-				sont deux constantes, donc l'empreinte qu'elles alimentent reste stable, mais{" "}
+				<code>&lt;title&gt;(missing)&lt;/title&gt;</code>, dont aucun n’existe sur la page. Ce
+				sont deux constantes, donc l’empreinte qu’elles alimentent reste stable, mais{" "}
 				<strong>ne considérez pas <code>selector</code> comme résolvable ni <code>html</code>{" "}
 				comme du vrai balisage sans vérifier que la règle a signalé quelque chose qui
 				existe</strong>.
@@ -166,7 +166,7 @@ const occurrenceRows = [
 		field: <code>html</code>,
 		meaning: (
 			<>
-				Un extrait outer-HTML de l'élément signalé. Utilisez-le comme principal indicateur de
+				Un extrait outer-HTML de l’élément signalé. Utilisez-le comme principal indicateur de
 				« quel élément » lorsque <code>includeShadowDom: true</code> (les sélecteurs ne
 				traversent pas les frontières du shadow DOM).
 			</>
@@ -177,12 +177,12 @@ const occurrenceRows = [
 		field: <code>structuralPath</code>,
 		meaning: (
 			<>
-				Le chemin d'indices de frères de l'élément signalé, depuis <code>documentElement</code>{" "}
-				jusqu'à lui (par ex. <code>[1, 0, 2]</code>) ; <code>[]</code> si l'élément <em>est</em>{" "}
-				<code>documentElement</code>, <code>null</code> s'il n'a pas pu être déterminé. Un
-				mécanisme d'identification d'élément plus robuste que <code>selector</code> seul : il
+				Le chemin d’indices de frères de l’élément signalé, depuis <code>documentElement</code>{" "}
+				jusqu’à lui (par ex. <code>[1, 0, 2]</code>) ; <code>[]</code> si l’élément <em>est</em>{" "}
+				<code>documentElement</code>, <code>null</code> s’il n’a pas pu être déterminé. Un
+				mécanisme d’identification d’élément plus robuste que <code>selector</code> seul : il
 				résiste à des changements du DOM qui casseraient une chaîne de sélecteur (le renommage
-				d'un id ou d'une classe, par exemple), au{" "}
+				d’un id ou d’une classe, par exemple), au{" "}
 				<strong>prix de ne pas pouvoir servir de vrai sélecteur CSS</strong>.
 			</>
 		),
@@ -195,8 +195,8 @@ const occurrenceRows = [
 		meaning: (
 			<>
 				Les clés de traduction brutes derrière <code>summary</code>/<code>hint</code>, si vous
-				voulez les afficher vous-même dans une autre locale sans relancer l'analyse.{" "}
-				<code>null</code> si l'occurrence n'a pas utilisé d'i18n à base de clés.
+				voulez les afficher vous-même dans une autre langue sans relancer l’analyse.{" "}
+				<code>null</code> si l’occurrence n’a pas utilisé d’i18n à base de clés.
 			</>
 		),
 	},
@@ -206,12 +206,12 @@ const occurrenceRows = [
 		meaning: (
 			<>
 				Présent sur la plupart des occurrences : pourquoi le moteur a jugé cet élément éligible
-				(ou non) selon le modèle d'éligibilité utilisé par la règle. <code>eligible</code> en est
-				le résultat ; <code>targetSet</code> indique quel modèle l'a produit (<code>'dom'</code> :
+				(ou non) selon le modèle d’éligibilité utilisé par la règle. <code>eligible</code> en est
+				le résultat ; <code>targetSet</code> indique quel modèle l’a produit (<code>'dom'</code> :
 				visibilité DOM/CSS brute, pour la plupart des règles ; <code>'acc'</code> : éligibilité
-				selon l'arbre d'accessibilité). <code>accEligible</code> reprend <code>eligible</code>{" "}
+				selon l’arbre d’accessibilité). <code>accEligible</code> reprend <code>eligible</code>{" "}
 				uniquement lorsque <code>targetSet</code> vaut <code>'acc'</code>, sinon{" "}
-				<code>null</code>. <code>reasons</code> est une liste de codes d'exclusion lisibles par
+				<code>null</code>. <code>reasons</code> est une liste de codes d’exclusion lisibles par
 				une machine lorsque <code>eligible: false</code>.
 			</>
 		),
@@ -227,8 +227,8 @@ const occurrenceRows = [
 				<code>severity</code>. Leur forme varie selon la règle ; considérez-les comme un contexte
 				supplémentaire fourni au mieux, pas comme un contrat stable. La seule exception est{" "}
 				<code>data.details.reasonCode</code>, qui <strong>est</strong> stable : il identifie{" "}
-				<em>lequel</em> des constats d'une règle il s'agit, et forme avec <code>ruleId</code> et{" "}
-				<code>html</code> l'empreinte sur laquelle reposent les baselines et SARIF. Voir{" "}
+				<em>lequel</em> des constats d’une règle il s’agit, et forme avec <code>ruleId</code> et{" "}
+				<code>html</code> l’empreinte sur laquelle reposent les baselines et SARIF. Voir{" "}
 				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>
 					<code>API_STABILITY.md</code>
 				</a>
@@ -243,35 +243,35 @@ const occurrenceRows = [
 			<>
 				Le niveau auquel appartient cette occurrence, pour une règle qui a réparti ses constats
 				entre un niveau <code>fail</code> certain et un niveau <code>cantTell</code> à revoir.
-				Une règle qui ne signale qu'un seul niveau l'omet ; dans ce cas, l'<code>outcome</code>{" "}
-				du résultat lui-même est le niveau de l'occurrence.
+				Une règle qui ne signale qu’un seul niveau l’omet ; dans ce cas, l’<code>outcome</code>{" "}
+				du résultat lui-même est le niveau de l’occurrence.
 			</>
 		),
 	},
-	{ id: "uncertainty", field: <code>uncertainty</code>, meaning: <>Pourquoi ce constat n'a pas pu être tranché ; voir <a href="#uncertainty-codes">Codes d'incertitude</a> ci-dessous.</> },
+	{ id: "uncertainty", field: <code>uncertainty</code>, meaning: <>Pourquoi ce constat n’a pas pu être tranché ; voir <a href="#uncertainty-codes">Codes d’incertitude</a> ci-dessous.</> },
 ];
 
 const uncertaintyRows = [
-	{ id: "not-computable", code: <code>not-computable</code>, meaning: "Les éléments dont la règle avait besoin n'ont pas pu être lus dans cet environnement.", shape: "Une feuille de style d'une autre origine, une couleur d'arrière-plan qui ne se résout en aucune valeur, un src qui ne se résout pas." },
-	{ id: "runtime-dependent", code: <code>runtime-dependent</code>, meaning: "Le balisage ne permet pas de trancher, car c'est un script qui décide à l'exécution.", shape: "Un aria-controls qui désigne un élément que le widget construit à son ouverture." },
-	{ id: "spec-only", code: <code>spec-only</code>, meaning: "Une vraie violation de la spécification, mais le nom, le rôle et la valeur exposés n'en souffrent pas : aucun critère de succès n'est donc établi comme non satisfait.", shape: "Un attribut ARIA dont la spécification fournit une valeur par défaut en cas d'absence." },
+	{ id: "not-computable", code: <code>not-computable</code>, meaning: "Les éléments dont la règle avait besoin n’ont pas pu être lus dans cet environnement.", shape: "Une feuille de style d’une autre origine, une couleur d’arrière-plan qui ne se résout en aucune valeur, un src qui ne se résout pas." },
+	{ id: "runtime-dependent", code: <code>runtime-dependent</code>, meaning: "Le balisage ne permet pas de trancher, car c’est un script qui décide à l’exécution.", shape: "Un aria-controls qui désigne un élément que le widget construit à son ouverture." },
+	{ id: "spec-only", code: <code>spec-only</code>, meaning: "Une vraie violation de la spécification, mais le nom, le rôle et la valeur exposés n’en souffrent pas : aucun critère de succès n’est donc établi comme non satisfait.", shape: "Un attribut ARIA dont la spécification fournit une valeur par défaut en cas d’absence." },
 	{ id: "equivalence-unknown", code: <code>equivalence-unknown</code>, meaning: "Deux éléments servent peut-être le même objectif, peut-être pas, et ni le balisage ni le contenu ne permettent de trancher.", shape: "Deux frames qui partagent un nom accessible mais intègrent des ressources différentes." },
-	{ id: "judgement-required", code: <code>judgement-required</code>, meaning: "La question relève par nature d'une décision humaine.", shape: "Savoir si une cible trop petite est essentielle ; toute règle type: \"manual\"." },
+	{ id: "judgement-required", code: <code>judgement-required</code>, meaning: "La question relève par nature d’une décision humaine.", shape: "Savoir si une cible trop petite est essentielle ; toute règle type: \"manual\"." },
 	{ id: "out-of-scope", code: <code>out-of-scope</code>, meaning: "Le constat est réel, mais sort du cadre de la norme visée par cette exécution.", shape: "Une règle associée uniquement à un critère que la version WCAG cible a retiré." },
 ];
 
 const outcomeRows = [
 	{ id: "fail", outcome: <code>fail</code>, meaning: "Violation normative déterministe : la procédure de décision ne devine rien.", manual: "Non (converti en cantTell)" },
-	{ id: "pass", outcome: <code>pass</code>, meaning: "La ou les cibles applicables de la règle existent et aucune n'a été signalée.", manual: "Oui" },
-	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "Nécessite un jugement humain : soit c'est réellement ambigu, soit c'est le constat indicatif d'une règle manuelle.", manual: "Oui" },
-	{ id: "notApplicable", outcome: <code>notApplicable</code>, meaning: "La règle n'a trouvé aucun élément auquel elle s'applique sur cette page ou dans ce périmètre.", manual: "Oui" },
+	{ id: "pass", outcome: <code>pass</code>, meaning: "La ou les cibles applicables de la règle existent et aucune n’a été signalée.", manual: "Oui" },
+	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "Nécessite un jugement humain : soit c’est réellement ambigu, soit c’est le constat indicatif d’une règle manuelle.", manual: "Oui" },
+	{ id: "notApplicable", outcome: <code>notApplicable</code>, meaning: "La règle n’a trouvé aucun élément auquel elle s’applique sur cette page ou dans ce périmètre.", manual: "Oui" },
 ];
 
 export function OutputSchemaContent() {
 	return (
 		<>
 			<p>
-				Voici la forme exacte de l'objet renvoyé par <code>runDomRulesInPage(...)</code> /{" "}
+				Voici la forme exacte de l’objet renvoyé par <code>runDomRulesInPage(...)</code> /{" "}
 				<code>runa11yCoreInPage(...)</code> (voir{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> pour savoir
 				lequel appeler). Chaque exemple de cette page est une sortie réelle du moteur actuel (
@@ -317,7 +317,7 @@ export function OutputSchemaContent() {
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>
 					<code>INTEGRATION.md</code>
 				</a>
-				) renvoie une forme différente, récursive, au lieu d'un simple résultat de premier
+				) renvoie une forme différente, récursive, au lieu d’un simple résultat de premier
 				niveau :
 			</p>
 			<CodeBlock
@@ -342,19 +342,19 @@ export function OutputSchemaContent() {
 					<code>&lt;frame&gt;</code> enfant direct dans le périmètre analysé. Un enfant
 					joignable (qui a appelé <code>a11yCoreEnableFrameResponder()</code>) fournit son propre{" "}
 					<code>{"{ url, topFrame, frames }"}</code> complet, y compris <em>ses propres</em>{" "}
-					<code>frames</code> imbriqués, récursivement, puisqu'un petit-enfant plus profond n'est
-					joignable que par l'intermédiaire de son parent immédiat. Un enfant injoignable (le cas
+					<code>frames</code> imbriqués, récursivement, puisqu’un petit-enfant plus profond n’est
+					joignable que par l’intermédiaire de son parent immédiat. Un enfant injoignable (le cas
 					courant pour la plupart des contenus tiers intégrés : pas de responder coopératif, ou
 					délai dépassé) fournit à la place <code>{"{ url, error }"}</code>, sans interrompre le
-					reste de l'analyse.
+					reste de l’analyse.
 				</li>
 				<li>
-					Il s'agit d'un <strong>arbre, pas d'une liste à plat</strong> : une différence
+					Il s’agit d’un <strong>arbre, pas d’une liste à plat</strong> : une différence
 					délibérée avec le <code>.frames(true)</code> du binding{" "}
 					<code>@surea11y/playwright</code>, qui <em>peut</em> aplatir parce que le{" "}
 					<code>page.frames()</code> de Playwright fournit déjà tous les frames quelle que soit
-					leur profondeur d'imbrication ; un relais <code>postMessage</code> n'a pas cette vue
-					globale, donc l'imbrication est exprimée par la structure.
+					leur profondeur d’imbrication ; un relais <code>postMessage</code> n’a pas cette vue
+					globale, donc l’imbrication est exprimée par la structure.
 				</li>
 			</ul>
 
@@ -411,13 +411,13 @@ export function OutputSchemaContent() {
 				<li>
 					<strong>Les règles <code>type: "manual"</code> ne peuvent jamais renvoyer{" "}
 					<code>outcome: "fail"</code>.</strong>{" "}
-					Si la logique propre d'une règle manuelle aurait conclu à <code>fail</code>, le moteur
+					Si la logique propre d’une règle manuelle aurait conclu à <code>fail</code>, le moteur
 					le convertit en <code>cantTell</code> et ajoute une note explicative à{" "}
 					<code>error</code>. Ce comportement est imposé de façon centralisée (
 					<code>policy.coerceManualFailToCantTell</code>, activé par défaut sous le contrat de
 					politique <code>a11y</code> ; voir{" "}
-					<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>), et ce n'est pas à chaque
-					règle d'y penser. <code>fail</code> est réservé aux constats déterministes{" "}
+					<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>), et ce n’est pas à chaque
+					règle d’y penser. <code>fail</code> est réservé aux constats déterministes{" "}
 					<code>type: "automatic"</code> uniquement.
 				</li>
 				<li>
@@ -430,33 +430,33 @@ export function OutputSchemaContent() {
 				</li>
 				<li>
 					<strong><code>wcagVersionScope</code></strong> : présent uniquement lorsque la version
-					WCAG cible de l'exécution a transformé le <code>fail</code> de cette règle en{" "}
-					<code>cantTell</code>. Aujourd'hui, cela concerne une règle associée au critère 4.1.1
+					WCAG cible de l’exécution a transformé le <code>fail</code> de cette règle en{" "}
+					<code>cantTell</code>. Aujourd’hui, cela concerne une règle associée au critère 4.1.1
 					Analyse syntaxique (<code>duplicate-id</code>) sous la cible 2.2 par défaut, puisque 2.2
-					a retiré ce critère. <code>removedSc</code> liste les critères qui ont cessé d'exister,{" "}
+					a retiré ce critère. <code>removedSc</code> liste les critères qui ont cessé d’exister,{" "}
 					<code>target</code> est la version qui les a retirés, et <code>coercedFrom</code> est le
 					résultat que la règle a elle-même renvoyé. Les occurrences sont celles de la règle,
-					inchangées : rien n'a été supprimé, seul le verdict de conformité l'a été. Absent de
+					inchangées : rien n’a été supprimé, seul le verdict de conformité l’a été. Absent de
 					tous les autres résultats, et <strong>jamais</strong> signalé via <code>error</code> :
-					rien ne s'est mal passé. Voir{" "}
+					rien ne s’est mal passé. Voir{" "}
 					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtrer par version de WCAG</a>.
 				</li>
 				<li>
-					<strong><code>error</code></strong> : présent dans trois cas seulement. L'implémentation
+					<strong><code>error</code></strong> : présent dans trois cas seulement. L’implémentation
 					de la règle a levé une exception non interceptée, la conversion des échecs
-					manuels décrite ci-dessus s'est appliquée, ou bien chaque occurrence d'un résultat{" "}
+					manuels décrite ci-dessus s’est appliquée, ou bien chaque occurrence d’un résultat{" "}
 					<code>fail</code> a vu son parcours des ancêtres atteindre une limite de profondeur
-					interne (le moteur n'a donc pas pu confirmer que le contenu signalé est réellement
+					interne (le moteur n’a donc pas pu confirmer que le contenu signalé est réellement
 					exposé) et le résultat entier a été converti en <code>cantTell</code> de la même façon.
 					Une règle qui lève une exception apparaît toujours sous la forme{" "}
 					<code>outcome: "cantTell"</code> avec <code>occurrences: []</code> et <code>error</code>{" "}
-					contenant le message de l'exception : le moteur ne laisse jamais une règle défaillante
-					faire planter toute l'analyse.
+					contenant le message de l’exception : le moteur ne laisse jamais une règle défaillante
+					faire planter toute l’analyse.
 				</li>
 				<li>
-					<strong><code>engineOptions</code></strong> sur chaque résultat est l'objet d'options{" "}
+					<strong><code>engineOptions</code></strong> sur chaque résultat est l’objet d’options{" "}
 					<em>résolu</em> (après application des valeurs par défaut de locale et de contraste),
-					et non littéralement ce que vous avez passé. Utile pour vérifier ce qu'une règle donnée
+					et non littéralement ce que vous avez passé. Utile pour vérifier ce qu’une règle donnée
 					a réellement reçu, en particulier la <code>locale</code> résolue et{" "}
 					<code>contrast.mode</code>/<code>contrast.rootCanvasFallback</code>.
 				</li>
@@ -466,18 +466,18 @@ export function OutputSchemaContent() {
 			<p>
 				Normalement présente uniquement lorsque <code>outcome</code> vaut <code>fail</code> ou{" "}
 				<code>cantTell</code> : un résultat <code>pass</code> a <code>occurrences: []</code>,
-				puisque ce moteur n'énumère pas les éléments qu'il a validés, seulement ceux qu'il a
+				puisque ce moteur n’énumère pas les éléments qu’il a validés, seulement ceux qu’il a
 				signalés.
 			</p>
 			<p>
-				<code>notApplicable</code> est la seule exception. Une règle qui n'avait rien à juger
-				peut joindre une occurrence unique expliquant pourquoi, et c'est exactement ce que font
-				les règles de contraste lorsqu'aucun texte n'avait d'arrière-plan calculable : la
+				<code>notApplicable</code> est la seule exception. Une règle qui n’avait rien à juger
+				peut joindre une occurrence unique expliquant pourquoi, et c’est exactement ce que font
+				les règles de contraste lorsqu’aucun texte n’avait d’arrière-plan calculable : la
 				différence entre « vérifié, rien à signaler » et « impossible à vérifier » est une
 				différence que ce moteur signale au lieu de la masquer. Une telle occurrence décrit
-				l'analyse, pas un élément, donc son <code>selector</code> est vide.{" "}
+				l’analyse, pas un élément, donc son <code>selector</code> est vide.{" "}
 				<strong>Ne lisez pas <code>occurrences.length</code> comme un nombre de violations sans
-				vérifier d'abord <code>outcome</code>.</strong>
+				vérifier d’abord <code>outcome</code>.</strong>
 			</p>
 			<CodeBlock
 				lines={[
@@ -511,12 +511,12 @@ export function OutputSchemaContent() {
 				rows={occurrenceRows}
 			/>
 
-			<h3 id="uncertainty-codes">Codes d'incertitude</h3>
+			<h3 id="uncertainty-codes">Codes d’incertitude</h3>
 			<p>
-				Un <code>cantTell</code> indique que le moteur n'a pas tranché. <code>uncertainty</code>{" "}
-				indique <strong>pourquoi</strong>, à partir d'un vocabulaire fermé, pour qu'un
-				consommateur puisse agir selon la raison plutôt que d'analyser une chaîne de résumé. Il
-				n'est présent que sur une occurrence de niveau <code>cantTell</code> : une occurrence de
+				Un <code>cantTell</code> indique que le moteur n’a pas tranché. <code>uncertainty</code>{" "}
+				indique <strong>pourquoi</strong>, à partir d’un vocabulaire fermé, pour qu’un
+				consommateur puisse agir selon la raison plutôt que d’analyser une chaîne de résumé. Il
+				n’est présent que sur une occurrence de niveau <code>cantTell</code> : une occurrence de
 				niveau <code>fail</code> affirmerait que la règle a à la fois tranché et pas tranché,
 				donc le moteur le retire.
 			</p>
@@ -541,19 +541,19 @@ export function OutputSchemaContent() {
 			</p>
 			<p>
 				Toute règle automatique susceptible de renvoyer <code>cantTell</code> le fournit, et un
-				test y veille pour qu'une nouvelle règle ne puisse pas arriver sans lui. Le code{" "}
+				test y veille pour qu’une nouvelle règle ne puisse pas arriver sans lui. Le code{" "}
 				<code>out-of-scope</code> est ajouté par le moteur et non par une règle, sur les mêmes
 				occurrences que celles qui produisent un <code>wcagVersionScope</code> au niveau du
 				résultat. Les règles manuelles ne le portent pas : <code>judgement-required</code> est
 				précisément ce que signifie déjà <code>type: "manual"</code>, donc le répéter pour
-				chaque occurrence n'apporterait rien que le résultat ne dise déjà.
+				chaque occurrence n’apporterait rien que le résultat ne dise déjà.
 			</p>
 
 			<h2 id="composite-result">Un résultat composite (<code>rulesResults[i]</code>)</h2>
 			<p>
 				Les composites agrègent plusieurs règles atomiques en un seul critère de succès WCAG (par
 				ex. <code>wcag-1.1.1-non-text-content</code> agrège 21 règles atomiques). Leur forme
-				reprend l'enveloppe d'un résultat de vérification, avec un <code>data.details</code>{" "}
+				reprend l’enveloppe d’un résultat de vérification, avec un <code>data.details</code>{" "}
 				propre aux composites :
 			</p>
 			<CodeBlock
@@ -575,10 +575,10 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<p>
-				Ordre de priorité de l'agrégation (déterministe, dans cet ordre) :{" "}
+				Ordre de priorité de l’agrégation (déterministe, dans cet ordre) :{" "}
 				<strong>au moins une règle contributrice en <code>fail</code> → composite{" "}
 				<code>fail</code></strong> ; sinon{" "}
-				<strong>au moins un <code>cantTell</code> (ou une règle contributrice qui ne s'est pas
+				<strong>au moins un <code>cantTell</code> (ou une règle contributrice qui ne s’est pas
 				exécutée du tout, <code>missingCount &gt; 0</code>) → composite{" "}
 				<code>cantTell</code></strong> ; sinon{" "}
 				<strong>toutes les contributrices en <code>notApplicable</code> → composite{" "}
@@ -607,24 +607,24 @@ export function OutputSchemaContent() {
 			<ul>
 				<li>
 					<code>severity</code> : <code>minor</code> &lt; <code>moderate</code> &lt;{" "}
-					<code>serious</code> &lt; <code>critical</code> ; l'évaluation par l'auteur de la
-					règle de l'impact sur les utilisateurs, indépendante de <code>confidence</code>.
+					<code>serious</code> &lt; <code>critical</code> ; l’évaluation par l’auteur de la
+					règle de l’impact sur les utilisateurs, indépendante de <code>confidence</code>.
 				</li>
 				<li>
 					<code>confidence</code> : <code>low</code> &lt; <code>medium</code> &lt;{" "}
-					<code>high</code> ; le degré de certitude du moteur quant à l'exactitude d'un verdict{" "}
+					<code>high</code> ; le degré de certitude du moteur quant à l’exactitude d’un verdict{" "}
 					<code>fail</code>/<code>cantTell</code>. Ce sont deux métadonnées informatives servant à
 					prioriser ; aucune ne change le sens de <code>outcome</code>.
 				</li>
 			</ul>
 			<p>
-				<strong>Un <code>fail</code> n'est pas toujours <code>confidence: "high"</code>, et ce
-				n'est pas une contradiction.</strong> Le résultat décrit la procédure de décision (elle a
+				<strong>Un <code>fail</code> n’est pas toujours <code>confidence: "high"</code>, et ce
+				n’est pas une contradiction.</strong> Le résultat décrit la procédure de décision (elle a
 				tranché la question sans deviner), tandis que <code>confidence</code> décrit le modèle
 				par rapport auquel cette décision a été prise. Quelques règles automatiques décident de
 				façon déterministe par rapport à quelque chose qui est lui-même une approximation (les
 				tables de rôles WAI-ARIA maintenues à la main, les correspondances de rôles natifs, un
-				arbre d'accessibilité déduit du balisage statique) et renvoient <code>medium</code> :{" "}
+				arbre d’accessibilité déduit du balisage statique) et renvoient <code>medium</code> :{" "}
 				<code>aria-required-children</code>, <code>aria-prohibited-children</code>,{" "}
 				<code>aria-required-parent</code>, <code>aria-allowed-attr</code>,{" "}
 				<code>form-control-programmatic-label-present</code>,{" "}
@@ -633,7 +633,7 @@ export function OutputSchemaContent() {
 				<code>video-poster-text-alternative-present</code> et <code>target-size-minimum</code>.{" "}
 				<code>confidence</code> figure sur chaque résultat, donc un consommateur qui ne veut que
 				les échecs les plus certains peut filtrer directement dessus ;{" "}
-				<code>policy.allowedConfidence</code> ne le fera pas pour vous, puisqu'une valeur non
+				<code>policy.allowedConfidence</code> ne le fera pas pour vous, puisqu’une valeur non
 				autorisée est remplacée par le <code>defaultConfidence</code> propre à la règle au lieu
 				de changer le résultat (voir{" "}
 				<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>).
@@ -644,7 +644,7 @@ export function OutputSchemaContent() {
 				Analyse de <code>&lt;img src="logo.png"&gt;</code> (sans <code>alt</code>) et de{" "}
 				<code>&lt;button&gt;&lt;/button&gt;</code> (sans nom accessible), limitée à ces deux
 				règles via <code>runOnly: {"{ includeRuleIds: [...] }"}</code> (voir{" "}
-				<a href="/configuration/engine-options/">Options du moteur</a> : ce n'est{" "}
+				<a href="/configuration/engine-options/">Options du moteur</a> : ce n’est{" "}
 				<strong>pas</strong> un simple tableau) :
 			</p>
 			<CodeBlock
@@ -720,8 +720,8 @@ export function OutputSchemaContent() {
 				<code>title</code>/<code>description</code>/<code>i18n</code>/<code>meta</code>/
 				<code>engineOptions</code>/<code>schemaVersion</code> sur chaque entrée, conformément à
 				la forme complète ci-dessus. <code>rulesResults</code> est vide ici parce que{" "}
-				<code>runOnly.includeRuleIds</code> a limité l'analyse à deux règles atomiques et qu'aucun
-				ID de composite n'était inclus.)
+				<code>runOnly.includeRuleIds</code> a limité l’analyse à deux règles atomiques et qu’aucun
+				ID de composite n’était inclus.)
 			</p>
 		</>
 	);

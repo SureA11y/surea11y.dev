@@ -47,7 +47,7 @@ export function FaqContent() {
 					<code>runInPage</code>
 					の中に移すか、
 					<code>ctx.rule</code>
-					/
+					／
 					<code>ctx.helpers</code>
 					経由で渡す）は
 					<a href={`${core}/docs/RULE_AUTHORING.md`}><code>RULE_AUTHORING.md</code></a>
@@ -72,7 +72,7 @@ export function FaqContent() {
 						<code>notApplicable</code>
 						を報告します。
 					</strong>
-					これらのルールで実際の検出結果を得るには、実際のブラウザー（Puppeteer/Playwright。
+					これらのルールで実際の検出結果を得るには、実際のブラウザー（Puppeteer／Playwright。
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
 					の<span lang="en">Pattern 2</span>を参照）で実行してください。
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>
@@ -84,7 +84,7 @@ export function FaqContent() {
 				<h2>
 					「
 					<code>fail</code>
-					/
+					／
 					<code>cantTell</code>
 					の検出箇所しか表示されない。合格した要素の一覧はどこにあるのか」
 				</h2>
@@ -144,7 +144,7 @@ export function FaqContent() {
 						<a href="/configuration/engine-options/#rule-scoped-excludeselectors"><code>ENGINE_OPTIONS.md</code></a>
 						を参照）。反応するはずのルールが1つの要素に対してだけ
 						<code>notApplicable</code>
-						/
+						／
 						<code>pass</code>
 						を返し続ける場合は、グローバルの除外リストだけでなく、そのルール固有の除外リストが設定されていないかも確認してください。
 					</li>
@@ -214,7 +214,7 @@ export function FaqContent() {
 					<em>関数そのもの</em>
 					を別のJSレルムに渡す場合は
 					<code>runa11yCoreInPage</code>
-					です。ほぼ常にPuppeteer/Playwrightの
+					です。ほぼ常にPuppeteer／Playwrightの
 					<code>page.evaluate</code>
 					のケースで、これは関数をソースコードの文字列にシリアライズし、ブラウザーのタブ内で再実行します（タブからはNodeのモジュールスコープにアクセスできません）。両方のパターンの完全な例は
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>

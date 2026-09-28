@@ -31,7 +31,7 @@ const localeReasonRows = [
 	{
 		id: "dictionary-not-loaded",
 		reason: <code>dictionary-not-loaded</code>,
-		meaning: "Das Projekt liefert diese Sprache aus, aber diese Kopie der Engine enthält sie nicht, und es wurde auch keine übergeben. In der Praxis: das eigenständige Browser-Bundle ohne seine zugehörige Locale-Datei.",
+		meaning: "Das Projekt liefert diese Sprache aus, aber diese Kopie der Engine enthält sie nicht, und es wurde auch keine übergeben. In der Praxis: das Standalone-Browser-Bundle ohne die zugehörige Locale-Datei.",
 	},
 	{
 		id: "unknown-locale",
@@ -111,8 +111,8 @@ export function LocalesContent() {
 
 			<h2>Wie eine Locale gewählt wird</h2>
 			<p>
-				Es passieren zwei Dinge, in dieser Reihenfolge. Wer sie verwechselt, ist meist genau
-				deshalb verwirrt, darum werden sie getrennt beschrieben.
+				Es passieren zwei Dinge, in dieser Reihenfolge. Die meisten Missverständnisse entstehen,
+				wenn man sie verwechselt, darum werden sie getrennt beschrieben.
 			</p>
 			<h3>Schritt 1: ein Wörterbuch wählen (einmal pro Scan)</h3>
 			<ol>

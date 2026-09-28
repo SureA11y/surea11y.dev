@@ -66,8 +66,8 @@ export function EarlReportContent() {
 				<strong>Jede ausgeführte Regel wird zu einer Aussage, <code>pass</code> und{" "}
 				<code>inapplicable</code> eingeschlossen</strong>, weil ein Implementierungsbericht eine
 				Aussage darüber ist, was die Engine <em>überall</em> entschieden hat. Eine Regel, die
-				stumm blieb, weil sie nichts Anwendbares fand, ist ein Beleg, kein Rauschen: Nur so kann
-				ein Leser unterscheiden zwischen „diese Engine hat geprüft und nichts zu prüfen gefunden“
+				stumm blieb, weil sie nichts Anwendbares fand, ist ein Beleg, kein Rauschen: Nur so lässt
+				sich unterscheiden zwischen „diese Engine hat geprüft und nichts zu prüfen gefunden“
 				und „diese Engine implementiert diese Regel gar nicht“.
 			</p>
 
@@ -146,14 +146,14 @@ export function EarlReportContent() {
 				bei statt einer „<span lang="en">untested</span>“-Aussage.
 			</p>
 			<p>
-				<strong><code>cantTell</code> kostet keine Konformitätspunkte.</strong> Nach den
+				<strong><code>cantTell</code> wird nicht negativ angerechnet.</strong> Nach den
 				Konsistenzregeln von ACT darf eine automatische Implementierung bei manchen Beispielen,
 				wenn auch nicht bei allen, „<span lang="en">cannot tell</span>“ melden und trotzdem als konsistent gelten. Was
-				eine teilweise konsistente Implementierung <em>nicht</em> darf, ist ein Falsch-Positiv
-				erzeugen: ein Beispiel scheitern lassen, das laut Regel bestehen soll oder nicht anwendbar
+				eine teilweise konsistente Implementierung <em>nicht</em> darf, ist ein falsch positives
+				Ergebnis erzeugen: ein Beispiel scheitern lassen, das laut Regel bestehen soll oder nicht anwendbar
 				ist. Das ist die Schwelle, auf die es ankommt, und sie ist eine Eigenschaft der Regeln,
 				nicht dieses Berichts. Beim letzten vollständigen Lauf erzeugte die Engine{" "}
-				<strong>null Falsch-Positive</strong> über die 798 ACT-Beispiele hinweg, die ihre 58
+				<strong>null falsch positive Ergebnisse</strong> über die 798 ACT-Beispiele hinweg, die ihre 58
 				zugeordneten Regeln abdecken. Siehe{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>, und
 				führen Sie <code>scripts/act-testcase-check.js</code> für die aktuelle Zahl erneut aus,

@@ -10,14 +10,14 @@ const optionRows = [
 		option: <code>locale</code>,
 		meaning: (
 			<>
-				N'importe quelle chaîne. Un code avec une sous-étiquette se rabat d'abord sur sa langue de
-				base, donc <code>de-DE</code> utilise <code>de</code> ; à défaut, l'anglais. Chaque chaîne
-				se rabat ensuite de la même façon (locale choisie → <code>en</code> → texte anglais
-				littéral de la règle), si bien qu'une locale partiellement traduite ne produit jamais de
+				N’importe quelle chaîne. Un code avec une sous-étiquette se rabat d’abord sur sa langue de
+				base, donc <code>de-DE</code> utilise <code>de</code> ; à défaut, l’anglais. Chaque chaîne
+				se rabat ensuite de la même façon (langue choisie → <code>en</code> → texte anglais
+				littéral de la règle), si bien qu’une langue partiellement traduite ne produit jamais de
 				texte manquant. Rien de tout cela ne se voit dans les chaînes elles-mêmes, donc le
-				résultat indique ce qui s'est réellement passé dans <code>engine.locale</code> :
+				résultat indique ce qui s’est réellement passé dans <code>engine.locale</code> :
 				consultez-le si vous devez savoir si vous avez obtenu la langue demandée. Voir{" "}
-				<a href="/configuration/locales/">Paramètres régionaux</a>.
+				<a href="/configuration/locales/">Langues</a>.
 			</>
 		),
 	},
@@ -27,16 +27,16 @@ const optionRows = [
 		meaning: (
 			<>
 				<code>'2.0'</code>, <code>'2.1'</code> ou <code>'2.2'</code> : la version de WCAG par
-				rapport à laquelle l'exécution teste la conformité. Par défaut, celle qu'impliquent vos
-				tags d'origine de version, et <code>'2.2'</code> s'ils n'impliquent rien.{" "}
+				rapport à laquelle l’exécution teste la conformité. Par défaut, celle qu’impliquent vos
+				tags d’origine de version, et <code>'2.2'</code> s’ils n’impliquent rien.{" "}
 				<strong>
-					Elle ne change actuellement qu'une chose, le critère 4.1.1 Analyse syntaxique, retiré
+					Elle ne change actuellement qu’une chose, le critère 4.1.1 Analyse syntaxique, retiré
 					en 2.2
-				</strong> : avec une cible 2.2, une règle portant le tag <code>wcag22-removed</code> s'exécute
+				</strong> : avec une cible 2.2, une règle portant le tag <code>wcag22-removed</code> s’exécute
 				toujours et signale toujours ses occurrences, mais ne peut pas renvoyer{" "}
 				<code>fail</code> (voir{" "}
 				<a href="#filtering-by-wcag-version">« Filtrer par version de WCAG »</a> plus haut).
-				Toute autre valeur est ignorée et la valeur par défaut s'applique.
+				Toute autre valeur est ignorée et la valeur par défaut s’applique.
 			</>
 		),
 	},
@@ -47,11 +47,11 @@ const optionRows = [
 			<>
 				<code>{"{ [locale]: { key: text } }"}</code> facultatif. Consulté avant les tables propres
 				au moteur, il peut donc remplacer des chaînes individuelles ou fournir une langue que le
-				build n'embarque pas. Les clés omises se rabattent normalement, donc un remplacement
-				partiel ne pose aucun problème. C'est ainsi que le bundle navigateur autonome reçoit un
-				fichier de locale séparé, et c'est le seul moyen de faire entrer un dictionnaire dans le
-				contexte d'une page, puisque le runner in-page est sérialisé et ne peut pas lire de
-				fichiers. Voir <a href="/configuration/locales/">Paramètres régionaux</a>.
+				build n’embarque pas. Les clés omises se rabattent normalement, donc un remplacement
+				partiel ne pose aucun problème. C’est ainsi que le bundle navigateur autonome reçoit un
+				fichier de langue séparé, et c’est le seul moyen de faire entrer un dictionnaire dans le
+				contexte d’une page, puisque le runner in-page est sérialisé et ne peut pas lire de
+				fichiers. Voir <a href="/configuration/locales/">Langues</a>.
 			</>
 		),
 	},
@@ -64,7 +64,7 @@ const optionRows = [
 				par des mécanismes structurels/CSS comme <code>display:none</code>, <code>[hidden]</code>,
 				un <code>&lt;details&gt;</code> fermé et les éléments hôtes masqués servant uniquement au
 				rendu (leurs descendants sont exclus aussi). Passez-la à <code>true</code> pour inclure
-				ces sous-arbres masqués/repliés dans l'évaluation (comportement historique/balisage
+				ces sous-arbres masqués/repliés dans l’évaluation (comportement historique/balisage
 				statique).
 			</>
 		),
@@ -75,10 +75,10 @@ const optionRows = [
 		meaning: (
 			<>
 				Par défaut <code>true</code> : les règles qui utilisent <code>helpers.queryAllSmart</code>{" "}
-				descendent dans les shadow roots ouvertes. Passez <code>false</code> pour n'analyser que
+				descendent dans les shadow roots ouvertes. Passez <code>false</code> pour n’analyser que
 				le light DOM.{" "}
 				<strong>Les shadow roots fermées ne sont jamais accessibles, dans un cas comme dans
-				l'autre</strong> : aucune API DOM ne les expose.
+				l’autre</strong> : aucune API DOM ne les expose.
 			</>
 		),
 	},
@@ -87,7 +87,7 @@ const optionRows = [
 		option: <code>fragment</code>,
 		meaning: (
 			<>
-				Par défaut <code>false</code>. Quelques règles vérifient la présence d'une propriété qui
+				Par défaut <code>false</code>. Quelques règles vérifient la présence d’une propriété qui
 				existe une fois par page réelle (<code>page-title-present</code>,{" "}
 				<code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code>,{" "}
 				<code>aria-hidden-body</code>, <code>css-orientation-lock</code>,{" "}
@@ -96,12 +96,12 @@ const optionRows = [
 				<code>page-title-patterns</code>, <code>region</code>,{" "}
 				<code>bypass-blocks-present</code>, <code>landmark-one-main</code>,{" "}
 				<code>page-has-heading-one</code>) et renvoient à juste titre <code>notApplicable</code>{" "}
-				pour ces propriétés dès que <code>contextSelector</code> a restreint l'exécution à moins
+				pour ces propriétés dès que <code>contextSelector</code> a restreint l’exécution à moins
 				que le document entier (<code>document.documentElement</code> ne figure plus parmi les
-				racines résolues), puisqu'on n'a jamais attendu d'un sous-arbre ciblé qu'il porte son
+				racines résolues), puisqu’on n’a jamais attendu d’un sous-arbre ciblé qu’il porte son
 				propre <code>&lt;title&gt;</code>/<code>&lt;html lang&gt;</code>/etc. Passez{" "}
 				<code>fragment: true</code> pour le cas que le ciblage seul ne peut pas détecter : une
-				cible d'analyse qui est le document fourni <em>tout entier</em>, mais qui n'a jamais été
+				cible d’analyse qui est le document fourni <em>tout entier</em>, mais qui n’a jamais été
 				censée représenter une vraie page (par exemple un extrait de composant brut parsé
 				isolément). Cela impose le même filtrage <code>notApplicable</code> même sans ciblage.
 			</>
@@ -112,10 +112,10 @@ const optionRows = [
 		option: <code>excludeSelectors</code>,
 		meaning: (
 			<>
-				Les éléments qui correspondent à l'un de ces sélecteurs (ainsi que leurs descendants) sont
+				Les éléments qui correspondent à l’un de ces sélecteurs (ainsi que leurs descendants) sont
 				entièrement ignorés, pour <strong>toutes</strong> les règles. Utile pour les bannières de
 				cookies, les contenus tiers intégrés ou les widgets connus pour être bruyants que vous ne
-				maîtrisez pas. Pour exclure un élément d'une seule règle, utilisez plutôt{" "}
+				maîtrisez pas. Pour exclure un élément d’une seule règle, utilisez plutôt{" "}
 				<code>rules[ruleId].excludeSelectors</code> ci-dessous.
 			</>
 		),
@@ -126,7 +126,7 @@ const optionRows = [
 		meaning: (
 			<>
 				Transmis tel quel au champ <code>timestamp</code> de premier niveau du résultat ; le
-				moteur n'en génère pas lui-même (déterministe par conception).
+				moteur n’en génère pas lui-même (déterministe par conception).
 			</>
 		),
 	},
@@ -136,7 +136,7 @@ const optionRows = [
 		meaning: (
 			<>
 				<code>strictConformance</code> (par défaut) : les règles de contraste restent muettes (
-				<code>notApplicable</code>/ignorées) chaque fois que l'arrière-plan réellement rendu ne
+				<code>notApplicable</code>/ignorées) chaque fois que l’arrière-plan réellement rendu ne
 				peut pas être calculé avec certitude, pour éviter les faux <code>fail</code>.{" "}
 				<code>auditorAssist</code> : sacrifie une partie de cette marge de sécurité pour obtenir
 				davantage de constats ; conçu pour un auditeur humain qui revérifiera les cas signalés,
@@ -149,8 +149,8 @@ const optionRows = [
 		option: <code>contrast.rootCanvasFallback</code>,
 		meaning: (
 			<>
-				La couleur d'arrière-plan supposée pour la page lorsqu'elle n'est pas calculable du tout.
-				Ne compte qu'en mode <code>auditorAssist</code>.
+				La couleur d’arrière-plan supposée pour la page lorsqu’elle n’est pas calculable du tout.
+				Ne compte qu’en mode <code>auditorAssist</code>.
 			</>
 		),
 	},
@@ -159,11 +159,11 @@ const optionRows = [
 		option: <code>visibilityMode</code>,
 		meaning: (
 			<>
-				Détermine le degré d'exigence des trois règles de contraste (<code>contrast-minimum</code>,{" "}
-				<code>contrast-enhanced</code>, <code>contrast-computable</code>) pour décider qu'un nœud
+				Détermine le degré d’exigence des trois règles de contraste (<code>contrast-minimum</code>,{" "}
+				<code>contrast-enhanced</code>, <code>contrast-computable</code>) pour décider qu’un nœud
 				texte est réellement éligible à la vérification.{" "}
 				<strong>Aucune autre règle ne la lit.</strong> <code>'styleOnly'</code> (par défaut) :
-				l'éligibilité repose uniquement sur le CSS (<code>display</code>,{" "}
+				l’éligibilité repose uniquement sur le CSS (<code>display</code>,{" "}
 				<code>visibility</code>, <code>opacity</code>, masquage par un ancêtre, etc.).{" "}
 				<code>'styleAndGeometry'</code> : ajoute par-dessus de vraies vérifications de mise en
 				page (<code>getClientRects()</code>/<code>getBoundingClientRect()</code>) ; le texte sans
@@ -171,7 +171,7 @@ const optionRows = [
 				<code>'styleAndGeometry'</code> lorsque vous exécutez dans un vrai
 				navigateur/Playwright-Puppeteer (<code>runa11yCoreInPage</code>) et que vous voulez que
 				les constats de contraste reflètent la mise en page réellement rendue plutôt que le seul
-				style calculé ; sous jsdom seul (<code>runDomRulesInPage</code>), il n'y a pas de vrai
+				style calculé ; sous jsdom seul (<code>runDomRulesInPage</code>), il n’y a pas de vrai
 				moteur de mise en page, donc <code>'styleAndGeometry'</code> ajoute surtout des
 				vérifications de taille nulle via <code>getBoundingClientRect()</code>, pas une vraie
 				détection du rognage ou du débordement (voir les{" "}
@@ -204,12 +204,12 @@ const optionRows = [
 				que construire leurs occurrences à la main (1.5.0), ce remplissage est le chemin que
 				suivent presque toutes les 132 règles du moteur : définir{" "}
 				<code>includeSelector: false</code> / <code>includeHtml: false</code> retire les
-				sélecteurs et les extraits HTML de la grande majorité d'entre elles. Quelques-unes
+				sélecteurs et les extraits HTML de la grande majorité d’entre elles. Quelques-unes
 				assemblent encore ces champs elles-mêmes dans <code>runInPage</code> et ne sont pas
 				concernées, parmi lesquelles <code>contrast-minimum</code>/<code>contrast-enhanced</code>{" "}
 				(dont les constats portent sur des segments de texte, pas sur des éléments),{" "}
 				<code>page-title-present</code> et <code>identical-links-same-purpose</code>.{" "}
-				<strong>Cela réduit donc nettement la sortie, mais ne garantit toujours pas l'absence{" "}
+				<strong>Cela réduit donc nettement la sortie, mais ne garantit toujours pas l’absence{" "}
 				<em>totale</em> de sélecteurs ou de HTML dans le résultat.</strong>
 			</>
 		),
@@ -221,7 +221,7 @@ const optionRows = [
 			<>
 				Transmis à cette règle sous la forme <code>ctx.config</code> et, pour{" "}
 				<code>excludeSelectors</code> en particulier, lu par le moteur lui-même avant même que la
-				règle s'exécute. Voir{" "}
+				règle s’exécute. Voir{" "}
 				<a href="#rule-scoped-excludeselectors">« excludeSelectors par règle »</a> ci-dessous.
 				Toute autre clé est simplement transmise : <strong>aucune règle livrée ne lit
 				actuellement <code>ctx.config</code></strong> pour autre chose que{" "}
@@ -237,9 +237,9 @@ const optionRows = [
 				Un objet de preuves facultatif, sérialisable en JSON, que votre application hôte peut
 				fournir (le moteur en plafonne la profondeur et la taille avant que les règles ne le
 				voient, via <code>ctx.inputs.probes</code>), destiné à de futures règles susceptibles
-				d'accepter des signaux externes (par exemple de vraies mesures de mise en page qu'une
+				d’accepter des signaux externes (par exemple de vraies mesures de mise en page qu’une
 				analyse statique du DOM ne peut pas calculer elle-même).{" "}
-				<strong>Aucune règle actuelle ne l'utilise.</strong>
+				<strong>Aucune règle actuelle ne l’utilise.</strong>
 			</>
 		),
 	},
@@ -255,12 +255,12 @@ const optionRows = [
 				Réservé au débogage. <code>perfStats: true</code> renvoie des compteurs internes dans le
 				champ <code>perfStats</code> du résultat ; <code>profileRules: true</code> y ajoute{" "}
 				<strong>en plus</strong> une ventilation des temps par règle. <code>profileRules</code>{" "}
-				seul ne fait rien : c'est <code>perfStats</code> qui crée l'objet dans lequel figure
+				seul ne fait rien : c’est <code>perfStats</code> qui crée l’objet dans lequel figure
 				cette ventilation.{" "}
 				<strong>Sa forme ne fait pas partie du contrat de sortie stable : ne construisez rien
 				dessus.</strong> Notez aussi que <code>profileRules</code> est la seule option qui rend
-				la sortie non déterministe : les compteurs sont stables d'une exécution identique à
-				l'autre, les temps mesurés ne le sont pas. Laissez-la désactivée si vous comparez des
+				la sortie non déterministe : les compteurs sont stables d’une exécution identique à
+				l’autre, les temps mesurés ne le sont pas. Laissez-la désactivée si vous comparez des
 				résultats entre exécutions.
 			</>
 		),
@@ -278,8 +278,8 @@ const optionRows = [
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>
 					<code>INTEGRATION.md</code>
 				</a>
-				) : combien de temps attendre qu'un frame enfant réponde à un ping (par défaut{" "}
-				<code>500</code> ms) et à une requête d'exécution complète (par défaut{" "}
+				) : combien de temps attendre qu’un frame enfant réponde à un ping (par défaut{" "}
+				<code>500</code> ms) et à une requête d’exécution complète (par défaut{" "}
 				<code>60000</code> ms) avant de le considérer comme injoignable. Ignorées par{" "}
 				<code>runDomRulesInPage</code>/<code>runa11yCoreInPage</code>.
 			</>
@@ -302,9 +302,9 @@ export function EngineOptionsContent() {
 				Il existe <strong>deux façons indépendantes</strong> de sélectionner des règles : le
 				4ᵉ argument (<code>runOnly</code>), ou{" "}
 				<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>/
-				<code>.includeMode</code>. Si <code>runOnly</code> contient un filtre quel qu'il soit, il
-				l'emporte d'office ; sinon, le moteur se rabat sur <code>engineOptions</code>.{" "}
-				<strong>Ne les combinez pas en comptant sur l'application des deux : choisissez-en
+				<code>.includeMode</code>. Si <code>runOnly</code> contient un filtre quel qu’il soit, il
+				l’emporte d’office ; sinon, le moteur se rabat sur <code>engineOptions</code>.{" "}
+				<strong>Ne les combinez pas en comptant sur l’application des deux : choisissez-en
 				une.</strong>
 			</p>
 
@@ -322,11 +322,11 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong><code>runOnly</code> doit avoir exactement cette forme d'objet, et non celle d'un
+				<strong><code>runOnly</code> doit avoir exactement cette forme d’objet, et non celle d’un
 				simple tableau.</strong>{" "}
 				<code>runOnly: ['img-alt-present']</code> (un tableau brut) est{" "}
 				<strong>ignoré sans avertissement</strong> ; le moteur exécute alors toutes les règles.
-				C'est de loin l'erreur d'intégration la plus fréquente (voir{" "}
+				C’est de loin l’erreur d’intégration la plus fréquente (voir{" "}
 				<a href="/help/faq/">la FAQ</a>).
 			</p>
 			<DataTable
@@ -337,8 +337,8 @@ export function EngineOptionsContent() {
 					{ key: "meaning", label: "Signification", wrap: true },
 				]}
 				rows={[
-					{ field: <code>includeRuleIds</code>, type: <code>string[]</code>, meaning: "N'exécute que ces IDs de règle (plus, pour un ID composite, ses règles atomiques enfants)." },
-					{ field: <code>excludeRuleIds</code>, type: <code>string[]</code>, meaning: "N'exécute jamais celles-ci ; appliqué après l'inclusion." },
+					{ field: <code>includeRuleIds</code>, type: <code>string[]</code>, meaning: "N’exécute que ces IDs de règle (plus, pour un ID composite, ses règles atomiques enfants)." },
+					{ field: <code>excludeRuleIds</code>, type: <code>string[]</code>, meaning: "N’exécute jamais celles-ci ; appliqué après l’inclusion." },
 					{
 						field: (
 							<>
@@ -346,10 +346,10 @@ export function EngineOptionsContent() {
 							</>
 						),
 						type: <code>string[]</code>,
-						meaning: "Même correspondance que ci-dessus. Conservé comme champ distinct parce qu'en interne les règles s'appellent « tests » (l'unité exécutable atomique) ; fonctionnellement identique à includeRuleIds/excludeRuleIds aujourd'hui.",
+						meaning: "Même correspondance que ci-dessus. Conservé comme champ distinct parce qu’en interne les règles s’appellent « tests » (l’unité exécutable atomique) ; fonctionnellement identique à includeRuleIds/excludeRuleIds aujourd’hui.",
 					},
-					{ field: <code>tags</code>, type: <code>string[]</code>, meaning: "N'exécute que les règles portant au moins un de ces tags (par ex. wcag412, wcag2aa, best-practice)." },
-					{ field: <code>excludeTags</code>, type: <code>string[]</code>, meaning: "N'exécute jamais les règles portant l'un de ces tags ; appliqué après l'inclusion." },
+					{ field: <code>tags</code>, type: <code>string[]</code>, meaning: "N’exécute que les règles portant au moins un de ces tags (par ex. wcag412, wcag2aa, best-practice)." },
+					{ field: <code>excludeTags</code>, type: <code>string[]</code>, meaning: "N’exécute jamais les règles portant l’un de ces tags ; appliqué après l’inclusion." },
 					{
 						field: <code>includeMode</code>,
 						type: (
@@ -357,7 +357,7 @@ export function EngineOptionsContent() {
 								<code>'and'</code> | <code>'or'</code>
 							</>
 						),
-						meaning: "Lorsqu'une inclusion par ID et une inclusion par tag sont toutes deux fournies : 'and' (par défaut) exige qu'une règle satisfasse les deux ; 'or' exécute une règle si elle satisfait l'une ou l'autre. Sans objet si vous n'utilisez qu'une seule dimension.",
+						meaning: "Lorsqu’une inclusion par ID et une inclusion par tag sont toutes deux fournies : 'and' (par défaut) exige qu’une règle satisfasse les deux ; 'or' exécute une règle si elle satisfait l’une ou l’autre. Sans objet si vous n’utilisez qu’une seule dimension.",
 					},
 				]}
 			/>
@@ -383,14 +383,14 @@ export function EngineOptionsContent() {
 			<h3 id="filtering-by-wcag-version">Filtrer par version de WCAG (2.0, 2.1, 2.2)</h3>
 			<p>
 				Chaque règle et chaque composite porte exactement un tag de niveau indiquant sa version
-				WCAG d'origine : <code>wcag2a</code>/<code>wcag2aa</code>/<code>wcag2aaa</code> pour un
+				WCAG d’origine : <code>wcag2a</code>/<code>wcag2aa</code>/<code>wcag2aaa</code> pour un
 				critère de succès du socle WCAG 2.0, <code>wcag21a</code>/<code>wcag21aa</code>/
 				<code>wcag21aaa</code> pour un critère introduit par WCAG 2.1 (par ex. <code>1.3.5</code>{" "}
 				Identifier la finalité des champs), <code>wcag22a</code>/<code>wcag22aa</code>/
 				<code>wcag22aaa</code> pour un critère introduit par WCAG 2.2 (par ex. <code>2.5.8</code>{" "}
 				Taille de la cible (minimum)). Une règle reçoit <strong>uniquement</strong> le tag de la
-				version d'origine réelle de son critère : un critère introduit en 2.1 ne porte jamais aussi{" "}
-				<code>wcag2aa</code>, puisqu'il n'existe pas pour une cible de conformité WCAG 2.0.
+				version d’origine réelle de son critère : un critère introduit en 2.1 ne porte jamais aussi{" "}
+				<code>wcag2aa</code>, puisqu’il n’existe pas pour une cible de conformité WCAG 2.0.
 			</p>
 			<p>
 				Comme les versions sont cumulatives (2.1 = 2.0 + nouveautés ; 2.2 = 2.0 + 2.1 +
@@ -415,34 +415,34 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Un critère va dans l'autre sens.</strong> WCAG 2.2 a retiré le critère 4.1.1
-				Analyse syntaxique, le seul critère jamais supprimé plutôt qu'ajouté. Une règle qui lui
-				est associée porte son tag d'origine 2.0 (<code>wcag2a</code>) comme toute autre règle du
+				<strong>Un critère va dans l’autre sens.</strong> WCAG 2.2 a retiré le critère 4.1.1
+				Analyse syntaxique, le seul critère jamais supprimé plutôt qu’ajouté. Une règle qui lui
+				est associée porte son tag d’origine 2.0 (<code>wcag2a</code>) comme toute autre règle du
 				socle, plus <code>wcag22-removed</code>, et les ensembles de tags par version ci-dessus
-				l'incluent donc sous une cible 2.2, où elle n'a pas sa place.
+				l’incluent donc sous une cible 2.2, où elle n’a pas sa place.
 			</p>
 			<p>
-				Vous n'avez rien à faire pour autant. Le moteur résout une{" "}
+				Vous n’avez rien à faire pour autant. Le moteur résout une{" "}
 				<strong>version WCAG cible</strong> pour chaque exécution et, lorsque cette cible est 2.2,
 				une règle <code>wcag22-removed</code> ne peut pas renvoyer <code>fail</code> : elle
-				s'exécute toujours et signale toujours chaque occurrence trouvée, mais son résultat est
+				s’exécute toujours et signale toujours chaque occurrence trouvée, mais son résultat est
 				converti en <code>cantTell</code> et le résultat porte un champ{" "}
 				<code>wcagVersionScope</code> qui en explique la raison (voir{" "}
-				<a href="/results-reports/output-schema/">le schéma de sortie</a>). Rien n'est supprimé
-				en silence, et une exécution 2.2 n'est pas bloquée par un critère que 2.2 ne contient pas.
+				<a href="/results-reports/output-schema/">le schéma de sortie</a>). Rien n’est supprimé
+				en silence, et une exécution 2.2 n’est pas bloquée par un critère que 2.2 ne contient pas.
 			</p>
 			<p>La version cible est résolue dans cet ordre :</p>
 			<ol>
 				<li>
 					<code>engineOptions.wcagVersion</code> (<code>'2.0'</code>, <code>'2.1'</code> ou{" "}
-					<code>'2.2'</code>), si vous l'avez défini.
+					<code>'2.2'</code>), si vous l’avez défini.
 				</li>
 				<li>
-					Les tags d'origine de version de votre propre filtre : un ensemble qui s'arrête à{" "}
+					Les tags d’origine de version de votre propre filtre : un ensemble qui s’arrête à{" "}
 					<code>wcag21a</code>/<code>wcag21aa</code> se lit comme une cible 2.1, un ensemble qui
 					contient un tag <code>wcag22*</code> comme une cible 2.2, un ensemble ne contenant que
 					des tags <code>wcag2*</code> comme une cible 2.0. Seuls ces neuf tags comptent : un tag
-					de critère (<code>wcag411</code>) ou <code>best-practice</code> ne dit rien d'une
+					de critère (<code>wcag411</code>) ou <code>best-practice</code> ne dit rien d’une
 					version.
 				</li>
 				<li>
@@ -465,7 +465,7 @@ export function EngineOptionsContent() {
 			/>
 			<p>
 				La cible résolue est renvoyée dans chaque résultat sous <code>engine.wcagVersion</code>,
-				ce qui vous permet de vérifier celle qu'une exécution a réellement utilisée.
+				ce qui vous permet de vérifier celle qu’une exécution a réellement utilisée.
 			</p>
 			<p>
 				Si vous préférez ne pas voir du tout la règle sous 2.2, excluez-la purement et
@@ -482,10 +482,10 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<code>duplicate-id</code> est aujourd'hui la seule règle qui porte ce tag. Si vous la
+				<code>duplicate-id</code> est aujourd’hui la seule règle qui porte ce tag. Si vous la
 				laissez, elle signale toujours un vrai problème (un id dupliqué casse{" "}
-				<code>&lt;label for&gt;</code>, les liens d'ancre et <code>getElementById</code>, quoi
-				qu'en dise la norme) ; ce n'est simplement pas un échec de conformité 2.2.
+				<code>&lt;label for&gt;</code>, les liens d’ancre et <code>getElementById</code>, quoi
+				qu’en dise la norme) ; ce n’est simplement pas un échec de conformité 2.2.
 			</p>
 
 			<h3>Avec <code>engineOptions</code> (sans <code>runOnly</code>)</h3>
@@ -571,8 +571,8 @@ export function EngineOptionsContent() {
 
 			<h3 id="rule-scoped-excludeselectors"><code>excludeSelectors</code> par règle</h3>
 			<p>
-				Le <code>excludeSelectors</code> de premier niveau s'applique à <em>toutes</em> les
-				règles : impossible, avec lui seul, d'exclure un élément d'une seule règle tout en
+				Le <code>excludeSelectors</code> de premier niveau s’applique à <em>toutes</em> les
+				règles : impossible, avec lui seul, d’exclure un élément d’une seule règle tout en
 				continuant à lui appliquer toutes les autres. <code>rules[ruleId].excludeSelectors</code>{" "}
 				comble ce manque : il restreint les candidats pour <strong>cette seule règle</strong>, en
 				plus de la liste globale (jamais à sa place).
@@ -594,39 +594,39 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				Pourquoi en avoir besoin : le <code>&lt;mat-select&gt;</code> d'<span lang="en">Angular Material</span> construit
-				sa structure ARIA interne d'une manière qui déclenche un faux positif sur{" "}
+				Pourquoi en avoir besoin : le <code>&lt;mat-select&gt;</code> d’<span lang="en">Angular Material</span> construit
+				sa structure ARIA interne d’une manière qui déclenche un faux positif sur{" "}
 				<code>aria-required-children</code> en particulier, alors que le composant est correct par
-				ailleurs. Avec le seul <code>excludeSelectors</code> global, l'unique moyen de faire taire
+				ailleurs. Avec le seul <code>excludeSelectors</code> global, l’unique moyen de faire taire
 				ce faux positif est <code>excludeSelectors: ['mat-select']</code>, ce qui masque aussi{" "}
 				<code>mat-select</code> à <em>toutes les autres règles</em>, dont{" "}
 				<code>contrast-minimum</code> et <code>aria-allowed-attr</code>, et supprime en silence
-				une couverture réelle avec laquelle ces vérifications n'avaient aucun problème. L'exemple
+				une couverture réelle avec laquelle ces vérifications n’avaient aucun problème. L’exemple
 				ci-dessus laisse <code>mat-select</code> entièrement visible pour toutes les règles sauf
 				celle qui se trompe à son sujet.
 			</p>
 			<p>
-				Les exclusions effectives d'une règle donnée sont l'<strong>union</strong> de la liste
-				globale et de la liste propre à cette règle : un élément qui correspond à l'une ou à
-				l'autre est retiré des candidats de cette règle. Une règle dont tous les éléments qui
+				Les exclusions effectives d’une règle donnée sont l’<strong>union</strong> de la liste
+				globale et de la liste propre à cette règle : un élément qui correspond à l’une ou à
+				l’autre est retiré des candidats de cette règle. Une règle dont tous les éléments qui
 				auraient échoué sont exclus de cette façon renvoie <code>outcome: 'pass'</code> ou{" "}
-				<code>'notApplicable'</code> (selon sa propre convention en l'absence de candidats), avec{" "}
+				<code>'notApplicable'</code> (selon sa propre convention en l’absence de candidats), avec{" "}
 				<code>occurrences: []</code>, et jamais <code>outcome: 'fail'</code> avec un tableau{" "}
 				<code>occurrences</code> vide, puisque cette forme exacte est réservée ailleurs dans le
 				schéma pour signifier « cette règle a levé une exception » (voir{" "}
 				<a href="/results-reports/output-schema/">le schéma de sortie</a>).
 			</p>
 			<p>
-				Accepte les mêmes formes que l'option globale : un tableau (
+				Accepte les mêmes formes que l’option globale : un tableau (
 				<code>['mat-select', 'mat-stepper']</code>) ou une chaîne séparée par des virgules (
 				<code>'mat-select, mat-stepper'</code>).
 			</p>
 			<p>
 				Si vous utilisez un package de binding (<code>@surea11y/binding-base</code> et ses
 				wrappers Playwright/Puppeteer), vérifiez dans le README de ce binding si sa méthode de
-				builder <code>.exclude()</code> dispose déjà d'une forme par règle : il s'agit d'une forme
-				d'<code>engineOptions</code> documentée ici au niveau du moteur, et tous les bindings ne
-				l'ont pas encore reprise.
+				builder <code>.exclude()</code> dispose déjà d’une forme par règle : il s’agit d’une forme
+				d’<code>engineOptions</code> documentée ici au niveau du moteur, et tous les bindings ne
+				l’ont pas encore reprise.
 			</p>
 
 			<h2>Recettes : combiner les options pour des scénarios réels</h2>
@@ -647,9 +647,9 @@ export function EngineOptionsContent() {
 				<strong>Auditeur humain qui fait une passe approfondie sur le contraste dans un vrai
 				navigateur</strong> : sacrifiez une partie de la protection contre les faux positifs pour
 				obtenir davantage de constats, et vérifiez la mise en page réelle (pas seulement le style
-				calculé) puisque c'est une vraie page qui est pilotée. Exemple avec{" "}
+				calculé) puisque c’est une vraie page qui est pilotée. Exemple avec{" "}
 				<code>page.evaluate</code> de Puppeteer (qui accepte plusieurs arguments) ; si vous êtes
-				sur Playwright, regroupez d'abord les quatre arguments positionnels dans un seul objet
+				sur Playwright, regroupez d’abord les quatre arguments positionnels dans un seul objet
 				(voir <a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>) :
 			</p>
 			<CodeBlock
@@ -662,7 +662,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Nouvelle analyse ciblée d'une zone après une modification de l'interface, sans le
+				<strong>Nouvelle analyse ciblée d’une zone après une modification de l’interface, sans le
 				shadow DOM</strong> : utile dans un test au niveau composant où seul le widget que vous
 				venez de modifier vous intéresse :
 			</p>
@@ -677,7 +677,7 @@ export function EngineOptionsContent() {
 			<p>
 				<strong>Sortie reproductible pour les tests de snapshot</strong> : fixez un{" "}
 				<code>timestamp</code> pour que deux exécutions sur le même HTML produisent un JSON
-				identique à l'octet près, et demandez la ventilation des temps de débogage :
+				identique à l’octet près, et demandez la ventilation des temps de débogage :
 			</p>
 			<CodeBlock
 				lang="js"
@@ -716,19 +716,19 @@ export function EngineOptionsContent() {
 				]}
 			/>
 
-			<h2><code>customRules</code> : règles enregistrées à l'exécution</h2>
+			<h2><code>customRules</code> : règles enregistrées à l’exécution</h2>
 			<p>
 				Toutes les règles livrées sont intégrées à <code>src/core.js</code> au moment du build.{" "}
-				<code>engineOptions.customRules</code> est la porte de sortie à l'exécution : un tableau
-				de descripteurs de règles enregistrés pour ce seul appel. Rien n'est ajouté au catalogue
-				statique et rien ne persiste d'un appel à l'autre. C'est voulu, pas une limitation à
+				<code>engineOptions.customRules</code> est la porte de sortie à l’exécution : un tableau
+				de descripteurs de règles enregistrés pour ce seul appel. Rien n’est ajouté au catalogue
+				statique et rien ne persiste d’un appel à l’autre. C’est voulu, pas une limitation à
 				contourner : surea11y reçoit déjà des <code>engineOptions</code> neuves à chaque appel,
-				sans configuration globale mutable (contrairement à d'autres moteurs, qui exigent une
+				sans configuration globale mutable (contrairement à d’autres moteurs, qui exigent une
 				étape <code>configure()</code>/<code>reset()</code> sur un runtime partagé), et les
 				règles personnalisées suivent ce même modèle par appel.
 			</p>
 			<p>
-				Appeler directement la bibliothèque n'est qu'une des possibilités ; la CLI expose aussi
+				Appeler directement la bibliothèque n’est qu’une des possibilités ; la CLI expose aussi
 				cette fonction via <code>--custom-rules &lt;path&gt;</code> (un fichier local, chargé une
 				fois par analyse). Voir{" "}
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#custom-rules">
@@ -737,7 +737,7 @@ export function EngineOptionsContent() {
 				.
 			</p>
 			<p>
-				Un descripteur a <em>la même forme que l'export d'un module de règle interne</em> : si
+				Un descripteur a <em>la même forme que l’export d’un module de règle interne</em> : si
 				vous savez déjà écrire un fichier de règle pour ce moteur, vous connaissez déjà cette
 				API :
 			</p>
@@ -756,10 +756,10 @@ export function EngineOptionsContent() {
 			<ul>
 				<li>
 					<code>runInPage</code>/<code>applicability</code> peut être une{" "}
-					<strong>vraie fonction</strong> ou une <strong>chaîne contenant le source d'une
-					fonction</strong> (c'est-à-dire <code>fn.toString()</code>). Passez une vraie fonction
+					<strong>vraie fonction</strong> ou une <strong>chaîne contenant le source d’une
+					fonction</strong> (c’est-à-dire <code>fn.toString()</code>). Passez une vraie fonction
 					lorsque <code>engineOptions</code> ne quitte jamais le realm JS courant (usage simple
-					sous Node/jsdom). Passez une chaîne dans le cas contraire, par exemple lors d'un appel
+					sous Node/jsdom). Passez une chaîne dans le cas contraire, par exemple lors d’un appel
 					Playwright <code>page.evaluate(runa11yCoreInPage, {"{ engineOptions }"})</code>, où{" "}
 					<code>engineOptions</code> franchit une frontière JSON/structured clone qui ne peut pas
 					transporter une référence <code>Function</code> vivante, mais peut transporter une
@@ -769,33 +769,33 @@ export function EngineOptionsContent() {
 				</li>
 				<li>
 					<code>meta</code> bénéficie des mêmes valeurs par défaut et de la même validation
-					qu'une règle intégrée au build : omettez tout ce dont vous n'avez pas besoin ;{" "}
+					qu’une règle intégrée au build : omettez tout ce dont vous n’avez pas besoin ;{" "}
 					<code>severity</code> vaut par défaut <code>moderate</code>, <code>confidence</code>{" "}
 					<code>medium</code>, <code>type</code> <code>automatic</code>, etc.
 				</li>
 				<li>
-					Une règle personnalisée dont l'<code>id</code> entre en collision avec celui d'une règle
+					Une règle personnalisée dont l’<code>id</code> entre en collision avec celui d’une règle
 					intégrée <strong>la remplace pour cette analyse</strong>, au lieu que les deux
-					s'exécutent. Comme une règle personnalisée homonyme a autant de chances d'être une
-					collision accidentelle qu'un remplacement délibéré, chaque collision est signalée de
+					s’exécutent. Comme une règle personnalisée homonyme a autant de chances d’être une
+					collision accidentelle qu’un remplacement délibéré, chaque collision est signalée de
 					deux façons : un <code>console.warn</code> qui nomme le ou les ids, et un tableau{" "}
-					<code>overriddenBuiltinIds</code> au premier niveau du résultat (vide en l'absence de
+					<code>overriddenBuiltinIds</code> au premier niveau du résultat (vide en l’absence de
 					collision). Voir <a href="/results-reports/output-schema/">le schéma de sortie</a>.
 				</li>
 				<li>
-					Un descripteur invalide (<code>id</code> absent ou qui n'est pas une chaîne, ou{" "}
-					<code>runInPage</code> qui n'est ni une fonction ni une chaîne source reconstructible)
-					est ignoré sans avertissement ; le reste de l'analyse, y compris toutes les règles
-					intégrées, s'exécute normalement. Ce n'est pas une lacune de validation à corriger :
-					une règle personnalisée est du code arbitraire fourni par l'appelant, donc « écarter
-					cette seule entrée, ne pas interrompre l'analyse » est le comportement par défaut le
-					plus sûr, à l'image d'une règle <em>intégrée</em> qui lève une exception et qui est
+					Un descripteur invalide (<code>id</code> absent ou qui n’est pas une chaîne, ou{" "}
+					<code>runInPage</code> qui n’est ni une fonction ni une chaîne source reconstructible)
+					est ignoré sans avertissement ; le reste de l’analyse, y compris toutes les règles
+					intégrées, s’exécute normalement. Ce n’est pas une lacune de validation à corriger :
+					une règle personnalisée est du code arbitraire fourni par l’appelant, donc « écarter
+					cette seule entrée, ne pas interrompre l’analyse » est le comportement par défaut le
+					plus sûr, à l’image d’une règle <em>intégrée</em> qui lève une exception et qui est
 					cantonnée à un <code>cantTell</code> pour cette règle au lieu de faire planter
-					l'exécution.
+					l’exécution.
 				</li>
 				<li>
 					Les résultats apparaissent dans <code>checksResults</code> exactement comme ceux de
-					n'importe quelle autre règle, y compris le remplissage automatique de{" "}
+					n’importe quelle autre règle, y compris le remplissage automatique de{" "}
 					<code>selector</code>/<code>html</code>/<code>structuralPath</code> pour les occurrences{" "}
 					<code>fail</code>/<code>cantTell</code> qui ne joignent que{" "}
 					<code>{"{ __node }"}</code> (voir{" "}
@@ -803,9 +803,9 @@ export function EngineOptionsContent() {
 				</li>
 			</ul>
 
-			<h2><code>contextSelector</code> (2ᵉ argument du runner, pas un champ d'<code>engineOptions</code>)</h2>
+			<h2><code>contextSelector</code> (2ᵉ argument du runner, pas un champ d’<code>engineOptions</code>)</h2>
 			<p>
-				Un sélecteur CSS (ou un tableau de sélecteurs) qui limite l'analyse à un ou plusieurs
+				Un sélecteur CSS (ou un tableau de sélecteurs) qui limite l’analyse à un ou plusieurs
 				sous-arbres, résolu via <code>document.querySelectorAll</code> (toutes les
 				correspondances, pas seulement la première), avec repli sur{" "}
 				<code>document.documentElement</code>/<code>document.body</code> si rien ne correspond.
@@ -814,18 +814,18 @@ export function EngineOptionsContent() {
 			<ul>
 				<li>
 					<strong>Une chaîne unique</strong> peut elle-même être une liste de sélecteurs séparés
-					par des virgules (sémantique d'union CSS ordinaire) : <code>'#a, #b'</code> analyse à
+					par des virgules (sémantique d’union CSS ordinaire) : <code>'#a, #b'</code> analyse à
 					la fois <code>#a</code> et <code>#b</code>.
 				</li>
 				<li>
-					<strong>Un tableau de chaînes</strong> analyse l'union des correspondances de chaque
+					<strong>Un tableau de chaînes</strong> analyse l’union des correspondances de chaque
 					sélecteur : <code>['#a', '.card']</code> se comporte comme <code>'#a, .card'</code> ; la
 					forme tableau existe pour les appelants qui construisent la liste par programme.
 				</li>
 				<li>
-					Les zones qui se chevauchent ou s'imbriquent sont automatiquement dédupliquées : un
-					élément atteignable depuis plusieurs racines correspondantes n'est jamais signalé
-					qu'une fois, et non une fois par zone.
+					Les zones qui se chevauchent ou s’imbriquent sont automatiquement dédupliquées : un
+					élément atteignable depuis plusieurs racines correspondantes n’est jamais signalé
+					qu’une fois, et non une fois par zone.
 				</li>
 			</ul>
 		</>

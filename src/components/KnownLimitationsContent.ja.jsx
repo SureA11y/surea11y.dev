@@ -48,7 +48,7 @@ export function KnownLimitationsContent() {
 			<ul>
 				<li>
 					<strong>jsdom（Node上で動き、本物のブラウザーを使わない）にはCSSのレイアウトエンジンがありません。</strong>
-					実際のジオメトリーが必要なルール、特に
+					実際のジオメトリが必要なルール、特に
 					<code>target-size-minimum</code>
 					（WCAG 2.5.8。実際の
 					<code>getBoundingClientRect()</code>
@@ -64,7 +64,7 @@ export function KnownLimitationsContent() {
 					</strong>
 					WCAG 1.4.12とその元になっているACTルールは、ソフトな折り返し位置を含むテキストにだけ適用されますが、静的なスキャンではそれを確定できません。
 					<code>avoid-inline-spacing</code>
-					はデフォルトでテキストが折り返すものとして扱うので、基準値を下回る値を通常どおり強制していればfailになります。レイアウトなしでも
+					はデフォルトでテキストが折り返すものとして扱うので、基準値を下回る値を強制するふつうのケースは引き続きfailになります。レイアウトなしでも
 					<em>見て取れる</em>
 					理由で折り返しがありえない場合（テキストの折り返しが禁止されている、横スクロールする祖先の中にある固定幅の要素など）は、代わりに
 					<code>cantTell</code>

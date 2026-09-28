@@ -84,7 +84,7 @@ export function FaqContent() {
 						<code>visibility: hidden</code>, <code>hidden</code> oder ein <code>inert</code>-Vorfahre.
 						Die meisten Regeln überspringen Inhalte, die für assistive Technologien ohnehin
 						unsichtbar sind, denn ein verborgenes Element zu prüfen wäre sinnlos und könnte ein
-						irreführendes <code>fail</code> für Inhalte erzeugen, auf die kein Nutzer trifft.
+						irreführendes <code>fail</code> für Inhalte erzeugen, auf die niemand trifft.
 						Einige Regeln setzen diese Einschränkung ausdrücklich aus, wo sie keinen Sinn ergäbe
 						(z. B. <code>no-autoplay-audio</code> — verborgenes Audio spielt trotzdem Ton ab) —
 						prüfen Sie den Kopfkommentar der jeweiligen Regeldatei (
@@ -105,10 +105,10 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2>„Bedeutet ein sauberer Scan (überall <code>pass</code>), dass die Seite WCAG-konform ist?“</h2>
+				<h2>„Bedeutet ein Scan ohne Befunde (überall <code>pass</code>), dass die Seite WCAG-konform ist?“</h2>
 				<p>
 					Nein — siehe <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
-					<strong>Ein <code>pass</code> bedeutet, dass jede <em>automatisierbare</em> Prüfung sauber war.</strong> Ein
+					<strong>Ein <code>pass</code> bedeutet, dass jede <em>automatisierbare</em> Prüfung ohne Befund blieb.</strong> Ein
 					nennenswerter Teil der WCAG erfordert menschliches Urteil (zutreffende Alternativtexte,
 					verständliche Fehlermeldungen) oder dynamische Tests, die die Architektur dieser Engine
 					überhaupt nicht leisten kann (Tastaturfallen, Reflow beim Zoomen) — siehe{" "}
@@ -137,9 +137,9 @@ export function FaqContent() {
 			<article>
 				<h2>„Was passiert, wenn eine Locale nur teilweise übersetzt ist?“</h2>
 				<p>
-					<strong>Fehlende Schlüssel fallen pro String auf Englisch zurück (nie ein leeres oder kaputtes
-					Ergebnis), sodass eine unvollständige Locale sauber degradiert, statt ganz zu
-					scheitern.</strong> Siehe <a href="/configuration/locales/"><code>I18N.md</code></a> für
+					<strong>Fehlende Schlüssel fallen einzeln auf den englischen Text zurück (nie ein leeres oder
+					kaputtes Ergebnis): Wo in einer unvollständigen Locale eine Übersetzung fehlt, erscheint
+					die englische Meldung, statt dass die Ausgabe ganz fehlschlägt.</strong> Siehe <a href="/configuration/locales/"><code>I18N.md</code></a> für
 					den Mechanismus und die aktuelle Abdeckung. Die Gleichheit der Schlüssel wird
 					erzwungen, nicht erhofft: <code>npm run i18n:sync</code> überträgt jeden neuen oder
 					umbenannten <code>en.json</code>-Schlüssel in alle anderen Locale-Dateien, und der

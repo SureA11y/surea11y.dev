@@ -4,7 +4,7 @@ export function ConformanceContent() {
 	return (
 		<>
 			<p>
-				<strong>Ein sauberer Scan ist für sich allein keine Aussage über WCAG-Konformität</strong> — und
+				<strong>Ein Scan ohne Befunde ist für sich allein keine Aussage über WCAG-Konformität</strong> — und
 				so zu tun, als wäre er es, ist genau die Art von Übertreibung, die diese Engine ablehnt. Dieser
 				Abschnitt zeigt, wie sich einzelne Regelergebnisse tatsächlich zu einem Urteil über ein
 				Erfolgskriterium zusammensetzen, was dieses Urteil ehrlicherweise abdeckt und was nicht, und wie

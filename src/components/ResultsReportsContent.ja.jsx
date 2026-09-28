@@ -5,7 +5,7 @@ const formatRows = [
 	{ format: <code>JSON</code>, use: "連携、保存、独自の処理", audience: "開発者、プラットフォーム" },
 	{ format: "HTML", use: "特定の1回のスキャンを人がレビューする", audience: "QA、監査" },
 	{ format: "SARIF", use: "コード解析ツールとの連携", audience: "開発チーム、セキュリティチーム" },
-	{ format: "EARL", use: "相互運用性とACT適合の証跡", audience: "標準化、研究、適合性" },
+	{ format: "EARL", use: "相互運用性、ACTルール実装の根拠", audience: "標準化、研究、適合性" },
 ];
 
 export function ResultsReportsContent() {
@@ -46,7 +46,7 @@ export function ResultsReportsContent() {
 			<p>
 				変換処理を自分で書かなくても、スキャン結果を<span lang="en">GitHub Code Scanning</span>やその他のSARIF対応ダッシュボードへ直接渡せます。違反は内容ベースの安定したフィンガープリント付きでSARIFの結果に対応付けられるため、
 				<a href="/conformance/baseline/">ベースライン／許可リスト</a>
-				のフィルタリングもきれいに機能し、ダッシュボードは行番号がずれるたびに検出結果を見失うことなく、コミットをまたいで追跡できます。
+				のフィルタリングも確実に機能し、ダッシュボードは行番号がずれるたびに検出結果を見失うことなく、コミットをまたいで追跡できます。
 				<a href="/results-reports/sarif-report/">SARIFレポート</a>
 				を参照してください。
 			</p>
@@ -55,7 +55,7 @@ export function ResultsReportsContent() {
 			<p>
 				W3CのEARL/JSON-LD形式の実装報告で、
 				<strong>失敗だけでなくすべてのルールの判定結果を表明します</strong>
-				。<span lang="en">ACT Rules</span>コミュニティグループが、エンジンが主張どおりの実装をしていることの証拠として受け付ける形式です。ACTへの適合を、ただ主張するのではなく検証可能にする必要があるときに有用な証明になります。
+				。<span lang="en">ACT Rules</span>コミュニティグループが、エンジンが主張どおりの実装をしていることの証拠として受け付ける形式です。ACTルールの実装状況についての主張を、言葉だけでなく検証できる形で示したいときに役立つ根拠になります。
 				<a href="/results-reports/earl-report/">EARLレポート</a>
 				を参照してください。
 			</p>

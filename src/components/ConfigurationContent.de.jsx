@@ -15,9 +15,9 @@ export function ConfigurationContent() {
 			<p>
 				Beschränken Sie einen Scan auf genau die Regeln, die Sie wollen — nach ID, nach Tag oder
 				nach WCAG-Version (2.0, 2.1 oder 2.2) —, damit ein Lauf das meldet, wofür Sie tatsächlich
-				verantwortlich sind, nicht mehr und nicht weniger. Bringen Sie bekanntermaßen
-				problematische Widgets global oder für eine einzelne Regel zum Schweigen, ohne überall
-				sonst Abdeckung zu verlieren, stellen Sie ein, wie streng die Kontrastprüfungen für einen
+				verantwortlich sind, nicht mehr und nicht weniger. Nehmen Sie Widgets, die
+				bekanntermaßen störende Befunde liefern, global oder für eine einzelne Regel vom Scan
+				aus, ohne überall sonst Abdeckung zu verlieren, stellen Sie ein, wie streng die Kontrastprüfungen für einen
 				menschlichen Auditor im Vergleich zu einem unbeaufsichtigten CI-Gate sein sollen, und
 				ergänzen Sie eine organisationsspezifische Regel neben den eingebauten, wenn der Katalog
 				etwas nicht abdeckt, das Ihnen wichtig ist. Die vollständige Referenz finden Sie unter{" "}
@@ -39,8 +39,8 @@ export function ConfigurationContent() {
 			<p>
 				Liefern Sie Befunde, mit denen Ihr Team tatsächlich arbeiten kann, in der Sprache, die es
 				am schnellsten liest — jeder Regeltitel sowie Zusammenfassung und Hinweis jedes
-				Vorkommens werden aus einem schlüsselbasierten Wörterbuch aufgelöst, mit einem sauberen
-				Fallback pro String auf Englisch statt einer Leerstelle oder eines Fehlers. Heute sind
+				Vorkommens werden aus einem schlüsselbasierten Wörterbuch aufgelöst, mit einem Fallback
+				auf Englisch pro String statt einer Leerstelle oder eines Fehlers. Heute sind
 				vier Sprachen verfügbar (Englisch, Französisch, Deutsch, Spanisch), und ein Ergebnis gibt
 				immer genau an, welche Locale verwendet wurde, sodass nichts unbemerkt schlechter wird.
 				Abdeckung und wie Sie ein eigenes Wörterbuch bereitstellen, finden Sie unter{" "}
