@@ -34,4 +34,12 @@ npm install
 npm run dev      # localhost:4321
 npm run build    # outputs to ./dist/
 npm run preview  # preview a production build locally
+npm run check:links  # after a build: broken internal links/anchors
+npm run i18n:check   # translation coverage per language
 ```
+
+## Languages
+
+English lives at the root, other languages under their own prefix
+(`/es/…`). The language list is `src/i18n/locales.ts`; the steps to add
+one are under "Adding a language" in `CLAUDE.md`.
