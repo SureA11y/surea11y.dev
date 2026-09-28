@@ -19,7 +19,7 @@
 		"title": "<area> muss einen zugänglichen Namen haben",
 		"description": "Prüft, dass <area>-Elemente über alt, aria-label/aria-labelledby oder title einen nicht leeren zugänglichen Namen haben.",
 		"applicability": "Gilt für <area>-Elemente, die: 1) in einer <map> liegen, auf die ein <img usemap> verweist, UND 2) ein nicht leeres href tragen (ein <area> ohne href ist laut HTML-Spezifikation überhaupt kein Hyperlink und hat nichts, was diese Regel benennen müsste), UND 3) deren verweisendes <img> tatsächlich gerendert wird (hidden/display:none/ visibility schließen es aus; aria-hidden nicht, da <area> kein DOM-Nachfahre von <img> ist), UND 4) das <area> selbst im Accessibility Tree berücksichtigt wird. hidden, display:none und inert auf dem <area> oder seiner <map> schließen es nicht aus: Keines der beiden Elemente erzeugt eine Box, daher ignoriert das Hit-Testing von Image-Maps in einem echten Browser alle drei an dieser Stelle (geprüft mit Chromium und Firefox); nur dieselben Mechanismen auf einem echten Vorfahren des gesamten <img>+<map>-Paars schließen es aus.",
-		"expectation": "Jedes anwendbare <area>-Element hat einen nicht leeren zugänglichen Namen aus alt, aria-label/aria-labelledby oder title. Ein <area> in einer verwendeten Map ist immer ein Link, daher ist alt=\"\" hier nicht dekorativ wie bei <img>: Ein leeres alt scheitert genauso wie ein fehlendes, sofern kein anderer Mechanismus einen Namen liefert.",
+		"expectation": "Jedes anwendbare <area>-Element hat einen nicht leeren zugänglichen Namen aus alt, aria-label/aria-labelledby oder title. Ein <area> in einer verwendeten Map ist immer ein Link, daher ist alt=\"\" hier nicht dekorativ wie bei <img>: Ein leeres alt ist genauso ein Verstoß wie ein fehlendes, sofern kein anderer Mechanismus einen Namen liefert.",
 		"examples": [
 			{
 				"state": "pass",
@@ -27,7 +27,7 @@
 			},
 			{
 				"state": "fail",
-				"explanation": "Das `<area>` ist ein Link (hat `href`) in einer verwendeten Map, aber ohne `alt`."
+				"explanation": "Das `<area>` ist ein Link (hat `href`) in einer verwendeten Map, hat aber kein `alt`."
 			}
 		]
 	},
@@ -39,11 +39,11 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Die Area hat in einer verwendeten Image-Map einen nicht leeren Alternativtext – prüfen Sie, ob „[[en:Room 12]]“ diesen Bereich zutreffend beschreibt."
+				"explanation": "Das `<area>` hat in einer verwendeten Image-Map einen nicht leeren Alternativtext – prüfen Sie, ob „[[en:Room 12]]“ diesen Bereich zutreffend beschreibt."
 			},
 			{
 				"state": "na",
-				"explanation": "Kein `<img usemap>` verweist auf diese Map, daher wird die Area weder per Hit-Testing erfasst noch gerendert – außerhalb des Geltungsbereichs."
+				"explanation": "Kein `<img usemap>` verweist auf diese Map, daher wird das `<area>` weder per Hit-Testing erfasst noch gerendert – außerhalb des Geltungsbereichs."
 			}
 		]
 	},
@@ -83,7 +83,7 @@
 		"title": "aria-braillelabel/aria-brailleroledescription brauchen eine Entsprechung außerhalb von Braille",
 		"description": "Prüft, dass Elemente mit aria-braillelabel auch einen regulären zugänglichen Namen haben und Elemente mit aria-brailleroledescription auch aria-roledescription.",
 		"applicability": "Elemente mit einem nicht leeren `aria-braillelabel`- und/oder einem nicht leeren `aria-brailleroledescription`-Attribut.",
-		"expectation": "Laut ARIA-Spezifikation ist `aria-braillelabel` eine Braille-spezifische ERGÄNZUNG zum regulären zugänglichen Namen des Elements (kein Ersatz dafür), und `aria-brailleroledescription` ist eine Ergänzung zu `aria-roledescription`. Ein Element muss daher zusätzlich Folgendes haben:\n\n- einen nicht leeren zugänglichen Namen aus einem Mechanismus außerhalb von Braille, wenn es `aria-braillelabel` deklariert;\n- ein nicht leeres `aria-roledescription`, wenn es `aria-brailleroledescription` deklariert.\n\nWird eines der Braille-spezifischen Attribute als EINZIGER Benennungsmechanismus verwendet, erhalten assistive Technologien ohne Braille (die meisten Screenreader, Sprachsteuerung usw.) überhaupt keinen zugänglichen Namen bzw. keine Rollenbeschreibung. Wird als CANTTELL statt FAIL gemeldet: aria-brailleroledescription ohne aria-roledescription erreicht überhaupt niemanden, und ein fehlender zugänglicher Name ist bei Rollen, die einen verlangen, Sache der Benennungsregeln. Dass das Braille-Attribut ohne Gegenstück steht, sollte sichtbar werden, ist aber selbst kein Verstoß gegen ein Kriterium.",
+		"expectation": "Laut ARIA-Spezifikation ist `aria-braillelabel` eine Braille-spezifische ERGÄNZUNG zum regulären zugänglichen Namen des Elements (kein Ersatz dafür), und `aria-brailleroledescription` ist eine Ergänzung zu `aria-roledescription`. Ein Element muss daher zusätzlich Folgendes haben:\n\n- einen nicht leeren zugänglichen Namen aus einem Mechanismus außerhalb von Braille, wenn es `aria-braillelabel` deklariert;\n- ein nicht leeres `aria-roledescription`, wenn es `aria-brailleroledescription` deklariert.\n\nWird eines der Braille-spezifischen Attribute als EINZIGER Benennungsmechanismus verwendet, erhalten assistive Technologien ohne Braille (die meisten Screenreader, Sprachsteuerung usw.) überhaupt keinen zugänglichen Namen bzw. keine Rollenbeschreibung. Wird als CANTTELL statt FAIL gemeldet: aria-brailleroledescription ohne aria-roledescription erreicht überhaupt niemanden, und ein fehlender zugänglicher Name ist bei Rollen, die einen verlangen, Sache der Benennungsregeln. Dass das Braille-Attribut ohne Gegenstück steht, verdient einen Hinweis, ist aber selbst kein Verstoß gegen ein Kriterium.",
 		"examples": [
 			{
 				"state": "pass",
@@ -99,7 +99,7 @@
 		"title": "aria-checked einer nativen Checkbox/eines nativen Radiobuttons sollte dem tatsächlichen Zustand entsprechen",
 		"description": "Markiert ein natives <input type=\"checkbox\">/<input type=\"radio\">, dessen expliziter aria-checked-Wert vom tatsächlichen checked-/indeterminate-Zustand abweicht, zur manuellen Prüfung.",
 		"applicability": "Native `<input type=\"checkbox\">`- / `<input type=\"radio\">`-Elemente mit einem expliziten `aria-checked`-Attribut.",
-		"expectation": "`aria-checked` ist auf einer nativen Checkbox bzw. einem nativen Radiobutton redundant (der checked-Zustand der Rolle wird bereits nativ bereitgestellt). Setzt ein Autor es dennoch explizit, sollte es mit dem tatsächlichen Zustand des Elements übereinstimmen, sonst wird assistiven Technologien etwas anderes mitgeteilt, als sehende Nutzer wahrnehmen.",
+		"expectation": "`aria-checked` ist auf einer nativen Checkbox bzw. einem nativen Radiobutton redundant (der checked-Zustand der Rolle wird bereits nativ bereitgestellt). Setzt ein Autor es dennoch explizit, sollte es mit dem tatsächlichen Zustand des Elements übereinstimmen, sonst wird assistiven Technologien etwas anderes mitgeteilt, als sehende Nutzende wahrnehmen.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -115,7 +115,7 @@
 		"title": "aria-errormessage setzt aria-invalid mit einem Wert ungleich false voraus",
 		"description": "Prüft, dass Elemente mit aria-errormessage auch aria-invalid mit „true“, „grammar“ oder „spelling“ haben; andernfalls fällt die Fehlermeldung aus dem Accessibility Tree heraus.",
 		"applicability": "Elemente mit einem nicht leeren `aria-errormessage`-Attribut.",
-		"expectation": "Laut ARIA-Spezifikation wird `aria-errormessage` assistiven Technologien nur bereitgestellt, wenn `aria-invalid` mit einem anderen Wert als `\"false\"` vorhanden ist (also `\"true\"`, `\"grammar\"` oder `\"spelling\"`). Bei einem Element mit `aria-errormessage`, aber fehlendem oder auf `\"false\"` gesetztem `aria-invalid` fällt die Fehlermeldung stillschweigend aus dem Accessibility Tree heraus, obwohl Autoren fast immer wollen, dass sie bereitgestellt wird. Wird als CANTTELL statt FAIL gemeldet: aria-errormessage wird erst bereitgestellt, wenn aria-invalid gesetzt ist, der Verweis ist also derzeit wirkungslos. Ob das den Nutzer etwas kostet, hängt davon ab, ob die Meldung auf anderem Weg vermittelt wird (sichtbarer Text neben dem Feld, aria-describedby), was sich am statischen Markup nicht klären lässt.",
+		"expectation": "Laut ARIA-Spezifikation wird `aria-errormessage` assistiven Technologien nur bereitgestellt, wenn `aria-invalid` mit einem anderen Wert als `\"false\"` vorhanden ist (also `\"true\"`, `\"grammar\"` oder `\"spelling\"`). Bei einem Element mit `aria-errormessage`, aber fehlendem oder auf `\"false\"` gesetztem `aria-invalid` fällt die Fehlermeldung stillschweigend aus dem Accessibility Tree heraus, obwohl Autoren fast immer wollen, dass sie bereitgestellt wird. Wird als CANTTELL statt FAIL gemeldet: aria-errormessage wird erst bereitgestellt, wenn aria-invalid gesetzt ist, der Verweis ist also derzeit wirkungslos. Ob das Nutzenden schadet, hängt davon ab, ob die Meldung auf anderem Weg vermittelt wird (sichtbarer Text neben dem Feld, aria-describedby), was sich am statischen Markup nicht klären lässt.",
 		"examples": [
 			{
 				"state": "pass",
@@ -131,7 +131,7 @@
 		"title": "role-Attribut sollte keine veraltete oder für Autoren nicht empfohlene ARIA-Rolle verwenden",
 		"description": "Prüft, dass ein explizites role=\"\"-Attribut keine Rolle verwendet, die die WAI-ARIA-Spezifikation als veraltet kennzeichnet oder die für die interne Verwendung durch User Agents reserviert ist (z. B. role=\"generic\").",
 		"applicability": "Gilt für jedes Element, dessen erstes (verwendetes) Token im role-Attribut eine gültige, nicht abstrakte ARIA-Rolle ist, die Autoren nicht explizit deklarieren sollten – entweder weil WAI-ARIA sie als veraltet kennzeichnet (z. B. „directory“, ersetzt durch role=\"list\") oder weil sie für die interne Verwendung durch User Agents reserviert ist (role=\"generic\", die laut ARIA 1.2 §5.4 Autoren in Inhalten nicht verwenden SOLLTEN).",
-		"expectation": "Die verwendete Rolle ist weder veraltet noch reserviert. Abgestuft nach der Verbindlichkeit der Vorgabe in ARIA:\n\n- CANTTELL bei [[en:SHOULD NOT]], womit die Verwendung konform bleibt und der Autor entscheidet, ob es eine Rolle spielt: eine veraltete Rolle („directory“) oder eine für User Agents reservierte („generic“).\n- FAIL bei [[en:MUST NOT]]. Außerhalb der abstrakten Rollen trägt keine Rolle in ARIA 1.2 oder 1.3 ein [[en:MUST NOT]] für Autoren; dieses Ergebnis ist daher einer späteren Revision vorbehalten, die eine Rolle auf diese Stufe hebt.\n\nEine eigenständige, atomare Entscheidung neben aria-roles-valid (Existenz/ Abstraktheit): Eine Rolle kann gültig und nicht abstrakt sein und in expliziter Verwendung durch Autoren trotzdem nicht empfohlen sein.",
+		"expectation": "Die verwendete Rolle ist weder veraltet noch reserviert. Abgestuft nach der Verbindlichkeit der Vorgabe in ARIA:\n\n- CANTTELL bei [[en:SHOULD NOT]], womit die Verwendung konform bleibt und der Autor entscheidet, ob es eine Rolle spielt: eine veraltete Rolle („directory“) oder eine für User Agents reservierte („generic“).\n- FAIL bei [[en:MUST NOT]]. Außerhalb der abstrakten Rollen trägt keine Rolle in ARIA 1.2 oder 1.3 ein [[en:MUST NOT]] für Autoren; dieses Ergebnis ist daher einer späteren Revision vorbehalten, die eine Rolle auf diese Stufe hebt.\n\nEine eigenständige, atomare Entscheidung neben aria-roles-valid (Existenz/Abstraktheit): Eine Rolle kann gültig und nicht abstrakt sein und in expliziter Verwendung durch Autoren trotzdem nicht empfohlen sein.",
 		"examples": [
 			{
 				"state": "pass",
@@ -163,7 +163,7 @@
 		"title": "Mit ARIA ausgeblendete Elemente dürfen nicht fokussierbar sein",
 		"description": "Prüft, dass Elemente mit aria-hidden=\"true\" nicht fokussierbar sind und keine fokussierbaren Nachfahren enthalten.",
 		"applicability": "Gilt für Elemente mit aria-hidden=\"true\".",
-		"expectation": "Kein Element mit aria-hidden=\"true\" darf selbst fokussierbar sein, und innerhalb eines Teilbaums mit aria-hidden=\"true\" darf es kein fokussierbares Element geben. Hinweise:\n\n- Die Fokussierbarkeit wird über ctx.helpers.getFocusableInfo ermittelt (nativ + tabindex + contenteditable).\n- Nicht gerenderte Elemente (z. B. display:none, visibility:hidden, [hidden]) werden ausgeschlossen.\n- Per CSS so ausgeblendete Elemente, dass sie weiterhin den Tastaturfokus erhalten können (z. B. opacity:0, außerhalb des sichtbaren Bereichs, clip), bleiben im Geltungsbereich und werden gemeldet, wenn sie fokussierbar sind.",
+		"expectation": "Kein Element mit aria-hidden=\"true\" darf selbst fokussierbar sein, und innerhalb eines Teilbaums mit aria-hidden=\"true\" darf es kein fokussierbares Element geben. Hinweise:\n\n- Die Fokussierbarkeit wird über ctx.helpers.getFocusableInfo ermittelt (nativ + tabindex + contenteditable).\n- Nicht gerenderte Elemente (z. B. display:none, visibility:hidden, [hidden]) werden ausgeschlossen.\n- Elemente, die per CSS so ausgeblendet sind, dass sie weiterhin den Tastaturfokus erhalten können (z. B. opacity:0, außerhalb des sichtbaren Bereichs, clip), bleiben im Geltungsbereich und werden gemeldet, wenn sie fokussierbar sind.",
 		"examples": [
 			{
 				"state": "pass",
@@ -195,7 +195,7 @@
 		"title": "Container-Rollen dürfen kein Kind mit unzulässiger Rolle besitzen",
 		"description": "Prüft, dass jedes im Accessibility Tree besessene Kind einer Container-Rolle (list, listbox, menu, menubar, radiogroup, rowgroup, table, grid, treegrid, tablist, tree, row) eine der für diese Rolle zulässigen besessenen Rollen hat.",
 		"applicability": "Gilt für Elemente mit einer expliziten, gültigen Rolle, die eine der Container-Rollen mit einem dokumentierten Eintrag „[[en:required owned elements]]“ ist (dieselbe Tabelle REQUIRED_OWNED_ROLES, die auch aria-required-children verwendet, siehe src/core/aria-helpers.js).",
-		"expectation": "Jeder im Accessibility Tree besessene Nachfahre des Containers (nach dem Entfernen von Elementen mit role=\"none\"/\"presentation\" und von Wrappern mit „group“/ „rowgroup“, die laut WAI-ARIA für den Abgleich besessener Elemente immer transparent sind – unabhängig davon, ob „group“/„rowgroup“ selbst zu den erforderlichen besessenen Rollen des Containers gehört) hat eine Rolle aus genau dieser Menge. Nichts anderes ist ein strukturell gültiges direktes Kind einer zusammengesetzten bzw. Container-Rolle, wobei „zulässig“ die erforderlichen besessenen Rollen des Containers umfasst sowie die kleine Menge ALLOWED_EXTRA_OWNED_ROLES mit Rollen, die er besitzen darf, ohne dass sie erforderlich sind (ein Trenner zwischen Menüeinträgen, eine Beschriftung in einem Grid). In einen Wrapper ohne Rolle wird hineingestiegen, um die Einträge zu erreichen, die eine Komponentenbibliothek darin vergräbt; sobald dort aber einer gefunden ist, gilt der Rest des Teilbaums dieses Wrappers als eigener Inhalt des Eintrags und wird nicht gegen den Container geprüft.",
+		"expectation": "Jeder im Accessibility Tree besessene Nachfahre des Containers (nach dem Entfernen von Elementen mit role=\"none\"/\"presentation\" und von Wrappern mit „group“/„rowgroup“, die laut WAI-ARIA für den Abgleich besessener Elemente immer transparent sind – unabhängig davon, ob „group“/„rowgroup“ selbst zu den erforderlichen besessenen Rollen des Containers gehört) hat eine Rolle aus genau dieser Menge. Nichts anderes ist ein strukturell gültiges direktes Kind einer zusammengesetzten bzw. Container-Rolle, wobei „zulässig“ die erforderlichen besessenen Rollen des Containers umfasst sowie die kleine Menge ALLOWED_EXTRA_OWNED_ROLES mit Rollen, die er besitzen darf, ohne dass sie erforderlich sind (ein Trenner zwischen Menüeinträgen, eine Beschriftung in einem Grid). In einen Wrapper ohne Rolle wird hineingestiegen, um die Einträge zu erreichen, die eine Komponentenbibliothek darin vergräbt; sobald dort aber einer gefunden ist, gilt der Rest des Teilbaums dieses Wrappers als eigener Inhalt des Eintrags und wird nicht gegen den Container geprüft.",
 		"examples": [
 			{
 				"state": "pass",
@@ -208,9 +208,9 @@
 		]
 	},
 	"aria-required-attr": {
-		"title": "Rollen mit erforderlichem ARIA-Zustand bzw. erforderlicher ARIA-Eigenschaft müssen diesen tragen",
+		"title": "Rollen müssen ihre erforderlichen ARIA-Zustände und -Eigenschaften tragen",
 		"description": "Prüft, dass Elemente mit expliziter Rolle jeden eindeutigen, kontextunabhängigen erforderlichen aria-*-Zustand bzw. jede solche Eigenschaft für diese Rolle tragen (z. B. muss role=\"checkbox\" aria-checked haben).",
-		"applicability": "Gilt für Elemente mit einer expliziten, gültigen, nicht abstrakten Rolle, die zugleich zu der kleinen Menge von Rollen mit einem dokumentierten, kontext- unabhängigen erforderlichen Zustand bzw. einer solchen Eigenschaft gehört (checkbox, combobox, heading, menuitemcheckbox, menuitemradio, meter, radio, scrollbar, separator, slider, switch) – außer wenn diese explizite Rolle mit der nativen/impliziten Rolle des Elements identisch ist (ACT 4e8ab6: z. B. <input type=\"checkbox\" role=\"checkbox\">, das ausgenommen ist, weil die Zustandsbereitstellung des nativen Steuerelements das bereits abdeckt; aria-checked ist nicht erforderlich. helpers.aria.getNativeRoleForElement löst das auf).",
+		"applicability": "Gilt für Elemente mit einer expliziten, gültigen, nicht abstrakten Rolle, die zugleich zu der kleinen Menge von Rollen mit einem dokumentierten, kontextunabhängigen erforderlichen Zustand bzw. einer solchen Eigenschaft gehört (checkbox, combobox, heading, menuitemcheckbox, menuitemradio, meter, radio, scrollbar, separator, slider, switch) – außer wenn diese explizite Rolle mit der nativen/impliziten Rolle des Elements identisch ist (ACT 4e8ab6: z. B. <input type=\"checkbox\" role=\"checkbox\">, das ausgenommen ist, weil die Zustandsbereitstellung des nativen Steuerelements das bereits abdeckt; aria-checked ist nicht erforderlich. helpers.aria.getNativeRoleForElement löst das auf).",
 		"expectation": "Jeder erforderliche Zustand bzw. jede erforderliche Eigenschaft für diese Rolle ist vorhanden und nicht leer. Abgestuft danach, ob ARIA einen Ersatz für das fehlende Attribut vorsieht:\n\n- FAIL, wenn nicht, sodass der Zustand schlicht nicht bereitgestellt wird (aria-checked auf checkbox/radio/switch/menuitemcheckbox/menuitemradio, aria-valuenow auf slider/scrollbar/meter und auf einem fokussierbaren separator).\n- CANTTELL, wenn ARIA einen impliziten Wert definiert, auf den die Rolle zurückfällt (aria-expanded auf combobox, aria-level auf heading), sodass die Rolle weiterhin einen Wert bereitstellt und nur der Autor weiß, ob es der richtige ist.",
 		"examples": [
 			{
@@ -227,7 +227,7 @@
 		"title": "Container-Rollen müssen mindestens eine erforderliche Kind-Rolle besitzen",
 		"description": "Prüft, dass Container-Rollen mit einem dokumentierten Eintrag „[[en:required owned elements]]“ (list, listbox, menu, radiogroup, table, grid, tablist, tree, row, ...) mindestens einen Nachfahren oder ein per aria-owns referenziertes Element mit einer zulässigen besessenen Rolle enthalten.",
 		"applicability": "Gilt für Elemente mit einer expliziten, gültigen, nicht abstrakten Rolle, die zugleich eine der Container-Rollen mit einem dokumentierten Eintrag „[[en:required owned elements]]“ ist (list, listbox, menu, menubar, radiogroup, rowgroup, table, grid, treegrid, tablist, tree, row).",
-		"expectation": "Mindestens ein Nachfahre oder ein per aria-owns referenziertes Element hat eine der für diese Container-Rolle zulässigen besessenen Rollen. Wird als CANTTELL gemeldet, nie als FAIL: Diese Regel fragt nur, ob der erforderliche Inhalt VORHANDEN ist, und ein Container, der nichts besitzt, vermittelt nichts Falsches – ein leeres role=\"list\" wird als Liste ohne Einträge angesagt, und genau das ist es. Ob der Inhalt, den ein Container tatsächlich besitzt, GÜLTIG ist, entscheidet aria-prohibited-children, und diese Regel schlägt weiterhin fehl; eine tatsächlich falsch beschriebene Struktur (ein role=\"button\" zwischen Listeneinträgen, eine tablist aus einfachen Buttons) wird also genauso streng erfasst wie zuvor. Die nativen HTML-Entsprechungen funktionieren bereits so: Keine Regel in diesem Regelwerk lässt ein leeres <ul> scheitern, und list-children-valid beurteilt nur die Kinder, die existieren.",
+		"expectation": "Mindestens ein Nachfahre oder ein per aria-owns referenziertes Element hat eine der für diese Container-Rolle zulässigen besessenen Rollen. Wird als CANTTELL gemeldet, nie als FAIL: Diese Regel fragt nur, ob der erforderliche Inhalt VORHANDEN ist, und ein Container, der nichts besitzt, vermittelt nichts Falsches – ein leeres role=\"list\" wird als Liste ohne Einträge angesagt, und genau das ist es. Ob der Inhalt, den ein Container tatsächlich besitzt, GÜLTIG ist, entscheidet aria-prohibited-children, und diese Regel meldet weiterhin FAIL; eine tatsächlich falsch beschriebene Struktur (ein role=\"button\" zwischen Listeneinträgen, eine tablist aus einfachen Buttons) wird also genauso streng erfasst wie zuvor. Die nativen HTML-Entsprechungen funktionieren bereits so: Keine Regel in diesem Regelwerk meldet ein leeres <ul> als FAIL, und list-children-valid beurteilt nur die Kinder, die existieren.",
 		"examples": [
 			{
 				"state": "pass",
@@ -275,7 +275,7 @@
 		"title": "role-Attribut muss eine gültige, nicht abstrakte ARIA-Rolle sein",
 		"description": "Prüft, dass ein explizites role=\"\"-Attribut zu einer echten, nicht abstrakten WAI-ARIA-Rolle aufgelöst wird.",
 		"applicability": "Gilt für jedes Element mit einem nicht leeren role=\"\"-Attribut im zusammengesetzten DOM.",
-		"expectation": "Mindestens ein role-Token benennt eine konkrete, nicht abstrakte ARIA-Rolle. Ist das nicht der Fall, richtet sich die Einstufung danach, worauf das Element zurückfällt:\n\n- FAIL bei einem Host ohne Rolle (div, span, Custom Element), der als generic bereitgestellt bleibt, sodass die vom Autor gemeinte Rolle niemanden erreicht.\n- CANTTELL, wenn das Element eine native Rolle hat (ein <button>, <nav>, <a href>), die der Accessibility Tree weiterhin verwendet. ACT 674b10 führt 4.1.2 nur als sekundäre Anforderung, „[[en:satisfied through the implicit role]]“; das fehlerhafte Token sollte also gemeldet werden, ist aber selbst kein Verstoß gegen das Kriterium.",
+		"expectation": "Mindestens ein role-Token benennt eine konkrete, nicht abstrakte ARIA-Rolle. Ist das nicht der Fall, richtet sich die Einstufung danach, worauf das Element zurückfällt:\n\n- FAIL bei einem Host ohne Rolle (div, span, Custom Element), der als generic bereitgestellt bleibt, sodass die vom Autor gemeinte Rolle niemanden erreicht.\n- CANTTELL, wenn das Element eine native Rolle hat (ein <button>, <nav>, <a href>), die der Accessibility Tree weiterhin verwendet. ACT 674b10 führt 4.1.2 nur als sekundäre Anforderung, „[[en:satisfied through the implicit role]]“; das fehlerhafte Token ist also meldenswert, ist aber selbst kein Verstoß gegen das Kriterium.",
 		"examples": [
 			{
 				"state": "pass",
@@ -291,7 +291,7 @@
 		"title": "Elemente mit role=\"text\" sollten keine fokussierbaren Nachfahren haben",
 		"description": "Prüft, dass Elemente mit role=\"text\" keinen fokussierbaren Nachfahren enthalten (Link, Button, Formularsteuerelement, tabindex, iframe oder contenteditable).",
 		"applicability": "Elemente mit einem expliziten `role=\"text\"`.",
-		"expectation": "`role=\"text\"` weist assistive Technologien an, den gesamten Teilbaum eines Elements als eine Einheit aus reinem Text zu behandeln (z. B. Text, der durch Styling optisch auf mehrere `<span>`s verteilt ist). Laut den [[en:WAI-ARIA Authoring Practices]] ist das nur sinnvoll, wenn dieser Teilbaum keine fokussierbaren Inhalte enthält: Ein fokussierbarer Nachfahre in einem Bereich, der als „nur Text“ gilt, ist für Tastatur- und AT-Nutzer unerreichbar oder verwirrend.",
+		"expectation": "`role=\"text\"` weist assistive Technologien an, den gesamten Teilbaum eines Elements als eine Einheit aus reinem Text zu behandeln (z. B. Text, der durch Styling optisch auf mehrere `<span>`s verteilt ist). Laut den [[en:WAI-ARIA Authoring Practices]] ist das nur sinnvoll, wenn dieser Teilbaum keine fokussierbaren Inhalte enthält: Ein fokussierbarer Nachfahre in einem Bereich, der als „nur Text“ gilt, ist für Menschen, die mit Tastatur oder assistiven Technologien arbeiten, unerreichbar oder verwirrend.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -352,10 +352,10 @@
 		]
 	},
 	"avoid-inline-spacing": {
-		"title": "Inline-Stile dürfen Textabstände nicht unter den WCAG-Wert erzwingen",
-		"description": "Prüft, dass ein per Inline-Stil mit !important erzwungenes line-height, letter-spacing oder word-spacing bereits WCAG 1.4.12 erfüllt, sodass der Nutzer nichts mehr überschreiben muss.",
+		"title": "Inline-Stile dürfen keine Textabstände unterhalb des WCAG-Werts erzwingen",
+		"description": "Prüft, dass ein per Inline-Stil mit !important erzwungenes line-height, letter-spacing oder word-spacing bereits WCAG 1.4.12 erfüllt, sodass Nutzende nichts mehr überschreiben müssen.",
 		"applicability": "Gilt für ein gerendertes Element mit eigenem sichtbarem Text, dessen style-Attribut line-height, letter-spacing oder word-spacing als `!important` mit einem echten Wert deklariert. Ein CSS-weites Schlüsselwort (inherit, initial, unset, revert) legt selbst keinen Abstand fest und liegt außerhalb des Geltungsbereichs.",
-		"expectation": "Jede solche Deklaration erfüllt bereits den in WCAG 1.4.12 für diese Eigenschaft festgelegten Wert, als Vielfaches der Schriftgröße: line-height mindestens 1,5, letter-spacing mindestens 0,12, word-spacing mindestens 0,16. Ein erzwungener Wert, der das Kriterium bereits erfüllt, lässt dem Nutzer nichts zu überschreiben.",
+		"expectation": "Jede solche Deklaration erfüllt bereits den in WCAG 1.4.12 für diese Eigenschaft festgelegten Wert, als Vielfaches der Schriftgröße: line-height mindestens 1,5, letter-spacing mindestens 0,12, word-spacing mindestens 0,16. Ein erzwungener Wert, der das Kriterium bereits erfüllt, lässt Nutzenden nichts zu überschreiben.",
 		"examples": [
 			{
 				"state": "pass",
@@ -403,7 +403,7 @@
 		"title": "Die Seite muss eine Möglichkeit bieten, wiederholte Blöcke zu überspringen",
 		"description": "Prüft, dass die Seite mindestens einen anerkannten Mechanismus zum Überspringen von Blöcken nach WCAG 2.4.1 hat: eine main-Landmark, einen funktionierenden Anker-Link innerhalb der Seite oder eine Überschrift.",
 		"applicability": "Gilt immer für jedes HTML-Dokument mit einem <body>-Element: „Blöcke überspringen“ betrifft die ganze Seite, analog zu aria-hidden-body / page-title-present, die das Dokument direkt auswerten statt eines eingegrenzten Roots.",
-		"expectation": "Mindestens eine der folgenden anerkannten Techniken nach WCAG 2.4.1 ist vorhanden: (a) eine main-Landmark (<main> oder [role=\"main\"]), Technik ARIA11: Screenreader-Nutzer können direkt dorthin springen und alles davor (nav, header, wiederholte Blöcke) in einem Schritt überspringen; (b) ein funktionierender Anker-Link innerhalb der Seite, Technik G1/G123: ein <a href=\"#id\"> (oder das ältere <a name=\"id\">), dessen Ziel zu einem echten Element im eigenen Baum des Links aufgelöst wird (Light DOM oder derselbe Shadow Root). Er muss weder vor einem <nav> stehen noch in der Tastatur-Fokusreihenfolge an erster Stelle (siehe Implementierungshinweise); (c) mindestens eine Überschrift (<h1>-<h6> oder [role=\"heading\"]), die sowohl im Accessibility Tree enthalten ALS AUCH sichtbar ist (nicht außerhalb des sichtbaren Bereichs, abgeschnitten, opacity:0 oder mit Nullgröße und overflow hidden), Technik H69: Die Navigation über Überschriften ist selbst ein vom Standard anerkannter Mechanismus zum Überspringen (z. B. der Screenreader-Befehl „zur nächsten Überschrift springen“), aber die Expectation von ACT 047fe0 verlangt zusätzlich Sichtbarkeit, da eine nur für Screenreader vorhandene Überschrift sehenden Tastaturnutzern keinen gleichwertigen Weg lässt, den Beginn des nicht wiederholten Inhalts zu finden.",
+		"expectation": "Mindestens eine der folgenden anerkannten Techniken nach WCAG 2.4.1 ist vorhanden: (a) eine main-Landmark (<main> oder [role=\"main\"]), Technik ARIA11: Screenreader-Nutzende können direkt dorthin springen und alles davor (nav, header, wiederholte Blöcke) in einem Schritt überspringen; (b) ein funktionierender Anker-Link innerhalb der Seite, Technik G1/G123: ein <a href=\"#id\"> (oder das ältere <a name=\"id\">), dessen Ziel zu einem echten Element im eigenen Baum des Links aufgelöst wird (Light DOM oder derselbe Shadow Root). Er muss weder vor einem <nav> stehen noch in der Tastatur-Fokusreihenfolge an erster Stelle (siehe Implementierungshinweise); (c) mindestens eine Überschrift (<h1>-<h6> oder [role=\"heading\"]), die sowohl im Accessibility Tree enthalten ALS AUCH sichtbar ist (nicht außerhalb des sichtbaren Bereichs, abgeschnitten, opacity:0 oder mit Nullgröße und overflow hidden), Technik H69: Die Navigation über Überschriften ist selbst ein vom Standard anerkannter Mechanismus zum Überspringen (z. B. der Screenreader-Befehl „zur nächsten Überschrift springen“), aber die Expectation von ACT 047fe0 verlangt zusätzlich Sichtbarkeit, da eine nur für Screenreader vorhandene Überschrift sehenden Personen, die mit der Tastatur navigieren, keinen gleichwertigen Weg lässt, den Beginn des nicht wiederholten Inhalts zu finden.",
 		"examples": [
 			{
 				"state": "na",
@@ -411,7 +411,7 @@
 			},
 			{
 				"state": "unknown",
-				"explanation": "Es wurde weder eine main-Landmark noch ein funktionierender Anker-Link innerhalb der Seite noch eine sichtbare Überschrift erkannt – ein Hinweis zur Prüfung, kein Fail, da die Engine anhand eines einzigen Snapshots nicht bestätigen kann, ob der Seite wirklich ein Mechanismus zum Überspringen fehlt."
+				"explanation": "Es wurde weder eine main-Landmark noch ein funktionierender Anker-Link innerhalb der Seite noch eine sichtbare Überschrift erkannt – ein Hinweis zur Prüfung, kein `fail`, da die Engine anhand eines einzigen Snapshots nicht bestätigen kann, ob der Seite wirklich ein Mechanismus zum Überspringen fehlt."
 			}
 		]
 	},
@@ -434,7 +434,7 @@
 	"canvas-text-alternative-quality": {
 		"title": "Textalternative von <canvas> muss angemessen sein (manuelle Prüfung)",
 		"description": "Markiert <canvas>-Elemente mit erkannter Textalternative zur manuellen Prüfung, ob sie gleichwertig und angemessen ist.",
-		"applicability": "Gilt für <canvas>-Elemente, die bereits eine Textalternative haben: Fallback-Inhalt im Element, einen ARIA-Namen oder ein title. Ein <canvas> ohne all das hat keine Alternative, deren Qualität sich beurteilen ließe; das ist ein Fehler von canvas-text-alternative-present. Das Element muss im Accessibility Tree enthalten sein, und role=\"presentation\"/\"none\" nimmt es aus dem Geltungsbereich, sofern es nicht fokussierbar ist, was seine Rolle wiederherstellt.",
+		"applicability": "Gilt für <canvas>-Elemente, die bereits eine Textalternative haben: Fallback-Inhalt im Element, einen ARIA-Namen oder ein title. Ein <canvas> ohne all das hat keine Alternative, deren Qualität sich beurteilen ließe; diesen Fall meldet canvas-text-alternative-present als Verstoß. Das Element muss im Accessibility Tree enthalten sein, und role=\"presentation\"/\"none\" nimmt es aus dem Geltungsbereich, sofern es nicht fokussierbar ist, was seine Rolle wiederherstellt.",
 		"expectation": "Eine manuelle Prüfung ist nötig, um zu bestätigen, dass die angegebene Textalternative zutreffend und angemessen ist.",
 		"examples": [
 			{
@@ -443,7 +443,7 @@
 			},
 			{
 				"state": "na",
-				"explanation": "Es gibt keinen Fallback-Inhalt, keinen ARIA-Namen und kein title zum Prüfen; das ist stattdessen ein Fehler von `canvas-text-alternative-present`."
+				"explanation": "Es gibt keinen Fallback-Inhalt, keinen ARIA-Namen und kein title zum Prüfen; diesen Fall meldet stattdessen `canvas-text-alternative-present` als `fail`."
 			}
 		]
 	},
@@ -459,7 +459,7 @@
 			},
 			{
 				"state": "fail",
-				"explanation": "Über keinen unterstützten Mechanismus ein zugänglicher Name."
+				"explanation": "Kein zugänglicher Name über einen der unterstützten Mechanismen."
 			}
 		]
 	},
@@ -483,7 +483,7 @@
 		"title": "Text erfüllt den erhöhten Farbkontrast (AAA)",
 		"description": "Prüft, dass sichtbarer Text ein Kontrastverhältnis von mindestens 7:1 (normal) bzw. 4,5:1 (groß) hat, sofern der Kontrast aus dem CSS berechenbar ist.",
 		"applicability": "Gilt für den sichtbaren Text, für den contrast-computable gilt (siehe dort für die Zulässigkeitskriterien), eingeschränkt auf Text, dessen Hinter- und Vordergrund tatsächlich berechenbar sind. Zulässiger, aber nicht berechenbarer Text macht diese Regel notApplicable statt cantTell: Das Melden dieser Unsicherheit ist Sache von contrast-computable, sodass die beiden denselben Text nie doppelt melden.",
-		"expectation": "Jeder berechenbare Textknoten erreicht das Verhältnis, das SC 1.4.6 für seine Größe verlangt: 4,5:1 für großen Text, 7:1 für alles andere. Text gilt als groß ab 24px oder ab 14pt (etwa 18,667px), wenn die berechnete Schriftstärke 700 oder höher ist.",
+		"expectation": "Jeder berechenbare Textknoten erreicht das Verhältnis, das SC 1.4.6 für seine Größe verlangt: 4,5:1 für großen Text, 7:1 für alles andere. Text gilt als groß ab 24px oder, bei einer berechneten Schriftstärke von 700 oder höher, bereits ab 14pt (etwa 18,667px).",
 		"examples": [
 			{
 				"state": "pass",
@@ -499,7 +499,7 @@
 		"title": "Text erfüllt den minimalen Farbkontrast (AA)",
 		"description": "Prüft, dass sichtbarer Text ein Kontrastverhältnis von mindestens 4,5:1 (normal) bzw. 3:1 (groß) hat, sofern der Kontrast aus dem CSS berechenbar ist.",
 		"applicability": "Gilt für den sichtbaren Text, für den contrast-computable gilt (siehe dort für die Zulässigkeitskriterien), eingeschränkt auf Text, dessen Hinter- und Vordergrund tatsächlich berechenbar sind. Zulässiger, aber nicht berechenbarer Text macht diese Regel notApplicable statt cantTell: Das Melden dieser Unsicherheit ist Sache von contrast-computable, sodass die beiden denselben Text nie doppelt melden.",
-		"expectation": "Jeder berechenbare Textknoten erreicht das Verhältnis, das SC 1.4.3 für seine Größe verlangt: 3:1 für großen Text, 4,5:1 für alles andere. Text gilt als groß ab 24px oder ab 14pt (etwa 18,667px), wenn die berechnete Schriftstärke 700 oder höher ist.",
+		"expectation": "Jeder berechenbare Textknoten erreicht das Verhältnis, das SC 1.4.3 für seine Größe verlangt: 3:1 für großen Text, 4,5:1 für alles andere. Text gilt als groß ab 24px oder, bei einer berechneten Schriftstärke von 700 oder höher, bereits ab 14pt (etwa 18,667px).",
 		"examples": [
 			{
 				"state": "pass",
@@ -535,7 +535,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Der Link bleibt in der Tab-Reihenfolge, obwohl `opacity:0` ihn für sehende Tastaturnutzer unsichtbar macht."
+				"explanation": "Der Link bleibt in der Tab-Reihenfolge, obwohl `opacity:0` ihn für sehende Personen, die mit der Tastatur navigieren, unsichtbar macht."
 			},
 			{
 				"state": "na",
@@ -576,18 +576,18 @@
 		]
 	},
 	"deprecated-elements-not-used": {
-		"title": "Veraltete, nicht anhaltbare Elemente (<blink>, <marquee>) dürfen nicht verwendet werden",
-		"description": "Prüft, dass keine veralteten, nicht standardkonformen HTML-Elemente vorhanden sind, deren blinkender bzw. laufender Inhalt vom Nutzer nicht pausiert, angehalten oder ausgeblendet werden kann (<blink>, <marquee>).",
-		"applicability": "Gilt für jeden Scan-Bereich; ob er ein <blink>- oder <marquee>-Element enthält, lässt sich immer beantworten. Das sind veraltete, nicht standardkonforme HTML-Elemente, deren kennzeichnendes Verhalten (blinkender oder automatisch laufender Text) keinen eingebauten Mechanismus bietet, mit dem Nutzer es pausieren, anhalten oder ausblenden können.",
-		"expectation": "Keines der beiden Elemente ist vorhanden. Da ihre Bewegung vom Nutzer nie pausiert, angehalten oder ausgeblendet werden kann, ist ihr Vorhandensein selbst der Verstoß und ihr Fehlen selbst ein Pass – einen dritten, nicht anwendbaren Fall gibt es nicht.",
+		"title": "Veraltete Elemente mit Bewegung, die sich nicht anhalten lässt (<blink>, <marquee>), dürfen nicht verwendet werden",
+		"description": "Prüft, dass keine veralteten, nicht standardkonformen HTML-Elemente vorhanden sind, deren blinkender bzw. laufender Inhalt von Nutzenden nicht pausiert, angehalten oder ausgeblendet werden kann (<blink>, <marquee>).",
+		"applicability": "Gilt für jeden Scan-Bereich; ob er ein <blink>- oder <marquee>-Element enthält, lässt sich immer beantworten. Das sind veraltete, nicht standardkonforme HTML-Elemente, deren kennzeichnendes Verhalten (blinkender oder automatisch laufender Text) keinen eingebauten Mechanismus bietet, mit dem Nutzende es pausieren, anhalten oder ausblenden können.",
+		"expectation": "Keines der beiden Elemente ist vorhanden. Da Nutzende ihre Bewegung nie pausieren, anhalten oder ausblenden können, ist schon ihr Vorhandensein der Verstoß, und ihr Fehlen gilt unmittelbar als bestanden – einen dritten Fall „nicht anwendbar“ gibt es nicht.",
 		"examples": [
 			{
 				"state": "pass",
-				"explanation": "Nirgends ein `<blink>`- oder `<marquee>`-Element, was die Regel unmittelbar erfüllt – einen eigenen nicht anwendbaren Fall gibt es nicht."
+				"explanation": "Es gibt nirgends ein `<blink>`- oder `<marquee>`-Element; damit ist die Regel unmittelbar erfüllt – einen eigenen Fall „nicht anwendbar“ gibt es nicht."
 			},
 			{
 				"state": "fail",
-				"explanation": "Für das automatische Laufen von `<marquee>` gibt es keinen eingebauten Weg, mit dem Nutzer es pausieren, anhalten oder ausblenden können."
+				"explanation": "Für das automatische Laufen von `<marquee>` gibt es keinen eingebauten Weg, mit dem Nutzende es pausieren, anhalten oder ausblenden können."
 			}
 		]
 	},
@@ -674,7 +674,7 @@
 	"embed-text-alternative-quality": {
 		"title": "Textalternative von <embed> muss angemessen sein (manuelle Prüfung)",
 		"description": "Markiert <embed>-Elemente mit erkanntem Namen zur manuellen Prüfung, ob er angemessen ist.",
-		"applicability": "Gilt für <embed>-Elemente, die bereits eine Textalternative haben: ein nicht leeres aria-label, ein aria-labelledby, das zu nicht leerem Text aufgelöst wird, oder ein nicht leeres title. Ein aria-labelledby, das auf eine fehlende id verweist, wird zu nichts aufgelöst und ist daher keine zu prüfende Textalternative; ein solches Element ist ein Fehler von embed-text-alternative-present. Das Element muss im Accessibility Tree enthalten sein, und role=\"presentation\"/\"none\" nimmt es aus dem Geltungsbereich, sofern es nicht fokussierbar ist, was seine Rolle wiederherstellt.",
+		"applicability": "Gilt für <embed>-Elemente, die bereits eine Textalternative haben: ein nicht leeres aria-label, ein aria-labelledby, das zu nicht leerem Text aufgelöst wird, oder ein nicht leeres title. Ein aria-labelledby, das auf eine fehlende id verweist, wird zu nichts aufgelöst und ist daher keine zu prüfende Textalternative; ein solches Element meldet embed-text-alternative-present als Verstoß. Das Element muss im Accessibility Tree enthalten sein, und role=\"presentation\"/\"none\" nimmt es aus dem Geltungsbereich, sofern es nicht fokussierbar ist, was seine Rolle wiederherstellt.",
 		"expectation": "Eine manuelle Prüfung ist nötig, um zu bestätigen, dass die angegebene Textalternative zutreffend und angemessen ist.",
 		"examples": [
 			{
@@ -683,7 +683,7 @@
 			},
 			{
 				"state": "na",
-				"explanation": "Es gibt kein aria-label, kein aufgelöstes aria-labelledby und kein title zum Prüfen; das ist stattdessen ein Fehler von `embed-text-alternative-present`."
+				"explanation": "Es gibt kein aria-label, kein aufgelöstes aria-labelledby und kein title zum Prüfen; diesen Fall meldet stattdessen `embed-text-alternative-present` als `fail`."
 			}
 		]
 	},
@@ -723,7 +723,7 @@
 		"title": "In die Tab-Reihenfolge aufgenommene Elemente sollten interaktive Semantik haben",
 		"description": "Markiert Elemente mit tabindex >= 0, deren explizite Rolle eine nicht interaktive Struktur- bzw. Dokumentrolle ist (z. B. heading, list, region, presentation), zur manuellen Prüfung.",
 		"applicability": "Elemente mit einem expliziten `tabindex` von `0` oder höher (in der Tab-Reihenfolge) UND einem expliziten `role`-Attribut aus einer kuratierten Menge eindeutig nicht interaktiver Struktur- bzw. Dokumentrollen.",
-		"expectation": "Ein Element, das absichtlich in die Tab-Reihenfolge aufgenommen wurde, sollte vermitteln, warum es fokussierbar ist: Eine Rolle wie `heading`, `list`, `region` oder `presentation` gibt assistiven Technologien keine interaktive Semantik zum Ansagen. Das verwirrt Tastaturnutzer, die darauf landen und keinen Hinweis erhalten, was eine Aktivierung (wenn überhaupt) bewirken würde.",
+		"expectation": "Ein Element, das absichtlich in die Tab-Reihenfolge aufgenommen wurde, sollte vermitteln, warum es fokussierbar ist: Eine Rolle wie `heading`, `list`, `region` oder `presentation` gibt assistiven Technologien keine interaktive Semantik zum Ansagen. Das verwirrt Personen, die per Tastatur darauf landen und keinen Hinweis erhalten, was eine Aktivierung (wenn überhaupt) bewirken würde.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -737,7 +737,7 @@
 	},
 	"form-control-label-quality": {
 		"title": "Beschriftungen von Formularfeldern sollten aussagekräftig und unterscheidbar sein",
-		"description": "Markiert eine sichtbare Beschriftung eines Formularfelds, die ein Platzhalter ist („[[en:Label]]“, „[[en:Field]]“) oder die Beschriftung eines anderen Felds wiederholt, ohne dass ein sichtbarer Kontext (Überschrift, Legend oder Zeile) die beiden unterscheidet.",
+		"description": "Markiert eine sichtbare Beschriftung eines Formularfelds, die ein Platzhalter ist („[[en:Label]]“, „[[en:Field]]“) oder die Beschriftung eines anderen Felds wiederholt, ohne dass ein sichtbarer Kontext (Überschrift, Legende oder Zeile) die beiden unterscheidet.",
 		"applicability": "Sichtbare Formularfelder: native `input` (außer hidden und den button-artigen Typen), `select`, `textarea` oder ein Element mit einer der in ACT cc0f0a aufgeführten ARIA-Widget-Rollen (checkbox, combobox, listbox, menuitemcheckbox, menuitemradio, radio, searchbox, slider, spinbutton, switch, textbox), die eine sichtbare programmatische Beschriftung haben: eine `<label>`-Zuordnung oder die Elemente, auf die `aria-labelledby` verweist. Ein Feld, das nur über `aria-label`/`title` benannt ist, hat keine sichtbare Beschriftung, die sich beurteilen ließe, und liegt hier außerhalb des Geltungsbereichs (sein Beschriftungsmechanismus ist Sache von `form-control-programmatic-label-quality`, sein Vorhandensein Sache von `form-control-programmatic-label-present`).",
 		"expectation": "Der sichtbare Beschriftungstext (a) ist kein im Markup vergessener Platzhalter („[[en:label]]“, „[[en:field]]“, „[[en:enter text]]“, ...), (b) wird nicht mit einem anderen Feld geteilt, das kein sichtbarer Kontext davon unterscheidet (zweimal dasselbe „Name“, ohne dass auf dem Bildschirm sichtbar ist, welches zur Lieferadresse und welches zur Rechnungsadresse gehört), und (c) ist die vollständige programmatische Beschriftung des Felds, nicht der sichtbare Teil einer Beschriftung, deren beschreibender Teil verborgen ist.",
 		"examples": [
@@ -775,7 +775,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Der einzige Name des Steuerelements stammt aus `placeholder`, das verschwindet, sobald der Nutzer zu tippen beginnt."
+				"explanation": "Der einzige Name des Steuerelements stammt aus `placeholder`, das verschwindet, sobald die Eingabe beginnt."
 			},
 			{
 				"state": "na",
@@ -787,7 +787,7 @@
 		"title": "Formularsteuerelemente dürfen nicht mehrere Beschriftungen haben",
 		"description": "Prüft, dass einem Formularsteuerelement höchstens ein <label> zugeordnet ist (durch Umschließen oder über label[for]).",
 		"applicability": "Gilt für beschriftbare Formularsteuerelemente (input, außer hidden/submit/reset/button/image; select; textarea).",
-		"expectation": "Dem Steuerelement ist höchstens ein <label> zugeordnet, das zu seinem zugänglichen Namen beitragen kann, entweder durch Umschließen oder durch ein <label for=\"...\"> auf seine id (ein Label, das umschließt und zugleich per for auf sich selbst verweist, zählt einmal). Abgestuft danach, ob die überzähligen Labels tatsächlich um den Namen konkurrieren:\n\n- PASS, wenn ein Override (aria-labelledby / aria-label) jedes native <label> ersetzt: Die Labels tragen dann nichts zum Namen bei und können nicht mehrdeutig sein. Eine Abweichung zwischen sichtbarem Label und Name ist Sache von SC 2.5.3 [[en:Label in Name]], nicht dieser Regel.\n- FAIL, wenn zwei oder mehr nicht leere Labels konkurrieren und es keinen Override gibt: Screenreader sagen eine nicht deterministische Teilmenge an.\n- CANTTELL, wenn zu einem nicht leeren Label leere Label-Zuordnungen hinzukommen und es keinen Override gibt: Der Name wird meist zum echten Label aufgelöst, aber der Umgang mit der leeren Zuordnung ist nicht in allen User Agents garantiert.\n\nNur leere Zuordnungen ohne Override sind ein Fall von fehlendem Namen (die verwandte Regel unten), keine Mehrdeutigkeit, daher bleibt diese Regel still.",
+		"expectation": "Dem Steuerelement ist höchstens ein <label> zugeordnet, das zu seinem zugänglichen Namen beitragen kann, entweder durch Umschließen oder durch ein <label for=\"...\"> auf seine id (ein Label, das umschließt und zugleich per for auf sich selbst verweist, zählt einmal). Abgestuft danach, ob die überzähligen Labels tatsächlich um den Namen konkurrieren:\n\n- PASS, wenn ein Override (aria-labelledby / aria-label) jedes native <label> ersetzt: Die Labels tragen dann nichts zum Namen bei und können nicht mehrdeutig sein. Eine Abweichung zwischen sichtbarem Label und Name ist Sache von SC 2.5.3 „Beschriftung im Namen“, nicht dieser Regel.\n- FAIL, wenn zwei oder mehr nicht leere Labels konkurrieren und es keinen Override gibt: Screenreader sagen eine nicht deterministische Teilmenge an.\n- CANTTELL, wenn zu einem nicht leeren Label leere Label-Zuordnungen hinzukommen und es keinen Override gibt: Der Name wird meist zum echten Label aufgelöst, aber der Umgang mit der leeren Zuordnung ist nicht in allen User Agents garantiert.\n\nSind alle Zuordnungen leer und gibt es keinen Override, ist das ein Fall von fehlendem Namen (die verwandte Regel unten), keine Mehrdeutigkeit, daher bleibt diese Regel still.",
 		"examples": [
 			{
 				"state": "pass",
@@ -803,7 +803,7 @@
 		"title": "Überschriftenebenen dürfen keine Ebene überspringen",
 		"description": "Prüft, dass Überschriftenebenen in Dokumentreihenfolge jeweils um höchstens eins zunehmen.",
 		"applicability": "Gilt immer dann, wenn die Seite zwei oder mehr Überschriftenelemente enthält (native <h1>-<h6> oder explizites role=\"heading\" mit aria-level; laut ARIA-Spezifikation Standardebene 2, wenn aria-level fehlt oder ungültig ist).",
-		"expectation": "In Dokumentreihenfolge ist die Ebene jeder Überschrift höchstens um eins größer als die höchste bisher vorgekommene Überschriftenebene. Ein Sprung um mehr als eine Ebene in die Tiefe (z. B. ein <h1>, direkt gefolgt von einem <h3>, unter Auslassung von <h2>) bricht die Dokumentgliederung, auf die sich Nutzer assistiver Technologien bei der Navigation über Überschriften verlassen. Die Rückkehr zu einer höheren Ebene ist jederzeit in Ordnung.",
+		"expectation": "In Dokumentreihenfolge ist die Ebene jeder Überschrift höchstens um eins größer als die tiefste bisher erreichte Überschriftenebene (die größte bisherige Ebenennummer). Ein Sprung um mehr als eine Ebene in die Tiefe (z. B. ein <h1>, direkt gefolgt von einem <h3>, unter Auslassung von <h2>) bricht die Dokumentgliederung, auf die sich Personen, die assistive Technologien nutzen, bei der Navigation über Überschriften verlassen. Die Rückkehr zu einer übergeordneten Ebene ist jederzeit in Ordnung.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -883,7 +883,7 @@
 		"title": "Links mit demselben zugänglichen Namen sollten zum selben Ziel führen",
 		"description": "Markiert Gruppen von Links, die denselben zugänglichen Namen haben, aber zu mehr als einem Ziel aufgelöst werden, zur manuellen Prüfung, ob sie demselben Zweck dienen.",
 		"applicability": "Jedes `a[href]` oder `[role=\"link\"]` mit einem nicht leeren zugänglichen Namen, gruppiert nach diesem Namen (getrimmt, Leerraum zusammengefasst, Groß-/Kleinschreibung vereinheitlicht).",
-		"expectation": "Innerhalb einer Seite wird erwartet, dass Links mit demselben zugänglichen Namen demselben Zweck dienen (also zum selben Ziel aufgelöst werden: der vollständig aufgelösten URL einschließlich eines etwaigen Fragments). Links mit gleichem Text und unterschiedlichem Ziel sind auf echten Websites häufig und oft beabsichtigt (z. B. wiederholte „Weiterlesen“-Links auf jeder Artikelkarte). Daher ist die Regel als `type: 'manual'` angelegt (auf cantTell begrenzt, nie fail) statt als harter Fail: Sie legt eine echte Abweichung zwischen Name und Ziel zur menschlichen Beurteilung vor, statt die Absicht zu erraten.",
+		"expectation": "Innerhalb einer Seite wird erwartet, dass Links mit demselben zugänglichen Namen demselben Zweck dienen (also zum selben Ziel aufgelöst werden: der vollständig aufgelösten URL einschließlich eines etwaigen Fragments). Links mit gleichem Text und unterschiedlichem Ziel sind auf echten Websites häufig und oft beabsichtigt (z. B. wiederholte „[[en:Read more]]“-Links auf jeder Artikelkarte). Daher ist die Regel als `type: 'manual'` angelegt (auf cantTell begrenzt, nie fail) statt als harter Fail: Sie legt eine echte Abweichung zwischen Name und Ziel zur menschlichen Beurteilung vor, statt die Absicht zu erraten.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -899,7 +899,7 @@
 		"title": "Frames mit tabindex=\"-1\" dürfen keine fokussierbaren Inhalte enthalten",
 		"description": "Prüft, dass <iframe>/<frame>-Elemente desselben Ursprungs mit tabindex=\"-1\" keine fokussierbaren Inhalte enthalten, da Browser diese Einschränkung nicht an das eingebettete Dokument des Frames weitergeben.",
 		"applicability": "Gilt für <iframe>/<frame>-Elemente mit einem expliziten negativen tabindex, deren eingebettetes Dokument denselben Ursprung hat und über contentDocument erreichbar ist (Cross-Origin- bzw. nicht erreichbare Frames stellen nichts fest, siehe Implementierungshinweise).",
-		"expectation": "Das eingebettete Dokument des Frames enthält kein fokussierbares Element. Browser geben tabindex=\"-1\" auf dem <iframe>-Host nicht an dessen eingebettetes Dokument weiter: Per Tab lassen sich fokussierbare Inhalte darin weiterhin erreichen, obwohl der Frame selbst übersprungen wird. Ein Autor, der tabindex=\"-1\" gesetzt hat, um den Frame aus der Tab-Reihenfolge zu nehmen, hat das tatsächlich nicht erreicht, wenn das eingebettete Dokument fokussierbare Inhalte enthält. Ausnahme: Ein iframe, dessen HTML-Attribute `width` und `height` beide 2px oder weniger betragen (ein verbreitetes „Tracking-Pixel“-Muster), kann keine wahrnehmbaren Inhalte darstellen; fokussierbare Inhalte darin erfüllen daher nie die „[[en:visible]]“-Anforderung von ACT akn7bn und zählen nicht.",
+		"expectation": "Das eingebettete Dokument des Frames enthält kein fokussierbares Element. Browser geben tabindex=\"-1\" auf dem <iframe>-Host nicht an dessen eingebettetes Dokument weiter: Per Tab lassen sich fokussierbare Inhalte darin weiterhin erreichen, obwohl der Frame selbst übersprungen wird. Wer tabindex=\"-1\" gesetzt hat, um den Frame aus der Tab-Reihenfolge zu nehmen, hat das tatsächlich nicht erreicht, wenn das eingebettete Dokument fokussierbare Inhalte enthält. Ausnahme: Ein iframe, dessen HTML-Attribute `width` und `height` beide 2px oder weniger betragen (ein verbreitetes „Tracking-Pixel“-Muster), kann keine wahrnehmbaren Inhalte darstellen; fokussierbare Inhalte darin erfüllen daher nie die „[[en:visible]]“-Anforderung von ACT akn7bn und zählen nicht.",
 		"examples": [
 			{
 				"state": "pass",
@@ -931,7 +931,7 @@
 		"title": "Titel von Frames müssen eindeutig sein",
 		"description": "Prüft, dass keine zwei <iframe>/<frame>-Elemente im Geltungsbereich denselben Wert im title-Attribut haben.",
 		"applicability": "Gilt für <iframe>/<frame>-Elemente mit einem nicht leeren title-Attribut.",
-		"expectation": "Keine zwei Frames im Geltungsbereich haben denselben (getrimmten, Groß-/Kleinschreibung beachtenden) Wert im title-Attribut. Ein doppelter Titel hindert Nutzer assistiver Technologien daran, Frames beim Durchsuchen nach Namen auseinanderzuhalten.",
+		"expectation": "Keine zwei Frames im Geltungsbereich haben denselben (getrimmten, Groß-/Kleinschreibung beachtenden) Wert im title-Attribut. Ein doppelter Titel hindert Personen, die assistive Technologien nutzen, daran, Frames beim Durchsuchen nach Namen auseinanderzuhalten.",
 		"examples": [
 			{
 				"state": "pass",
@@ -963,7 +963,7 @@
 		"title": "Ausgeschlossene <img>/<canvas>/<svg> müssen dekorativ sein (manuelle Prüfung)",
 		"description": "Markiert <img>-, <canvas>- und <svg>-Elemente, die aus dem Accessibility Tree ausgeschlossen sind (aria-hidden, role=\"none\"/\"presentation\", leeres alt oder ein unbeschriftetes svg/canvas), zur manuellen Prüfung, ob sie rein dekorativ sind.",
 		"applicability": "Gilt für sichtbare <img>-, <canvas>- oder <svg>-Elemente, die auf einem der folgenden Wege aus dem Accessibility Tree ausgeschlossen sind: aria-hidden am Element selbst oder an einem Vorfahren, ein explizites role=\"none\"/\"presentation\", das nicht durch Fokussierbarkeit aufgehoben wird, ein <img alt=\"\"> (die native Kennzeichnung als dekorativ, mit derselben Aufhebung durch Fokussierbarkeit), ein unbeschriftetes <svg>, dessen implizite Rolle graphics-document ist (keine erneute Angabe der Rolle img/graphics-symbol, kein ARIA-Name, kein <title>/<desc>, keine Fokussierbarkeit), oder ein unbeschriftetes <canvas> ganz ohne explizite Rolle. Gemäß ACT e88epe wird ein Element vollständig übersprungen, wenn ein Vorfahre bereits einen vom Autor vergebenen Namen hat (aria-label, aria-labelledby, title oder ein zugeordnetes <label>); dann zählt der Name dieses Vorfahren, nicht der Ausschluss dieses Elements (der häufige Praxisfall: ein reiner Icon-Button, der bereits über aria-label benannt ist).",
-		"expectation": "Eine manuelle Prüfung ist nötig, um zu bestätigen, dass das ausgeschlossene Element rein dekorativ ist und keine Information vermittelt, die einem Nutzer sonst entgehen würde.",
+		"expectation": "Eine manuelle Prüfung ist nötig, um zu bestätigen, dass das ausgeschlossene Element rein dekorativ ist und keine Information vermittelt, die Nutzenden sonst entgehen würde.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -999,7 +999,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Ein nicht leeres alt ist vorhanden, aber „[[en:image]]“ wiederholt nur den Elementtyp, statt zu beschreiben, was das Diagramm zeigt – ein Fall für die Einschätzung eines Prüfers."
+				"explanation": "Ein nicht leeres alt ist vorhanden, aber „[[en:image]]“ wiederholt nur den Elementtyp, statt zu beschreiben, was das Diagramm zeigt – ein Fall für die Einschätzung einer prüfenden Person."
 			},
 			{
 				"state": "na",
@@ -1056,10 +1056,10 @@
 		]
 	},
 	"label-in-name": {
-		"title": "[[en:Label in Name]]: Der zugängliche Name enthält den sichtbaren Text",
+		"title": "Beschriftung im Namen: Der zugängliche Name enthält den sichtbaren Text",
 		"description": "Prüft, dass bei einem Bedienelement mit sichtbarer Textbeschriftung der zugängliche Name diesen sichtbaren Beschriftungstext enthält (WCAG 2.5.3).",
 		"applicability": "Gilt für Bedienelemente, die aria-label oder aria-labelledby tragen, sichtbar gerendert werden und einen sichtbaren Beschriftungstext haben, den diese Engine deterministisch ermitteln kann: aus einem zugeordneten <label>, aus dem gerenderten Text des Bedienelements selbst oder aus den Elementen, auf die aria-labelledby verweist. Kandidaten sind <button>, <a href>, <summary>, nicht ausgeblendete Formularelemente sowie die Rollen button, link, checkbox, radio, switch, searchbox, tab, menuitem, menuitemcheckbox, menuitemradio, option, treeitem und gridcell, jeweils ohne ausgeblendete oder deaktivierte Elemente. aria-hidden wird nicht ausgeschlossen: Es ändert nichts daran, was auf dem Bildschirm gerendert wird, und genau darum geht es in diesem Erfolgskriterium.",
-		"expectation": "Der zugängliche Name enthält die Wörter der sichtbaren Beschriftung, zusammenhängend und in derselben Reihenfolge. Verglichen werden Wörter, nicht Zeichen: Text in Klammern wird entfernt, Groß- und Kleinschreibung wird angeglichen, der Text wird NFKD-normalisiert, und jedes Zeichen, das kein Buchstabe und keine Ziffer ist, wird zum Trennzeichen. Unterschiede bei Satzzeichen und Leerzeichen entscheiden das Ergebnis also nie. Vier Fälle, die sich am Markup nicht entscheiden lassen, werden als cantTell statt fail gemeldet: ein Wort, das an beiden Stellen unterschiedlich getrennt ist; ein sichtbares Wort, das der Autor möglicherweise abgekürzt hat, erkennbar am abschließenden Punkt; sichtbarer Text, der über eine bekannte Icon-Schrift gerendert wird (der DOM-Text besteht aus echten Wörtern, lesbar dargestellt wird aber nichts); und eine vollständige sichtbare Beschriftung aus genau einem Zeichen, das nicht einmal im zugänglichen Namen vorkommt und laut ACT 2ee8b8 eher „Nicht-Text-Inhalt“ sein kann (z. B. „X“ für „schließen“) als wörtlicher Text.",
+		"expectation": "Der zugängliche Name enthält die Wörter der sichtbaren Beschriftung, zusammenhängend und in derselben Reihenfolge. Verglichen werden Wörter, nicht Zeichen: Text in Klammern wird entfernt, Groß- und Kleinschreibung wird angeglichen, der Text wird NFKD-normalisiert, und jedes Zeichen, das kein Buchstabe und keine Ziffer ist, wird zum Trennzeichen. Unterschiede bei Satzzeichen und Leerzeichen entscheiden das Ergebnis also nie. Vier Fälle, die sich am Markup nicht entscheiden lassen, werden als cantTell statt fail gemeldet: ein Wort, das an beiden Stellen unterschiedlich mit Bindestrich geschrieben ist; ein sichtbares Wort, das beim Erstellen möglicherweise abgekürzt wurde, erkennbar am abschließenden Punkt; sichtbarer Text, der über eine bekannte Icon-Schrift gerendert wird (der DOM-Text besteht aus echten Wörtern, lesbar dargestellt wird aber nichts); und eine vollständige sichtbare Beschriftung aus genau einem Zeichen, das nicht einmal im zugänglichen Namen vorkommt und laut ACT 2ee8b8 „Nicht-Text-Inhalt“ sein kann (z. B. „X“ für „schließen“) statt wörtlichem Text.",
 		"examples": [
 			{
 				"state": "pass",
@@ -1079,7 +1079,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Das `title`-Attribut ist das einzige Mittel, das dem Feld einen Namen gibt — es erscheint als Tooltip, nicht als dauerhaft sichtbare Beschriftung."
+				"explanation": "Das `title`-Attribut ist das einzige Mittel, das dem Feld einen Namen gibt – es erscheint als Tooltip, nicht als dauerhaft sichtbare Beschriftung."
 			},
 			{
 				"state": "na",
@@ -1091,7 +1091,7 @@
 		"title": "Banner-Landmark muss auf oberster Ebene liegen",
 		"description": "Prüft, dass die Banner-Landmark (role=\"banner\" oder ein nicht verschachteltes <header>) nicht in einer anderen Landmark-Region verschachtelt ist.",
 		"applicability": "Gilt, sobald die Seite mindestens einen Banner-Kandidaten enthält: explizites role=\"banner\" ODER ein <header> ganz OHNE role-Attribut, unabhängig von der Verschachtelung (in den Implementierungshinweisen steht, warum die Kandidatenauswahl absichtlich bedingungslos ist).",
-		"expectation": "Kein Banner-Kandidat hat einen Vorfahren, der selbst eine Landmark-Region ist. Ein Banner, das in einer anderen Landmark verschachtelt ist, ist kein seitenweites Banner auf oberster Ebene und bringt Nutzer assistiver Technologien bei der Navigation über Landmarks durcheinander.",
+		"expectation": "Kein Banner-Kandidat hat einen Vorfahren, der selbst eine Landmark-Region ist. Ein Banner, das in einer anderen Landmark verschachtelt ist, ist kein seitenweites Banner auf oberster Ebene und bringt Personen, die assistive Technologien nutzen, bei der Navigation über Landmarks durcheinander.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1123,7 +1123,7 @@
 		"title": "Contentinfo-Landmark muss auf oberster Ebene liegen",
 		"description": "Prüft, dass die Contentinfo-Landmark (role=\"contentinfo\" oder ein nicht verschachteltes <footer>) nicht in einer anderen Landmark-Region verschachtelt ist.",
 		"applicability": "Gilt, sobald die Seite mindestens einen Contentinfo-Kandidaten enthält: explizites role=\"contentinfo\" ODER ein <footer> ganz OHNE role-Attribut, unabhängig von der Verschachtelung (in den Implementierungshinweisen steht, warum die Kandidatenauswahl absichtlich bedingungslos ist).",
-		"expectation": "Kein Contentinfo-Kandidat hat einen Vorfahren, der selbst eine Landmark-Region ist. Ein contentinfo, das in einer anderen Landmark verschachtelt ist, ist kein seitenweiter Fußbereich auf oberster Ebene und bringt Nutzer assistiver Technologien bei der Navigation über Landmarks durcheinander.",
+		"expectation": "Kein Contentinfo-Kandidat hat einen Vorfahren, der selbst eine Landmark-Region ist. Ein contentinfo, das in einer anderen Landmark verschachtelt ist, ist kein seitenweiter Fußbereich auf oberster Ebene und bringt Personen, die assistive Technologien nutzen, bei der Navigation über Landmarks durcheinander.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1139,7 +1139,7 @@
 		"title": "Main-Landmark muss auf oberster Ebene liegen",
 		"description": "Prüft, dass die Main-Landmark (role=\"main\" oder <main>) nicht in einer anderen Landmark-Region verschachtelt ist.",
 		"applicability": "Gilt, sobald die Seite mindestens eine Main-Landmark enthält (explizites role=\"main\" oder ein implizites <main>-Element).",
-		"expectation": "Keine Main-Landmark hat einen Vorfahren, der selbst eine Landmark-Region ist. Ein main-Bereich, der in einer anderen Landmark verschachtelt ist, ist kein seitenweiter Hauptinhaltsbereich auf oberster Ebene und bringt Nutzer assistiver Technologien bei der Navigation über Landmarks durcheinander.",
+		"expectation": "Keine Main-Landmark hat einen Vorfahren, der selbst eine Landmark-Region ist. Ein main-Bereich, der in einer anderen Landmark verschachtelt ist, ist kein seitenweiter Hauptinhaltsbereich auf oberster Ebene und bringt Personen, die assistive Technologien nutzen, bei der Navigation über Landmarks durcheinander.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1155,7 +1155,7 @@
 		"title": "Seite darf nicht mehr als eine Banner-Landmark haben",
 		"description": "Prüft, dass es auf der Seite höchstens eine Banner-Landmark (role=\"banner\" oder ein nicht verschachteltes <header>) gibt.",
 		"applicability": "Gilt, sobald die Seite mindestens eine Banner-Landmark enthält (explizites role=\"banner\" oder ein implizites, nicht verschachteltes <header>; das gemeinsame Modell zur Landmark-Erkennung beschreiben die Implementierungshinweise von landmark-banner-is-top-level).",
-		"expectation": "Auf der Seite gibt es höchstens eine Banner-Landmark. Laut den [[en:WAI-ARIA Authoring Practices]] steht die Banner-Landmark für websitebezogene Inhalte, die die Seite als Ganzes kennzeichnen. Mehr als eine ist daher für Nutzer assistiver Technologien, die über Landmarks navigieren, mehrdeutig.",
+		"expectation": "Auf der Seite gibt es höchstens eine Banner-Landmark. Laut den [[en:WAI-ARIA Authoring Practices]] steht die Banner-Landmark für websitebezogene Inhalte, die die Seite als Ganzes kennzeichnen. Mehr als eine ist daher für Personen, die mit assistiven Technologien über Landmarks navigieren, mehrdeutig.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1203,7 +1203,7 @@
 		"title": "Seite sollte eine Main-Landmark haben",
 		"description": "Prüft, dass die Seite mindestens eine Main-Landmark (role=\"main\" oder <main>) hat.",
 		"applicability": "Gilt immer für jedes HTML-Dokument mit einem <body>-Element: „Hat die Seite eine Main-Landmark?“ betrifft die ganze Seite und folgt damit dem Muster von bypass-blocks-present, das Dokument direkt zu bewerten.",
-		"expectation": "Auf der Seite gibt es mindestens eine Main-Landmark (role=\"main\" oder <main>), die assistiven Technologien bereitgestellt wird. Eine Seite ohne Main-Landmark bietet Nutzern assistiver Technologien keine Landmark, mit der sie direkt zum Hauptinhalt springen können.",
+		"expectation": "Auf der Seite gibt es mindestens eine Main-Landmark (role=\"main\" oder <main>), die assistiven Technologien bereitgestellt wird. Eine Seite ohne Main-Landmark bietet Personen, die assistive Technologien nutzen, keine Landmark, mit der sie direkt zum Hauptinhalt springen können.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1219,11 +1219,11 @@
 		"title": "Landmarks mit derselben Rolle müssen eindeutige Namen haben",
 		"description": "Prüft, dass bei zwei oder mehr Landmarks mit derselben Rolle jede einen eigenen zugänglichen Namen hat.",
 		"applicability": "Gilt, sobald zwei oder mehr Landmark-Regionen auf der Seite dieselbe Landmark-Rolle haben (banner, contentinfo, main, navigation, complementary, region, form oder search; das Erkennungsmodell beschreiben die Implementierungshinweise).",
-		"expectation": "Unter Landmarks mit derselben Rolle hat jede einen eigenen zugänglichen Namen (über aria-label/aria-labelledby; Landmarks erhalten ihren Namen nicht aus dem Inhalt). Zwei Landmarks derselben Rolle mit demselben Namen (auch zwei, die beide unbenannt sind) sind für Nutzer assistiver Technologien, die über Landmarks navigieren, nicht zu unterscheiden.",
+		"expectation": "Unter Landmarks mit derselben Rolle hat jede einen eigenen zugänglichen Namen (über aria-label/aria-labelledby; Landmarks erhalten ihren Namen nicht aus dem Inhalt). Zwei Landmarks derselben Rolle mit demselben Namen (auch zwei, die beide unbenannt sind) sind für Personen, die mit assistiven Technologien über Landmarks navigieren, nicht zu unterscheiden.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Zwei Navigation-Landmarks haben denselben zugänglichen Namen, sodass Screenreader-Nutzer sie in der Landmark-Liste nicht auseinanderhalten können."
+				"explanation": "Zwei Navigation-Landmarks haben denselben zugänglichen Namen, sodass Screenreader-Nutzende sie in der Landmark-Liste nicht auseinanderhalten können."
 			},
 			{
 				"state": "na",
@@ -1232,7 +1232,7 @@
 		]
 	},
 	"link-in-text-block": {
-		"title": "Links in Textblöcken müssen sich nicht nur durch Farbe vom umgebenden Text abheben",
+		"title": "Links in Textblöcken müssen sich vom umgebenden Text unterscheiden, ohne sich allein auf Farbe zu stützen",
 		"description": "Prüft, dass sich ein Link innerhalb eines Textflusses visuell vom umgebenden Text unterscheidet, durch Unterstreichung, eine andere Schriftstärke/einen anderen Schriftstil oder einen ausreichenden Farbkontrast (>=3:1), nicht allein durch die Farbe.",
 		"applicability": "Gilt für <a href>-Elemente, deren direktes Elternelement außerdem mindestens einen direkten Textknoten mit Inhalt außer Leerraum hat (d. h. der Link steht inline in einem Fließtext, nicht als eigenständiges Element, z. B. nicht als einziger Inhalt eines <li>-Navigationseintrags).",
 		"expectation": "Ein Link in einem Textblock muss sich durch mindestens ein Mittel außer der Farbe visuell vom umgebenden Text unterscheiden:\n\n- text-decoration: underline, ODER\n- eine andere font-weight als der umgebende Text, ODER\n- ein anderer font-style als der umgebende Text, ODER\n- ein Kontrastverhältnis von mindestens 3:1 zwischen der Textfarbe des Links und der Farbe des umgebenden Texts (der Schwellenwert der WCAG-Technik G183; ausreichender Kontrast allein ist eine anerkannte Alternative zur Unterstreichung).\n\nSchlägt nur fehl, wenn keiner dieser Punkte zutrifft UND der Farbkontrast zwischen Link und umgebendem Text zuverlässig berechenbar ist und unter 3:1 liegt, die Farbe also nachweislich das einzige Unterscheidungsmerkmal ist.",
@@ -1331,7 +1331,7 @@
 		"title": "Manuelle Prüfung: Tastaturnavigation und Fokusreihenfolge",
 		"description": "Weist darauf hin, dass eine manuelle Prüfung der Tastaturnavigation und der Fokusreihenfolge nötig ist.",
 		"applicability": "Gilt für jeden Durchlauf, unabhängig vom Inhalt der Seite. Tastaturbedienbarkeit und Fokusreihenfolge sind Eigenschaften der Seite als Ganzes, und kein Markup-Muster schließt die Frage aus.",
-		"expectation": "Immer cantTell, mit einem Vorkommen an der Wurzel des Scans. Ob der Fokus jede Komponente wieder verlassen kann, ob die Tab-Reihenfolge der Lesereihenfolge folgt und ob der Fokusindikator bei der Bedienung sichtbar bleibt, kann nur ein Mensch prüfen, der die Seite bedient. Die Regel gibt es, damit dieser Bedarf in den Ergebnissen steht, statt dass der Leser selbst daran denken muss.",
+		"expectation": "Immer cantTell, mit einem Vorkommen an der Wurzel des Scans. Ob der Fokus jede Komponente wieder verlassen kann, ob die Tab-Reihenfolge der Lesereihenfolge folgt und ob der Fokusindikator bei der Bedienung sichtbar bleibt, kann nur ein Mensch prüfen, der die Seite bedient. Die Regel gibt es, damit dieser Bedarf in den Ergebnissen steht, statt dass man beim Lesen der Ergebnisse selbst daran denken muss.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1347,7 +1347,7 @@
 		"examples": [
 			{
 				"state": "na",
-				"explanation": "`aria-describedby` verweist auf Text, der ausdrücklich als Transkript gekennzeichnet ist — ein starker Hinweis."
+				"explanation": "`aria-describedby` verweist auf Text, der ausdrücklich als Transkript gekennzeichnet ist – ein starker Hinweis."
 			},
 			{
 				"state": "unknown",
@@ -1372,14 +1372,14 @@
 		]
 	},
 	"meta-refresh-no-exceptions": {
-		"title": "Seite darf überhaupt kein Meta-Refresh verwenden (AAA)",
-		"description": "Prüft, dass <meta http-equiv=\"refresh\"> überhaupt nicht vorhanden ist, unabhängig von der Verzögerung. Das ist das strengere Gegenstück auf AAA-Ebene zur Prüfung auf A-Ebene, die nur positive Verzögerungen betrifft.",
+		"title": "Seite darf kein zeitgesteuertes Meta-Refresh verwenden (AAA)",
+		"description": "Prüft, dass kein <meta http-equiv=\"refresh\"> mit positiver Verzögerung vorhanden ist, unabhängig davon, wie lang sie ist (eine sofortige Weiterleitung mit Verzögerung 0 besteht). Das ist das strengere Gegenstück auf AAA-Ebene zur Prüfung auf A-Ebene, die Verzögerungen von mehr als 20 Stunden ausnimmt.",
 		"applicability": "Gilt für das erste <meta http-equiv=\"refresh\">-Element in Dokumentreihenfolge mit gültigem content-Attribut. Gemäß den gemeinsamen Schritten für deklaratives Refresh in HTML wertet ein Dokument immer nur sein erstes gültiges Meta-Refresh aus; ein späteres (gültig oder nicht) ist wirkungslos und fällt nicht darunter.",
-		"expectation": "Die gemeinsamen Schritte für deklaratives Refresh, angewendet auf den content-Wert dieses Elements, ergeben eine Verzögerung von genau 0. Eine sofortige Weiterleitung (delay=0) besteht auch auf AAA-Ebene, genau wie bei der Regel auf A-Ebene: Wenn vorher nichts angezeigt wird, kann auch niemand beim Lesen unterbrochen werden. Jede positive Verzögerung schlägt fehl, ohne die Ausnahme der A-Regel für mehr als 20 Stunden: Auf AAA-Ebene verlangen WCAG 2.2.4 (Unterbrechungen) und 3.2.5 (Änderung auf Anfrage), dass ein *zeitgesteuerter* automatischer Kontextwechsel nur auf Anforderung des Nutzers erfolgt, unabhängig davon, wie lang der Timer ist.",
+		"expectation": "Die gemeinsamen Schritte für deklaratives Refresh, angewendet auf den content-Wert dieses Elements, ergeben eine Verzögerung von genau 0. Eine sofortige Weiterleitung (delay=0) besteht auch auf AAA-Ebene, genau wie bei der Regel auf A-Ebene: Wenn vorher nichts angezeigt wird, kann auch niemand beim Lesen unterbrochen werden. Jede positive Verzögerung schlägt fehl, ohne die Ausnahme der A-Regel für mehr als 20 Stunden: Auf AAA-Ebene verlangen WCAG 2.2.4 (Unterbrechungen) und 3.2.5 (Änderung auf Anfrage), dass ein *zeitgesteuerter* automatischer Kontextwechsel nur auf Anforderung der Nutzenden erfolgt, unabhängig davon, wie lang der Timer ist.",
 		"examples": [
 			{
 				"state": "pass",
-				"explanation": "Eine Verzögerung von genau 0 ist eine sofortige Weiterleitung; es gibt nichts, was Nutzer beim Lesen unterbrechen könnte."
+				"explanation": "Eine Verzögerung von genau 0 ist eine sofortige Weiterleitung; niemand wird beim Lesen unterbrochen."
 			},
 			{
 				"state": "fail",
@@ -1391,7 +1391,7 @@
 		"title": "Seite darf kein zeitgesteuertes Meta-Refresh verwenden",
 		"description": "Prüft, dass <meta http-equiv=\"refresh\"> keine positive Verzögerung von 20 Stunden oder weniger vorgibt.",
 		"applicability": "Gilt für das erste <meta http-equiv=\"refresh\">-Element in Dokumentreihenfolge, dessen content-Attribut einen auswertbaren führenden Verzögerungswert hat. Gemäß den gemeinsamen Schritten für deklaratives Refresh in HTML wertet ein Dokument immer nur sein erstes gültiges Meta-Refresh aus; jedes spätere (gültig oder nicht) ist wirkungsloses Markup, das ein Browser nie verarbeitet, und wird daher nicht bewertet.",
-		"expectation": "Die Verzögerung ist 0 (eine sofortige Weiterleitung, die Nutzer nicht mitten beim Lesen überraschen kann) oder beträgt mehr als 20 Stunden. Jede andere positive Verzögerung aktualisiert die Seite oder leitet sie weiter, und zwar per Timer, den der Nutzer nicht ausgelöst hat und weder anhalten, stoppen noch verlängern kann, obwohl WCAG 2.2.1 (Zeiteinteilung anpassbar) genau das verlangt.",
+		"expectation": "Die Verzögerung ist 0 (eine sofortige Weiterleitung, die Nutzer nicht mitten beim Lesen überraschen kann) oder beträgt mehr als 20 Stunden. Jede andere positive Verzögerung aktualisiert die Seite oder leitet sie weiter, und zwar per Timer, den die Nutzenden nicht ausgelöst haben und weder anhalten, stoppen noch verlängern kann, obwohl WCAG 2.2.1 (Zeiteinteilung anpassbar) genau das verlangt.",
 		"examples": [
 			{
 				"state": "pass",
@@ -1399,7 +1399,7 @@
 			},
 			{
 				"state": "fail",
-				"explanation": "Eine Verzögerung von 30 Sekunden aktualisiert die Seite per Timer, den der Nutzer weder anhalten, stoppen noch verlängern kann."
+				"explanation": "Eine Verzögerung von 30 Sekunden aktualisiert die Seite per Timer, den die Nutzenden weder anhalten, stoppen noch verlängern kann."
 			}
 		]
 	},
@@ -1407,11 +1407,11 @@
 		"title": "Viewport-Meta-Tag sollte Zoomen bis 500 % erlauben",
 		"description": "Prüft, dass <meta name=\"viewport\"> weder user-scalable=no noch maximum-scale unter 5 (500 %) setzt.",
 		"applicability": "Gilt für <meta name=\"viewport\">-Elemente mit nicht leerem content-Attribut.",
-		"expectation": "Das content-Attribut setzt user-scalable nicht auf \"no\"/\"0\" und maximum-scale nicht unter 5 (500 %). Das ist das strengere Gegenstück auf AAA-Ebene zu meta-viewport-zoom-enabled (jene Regel setzt das AA-Minimum von 200 % als harten, WCAG-normativen fail durch); diese Regel ist eine unverbindliche Best-Practice-Empfehlung in Richtung der höheren AAA-Messlatte.",
+		"expectation": "Das content-Attribut setzt user-scalable nicht auf \"no\"/\"0\" und maximum-scale nicht unter 5 (500 %). Das ist das strengere Gegenstück zu meta-viewport-zoom-enabled (jene Regel setzt das AA-Minimum von 200 % als harten, WCAG-normativen fail durch); diese Regel stützt sich auf kein WCAG-Erfolgskriterium, sondern ist eine unverbindliche Best-Practice-Empfehlung mit dem höheren Ziel von 500 %.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "`user-scalable=no` verhindert jedes Zoomen über den Maßstab hinaus, mit dem die Seite lädt, und verfehlt damit das Best-Practice-Ziel von 500 % auf AAA-Ebene."
+				"explanation": "`user-scalable=no` verhindert jedes Zoomen über den Maßstab hinaus, mit dem die Seite lädt, und verfehlt damit das Best-Practice-Ziel von 500 %."
 			},
 			{
 				"state": "na",
@@ -1423,7 +1423,7 @@
 		"title": "Viewport-Meta-Tag darf Zoomen nicht deaktivieren",
 		"description": "Prüft, dass <meta name=\"viewport\"> weder user-scalable=no noch maximum-scale unter 2 (200 %) setzt.",
 		"applicability": "Gilt für <meta name=\"viewport\">-Elemente, deren content-Attribut maximum-scale oder user-scalable setzt. Ein content-Wert, der keines von beiden setzt, kann das Zoomen nicht einschränken.",
-		"expectation": "user-scalable fehlt, ist yes, device-width, device-height oder eine Zahl außerhalb des Bereichs -1 bis 1; und maximum-scale fehlt, ist device-width, device-height, negativ oder 2 oder größer. Alles andere hindert Nutzer daran, Text auf 200 % zu vergrößern, was WCAG 1.4.4 (Textgröße ändern) verlangt.",
+		"expectation": "user-scalable fehlt, ist yes, device-width, device-height oder eine Zahl außerhalb des Bereichs -1 bis 1; und maximum-scale fehlt, ist device-width, device-height, negativ oder 2 oder größer. Alles andere hindert Nutzende daran, Text auf 200 % zu vergrößern, was WCAG 1.4.4 (Textgröße ändern) verlangt.",
 		"examples": [
 			{
 				"state": "pass",
@@ -1455,11 +1455,11 @@
 		"title": "Inline-Event-Handler nur für Zeigergeräte sollten ein per Tastatur erreichbares Gegenstück haben",
 		"description": "Markiert Elemente mit einem Inline-Event-Handler nur für Zeigergeräte (onmouseover, onmouseout, onmousedown, onmouseup, ondblclick, onmousemove, onmouseenter, onmouseleave) ohne per Tastatur erreichbares Gegenstück (onkeydown/onkeyup/onkeypress/onfocus/onblur) zur manuellen Prüfung.",
 		"applicability": "Elemente mit mindestens einem Inline-Event-Handler-Attribut nur für Zeigergeräte (`onmouseover`, `onmouseout`, `onmousedown`, `onmouseup`, `ondblclick`, `onmousemove`, `onmouseenter`, `onmouseleave`) mit nicht leerem Wert, die außerdem infrage kommen bzw. erreichbar sind (nicht ausgeblendet/`aria-hidden`/`display:none`).",
-		"expectation": "Das Element trägt zusätzlich mindestens einen per Tastatur erreichbaren Inline-Handler: `onkeydown`, `onkeyup`, `onkeypress` (die direkten Entsprechungen für Tastaturereignisse) oder `onfocus`/`onblur` (der übliche Ersatz für hover-gesteuertes Verhalten: focus/blur sind laut WCAG-Technik G90 das tastaturbedienbare Gegenstück zu mouseover/mouseout). Andernfalls lässt sich das mausgesteuerte Verhalten des Elements (ein Hover-Tooltip, ein eigenes Dropdown, eine Drag-Interaktion) von Nutzern, die nur die Tastatur verwenden, nicht auslösen.",
+		"expectation": "Das Element trägt zusätzlich mindestens einen per Tastatur erreichbaren Inline-Handler: `onkeydown`, `onkeyup`, `onkeypress` (die direkten Entsprechungen für Tastaturereignisse) oder `onfocus`/`onblur` (der übliche Ersatz für hover-gesteuertes Verhalten: focus/blur sind laut WCAG-Technik G90 das tastaturbedienbare Gegenstück zu mouseover/mouseout). Andernfalls lässt sich das mausgesteuerte Verhalten des Elements (ein Hover-Tooltip, ein eigenes Dropdown, eine Drag-Interaktion) von Personen, die nur die Tastatur verwenden, nicht auslösen.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "`onmouseover`/`onmouseout` haben kein Gegenstück `onfocus`/`onblur`, daher können Tastaturnutzer dieses Verhalten nie auslösen."
+				"explanation": "`onmouseover`/`onmouseout` haben kein Gegenstück `onfocus`/`onblur`, daher können Personen, die die Tastatur verwenden, dieses Verhalten nie auslösen."
 			},
 			{
 				"state": "na",
@@ -1491,11 +1491,11 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Das Audio startet automatisch und nicht stummgeschaltet, ohne `controls`-Attribut; Nutzer haben keine Möglichkeit, es anzuhalten oder zu stoppen."
+				"explanation": "Das Audio startet automatisch und nicht stummgeschaltet, ohne `controls`-Attribut; es gibt keine Möglichkeit, es anzuhalten oder zu stoppen."
 			},
 			{
 				"state": "na",
-				"explanation": "Native `controls` geben Nutzern eine Möglichkeit zum Anhalten und zur Lautstärkeregelung."
+				"explanation": "Native `controls` bieten eine Möglichkeit zum Anhalten und zur Lautstärkeregelung."
 			}
 		]
 	},
@@ -1567,7 +1567,7 @@
 		"title": "Seite sollte eine Überschrift der ersten Ebene haben",
 		"description": "Prüft, dass die Seite mindestens eine Überschrift der ersten Ebene hat (<h1> oder role=\"heading\" mit aria-level=\"1\").",
 		"applicability": "Gilt immer für jedes HTML-Dokument mit einem <body>-Element: „Hat die Seite eine h1?“ betrifft die ganze Seite und folgt damit dem Muster von bypass-blocks-present, das Dokument direkt zu bewerten.",
-		"expectation": "Es gibt mindestens eine Überschrift der Ebene 1 (natives <h1> oder role=\"heading\" mit aria-level=\"1\"). Eine Seite ohne Überschrift der obersten Ebene bietet Nutzern assistiver Technologien, die über Überschriften navigieren, keinen klaren Einstiegspunkt.",
+		"expectation": "Es gibt mindestens eine Überschrift der Ebene 1 (natives <h1> oder role=\"heading\" mit aria-level=\"1\"). Eine Seite ohne Überschrift der obersten Ebene bietet Personen, die mit assistiven Technologien über Überschriften navigieren, keinen klaren Einstiegspunkt.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1583,7 +1583,7 @@
 		"title": "Muster im Seitentitel, die auf zu wenig Aussagekraft hindeuten können",
 		"description": "Erkennt Muster im Seitentitel, die auf geringe Aussagekraft hindeuten können, etwa generische, doppelte oder zu stark schablonenhafte Titel. Diese Regel liefert Hinweise zur Prüfung und schlägt nicht automatisch fehl.",
 		"applicability": "Gilt für einen Durchlauf über ein ganzes Dokument, dessen <title> zu nicht leerem Text aufgelöst wird; ein fehlender oder leerer Titel ist ein Fehler von page-title-present, kein zu prüfendes Muster. Ein durch contextSelector oder engineOptions.fragment eingeschränkter Durchlauf ist notApplicable, ebenso ein Titel, der keinem der folgenden Muster entspricht.",
-		"expectation": "Der Titel zeigt keines der zurückhaltend gewählten Signale für geringe Aussagekraft: einer der generischen Titel [[en:home]], [[en:homepage]], [[en:welcome]], [[en:untitled]], [[en:page]] oder [[en:document]]; weniger als acht Zeichen; oder eine Schablonenform, die ein generisches Token mit einer Marke kombiniert, etwa „[[en:Home | Brand]]“. Liefert die Probe crawl.pageTitles mindestens zehn Seiten, werden stattdessen seitenübergreifende Signale verwendet: ein Titel, der sich über verschiedene URLs wiederholt, oder ein Präfix oder Suffix von zwölf oder mehr Zeichen, das die ganze Menge teilt. Jedes Signal wird als cantTell gemeldet: Ob ein Titel seine Seite beschreibt, ist eine Ermessensfrage, daher schlägt die Regel nie allein wegen eines Musters fehl.",
+		"expectation": "Der Titel zeigt keines der zurückhaltend gewählten Signale für geringe Aussagekraft: einer der generischen Titel [[en:home]], [[en:homepage]], [[en:welcome]], [[en:untitled]], [[en:page]] oder [[en:document]]; weniger als acht Zeichen; oder eine Schablonenform, die ein generisches Token mit einer Marke kombiniert, etwa „[[en:Home | Brand]]“. Liefert die Probe crawl.pageTitles mindestens zehn Seiten, werden stattdessen seitenübergreifende Signale verwendet: ein Titel, der sich über verschiedene URLs wiederholt, oder ein Präfix oder Suffix von zwölf oder mehr Zeichen, das alle Titel der Menge gemeinsam haben. Jedes Signal wird als cantTell gemeldet: Ob ein Titel seine Seite beschreibt, ist eine Ermessensfrage, daher schlägt die Regel nie allein wegen eines Musters fehl.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1615,7 +1615,7 @@
 		"title": "Authentifizierungsfelder dürfen das Einfügen nicht blockieren",
 		"description": "Prüft, dass ein Passwort- oder Einmalcode-Feld keinen Inline-paste-Handler hat, der das Einfügen abbricht. Damit fiele der Passwortmanager oder die Zwischenablage weg, auf die sich WCAG 3.3.8 als unterstützenden Mechanismus stützt.",
 		"applicability": "Gilt für jedes Bedienelement, dessen autocomplete-Token current-password, new-password oder one-time-code ist, sowie für <input type=\"password\">, sofern sein autocomplete keinen anderen Zweck nennt. Ein deaktiviertes oder schreibgeschütztes Feld nimmt keine Eingabe an, die blockiert werden könnte, und ein Feld außerhalb des Accessibility Trees wird gar nicht abgefragt; beide fallen daher nicht darunter.",
-		"expectation": "Eine prüfende Person bestätigt, dass sich in das Feld weiterhin etwas einfügen lässt. Sich ein Passwort zu merken, ist ein kognitiver Funktionstest, und 3.3.8 verlangt einen Mechanismus, der Nutzern dabei hilft; ein Passwortmanager bzw. bei einem Einmalcode die Zwischenablage ist dieser Mechanismus.",
+		"expectation": "Eine prüfende Person bestätigt, dass sich in das Feld weiterhin etwas einfügen lässt. Sich ein Passwort zu merken, ist ein kognitiver Funktionstest, und 3.3.8 verlangt einen Mechanismus, der Nutzenden dabei hilft; ein Passwortmanager bzw. bei einem Einmalcode die Zwischenablage ist dieser Mechanismus.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1631,7 +1631,7 @@
 		"title": "Präsentationsrolle darf nicht mit einem globalen ARIA-Attribut oder Fokussierbarkeit kollidieren",
 		"description": "Prüft, dass role=\"presentation\"/\"none\" (einschließlich der impliziten Präsentationsrolle eines <img alt=\"\">) nicht mit einem globalen ARIA-Attribut (aria-label, aria-hidden, aria-describedby, ...) oder mit Fokussierbarkeit (tabindex/nativ) kombiniert ist.",
 		"applicability": "Gilt für Elemente mit explizitem role=\"presentation\" oder role=\"none\" ODER für ein <img alt=\"\"> ohne eigene explizite Rolle (ein leeres alt gibt einem <img> laut HTML-AAM eine implizite Präsentationsrolle, auch ganz ohne explizites role-Attribut: `img[alt=''], [role=\"none\"], [role=\"presentation\"]`).",
-		"expectation": "Das Element trägt nicht zusätzlich einen *globalen* WAI-ARIA-Zustand bzw. eine globale Eigenschaft (aria-label, aria-hidden, aria-describedby, aria-live, aria-current, ...; die vollständige Menge der globalen Attribute, nicht nur die benennenden) UND ist nicht fokussierbar. Laut dem Abschnitt „[[en:Presentational Roles Conflict Resolution]]“ der WAI-ARIA-Spezifikation wird eine Präsentationsrolle auf die implizite semantische Rolle des Elements „zurückgesetzt“, sobald eine der beiden Bedingungen zutrifft: Die Rolle presentation/none hört stillschweigend auf zu wirken, entgegen der offensichtlichen Absicht des Autors, das Element aus dem Accessibility Tree zu entfernen.",
+		"expectation": "Das Element trägt nicht zusätzlich einen *globalen* WAI-ARIA-Zustand bzw. eine globale Eigenschaft (aria-label, aria-hidden, aria-describedby, aria-live, aria-current, ...; die vollständige Menge der globalen Attribute, nicht nur die benennenden) UND ist nicht fokussierbar. Laut dem Abschnitt „[[en:Presentational Roles Conflict Resolution]]“ der WAI-ARIA-Spezifikation wird eine Präsentationsrolle auf die implizite semantische Rolle des Elements „zurückgesetzt“, sobald eine der beiden Bedingungen zutrifft: Die Rolle presentation/none hört stillschweigend auf zu wirken, entgegen der offensichtlichen Absicht, das Element aus dem Accessibility Tree zu entfernen.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1679,7 +1679,7 @@
 		"title": "Seiteninhalte sollten in einer Landmark-Region liegen",
 		"description": "Prüft, dass Inhalte unter <body> in einer Landmark-Region enthalten sind.",
 		"applicability": "Gilt für jedes Element unter <body>, das direkt sichtbaren Text (oder anderen eigenen Inhalt, siehe @implementation-notes) trägt und nicht selbst eine Landmark, eine Live-Region, ein Dialog, ein Button, ein <svg>, ein <iframe>/<frame> oder ein auflösbarer Skip-Link ist.",
-		"expectation": "Jeder Seiteninhalt auf oberster Ebene liegt in einer Landmark-Region (main, navigation, banner, contentinfo, complementary, region, form, search), damit Nutzer assistiver Technologien, die über Landmarks navigieren, keine Inhalte verpassen, die nie in einer Landmark untergebracht wurden.",
+		"expectation": "Jeder Seiteninhalt auf oberster Ebene liegt in einer Landmark-Region (main, navigation, banner, contentinfo, complementary, region, form, search), damit Personen, die mit assistiven Technologien über Landmarks navigieren, keine Inhalte verpassen, die nie in einer Landmark untergebracht wurden.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1725,13 +1725,13 @@
 	},
 	"scrollable-region-focusable": {
 		"title": "Scrollbare Bereiche ohne fokussierbaren Inhalt sollten per Tastatur fokussierbar sein",
-		"description": "Markiert Elemente, deren CSS overflow:auto/scroll festlegt, die keinen fokussierbaren Nachfahren enthalten und selbst nicht per Tastatur fokussierbar sind, zur manuellen Prüfung, ob ihr Inhalt tatsächlich überläuft und Scrollen per Tastatur möglich sein muss.",
+		"description": "Markiert Elemente, deren CSS overflow:auto/scroll festlegt, die keinen fokussierbaren Nachfahren enthalten und selbst nicht per Tastatur fokussierbar sind, zur manuellen Prüfung, ob ihr Inhalt tatsächlich überläuft und daher per Tastatur scrollbar sein sollte.",
 		"applicability": "Absichtlich auf eine feste Menge von Container-Tags beschränkt, die wahrscheinlich scrollen (div, section, article, aside, main, nav, pre, table, blockquote, ul, ol, textarea) und ein berechnetes `overflow-x`/`overflow-y` von `auto` oder `scroll` haben, nicht auf jedes Element der Seite, damit die Prüfung deterministisch und performant bleibt (dieselbe Art der Eingrenzung wie bei `region`).",
-		"expectation": "Ein Bereich, der laut CSS scrollen kann (`auto`/`scroll`), sollte per Tastatur erreichbar sein: Entweder enthält er bereits einen fokussierbaren Nachfahren (einen Link, einen Button, ein Formularelement oder ein Element mit `tabindex`, zu dem Tastaturnutzer per Tab gelangen und von dort mit den Pfeiltasten scrollen können), oder der Bereich selbst hat einen nicht negativen `tabindex`.",
+		"expectation": "Ein Bereich, der laut CSS scrollen kann (`auto`/`scroll`), sollte per Tastatur erreichbar sein: Entweder enthält er bereits einen fokussierbaren Nachfahren (einen Link, einen Button, ein Formularelement oder ein Element mit `tabindex`, zu dem man per Tab gelangen und von dort mit den Pfeiltasten scrollen können), oder der Bereich selbst hat einen nicht negativen `tabindex`.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Der Bereich kann scrollen, hat aber keinen eigenen `tabindex` und enthält keinen fokussierbaren Nachfahren, daher können Tastaturnutzer ihn nie erreichen, um ihn zu scrollen."
+				"explanation": "Der Bereich kann scrollen, hat aber keinen eigenen `tabindex` und enthält keinen fokussierbaren Nachfahren, daher lässt er sich per Tastatur nie erreichen, um ihn zu scrollen."
 			},
 			{
 				"state": "na",
@@ -1759,7 +1759,7 @@
 		"title": "Bilder dürfen keine serverseitige Image-Map verwenden",
 		"description": "Prüft, dass <img>-Elemente kein ismap-Attribut tragen (serverseitige Image-Maps haben kein per Tastatur bedienbares Gegenstück).",
 		"applicability": "Gilt für jeden Scan-Bereich; ob er ein <img> mit ismap-Attribut enthält, lässt sich immer beantworten.",
-		"expectation": "Kein Bild verwendet ismap. Serverseitige Image-Maps beruhen darauf, dass der Browser Klickkoordinaten an den Server sendet; dafür gibt es kein per Tastatur bedienbares Gegenstück, und einzelne klickbare Bereiche lassen sich weder ermitteln noch assistiven Technologien oder Tastaturnutzern bereitstellen. Clientseitige Image-Maps (<map>/<area>, jeweils mit echtem href/alt) sind die barrierefreie Alternative und werden von dieser Regel nicht markiert. Das Vorhandensein von ismap ist selbst der Verstoß, sein Fehlen selbst ein pass -- einen dritten, nicht anwendbaren Fall gibt es nicht.",
+		"expectation": "Kein Bild verwendet ismap. Serverseitige Image-Maps beruhen darauf, dass der Browser Klickkoordinaten an den Server sendet; dafür gibt es kein per Tastatur bedienbares Gegenstück, und einzelne klickbare Bereiche lassen sich weder ermitteln noch assistiven Technologien oder Personen, die die Tastatur verwenden, bereitstellen. Clientseitige Image-Maps (<map>/<area>, jeweils mit echtem href/alt) sind die barrierefreie Alternative und werden von dieser Regel nicht markiert. Das Vorhandensein von ismap ist selbst der Verstoß, sein Fehlen ergibt direkt pass -- einen dritten, nicht anwendbaren Fall gibt es nicht.",
 		"examples": [
 			{
 				"state": "pass",
@@ -1773,7 +1773,7 @@
 	},
 	"skip-link": {
 		"title": "Skip-Link muss ein auflösbares, nutzbares Ziel haben",
-		"description": "Prüft, dass das href-Fragment eines „Springe zu ...“-Links auf ein echtes, aktuell nutzbares Element im Dokument verweist.",
+		"description": "Prüft, dass das href-Fragment eines Skip-Links („[[en:skip to]] ...“) auf ein echtes, aktuell nutzbares Element im Dokument verweist.",
 		"applicability": "Gilt für <a href=\"#fragment\">-Elemente, deren zugänglicher Name einer gängigen Konvention wie „[[en:skip to]] ...“ / „[[en:jump to]] ...“ entspricht („[[en:skip]]“ oder „[[en:jump to]]“ im Namen, ohne Beachtung der Groß-/Kleinschreibung), dem erkennbaren Muster eines Skip-Links, nicht für jeden seiteninternen Anker-Link. „[[en:jump to]]“ wird neben „[[en:skip]]“ berücksichtigt, weil echte Skip-Links beide Konventionen verwenden (z. B. ein Link „[[en:Jump to section]]“, den ein rein positionsbasierter Abgleich erfassen, ein reines „[[en:skip]]“-Textmuster aber verpassen würde). Der Abgleich über Textmuster bleibt bewusst so (siehe implementation-notes); hier wird nur die Liste bekannter Konventionen erweitert.",
 		"expectation": "Das Fragment des Links verweist auf ein echtes Element im Dokument (über eine passende id oder ein veraltetes <a name=\"...\">), und dieses Ziel ist aktuell nutzbar (nicht aus dem Accessibility Tree ausgeblendet und, sofern Browser-Geometrie verfügbar ist, nicht ohne Fläche/ohne Rechtecke). Ein Skip-Link, dessen Ziel fehlt oder faktisch unbrauchbar ist, bietet kein verlässliches Sprungziel.",
 		"examples": [
@@ -1855,7 +1855,7 @@
 		"title": "<svg> muss eine Textalternative bereitstellen",
 		"description": "Prüft, dass Inline-<svg>-Elemente über ein <title>-Element oder einen ARIA-Namen eine Textalternative bereitstellen (ein <desc>-Element allein zählt nicht).",
 		"applicability": "Gilt für Inline-<svg>-Elemente, die assistiven Technologien bereitgestellt werden UND offenbar etwas vermitteln sollen. „Soll etwas vermitteln“ wird deterministisch angenähert durch mindestens eines der folgenden Merkmale:\n\n- role=\"img\", role=\"graphics-symbol\" oder role=\"graphics-document\" am SVG-Wurzelelement selbst (die Rollen des [[en:WAI-ARIA Graphics Module]], neben img). Erstreckt sich NICHT auf beliebige Nachfahren mit role=\"img\"/\"graphics-symbol\"/\"graphics-document\" innerhalb eines <svg>. Diese Prüfung betrifft nur die <svg>-Wurzel; role-img-text-alternative-present deckt dieselben drei Rollen auf jedem anderen Element ab, auch auf verschachtelten SVG-Formen (das eigene Fehlerbeispiel von ACT 7d6734: eine einfache `<svg>`-Wurzel mit einem verschachtelten `<circle role=\"graphics-symbol\">`).\n- aria-label / aria-labelledby vorhanden\n- <title> oder <desc> vorhanden (desc allein ist nur ein Signal für die Anwendbarkeit, siehe @expectation)\n- fokussierbar/per Tab erreichbar (z. B. tabindex, native Fokussierbarkeit)\n\nBilder mit role=\"presentation\" oder role=\"none\" sind nur ausgeschlossen, wenn sie nicht fokussierbar sind. Elemente, die ansonsten aus dem Accessibility Tree ausgeblendet sind, bleiben betroffen, wenn sie per Tab fokussierbar sind oder über IDREF-Beziehungen referenziert werden (gemäß den Eignungsprüfungen der Engine).",
-		"expectation": "Jedes betroffene <svg>-Element stellt eine Textalternative bereit über:\n\n- nicht leeren <title>-Text, ODER\n- einen ARIA-Namen (aria-label / aria-labelledby).\n\nEin <desc>-Element allein genügt NICHT: Laut [[en:SVG Accessibility API Mappings]] §7.1 trägt <desc> immer nur zur zugänglichen BESCHREIBUNG bei, nie zum zugänglichen NAMEN. Ein <svg> mit nur einem <desc> und ohne <title>/ARIA-Namen ist trotzdem „betroffen“ (desc zeigt die Absicht des Autors an), schlägt aber fehl.",
+		"expectation": "Jedes betroffene <svg>-Element stellt eine Textalternative bereit über:\n\n- nicht leeren <title>-Text, ODER\n- einen ARIA-Namen (aria-label / aria-labelledby).\n\nEin <desc>-Element allein genügt NICHT: Laut [[en:SVG Accessibility API Mappings]] §7.1 trägt <desc> immer nur zur zugänglichen BESCHREIBUNG bei, nie zum zugänglichen NAMEN. Ein <svg> mit nur einem <desc> und ohne <title>/ARIA-Namen ist trotzdem „betroffen“ (desc zeigt an, dass die Grafik etwas vermitteln soll), schlägt aber fehl.",
 		"examples": [
 			{
 				"state": "pass",
@@ -1907,7 +1907,7 @@
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Ein positiver `tabindex` nimmt dieses Element aus der natürlichen Tab-Reihenfolge des Dokuments und stellt es vor alle anderen, was Tastaturnutzer meist überrascht."
+				"explanation": "Ein positiver `tabindex` nimmt dieses Element aus der natürlichen Tab-Reihenfolge des Dokuments und stellt es vor alle anderen, was Personen, die per Tastatur navigieren, meist überrascht."
 			},
 			{
 				"state": "na",
@@ -1935,7 +1935,7 @@
 		"title": "Die erste Zeile einer Tabelle sollte kein echtes <caption> ersetzen",
 		"description": "Markiert Tabellen ohne <caption>, deren erste Zeile eine einzige nicht leere Zelle hat, während andere Zeilen mehrere Zellen haben, zur manuellen Prüfung, ob diese Zelle als unechte Tabellenbeschriftung dient.",
 		"applicability": "`<table>`-Elemente ohne `<caption>`-Kind, mit mindestens zwei Zeilen und einer ersten Zeile mit genau einer Zelle mit nicht leerem Text, während mindestens eine andere Zeile mehr als eine Zelle hat.",
-		"expectation": "Eine einzelne Zelle in der ersten Zeile über Zeilen, die eindeutig mehrere Spalten haben, deutet stark darauf hin, dass der Autor sie als optische Beschriftung/Titel verwendet und nicht als echte Tabellenzelle. Struktur, die nur über diese Positionskonvention vermittelt wird, ist nicht programmatisch mit der Tabelle verknüpft, wie es ein echtes `<caption>`-Element wäre (1.3.1).",
+		"expectation": "Eine einzelne Zelle in der ersten Zeile über Zeilen, die eindeutig mehrere Spalten haben, deutet stark darauf hin, dass sie als optische Beschriftung/Titel dient und nicht als echte Tabellenzelle. Struktur, die nur über diese Positionskonvention vermittelt wird, ist nicht programmatisch mit der Tabelle verknüpft, wie es ein echtes `<caption>`-Element wäre (1.3.1).",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1983,7 +1983,7 @@
 		"title": "Zeigerziele müssen mindestens 24x24px groß sein oder ausreichend Abstand zu anderen Zielen haben",
 		"description": "Prüft, dass per Zeiger bedienbare Ziele eine effektive Trefferfläche von mindestens 24 mal 24 CSS-Pixeln haben oder eine zulässige Ausnahme erfüllen (z. B. ausreichender Abstand).",
 		"applicability": "Gilt für <button>, <summary>, <a href>, <area href>, <input>, <select>, <textarea> und Elemente mit role=\"button\"/\"link\", die per Zeiger erreichbar sind: gerendert, nicht durch pointer-events:none unterdrückt und mit einer messbaren Box, deren Größe nicht null ist. Der Ausschluss aus dem Accessibility Tree ist hier kein Filter: Ein Bedienelement mit aria-hidden ist trotzdem ein Ziel, das ein Zeiger treffen kann. <area> wird erfasst, aber aus dem unten genannten Grund nie tatsächlich bewertet.",
-		"expectation": "Jedes Ziel ist mindestens 24 mal 24 CSS-Pixel groß oder erfüllt eine der Ausnahmen von SC 2.5.8, die diese Regel anhand der Geometrie feststellen kann: Abstand (ein Kreis mit 24px Durchmesser, zentriert auf dem Ziel, erreicht kein nicht verwandtes Ziel), die Inline-Ausnahme für einen Link innerhalb eines Fließtexts oder die Größenfestlegung durch den User Agent (eine nicht gestylte native Checkbox oder ein Radio-Button, erkannt daran, dass appearance nicht auf none zurückgesetzt wurde). Ein zu kleines Ziel, das zu nah an einem Nachbarn liegt, schlägt fehl. Wo eine Ausnahme greifen kann, die Geometrie sie aber nicht bestätigen kann (zwei Inline-Links in einem Fließtext oder ein Ziel in einem SVG, Canvas oder einer Image-Map, das wesentlich sein kann), ist das Ergebnis cantTell statt einer Vermutung. Hinweise (Absicht der Engine):\n\n- Diese Regel arbeitet DOM-basiert und misst die Trefferflächen, die sehenden Zeigernutzern zur Verfügung stehen.\n- Elemente können „per Zeiger bedienbar“ sein, auch wenn sie aus dem Accessibility Tree ausgeschlossen sind (z. B. aria-hidden=\"true\").\n- Ausgeschlossen sind Ziele, die nicht per Zeiger erreichbar sind, weil ihr Rendering unterdrückt ist (display:none usw.), Zeigerereignisse unterdrückt sind (pointer-events:none) oder ihre Geometrie null ist (z. B. scale(0) -> Rechtecke ohne Fläche).\n\nUmgesetzte Ausnahmen von WCAG 2.5.8 und wie:\n\n- Abstand: Ein Kreis mit 24px Durchmesser, zentriert auf einem zu kleinen Ziel, darf weder die Box eines anderen (nicht verwandten) Ziels noch den Kreis eines anderen zu kleinen Ziels schneiden. Zwei Durchgänge: eine schnelle Prüfung des Mittelpunktabstands (exakt für zu klein gegen zu klein, sonst eine brauchbare Näherung) und eine Stichprobe von 16 Randpunkten über elementFromPoint als genauerer Rückfall für Fälle, die die Abstandsprüfung nicht ausreichend erkennt (z. B. ein kleines Ziel neben einem großen, langgestreckten Nachbarn). Vorfahren-/Nachfahrenbeziehungen zwischen dem Ziel und dem „anderen“ Element werden nie als Konflikt gewertet (siehe isRelated): Eine verschachtelte interaktive Form, ein kleines Bedienelement in seinem eigenen umschließenden Link/Button, ist eine einzige visuelle Fläche, nicht zwei unabhängige Ziele. Dieses Muster ist Sache von nested-interactive-controls-absent, keine Abstandsfrage.\n- Inline: Ein Link in einem Textblock-Container besteht direkt (isInlineTextExceptionTarget). Ein Inline-Link, dessen einziger Abstandskonflikt ein anderer Inline-Link im selben Fließtext ist, wird als cantTell gemeldet (isInlineLinkTarget), da die Inline-Ausnahme ihn abdecken kann, die Geometrie das aber nicht bestätigen kann.\n- User-Agent-Bedienelement: eine nicht gestylte native Checkbox bzw. ein Radio-Button, erkannt daran, dass `appearance` nicht auf `none` zurückgesetzt ist (siehe isUserAgentSizedControl). Bewusst eng auf Checkbox/Radio beschränkt, nicht auf jedes Formularelement, da nur diese Typen ein eindeutiges natives Rendering haben.\n- Wesentlich/Gleichwertig: Nur eine enge Teilmenge mit hoher Sicherheit wird angenommen (in SVG/Canvas/Map eingebettete Bedienelemente, siehe isPlausiblyEssentialOrEquivalent); alles andere wird als cantTell zurückgestellt, statt „wesentlich“ aus einem Layout-Container abzuleiten.\n\nBekannte, absichtlich nicht umgesetzte Lücke: `<area>`-Elemente (Hotspots von Image-Maps) werden überhaupt nicht bewertet. `area[href]` steht aus Gründen der Vorwärtskompatibilität in CANDIDATE_SELECTOR, bewirkt derzeit aber nichts. `<area>` hat keine eigene CSS-Box (laut dem Standard-UA-Stylesheet der HTML-Spezifikation `display: none`, anhand der Spezifikation bestätigt und keine jsdom-Eigenheit), daher meldet `getBoundingClientRect()` immer eine Geometrie von null, und die vorhandene `display:none`-Prüfung von `isPointerReachable` verwirft es, bevor Größen- oder Ausnahmelogik läuft. Die echte Trefferfläche eines `<area>` berechnet der Browser aus seinen Attributen `shape`/`coords` bezogen auf die *gerenderte* Größe des zugehörigen `<img>`, ein völlig anderer Messweg als bei jedem anderen Kandidaten hier. Das richtig umzusetzen (`coords` auswerten, das zugehörige `<img>` über sein `usemap` auflösen, die per CSS skalierte Darstellungsgröße des Bilds berücksichtigen) ist ein eigenes, größeres Feature und wurde in diesem Durchgang nicht versucht. Dies ist eine automatische, deterministische Annäherung, die:\n\n- bei eindeutigen Fehlern streng ist,\n- zurückhaltend bleibt, wenn sich Ausnahmen nicht zuverlässig feststellen lassen.",
+		"expectation": "Jedes Ziel ist mindestens 24 mal 24 CSS-Pixel groß oder erfüllt eine der Ausnahmen von SC 2.5.8, die diese Regel anhand der Geometrie feststellen kann: Abstand (ein Kreis mit 24px Durchmesser, zentriert auf dem Ziel, erreicht kein nicht verwandtes Ziel), die Inline-Ausnahme für einen Link innerhalb eines Fließtexts oder die Größenfestlegung durch den User Agent (eine nicht gestylte native Checkbox oder ein Radio-Button, erkannt daran, dass appearance nicht auf none zurückgesetzt wurde). Ein zu kleines Ziel, das zu nah an einem Nachbarn liegt, schlägt fehl. Wo eine Ausnahme greifen kann, die Geometrie sie aber nicht bestätigen kann (zwei Inline-Links in einem Fließtext oder ein Ziel in einem SVG, Canvas oder einer Image-Map, das wesentlich sein kann), ist das Ergebnis cantTell statt einer Vermutung. Hinweise (Absicht der Engine):\n\n- Diese Regel arbeitet DOM-basiert und misst die Trefferflächen, die sehenden Personen bei der Bedienung per Zeiger zur Verfügung stehen.\n- Elemente können „per Zeiger bedienbar“ sein, auch wenn sie aus dem Accessibility Tree ausgeschlossen sind (z. B. aria-hidden=\"true\").\n- Ausgeschlossen sind Ziele, die nicht per Zeiger erreichbar sind, weil ihr Rendering unterdrückt ist (display:none usw.), Zeigerereignisse unterdrückt sind (pointer-events:none) oder ihre Geometrie null ist (z. B. scale(0) -> Rechtecke ohne Fläche).\n\nUmgesetzte Ausnahmen von WCAG 2.5.8 und wie:\n\n- Abstand: Ein Kreis mit 24px Durchmesser, zentriert auf einem zu kleinen Ziel, darf weder die Box eines anderen (nicht verwandten) Ziels noch den Kreis eines anderen zu kleinen Ziels schneiden. Zwei Durchgänge: eine schnelle Prüfung des Mittelpunktabstands (exakt für zu klein gegen zu klein, sonst eine brauchbare Näherung) und eine Stichprobe von 16 Randpunkten über elementFromPoint als genauerer Rückfall für Fälle, die die Abstandsprüfung nicht ausreichend erkennt (z. B. ein kleines Ziel neben einem großen, langgestreckten Nachbarn). Vorfahren-/Nachfahrenbeziehungen zwischen dem Ziel und dem „anderen“ Element werden nie als Konflikt gewertet (siehe isRelated): Eine verschachtelte interaktive Form, ein kleines Bedienelement in seinem eigenen umschließenden Link/Button, ist eine einzige visuelle Fläche, nicht zwei unabhängige Ziele. Dieses Muster ist Sache von nested-interactive-controls-absent, keine Abstandsfrage.\n- Inline: Ein Link in einem Textblock-Container besteht direkt (isInlineTextExceptionTarget). Ein Inline-Link, dessen einziger Abstandskonflikt ein anderer Inline-Link im selben Fließtext ist, wird als cantTell gemeldet (isInlineLinkTarget), da die Inline-Ausnahme ihn abdecken kann, die Geometrie das aber nicht bestätigen kann.\n- User-Agent-Bedienelement: eine nicht gestylte native Checkbox bzw. ein Radio-Button, erkannt daran, dass `appearance` nicht auf `none` zurückgesetzt ist (siehe isUserAgentSizedControl). Bewusst eng auf Checkbox/Radio beschränkt, nicht auf jedes Formularelement, da nur diese Typen ein eindeutiges natives Rendering haben.\n- Wesentlich/Gleichwertig: Nur eine enge Teilmenge mit hoher Sicherheit wird angenommen (in SVG/Canvas/Map eingebettete Bedienelemente, siehe isPlausiblyEssentialOrEquivalent); alles andere wird als cantTell zurückgestellt, statt „wesentlich“ aus einem Layout-Container abzuleiten.\n\nBekannte, absichtlich nicht umgesetzte Lücke: `<area>`-Elemente (Hotspots von Image-Maps) werden überhaupt nicht bewertet. `area[href]` steht aus Gründen der Vorwärtskompatibilität in CANDIDATE_SELECTOR, bewirkt derzeit aber nichts. `<area>` hat keine eigene CSS-Box (laut dem Standard-UA-Stylesheet der HTML-Spezifikation `display: none`, anhand der Spezifikation bestätigt und keine jsdom-Eigenheit), daher meldet `getBoundingClientRect()` immer eine Geometrie von null, und die vorhandene `display:none`-Prüfung von `isPointerReachable` verwirft es, bevor Größen- oder Ausnahmelogik läuft. Die echte Trefferfläche eines `<area>` berechnet der Browser aus seinen Attributen `shape`/`coords` bezogen auf die *gerenderte* Größe des zugehörigen `<img>`, ein völlig anderer Messweg als bei jedem anderen Kandidaten hier. Das richtig umzusetzen (`coords` auswerten, das zugehörige `<img>` über sein `usemap` auflösen, die per CSS skalierte Darstellungsgröße des Bilds berücksichtigen) ist ein eigenes, größeres Feature und wurde in diesem Durchgang nicht versucht. Dies ist eine automatische, deterministische Annäherung, die:\n\n- bei eindeutigen Fehlern streng ist,\n- zurückhaltend bleibt, wenn sich Ausnahmen nicht zuverlässig feststellen lassen.",
 		"examples": [
 			{
 				"state": "pass",

@@ -5,7 +5,7 @@ import { DataTable } from "./design-system/data/DataTable.jsx";
 const core = "https://github.com/SureA11y/core/blob/main";
 
 const sarifLevelRows = [
-	{ id: "fail", outcome: <code>fail</code>, level: <code>error</code>, meaning: "決定論的な違反です。CIを止めるべきケースです。" },
+	{ id: "fail", outcome: <code>fail</code>, level: <code>error</code>, meaning: "決定論的な違反です。CIのゲート判定に使うのはこのケースです。" },
 	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "人間によるレビューが必要です。表示はされますが、それだけでビルドを止めるべきではありません。" },
 ];
 

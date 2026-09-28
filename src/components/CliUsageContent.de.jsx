@@ -45,7 +45,7 @@ export function CliUsageContent() {
 			/>
 			<h2>Einschränkungen</h2>
 			<p>
-				<code>cantTell</code> beeinflusst den Exit-Code nie: <code>0</code> sauber,{" "}
+				<code>cantTell</code> beeinflusst den Exit-Code nie: <code>0</code> bestanden,{" "}
 				<code>1</code> mindestens ein — bzw. beim Scannen mit <code>--baseline</code> mindestens
 				ein <em>neues</em> — <code>fail</code> (der Fall für CI-Gating; unter{" "}
 				<a href="/conformance/baseline/">Baseline / Allowlist</a> steht, was als „bekannt“ und was
@@ -59,7 +59,7 @@ export function CliUsageContent() {
 			<p>
 				Vollständige Referenz der Flags, Vertrag für eigene Regeln und CI-Rezepte:{" "}
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md"><code>docs/CLI.md</code></a>.
-				Speziell für Vorlagen für CI-Pipelines siehe{" "}
+				Fertige Vorlagen für CI-Pipelines finden Sie unter{" "}
 				<a href="/configuration/ci-integration/">CI-Integration</a>.
 			</p>
 		</>

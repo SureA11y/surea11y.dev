@@ -28,7 +28,7 @@ export function RuleOrganizationContent() {
 					Raten. Kann <code>fail</code> melden. <code>cantTell</code> kommt hier trotzdem vor, in
 					drei Situationen: Es gibt einen echten Verstoß, der aber für sich allein nicht belegt,
 					dass das zugeordnete WCAG-Kriterium verletzt ist (eine ARIA-Anforderung an Autoren,
-					bei der Name/Rolle/Wert trotzdem korrekt bereitgestellt werden); die Regel entscheidet
+					bei der der bereitgestellte Name, die Rolle bzw. der Wert trotzdem erhalten bleibt); die Regel entscheidet
 					deterministisch, beansprucht aber gar kein Erfolgskriterium (<code>aria-allowed-role</code>,
 					als Best Practice getaggt); oder die Regel kann nur bestätigen, dass ein Mechanismus{" "}
 					<em>vorhanden</em> ist, während die Frage, ob das Vorhandene tatsächlich gültig ist,
@@ -106,7 +106,7 @@ export function RuleOrganizationContent() {
 				Das ist wichtig beim Lesen des Ergebnisses einer zusammengesetzten Regel
 				(Zusammenfassung pro WCAG-Erfolgskriterium): Ein <ResultBadge lang="en" state="pass" size="sm" />{" "}
 				einer zusammengesetzten Regel bedeutet, dass jede automatisierte Prüfung für dieses
-				Erfolgskriterium sauber war, aber <strong>wenn eine Facette überhaupt keine automatisierte
+				Erfolgskriterium ohne Befund blieb, aber <strong>wenn eine Facette überhaupt keine automatisierte
 				Abdeckung hat, schweigt die zusammengesetzte Regel zu dieser Facette, statt zu behaupten,
 				sie sei in Ordnung</strong>. Unter <a href="/conformance/wcag-mapping/">Konformität</a>{" "}
 				finden Sie die drei Ebenen (atomare Regeln, Facetten, zusammengesetzte Regeln) und wie das

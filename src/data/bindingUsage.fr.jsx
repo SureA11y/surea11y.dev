@@ -65,7 +65,7 @@ export const bindingUsage = {
 		],
 		installNote: (
 			<p>
-				La seconde commande compte : chaque test lance un vrai navigateur, et{" "}
+				La seconde commande est importante : chaque test lance un vrai navigateur, et{" "}
 				<code>npm install</code> seul ne le télécharge pas.
 			</p>
 		),

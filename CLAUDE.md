@@ -390,6 +390,8 @@ fallback for anything not yet translated.
   mismatched `{placeholders}`, a translation whose exports differ from the
   English file, or a rule overlay that doesn't match the catalog.
   `--strict` also fails on anything missing; `--locale=fr` narrows it.
+  On Node < 22.18 it can't load `locales.ts` (`ERR_UNKNOWN_FILE_EXTENSION`);
+  run `node --experimental-strip-types scripts/check-i18n.mjs` instead.
 - Outdated translations: `src/i18n/translation-sources.json` holds, per
   locale and unit (`content:components/FaqContent`, `string:<key>`,
   `rule:<id>`), a fingerprint of the English each translation was made
@@ -428,15 +430,30 @@ Spanish. Conventions, so later edits stay consistent:
 - French: "vous"; non-breaking space before `: ; ? !` and inside « » in
   prose (not in code); typographic apostrophes. Terms: règle, moteur,
   analyse, rapport, binding (m.), critère de succès, conformité, revue
-  manuelle, paramètres régionaux (page name) / `locale` (option), landmark,
-  arbre d'accessibilité, nom accessible, technologies d'assistance.
+  manuelle, Langues (page name; « langue » for the concept) / `locale`
+  (option, locale codes, resolution reasons), landmark, arbre
+  d'accessibilité, nom accessible, technologies d'assistance, gravité
+  (severity), libellé (a form label; « étiquette » only in 2.5.3 « Étiquette
+  dans le nom »), atteignable (reachable, never « accessible »). Not
+  « paramètres régionaux »: that implies date/number formatting, and the
+  engine only has message dictionaries.
 - German: "Sie"; „…" quotes. Terms: Regel, Engine, Scan, Bericht, Binding
   (das), Erfolgskriterium, Konformität, Barrierefreiheit, manuelle Prüfung,
   Locales, Accessibility Tree, zugänglicher Name, Landmark, assistive
-  Technologien. Gender-neutral wording where a person is described
-  (Nutzende, Fachperson).
+  Technologien, Ergebnis (outcome; not "Outcome"), Schweregrad/Konfidenz
+  (severity/confidence), Befund (a finding), Vorkommen (an occurrence).
+  Gender-neutral wording where a person is described (Nutzende, Personen,
+  die …, prüfende Person), not "Nutzer"/"Tester"/"Auditor". No "sauber" for
+  outcomes: a clean scan is "ohne Befunde"; exit code `0` is "bestanden"
+  (it still allows `cantTell`). Not "ein Pass": "ergibt `pass`" / "gilt
+  als bestanden".
 - Official W3C French/German names are used for WCAG criterion titles
-  (e.g. 4.1.1 "Analyse syntaxique" / "Syntaxanalyse").
+  (e.g. 4.1.1 "Analyse syntaxique" / "Syntaxanalyse"; 2.5.3 « Étiquette
+  dans le nom » / „Beschriftung im Namen“).
+- Obligation level follows the English exactly, in every language: "must"
+  → doit / muss / 〜してはいけません・〜なければなりません; "should" and
+  advisory wording → devrait / sollte / 〜を推奨します・〜が望ましい. A manual
+  rule's wording never reads as a definite failure.
 - Sample page text inside examples ("Read more", "Save changes") and
   engine output strings stay English, since they refer to the English
   markup or real output.
@@ -461,9 +478,58 @@ translation, and what to keep in mind when editing it:
 - Style: です・ます, full-width punctuation, 「」 quotes, official WAIC names
   for WCAG criteria. Terms: ルール, エンジン, スキャン, 判定結果, バインディング,
   達成基準, 適合性, 複合ルール, 構成ルール, ファセット, アクセシブルな名前,
-  アクセシビリティツリー, 支援技術, 誤検出.
+  アクセシビリティツリー, 支援技術, 誤検出. 2.5.3 is 「ラベルを含む名前
+  ([[en:name]])」. The accessibility statement page is 「このサイトのアクセシビリティ」
+  (title and footer link), not 「方針」 (that reads as a JIS X 8341-3 policy
+  with targets) or 「声明」. Keep
+  「必要があります」 for genuine "must"s only; "must not" titles use
+  「〜してはいけません」.
 - The engine itself has no `ja` locale (`locales.generated.json`:
-  en/de/es/fr), so Japanese pages document English engine output.
+  en/de/es/fr), so Japanese pages document English engine output. The
+  Locales and Configuration pages say so explicitly: this site's Japanese
+  translation is separate from the engine's report languages.
+
+**Translation review (2026-09-28)**: de, fr and ja were reviewed line by
+line against the English (all 132 rules, every content page, dictionaries),
+correcting meaning, obligation levels and terminology per the conventions
+above. `meta-refresh-no-exceptions` said "must not use a meta refresh at
+all", but a delay of 0 passes. The English is now fixed at the source
+(`core`'s rule module and `src/i18n/en.json`, plus the regenerated
+`RULE_CATALOG.md`) to "must not use a timed meta refresh". de/fr/ja match
+it; `es` (and `core`'s own de/es/fr engine messages) still say "at all",
+and `i18n:check` lists `es` as outdated. `meta-viewport-large` still
+differs on purpose: the English calls it "AAA-level", but it has
+`wcagSc: []` / Best Practices, so the translations drop "AAA". Fix the
+English, and `es`, to match.
+
+Open English-source issues found in that review, not yet decided:
+- `ResultsReportsContent.jsx` calls EARL "ACT-conformance evidence";
+  `core/docs/EARL.md` says "listed as an ACT implementation", never
+  certification. The translations follow EARL.md.
+- `sections.ts` Rules description says "a pass/fail example"; examples also
+  cover `cantTell`/`notApplicable`. The translations say "examples of
+  results" without promising all four per rule (`manual-review` has one).
+- `GettingStartedContent.jsx` says "One `fail`", but its own sample shows
+  `fail: 2` (fr/ja match the sample, de follows the English).
+- `OutputSchemaContent.jsx` equates "no WCAG mapping" with "manual rules";
+  `aria-allowed-role` is automatic with no mapping.
+- Overview's "These are the cases where the engine reports `cantTell`"
+  covers cases with no rule at all (keyboard traps, reflow).
+- About 25 manual rules have "must" titles but only return `cantTell`;
+  `css-hidden-focus` and `aria-valid-attr` contradict themselves;
+  `avoid-inline-spacing`'s fail example says "the page's own styles"
+  (1.4.12 is about the user's). Rule text also exposes internal notes and
+  "see below" (`target-size-minimum`, `aria-prohibited-attr`).
+- `skip-link` only recognises English link text ("skip", "jump to"),
+  which isn't documented.
+- The FAQ mentions `npm run i18n:sync`, a `core` maintainer command.
+- Bugs outside translation: `AccessibilityStatementContent`'s issue link
+  resolves to `…/core/blob/main/issues` (should be `…/core/issues`);
+  `TestMatchersUsageContent`'s sample names nonexistent ids
+  (`link-name-quality-manual`, `color-contrast-computable`); `es` has
+  glued-word JSX bugs (`OutputSchemaContent.es.jsx`,
+  `SarifReportContent.es.jsx`, `WcagMappingContent.es.jsx`,
+  `TestMatchersUsageContent.es.jsx`).
 
 ## Why Astro without Starlight
 

@@ -17,9 +17,9 @@ export function CiIntegrationContent() {
 				</a>{"\u00a0"}: cette page porte spécifiquement sur la CLI utilisée comme étape de pipeline.
 			</p>
 			<p>
-				Tous reposent sur les codes de sortie de la CLI (<code>0</code> si tout est propre,{" "}
-				<code>1</code> s’il y a au moins un résultat <code>fail</code>, ou au moins un{" "}
-				<em>nouveau</em> avec <code>--baseline</code>, <code>2</code> en cas d’erreur
+				Tous reposent sur les codes de sortie de la CLI (<code>0</code> si aucun <code>fail</code>,{" "}
+				<code>1</code> s’il y a au moins un résultat <code>fail</code> (ou au moins un{" "}
+				<em>nouveau</em> avec <code>--baseline</code>), <code>2</code> en cas d’erreur
 				d’utilisation ou d’analyse) pour contrôler le pipeline ; aucun script supplémentaire n’est
 				nécessaire pour un contrôle réussite/échec de base.
 			</p>
@@ -119,8 +119,8 @@ export function CiIntegrationContent() {
 
 			<h2><span lang="en">Bitbucket Pipelines</span></h2>
 			<p>
-				<span lang="en">Bitbucket Pipelines</span> n’a pas de tableau de bord intégré exploitant SARIF équivalent à GitHub
-				<span lang="en">Code Scanning</span> ; le point d’intégration pratique est donc le code de sortie de la CLI (plus,
+				<span lang="en">Bitbucket Pipelines</span> n’a pas de tableau de bord intégré exploitant SARIF équivalent à{" "}
+				<span lang="en">GitHub Code Scanning</span> ; le point d’intégration pratique est donc le code de sortie de la CLI (plus,
 				éventuellement, <code>--html</code> comme artefact de pipeline téléchargeable) plutôt que{" "}
 				<code>--sarif</code>.
 			</p>
@@ -150,7 +150,7 @@ export function CiIntegrationContent() {
 
 			<h2>Limites de minutes des offres gratuites et dépôts privés</h2>
 			<p>
-				Si l’offre gratuite de votre fournisseur de pipelines est limitée en minutes (celle de
+				Si l’offre gratuite de votre fournisseur de pipelines est limitée en minutes (celle de{" "}
 				<span lang="en">Bitbucket Pipelines</span> est par exemple de 50 minutes de build par mois sur les espaces de
 				travail privés), une analyse basée sur <code>jsdom</code> de HTML statique ou rendu côté
 				serveur (ce que fait la CLI) coûte bien moins cher que de piloter un vrai navigateur ; voir{" "}

@@ -19,9 +19,9 @@ export function RuleOrganizationContent() {
 
 			<h2>Automatique ou manuelle</h2>
 			<p>
-				Le <code>type</code> de chaque règle est l’un de deux genres, et la différence tient à ce
-				que la règle est <em>capable de trancher</em>, pas au résultat qu’elle se trouve
-				rapporter :
+				Le <code>type</code> de chaque règle prend l’une de deux valeurs, et la différence tient à
+				ce que la règle est <em>capable de trancher</em>, pas au résultat qu’elle renvoie dans un
+				cas donné :
 			</p>
 			<ul>
 				<li>
@@ -76,7 +76,7 @@ export function RuleOrganizationContent() {
 			<p>
 				L’intention détermine si une règle <em>peut</em> être automatique : « quelque chose est-il
 				présent ? » peut souvent se trancher à partir du seul balisage, alors que « est-ce
-				bien ? » ne le peut presque jamais. C’est aussi la logique des liens{" "}
+				pertinent ? » ne le peut presque jamais. C’est aussi la logique des liens{" "}
 				<strong>Règles associées</strong> sur chaque page de règle : les règles qui partagent une
 				famille (tout ce qui précède le dernier segment <code>-</code> de l’identifiant) y sont
 				regroupées. Le jeu de règles couvre des dizaines de familles au-delà de <code>img</code>{" "}
@@ -100,7 +100,7 @@ export function RuleOrganizationContent() {
 				trancher de façon déterministe. En interne, chaque critère est découpé en « facettes »
 				nommées : pour le 1.1.1 Contenu non textuel, il s’agit par exemple de savoir si un
 				attribut <code>alt</code> est présent, si son texte a du sens, et si les images
-				décoratives sont correctement marquées avec un texte vide. Une règle correspond à une ou
+				décoratives sont correctement marquées par un attribut <code>alt</code> vide. Une règle correspond à une ou
 				plusieurs facettes, et plusieurs règles couvrent souvent différentes facettes du même
 				critère, ce que fait exactement la famille img-alt ci-dessus pour le 1.1.1.
 			</p>
@@ -110,7 +110,7 @@ export function RuleOrganizationContent() {
 				automatisée de ce critère est revenue sans erreur, mais{" "}
 				<strong>si une facette n’a aucune couverture automatisée, le composite ne dit rien de
 				cette facette au lieu d’affirmer qu’elle est correcte</strong>. Voir{" "}
-				<a href="/conformance/wcag-mapping/">Conformité</a> pour les trois niveaux (règles
+				<a href="/conformance/wcag-mapping/">Conformité</a> pour les trois couches (règles
 				atomiques, facettes, composites) et la façon dont le résultat d’un composite est
 				réellement calculé.
 			</p>

@@ -21,7 +21,7 @@ export function HtmlReportContent() {
 			<ul>
 				<li>
 					<strong>ヒーロー</strong>
-					：平易な言葉の見出し（「適用されるM件のチェックのうちN件が合格」）1つと、判定結果（
+					：「<span lang="en">N of M applicable checks passed</span>」のような平易な言葉の見出し1つと、判定結果（
 					<code>fail</code>
 					/
 					<code>cantTell</code>
@@ -44,7 +44,7 @@ export function HtmlReportContent() {
 					：適合レベル（A / AA / AAA）ごとにまとめたもので、エンジン自身の
 					<code>rulesResults[]</code>
 					の複合集約をそのまま使っています（
-					<a href="/conformance/wcag-mapping/">適合性</a>
+					<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>
 					を参照）。達成基準ごとに1行で、その判定結果、合格/不合格/要レビュー/該当なしの内訳、寄与したアトミックルールを表示します。独自に作ったグループ分けではなく、実際のエンジンのデータです。生のJSONの
 					<code>rulesResults</code>
 					から得られるものと同じ集約です。
@@ -56,7 +56,7 @@ export function HtmlReportContent() {
 			</ul>
 			<p>
 				ヘッダーの下のメタ情報バーには、ルール数、検出箇所の数、エンジンのタグ、スキーマのバージョン、スキャンで解決されたロケールが表示されます。ロケールのフォールバックは文字列単位で行われ、テキスト自体からは見分けがつきません。そのため、
-				<strong>エンジンが持っていない言語で要求したレポートは、ふつうの英語のレポートとして表示されます</strong>
+				<strong>エンジンが持っていない言語（日本語もその1つです）で要求したレポートは、ふつうの英語のレポートとして表示されます</strong>
 				。要求したロケールと解決されたロケールが異なる場合は、チップに両方が表示されます。
 				<a href="/configuration/locales/">ロケール</a>
 				を参照してください。

@@ -8,7 +8,7 @@ const core = "https://github.com/SureA11y/core/blob/main";
 const localeCoverageRows = localeData.locales.map((l) => ({
 	id: l.id,
 	locale: <code>{l.id}</code>,
-	name: l.name,
+	name: new Intl.DisplayNames(["fr"], { type: "language" }).of(l.id) ?? l.name,
 	file: <code>{l.file}</code>,
 	keys: String(l.keys),
 	untranslated: l.canonical ? "— (le jeu canonique, utilisé en repli)" : String(l.stillEnglish),
@@ -21,7 +21,7 @@ const localeReasonRows = [
 		reason: <code>primary-subtag</code>,
 		meaning: (
 			<>
-				Votre code comportait une sous-étiquette sans dictionnaire propre, donc sa langue de base a
+				Votre code de locale comportait une sous-étiquette sans dictionnaire propre, donc sa langue de base a
 				été utilisée : vous avez demandé <code>de-DE</code> et obtenu <code>de</code>. C’est normal
 				et attendu ; il n’y a rien à corriger. Une simple différence de casse ne relève pas de ce
 				cas : <code>DE</code> renvoie <code>ok</code>.
@@ -31,14 +31,14 @@ const localeReasonRows = [
 	{
 		id: "dictionary-not-loaded",
 		reason: <code>dictionary-not-loaded</code>,
-		meaning: "Le projet fournit cette langue, mais cette copie du moteur ne l’embarque pas et aucune n’a été fournie. En pratique : le bundle navigateur autonome sans son fichier de langue séparé.",
+		meaning: "Le projet fournit cette langue, mais cette copie du moteur ne l’embarque pas et aucun dictionnaire n’a été fourni. En pratique : le bundle navigateur autonome sans son fichier de langue séparé.",
 	},
 	{
 		id: "unknown-locale",
 		reason: <code>unknown-locale</code>,
 		meaning: (
 			<>
-				Le projet n’a aucune traduction de ce type, donc l’anglais a été utilisé. <code>ja</code> et{" "}
+				Le projet ne propose aucune traduction dans cette langue, donc l’anglais a été utilisé. <code>ja</code> et{" "}
 				<code>pt-BR</code> tombent tous deux dans ce cas aujourd’hui.
 			</>
 		),
@@ -77,7 +77,7 @@ export function LocalesContent() {
 			<DataTable
 				rowKey="id"
 				columns={[
-					{ key: "locale", label: "Locale", width: "18%" },
+					{ key: "locale", label: "Langue", width: "18%" },
 					{ key: "file", label: "Fichier", width: "24%" },
 					{ key: "keys", label: "Clés", width: "12%" },
 					{ key: "untranslated", label: "Valeurs encore en anglais", wrap: true },
@@ -98,7 +98,7 @@ export function LocalesContent() {
 				au code.
 			</p>
 			<p>
-				Chaque locale contient toutes les clés de <code>en.json</code>. C’est le rôle de{" "}
+				Chaque fichier de langue contient toutes les clés de <code>en.json</code>. C’est le rôle de{" "}
 				<code>npm run i18n:sync</code> de le garantir : lancez-le après toute modification de{" "}
 				<code>en.json</code> et il réécrit chaque fichier de langue non anglais pour l’aligner, en
 				ajoutant les nouvelles clés, en supprimant celles que <code>en.json</code> n’a plus, et
@@ -106,11 +106,11 @@ export function LocalesContent() {
 				valeur initiale, ce qui compte comme non traduit jusqu’à ce que quelqu’un le remplace.
 			</p>
 
-			<h2>Choisir une locale</h2>
+			<h2>Choisir une langue</h2>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { locale: 'fr' }, null);"]} />
 			<p>La valeur par défaut est <code>'en'</code> si l’option est omise. Toute chaîne est acceptée ; <strong>une locale non reconnue n’est jamais une erreur</strong>.</p>
 
-			<h2>Comment la locale est déterminée</h2>
+			<h2>Comment la langue est déterminée</h2>
 			<p>
 				Deux choses se produisent, dans cet ordre. Les confondre est la source de confusion
 				habituelle, c’est pourquoi elles sont décrites séparément.
@@ -118,7 +118,7 @@ export function LocalesContent() {
 			<h3>Étape 1 : choisir un dictionnaire (une fois par analyse)</h3>
 			<ol>
 				<li>
-					Utiliser le dictionnaire qui correspond à votre code. <code>de</code> trouve{" "}
+					Utiliser le dictionnaire qui correspond à votre code de locale. <code>de</code> trouve{" "}
 					<code>de.json</code>. La casse n’a pas d’importance : <code>pt-br</code>,{" "}
 					<code>pt-BR</code> et <code>PT-BR</code> trouvent tous <code>pt-BR.json</code>.
 				</li>
@@ -150,7 +150,7 @@ export function LocalesContent() {
 				partout ailleurs.
 			</p>
 
-			<h2>Savoir quelle locale vous avez réellement obtenue</h2>
+			<h2>Savoir quelle langue vous avez réellement obtenue</h2>
 			<p>
 				Ce repli en douceur a un inconvénient :{" "}
 				<strong>demandez une langue que le build n’embarque pas et vous recevez un anglais
@@ -188,7 +188,7 @@ export function LocalesContent() {
 			<p>
 				Si vous avez besoin d’une langue précise, <code>requested !== resolved</code> est la
 				condition à vérifier en CI. Notez qu’elle est aussi vraie dans le cas inoffensif{" "}
-				<code>primary-subtag</code> ; conditionnez donc sur{" "}
+				<code>primary-subtag</code> ; basez donc plutôt la condition sur{" "}
 				<code>reason === 'unknown-locale' || reason === 'dictionary-not-loaded'</code> si une
 				correspondance sur la langue de base vous suffit. Voir{" "}
 				<a href="/results-reports/output-schema/">le schéma de sortie</a> pour la place de ce champ
@@ -224,8 +224,8 @@ export function LocalesContent() {
 			<p>
 				Demandez une langue dont vous n’avez pas chargé le fichier et vous obtenez l’anglais, avec{" "}
 				<code>engine.locale.reason</code> défini à <code>dictionary-not-loaded</code>, ce qui
-				diffère de <code>unknown-locale</code>, qui signifie que le projet n’a aucune traduction
-				de ce type.
+				diffère de <code>unknown-locale</code>, qui signifie que le projet ne propose aucune traduction
+				dans cette langue.
 			</p>
 
 			<h3>Fournir votre propre dictionnaire</h3>
@@ -262,7 +262,7 @@ export function LocalesContent() {
 			</ul>
 			<p>
 				Les deux figurent dans le résultat à côté du texte déjà résolu, ce qui vous permet de
-				réafficher un résultat enregistré dans une autre locale sans relancer l’analyse.
+				réafficher un résultat enregistré dans une autre langue sans relancer l’analyse.
 			</p>
 		</>
 	);

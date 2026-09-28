@@ -42,9 +42,9 @@ export const bindingUsage = {
 			<p>
 				ドライバーを使うほかのバインディングと違い、コンストラクターに
 				<code>{"{ page }"}</code>
-				/
+				／
 				<code>{"{ browser }"}</code>
-				/
+				／
 				<code>{"{ driver }"}</code>
 				の引数はありません。Cypressにはそのようなハンドルがないからです。
 				<code>cy</code>
@@ -165,7 +165,7 @@ export const bindingUsage = {
 				<code>selenium-webdriver</code>
 				にはSelenium Managerが同梱されており、初めてドライバーを作成するときに、対応する
 				<code>chromedriver</code>
-				を自動でダウンロードして管理します。Seleniumサーバーを別に用意する必要も、ドライバーを手動でインストールする必要もありません（Chrome自体はマシンにインストール済みである必要があります）。
+				を自動でダウンロードして管理します。Seleniumサーバーを別に用意する必要も、ドライバーを手動でインストールする必要もありません（Chrome自体は、あらかじめマシンにインストールしておいてください）。
 			</p>
 		),
 		usage: [

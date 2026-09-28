@@ -29,7 +29,7 @@ const optionRows = [
 				<code>'2.0'</code>, <code>'2.1'</code> oder <code>'2.2'</code>: gegen welche WCAG-Version
 				der Lauf auf Konformität prüft. Standardmäßig gilt die Version, die sich aus Ihren
 				Versionsursprungs-Tags ergibt, und <code>'2.2'</code>, wenn sich daraus keine ergibt.{" "}
-				<strong>Derzeit ändert die Option nur etwas an Erfolgskriterium 4.1.1 Parsing, das in 2.2 entfernt
+				<strong>Derzeit ändert die Option nur etwas an Erfolgskriterium 4.1.1 „Syntaxanalyse“, das in 2.2 entfernt
 				wurde</strong>: Bei einem 2.2-Ziel läuft eine Regel mit dem Tag{" "}
 				<code>wcag22-removed</code> weiterhin und meldet weiterhin ihre Vorkommen, kann aber nicht{" "}
 				<code>fail</code> ergeben. Siehe{" "}
@@ -138,8 +138,8 @@ const optionRows = [
 				<code>notApplicable</code>/Überspringen), sobald sich der tatsächlich gerenderte
 				Hintergrund nicht verlässlich berechnen lässt, um falsche <code>fail</code>-Ergebnisse
 				zu vermeiden. <code>auditorAssist</code>: gibt einen Teil dieser Sicherheitsmarge
-				zugunsten von mehr Befunden auf. Gedacht für einen menschlichen Auditor, der markierte
-				Fälle nachprüft, nicht für unbeaufsichtigtes Gating in der CI.
+				zugunsten von mehr Befunden auf. Gedacht für Fachleute im Audit, die markierte
+				Fälle nachprüfen, nicht für unbeaufsichtigtes Gating in der CI.
 			</>
 		),
 	},
@@ -183,7 +183,7 @@ const optionRows = [
 		meaning: (
 			<>
 				Siehe <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>. Steuert, welche
-				Outcome- und Confidence-Werte zulässig sind und ob ein <code>fail</code>, das eine
+				Ergebnis- und Konfidenzwerte zulässig sind und ob ein <code>fail</code>, das eine
 				manuelle Regel ergeben würde, zu <code>cantTell</code> umgewandelt wird.
 			</>
 		),
@@ -410,7 +410,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Ein Kriterium geht den umgekehrten Weg.</strong> WCAG 2.2 hat Erfolgskriterium 4.1.1 Parsing
+				<strong>Ein Kriterium geht den umgekehrten Weg.</strong> WCAG 2.2 hat Erfolgskriterium 4.1.1 „Syntaxanalyse“
 				entfernt, das einzige Kriterium, das je gestrichen statt hinzugefügt wurde. Eine darauf
 				abgebildete Regel trägt wie jede andere Basisregel ihr 2.0-Ursprungs-Tag (
 				<code>wcag2a</code>) und zusätzlich <code>wcag22-removed</code>. Die obigen
@@ -421,7 +421,7 @@ export function EngineOptionsContent() {
 				Sie müssen dafür nichts tun. Die Engine ermittelt für jeden Lauf eine{" "}
 				<strong>WCAG-Zielversion</strong>, und ist dieses Ziel 2.2, kann eine Regel mit{" "}
 				<code>wcag22-removed</code> kein <code>fail</code> melden: Sie läuft weiterhin, meldet
-				weiterhin jedes gefundene Vorkommen, aber ihr Outcome wird zu <code>cantTell</code>{" "}
+				weiterhin jedes gefundene Vorkommen, aber ihr Ergebnis wird zu <code>cantTell</code>{" "}
 				umgewandelt, und das Ergebnis enthält ein Feld <code>wcagVersionScope</code>, das den
 				Grund nennt (siehe <a href="/results-reports/output-schema/">das Ausgabeschema</a>).
 				Nichts fällt stillschweigend weg, und ein 2.2-Lauf wird nicht durch ein Kriterium
@@ -587,20 +587,20 @@ export function EngineOptionsContent() {
 			<p>
 				Wozu das gut ist: <code>&lt;mat-select&gt;</code> aus <span lang="en">Angular Material</span> baut seine
 				interne ARIA-Struktur so auf, dass speziell bei <code>aria-required-children</code> ein
-				Falsch-Positiv entsteht, obwohl die Komponente ansonsten in Ordnung ist. Mit nur dem
-				globalen <code>excludeSelectors</code> lässt sich dieses Falsch-Positiv nur über{" "}
+				falsch positives Ergebnis entsteht, obwohl die Komponente ansonsten in Ordnung ist. Mit nur dem
+				globalen <code>excludeSelectors</code> lässt sich dieses falsch positive Ergebnis nur über{" "}
 				<code>excludeSelectors: ['mat-select']</code> unterdrücken. Das verbirgt{" "}
 				<code>mat-select</code> aber auch vor <em>allen anderen Regeln</em>, darunter{" "}
 				<code>contrast-minimum</code> und <code>aria-allowed-attr</code>, und lässt damit
 				stillschweigend echte Abdeckung wegfallen, mit der diese Prüfungen nie ein Problem
 				hatten. Das Beispiel oben hält <code>mat-select</code> für jede Regel vollständig
-				sichtbar, außer für die eine, die daran fehlschlägt.
+				sichtbar, außer für die eine, die dort fälschlich anschlägt.
 			</p>
 			<p>
 				Die wirksamen Ausschlüsse für eine Regel sind die <strong>Vereinigung</strong> aus der
 				globalen Liste und der eigenen Liste der Regel: Ein Element, auf das eine der beiden
 				passt, fällt aus den Kandidaten dieser Regel heraus. Eine Regel, deren einzige
-				potenziell fehlschlagende Elemente alle auf diese Weise ausgeschlossen sind, meldet{" "}
+				Elemente, die sonst <code>fail</code> ergeben würden, alle auf diese Weise ausgeschlossen sind, meldet{" "}
 				<code>outcome: 'pass'</code> oder <code>'notApplicable'</code> (je nach eigener
 				Konvention der Regel für den Fall ohne Kandidaten) mit <code>occurrences: []</code>, nie{" "}
 				<code>outcome: 'fail'</code> mit leerem <code>occurrences</code>-Array, denn genau diese
@@ -635,8 +635,8 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Menschlicher Auditor bei einer gründlichen Kontrastprüfung im echten
-				Browser</strong>: etwas Schutz vor Falsch-Positiven gegen mehr Befunde eintauschen und
+				<strong>Manuelles Audit: gründliche Kontrastprüfung im echten
+				Browser</strong>: etwas Schutz vor falsch positiven Ergebnissen gegen mehr Befunde eintauschen und
 				das echte Layout prüfen (nicht nur den berechneten Stil), da eine echte Seite gesteuert
 				wird. Gezeigt mit <code>page.evaluate</code> von Puppeteer (akzeptiert mehrere
 				Argumente); mit Playwright fassen Sie die vier Positionsargumente zuerst in einem
@@ -780,7 +780,7 @@ export function EngineOptionsContent() {
 					Quelltext-String ist) wird stillschweigend übersprungen. Der Rest des Scans,
 					einschließlich jeder eingebauten Regel, läuft ganz normal weiter. Das ist keine zu
 					schließende Validierungslücke: Eine eigene Regel ist beliebiger, vom Aufrufer
-					gelieferter Code, daher ist „diesen einen Eintrag sicher fehlschlagen lassen, den Scan
+					gelieferter Code, daher ist „nur diesen einen Eintrag verwerfen, den Scan
 					nicht abbrechen“ der sicherere Standard. Das entspricht dem Umgang mit einer{" "}
 					<em>eingebauten</em> Regel, die eine Exception wirft: Sie wird auf ein{" "}
 					<code>cantTell</code> für diese Regel begrenzt, statt den Lauf abstürzen zu lassen.

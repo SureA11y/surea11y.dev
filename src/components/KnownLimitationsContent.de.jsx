@@ -71,11 +71,11 @@ export function KnownLimitationsContent() {
 					WCAG 1.4.12 und die zugehörigen ACT-Regeln gelten nur für Text mit einem weichen
 					Zeilenumbruch, was ein statischer Scan nicht feststellen kann.{" "}
 					<code>avoid-inline-spacing</code> behandelt Text standardmäßig als umbrechend, ein
-					gewöhnlicher erzwungener Wert unter dem Grenzwert scheitert also weiterhin. Wo aus einem
+					gewöhnlicher erzwungener Wert unter dem Grenzwert ergibt also weiterhin <code>fail</code>. Wo aus einem
 					Grund, der <em>ohne</em> Layout erkennbar ist, kein Umbruch möglich ist (Text, der nicht
 					umbrechen darf, oder ein Element mit fester Breite in einem horizontal scrollenden
 					Vorfahren), meldet sie stattdessen <code>cantTell</code>. Text, der aus einem anderen
-					Grund nie umbricht, wird weiterhin als Fehler gemeldet.
+					Grund nie umbricht, wird weiterhin als Verstoß gemeldet.
 				</li>
 				<li>
 					<strong>
@@ -194,7 +194,7 @@ export function KnownLimitationsContent() {
 					außerhalb des Umfangs.
 				</li>
 				<li>
-					<strong>Bedienung durch Bewegung</strong> (WCAG 2.5.4): Nischig, in der Praxis selten;
+					<strong>Betätigung durch Bewegung</strong> (WCAG 2.5.4): Nischig, in der Praxis selten;
 					nicht priorisiert, aber nicht strukturell unmöglich.
 				</li>
 				<li>
@@ -204,8 +204,8 @@ export function KnownLimitationsContent() {
 					<code>&lt;canvas&gt;</code> (auf dem tatsächlich nichts gezeichnet ist) sind beide von der
 					Anwendbarkeit nach ACT ausgenommen. Keins von beiden lässt sich aus einem statischen
 					DOM-Scan entscheiden (kein Dekodieren von Bildern, kein Auslesen von Canvas-Pixeln), daher
-					bleiben beide im Umfang, statt ausgenommen zu werden: ein seltenes Falsch-Positiv, das ein
-					menschlicher Prüfer auf einen Blick verwirft, ist sicherer, als ein echtes
+					bleiben beide im Umfang, statt ausgenommen zu werden: ein seltenes Falsch-Positiv, das eine
+					prüfende Person auf einen Blick verwirft, ist sicherer, als ein echtes
 					ausgeschlossenes oder nicht dekoratives Element stillschweigend zu übersehen.
 				</li>
 			</ul>
@@ -217,7 +217,7 @@ export function KnownLimitationsContent() {
 				und die meisten auch die Ermessensfragen. Der Grund, es hier ausdrücklich zu sagen:{" "}
 				<strong>Ein <code>pass</code> dieser Engine (oder jedes anderen automatischen Tools) ersetzt
 				nie die manuelle Prüfung, die WCAG selbst für die oben genannten Kriterien verlangt.</strong>{" "}
-				Was ein <code>pass</code> bzw. ein zusammengefasstes <code>pass</code> genau aussagt und was
+				Was ein <code>pass</code> bzw. das <code>pass</code> einer zusammengesetzten Regel genau aussagt und was
 				nicht, steht in{" "}
 				<a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.
 			</p>

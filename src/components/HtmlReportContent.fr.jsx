@@ -20,8 +20,8 @@ export function HtmlReportContent() {
 			<h2>Ce qu’il affiche</h2>
 			<ul>
 				<li>
-					<strong>En-tête</strong> : un titre en langage clair (« N vérifications applicables
-					réussies sur M ») ainsi qu’une barre empilée et sa légende (icône + libellé + nombre :
+					<strong>En-tête</strong> : un titre en langage clair (« <span lang="en">N of M applicable checks passed</span> »)
+					ainsi qu’une barre empilée et sa légende (icône + libellé + nombre :
 					l’état n’est jamais indiqué par la seule couleur), ventilées par résultat{" "}
 					(<code>fail</code>/<code>cantTell</code>/<code>pass</code>/
 					<code>notApplicable</code>).
@@ -51,13 +51,13 @@ export function HtmlReportContent() {
 			</ul>
 			<p>
 				La barre de métadonnées sous l’en-tête indique le nombre de règles, le nombre
-				d’occurrences, le tag du moteur, la version du schéma et la locale retenue pour
-				l’analyse. Le repli de locale se fait chaîne par chaîne et ne se voit pas dans le texte
+				d’occurrences, le tag du moteur, la version du schéma et la langue retenue pour
+				l’analyse. Le repli de langue se fait chaîne par chaîne et ne se voit pas dans le texte
 				lui-même, donc{" "}
 				<strong>un rapport demandé dans une langue que le moteur ne propose pas se lit comme un
-				rapport anglais ordinaire</strong> : la pastille indique la locale demandée à côté de la
-				locale retenue quand les deux diffèrent. Voir{" "}
-				<a href="/configuration/locales/">Paramètres régionaux</a>.
+				rapport anglais ordinaire</strong> : la pastille indique la langue demandée à côté de la
+				langue retenue quand les deux diffèrent. Voir{" "}
+				<a href="/configuration/locales/">Langues</a>.
 			</p>
 
 			<h2>Utilisation comme bibliothèque</h2>
@@ -87,7 +87,7 @@ export function HtmlReportContent() {
 				temps.</strong> Suivre les résultats sur de nombreuses exécutions est un sujet distinct et
 				plus vaste, qui ne fait pas partie de cet outil : conservez le JSON de chaque analyse et
 				comparez-les vous-même, ou envoyez le SARIF vers un tableau de bord qui gère déjà
-				l’historique (voir <a href="/results-reports/sarif-report/">Rapport SARIF</a> ci-dessous).
+				l’historique (voir <a href="/results-reports/sarif-report/">Rapport SARIF</a>).
 			</p>
 		</>
 	);

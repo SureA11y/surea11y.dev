@@ -8,8 +8,8 @@ export function ConformanceContent() {
 				et prétendre le contraire est précisément le genre d’excès que ce moteur refuse. Cette
 				section explique comment les résultats de chaque règle s’agrègent en un verdict par critère
 				de succès, ce que ce verdict couvre honnêtement et ce qu’il ne couvre pas, et comment
-				conditionner un vrai pipeline de CI aux violations connues et déjà examinées, au lieu de
-				bloquer chaque build jusqu’à ce que tout soit corrigé d’un coup.
+				faire tourner un vrai pipeline de CI en tenant compte des violations connues et déjà
+				examinées, au lieu de bloquer chaque build jusqu’à ce que tout soit corrigé d’un coup.
 			</p>
 
 			<h2>Correspondance de conformité WCAG</h2>

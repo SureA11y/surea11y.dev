@@ -92,7 +92,7 @@ export function OverviewContent() {
 			<p>
 				<code>cantTell</code> ist der Kern des Projekts. Eine Engine, die stillschweigend
 				verwirft, was sie nicht bestimmen kann,{" "}
-				<strong>liefert einen kürzeren Bericht und eine trügerische Abdeckung</strong>. Die
+				<strong>liefert einen kürzeren Bericht und den trügerischen Eindruck vollständiger Abdeckung</strong>. Die
 				vollständige Struktur eines Ergebnisses finden Sie unter{" "}
 				<a href="/results-reports/output-schema/">Ergebnisse und Berichte</a>, und unter{" "}
 				<a href="/conformance/wcag-mapping/">Konformität</a>, wie sich einzelne Ergebnisse zu einem
@@ -104,11 +104,12 @@ export function OverviewContent() {
 			<p>
 				Die Engine bringt {rules.length} Regeln mit. 58 davon haben eine Entsprechung in den{" "}
 				<a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a> und laufen gegen die
-				veröffentlichten Testfälle von ACT: 798 Beispiele über diese 58 Regeln. Die Engine lässt
-				keines der Beispiele scheitern, die ACT als bestanden oder nicht anwendbar markiert, meldet
-				also gegenüber diesem Korpus keine Falsch-Positive. 31 Beispiele, die ACT als gescheitert
-				markiert, bleiben unmarkiert, meist Ermessensfragen wie die, ob eine Überschrift den Inhalt
-				darunter beschreibt. Jedes einzelne, mit Begründung, steht in{" "}
+				veröffentlichten Testfälle von ACT: 798 Beispiele über diese 58 Regeln. Für keines der
+				Beispiele, die ACT als bestanden oder nicht anwendbar markiert, meldet die Engine{" "}
+				<code>fail</code>; gegenüber diesem Korpus gibt es also keine Falsch-Positive. 31 Beispiele,
+				die ACT als nicht bestanden markiert, erkennt die Engine dagegen nicht: Sie meldet dafür
+				weder <code>fail</code> noch <code>cantTell</code>. Meist geht es um Ermessensfragen wie die,
+				ob eine Überschrift den Inhalt darunter beschreibt. Jedes einzelne, mit Begründung, steht in{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>.
 			</p>
 			<p>

@@ -16,7 +16,7 @@ export function ConfigurationContent() {
 				Limitez une analyse exactement aux règles voulues, par identifiant, par tag ou par version
 				de conformité WCAG (2.0, 2.1 ou 2.2), pour qu’une exécution rapporte ce dont vous êtes
 				réellement responsable, ni plus ni moins. Faites taire des widgets connus pour être bruyants,
-				globalement ou pour une seule règle, sans perdre la couverture ailleurs, ajustez la sévérité
+				globalement ou pour une seule règle, sans perdre la couverture ailleurs, ajustez le degré d’exigence
 				des vérifications de contraste selon qu’elles servent un auditeur humain ou un contrôle de CI
 				sans surveillance, et ajoutez une règle propre à votre organisation à côté des règles
 				intégrées quand le catalogue ne couvre pas un point qui vous importe. Voir{" "}
@@ -33,15 +33,15 @@ export function ConfigurationContent() {
 				<a href="/configuration/ci-integration/">Intégration CI</a> pour les modèles complets.
 			</p>
 
-			<h2>Paramètres régionaux</h2>
+			<h2>Langues</h2>
 			<p>
 				Livrez des résultats exploitables par votre équipe dans la langue qu’elle lit le plus vite :
 				chaque titre de règle, ainsi que le résumé et l’indication de chaque occurrence, est résolu
 				à partir d’un dictionnaire à clés, avec un repli chaîne par chaîne vers l’anglais plutôt
 				qu’un texte vide ou une erreur. Quatre langues sont disponibles aujourd’hui (anglais,
-				français, allemand, espagnol), et un résultat indique toujours exactement quelle locale il a
+				français, allemand, espagnol), et un résultat indique toujours exactement quelle langue il a
 				utilisée, pour que rien ne se dégrade en silence à votre insu. Voir{" "}
-				<a href="/configuration/locales/">Paramètres régionaux</a> pour la couverture et la façon de
+				<a href="/configuration/locales/">Langues</a> pour la couverture et la façon de
 				fournir votre propre dictionnaire.
 			</p>
 		</>

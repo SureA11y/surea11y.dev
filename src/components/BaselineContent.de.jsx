@@ -11,7 +11,7 @@ export function BaselineContent() {
 				die Einführung, wenn ein Team eine bestehende, unvollkommene Website zum ersten Mal
 				scannt — es kann nichts ausliefern, bis jeder bereits vorhandene Verstoß behoben ist. Mit
 				einer Baseline kann ein Team sagen: „Diese N sind bereits bekannt — daran soll das Gate nicht
-				scheitern, aber sofort, sobald ein tatsächlich neuer auftaucht.“
+				scheitern, wohl aber sofort, sobald ein tatsächlich neuer auftaucht.“
 			</p>
 			<CodeBlock
 				lines={[
@@ -25,8 +25,9 @@ export function BaselineContent() {
 				]}
 			/>
 			<p>
-				Die Baseline-Datei ist dafür gedacht, in git committet zu werden. So wird das Akzeptieren
-				weiterer Barrierefreiheits-Schulden zu einer expliziten, überprüfbaren Entscheidung — ein
+				Die Baseline-Datei ist dafür gedacht, in git committet zu werden. Weitere bekannte
+				Barrieren hinzunehmen, statt sie zu beheben, wird so zu einer expliziten, überprüfbaren
+				Entscheidung — ein
 				neuer Verstoß erscheint als neue Zeile im Diff der Datei in einem PR, nicht als stille
 				Änderung einer Zahl.
 			</p>
@@ -36,7 +37,7 @@ export function BaselineContent() {
 				<li>
 					<strong>Scans auf einer bestehenden Website einführen.</strong> Der oben beschriebene
 					Ausgangsfall: Ein erster Scan einer gewachsenen Website kann Hunderte bereits
-					vorhandener Verstöße zutage fördern. Sie einmal in die Baseline aufzunehmen, macht das
+					vorhandener Verstöße zutage fördern. Werden sie einmal in die Baseline aufgenommen, ist
 					Gating sofort möglich, statt „erst alles beheben“ zu verlangen.
 				</li>
 				<li>

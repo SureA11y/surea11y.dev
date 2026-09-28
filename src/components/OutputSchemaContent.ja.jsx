@@ -124,8 +124,8 @@ const occurrenceRows = [
 			</>
 		),
 	},
-	{ id: "summary", field: <code>summary</code>, meaning: <>人が読むための文で、ローカライズ済みです（「<span lang="en">This button has no accessible name.</span>」）。</> },
-	{ id: "hint", field: <code>hint</code>, meaning: "人が読むための修正ガイダンスで、ローカライズ済みです。" },
+	{ id: "summary", field: <code>summary</code>, meaning: <>人が読むための文で、解決されたロケールの言語でローカライズ済みです（「<span lang="en">This button has no accessible name.</span>」）。</> },
+	{ id: "hint", field: <code>hint</code>, meaning: "人が読むための修正ガイダンスで、summaryと同じくローカライズ済みです。" },
 	{
 		id: "i18n",
 		field: <code>i18n</code>,
@@ -296,7 +296,7 @@ export function OutputSchemaContent() {
 					<strong><code>type: "manual"</code>のルールが<code>outcome: "fail"</code>を報告することはありません。</strong>手動ルール自身のロジックが<code>fail</code>と判断した場合、エンジンはそれを<code>cantTell</code>に強制変換し、<code>error</code>に説明を追記します。これは一元的に適用される仕組み（<code>policy.coerceManualFailToCantTell</code>。<code>a11y</code>ポリシー契約ではデフォルトで有効です。<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>を参照）で、各ルールが気にかける必要はありません。<code>fail</code>は、決定論的な<code>type: "automatic"</code>の検出結果だけのためにあります。
 				</li>
 				<li>
-					<strong><code>meta.normativeMappings</code></strong>は、チェック結果をWCAGの達成基準に結び付けるものです。WCAGとの正式な対応がないルール（このエンジンでは参考情報の<code>type: "manual"</code>ルールと呼んでいます）では<code>[]</code>になります。これらがどう集約されるかは<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。
+					<strong><code>meta.normativeMappings</code></strong>は、チェック結果をWCAGの達成基準に結び付けるものです。WCAGとの正式な対応がないルールでは<code>[]</code>になります（このエンジンでは、そのほとんどが参考情報の<code>type: "manual"</code>ルールです）。これらがどう集約されるかは<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。
 				</li>
 				<li>
 					<strong><code>wcagVersionScope</code></strong>：スキャンの対象WCAGバージョンによって、このルールの<code>fail</code>が<code>cantTell</code>に変わった場合にだけ含まれます。現時点では、デフォルトの2.2を対象としたときの、SC 4.1.1（構文解析）に対応するルール（<code>duplicate-id</code>）がこれに当たります。2.2でその達成基準が削除されたためです。<code>removedSc</code>は存在しなくなった達成基準、<code>target</code>はそれを削除したバージョン、<code>coercedFrom</code>はルール自身が報告した判定結果です。検出箇所はルール自身のもので、手を加えていません。捨てられたものは何もなく、変わったのは適合の判定だけです。それ以外の結果には含まれず、<code>error</code>で報告されることも<strong>ありません</strong>。何も問題は起きていないからです。<a href="/configuration/engine-options/#filtering-by-wcag-version">WCAGバージョンによる絞り込み</a>を参照してください。

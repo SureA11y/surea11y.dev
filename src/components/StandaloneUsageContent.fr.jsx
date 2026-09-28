@@ -35,8 +35,8 @@ export function StandaloneUsageContent() {
 				sans <code>require</code> ni système de modules, pas à ajouter une API distincte.
 			</p>
 			<p>
-				<strong>Le bundle ne contient que l’anglais.</strong> Chaque autre locale est fournie à
-				côté dans son propre fichier : chargez-en une après le bundle et cette langue devient
+				<strong>Le bundle ne contient que l’anglais.</strong> Chaque autre langue est fournie à
+				côté, dans son propre fichier : chargez ce fichier après le bundle et la langue devient
 				disponible :
 			</p>
 			<CodeBlock
@@ -50,8 +50,8 @@ export function StandaloneUsageContent() {
 				]}
 			/>
 			<p>
-				Si vous demandez une locale dont vous n’avez pas chargé le fichier, vous obtenez
-				l’anglais, pas une erreur. Voir <a href="/configuration/locales/">Paramètres régionaux</a>.
+				Si vous demandez une langue dont vous n’avez pas chargé le fichier, vous obtenez
+				l’anglais, pas une erreur. Voir <a href="/configuration/locales/">Langues</a>.
 			</p>
 			<p>
 				<strong>Délibérément exclus du bundle</strong> :{" "}
@@ -66,7 +66,7 @@ export function StandaloneUsageContent() {
 			</p>
 			<p>
 				Appeler directement <code>require('@surea11y/core')</code>, sans aucun binding, est
-				l’autre voie standalone : ce sont les <span lang="en">Pattern 1</span> et <span lang="en">Pattern 2</span> de{" "}
+				l’autre voie autonome : ce sont les <span lang="en">Pattern 1</span> et <span lang="en">Pattern 2</span> de{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>, à savoir jsdom
 				dans Node sans vrai navigateur, ou piloter vous-même Puppeteer/Playwright au lieu de
 				passer par un binding.

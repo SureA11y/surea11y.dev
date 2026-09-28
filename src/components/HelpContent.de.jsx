@@ -15,7 +15,7 @@ export function HelpContent() {
 				Die häufigsten Fragen, klar beantwortet: warum <code>runOnly</code> stillschweigend alle
 				Regeln ausgeführt hat statt der einen, die Sie angegeben haben, warum eine eigene Regel ohne
 				erkennbaren Grund immer wieder <code>cantTell</code> liefert, warum eine geometrieabhängige
-				Regel unter jsdom <code>notApplicable</code> meldet und was ein sauberer Scan tatsächlich
+				Regel unter jsdom <code>notApplicable</code> meldet und was ein Scan ohne Befunde tatsächlich
 				bedeutet und was nicht. Eine Viertelstunde hier erspart den Großteil der Fehlersuche, die die
 				meisten ohnehin irgendwann betreiben. Siehe <a href="/help/faq/">FAQ</a>.
 			</p>
@@ -24,8 +24,8 @@ export function HelpContent() {
 			<p>
 				Jede Grenze der Architektur dieser Engine, die statische DOM-Scans durchführt, ausdrücklich
 				benannt, statt überraschend entdeckt: was sie strukturell überhaupt nicht leisten kann, was von
-				der Umgebung abhängt, in der Sie sie ausführen, und wo sie bewusst nicht rät, weil ein falscher
-				Treffer schlimmer wäre als ein ehrliches <code>cantTell</code>. Wer diese Grenzen vorher kennt,
+				der Umgebung abhängt, in der Sie sie ausführen, und wo sie bewusst nicht rät, weil eine falsche
+				Vermutung schlimmer wäre als ein ehrliches <code>cantTell</code>. Wer diese Grenzen vorher kennt,
 				kann den übrigen Ergebnissen vertrauen. Siehe{" "}
 				<a href="/help/known-limitations/">Bekannte Einschränkungen</a>.
 			</p>

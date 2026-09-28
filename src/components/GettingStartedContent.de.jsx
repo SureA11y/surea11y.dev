@@ -106,7 +106,7 @@ export function GettingStartedContent() {
 			/>
 			<p>
 				Ein <code>fail</code>, bei dem sich die Engine sicher ist (Kontrast), eine{" "}
-				<code>cantTell</code>-Liste zur Prüfung durch einen Menschen (ist „<span lang="en">Click here</span>“ ein guter
+				<code>cantTell</code>-Liste zur manuellen Prüfung (ist „<span lang="en">Click here</span>“ ein guter
 				Linkname, besteht derselbe kontrastarme Text eine andere Prüfung, gibt es hier etwas, das
 				manuell angesehen werden muss) und unter den 114 <code>notApplicable</code>-Ergebnissen{" "}
 				<code>target-size-minimum</code> — diese Regel kann ohne echtes CSS-Layout nicht laufen,

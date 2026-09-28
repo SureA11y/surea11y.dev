@@ -134,7 +134,7 @@ export function OverviewContent() {
 			<ul>
 				<li><strong>決定論的な実行。</strong>同じ入力からは常に同じ出力が得られます。</li>
 				<li><strong>意図して保守的に。</strong><code>fail</code>は客観的で規範的な違反だけに使い、誤った警告を最小限に抑えます。</li>
-				<li><strong>標準へのトレーサビリティ。</strong>ルールは、該当する場合は必ず対応するWCAGの達成基準に紐付けています。</li>
+				<li><strong>標準へのトレーサビリティ。</strong>ルールは、適切な場合には、該当するWCAGの達成基準に紐付けています。</li>
 				<li><strong>安定した機械可読の出力。</strong>ルールIDは言語によって変わりません。</li>
 				<li><strong>フレームワークに依存しない。</strong>jsdomでも、どのブラウザー自動化フレームワークの中でも実行できます。</li>
 				<li><strong>拡張可能。</strong>カスタムルールの追加、ポリシーの登録、ルールID・タグ・WCAGバージョンによるスキャンの絞り込みができます。</li>

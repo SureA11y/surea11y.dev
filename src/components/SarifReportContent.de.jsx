@@ -6,7 +6,7 @@ const core = "https://github.com/SureA11y/core/blob/main";
 
 const sarifLevelRows = [
 	{ id: "fail", outcome: <code>fail</code>, level: <code>error</code>, meaning: "Deterministischer Verstoß: der Fall, an dem die CI scheitern soll." },
-	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "Braucht menschliche Prüfung: wird angezeigt, sollte aber allein keinen Build blockieren." },
+	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "Erfordert manuelle Prüfung: wird angezeigt, sollte aber allein keinen Build blockieren." },
 ];
 
 const sarifFieldRows = [
@@ -132,8 +132,8 @@ export function SarifReportContent() {
 			<ul>
 				<li>
 					<strong>Scans lokaler Dateien</strong>: ein Pfad relativ zum aktuellen Arbeitsverzeichnis
-					(mit Schrägstrichen). Entspricht er einer echten Datei in Ihrem Repository, kann GitHub
-					<span lang="en">Code Scanning</span> den Befund als Inline-Annotation anzeigen.
+					(mit Schrägstrichen). Entspricht er einer echten Datei in Ihrem Repository, kann{" "}
+					<span lang="en">GitHub Code Scanning</span> den Befund als Inline-Annotation anzeigen.
 				</li>
 				<li>
 					<strong>URL-Scans</strong>: die gescannte URL selbst. <span lang="en">GitHub Code Scanning</span> listet den

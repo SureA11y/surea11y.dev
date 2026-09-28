@@ -49,7 +49,7 @@ export function CliUsageContent() {
 				<code>cantTell</code>
 				は終了コードに影響しません。
 				<code>0</code>
-				は問題なし、
+				は失敗となる判定結果なし、
 				<code>1</code>
 				は
 				<code>fail</code>

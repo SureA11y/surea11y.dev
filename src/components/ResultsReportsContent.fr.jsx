@@ -5,7 +5,7 @@ const formatRows = [
 	{ format: <code>JSON</code>, use: "Intégration, stockage et traitements propres", audience: "Développeurs et plateformes" },
 	{ format: "HTML", use: "Revue humaine d’une analyse précise", audience: "QA et audit" },
 	{ format: "SARIF", use: "Intégration avec les outils d’analyse de code", audience: "Équipes de développement et de sécurité" },
-	{ format: "EARL", use: "Interopérabilité et preuve de conformité ACT", audience: "Normes, recherche et conformité" },
+	{ format: "EARL", use: "Interopérabilité et rapport d’implémentation ACT", audience: "Normes, recherche et conformité" },
 ];
 
 export function ResultsReportsContent() {
@@ -16,7 +16,7 @@ export function ResultsReportsContent() {
 				formats de rapport ci-dessous reposent directement sur ce même objet, chacun pensé pour un
 				lecteur différent : une personne qui parcourt un onglet de navigateur, un tableau de bord de
 				CI qui ne comprend que SARIF, ou le format de rapport d’implémentation du W3C lui-même.
-				Choisissez la forme adaptée à qui va réellement le lire.
+				Choisissez la forme adaptée à la personne qui va réellement le lire.
 			</p>
 			<DataTable
 				rowKey="format"
@@ -56,18 +56,20 @@ export function ResultsReportsContent() {
 				compatible SARIF, sans écrire de convertisseur vous-même. Les violations deviennent des
 				résultats SARIF avec une empreinte stable, fondée sur le contenu, si bien qu’une{" "}
 				<a href="/conformance/baseline/">baseline / allowlist</a>{" "}
-				filtre toujours proprement et qu’un tableau de bord peut suivre un résultat d’un commit à
+				filtre toujours de façon fiable et qu’un tableau de bord peut suivre un constat d’un commit à
 				l’autre au lieu de le perdre dès qu’un numéro de ligne change. Voir{" "}
 				<a href="/results-reports/sarif-report/">Rapport SARIF</a>.
 			</p>
 
 			<h2>Rapport EARL</h2>
 			<p>
-				Un rapport d’implémentation W3C EARL/JSON-LD <strong>qui atteste le résultat de chaque
-				règle, pas seulement les échecs</strong>, le format que le groupe communautaire <span lang="en">ACT Rules</span>
-				accepte comme preuve qu’un moteur implémente réellement ce qu’il annonce. Une preuve utile
-				quand une déclaration de conformité ACT doit être vérifiable, et pas seulement affirmée.
-				Voir <a href="/results-reports/earl-report/">Rapport EARL</a>.
+				Un rapport d’implémentation W3C EARL/JSON-LD, lisible par machine, <strong>qui atteste le
+				résultat de chaque règle, pas seulement les échecs</strong>. C’est le format que le groupe
+				communautaire <span lang="en">ACT Rules</span> accepte comme rapport d’implémentation :
+				exécuté sur les cas de test ACT, il consigne le résultat obtenu pour chacun, ce qui permet
+				de vérifier comment le moteur applique chaque règle plutôt que de simplement l’affirmer. Il
+				ne s’agit ni d’une certification ni d’une preuve de conformité WCAG : figurer parmi les
+				implémentations ACT n’est pas une validation par le W3C. Voir <a href="/results-reports/earl-report/">Rapport EARL</a>.
 			</p>
 		</>
 	);

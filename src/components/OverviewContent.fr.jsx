@@ -78,7 +78,7 @@ export function OverviewContent() {
 				<li>
 					<ResultBadge lang="en" state="pass" /> (<code>pass</code>) : la condition précise de cette règle est
 					remplie.{" "}
-					<strong>Ce n’est pas une affirmation que la page est accessible.</strong>
+					<strong>Cela ne signifie pas que la page est accessible.</strong>
 				</li>
 				<li>
 					<ResultBadge lang="en" state="unknown" /> (<code>cantTell</code>) : une personne doit trancher, et le
@@ -103,8 +103,8 @@ export function OverviewContent() {
 			<p>
 				Le moteur comprend {rules.length} règles. Cinquante-huit d’entre elles ont un équivalent
 				dans les <a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a> et sont exécutées sur les
-				cas de test publiés par ACT : 798 exemples répartis sur ces 58 règles. Le moteur n’échoue
-				sur aucun des exemples qu’ACT marque comme réussis ou inapplicables ; il ne produit donc
+				cas de test publiés par ACT : 798 exemples répartis sur ces 58 règles. Le moteur ne renvoie{" "}
+				<code>fail</code> sur aucun des exemples qu’ACT marque comme réussis ou inapplicables ; il ne produit donc
 				aucun faux positif sur ce corpus. Trente et un exemples qu’ACT marque en échec ne sont pas
 				signalés, pour la plupart des questions de jugement, comme savoir si un titre décrit le
 				contenu qui le suit ; voir{" "}

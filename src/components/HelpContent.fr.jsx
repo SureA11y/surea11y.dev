@@ -4,7 +4,7 @@ export function HelpContent() {
 	return (
 		<>
 			<p>
-				Deux types de questions arrivent ici, et mieux vaut savoir lequel est le vôtre avant de
+				Vous trouverez ici deux types de questions, et mieux vaut savoir lequel est le vôtre avant de
 				chercher : « pourquoi le moteur a-t-il fait ça ? » trouve sa réponse ci-dessous, et
 				« que ne fera-t-il jamais ? » reçoit une réponse tout aussi directe, énoncée d’emblée
 				plutôt que découverte à vos dépens en production.
