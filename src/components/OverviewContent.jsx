@@ -70,19 +70,19 @@ export function OverviewContent() {
 			</p>
 			<ul className="outcome-list">
 				<li>
-					<ResultBadge state="fail" /> (<code>fail</code>) — a violation provable from the DOM.
+					<ResultBadge lang="en" state="fail" /> (<code>fail</code>) — a violation provable from the DOM.
 					Reserved for objective, normative cases.
 				</li>
 				<li>
-					<ResultBadge state="pass" /> (<code>pass</code>) — this rule's specific condition is met.{" "}
+					<ResultBadge lang="en" state="pass" /> (<code>pass</code>) — this rule's specific condition is met.{" "}
 					<strong>Not a claim that the page is accessible.</strong>
 				</li>
 				<li>
-					<ResultBadge state="unknown" /> (<code>cantTell</code>) — a human has to decide this, and
+					<ResultBadge lang="en" state="unknown" /> (<code>cantTell</code>) — a human has to decide this, and
 					the result says what was ambiguous.
 				</li>
 				<li>
-					<ResultBadge state="na" /> (<code>notApplicable</code>) — the rule's precondition isn't
+					<ResultBadge lang="en" state="na" /> (<code>notApplicable</code>) — the rule's precondition isn't
 					present.
 				</li>
 			</ul>

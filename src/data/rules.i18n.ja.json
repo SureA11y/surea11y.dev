@@ -1,0 +1,2110 @@
+{
+	"accesskeys": {
+		"title": "accesskeyの値は一意である必要があります",
+		"description": "ページ上の複数の要素が同じaccesskey属性値を共有していないことを確認します。",
+		"applicability": "空でない同じaccesskey属性値（大文字と小文字を区別しない）を2つ以上の要素が共有している場合に適用されます。",
+		"expectation": "ページ上のaccesskeyの値はすべて一意です。accesskeyが重複していると、キーボードショートカットでどの要素が有効になるかが曖昧になります。同じキーを共有する要素のうち、実際にそのキーで到達できるのは1つだけで、どれになるかはブラウザーやプラットフォームによって異なります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "2つの要素が同じ`accesskey`の値（「s」）を共有しており、多くのブラウザーではどちらが選ばれるか予測できません。"
+			},
+			{
+				"state": "na",
+				"explanation": "ページ上の`accesskey`の値はすべて一意です。"
+			}
+		]
+	},
+	"area-alt-present": {
+		"title": "<area>はアクセシブルな名前を持つ必要があります",
+		"description": "<area>要素が、alt、aria-label/aria-labelledby、またはtitleによる空でないアクセシブルな名前を持つことを確認します。",
+		"applicability": "次の条件をすべて満たす<area>要素に適用されます。1) <img usemap>から参照される<map>内にある。2) 空でないhrefを持つ（hrefのない<area>はHTML仕様上そもそもハイパーリンクではなく、このルールが名前を求める対象がない）。3) 参照元の<img>が実際にレンダリングされている（hidden/display:none/visibilityでは除外されるが、<area>は<img>のDOM上の子孫ではないため、aria-hiddenでは除外されない）。4) <area>自体がアクセシビリティツリーの対象となる。<area>やその<map>に指定されたhidden、display:none、inertでは除外されません。どちらの要素もボックスを生成しないため、実際のブラウザーのイメージマップのヒットテストではこの3つはいずれも無視されます（ChromiumとFirefoxで確認済み）。除外されるのは、<img>と<map>の組み合わせ全体を含む本当の祖先要素にこれらが指定された場合だけです。",
+		"expectation": "適用対象の各<area>要素が、alt、aria-label/aria-labelledby、またはtitleによる空でないアクセシブルな名前を持っています。使用中のマップ内の<area>は常にリンクなので、<img>の場合と違ってalt=\"\"は装飾を意味しません。ほかの仕組みで名前が付けられていない限り、空のaltはaltがない場合と同じく失敗になります。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`<area>`は使用中のマップ内のリンクで、空でない`alt`を持っています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<area>`は使用中のマップ内のリンク（`href`あり）ですが、`alt`がありません。"
+			}
+		]
+	},
+	"area-alt-quality": {
+		"title": "<area>の代替テキストは適切である必要があります（手動レビュー）",
+		"description": "空でない代替テキストを持つ<area>要素を、内容が適切かどうかの人によるレビュー対象として報告します。",
+		"applicability": "alt属性があり、その値が空でない<area>要素に適用されます。<area>は空でないhrefを持ち（持たない場合はHTML仕様上そもそもハイパーリンクではない）、<img usemap>から実際に参照されている<map>に属している必要があります。使われていないマップ内の<area>は対象外です。参照元の<img>は実際にレンダリングされている必要があり（hidden/display:none/visibilityでは除外されるが、<area>は<img>のDOM上の子孫ではないため、aria-hiddenでは除外されない）、<area>自体も対象となる状態である必要があります。<area>やその<map>に指定されたhidden、display:none、inertでは除外されません。どちらの要素もボックスを生成せず、実際のブラウザーのイメージマップのヒットテストではこの3つはいずれも無視されるためです（ChromiumとFirefoxで確認済み）。除外されるのは、<img>と<map>の組み合わせ全体を含む本当の祖先要素にこれらが指定された場合だけです。role=\"presentation\"/\"none\"を指定した要素は、フォーカス可能でない限り対象外になります。",
+		"expectation": "提供されている代替テキストが正確かつ適切であることを、人がレビューして確認する必要があります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "使用中のイメージマップ内のareaが空でない代替テキストを持っています。「[[en:Room 12]]」がその領域の説明として正確かどうか確認してください。"
+			},
+			{
+				"state": "na",
+				"explanation": "このマップを参照する`<img usemap>`がないため、areaはヒットテストもレンダリングもされず、対象外です。"
+			}
+		]
+	},
+	"aria-allowed-attr": {
+		"title": "aria-*属性は要素のロールで許可されている必要があります",
+		"description": "明示的なロールを持つ要素に指定された、認識されるaria-*属性がすべて、グローバルにサポートされているか、そのロールでサポートされていることを確認します。",
+		"applicability": "認識される、グローバルでないaria-*属性を少なくとも1つ持つ要素に適用されます。判定には要素が実際に持つロールを使います。有効な明示的ロールがあればそれ、なければタグの暗黙のロール、HTML-AAMでどのロールにも対応付けられない要素の場合はロールなしとして扱います。",
+		"expectation": "指定されているaria-*属性はすべて、(a) どの要素でもグローバルにサポートされる（「グローバル」なARIAのステートやプロパティ。例：aria-label/aria-hidden/aria-describedby）、または (b) 要素のロールで必須またはサポート対象のステートやプロパティとして明記されている、のいずれかです。ARIAがそのロールで禁止ではなく非推奨としている属性は引き続き許可されます。その場合は許可されていない属性としてのFAILではなく、CANTTELLとして報告され（helpers.aria.isDeprecatedAttrを参照）、判断は作成者に委ねられます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-checked`は、role=\"checkbox\"がサポートするステートの1つです。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`aria-valuenow`は範囲ウィジェット用の属性で、role=\"checkbox\"には属しません。"
+			}
+		]
+	},
+	"aria-allowed-role": {
+		"title": "明示的なロールはホスト要素で許可されている必要があります",
+		"description": "明示的なrole=\"\"属性が、[[en:ARIA in HTML]]仕様でそのホスト要素に許可されているロールの1つであることを確認します（例：<nav>ではrole=\"tab\"は許可されていない）。",
+		"applicability": "有効で抽象的でない明示的なロールを持つ要素のうち、ホスト要素と属性の組み合わせについて、[[en:ARIA in HTML]]の表（src/core/aria-helpers.jsのALLOWED_ROLES_BY_ELEMENT）に許可ロールの制約が定められているものに適用されます。",
+		"expectation": "明示的なロールは、[[en:ARIA in HTML]]仕様でそのホスト要素に許可されているロールの1つです。FAILではなくCANTTELLとして報告されます。[[en:ARIA in HTML]]の許可ロール表は作成者向けの適合要件であり、対応するACTルールもなく、どの資料にもWCAGとの対応付けがありません。作成者が指定したロールは、そのまま支援技術に公開されるロールでもあるため、その組み合わせが誰かに不利益を与えるかどうかは表ではなくウィジェット次第です。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`role=\"navigation\"`は[[en:ARIA in HTML]]仕様で`<nav>`に許可されています（この要素の暗黙のロールでもあります）。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "`role=\"tab\"`は、[[en:ARIA in HTML]]が`<nav>`に許可しているロールではありません。"
+			}
+		]
+	},
+	"aria-braille-equivalent": {
+		"title": "aria-braillelabel/aria-brailleroledescriptionには点字以外の対応する指定がある必要があります",
+		"description": "aria-braillelabelを使う要素が通常のアクセシブルな名前も持ち、aria-brailleroledescriptionを使う要素がaria-roledescriptionも持つことを確認します。",
+		"applicability": "空でない`aria-braillelabel`属性、または空でない`aria-brailleroledescription`属性（あるいはその両方）を持つ要素。",
+		"expectation": "ARIA仕様では、`aria-braillelabel`は要素の通常のアクセシブルな名前を置き換えるものではなく、点字向けにそれを補足するものです。同様に`aria-brailleroledescription`は`aria-roledescription`を補足するものです。そのため要素には次も必要です。\n\n- `aria-braillelabel`を宣言している場合は、点字以外の仕組みによる空でないアクセシブルな名前\n- `aria-brailleroledescription`を宣言している場合は、空でない`aria-roledescription`\n\nどちらかの点字専用属性だけで名前を付けていると、点字以外の支援技術（ほとんどのスクリーンリーダーや音声操作など）にはアクセシブルな名前やロールの説明がまったく伝わりません。FAILではなくCANTTELLとして報告されます。aria-roledescriptionのないaria-brailleroledescriptionはどのユーザーにも届かず、アクセシブルな名前の欠落については、名前が必須のロールに関して名前付けのルールが判定するためです。点字属性に対応する指定がないことは知らせる価値がありますが、それ自体が達成基準の不適合ではありません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "点字ラベルは実際のアクセシブルな名前（「[[en:Save changes]]」）を補足しており、点字以外の支援技術にも名前が伝わります。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "名前付けの仕組みが`aria-braillelabel`しかなく、点字以外の支援技術にはアクセシブルな名前がまったく伝わりません。"
+			}
+		]
+	},
+	"aria-checked-state-mismatch": {
+		"title": "ネイティブのチェックボックスやラジオボタンのaria-checkedは実際の状態と一致させることが推奨されます",
+		"description": "明示的なaria-checkedの値が実際のchecked/indeterminateの状態と食い違っているネイティブの<input type=\"checkbox\">/<input type=\"radio\">を、手動レビューの対象として報告します。",
+		"applicability": "明示的な`aria-checked`属性を持つ、ネイティブの`<input type=\"checkbox\">`/`<input type=\"radio\">`要素。",
+		"expectation": "ネイティブのチェックボックスやラジオボタンでは`aria-checked`は冗長です（ロールのチェック状態はネイティブにすでに公開されている）。それでも作成者が明示的に指定する場合は、要素の実際の状態と一致させるべきです。一致しないと、晴眼のユーザーが目にしている状態とは異なる情報が支援技術に伝わります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "チェックボックスは実際にはチェックされていますが、`aria-checked=\"false\"`が支援技術に逆の状態を伝えています。"
+			},
+			{
+				"state": "na",
+				"explanation": "`aria-checked`がコントロールの実際のチェック状態と一致しています。"
+			}
+		]
+	},
+	"aria-conditional-attr": {
+		"title": "aria-errormessageにはfalse以外の値のaria-invalidを指定する必要があります",
+		"description": "aria-errormessageを持つ要素に、aria-invalidが\"true\"、\"grammar\"、\"spelling\"のいずれかで指定されていることを確認します。指定されていないと、エラーメッセージはアクセシビリティツリーから除外されます。",
+		"applicability": "空でない`aria-errormessage`属性を持つ要素。",
+		"expectation": "ARIA仕様では、`aria-errormessage`が支援技術に公開されるのは、`aria-invalid`が`\"false\"`以外の値（つまり`\"true\"`、`\"grammar\"`、`\"spelling\"`）で指定されている場合だけです。`aria-errormessage`があっても`aria-invalid`がないか`\"false\"`の場合、エラーメッセージは何の通知もなくアクセシビリティツリーから除外されます。作成者はほぼ例外なく公開されることを意図しています。FAILではなくCANTTELLとして報告されます。aria-errormessageはaria-invalidが設定されて初めて公開されるため、現時点ではこの参照は機能していません。それがユーザーにとって実害になるかどうかは、メッセージが別の方法（フィールド横の可視テキストやaria-describedby）で伝わっているかどうかによりますが、静的なマークアップからはそれを判断できません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-invalid=\"true\"`があるので、`aria-errormessage`は実際に支援技術に公開されます。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "`aria-invalid`が`\"false\"`以外の値に設定されていないため、`aria-errormessage`は公開されず、この参照は現時点では機能していません。"
+			}
+		]
+	},
+	"aria-deprecated-role": {
+		"title": "role属性に非推奨のARIAロールや作成者による使用が推奨されないARIAロールを使わないことが推奨されます",
+		"description": "明示的なrole=\"\"属性に、WAI-ARIA仕様で非推奨とされたロールや、ユーザーエージェントの内部用に予約されたロール（例：role=\"generic\"）が使われていないことを確認します。",
+		"applicability": "role属性の最初の（実際に使われる）トークンが、有効で抽象的でないARIAロールのうち、作成者が明示的に宣言すべきでないものである要素に適用されます。WAI-ARIAで非推奨とされたロール（例：role=\"list\"に置き換えられた\"directory\"）や、ユーザーエージェントの内部用に予約されたロール（role=\"generic\"。ARIA 1.2 §5.4では作成者がコンテンツで使うべきではない（[[en:SHOULD NOT]]）とされている）が該当します。",
+		"expectation": "使われているロールは非推奨でも予約済みでもありません。ARIAが定める規定の強さに応じて判定します。\n\n- [[en:SHOULD NOT]]の場合はCANTTELL。使用自体は適合のままなので、問題になるかどうかは作成者が判断します。非推奨のロール（\"directory\"）やユーザーエージェント用に予約されたロール（\"generic\"）が該当します。\n- [[en:MUST NOT]]の場合はFAIL。ARIA 1.2と1.3では、抽象ロールを除いて作成者向けの[[en:MUST NOT]]が定められたロールはないため、この判定結果は将来の改訂でいずれかのロールがその強さに引き上げられた場合のために確保されています。\n\naria-roles-valid（ロールの存在と抽象性）とは別の、独立した判定です。ロールは有効かつ抽象的でなくても、作成者が明示的に使うことは推奨されない場合があります。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`role=\"list\"`は現行の、非推奨でないARIAロールです。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "`role=\"directory\"`はWAI-ARIAで非推奨となり、`role=\"list\"`が推奨されています。マークアップとしては有効ですが、使用は推奨されません。"
+			}
+		]
+	},
+	"aria-hidden-body": {
+		"title": "文書の<body>にはaria-hiddenを指定しない必要があります",
+		"description": "<body>にaria-hidden=\"true\"が指定されていないことを確認します。指定されているとページ全体がアクセシビリティツリーから除外されます。",
+		"applicability": "<body>要素を持つHTML文書には常に適用されます。contextSelectorやルートのスコープ指定には左右されません。これは文書全体に関わる問題であり、スコープ指定されたルートではなくdocument.bodyを直接評価するpage-title-presentと同じ方式です。",
+		"expectation": "<body>にaria-hidden=\"true\"が指定されていません。文書のbodyを隠すと、ページのすべてのコンテンツと構造が一度にアクセシビリティツリーから除外されます。1.3.1（情報及び関係性：ページの構造がまったく判別できなくなる）と4.1.2（名前 ([[en:name]])・役割 ([[en:role]])・値 ([[en:value]])：文書内のどの要素もロール、名前、値を公開しなくなる）の両方が該当します。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "文書の`<body>`は`aria-hidden`ではありません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<body>`を隠すと、ページ全体が一度にアクセシビリティツリーから除外されます。"
+			}
+		]
+	},
+	"aria-hidden-focus": {
+		"title": "ARIAで隠された要素はフォーカス不可である必要があります",
+		"description": "aria-hidden=\"true\"の要素がフォーカス可能でなく、フォーカス可能な子孫も含まないことを確認します。",
+		"applicability": "aria-hidden=\"true\"を持つ要素に適用されます。",
+		"expectation": "aria-hidden=\"true\"の要素はそれ自体がフォーカス可能であってはならず、aria-hidden=\"true\"のサブツリー内にフォーカス可能な要素があってもいけません。補足：\n\n- フォーカス可能かどうかはctx.helpers.getFocusableInfo（ネイティブ要素、tabindex、contenteditable）で算出します。\n- レンダリングされていない要素（例：display:none、visibility:hidden、[hidden]）は除外されます。\n- キーボードフォーカスを受け取れる状態のままCSSで隠された要素（例：opacity:0、画面外への配置、clip）は対象に含まれ、フォーカス可能であれば報告されます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "隠されたサブツリー内にフォーカス可能な要素がないため、支援技術から隠しても、何も伝わらないフォーカス位置は生じません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`aria-hidden`でアクセシビリティツリーから除外されているのに、リンクがタブ順序に残っています。"
+			}
+		]
+	},
+	"aria-prohibited-attr": {
+		"title": "名前付けを禁止するロールにはARIAの名前付け属性を使わない必要があります",
+		"description": "仕様で明示的にARIAによる名前付けが禁止されているWAI-ARIAロール（例：generic、emphasis、strong、paragraph）に、aria-label/aria-labelledbyが指定されていないことを確認します。",
+		"applicability": "次の要素に適用されます。(a) 明示的で有効なロールが、名前付け属性について「[[en:Prohibited ARIA States and Properties]]」の一覧が定められたARIA 1.2のロール（純粋にテキストの意味を表すロール、または名前を付けない構造ロール：caption、code、deletion、emphasis、generic、insertion、mark、none、paragraph、presentation、strong、subscript、suggestion、superscript、time）である要素。(b) ロールをまったく持たない要素。暗黙のロールを持たないことを確認済みのネイティブHTMLタグの厳選リスト（後述のROLELESS_NATIVE_TAGSを参照）、または任意の自律カスタム要素（[[en:Custom Elements]]仕様に基づく、作成者定義のハイフン付きタグ。後述のisRolelessCustomElementTagを参照）が該当します。いずれの場合も、aria-labelまたはaria-labelledbyを持つ要素だけが対象です。",
+		"expectation": "(a) では禁止された属性があってはいけません。(b) では名前付け属性はよくて不確実（アクセシブルな名前を扱う仕組みがない）、悪ければ支援技術に何の通知もなく無視されます。これによって生じる確度の分かれ方については、後述のロールなしの場合の実装メモを参照してください。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "role=\"generic\"には名前を付けられませんが、名前付け属性はどれも指定されていません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "WAI-ARIAで名前付けが禁止されているロールに`aria-label`が指定されています。"
+			}
+		]
+	},
+	"aria-prohibited-children": {
+		"title": "コンテナーロールが所有する子は許可されたロールである必要があります",
+		"description": "コンテナーロール（list、listbox、menu、menubar、radiogroup、rowgroup、table、grid、treegrid、tablist、tree、row）がアクセシビリティツリー上で所有するすべての子が、そのロールで許可された所有ロールのいずれかを持つことを確認します。",
+		"applicability": "明示的で有効なロールが、「[[en:required owned elements]]」の項目が定められたコンテナーロールのいずれかである要素に適用されます（aria-required-childrenと同じREQUIRED_OWNED_ROLES表。src/core/aria-helpers.jsを参照）。",
+		"expectation": "コンテナーがアクセシビリティツリー上で所有する子孫（role=\"none\"/\"presentation\"の要素と、\"group\"/\"rowgroup\"のラッパーを取り除いた後）はすべて、同じ必須所有ロールの集合に含まれるロールを持ちます。\"group\"/\"rowgroup\"のラッパーは、WAI-ARIAに従い、所有要素の照合では常に透過的に扱われます。これは\"group\"/\"rowgroup\"自体がそのコンテナーの必須所有ロールの集合に含まれるかどうかに関係ありません。複合ロールやコンテナーロールの直接の子として構造上有効なのはこれらだけです。ここで「許可されている」とは、コンテナーの必須所有ロールに加え、必須ではないが所有してもよい小さなロールの集合ALLOWED_EXTRA_OWNED_ROLES（メニュー項目間のseparator、grid内のcaptionなど）を指します。コンポーネントライブラリーが項目を埋め込むロールなしのラッパーは、項目にたどり着くまで中をたどります。ただし項目が見つかった時点で、そのラッパーの残りのサブツリーは項目自身のコンテンツとみなされ、コンテナーに照らした判定は行いません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "所有されている2つの子はどちらも、menubarの仕様で許可されたロールです。"
+			},
+			{
+				"state": "fail",
+				"explanation": "role=\"table\"が許可する子はrow（またはrowgroup）だけであり、ボタンは許可されていない所有される子です。"
+			}
+		]
+	},
+	"aria-required-attr": {
+		"title": "必須のARIAステートやプロパティがあるロールには、それを指定する必要があります",
+		"description": "明示的なロールを持つ要素に、そのロールで必須とされている、曖昧さがなく文脈に依存しないaria-*ステートやプロパティがすべて指定されていることを確認します（例：role=\"checkbox\"にはaria-checkedが必要）。",
+		"applicability": "明示的で有効な、抽象的でないロールのうち、文脈に依存しない必須のステートやプロパティが定められた少数のロール（checkbox、combobox、heading、menuitemcheckbox、menuitemradio、meter、radio、scrollbar、separator、slider、switch）を持つ要素に適用されます。ただし、その明示的なロールが要素自身のネイティブまたは暗黙のロールと同一の場合は除きます（ACT 4e8ab6。例：<input type=\"checkbox\" role=\"checkbox\">はネイティブコントロール自身の状態公開で足りるため対象外で、aria-checkedは必要ありません。この判定はhelpers.aria.getNativeRoleForElementが行います）。",
+		"expectation": "そのロールで必須のステートやプロパティがすべて存在し、空ではありません。欠けている属性の代わりになるものをARIAが定めているかどうかで判定します。\n\n- 代わりがない場合はFAIL。その状態がまったく公開されないためです（checkbox/radio/switch/menuitemcheckbox/menuitemradioのaria-checked、slider/scrollbar/meterとフォーカス可能なseparatorのaria-valuenow）。\n- ARIAがロールの既定値となる暗黙の値を定めている場合はCANTTELL（comboboxのaria-expanded、headingのaria-level）。ロールは引き続き値を公開しており、それが正しい値かどうかは作成者にしか分からないためです。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "role=\"checkbox\"には`aria-checked`が必須で、指定されています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "role=\"checkbox\"には`aria-checked`が必須ですが、まったく指定されていません。"
+			}
+		]
+	},
+	"aria-required-children": {
+		"title": "コンテナーロールは必須の子ロールを少なくとも1つ所有する必要があります",
+		"description": "「[[en:required owned elements]]」の項目が定められたコンテナーロール（list、listbox、menu、radiogroup、table、grid、tablist、tree、rowなど）が、許容される所有ロールを持つ子孫またはaria-ownsで参照される要素を少なくとも1つ含むことを確認します。",
+		"applicability": "明示的で有効な、抽象的でないロールが、「[[en:required owned elements]]」の項目が定められたコンテナーロール（list、listbox、menu、menubar、radiogroup、rowgroup、table、grid、treegrid、tablist、tree、row）のいずれかである要素に適用されます。",
+		"expectation": "少なくとも1つの子孫、またはaria-ownsで参照される要素が、そのコンテナーロールで許容される所有ロールのいずれかを持っています。FAILにはならず、常にCANTTELLとして報告されます。このルールが問うのは必須のコンテンツが存在するかどうかだけであり、何も所有しないコンテナーは誤った情報を伝えません。空のrole=\"list\"は項目のないリストとして読み上げられ、実際にそのとおりだからです。コンテナーが所有するコンテンツが有効かどうかはaria-prohibited-childrenが判定し、そちらのルールは引き続き失敗を報告します。そのため、本当に誤って記述された構造（リスト項目に混じったrole=\"button\"や、普通のボタンで構成されたtablist）は、これまでと同じ強さで検出されます。ネイティブHTMLの対応する要素もすでにこの方式です。このルールセットでは空の<ul>を失敗とするものはなく、list-children-validは実際に存在する子だけを判定します。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "listロールが、`listitem`ロールの子を少なくとも1つ所有しています。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "空の`role=\"list\"`が必須の子ロールを1つも所有していません。項目のないリストとして読み上げられ、実際そのとおりですが、確認する価値はあります。"
+			}
+		]
+	},
+	"aria-required-parent": {
+		"title": "特定の文脈ロールを必要とするロールは、その文脈内にある必要があります",
+		"description": "「[[en:required context role]]」の項目が定められたロール（listitem、option、tab、treeitem、row、cellなど）が、許容される文脈ロールを持つ祖先またはaria-ownsによる所有者を持つことを確認します。",
+		"applicability": "明示的で有効な、抽象的でないロールが、空でない「[[en:required context role]]」の項目が定められたロール（listitem、option、menuitem、menuitemcheckbox、menuitemradio、tab、treeitem、row、cell、gridcell、columnheader、rowheader、rowgroup）のいずれかである要素に適用されます。",
+		"expectation": "要素には、実効ロールがこの要素のロールで許容される文脈ロールのいずれかである祖先（DOM上の包含関係）または所有者（その祖先や所有者のaria-ownsによる）があります。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "role=\"tab\"にはrole=\"tablist\"を持つ祖先（または`aria-owns`による所有者）が必要で、それが存在します。"
+			},
+			{
+				"state": "fail",
+				"explanation": "role=\"tab\"には、ページ内のどこにもtablistの祖先や所有者がありません。"
+			}
+		]
+	},
+	"aria-role-name-present": {
+		"title": "アクセシブルな名前を必要とするARIAロールには名前があります",
+		"description": "WAI-ARIAでアクセシブルな名前が必須とされているARIAロールが、空でない名前を公開していることを確認します。",
+		"applicability": "role属性がgrid、meter、progressbar、radiogroup、treeのいずれか1つと完全に一致し、アクセシビリティツリーに含まれる要素に適用されます。対象となるかどうかは、ロールが名前を許可しているかどうかではなく、WAI-ARIA自身の「[[en:Accessible Name Required: True]]」という特性で決まります。tablist、toolbar、menu、menubar、scrollbarは作成者によって名前が付けられるロールですが、仕様上名前は必須ではないため対象外です。meterとprogressbarはmeter-name-presentとprogressbar-name-presentでも扱われ、そちらは達成基準1.1.1に対応付けられています。この2つのロールを4.1.2の観点で扱っているのはこのルールです。",
+		"expectation": "要素が、空でないaria-label、空でないテキストに解決されるaria-labelledby、または空でないtitleを持っています。対象のロールはすべて作成者によってのみ名前が付けられるロールなので、子孫のテキストは認められません。認めてしまうと、複合ウィジェット内のラベル付きの子によって、自身の名前を持たないコンテナーが合格してしまいます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "role=\"grid\"にはアクセシブルな名前が必須で、`aria-label`がそれを提供しています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "role=\"grid\"にはアクセシブルな名前が必須ですが、何も指定されていません。"
+			}
+		]
+	},
+	"aria-roles-valid": {
+		"title": "role属性は有効で抽象的でないARIAロールである必要があります",
+		"description": "明示的なrole=\"\"属性が、実在する抽象的でないWAI-ARIAロールに解決されることを確認します。",
+		"applicability": "合成DOM内で、空でないrole=\"\"属性を持つすべての要素に適用されます。",
+		"expectation": "少なくとも1つのロールトークンが、具体的で抽象的でないARIAロールを指しています。どのトークンも該当しない場合に要素が何にフォールバックするかで判定します。\n\n- ロールを持たないホスト（div、span、カスタム要素）ではFAIL。genericとして公開されたままになり、作成者が意図したロールは誰にも伝わりません。\n- 要素がネイティブのロールを持つ場合（<button>、<nav>、<a href>）はCANTTELL。アクセシビリティツリーではそのロールが使われ続けます。ACT 674b10は4.1.2を副次的な要件としてのみ挙げ、「暗黙のロールによって満たされる」としているため、不正なトークンは報告する価値がありますが、それ自体が達成基準の不適合ではありません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "\"button\"は実在する具体的なARIAロールです。"
+			},
+			{
+				"state": "fail",
+				"explanation": "\"buton\"は定義されたARIAロールのトークンではありません（タイプミス）。"
+			}
+		]
+	},
+	"aria-text": {
+		"title": "role=\"text\"の要素はフォーカス可能な子孫を持たないことが推奨されます",
+		"description": "role=\"text\"を持つ要素が、フォーカス可能な子孫（リンク、ボタン、フォームコントロール、tabindex、iframe、contenteditable）を含まないことを確認します。",
+		"applicability": "明示的な`role=\"text\"`を持つ要素。",
+		"expectation": "`role=\"text\"`は、要素のサブツリー全体をひとまとまりのプレーンテキストとして扱うよう支援技術に指示します（例：スタイルのために複数の`<span>`に分割されたテキスト）。[[en:WAI-ARIA Authoring Practices]]によれば、これが意味を持つのはサブツリーにフォーカス可能なコンテンツがない場合だけです。「ただのテキスト」とされた領域の中にフォーカス可能な子孫があると、キーボードや支援技術のユーザーはそこに到達できないか、混乱することになります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`role=\"text\"`はこれを1つの平坦な文字列として扱うよう支援技術に指示していますが、その下にある入れ子のリンクは引き続きフォーカス可能で操作できます。"
+			},
+			{
+				"state": "na",
+				"explanation": "`role=\"text\"`の要素内にフォーカス可能な子孫はありません。"
+			}
+		]
+	},
+	"aria-valid-attr": {
+		"title": "aria-*属性は実在する定義済みのARIA属性である必要があります",
+		"description": "DOM内にあるすべてのaria-*属性名が、WAI-ARIA仕様で定義された実在する属性であることを確認します。",
+		"applicability": "合成DOM内で、名前が\"aria-\"で始まる属性を少なくとも1つ持つすべての要素に適用されます。",
+		"expectation": "各aria-*属性名は、WAI-ARIA仕様で定義された実在する属性です（タイプミスや架空の属性名を検出します。これらは支援技術に何の通知もなく無視されるため、実際に存在する決定論的な欠陥です）。FAILではなくCANTTELLとして報告されます。仕様で定義されていないaria-*属性は何の効果もないため、それがあることで要素が公開する名前、ロール、値が変わることはありません。作成者が実在する属性を意図していて、結果として要素に名前がない場合、その欠落を判定するのはこのルールではなく名前付けのルールです。ACT 5f99a7は1.3.1/4.1.2を、ルール自体より「緩い」副次的な要件として対応付けています。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`は実在する定義済みのARIA属性です。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "`aria-labeledby`はタイプミスで（正しい属性は`aria-labelledby`）、支援技術に何の通知もなく無視されます。"
+			}
+		]
+	},
+	"aria-valid-attr-value": {
+		"title": "aria-*属性の値は宣言された型に一致する必要があります",
+		"description": "認識されるすべてのaria-*属性の値が、WAI-ARIAで宣言された値の型（boolean、tristate、token、integer、number、ID参照）に適合していることを確認します。",
+		"applicability": "認識されるaria-*属性を少なくとも1つ持つすべての要素に適用されます（認識されない属性名はaria-valid-attrが扱うため、ここでは評価しません）。",
+		"expectation": "各属性の値は、WAI-ARIAで宣言された値の型に適合しています。boolean（\"true\"/\"false\"）、tristate（\"true\"/\"false\"/\"mixed\"）、固定の列挙セットに含まれるトークン、整数、実数、または文書内の既存の要素に解決されるID参照（リスト）です。ACT 6a7281自身の適用範囲（「空でないステートやプロパティ」）に従い、明示的に空の値は、どの値の型でも違反ではなく対象外です。「=値」をまったく持たないブール形式の属性（例：`aria-checked`のみ）もこれに含まれます。テンプレートで生成されるマークアップでは、これはよくある意図的なパターンです（例：Reactで条件付きで`aria-describedby={hasError ? errorId : ''}`をレンダリングする場合）。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "\"true\"は、boolean型の`aria-hidden`に有効な値です。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`aria-hidden`はboolean型であり、\"yes\"は有効なbooleanトークンではありません。"
+			}
+		]
+	},
+	"autocomplete-valid": {
+		"title": "autocomplete属性は有効な自動入力の値である必要があります",
+		"description": "空でないautocomplete属性が、\"on\"/\"off\"、または正しい形式の自動入力詳細トークンリストであることを確認します。",
+		"applicability": "空でないautocomplete属性を持つフォームコントロール（input、select、textarea）に適用されます。",
+		"expectation": "値が\"on\"/\"off\"単独、または正しい形式の自動入力詳細トークンリストです。トークンリストは、任意の\"section-*\"トークン、任意の\"shipping\"/\"billing\"トークン、任意の連絡手段トークン（home/work/mobile/fax/pager/impp）の順に続き、認識されるフィールド名トークン（name、email、street-address、cc-number、telなど）がちょうど1つ、その後に任意で\"webauthn\"が続く形式です。値の形式が不正だと、autocompleteを使って入力の目的を伝える支援技術がフィールドを確実に識別できません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "\"email\"は認識される自動入力のフィールド名トークンです。"
+			},
+			{
+				"state": "fail",
+				"explanation": "\"emial\"はタイプミスで、認識される自動入力トークンではありません。"
+			}
+		]
+	},
+	"avoid-inline-spacing": {
+		"title": "インラインスタイルでテキストの間隔をWCAGの基準値未満に固定しない必要があります",
+		"description": "インラインスタイルで!importantを使ってline-height、letter-spacing、word-spacingを固定している場合に、その値がすでにWCAG 1.4.12を満たしていて、ユーザーが上書きする必要がないことを確認します。",
+		"applicability": "独自の可視テキストを持つレンダリングされた要素のうち、style属性でline-height、letter-spacing、word-spacingを実際の値付きの`!important`として宣言しているものに適用されます。CSS全体キーワード（inherit、initial、unset、revert）は独自の間隔を指定しないため対象外です。",
+		"expectation": "そのような宣言はいずれも、そのプロパティについてWCAG 1.4.12が定める基準値（フォントサイズに対する倍率）をすでに満たしています。line-heightは1.5以上、letter-spacingは0.12以上、word-spacingは0.16以上です。固定された値が達成基準をすでに満たしていれば、ユーザーが上書きする必要はありません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "固定されたletter-spacingは、WCAG 1.4.12の最小基準値を上回っています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`!important`によってline-heightが最小値の1.5未満に固定されており、ページ側のスタイルでは上書きできません。"
+			}
+		]
+	},
+	"binary-control-name-present": {
+		"title": "二値コントロールにはアクセシブルな名前があります",
+		"description": "チェックボックス、ラジオボタン、スイッチのコントロールが、空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "role=\"checkbox\"、role=\"radio\"、role=\"switch\"を持ち（属性はフォールバックのリストではなく、これらのロールのいずれか1つだけを指定している必要がある）、アクセシビリティツリーに含まれる要素に適用されます。ネイティブの<input type=\"checkbox\">/<input type=\"radio\">は、これらのロールを明示的に持つ場合にのみ対象となります。role属性がない場合はform-control-programmatic-label-presentの対象です。",
+		"expectation": "コントロールが、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleによる空でないアクセシブルな名前を持っています。ネイティブのチェックボックスやラジオボタンでは、関連付けられた<label>、labels API、囲む<label>、label[for]も認められます（決定論性のため読み取るラベルは最大4つ）。それ以外の要素では、これらのロールは内容から名前が決まるため、自身のサブツリーのテキストも認められます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がスイッチにアクセシブルな名前を与えています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "スイッチには、サポートされているどの仕組みによる名前もありません。"
+			}
+		]
+	},
+	"button-name-present": {
+		"title": "ボタンにはアクセシブルな名前があります",
+		"description": "ボタンが空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "<button>、<input type=\"button\">、<input type=\"submit\">、<input type=\"reset\">、およびrole=\"button\"を持つ要素のうち、アクセシビリティツリーに含まれるものに適用されます。role=\"presentation\"/\"none\"を指定した要素は対象外になります。ただし、プレゼンテーショナルロールの競合解決に従い、グローバルなARIA属性やフォーカス可能であることによってロールが復元される場合は除きます。",
+		"expectation": "要素が空でないアクセシブルな名前を持っています。まずプログラムによる名前（aria-labelledby、aria-label、関連付けられた<label>、title）が使われます。それがなければ、<input>のボタンはvalue属性にフォールバックし、type=\"submit\"/type=\"reset\"はユーザーエージェント自身の既定値「[[en:Submit]]」/「[[en:Reset]]」にフォールバックします。そのためこの2つは名前がなくなることがありません。どちらもない場合、内容から名前が決まるロールのボタンはサブツリーのテキストにフォールバックします。その際はテキストノードだけでなく、各子孫自身の名前（<img alt>、aria-label、title）も数えます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "ボタンのテキストコンテンツがアクセシブルな名前になっています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "ボタンにはテキストコンテンツも`aria-label`も`aria-labelledby`もありません。"
+			}
+		]
+	},
+	"bypass-blocks-present": {
+		"title": "ページは繰り返されるブロックをスキップする手段を提供する必要があります",
+		"description": "ページに、WCAG 2.4.1のブロックスキップの手段として認められるもの（mainランドマーク、機能するページ内アンカーリンク、または見出し）が少なくとも1つあることを確認します。",
+		"applicability": "<body>要素を持つHTML文書には常に適用されます。「ブロックスキップ」はページ全体に関わる問題であり、スコープ指定されたルートではなく文書を直接評価するaria-hidden-body/page-title-presentと同じ方式です。",
+		"expectation": "WCAG 2.4.1の次の達成方法のうち、少なくとも1つが存在します。(a) mainランドマーク（<main>または[role=\"main\"]）、達成方法ARIA11：スクリーンリーダーのユーザーはそこへ直接移動でき、その前にあるもの（ナビゲーション、ヘッダー、繰り返されるブロック）を一度にすべてスキップできます。(b) 機能するページ内アンカーリンク、達成方法G1/G123：ターゲットがリンク自身と同じツリー（ライトDOMまたは同じシャドウルート）内の実在する要素に解決される<a href=\"#id\">（または旧来の<a name=\"id\">）。<nav>より前に配置されていることや、キーボードフォーカス順序の先頭であることは求めません（実装メモを参照）。(c) アクセシビリティツリーに含まれ、かつ可視（画面外、クリップ、opacity:0、サイズゼロでoverflow:hiddenのいずれでもない）である見出し（<h1>〜<h6>または[role=\"heading\"]）が少なくとも1つ、達成方法H69：見出しナビゲーション自体が標準で認められたブロックスキップの手段です（例：スクリーンリーダーの「見出しへ移動」コマンド）。ただしACT 047fe0の期待される結果は可視であることも求めています。スクリーンリーダー専用の見出しでは、晴眼のキーボードユーザーが繰り返されないコンテンツの開始位置を見つける同等の手段がないためです。",
+		"examples": [
+			{
+				"state": "na",
+				"explanation": "ブロックスキップの手段として認められるmainランドマークがあるため、報告するものはありません。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "mainランドマーク、機能するページ内アンカーリンク、可視の見出しのいずれも検出されませんでした。エンジンは1つのスナップショットだけではページに本当にブロックスキップの手段がないかどうか確認できないため、失敗ではなくレビューを促すものです。"
+			}
+		]
+	},
+	"canvas-text-alternative-present": {
+		"title": "<canvas>は代替テキストを提供する必要があります",
+		"description": "<canvas>要素が、フォールバックコンテンツまたはアクセシブルな名前によって代替テキストを提供していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれる<canvas>要素に適用されます。隠された要素は、フォーカス可能かどうかにかかわらず除外されます。",
+		"expectation": "適用対象の各<canvas>が、フォールバックコンテンツまたはアクセシブルな名前によって代替テキストを提供しています。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "タグの間のフォールバックコンテンツが代替テキストを提供しています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "フォールバックコンテンツもアクセシブルな名前もありません。"
+			}
+		]
+	},
+	"canvas-text-alternative-quality": {
+		"title": "<canvas>の代替テキストは適切である必要があります（手動レビュー）",
+		"description": "代替テキストが検出された<canvas>要素を、内容が同等で適切かどうかの人によるレビュー対象として報告します。",
+		"applicability": "すでに代替テキスト（要素内のフォールバックコンテンツ、ARIAによる名前、またはtitle）を持つ<canvas>要素に適用されます。どれも持たない<canvas>には質を判断できる代替テキストがなく、それはcanvas-text-alternative-presentの失敗です。要素はアクセシビリティツリーに含まれている必要があり、role=\"presentation\"/\"none\"を指定した場合は対象外になります。ただし、フォーカス可能であればロールが復元されるため対象に含まれます。",
+		"expectation": "提供されている代替テキストが正確かつ適切であることを、人がレビューして確認する必要があります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "フォールバックテキスト「[[en:Bar chart]]」はありますが、一般的すぎます。グラフの種類だけでなく、実際のデータが伝わるかどうか確認してください。"
+			},
+			{
+				"state": "na",
+				"explanation": "レビュー対象となるフォールバックコンテンツ、ARIAによる名前、titleがありません。この場合は代わりに`canvas-text-alternative-present`の失敗になります。"
+			}
+		]
+	},
+	"combobox-name-present": {
+		"title": "コンボボックスにはアクセシブルな名前があります",
+		"description": "role=\"combobox\"を持つ要素が、空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "role=\"combobox\"を持ち（属性はフォールバックのリストではなく、このロールだけを指定している必要がある）、アクセシビリティツリーに含まれる要素に適用されます。暗黙のロールが一致していても、role属性を持たない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleによる空でないアクセシブルな名前を持っています。role=\"combobox\"は作成者によってのみ名前が付けられるロールなので、サブツリーのテキストは決して認められません。カスタムのコンボボックスウィジェット内にあるテキストは、名前として確実に公開されるとは限らないためです。ラベル付け可能な要素（<input role=\"combobox\">）では、関連付けられた<label>も認められます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がコンボボックスに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "サポートされているどの仕組みによるアクセシブルな名前もありません。"
+			}
+		]
+	},
+	"contrast-computable": {
+		"title": "レンダリングされたテキストの色のコントラストを算出できます",
+		"description": "可視テキストについてWCAGの色のコントラストを算出するのに十分な情報があるかどうかを判定します（例：背景が特定できなくなるグラデーション、画像、ブレンドモードがないこと）。",
+		"applicability": "スコープ内のすべての可視テキストノードに加え、<input type=\"button\">/[type=\"submit\"]/[type=\"reset\"]のラベルにも適用されます。これらのラベルはvalue属性からレンダリングされるため、テキストノードをたどるだけでは見つかりません。テキストが対象となるのは、その要素が実行時の可視性モードでDOM上可視であり、sr-onlyの手法（clipまたはclip-path）で見えないように切り取られておらず、無効なコントロールにもそのラベルにも属していない場合だけです（最後の条件はWCAGの非アクティブなユーザーインターフェースコンポーネントの例外）。engineOptions.excludeSelectorsで除外されたサブツリーはスキップされ、オープンなシャドウルートはそれ自体がルートとしてたどられます。",
+		"expectation": "適用対象のすべてのテキストノードについて、コントラスト計算の両側をCSSから確定できます。つまり、不透明な色に解決される実効的な背景と、解析可能な前景色です。どちらかが確定できない場合（背景画像やグラデーション、mix-blend-mode、filterやbackdrop-filter、text-shadow（このエンジンにはグリフ描画のモデルがないため考慮できないコントラストが加わる可能性がある）、祖先のopacity、最後まで不透明にならないルートの背景、解析できない色）、判定結果はその原因を示すcantTellになります。この不確実性を報告するのはこのルールであり、そのおかげでcontrast-minimumとcontrast-enhancedは同じテキストについて比率を推測せずに何も報告しないでいられます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "前景と背景がどちらも均一で不透明な色なので、比率を算出できます（その後AA/AAAで合格するかどうかは別です）。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "テキストの背後にある`background-image`は均一な色ではないため、コントラスト比をまったく算出できません。"
+			}
+		]
+	},
+	"contrast-enhanced": {
+		"title": "テキストは高度な色のコントラスト（AAA）を満たします",
+		"description": "CSSからコントラストを算出できる場合に、可視テキストのコントラスト比が7:1以上（通常のテキスト）または4.5:1以上（大きなテキスト）であることを確認します。",
+		"applicability": "contrast-computableの対象となる可視テキスト（対象となる条件はそのルールを参照）のうち、背景と前景を実際に算出できるものに適用されます。対象となるテキストでも算出できない場合、このルールはcantTellではなくnotApplicableになります。その不確実性を報告するのはcontrast-computableの役割なので、2つのルールが同じテキストを二重に報告することはありません。",
+		"expectation": "算出可能なすべてのテキストノードが、そのサイズに応じて達成基準1.4.6が求める比率に達しています。大きなテキストは4.5:1、それ以外は7:1です。テキストは、24px以上、または算出されたフォントの太さが700以上で14pt（約18.667px）以上の場合に大きなテキストとみなされます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "白地に黒はおよそ21:1で、AAAのしきい値7:1を大きく上回っています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "白地に灰色は約4.6:1で、AAの最小値は満たしますが、より厳しいAAAのしきい値7:1は満たしません。"
+			}
+		]
+	},
+	"contrast-minimum": {
+		"title": "テキストは最低限の色のコントラスト（AA）を満たします",
+		"description": "CSSからコントラストを算出できる場合に、可視テキストのコントラスト比が4.5:1以上（通常のテキスト）または3:1以上（大きなテキスト）であることを確認します。",
+		"applicability": "contrast-computableの対象となる可視テキスト（対象となる条件はそのルールを参照）のうち、背景と前景を実際に算出できるものに適用されます。対象となるテキストでも算出できない場合、このルールはcantTellではなくnotApplicableになります。その不確実性を報告するのはcontrast-computableの役割なので、2つのルールが同じテキストを二重に報告することはありません。",
+		"expectation": "算出可能なすべてのテキストノードが、そのサイズに応じて達成基準1.4.3が求める比率に達しています。大きなテキストは3:1、それ以外は4.5:1です。テキストは、24px以上、または算出されたフォントの太さが700以上で14pt（約18.667px）以上の場合に大きなテキストとみなされます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "約4.6:1で、通常のテキストに対するAAの最小値4.5:1を上回っています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "白の上で祖先（グループ）のopacityが50%になっているため、合成すると約4:1の均一な灰色になり、AAの最小値を下回ります。"
+			}
+		]
+	},
+	"css-focus-indicator-suppressed": {
+		"title": "フォーカスインジケーターを代替なしに削除しない必要があります",
+		"description": "タブ順序内の要素のうち、:focus/:focus-visibleのルールでフォーカスのアウトラインが削除され、その要素に一致する他のどのフォーカスルールにも代わりのインジケーター（border、box-shadow、backgroundなど）がないものを報告します。",
+		"applicability": "アクセス可能なスタイルシートに`:focus`または`:focus-visible`のルールが少なくとも1つあるページで、逐次フォーカスナビゲーションに含まれる（タブ移動可能でレンダリングされている）要素。フォーカスルールがどこにもなければ、すべての要素がユーザーエージェント自身のインジケーターを保つため、確認するものはありません。",
+		"expectation": "アウトラインを削除する`:focus`/`:focus-visible`のルール（`outline: none`、`outline: 0`、`outline-color: transparent`など）に一致する要素はありません。ただし、その要素に一致する別のフォーカスルールが代わりのもの（border、box-shadow、background、色の変化、独自の正のアウトライン、`::before`/`::after`による装飾）を描画している場合は除きます。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`:focus { outline: none; }`がフォーカスインジケーターを削除しており、このリンクに一致する他のどのルールも代わりのものを描画していません。"
+			},
+			{
+				"state": "na",
+				"explanation": "アウトラインを削除しているのと同じルールが、代わりに`box-shadow`を描画しています。"
+			}
+		]
+	},
+	"css-hidden-focus": {
+		"title": "フォーカス可能な要素を視覚的に隠さない必要があります",
+		"description": "キーボードでフォーカス可能な要素が、タブ順序に残る可能性のあるCSSの手法で視覚的に隠されていないことを確認します。",
+		"applicability": "タブ移動可能（キーボードでフォーカス可能）でありながら、タブ順序に残る可能性のあるCSSの手法で視覚的に隠されている要素に適用されます。",
+		"expectation": "視覚的に隠された状態（例：opacity:0、クリップ、画面外への配置）でタブ移動可能な要素があってはいけません。補足：\n\n- このルールは、要素をフォーカス可能なままに*できる*CSSの手法を意図的に対象としています。\n- レンダリングから除外された要素（display:none、visibility:hidden、[hidden]）は除外されます。\n- このルールは決定論的なヒューリスティック（算出スタイルの解析）を使い、レイアウトのジオメトリには依存しません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`opacity:0`で晴眼のキーボードユーザーには見えないのに、リンクがタブ順序に残っています。"
+			},
+			{
+				"state": "na",
+				"explanation": "リンクはフォーカス可能で、かつ見えています。報告するものはありません。"
+			}
+		]
+	},
+	"css-orientation-lock": {
+		"title": "CSSでページの表示の向きを1つに固定しない必要があります",
+		"description": "デバイスの向きを無効にする既知の手法である、ページにtransform: rotate(...)を設定する@media (orientation: portrait|landscape)ルールがないことを確認します。",
+		"applicability": "アクセス可能な（同一文書内の、クロスオリジンでない）すべてのスタイルシート。インラインの`<style>`ブロックと、`document.styleSheets`に読み込み済みの同一オリジンの`<link>`スタイルシートが該当します。",
+		"expectation": "`@media (orientation: portrait)`や`@media (orientation: landscape)`のブロックで、約90度（180で割った余り、つまり約90度または約270度）の`transform`/`-webkit-transform`/`rotate`による回転を設定しているものはありません。これはデバイスの実際の向きに関係なく、見た目上1つの向きを強制するよく知られた手法です。WCAG 1.3.4は、その向きが必須でない限り、コンテンツの表示を単一の表示の向きに制限しないことを求めており、この手法はそれに反します。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "ページを回転させる向きのメディアクエリはありません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "横向きのメディアクエリが90度の回転を強制しており、デバイスの向きに関係なくページが縦向きに固定されます。"
+			}
+		]
+	},
+	"definition-list-children-valid": {
+		"title": "説明リストは正しく構造化されている必要があります",
+		"description": "<dl>要素の直接の子が、<dt>/<dd>のグループ（1つの<div>で囲んでもよい）、<script>、<template>、<style>だけであることを確認します。",
+		"applicability": "直接の子要素を少なくとも1つ持つ<dl>要素に適用されます。",
+		"expectation": "直接の子要素はすべて、<dt>、<dd>、<script>、<template>、<style>、または自身の子が同じ集合から成る<div>のいずれかです（作成者がdt/ddの組をまとめる一般的な書き方に合わせ、囲むdivは1階層まで許可されます）。平坦化した集合に<dt>か<dd>が1つでも含まれる場合は、両方が含まれている必要があります（ddのないdt、dtのないddのように釣り合っていないものは無効です）。どちらも含まない平坦化した集合は、違反ではなく形式的に問題なしとみなされます（実装メモを参照）。それ以外の直接の子や囲まれた子があると、支援技術が頼りにしている説明リストのセマンティクスが崩れます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`<dl>`の直接の子は`dt`/`dd`だけです。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<p>`が`<dl>`の直接の子になっていますが、`dt`/`dd`（または許可されたラッパー）ではありません。"
+			}
+		]
+	},
+	"deprecated-elements-not-used": {
+		"title": "停止できない廃止済みの要素（<blink>、<marquee>）を使わない必要があります",
+		"description": "点滅やスクロールするコンテンツをユーザーが一時停止、停止、非表示にできない、非推奨で非標準のHTML要素（<blink>、<marquee>）が存在しないことを確認します。",
+		"applicability": "あらゆるスキャン範囲に適用されます。<blink>や<marquee>要素を含むかどうかは常に判定できるためです。これらは廃止された非標準のHTML要素で、その本来の動作（テキストの点滅や自動スクロール）には、ユーザーが一時停止、停止、非表示にするための組み込みの仕組みがありません。",
+		"expectation": "どちらの要素も存在しません。これらの動きはユーザーが一時停止、停止、非表示にすることが決してできないため、存在すること自体が違反であり、存在しないこと自体が合格です。3つ目の「適用対象外」のケースはありません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`<blink>`や`<marquee>`要素がどこにもないため、それだけでルールを満たします。別途「適用対象外」になるケースはありません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<marquee>`の自動スクロールには、ユーザーが一時停止、停止、非表示にするための組み込みの手段がありません。"
+			}
+		]
+	},
+	"dialog-name-present": {
+		"title": "ダイアログにはアクセシブルな名前があります",
+		"description": "role=\"dialog\"またはrole=\"alertdialog\"を持つ要素が、空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "role=\"dialog\"またはrole=\"alertdialog\"を持ち（属性はフォールバックのリストではなく、これらのロールのいずれか1つだけを指定している必要がある）、アクセシビリティツリーに含まれる要素に適用されます。明示的なロールのないネイティブの<dialog>は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleによる空でないアクセシブルな名前を持っています。どちらのロールも作成者によってのみ名前が付けられるロールなので、ダイアログ内の見出しや本文のテキストは、aria-labelledbyがそれを参照していない限り名前として認められません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がダイアログに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "アクセシブルな名前がありません。可視の本文テキストはダイアログの名前には数えられません。"
+			}
+		]
+	},
+	"dlitem-parent-valid": {
+		"title": "説明リストの項目は説明リストの中にある必要があります",
+		"description": "<dt>/<dd>要素が、直接または1つの囲む<div>を介して<dl>に含まれていることを確認します。",
+		"applicability": "親要素を持つ<dt>/<dd>要素に適用されます。",
+		"expectation": "親が<dl>であるか、親が<div>でその親が<dl>です（作成者がdt/ddの組をまとめる一般的な書き方に合わせ、囲むdivは1階層まで許可されます）。本来の説明リストのコンテナーの外で使われた<dt>/<dd>は、支援技術に用語や定義として公開されません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`dt`と`dd`はどちらも`<dl>`の祖先の中にあります。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<dt>`には`<dl>`の祖先がまったくありません。"
+			}
+		]
+	},
+	"duplicate-id": {
+		"title": "IDは一意である必要があります",
+		"description": "空でないid属性の値がすべて、それぞれの文書またはシャドウツリー内で一意であることを確認します（WCAG 2.0/2.1の達成基準4.1.1。WCAG 2.2で削除）。",
+		"applicability": "空でないid属性を持つすべての要素に適用されます。可視性は関係ありません。IDが重複していると、要素がレンダリングされるかどうかにかかわらず同じ参照が壊れるためです。ACT 3ea0c8が隠された要素も評価するのはこのためです。",
+		"expectation": "同じツリー内に、同じidの値を持つ要素がほかにありません。IDのスコープは文書ツリーごと、シャドウツリーごとなので、2つの異なるシャドウルート内にある同じIDは重複ではありません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "各要素が異なるIDを持っています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "ID`section-1`が同じツリー内の2つの要素で使われており、`<label for>`、フラグメントリンク、`getElementById`が正しく機能しません。"
+			}
+		]
+	},
+	"duplicate-id-aria": {
+		"title": "ARIAで参照されるIDは一意である必要があります",
+		"description": "ARIAのID参照属性（aria-labelledby、aria-describedby、aria-owns、aria-controls、aria-activedescendant、aria-flowto、aria-errormessage、aria-details）で参照されるidの値が、文書内で一意であることを確認します。",
+		"applicability": "文書に、空でないaria-labelledby、aria-describedby、aria-owns、aria-controls、aria-activedescendant、aria-flowto、aria-errormessage、aria-details属性が少なくとも1つある場合（つまり解決すべきARIAのID参照が少なくとも1つある場合）に適用されます。",
+		"expectation": "これらの属性で参照されるidの値のそれぞれについて、そのidを持つ要素が文書内にちょうど1つあります。重複していても参照は壊れません。ツリー順で最初の要素に解決されるため、名前は引き続き算出されます。その要素が意図したターゲットかどうかは作成者の意図次第で、マークアップにはその情報がないため、判定結果はcantTellになります。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "ID`lbl`は一意なので、参照は曖昧さなく解決されます。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "`aria-labelledby=\"lbl\"`はそのIDを持つ最初の要素に解決されます。それが意図したターゲットかどうかは作成上の問題で、マークアップからは判断できません。"
+			}
+		]
+	},
+	"embed-text-alternative-present": {
+		"title": "<embed>は代替テキストを提供する必要があります",
+		"description": "<embed>要素が、アクセシブルな名前によって代替テキストを提供していることを確認します。",
+		"applicability": "支援技術に公開される<embed>要素に適用されます。アクセシビリティツリーから隠されている要素でも、タブ移動可能であるか、IDREFの関係で参照されている場合は対象のままです（エンジンの対象判定による）。role=\"presentation\"/role=\"none\"は、フォーカス可能でない場合にのみ除外されます。",
+		"expectation": "適用対象の各<embed>が、次のいずれかによって代替テキストを提供しています。\n\n- アクセシブルな名前（aria-labelledby/aria-label）\n- title属性（ベストエフォートのフォールバック）\n\n補足：HTMLでは<embed>はフォールバックコンテンツをサポートしないため、このルールは子要素を確認しません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がembedにアクセシブルな名前を与えています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "アクセシブルな名前もフォールバックコンテンツもありません。"
+			}
+		]
+	},
+	"embed-text-alternative-quality": {
+		"title": "<embed>の代替テキストは適切である必要があります（手動レビュー）",
+		"description": "名前が検出された<embed>要素を、内容が適切かどうかの人によるレビュー対象として報告します。",
+		"applicability": "すでに代替テキスト（空でないaria-label、空でないテキストに解決されるaria-labelledby、または空でないtitle）を持つ<embed>要素に適用されます。存在しないidを参照するaria-labelledbyは何にも解決されないため、レビュー対象の代替テキストにはなりません。その要素はembed-text-alternative-presentの失敗です。要素はアクセシビリティツリーに含まれている必要があり、role=\"presentation\"/\"none\"を指定した場合は対象外になります。ただし、フォーカス可能であればロールが復元されるため対象に含まれます。",
+		"expectation": "提供されている代替テキストが正確かつ適切であることを、人がレビューして確認する必要があります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`title`があります。埋め込みビューアーを見ることができない人にとって、それで文書を十分に識別できるか確認してください。"
+			},
+			{
+				"state": "na",
+				"explanation": "レビュー対象となるaria-label、解決されたaria-labelledby、titleがありません。この場合は代わりに`embed-text-alternative-present`の失敗になります。"
+			}
+		]
+	},
+	"empty-heading": {
+		"title": "見出しは空でない必要があります",
+		"description": "見出し要素（<h1>〜<h6>またはrole=\"heading\"）が、空でないアクセシブルな名前を持つことを確認します。",
+		"applicability": "見出しのロールを持つ要素に適用されます。ネイティブの<h1>〜<h6>、または明示的なrole=\"heading\"を持つ任意の要素です（別の明示的なロールで上書きされている場合を除く）。",
+		"expectation": "見出しが、空でないアクセシブルな名前を持っています。aria-label、aria-labelledby、支援技術から隠されていない可視のテキストコンテンツ、または（最後の手段として）title属性です。空の見出しは「見出し、レベルN」とだけ読み上げられ、見出し単位で移動するときに混乱を招きます。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "見出しにアクセシブルな名前がまったくなく、スクリーンリーダーが読み上げるものがありません。"
+			},
+			{
+				"state": "na",
+				"explanation": "見出しに可視のテキストコンテンツがあります。"
+			}
+		]
+	},
+	"empty-table-header": {
+		"title": "表の見出しセルは空でない必要があります",
+		"description": "表の見出しセル（<th>、またはrole=\"columnheader\"/\"rowheader\"を持つ任意の要素）が可視のテキストコンテンツを持つことを確認します。aria-label/aria-labelledbyだけで名前が付けられた見出しも報告されます。これに対する実際のスクリーンリーダーやブラウザーのサポートにはばらつきがあるためです。",
+		"applicability": "競合する明示的なロールを持たない<th>要素と、role=\"columnheader\"またはrole=\"rowheader\"を持つ任意の要素（ネイティブの<th>かどうかを問わない）に適用されます（`th:not([role]), [role=\"columnheader\"], [role=\"rowheader\"]`）。role=\"columnheader\"/\"rowheader\"を明示的に指定し直した<th>は2つ目の条件で引き続き対象となります。一方、<th role=\"presentation\">（もはや意味のある見出しではない）は正しく除外され、ARIAのロールだけによる見出し（例：role=\"grid\"/role=\"table\"のウィジェット内の<div role=\"columnheader\">）も検出されます。",
+		"expectation": "見出しセルが可視のテキストコンテンツを持っています。aria-label/aria-labelledbyだけで名前が付けられた（可視のテキストがない）<th>も同等とはみなされず、報告されます。実際には<th>でのaria-labelのサポートにばらつきがあるためです。NVDA+FirefoxとiOS VoiceOver+Safariはこれを完全に無視し（可視のテキストだけが読み上げられる）、JAWS+Chrome/IE11も見出しセル自体の可視のテキストしか読み上げません。テストしたすべての組み合わせで機能することが確認されているのは可視のテキストだけです。https://html5accessibility.com/stuff/2024/05/22/not-so-short-note-on-aria-label-usage-big-table-edition/を参照してください。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "見出しセルにテキストコンテンツもアクセシブルな名前もありません。"
+			},
+			{
+				"state": "na",
+				"explanation": "見出しセルに可視のテキストコンテンツがあります。"
+			}
+		]
+	},
+	"focus-order-semantics": {
+		"title": "タブ順序に追加された要素は対話的なセマンティクスを持つことが推奨されます",
+		"description": "tabindex >= 0を持ち、明示的なロールが対話的でない構造ロールや文書ロール（例：heading、list、region、presentation）である要素を、手動レビューの対象として報告します。",
+		"applicability": "明示的な`tabindex`が`0`以上で（タブ順序に含まれる）、かつ明示的な`role`属性が、明らかに対話的でない構造ロールや文書ロールを厳選した集合のいずれかである要素。",
+		"expectation": "意図的にタブ順序に置かれた要素は、なぜフォーカス可能なのかを伝えるべきです。`heading`、`list`、`region`、`presentation`のようなロールでは、支援技術が読み上げる対話的なセマンティクスがありません。そこにたどり着いたキーボードユーザーは、それを操作すると（何かが起こるとして）何が起こるのか手がかりがなく、混乱します。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "見出しのロールには対話的な動作がないため、タブ移動可能にするのは一般的ではなく、確認する価値があります。"
+			},
+			{
+				"state": "na",
+				"explanation": "`role=\"button\"`は対話的なロールなので、タブ移動可能なのは想定どおりです。"
+			}
+		]
+	},
+	"form-control-label-quality": {
+		"title": "フォームフィールドのラベルは内容が分かり区別できることが推奨されます",
+		"description": "可視のフォームフィールドのラベルが仮の文言（「[[en:Label]]」、「[[en:Field]]」）である場合や、2つを区別する可視の文脈（見出し、legend、行）がないまま別のフィールドのラベルと同じである場合に報告します。",
+		"applicability": "可視のフォームフィールド。ネイティブの`input`（hiddenとボタン型のタイプを除く）、`select`、`textarea`、またはACT cc0f0aが挙げるARIAウィジェットロール（checkbox、combobox、listbox、menuitemcheckbox、menuitemradio、radio、searchbox、slider、spinbutton、switch、textbox）のいずれかを持つ要素のうち、可視のプログラムによるラベル（`<label>`による関連付け、または`aria-labelledby`が参照する要素）を持つものです。`aria-label`/`title`だけで名前が付けられたフィールドには判定すべき可視のラベルがないため、ここでは対象外です（そのラベル付けの仕組みは`form-control-programmatic-label-quality`、ラベルの有無は`form-control-programmatic-label-present`が扱います）。",
+		"expectation": "可視のラベルテキストが、(a) マークアップに残された仮の文言（\"[[en:label]]\"、\"[[en:field]]\"、\"[[en:enter text]]\"など）ではない、(b) 可視の文脈で区別できない別のフィールドと共有されていない（同じ「[[en:Name]]」が2回あり、どちらが配送先でどちらが請求先かを示すものが画面上に何もない、など）、(c) 説明的な部分が隠されたラベルの見えている一部ではなく、フィールドのプログラムによるラベル全体である、の3つを満たしています。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "ラベルのテキストが仮の文言「[[en:Label]]」そのもので、フィールドの実際の説明になっていません。"
+			},
+			{
+				"state": "na",
+				"explanation": "ラベルのテキストが、フィールドを正しく説明する名前になっています。"
+			}
+		]
+	},
+	"form-control-programmatic-label-present": {
+		"title": "フォームコントロールはプログラムによるラベルを持つ必要があります",
+		"description": "フォームコントロールが、<label>、aria-label、aria-labelledby、title、placeholderのいずれかによるプログラムによるラベルを持つことを確認します。",
+		"applicability": "アクセシビリティツリーに含まれる<input>、<select>、<textarea>要素に適用されます。ただし、inputのタイプのうちhidden、submit、reset、button、imageは除きます。これらはラベルではなくvalue属性やalt属性から名前を得るためです。明示的なARIAウィジェットロールを持つコントロールは対象外です。button、checkbox、combobox、listbox、textbox、sliderなどROLE_OWNED_ELSEWHEREに含まれるロールには、それぞれ専用の名前付けのルールがあります。role=\"presentation\"/\"none\"を指定したコントロールは、タブ移動可能なままでない限り対象外になります。",
+		"expectation": "適用対象の各コントロールが、helpers.getLabelMethodが優先順位に従って解決する仕組みのいずれかによるプログラムによるラベルを持っています。優先順位は、関連付けられた<label>、aria-labelledby、aria-label、title、placeholderの順です。5つのうちどれでもこのルールを満たします。弱いほうの2つが主なラベルとして適切かどうかは別の問題で、form-control-programmatic-label-qualityが扱います。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`<label for>`による関連付けが、入力欄にプログラムによるラベルを与えています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<label>`も`aria-label`も`aria-labelledby`もなく、プログラムでフィールドに名前を付けているものが何もありません。"
+			}
+		]
+	},
+	"form-control-programmatic-label-quality": {
+		"title": "フォームコントロールの主なラベルをplaceholderやtitleに頼らないことが推奨されます",
+		"description": "算出されたアクセシブルな名前が、主なラベル付けの方法としてplaceholderやtitleに頼っているフォームコントロールを報告します。<label>またはaria-labelledbyの使用が推奨されます。",
+		"applicability": "支援技術に公開される、ラベル付け可能なネイティブのフォームコントロールに適用されます。\n\n- input（type=hidden|submit|reset|button|imageを除く）\n- select\n- textarea\n\nrole=\"presentation\"/\"none\"は、フォーカス可能でない場合にのみ除外されます。",
+		"expectation": "コントロールがプログラムによる名前を持つ場合、次のものだけに頼るべきではありません。\n\n- placeholder（空でないもの）\n- title（空でないもの）\n\n関連付けられた<label>またはaria-labelledbyの使用が推奨されます。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "コントロールの名前は`placeholder`だけから得られており、ユーザーが入力を始めると消えてしまいます。"
+			},
+			{
+				"state": "na",
+				"explanation": "常に表示される`<label>`が名前を提供しており、ここでの`placeholder`は書式のヒントにすぎません。"
+			}
+		]
+	},
+	"form-control-single-label": {
+		"title": "フォームコントロールのラベルは1つである必要があります",
+		"description": "フォームコントロールに関連付けられた<label>が（囲む形またはlabel[for]で）最大1つであることを確認します。",
+		"applicability": "ラベル付け可能なフォームコントロール（input（hidden/submit/reset/button/imageを除く）、select、textarea）に適用されます。",
+		"expectation": "コントロールのアクセシブルな名前に寄与しうる<label>で、コントロールを囲む形、またはそのidに対する<label for=\"...\">によって関連付けられたものは最大1つです（囲みつつforで自身を参照しているラベルは1つと数えます）。余分なラベルが実際に名前を取り合っているかどうかで判定します。\n\n- 上書き（aria-labelledby/aria-label）がすべてのネイティブの<label>より優先される場合はPASS。ラベルは名前に何も寄与しないため、曖昧になりようがありません。可視のラベルと名前の不一致は達成基準2.5.3「ラベルを含む名前 ([[en:name]])」が扱うもので、このルールの対象ではありません。\n- 空でないラベルが2つ以上競合し、上書きがない場合はFAIL。スクリーンリーダーは決定論的でない一部を読み上げます。\n- 空でないラベル1つに空のラベルの関連付けが加わり、上書きがない場合はCANTTELL。名前は通常は本来のラベルに解決されますが、空の関連付けの扱いはユーザーエージェント間で保証されていません。\n\n関連付けがすべて空で上書きもない場合は、曖昧さではなく名前の欠落のケース（後述の兄弟ルール）なので、このルールは何も報告しません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "囲む形のラベルが1つだけで、適用されるラベル付けの仕組みは1つだけです。"
+			},
+			{
+				"state": "fail",
+				"explanation": "別々の`label[for]`要素が2つとも同じコントロールを対象にしています。"
+			}
+		]
+	},
+	"heading-order": {
+		"title": "見出しレベルを飛ばさない必要があります",
+		"description": "文書の順序で、見出しレベルが一度に最大1つずつしか深くならないことを確認します。",
+		"applicability": "ページに見出し要素（ネイティブの<h1>〜<h6>、またはaria-levelを持つ明示的なrole=\"heading\"。aria-levelがないか無効な場合、ARIA仕様に従い既定のレベルは2）が2つ以上ある場合に適用されます。",
+		"expectation": "文書の順序で、各見出しのレベルが、それまでに現れた最も深い見出しレベルより2つ以上深くなっていません。2レベル以上一気に深くなると（例：<h1>の直後に<h2>を飛ばして<h3>が続く）、支援技術のユーザーが見出し単位で移動するときに頼りにする文書のアウトラインが崩れます。どの時点でも、より浅いレベルに戻ることは常に問題ありません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "見出しレベルが1から3に飛び、レベル2が抜けています。"
+			},
+			{
+				"state": "na",
+				"explanation": "見出しレベルは一度に最大1つずつしか深くなっていません。"
+			}
+		]
+	},
+	"heading-quality": {
+		"title": "見出しのテキストは仮の文言ではなく内容を表すことが推奨されます",
+		"description": "アクセシブルな名前が、後に続くコンテンツの説明ではなく仮の文言になっている見出しを報告します。一般的な単語（「[[en:Heading]]」、「[[en:Untitled]]」）、番号付きのテンプレートの枠（「[[en:Section 2]]」）、ファイル名、URLが該当します。",
+		"applicability": "見出しのロールを持つ要素（ネイティブの<h1>〜<h6>、または明示的なrole=\"heading\"を持つ任意の要素）のうち、アクセシビリティツリーに含まれ、空でないアクセシブルな名前を持つもの。名前がまったくない見出しは、このルールではなく`empty-heading`が扱います。",
+		"expectation": "見出しのアクセシブルな名前を正規化（空白の圧縮、大文字と小文字の統一、末尾の句読点の除去）したものが、マークアップに残された仮の文言ではありません。既知の一般的な単語（\"[[en:heading]]\"、\"[[en:title]]\"、\"[[en:untitled]]\"、\"lorem ipsum\"など）、番号付きのテンプレートの枠（\"[[en:Heading 2]]\"、\"[[en:Section 3]]\"）、ファイル名、URLが該当します。どれも、見出しが導入するコンテンツの話題や目的を説明していません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "見出しのテキストが一般的な仮の文言「[[en:Heading]]」そのもので、セクションの説明になっていません。"
+			},
+			{
+				"state": "na",
+				"explanation": "見出しが実際の話題を表しています。"
+			}
+		]
+	},
+	"html-lang-attr-present": {
+		"title": "ページの言語が宣言されています",
+		"description": "ページの既定の言語がプログラムで宣言されていることを確認します。",
+		"applicability": "ルートに<html>要素を持つHTML文書に適用されます。このルールは文書要素だけを評価し、子ノードはたどりません。HTML以外の文書や、文書要素を持たない文書は適用対象外です。",
+		"expectation": "<html>要素がlang属性を持っています。lang属性は空ではなく、構文的に有効な言語タグを含んでいます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "空でない、構文的に有効な言語タグが宣言されています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<html>`に`lang`属性がまったくありません。"
+			}
+		]
+	},
+	"html-xml-lang-mismatch": {
+		"title": "langとxml:langは一致している必要があります",
+		"description": "<html>要素のlang属性とxml:lang属性が両方ある場合に、同じ主言語を宣言していることを確認します。",
+		"applicability": "<html>要素が、空でないlang属性と空でないxml:lang属性の両方を持つ場合に適用されます。",
+		"expectation": "langとxml:langの主言語サブタグ（最初の\"-\"より前の部分）が、大文字と小文字を区別せずに一致しています。両方の属性があるのに異なる言語を宣言していると、支援技術やユーザーエージェントがページの言語を一貫しない形で解釈する可能性があります。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "主言語サブタグが一致しています（`en`）。地域サブタグは異なっていても構いません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`lang`と`xml:lang`が異なる主言語を宣言しています。"
+			}
+		]
+	},
+	"identical-iframes-same-purpose": {
+		"title": "同じ名前のフレームは同じリソースを埋め込んでいます",
+		"description": "アクセシブルな名前を共有する<iframe>/<frame>要素が同じリソースを埋め込んでいることを確認します。1つの名前が説明できるのは1つのリソースだけだからです。",
+		"applicability": "アクセシビリティツリーに含まれ、空でない同じアクセシブルな名前（空白を圧縮して比較）を共有する、2つ以上の<iframe>/<frame>要素の各組に適用されます。何にも名前を付けない仕組みだけで名前が付けられたフレームや、アクセシビリティツリーから隠されたフレームは組に含まれません。組が成立するには、条件を満たす要素が2つ残っている必要があります。",
+		"expectation": "組内のすべてのフレームが同じリソースに解決されます。共有された名前は1つのリソースを説明するものなので、その名前を持つ2つのフレームは同じリソースを埋め込んでいる必要があります。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "2つのフレームが名前「[[en:Weather widget]]」を共有し、同じリソースを埋め込んでいます。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "2つのフレームが同じ名前を共有していますが、異なるリソースに解決されます。正当に同等な2つのウィジェットかもしれませんし、ラベルの誤ったフレームかもしれません。マークアップだけでは判断できません。"
+			}
+		]
+	},
+	"identical-links-same-purpose": {
+		"title": "同じアクセシブルな名前のリンクは同じリンク先に移動することが推奨されます",
+		"description": "同じアクセシブルな名前を共有しながら、複数の異なるリンク先に解決されるリンクのグループを、同じ目的を果たしているかどうかの手動レビューの対象として報告します。",
+		"applicability": "空でないアクセシブルな名前を持つすべての`a[href]`または`[role=\"link\"]`。その名前（前後の空白の除去、空白の圧縮、大文字と小文字の統一を行ったもの）でグループ化します。",
+		"expectation": "1つのページ内で、同じアクセシブルな名前を共有するリンクは同じ目的を果たすことが想定されます（つまり同じリンク先に解決される。フラグメントも含めた、解決後の完全なURLで比較します）。テキストが同じでリンク先が異なるリンクは実際のサイトではよくあり、意図的な場合も多いため（例：記事カードごとに繰り返される「[[en:Read more]]」リンク）、このルールは明確な失敗ではなく`type: 'manual'`（上限はcantTellで、failにはならない）として作られています。意図を推測する代わりに、名前とリンク先の実際の不一致を人の判断に委ねるためです。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "2つのリンクがアクセシブルな名前「[[en:Read more]]」を共有していますが、異なるリンク先に解決されます。"
+			},
+			{
+				"state": "na",
+				"explanation": "各リンクのアクセシブルな名前が異なるため、リンク先を比較すべき同名のグループがありません。"
+			}
+		]
+	},
+	"iframe-focusable-content": {
+		"title": "tabindex=\"-1\"のフレームはフォーカス可能なコンテンツを含まない必要があります",
+		"description": "tabindex=\"-1\"を持つ同一オリジンの<iframe>/<frame>要素が、フォーカス可能なコンテンツを含まないことを確認します。ブラウザーはこの制限をフレームの埋め込み文書には伝播しないためです。",
+		"applicability": "明示的な負のtabindexを持つ<iframe>/<frame>要素のうち、埋め込み文書が同一オリジンで、contentDocumentからアクセスできるものに適用されます（クロスオリジンやアクセスできないフレームについては何も判定しません。実装メモを参照）。",
+		"expectation": "フレームの埋め込み文書にフォーカス可能な要素がありません。ブラウザーはホストの<iframe>のtabindex=\"-1\"を埋め込み文書に伝播しません。フレーム自体はスキップされても、中のフォーカス可能なコンテンツにはTabキーで到達できます。フレームをタブ順序から外すつもりでtabindex=\"-1\"を指定しても、埋め込み文書にフォーカス可能なコンテンツがあれば、実際には外れていません。例外：`width`と`height`のHTML属性がどちらも2px以下のiframe（よくある「トラッキングピクセル」のパターン）は知覚できるコンテンツをレンダリングできないため、その中のフォーカス可能なコンテンツはACT akn7bnの「可視」の要件を満たすことがなく、数に入りません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`tabindex=\"-1\"`がフレームをタブ順序から外しており、中にもフォーカス可能なものはありません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "ホストのフレームは`tabindex=\"-1\"`でスキップされますが、中のリンクには引き続きTabキーで到達できます。ブラウザーは負のtabindexを埋め込み文書に伝播しません。"
+			}
+		]
+	},
+	"iframe-name-present": {
+		"title": "フレームにはアクセシブルな名前があります",
+		"description": "<iframe>/<frame>要素が、aria-label、aria-labelledby、またはtitle属性による空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーの対象となり（isAccTreeEligible）、かつ逐次フォーカスナビゲーションで到達できる<iframe>/<frame>要素に、ロールにかかわらず適用されます。両方の条件が必要です。",
+		"expectation": "要素が、aria-labelledby、aria-label、またはtitle属性による空でないアクセシブルな名前を持っています。ほとんどの対話的な要素と異なり、iframeの名前はレンダリングされたコンテンツから導かれることはありません（埋め込み文書は別のブラウジングコンテキストです）。これはdialog-name-presentの「作成者によってのみ名前が付けられる」という考え方と同じです。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`title`属性がフレームに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`title`も`aria-label`も`aria-labelledby`もありません。"
+			}
+		]
+	},
+	"iframe-title-unique": {
+		"title": "フレームのタイトルは一意である必要があります",
+		"description": "スコープ内の2つの<iframe>/<frame>要素が同じtitle属性値を共有していないことを確認します。",
+		"applicability": "空でないtitle属性を持つ<iframe>/<frame>要素に適用されます。",
+		"expectation": "スコープ内の2つのフレームが同じtitle属性値（前後の空白を除去し、大文字と小文字を区別して比較）を共有していません。タイトルが重複していると、支援技術のユーザーが名前でフレームを探すときにフレームを区別できません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "ページ上のほかのフレームで、このタイトルを共有しているものはありません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "同じページの2つのフレームが、異なるコンテンツを埋め込んでいるのにまったく同じタイトルを共有しています。"
+			}
+		]
+	},
+	"image-redundant-alt": {
+		"title": "画像の代替テキストは隣接する可視テキストと重複しない必要があります",
+		"description": "<img>の代替テキストが、直接の親要素にすでにある他の可視テキストと同一でないことを確認します。",
+		"applicability": "空でない代替テキストを持つ<img>要素のうち、直接の親要素がほかにも可視のテキストコンテンツを持つもの（つまり画像以外のテキストノードがある。アイコン画像とテキストラベルの両方を囲む<a>や<button>によくあるケース）に適用されます。",
+		"expectation": "画像の代替テキストが、同じ親にすでにある他の可視テキストと同じ（大文字と小文字を区別せず正規化して比較）ではありません。両方がある場合、支援技術は1つのコントロールについて同じ言葉を2回読み上げます（例：アイコンの代替テキストがリンクテキストと重複しているアイコン付きテキストリンク）。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "画像の`alt`テキスト（「[[en:Home]]」）が隣接する可視のリンクテキストと一字一句同じで、スクリーンリーダーは2回読み上げます。"
+			},
+			{
+				"state": "na",
+				"explanation": "`alt`テキスト（「[[en:Home icon]]」）が隣接するテキスト（「[[en:Home]]」）と異なります。"
+			}
+		]
+	},
+	"img-alt-decorative": {
+		"title": "除外された<img>/<canvas>/<svg>は装飾である必要があります（手動レビュー）",
+		"description": "アクセシビリティツリーから除外された<img>、<canvas>、<svg>要素（aria-hidden、role=\"none\"/\"presentation\"、空のalt、またはラベルのないsvg/canvas）を、純粋な装飾かどうかの人によるレビュー対象として報告します。",
+		"applicability": "次のいずれかによってアクセシビリティツリーから除外された、可視の<img>、<canvas>、<svg>要素に適用されます。自身または祖先のaria-hidden、フォーカス可能であることで上書きされていない明示的なrole=\"none\"/\"presentation\"、<img alt=\"\">（ネイティブの装飾マーカー。フォーカス可能であることによる上書きも同様）、暗黙のロールがgraphics-documentであるラベルのない<svg>（img/graphics-symbolロールの再指定、ARIAによる名前、<title>/<desc>、フォーカス可能であることのいずれもない）、または明示的なロールをまったく持たないラベルのない<canvas>。ACT e88epeに従い、いずれかの祖先がすでに作成者の指定した名前（aria-label、aria-labelledby、title、または関連付けられた<label>）を持つ場合、要素は完全にスキップされます。重要なのはこの要素が除外されていることではなく、その祖先の名前です（よくある実際のケースは、aria-labelですでに名前が付けられたアイコンだけのボタンです）。",
+		"expectation": "除外された要素が純粋な装飾であり、ユーザーがそれがないと見逃してしまう情報を何も伝えていないことを、人がレビューして確認する必要があります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`alt=\"\"`で装飾としてマークされていますが、「quarterly-trend」のようなファイル名からすると、実際には装飾ではなく情報を伝えるグラフかもしれません。"
+			},
+			{
+				"state": "na",
+				"explanation": "ボタン自身の`aria-label`がすでにアクセシブルな名前を提供しています。アイコンが除外されていることは、この要素について装飾かどうかをレビューすべき問題ではありません。"
+			}
+		]
+	},
+	"img-alt-present": {
+		"title": "<img>はalt属性を持つ必要があります",
+		"description": "<img>要素が、代替テキストの仕組みを支えるalt属性を提供していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれる<img>要素に適用されます。role=\"presentation\"またはrole=\"none\"を持つ画像は、フォーカス可能でない場合にのみ除外されます。フォーカス可能な画像は、プレゼンテーショナルロールの競合解決によってimgロールに戻るためです。隠された画像は、フォーカス可能かどうかにかかわらず除外されます。",
+		"expectation": "適用対象の各<img>要素がalt属性を持っています。alt属性は空（alt=\"\"）でも構いません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "空でない`alt`があります。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`alt`属性がまったくありません（空の`alt=\"\"`であれば、装飾として合格になります）。"
+			}
+		]
+	},
+	"img-alt-quality": {
+		"title": "<img>の代替テキストは適切である必要があります（手動レビュー）",
+		"description": "空でない代替テキストを持つ<img>要素を、内容が適切かどうかの人によるレビュー対象として報告します。",
+		"applicability": "alt属性があり、その値が空でない<img>要素に適用されます。要素はアクセシビリティツリーに含まれている必要があり、role=\"presentation\"/\"none\"を指定した場合は対象外になります。ただし、フォーカス可能であればロールが復元されるため対象に含まれます。altがまったくない<img>はimg-alt-presentの失敗、alt=\"\"の<img>はimg-alt-decorativeのレビュー対象です。",
+		"expectation": "提供されている代替テキストが正確かつ適切であることを、人がレビューして確認する必要があります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "空でないaltはありますが、「[[en:image]]」はグラフが示す内容を説明せず、要素の種類を繰り返しているだけです。レビュー担当者が判断する価値があります。"
+			},
+			{
+				"state": "na",
+				"explanation": "空のaltは画像を装飾としてマークします。それはこのルールではなく`img-alt-decorative`が扱う問題です。"
+			}
+		]
+	},
+	"input-image-alt-decorative": {
+		"title": "alt=\"\"の<input type=\"image\">は適切である必要があります（手動レビュー）",
+		"description": "空のaltを持つ<input type=\"image\">要素を、人によるレビューの対象として報告します（機能を持つコントロールでは通常適切ではありません）。",
+		"applicability": "alt属性があるものの前後の空白を除去すると空になり、かつ別の手段による名前（空でないテキストに解決されるARIAによる名前、またはtitle）を持つ<input type=\"image\">要素に適用されます。別の名前がなければ、空のaltと比較するものがなく、そのコントロールは代わりにinput-image-alt-presentの失敗になります。要素はアクセシビリティツリーに含まれている必要があり、role=\"presentation\"/\"none\"を指定した場合は対象外になります。ただし、フォーカス可能であればロールが復元されるため対象に含まれます。",
+		"expectation": "提供されている代替テキストが正確かつ適切であることを、人がレビューして確認する必要があります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "機能を持つコントロールで空のaltは一般的ではありません。`title`によって名前は付いていますが、空のaltが意図的かどうか確認してください。"
+			},
+			{
+				"state": "na",
+				"explanation": "空でないaltは、このルールではなく`input-image-alt-quality`が扱う問題です。"
+			}
+		]
+	},
+	"input-image-alt-present": {
+		"title": "<input type=\"image\">はalt属性を持つ必要があります",
+		"description": "<input type=\"image\">要素が、代替テキストの仕組みを支えるalt属性を提供していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれる<input type=\"image\">要素に適用されます。",
+		"expectation": "適用対象の各<input type=\"image\">要素がalt属性を持ち、そのアクセシブルな名前が画像ボタンに対するブラウザーの既定値ではありません。alt属性は空（alt=\"\"）でも構いません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "空でない`alt`が画像ボタンに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`alt`属性がありません。"
+			}
+		]
+	},
+	"input-image-alt-quality": {
+		"title": "<input type=\"image\">の代替テキストは適切である必要があります（手動レビュー）",
+		"description": "空でない代替テキストを持つ<input type=\"image\">要素を、内容が適切かどうかの人によるレビュー対象として報告します。",
+		"applicability": "alt属性があり、その値が空でない<input type=\"image\">要素、つまりaltがラベルになっている画像ボタンに適用されます。要素はアクセシビリティツリーに含まれている必要があり、role=\"presentation\"/\"none\"を指定した場合は対象外になります。ただし、フォーカス可能であればロールが復元されるため対象に含まれます。",
+		"expectation": "提供されている代替テキストが正確かつ適切であることを、人がレビューして確認する必要があります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "この画像ボタンには空でないaltがあります。「[[en:Submit order]]」がボタンの実際の動作と一致しているか確認してください。"
+			},
+			{
+				"state": "na",
+				"explanation": "機能を持つコントロールの空のaltは、このルールではなく`input-image-alt-decorative`が扱う問題です。"
+			}
+		]
+	},
+	"label-in-name": {
+		"title": "名前 ([[en:name]]) のラベル：アクセシブルな名前には表示テキストが含まれている必要があります",
+		"description": "コントロールに表示テキストのラベルがある場合、アクセシブルな名前にその表示ラベルのテキストが含まれていることを確認します（WCAG 2.5.3）。",
+		"applicability": "aria-labelまたはaria-labelledbyを持ち、視覚的にレンダリングされ、かつこのエンジンが決定論的に抽出できる表示ラベルテキストを持つコントロールに適用されます。表示ラベルテキストの抽出元は、関連付けられた<label>、コントロール自身のレンダリングされたテキスト、またはaria-labelledbyが参照する要素です。対象候補は<button>、<a href>、<summary>、非表示でないフォームコントロール、およびbutton、link、checkbox、radio、switch、searchbox、tab、menuitem、menuitemcheckbox、menuitemradio、option、treeitem、gridcellの各ロールで、非表示または無効のものは除きます。aria-hiddenは除外しません。aria-hiddenは画面上に何がレンダリングされるかを何も変えず、この達成基準が扱うのはまさにその点だからです。",
+		"expectation": "アクセシブルな名前に、表示ラベルの単語が隣接したまま同じ順序で含まれています。比較は文字単位ではなく単語単位で行います。括弧内のテキストは除外し、大文字と小文字を区別せず、テキストをNFKD正規化し、英字と数字以外の文字はすべて区切りとして扱うため、句読点や空白の違いで判定結果が決まることはありません。マークアップだけでは判断できない次の4つのケースは、failではなくcantTellとして報告します。2か所でハイフネーションが異なる単語、末尾のピリオドから作成者が略語にした可能性がある表示上の単語、既知のアイコンフォントでレンダリングされる表示テキスト（DOM上のテキストは実際の単語でも、読める文字は何も表示されない）、そしてアクセシブルな名前の中にすら現れない、ちょうど1文字だけの表示ラベル全体です。最後のケースは、ACT 2ee8b8によれば文字どおりのテキストではなく「非テキストコンテンツ」（例：「[[en:close]]」を意味する「X」）である可能性があります。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "アクセシブルな名前（「[[en:Save changes]]」）に表示テキスト（「[[en:Save]]」）が含まれています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "アクセシブルな名前に表示ラベルのテキストがまったく含まれていません。"
+			}
+		]
+	},
+	"label-title-only": {
+		"title": "フォームコントロールにはtitle以外のラベルがある必要があります",
+		"description": "title属性を持つフォームコントロールに、本来のラベル（label要素、aria-label、またはaria-labelledby）もあることを確認します。",
+		"applicability": "空でないtitle属性を持つ、ラベル付け可能なフォームコントロール（input（hidden/submit/reset/button/imageを除く）、select、textarea）に適用されます。",
+		"expectation": "コントロールが、title属性だけに頼るのではなく、本来のラベル（ラップまたは関連付けされた<label>、aria-label、またはaria-labelledby）も持っています。titleだけのツールチップは、すべての支援技術で確実に公開されるとは限らず、常に表示されるラベルと違って、ホバーやフォーカスまでまったく表示されません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`title`属性がこのフィールドの唯一の名前付けの手段です。表示されるのはツールチップであり、常に表示されるラベルではありません。"
+			},
+			{
+				"state": "na",
+				"explanation": "本来の`<label>`がすでにフィールドに名前を付けており、`title`は補足にすぎません。"
+			}
+		]
+	},
+	"landmark-banner-is-top-level": {
+		"title": "bannerランドマークはトップレベルである必要があります",
+		"description": "bannerランドマーク（role=\"banner\"、または入れ子になっていない<header>）が、他のランドマーク領域の中に入れ子になっていないことを確認します。",
+		"applicability": "ページにbannerの候補が1つ以上ある場合に適用されます。候補は、明示的なrole=\"banner\"、またはrole属性をまったく持たない<header>で、入れ子かどうかは問いません（候補の選択を意図的に無条件にしている理由は、実装メモを参照してください）。",
+		"expectation": "どのbanner候補にも、ランドマーク領域である祖先要素がありません。他のランドマークの中に入れ子になったbannerは、ページ全体を対象とするトップレベルのbannerではなく、ランドマークを使ってナビゲーションする支援技術のユーザーを混乱させます。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "他のランドマークの中に入れ子になったbannerランドマークは、もはやページで唯一のトップレベルのヘッダーとして機能しません。"
+			},
+			{
+				"state": "na",
+				"explanation": "bannerは他のどのランドマークの中にも入れ子になっていません。"
+			}
+		]
+	},
+	"landmark-complementary-is-top-level": {
+		"title": "complementaryランドマークはトップレベルである必要があります",
+		"description": "complementaryランドマーク（role=\"complementary\"、または暗黙のロールを保持している<aside>）が、他のランドマーク領域の中に入れ子になっていないことを確認します。",
+		"applicability": "ページにcomplementaryロールを持つ要素が1つ以上ある場合に適用されます。対象は、明示的なrole=\"complementary\"、または暗黙のロールを保持している<aside>です（保持しない場合については実装メモを参照してください）。",
+		"expectation": "どのcomplementary候補にも、ランドマーク領域である祖先要素がありません。補足コンテンツはページのメインコンテンツを補うもので、その横に配置されます。他のランドマークの中に入れ子になると、そのランドマークの一部分になってしまい、ランドマークナビゲーションで伝えられる内容と一致しません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "navigationランドマークの中に入れ子になったcomplementaryランドマーク。"
+			},
+			{
+				"state": "na",
+				"explanation": "complementaryランドマークは他のどのランドマークの中にも入れ子になっていません。"
+			}
+		]
+	},
+	"landmark-contentinfo-is-top-level": {
+		"title": "contentinfoランドマークはトップレベルである必要があります",
+		"description": "contentinfoランドマーク（role=\"contentinfo\"、または入れ子になっていない<footer>）が、他のランドマーク領域の中に入れ子になっていないことを確認します。",
+		"applicability": "ページにcontentinfoの候補が1つ以上ある場合に適用されます。候補は、明示的なrole=\"contentinfo\"、またはrole属性をまったく持たない<footer>で、入れ子かどうかは問いません（候補の選択を意図的に無条件にしている理由は、実装メモを参照してください）。",
+		"expectation": "どのcontentinfo候補にも、ランドマーク領域である祖先要素がありません。他のランドマークの中に入れ子になったcontentinfoは、ページ全体を対象とするトップレベルのフッター領域ではなく、ランドマークを使ってナビゲーションする支援技術のユーザーを混乱させます。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "他のランドマークの中に入れ子になったcontentinfoランドマークは、もはやページで唯一のトップレベルのフッターとして機能しません。"
+			},
+			{
+				"state": "na",
+				"explanation": "contentinfoは他のどのランドマークの中にも入れ子になっていません。"
+			}
+		]
+	},
+	"landmark-main-is-top-level": {
+		"title": "mainランドマークはトップレベルである必要があります",
+		"description": "mainランドマーク（role=\"main\"または<main>）が、他のランドマーク領域の中に入れ子になっていないことを確認します。",
+		"applicability": "ページにmainランドマーク（明示的なrole=\"main\"、または暗黙の<main>要素）が1つ以上ある場合に適用されます。",
+		"expectation": "どのmainランドマークにも、ランドマーク領域である祖先要素がありません。他のランドマークの中に入れ子になったmain領域は、ページ全体を対象とするトップレベルのメインコンテンツ領域ではなく、ランドマークを使ってナビゲーションする支援技術のユーザーを混乱させます。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "mainランドマークがトップレベルではなく、navigationランドマークの中に入れ子になっています。"
+			},
+			{
+				"state": "na",
+				"explanation": "mainランドマークは他のどのランドマークの中にも入れ子になっていません。"
+			}
+		]
+	},
+	"landmark-no-duplicate-banner": {
+		"title": "ページ内のbannerランドマークは1つまでである必要があります",
+		"description": "ページ内のbannerランドマーク（role=\"banner\"、または入れ子になっていない<header>）が多くても1つであることを確認します。",
+		"applicability": "ページにbannerランドマーク（明示的なrole=\"banner\"、または暗黙的で入れ子になっていない<header>）が1つ以上ある場合に適用されます。共通のランドマーク検出モデルについては、landmark-banner-is-top-levelの実装メモを参照してください。",
+		"expectation": "ページ内のbannerランドマークは多くても1つです。[[en:WAI-ARIA Authoring Practices]]によれば、bannerランドマークはページ全体を識別するサイト単位のコンテンツを表すため、複数あるとランドマークでナビゲーションする支援技術のユーザーにとって曖昧になります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "トップレベルの`<header>`要素が2つあり、どちらもbannerロールになります。"
+			},
+			{
+				"state": "na",
+				"explanation": "bannerランドマークは1つだけです。"
+			}
+		]
+	},
+	"landmark-no-duplicate-contentinfo": {
+		"title": "ページ内のcontentinfoランドマークは1つまでである必要があります",
+		"description": "ページ内のcontentinfoランドマーク（role=\"contentinfo\"、または入れ子になっていない<footer>）が多くても1つであることを確認します。",
+		"applicability": "ページにcontentinfoランドマーク（明示的なrole=\"contentinfo\"、または暗黙的で入れ子になっていない<footer>）が1つ以上ある場合に適用されます。",
+		"expectation": "ページ内のcontentinfoランドマークは多くても1つです。理由はlandmark-no-duplicate-bannerと同じで、それをcontentinfoに当てはめたものです。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "トップレベルの`<footer>`要素が2つあり、どちらもcontentinfoロールになります。"
+			},
+			{
+				"state": "na",
+				"explanation": "contentinfoランドマークは1つだけです。"
+			}
+		]
+	},
+	"landmark-no-duplicate-main": {
+		"title": "ページ内のmainランドマークは1つまでである必要があります",
+		"description": "ページ内のmainランドマーク（role=\"main\"または<main>）が多くても1つであることを確認します。",
+		"applicability": "ページにmainランドマーク（明示的なrole=\"main\"、または暗黙の<main>）が1つ以上ある場合に適用されます。",
+		"expectation": "ページ内のmainランドマークは多くても1つです。landmark-one-mainとは別の、独立した判定です（そちらのルールはmainが0個の場合も検出し、このルールは2つ以上の場合だけを検出します）。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "2つの`<main>`要素が、どちらもmainランドマークとして支援技術に公開されています。"
+			},
+			{
+				"state": "na",
+				"explanation": "mainランドマークは1つだけです。"
+			}
+		]
+	},
+	"landmark-one-main": {
+		"title": "ページにはmainランドマークがある必要があります",
+		"description": "ページにmainランドマーク（role=\"main\"または<main>）が1つ以上あることを確認します。",
+		"applicability": "<body>要素を持つすべてのHTML文書に常に適用されます。「ページにmainランドマークがあるか」はページ全体に関わる問題なので、bypass-blocks-presentと同じく文書を直接評価します。",
+		"expectation": "支援技術に公開されたmainランドマーク（role=\"main\"または<main>）が、ページに1つ以上あります。1つもないページでは、支援技術のユーザーが主要なコンテンツへ直接移動するためのランドマークがありません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "ページのどこにも`<main>`も`role=\"main\"`もありません。"
+			},
+			{
+				"state": "na",
+				"explanation": "`<main>`ランドマークが存在するため、検出する問題はありません。"
+			}
+		]
+	},
+	"landmark-unique": {
+		"title": "同じロールのランドマークは名前が一意である必要があります",
+		"description": "2つ以上のランドマークが同じロールを持つ場合に、それぞれが異なるアクセシブルな名前を持つことを確認します。",
+		"applicability": "ページ上の2つ以上のランドマーク領域が同じランドマークロール（banner、contentinfo、main、navigation、complementary、region、form、search）を持つ場合に適用されます。検出モデルについては実装メモを参照してください。",
+		"expectation": "同じロールを持つランドマークは、それぞれ異なるアクセシブルな名前を持ちます（aria-label/aria-labelledbyによるもの。ランドマークの名前はコンテンツからは算出されません）。同じロールで名前も同じランドマーク（どちらも名前がない場合を含む）は、ランドマークでナビゲーションする支援技術のユーザーには区別がつきません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "2つのnavigationランドマークがまったく同じアクセシブルな名前を持っているため、スクリーンリーダーのユーザーはランドマーク一覧で両者を区別できません。"
+			},
+			{
+				"state": "na",
+				"explanation": "各navigationランドマークが異なるアクセシブルな名前を持っています。"
+			}
+		]
+	},
+	"link-in-text-block": {
+		"title": "テキストブロック内のリンクは、色だけに頼らずに周囲のテキストと区別できる必要があります",
+		"description": "テキストの流れの中にあるリンクが、色だけでなく、下線、font-weight/styleの違い、または十分な色のコントラスト差（>=3:1）によって、周囲のテキストと視覚的に区別できることを確認します。",
+		"applicability": "直接の親要素が、空白以外の内容を持つ直接の子テキストノードも1つ以上持っている<a href>要素に適用されます（つまり、リンクが独立した項目としてではなく、プレーンテキストの流れの中にインラインで置かれている場合です。たとえばナビゲーション項目の<li>の唯一の内容であるリンクは対象外です）。",
+		"expectation": "テキストブロック内のリンクは、色以外の手段を少なくとも1つ使って、周囲のテキストと視覚的に区別できる必要があります。\n\n- text-decoration: underline、または\n- 周囲のテキストと異なるfont-weight、または\n- 周囲のテキストと異なるfont-style、または\n- リンクのテキスト色と周囲のテキスト色のコントラスト比が3:1以上（WCAGテクニックG183のしきい値。十分なコントラストだけでも下線の代わりとして認められています）。\n\nfailとなるのは、上記のいずれも満たさず、かつリンクと周囲のテキストの色のコントラストが確実に計算でき、3:1未満の場合だけです。つまり、色が唯一の手がかりであることが明らかな場合です。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "リンクに下線があり、色以外の手段でも周囲のテキストと区別できます。"
+			},
+			{
+				"state": "fail",
+				"explanation": "周囲のテキストとの違いは約1.1:1のコントラストしかない色の変化だけで、最低基準の3:1を大きく下回っており、下線もfont-weight/styleの変化もありません。"
+			}
+		]
+	},
+	"link-name-present": {
+		"title": "リンクにアクセシブルな名前があります",
+		"description": "リンクが空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれる<a href>、<area href>、およびrole=\"link\"を持つ要素に適用されます。hrefのない<a>はリンクではないため、対象になりません。",
+		"expectation": "要素が空でないアクセシブルな名前を持っています。まずプログラムによる名前（aria-labelledby、aria-label、関連付けられた<label>、title）を採用し、それがなければ要素自身のサブツリーのテキストにフォールバックします。その際、各子孫要素自身の名前（<img alt>、aria-label、title）も数に入れます。よくある<a><img alt=\"...\"></a>形式のロゴリンクは、この仕組みで名前を得ます。名前をコンテンツから算出しない既知のロールが明示されている場合、コンテンツへのフォールバックは行いません。認識できないロールのトークンは、暗黙のロールにフォールバックします。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "リンクのテキスト内容がアクセシブルな名前になっています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "テキスト内容も`aria-label`も`aria-labelledby`もありません。"
+			}
+		]
+	},
+	"link-name-quality": {
+		"title": "リンクテキストは汎用的なものではなく、内容がわかるものである必要があります",
+		"description": "アクセシブルな名前全体が既知の内容を表さないフレーズ（例：「[[en:click here]]」「[[en:read more]]」「[[en:more]]」）であるリンクや、リンク先を示す隣接した文脈がない単なるファイル形式名（例：「HTML」「PDF」）のリンクを検出し、目的が明確かどうかを手動レビューに回します。",
+		"applicability": "`a[href], area[href], [role=\"link\"]`に一致し、算出されたアクセシブルな名前が空でない要素です（まずプログラムによる名前、次に「コンテンツからの名前」という2段階の解決方法で、`link-name-present`と同じです。セレクターも同じです）。名前がまったくないリンクは、このルールではなく`link-name-present`が扱います。",
+		"expectation": "リンクのアクセシブルな名前全体を正規化（前後の空白を除去し、大文字と小文字を区別せず、末尾の句読点を除去）したものが、既知の内容を表さないフレーズ（「[[en:click here]]」「[[en:read more]]」「[[en:more]]」「[[en:here]]」「[[en:details]]」「[[en:link]]」など。達成基準2.4.4に対するWCAGテクニックF84の既知の失敗パターン）や、単なるファイル形式・種類の名前（「HTML」「PDF」「EPUB」など）と完全に一致しません。ただし後者が問題になるのは、リンクが何に属するかを示す隣接した文脈（aria-describedbyの参照先、リンクを含むリスト項目・表のセル・段落自身のテキスト、または（形式名に限り）表の1行目の見出し）がない場合だけです。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "「[[en:Click here]]」は既知の汎用的なフレーズで、文脈がなければリンク先を説明しません。"
+			},
+			{
+				"state": "na",
+				"explanation": "リンクテキストが具体的で、内容を表しています。"
+			}
+		]
+	},
+	"list-children-valid": {
+		"title": "リストの直接の子はリスト項目だけである必要があります",
+		"description": "<ul>/<ol>要素の直接の子が<li>、<script>、<template>だけであることを確認します。",
+		"applicability": "直接の子要素を1つ以上持つ<ul>/<ol>要素に適用されます。",
+		"expectation": "直接の子要素はすべて<li>、<script>、<template>のいずれかです。ただし、明示的な`role`属性を持つ子要素は例外で、その場合はタグよりも明示的なロールが完全に優先されます。子要素が有効なのは、そのロールが「listitem」である場合に限ります（そのため`<li role=\"presentation\">`/`<li role=\"menuitem\">`は<li>タグであっても無効で、逆に`role=\"listitem\"`が明示された<li>以外の要素は有効です）。スタイル付けのためのラッパー<div>（ロールなし）は、これまでどおりリストのセマンティクスを壊します。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`<ul>`の直接の子は`<li>`だけです。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<div>`が、`<ul>`の直接の子として`<li>`と並んで置かれています。"
+			}
+		]
+	},
+	"listbox-name-present": {
+		"title": "リストボックスにアクセシブルな名前があります",
+		"description": "role=\"listbox\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"listbox\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleから、空でないアクセシブルな名前を得ています。role=\"listbox\"は作成者によってのみ名前が付けられるロールなので、サブツリーのテキストは受け付けません。カスタムのリストボックスウィジェット内にあるテキストは、その名前として確実に公開されるとは限らないためです。ラベル付け可能な要素（<select multiple role=\"listbox\">）では、関連付けられた<label>も有効です。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がリストボックスに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "サポートされているどの手段からもアクセシブルな名前が得られません。"
+			}
+		]
+	},
+	"listitem-parent-valid": {
+		"title": "リスト項目はリストコンテナーの中にある必要があります",
+		"description": "<li>要素が<ul>、<ol>、またはrole=\"list\"を持つ要素に含まれていることを確認します。",
+		"applicability": "親要素を持つ<li>要素に適用されます。",
+		"expectation": "親要素が、ロールの上書きがない<ul>/<ol>、または明示的なロールとして「list」「presentation」「none」のいずれかを持つ要素です。本来のリストコンテナーの外で使われた<li>（例：<div>の下で汎用的なflex/gridアイテムとして使われている場合）は、支援技術にリスト項目として公開されません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`<li>`が`<ul>`の中にあります。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<li>`に`<ul>`/`<ol>`/`role=\"list\"`の祖先がありません。"
+			}
+		]
+	},
+	"manual-review": {
+		"title": "手動レビュー：キーボード操作とフォーカス順序",
+		"description": "キーボード操作とフォーカス順序の手動レビューが必要であることを示します。",
+		"applicability": "ページの内容にかかわらず、すべての実行に適用されます。キーボード操作性とフォーカス順序はページ全体の性質であり、どのようなマークアップのパターンでもこの問題を除外することはできません。",
+		"expectation": "常にcantTellとなり、スキャンのルートに1件の検出箇所を持ちます。フォーカスをすべてのコンポーネントから外へ移動できるか、タブ順序が読む順序に従っているか、使用中にフォーカスインジケーターが表示され続けるかは、いずれも人が実際にページを操作して確かめる必要があります。このルールは、その必要性を読み手の記憶に任せるのではなく、結果の中に明示するためにあります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "キーボード操作性とフォーカス順序は、常に人が実際にページを操作して確かめる必要があります。このルールは、実行のたびにその必要性を明示します。"
+			}
+		]
+	},
+	"media-alternative-transcript-evidence": {
+		"title": "時間依存メディア：トランスクリプトまたはテキストによる代替の根拠",
+		"description": "トランスクリプトやその他のテキストによる代替の存在が、ページのコンテンツから強く裏付けられていないaudio要素とvideo要素を見つけます。このルールは保守的で、根拠がない場合や検証できない場合にはcantTellを報告します。",
+		"applicability": "合成されたDOM内の、対象となるすべての<audio>要素または<video>要素。",
+		"expectation": "トランスクリプトやテキストによる代替の強い手がかり（例：表示されているトランスクリプトのブロックへのaria-describedbyによる関連付けや、近くにある「[[en:Transcript]]」と明確にラベル付けされたセクションやリンク）がある場合、検出箇所は報告しません。それ以外の場合は、そのメディア要素についてcantTell（根拠不十分）を報告します。",
+		"examples": [
+			{
+				"state": "na",
+				"explanation": "`aria-describedby`が、トランスクリプトであると明示されたテキストに関連付けられています。これは強い根拠です。"
+			},
+			{
+				"state": "unknown",
+				"explanation": "メディア要素の近くにトランスクリプトやテキストによる代替の根拠が見つかりませんでした。ページの他の場所にも存在しないことをエンジンは確認できないため、これはfailではなく保守的な判定です。"
+			}
+		]
+	},
+	"menuitem-name-present": {
+		"title": "メニュー項目にアクセシブルな名前があります",
+		"description": "メニュー項目（checkbox/radioの派生を含むrole=\"menuitem*\"）が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"menuitem\"、role=\"menuitemcheckbox\"、またはrole=\"menuitemradio\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、これらのロールのいずれか1つだけを指定している必要があります）。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、title、または自身のサブツリーのテキストから、空でないアクセシブルな名前を得ています。3つのロールはいずれも名前をコンテンツから算出するため、サブツリーのテキストも有効です。その際、子孫要素自身の名前（<img alt>、aria-label、title）は、テキストノードだけでなく、その子孫要素が寄与する名前として数えます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "表示されているテキスト内容は、role=\"menuitem\"の名前の有効な提供元です。"
+			},
+			{
+				"state": "fail",
+				"explanation": "名前も内容もありません。"
+			}
+		]
+	},
+	"meta-refresh-no-exceptions": {
+		"title": "ページでは`meta refresh`を一切使用しない必要があります（AAA）",
+		"description": "遅延時間にかかわらず、<meta http-equiv=\"refresh\">がまったく存在しないことを確認します。これは、正の遅延だけを検査するレベルAのチェックに対応する、より厳格なレベルAAAのチェックです。",
+		"applicability": "文書順で最初の、有効なcontent属性を持つ<meta http-equiv=\"refresh\">要素に適用されます。HTMLの共通の宣言的リフレッシュ手順では、文書が処理するのは最初の有効な`meta refresh`だけなので、それ以降のもの（有効かどうかにかかわらず）は効果がなく、対象外です。",
+		"expectation": "その要素のcontent値に共通の宣言的リフレッシュ手順を適用した結果、遅延がちょうど0になります。即時（delay=0）のリダイレクトは、レベルAのルールと同じく、AAAでもpassします。先に何も表示されないのであれば、ユーザーが読んでいる途中で中断されることもありません。正の遅延はすべてfailとなり、レベルAのルールにある20時間超の例外もありません。AAAでは、WCAG 2.2.4（割り込み）と3.2.5（要求による変化）が、*時間指定の*自動的なコンテキストの変化は、タイマーの長さにかかわらずユーザーの要求があった場合にのみ起こることを求めているためです。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "ちょうど0の遅延は即時のリダイレクトなので、読んでいる途中のユーザーを中断することはありません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "AAAでは正の遅延はすべてfailとなり、長い遅延に対する例外もありません。"
+			}
+		]
+	},
+	"meta-refresh-timing-absent": {
+		"title": "ページでは時間指定の`meta refresh`を使用しない必要があります",
+		"description": "<meta http-equiv=\"refresh\">が、20時間以下の正の遅延を課していないことを確認します。",
+		"applicability": "文書順で最初の、content属性の先頭の遅延値を解析できる<meta http-equiv=\"refresh\">要素に適用されます。HTMLの共通の宣言的リフレッシュ手順では、文書が処理するのは最初の有効な`meta refresh`だけです。それ以降のもの（有効かどうかにかかわらず）はブラウザーが一切処理しない不活性なマークアップなので、評価しません。",
+		"expectation": "遅延が0（即時のリダイレクトで、ユーザーが読んでいる途中で巻き込まれることはない）であるか、20時間を超えています。それ以外の正の遅延では、ユーザーが開始しておらず、一時停止・停止・延長もできないタイマーによってページがリフレッシュまたはリダイレクトされます。WCAG 2.2.1（タイミング調整可能）は、これらを可能にすることを求めています。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "20時間（72000秒）を超える遅延は、WCAG 2.2.1の例外3により除外されます。"
+			},
+			{
+				"state": "fail",
+				"explanation": "30秒の遅延により、ユーザーが一時停止・停止・延長できないタイマーでページがリフレッシュされます。"
+			}
+		]
+	},
+	"meta-viewport-large": {
+		"title": "viewportのmetaタグでは500%までのズームを許可する必要があります",
+		"description": "<meta name=\"viewport\">が、user-scalable=noや5（500%）未満のmaximum-scaleを設定していないことを確認します。",
+		"applicability": "空でないcontent属性を持つ<meta name=\"viewport\">要素に適用されます。",
+		"expectation": "content属性でuser-scalableを「no」/「0」に設定しておらず、maximum-scaleを5（500%）未満に設定していません。これはmeta-viewport-zoom-enabled（AAの最低基準である200%を、WCAGの規定に基づく厳密なfailとして適用するルール）に対応する、より厳格なAAAレベルのルールです。このルールは、より高いAAAの基準に向けたベストプラクティスとしての参考情報です。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`user-scalable=no`により、ページの読み込み時の倍率を超えるズームができず、AAAのベストプラクティスの目標である500%に届きません。"
+			},
+			{
+				"state": "na",
+				"explanation": "`maximum-scale=5`（500%）は、このルールが目標とするベストプラクティスの上限をすでに満たしています。"
+			}
+		]
+	},
+	"meta-viewport-zoom-enabled": {
+		"title": "viewportのmetaタグでズームを無効にしない必要があります",
+		"description": "<meta name=\"viewport\">が、user-scalable=noや2（200%）未満のmaximum-scaleを設定していないことを確認します。",
+		"applicability": "content属性でmaximum-scaleまたはuser-scalableを設定している<meta name=\"viewport\">要素に適用されます。どちらも設定していないcontentでは、ズームは制限されません。",
+		"expectation": "user-scalableが、指定なし、yes、device-width、device-height、または-1から1の範囲外の数値のいずれかであり、かつmaximum-scaleが、指定なし、device-width、device-height、負の値、または2以上のいずれかです。それ以外の値では、ユーザーがテキストを200%までズームできなくなります。WCAG 1.4.4（テキストのサイズ変更）は、これを可能にすることを求めています。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`maximum-scale`が5（500%）なので、WCAG 1.4.4が求める200%を大きく超えるズームが可能です。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`user-scalable=no`により、ピンチズームが完全に無効になっています。"
+			}
+		]
+	},
+	"meter-name-present": {
+		"title": "メーターにアクセシブルな名前があります",
+		"description": "role=\"meter\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"meter\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleから、空でないアクセシブルな名前を得ています。role=\"meter\"は作成者によってのみ名前が付けられるロールなので、サブツリーのテキストは受け付けません。カスタムのメーターウィジェット内にあるテキストは、その名前として確実に公開されるとは限らないためです。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がメーターに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "サポートされているどの手段からもアクセシブルな名前が得られません。"
+			}
+		]
+	},
+	"mouse-only-event-handlers": {
+		"title": "ポインター専用のインラインイベントハンドラーには、キーボードで操作できる同等の手段がある必要があります",
+		"description": "ポインター専用のインラインイベントハンドラー（onmouseover、onmouseout、onmousedown、onmouseup、ondblclick、onmousemove、onmouseenter、onmouseleave）を持ち、キーボードで操作できる同等の手段（onkeydown/onkeyup/onkeypress/onfocus/onblur）を持たない要素を検出し、手動レビューに回します。",
+		"applicability": "空でない値を持つポインター専用のインラインイベントハンドラー属性（`onmouseover`、`onmouseout`、`onmousedown`、`onmouseup`、`ondblclick`、`onmousemove`、`onmouseenter`、`onmouseleave`）を1つ以上持ち、かつ対象となる到達可能な要素（非表示/`aria-hidden`/`display:none`でないもの）です。",
+		"expectation": "要素が、キーボードで操作できるインラインハンドラーも1つ以上持っています。対象は`onkeydown`、`onkeyup`、`onkeypress`（キーボードイベントとして直接対応するもの）、または`onfocus`/`onblur`（ホバーで起動する動作の標準的な代替手段。WCAGテクニックG90によれば、focus/blurはmouseover/mouseoutに相当するキーボード操作可能なイベントです）です。これがなければ、その要素のマウス操作による動作（ホバー時のツールチップ、カスタムのドロップダウン、ドラッグ操作）を、キーボードだけを使うユーザーが起動する方法はありません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`onmouseover`/`onmouseout`に対応する`onfocus`/`onblur`がないため、キーボードのユーザーはこの動作を起動できません。"
+			},
+			{
+				"state": "na",
+				"explanation": "各マウスハンドラーに、キーボード操作に相当するフォーカスハンドラーが対になっています。"
+			}
+		]
+	},
+	"nested-interactive-controls-absent": {
+		"title": "インタラクティブなコントロールは入れ子にしない必要があります",
+		"description": "インタラクティブなコントロール（リンク、ボタン、フォームコントロール、またはARIAのウィジェットロール）が、別のインタラクティブなコントロールを含んでいないことを確認します。",
+		"applicability": "インタラクティブなコントロールの集合に一致する要素に適用されます（ネイティブのa[href]、button、input（hiddenを除く）、select、textarea、または明示的なARIAウィジェットロール：button、link、checkbox、radio、switch、tab、textbox、combobox、listbox、menuitem、menuitemcheckbox、menuitemradio、option、slider、spinbutton、searchbox、treeitem）。コンテナー自身がフォーカス可能かどうかにかかわらず適用されます。フォーカス可能性は、ある*子孫要素*が入れ子になったインタラクティブなコントロールに当たるかどうかの判断にだけ使います。",
+		"expectation": "要素が、別の*操作可能な*インタラクティブなコントロールを子孫として含んでいません（例：<select>を囲む<button>や、チェックボックスを含むリンク）。入れ子になったインタラクティブなコントロールは、支援技術で確実に読み上げられたり操作できたりするとは限りません。外側と内側のどちらのコントロールを起動するのかが曖昧になり、一部の支援技術は2つのうち一方しか公開しません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "入れ子になったインタラクティブなコントロールはありません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<button>`の中に、別のフォーカス可能なコントロールである`<input type=\"checkbox\">`が入れ子になっています。"
+			}
+		]
+	},
+	"no-autoplay-audio": {
+		"title": "自動再生される音声には、一時停止・停止または音量調節の仕組みがある必要があります",
+		"description": "ミュートされずに自動再生され、ネイティブのcontrols属性を持たない<audio>/<video>要素を検出し、WCAG 1.4.2の3秒の例外に照らした手動レビューに回します。",
+		"applicability": "`muted`でないすべての<audio autoplay>要素または<video autoplay>要素。",
+		"expectation": "達成基準1.4.2が適用されるのは、音声が3秒より長く自動再生される場合だけです。クリップの長さは静的なマークアップからはわかりません（jsdomはメディアをデコードしません）。そのため、このルールでは、ある要素にこの達成基準がそもそも適用されるかどうかを判断できません。推測に頼るのではなく、意図的に`type: 'manual'`（上限はcantTellで、failにはならない）として作成しています。ミュートされずに自動再生され、`controls`属性（一時停止・停止や音量調節を行うための、静的に検証できるネイティブの仕組み）を持たない要素は、決定論的な違反としてではなく、人によるレビューの対象として検出します。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "音声がミュートされずに自動再生され、`controls`属性もないため、ユーザーは一時停止も停止もできません。"
+			},
+			{
+				"state": "na",
+				"explanation": "ネイティブの`controls`により、ユーザーは一時停止や音量調節ができます。"
+			}
+		]
+	},
+	"object-text-alternative-present": {
+		"title": "<object>にはテキストによる代替がある必要があります",
+		"description": "<object>要素が、フォールバックコンテンツまたはアクセシブルな名前によってテキストによる代替を提供していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれる<object>要素に適用されます。非表示のobjectは、フォーカス可能かどうかにかかわらず除外します。role=\"presentation\"/role=\"none\"は、フォーカス可能でない場合に限り除外します。",
+		"expectation": "対象となる各<object>が、次のいずれかによってテキストによる代替を提供しています。\n\n- フォールバックコンテンツ（<object>内の空でないテキスト内容）、または\n- アクセシブルな名前（aria-labelledby/aria-label）、または\n- title属性（ベストエフォートのフォールバック）。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "タグの間にあるフォールバックコンテンツは、テキストによる代替として扱われます。"
+			},
+			{
+				"state": "fail",
+				"explanation": "フォールバックコンテンツもアクセシブルな名前もありません。"
+			}
+		]
+	},
+	"object-text-alternative-quality": {
+		"title": "<object>のテキストによる代替は適切である必要があります（手動レビュー）",
+		"description": "フォールバックまたは名前が検出された<object>要素を、同等性と適切さを人がレビューするために検出します。",
+		"applicability": "すでにテキストによる代替（フォールバックのテキスト内容、空でないaria-label、空でないテキストに解決されるaria-labelledby、または空でないtitle）を持つ<object>要素に適用されます。これらのどれも持たない<object>は、品質の問題ではなくobject-text-alternative-presentのfailです。要素はアクセシビリティツリーに含まれている必要があり、role=\"presentation\"/\"none\"を持つ要素は対象外です。ただし、フォーカス可能な場合はロールが復元されるため対象になります。",
+		"expectation": "提供されているテキストによる代替が正確かつ適切であることを確認するには、人によるレビューが必要です。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "フォールバックテキストがあります。「[[en:Product brochure (PDF)]]」が単なる埋め草のキャプションではなく、埋め込まれた文書と本当に同等であるかを確認する価値があります。"
+			},
+			{
+				"state": "na",
+				"explanation": "レビュー対象となるフォールバックコンテンツ、ARIAによる名前、titleがありません。その場合は`object-text-alternative-present`のfailになります。"
+			}
+		]
+	},
+	"option-name-present": {
+		"title": "オプションにアクセシブルな名前があります",
+		"description": "role=\"option\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"option\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、title、または自身のサブツリーのテキストから、空でないアクセシブルな名前を得ています。role=\"option\"は名前をコンテンツから算出するため、サブツリーのテキストも有効です。その際、子孫要素自身の名前（<img alt>、aria-label、title）は、テキストノードだけでなく、その子孫要素が寄与する名前として数えます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "表示されているテキスト内容は、role=\"option\"の名前の有効な提供元です。"
+			},
+			{
+				"state": "fail",
+				"explanation": "名前も内容もありません。"
+			}
+		]
+	},
+	"p-as-heading": {
+		"title": "見出しのようにスタイル付けされた<p>は、おそらく本来の見出しである必要があります",
+		"description": "テキスト全体が太字で18px以上でレンダリングされている短い<p>要素を検出し、本来の見出し要素を使うべきかどうかを手動レビューに回します。",
+		"applicability": "前後の空白を除いたテキスト内容が空でなく短く（120文字以下）、全体が太字で（`<p>`自身の算出された`font-weight`が700以上、またはテキスト全体が1つの`<strong>`/`<b>`子要素で囲まれている）、18px以上でレンダリングされている`<p>`要素です。",
+		"expectation": "見た目で見出しとして読まれるようにスタイル付けされたテキスト（太字で、本文より大きく、短い）は、構造上の役割をプログラムで判断できるように、本来の見出し要素（`<h1>`-`<h6>`または`role=\"heading\"`）でマークアップする必要があります。これは、他の「構造が見た目だけで伝えられている」問題と同じく、1.3.1に関わる問題です。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "太字で見出しほどの大きさがあり、短いため、見た目は見出しですが、見出しのセマンティクスのないただの`<p>`としてマークアップされています。"
+			},
+			{
+				"state": "na",
+				"explanation": "太さもサイズも通常で、見出しを思わせる見た目ではありません。"
+			}
+		]
+	},
+	"page-has-heading-one": {
+		"title": "ページにはレベル1の見出しがある必要があります",
+		"description": "ページにレベル1の見出し（<h1>、またはaria-level=\"1\"を持つrole=\"heading\"）が1つ以上あることを確認します。",
+		"applicability": "<body>要素を持つすべてのHTML文書に常に適用されます。「ページにh1があるか」はページ全体に関わる問題なので、bypass-blocks-presentと同じく文書を直接評価します。",
+		"expectation": "レベル1の見出し（ネイティブの<h1>、またはaria-level=\"1\"を持つrole=\"heading\"）が1つ以上あります。トップレベルの見出しがないページでは、見出しでナビゲーションする支援技術のユーザーにとって明確な入り口がありません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`<h1>`も`role=\"heading\" aria-level=\"1\"`もありません。"
+			},
+			{
+				"state": "na",
+				"explanation": "レベル1の見出しが存在するため、検出する問題はありません。"
+			}
+		]
+	},
+	"page-title-patterns": {
+		"title": "説明が不十分な可能性があるページタイトルのパターン",
+		"description": "汎用的なタイトル、重複したタイトル、テンプレート化されすぎたタイトルなど、説明性の低さを示す可能性があるページタイトルのパターンを特定します。このルールはレビューのための手がかりを提供するもので、自動的にfailにはなりません。",
+		"applicability": "<title>が空でないテキストに解決される文書全体を対象とした実行に適用されます。タイトルがない、または空の場合は、レビューすべきパターンではなくpage-title-presentのfailです。contextSelectorやengineOptions.fragmentで範囲を絞った実行はnotApplicableとなり、以下のどのパターンにも一致しないタイトルも同様です。",
+		"expectation": "タイトルに、説明性の低さを示す保守的な手がかりが1つもありません。手がかりとは、汎用的なタイトル（[[en:home]]、[[en:homepage]]、[[en:welcome]]、[[en:untitled]]、[[en:page]]、[[en:document]]）のいずれかであること、8文字未満であること、または「[[en:Home | Brand]]」のように汎用的な語とブランド名を組み合わせたテンプレート形式であることです。crawl.pageTitlesプローブが10ページ以上を提供する場合は、代わりにページをまたいだ手がかりを使います。異なるURL間で同じタイトルが繰り返されていることや、全体で12文字以上の接頭辞または接尾辞が共有されていることです。どの手がかりもcantTellとして報告します。タイトルがページを説明しているかどうかは判断を要するため、このルールがパターンだけを理由にfailを返すことはありません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "「[[en:Home]]」は、このルールがレビューの対象とする保守的な汎用タイトルの手がかりの1つです。"
+			},
+			{
+				"state": "na",
+				"explanation": "タイトルがページの内容に固有のもので、説明性の低さを示すどのパターンにも一致しません。"
+			}
+		]
+	},
+	"page-title-present": {
+		"title": "ページに空でないタイトルがあります",
+		"description": "ページに空でない<title>要素が含まれていることを確認します。",
+		"applicability": "文書全体を対象とした実行に適用されます。contextSelectorやengineOptions.fragmentで範囲を絞った実行はnotApplicableです。ページにタイトルがあるかどうかは、どのサブツリーからも答えられる性質のものではないためです。",
+		"expectation": "文書に<title>要素があり、空白を詰めたdocument.titleが空ではありません。要素は<head>内だけでなく文書全体から探します。パーサーが<head>の外に置いた<title>も、どのブラウザーでも文書のタイトルとして扱われるためです。そのタイトルがページを説明しているかどうかは、page-title-patternsが扱います。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "文書に空でない`<title>`があります。"
+			},
+			{
+				"state": "fail",
+				"explanation": "文書のどこにも`<title>`要素がありません。"
+			}
+		]
+	},
+	"password-paste-enabled": {
+		"title": "認証フィールドでは貼り付けをブロックしない必要があります",
+		"description": "パスワードまたはワンタイムコードのフィールドに、貼り付けをキャンセルするインラインのpasteハンドラーがないことを確認します。そのようなハンドラーがあると、WCAG 3.3.8が支援の仕組みとして前提にしているパスワードマネージャーやクリップボードが使えなくなります。",
+		"applicability": "autocompleteトークンがcurrent-password、new-password、one-time-codeのいずれかであるコントロールと、autocompleteで別の目的を指定していない<input type=\"password\">に適用されます。disabledまたはreadonlyのフィールドには、ブロックされる入力がありません。また、アクセシビリティツリーの外にあるフィールドは入力を求められていないため、どちらも対象外です。",
+		"expectation": "フィールドに引き続き貼り付けできることを、レビュー担当者が確認します。パスワードを覚えることは認知機能テストであり、3.3.8はそれを乗り越えるためにユーザーを支援する仕組みを求めています。パスワードマネージャー、あるいはワンタイムコードの場合はクリップボードが、その仕組みに当たります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "インラインのハンドラーが貼り付けを完全にキャンセルするため、パスワードマネージャーやコピーしたワンタイムコードが使えません。"
+			},
+			{
+				"state": "na",
+				"explanation": "pasteハンドラーはまったく設定されていません。"
+			}
+		]
+	},
+	"presentation-role-conflict": {
+		"title": "プレゼンテーショナルなロールは、グローバルなARIA属性やフォーカス可能性と矛盾しない必要があります",
+		"description": "role=\"presentation\"/\"none\"（<img alt=\"\">の暗黙のpresentationロールを含む）が、グローバルなARIA属性（aria-label、aria-hidden、aria-describedbyなど）やフォーカス可能性（tabindex/ネイティブ）と組み合わされていないことを確認します。",
+		"applicability": "明示的なrole=\"presentation\"またはrole=\"none\"を持つ要素、または自身の明示的なロールを持たない<img alt=\"\">に適用されます（HTML-AAMでは、明示的なrole属性がまったくなくても、空のaltによって<img>は暗黙のpresentationロールを持ちます：`img[alt=''], [role=\"none\"], [role=\"presentation\"]`）。",
+		"expectation": "要素がWAI-ARIAの*グローバルな*ステートやプロパティ（aria-label、aria-hidden、aria-describedby、aria-live、aria-currentなど。名前付けに関するものだけでなく、グローバル属性の全体）を持っておらず、かつフォーカス可能でもありません。WAI-ARIA仕様の「[[en:Presentational Roles Conflict Resolution]]」の節によれば、どちらかの条件が当てはまると、プレゼンテーショナルなロールは要素の暗黙のセマンティックなロールに「復元」されます。つまりpresentation/noneロールは何の知らせもなく機能しなくなり、要素をアクセシビリティツリーから隠すという作成者の明らかな意図に反する結果になります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`role=\"presentation\"`は支援技術にこの要素を飛ばすよう求めていますが、`aria-label`が名前を与えています。WAI-ARIAの矛盾解決の規則ではグローバル属性が優先されてpresentationロールは無視されるため、要素（とその名前）が予期せずツリーに戻ってきます。"
+			},
+			{
+				"state": "na",
+				"explanation": "presentationロールと一緒に使われている、矛盾する名前付けの属性はありません。"
+			}
+		]
+	},
+	"presentational-children-focusable-absent": {
+		"title": "子要素がプレゼンテーショナルになるロールは、フォーカス可能なコンテンツを含まない必要があります",
+		"description": "ロールによって子要素がプレゼンテーショナルになる要素（button、checkbox、img、option、radio、slider、switch、tabなど）が、タブストップを持つ子孫要素を含んでいないことを確認します。",
+		"applicability": "セマンティックなロールが、子要素がプレゼンテーショナルであると定義されているWAI-ARIAロール（button、checkbox、img、menuitemcheckbox、menuitemradio、meter、option、progressbar、radio、scrollbar、separator、slider、switch、tab、およびDPUB-ARIA/Graphics-ARIAモジュールで同じ特性を継承しているdoc-pagebreakとgraphics-symbol）のいずれかである要素に適用されます。ロールは明示的なもの（role=\"tab\"）でも、ネイティブのもの（<button>、<meter>、<progress>、<option>）でも構いません。",
+		"expectation": "要素のどの子孫要素も、順次フォーカスナビゲーションの対象になっていません。子要素をプレゼンテーショナルにする仕組みはすべての子孫要素をアクセシビリティツリーから取り除くため、タブストップを持ったままの子孫要素は、読み上げるロールも名前もない状態でフォーカスを受け取ります。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "フォーカス可能でもあるプレゼンテーショナルなコンテンツはありません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "入れ子になった`<span>`が、ボタンのプレゼンテーショナルなコンテンツの中で、独自のインタラクティブなロールとタブストップを持っています。"
+			}
+		]
+	},
+	"progressbar-name-present": {
+		"title": "プログレスバーにアクセシブルな名前があります",
+		"description": "role=\"progressbar\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"progressbar\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleから、空でないアクセシブルな名前を得ています。role=\"progressbar\"は作成者によってのみ名前が付けられるロールなので、サブツリーのテキストは受け付けません。カスタムのプログレスバーウィジェット内にあるテキストは、その名前として確実に公開されるとは限らないためです。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がプログレスバーに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "サポートされているどの手段からもアクセシブルな名前が得られません。"
+			}
+		]
+	},
+	"region": {
+		"title": "ページのコンテンツはランドマーク領域の中にある必要があります",
+		"description": "<body>以下のコンテンツがランドマーク領域の中に含まれていることを確認します。",
+		"applicability": "<body>以下で、表示されるテキスト（またはその他の自身のコンテンツ。@implementation-notesを参照）を直接持ち、それ自体がランドマーク、ライブリージョン、ダイアログ、ボタン、<svg>、<iframe>/<frame>、または解決可能なスキップリンクではない要素に適用されます。",
+		"expectation": "ページのトップレベルのコンテンツはすべて、ランドマーク領域（main、navigation、banner、contentinfo、complementary、region、form、search）の中にあります。これにより、ランドマークでナビゲーションする支援技術のユーザーが、どのランドマークにも入っていないコンテンツを見落とすことがなくなります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "この段落は`<body>`の直下にあり、どのランドマークにも含まれていません。"
+			},
+			{
+				"state": "na",
+				"explanation": "ページのすべてのコンテンツがランドマーク領域の中に含まれています。"
+			}
+		]
+	},
+	"role-img-text-alternative-present": {
+		"title": "[role=\"img\"/\"graphics-symbol\"/\"graphics-document\"]にはアクセシブルなテキストによる代替がある必要があります",
+		"description": "role=\"img\"、\"graphics-symbol\"、\"graphics-document\"を持つ要素が、aria-label、aria-labelledby、title属性、または（SVG要素の場合）最初の子要素である<title>を使って、アクセシブルなテキストによる代替を提供していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"img\"、role=\"graphics-symbol\"、またはrole=\"graphics-document\"を持つ要素に適用されます（ACT 23a2a8の「プログラムによって非表示」の除外規定：要素または祖先のdisplay:none/visibility:hidden/aria-hidden=\"true\"。フォーカス可能な要素やIDREFで参照される要素の例外はなく、それらはaria-hidden-focusとduplicate-id-ariaがそれぞれ扱います）。ACT 7d6734に従い、<svg>ルートだけでなく、これらのロールのいずれかを持つすべての要素が対象になります（例：通常の<svg>内に入れ子になった<circle role=\"graphics-symbol\">）。<svg>ルート自体は、svg-text-alternative-presentが独自に（ACTに準拠した形で）行うtitle/ARIAによる名前の処理に任せます。<img>タグには専用のルールがあるため、ここでは除外します。",
+		"expectation": "対象となる各要素が、アクセシブルなテキストによる代替を持っています。\n\n- 空でない値を持つaria-label、または\n- 空でないテキストに寄与する既存の要素を1つ以上参照するaria-labelledby、または\n- 空でないtitle属性（HTML-AAMにおける最後の手段としてのアクセシブルな名前の提供元）、または\n- SVG名前空間の要素の場合は、空でない最初の子要素の<title>（SVG-AAM独自の名前付けの仕組みで、<svg>ルートに限りません）。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がテキストによる代替を提供しています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "明示的なrole=\"img\"を持つ要素では、テキスト内容は名前の有効な提供元になりません。"
+			}
+		]
+	},
+	"scope-attr-valid": {
+		"title": "scope属性の値は有効である必要があります",
+		"description": "scope=\"...\"の値がrow、col、rowgroup、colgroupのいずれかであることを確認します。",
+		"applicability": "空でないscope属性を持つ要素に適用されます。",
+		"expectation": "scopeの値が「row」「col」「rowgroup」「colgroup」のいずれかです（大文字と小文字は区別しません）。無効なscopeの値は支援技術に認識されず、宣言しようとした行見出し・列見出しとの関連付けが何の知らせもなく失われます。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "「column」は有効な`scope`の値ではありません（正しいトークンは「col」です）。"
+			},
+			{
+				"state": "na",
+				"explanation": "「col」は有効な`scope`の値です。"
+			}
+		]
+	},
+	"scrollable-region-focusable": {
+		"title": "フォーカス可能なコンテンツを含まないスクロール可能な領域は、キーボードでフォーカスできる必要があります",
+		"description": "CSSでoverflow:auto/scrollが宣言され、フォーカス可能な子孫要素を含まず、自身もキーボードでフォーカスできない要素を検出し、そのコンテンツが実際にはみ出していてキーボードでのスクロール操作が必要かどうかを手動レビューに回します。",
+		"applicability": "意図的に、スクロールする可能性が高いコンテナーの固定のタグ（div、section、article、aside、main、nav、pre、table、blockquote、ul、ol、textarea）のうち、算出された`overflow-x`/`overflow-y`が`auto`または`scroll`のものに限定しています。ページ上のすべての要素を対象にしないのは、決定論的で高速な処理を保つためです（`region`と同じ考え方の絞り込みです）。",
+		"expectation": "CSSでスクロールする可能性がある（`auto`/`scroll`）と宣言された領域は、キーボードで到達できる必要があります。つまり、フォーカス可能な子孫要素（キーボードのユーザーがタブで移動し、そこから矢印キーでスクロールできるリンク、ボタン、フォームコントロール、または`tabindex`を持つ要素）をすでに含んでいるか、領域自体が負でない`tabindex`を持っている必要があります。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "この領域はスクロールできますが、自身の`tabindex`もフォーカス可能な子孫要素もないため、キーボードのユーザーはスクロールするためにこの領域に到達できません。"
+			},
+			{
+				"state": "na",
+				"explanation": "`tabindex=\"0\"`により、スクロール可能な領域自体にキーボードで到達できます。"
+			}
+		]
+	},
+	"searchbox-name-present": {
+		"title": "検索ボックスにアクセシブルな名前があります",
+		"description": "role=\"searchbox\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"searchbox\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleから、空でないアクセシブルな名前を得ています。role=\"searchbox\"は作成者によってのみ名前が付けられるロールなので、サブツリーのテキストは受け付けません。カスタムの検索ボックスウィジェット内にあるテキストは、その名前として確実に公開されるとは限らないためです。ラベル付け可能な要素（<input role=\"searchbox\">）では、関連付けられた<label>も有効です。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`が検索ボックスに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "サポートされているどの手段からもアクセシブルな名前が得られません。"
+			}
+		]
+	},
+	"server-side-image-map-absent": {
+		"title": "画像ではサーバーサイドイメージマップを使用しない必要があります",
+		"description": "<img>要素がismap属性を持っていないことを確認します（サーバーサイドイメージマップには、キーボードで操作できる同等の手段がありません）。",
+		"applicability": "どのスキャン範囲にも適用されます。ismap属性を持つ<img>が含まれているかどうかは、常に答えられる問いです。",
+		"expectation": "ismapを使用している画像はありません。サーバーサイドイメージマップは、ブラウザーがクリック座標をサーバーに送ることを前提としており、キーボードで操作できる同等の手段がありません。クリック可能な個々の領域を判別することも、支援技術やキーボードのユーザーに公開することもできません。クライアントサイドイメージマップ（それぞれ実際のhref/altを持つ<map>/<area>）がアクセシブルな代替手段であり、このルールでは検出しません。ismapがあること自体が違反で、ないこと自体がpassです。3つ目の、適用対象外となるケースはありません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "クライアントサイドイメージマップには`ismap`属性がないため、それだけでルールを満たします。別途、適用対象外となるケースはありません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`ismap`は、ブラウザーがクリック座標をサーバーに送ることを前提としています。キーボードで操作できる同等の手段はありません。"
+			}
+		]
+	},
+	"skip-link": {
+		"title": "スキップリンクには、解決可能で使用できるリンク先がある必要があります",
+		"description": "「[[en:skip to]] ...」リンクのhrefのフラグメントが、文書内に実在し、現在使用できる要素に解決されることを確認します。",
+		"applicability": "アクセシブルな名前が、よく使われる「[[en:skip to]] ...」/「[[en:jump to]] ...」という作成上の慣例に一致する（名前に「[[en:skip]]」または「[[en:jump to]]」が含まれる。大文字と小文字は区別しない）<a href=\"#fragment\">要素に適用されます。これはスキップナビゲーションリンクと認識できるパターンであり、ページ上の同一ページ内アンカーリンクすべてが対象になるわけではありません。実際のスキップリンクでは両方の慣例が使われるため、「[[en:skip]]」に加えて「[[en:jump to]]」も含めています（例：「[[en:Jump to section]]」リンク。純粋に位置で一致させる方法なら拾えますが、「[[en:skip]]」だけのテキストパターンでは見落とします）。テキストパターンで一致させること自体は意図的なもので（implementation-notesを参照）、これは既知の慣例のリストを広げるだけです。",
+		"expectation": "リンクのフラグメントが文書内に実在する要素（一致するid、または従来の<a name=\"...\">）に解決され、そのリンク先が現在使用できる状態です（アクセシビリティツリーから隠されておらず、ブラウザーのジオメトリ情報を利用できる場合は、面積がゼロでも矩形がない状態でもない）。リンク先が存在しない、または実質的に使用できないスキップリンクは、確実なスキップ先を提供しません。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "リンクのフラグメントが指す要素がページのどこにも存在しないため、リンクを実行してもどこにも移動しません。"
+			},
+			{
+				"state": "na",
+				"explanation": "フラグメントが指す要素が存在し、使用できます。"
+			}
+		]
+	},
+	"slider-name-present": {
+		"title": "スライダーにアクセシブルな名前があります",
+		"description": "スライダー（input[type=\"range\"]とrole=\"slider\"）が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"slider\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。roleを持たないネイティブの<input type=\"range\">は、form-control-programmatic-label-presentが扱います。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleから、空でないアクセシブルな名前を得ています。role=\"slider\"は作成者によってのみ名前が付けられるロールなので、サブツリーのテキストは受け付けません。カスタムのスライダーウィジェット内にあるテキストは、その名前として確実に公開されるとは限らないためです。ラベル付け可能な要素（<input role=\"slider\">）では、関連付けられた<label>も有効です。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`が、スライダーとして機能するネイティブのrange入力に名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "サポートされているどの手段からもアクセシブルな名前が得られません。"
+			}
+		]
+	},
+	"spinbutton-name-present": {
+		"title": "スピンボタンにアクセシブルな名前があります",
+		"description": "role=\"spinbutton\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"spinbutton\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleから、空でないアクセシブルな名前を得ています。role=\"spinbutton\"は作成者によってのみ名前が付けられるロールなので、サブツリーのテキストは受け付けません。カスタムのスピンボタンウィジェット内にあるテキストは、その名前として確実に公開されるとは限らないためです。ラベル付け可能な要素（<input role=\"spinbutton\">）では、関連付けられた<label>も有効です。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がスピンボタンに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "サポートされているどの手段からもアクセシブルな名前が得られません。"
+			}
+		]
+	},
+	"summary-name-present": {
+		"title": "summary要素にアクセシブルな名前があります",
+		"description": "<summary>要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれる<summary>要素に、どこにあるかにかかわらず適用されます。<details>の外にある<summary>も対象です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、title、または自身のサブツリーのテキストから、空でないアクセシブルな名前を得ています。その際、子孫要素自身の名前（<img alt>、aria-label、title）は、その子孫要素が寄与する名前として数えます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "表示されているテキスト内容が`<summary>`に名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "テキスト内容もアクセシブルな名前もありません。"
+			}
+		]
+	},
+	"svg-image-text-alternative-present": {
+		"title": "SVGの<image>にはテキストによる代替がある必要があります",
+		"description": "SVGの<image>要素が、<title>/<desc>またはARIAによるアクセシブルな名前によって、テキストによる代替を提供していることを確認します。",
+		"applicability": "支援技術に公開されるSVGの<image>要素に適用されます。それ以外の理由でアクセシビリティツリーから隠されている要素も、タブで移動可能であるか、IDREFの関係で参照されている場合は、引き続き対象になります（エンジンの対象判定による）。role=\"presentation\"またはrole=\"none\"を持つSVGの<image>要素は、フォーカス可能でない場合に限り除外します。",
+		"expectation": "対象となる各SVGの<image>要素が、次のいずれかによってテキストによる代替を持っています。\n\n- 空でない直接の子要素<title>、または\n- 空でない直接の子要素<desc>、または\n- アクセシブルな名前（aria-label / aria-labelledby / title属性）。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "SVGの`<image>`内の`<title>`が代替を提供しています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<image>`自体に`<title>`/`<desc>`/ARIAによる名前がありません（外側の`<svg>`のラベルは引き継がれません）。"
+			}
+		]
+	},
+	"svg-text-alternative-present": {
+		"title": "<svg>にはテキストによる代替がある必要があります",
+		"description": "インラインの<svg>要素が、<title>要素またはARIAによる名前によって、テキストによる代替を提供していることを確認します（<desc>要素だけでは有効になりません）。",
+		"applicability": "支援技術に公開され、かつ情報を伝えることを意図していると見られるインラインの<svg>要素に適用されます。「情報を伝えることを意図している」かどうかは、次の少なくとも1つに当てはまるかどうかで決定論的に近似します。\n\n- SVGのルート要素自体にrole=\"img\"、role=\"graphics-symbol\"、またはrole=\"graphics-document\"がある（imgと並ぶ[[en:WAI-ARIA Graphics Module]]のロール）。<svg>内に入れ子になった任意のrole=\"img\"/\"graphics-symbol\"/\"graphics-document\"の子孫要素には適用されません。このチェックの範囲は<svg>ルートだけです。他のすべての要素（入れ子になったSVGの図形を含む）にある同じ3つのロールは、role-img-text-alternative-presentが扱います（ACT 7d6734自身のfailの例：入れ子になった`<circle role=\"graphics-symbol\">`を持つ、何も付いていない`<svg>`ルート）。\n- aria-label / aria-labelledbyがある\n- <title>または<desc>がある（descは適用範囲の手がかりにすぎません。@expectationを参照）\n- フォーカス可能/タブで移動可能である（例：tabindex、ネイティブのフォーカス可能性）\n\nrole=\"presentation\"またはrole=\"none\"を持つ画像は、フォーカス可能でない場合に限り除外します。それ以外の理由でアクセシビリティツリーから隠されている要素も、タブで移動可能かつフォーカス可能であるか、IDREFの関係で参照されている場合は、引き続き対象になります（エンジンの対象判定による）。",
+		"expectation": "対象となる各<svg>要素が、次のいずれかによってテキストによる代替を提供しています。\n\n- 空でない<title>のテキスト、または\n- ARIAによる名前（aria-label / aria-labelledby）。\n\n<desc>要素だけではこれを満たしません。[[en:SVG Accessibility API Mappings]]仕様の§7.1によれば、<desc>が寄与するのはアクセシブルな説明（[[en:DESCRIPTION]]）だけであり、アクセシブルな名前（[[en:NAME]]）には決して寄与しないためです。<desc>だけを持ち、<title>/ARIAによる名前がない<svg>も「適用対象」ではあります（descは作成者の意図を示すため）が、failになります。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "明示的なimgロールを持つSVGで、`<title>`がアクセシブルな名前を提供しています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`<title>`も`<desc>`もARIAによる名前もありません。"
+			}
+		]
+	},
+	"svg-text-alternative-quality": {
+		"title": "<svg>のテキストによる代替は適切である必要があります（手動レビュー）",
+		"description": "テキストによる代替が検出された対象の<svg>グラフィックを、適切さを人がレビューするために検出します。",
+		"applicability": "すでにテキストによる代替（空でない<title>または<desc>のテキスト、空でないaria-label、または空でないテキストに解決されるaria-labelledby）を持つインラインの<svg>要素に適用されます。<desc>はアクセシブルな名前には決して寄与しませんが、ここではレビュー対象として数えます。その区別はsvg-text-alternative-presentが扱います。要素はアクセシビリティツリーに含まれている必要があり、role=\"presentation\"/\"none\"を持つ要素は対象外です。ただし、フォーカス可能な場合はロールが復元されるため対象になります。",
+		"expectation": "提供されているテキストによる代替が正確かつ適切であることを確認するには、人によるレビューが必要です。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`<title>`があります。「[[en:Growth chart]]」が、単にグラフであることだけでなく、グラフが実際に何を示しているかを説明しているかを確認する価値があります。"
+			},
+			{
+				"state": "na",
+				"explanation": "レビュー対象となる`<title>`/`<desc>`のテキスト、aria-label、解決済みのaria-labelledbyがありません。その場合は`svg-text-alternative-present`のfailになります。"
+			}
+		]
+	},
+	"tab-name-present": {
+		"title": "タブにアクセシブルな名前があります",
+		"description": "role=\"tab\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"tab\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、title、または自身のサブツリーのテキストから、空でないアクセシブルな名前を得ています。role=\"tab\"は名前をコンテンツから算出するため、サブツリーのテキストも有効です。その際、子孫要素自身の名前（<img alt>、aria-label、title）は、テキストノードだけでなく、その子孫要素が寄与する名前として数えます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "表示されているテキスト内容がタブに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "名前も内容もありません。"
+			}
+		]
+	},
+	"tabindex": {
+		"title": "tabindexは0以下である必要があります",
+		"description": "tabindexの値が正の数ではなく、0または負の値であることを確認します。",
+		"applicability": "値が有効な整数として解析できるtabindex属性を持つ要素に適用されます。",
+		"expectation": "tabindexの値が0または負の値です。正のtabindexはキーボードのタブ順序を明示的に並べ替えるもので、ページが変わるたびに維持するのが難しく、通常は本来のDOMの順序を修正すべきであることを示しています。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "正の`tabindex`により、この要素は文書の本来のタブ順序から外れて他のすべての要素より先に来るため、キーボードのユーザーは通常戸惑います。"
+			},
+			{
+				"state": "na",
+				"explanation": "`tabindex=\"0\"`は、何も並べ替えずに要素を本来のタブ順序に配置します。"
+			}
+		]
+	},
+	"table-duplicate-name": {
+		"title": "表のキャプションはsummary属性と重複しない必要があります",
+		"description": "<table>の<caption>のテキストが、（非推奨の）summary属性と同一でないことを確認します。",
+		"applicability": "テキスト内容を持つ<caption>と、（非推奨ながら今でも見かける）summary属性の両方を持つ<table>要素に適用されます。",
+		"expectation": "キャプションのテキストとsummary属性のテキストが同一ではありません（大文字と小文字を区別せず、正規化して比較します）。両方があって同じ内容を述べている場合、両方を読み上げる支援技術では、1つの表について同じテキストが2回読み上げられます。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`summary`属性が、新しい情報を加えずにキャプションのテキストをそのまま繰り返しています。"
+			},
+			{
+				"state": "na",
+				"explanation": "`summary`が、キャプションにはない情報を提供しています。"
+			}
+		]
+	},
+	"table-fake-caption": {
+		"title": "表の1行目を本来の<caption>の代用にしない必要があります",
+		"description": "<caption>がなく、1行目に空でないセルが1つだけあり、他の行には複数のセルがある表を検出し、そのセルが偽のキャプションとして機能していないかを手動レビューに回します。",
+		"applicability": "`<caption>`子要素がなく、2行以上あり、1行目に空でないテキストを持つセルがちょうど1つだけあり、かつ他の少なくとも1行に複数のセルがある`<table>`要素です。",
+		"expectation": "明らかに複数の列を持つ行の上で、1行目に1つだけ置かれたセルは、作成者がそれを本来の表のセルとしてではなく、見た目上のキャプションやタイトルとして使っていることを強く示唆します。この位置による慣例だけで伝えられている構造は、本来の`<caption>`要素のようにはプログラムで表と関連付けられません（1.3.1）。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "複数のセルを持つ行の上で、1行目に1つだけのセルが置かれており、本来の`<caption>`もありません。データセルのふりをしたキャプションのように見えます。"
+			},
+			{
+				"state": "na",
+				"explanation": "表に本来の`<caption>`要素があります。"
+			}
+		]
+	},
+	"table-headers-attr-valid": {
+		"title": "表のセルのheaders属性は有効な見出しセルを参照する必要があります",
+		"description": "<td>/<th>のheaders属性にある各idが、同じ表内のセル（<td>または<th>）に解決されることを確認します（存在しない、セル以外の要素である、自分自身である、のいずれでもないこと）。",
+		"applicability": "空でないheaders属性を持つ<td>/<th>要素のうち、セマンティックなロールが今もtable/grid/treegridである<table>内にあるものに適用されます。それ以外の明示的なロール（role=\"presentation\"/\"none\"だけでなく、role=\"heading\"などの実際のロールも含む）はネイティブの表のセマンティクスを置き換えるため、headersが説明する表が存在しなくなります。ACT a25f45の適用範囲に一致します。",
+		"expectation": "headers属性のすべてのidトークンが、次の条件を満たす要素に解決されます。(a) 存在する、(b) 参照元のセルと同じ<table>のセル（<td>または<th>）である、(c) そのセル自身ではない。role=\"columnheader\"/\"rowheader\"によって見出しとして機能する<td>も、通常の<th>と同じく有効な参照先です。ACT a25f45はネイティブのタグを要求していません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`headers=\"h1\"`が、同じ表内の実際のセルに解決されます。"
+			},
+			{
+				"state": "fail",
+				"explanation": "`headers`が、表内に存在しないidを参照しています。"
+			}
+		]
+	},
+	"table-th-has-data-cells": {
+		"title": "<th>要素は少なくとも1つのデータセルを説明する必要があります",
+		"description": "<th>要素を含む表に、それらの見出しが説明する<td>データセルも1つ以上含まれていることを確認します。",
+		"applicability": "表のセマンティクスを保持し、アクセシビリティツリーに含まれる<table>要素のうち、表示され、アクセシビリティツリーに含まれ、rowheader/columnheader以外の明示的なロールで上書きされていない<th>を1つ以上含むものに適用されます。ARIAのみの同等の構造にも適用されます。つまり、role=\"grid\"/\"treegrid\"を持ち（ネイティブの<table>は関係しない）、対象となるcolumnheader/rowheaderロールの要素を1つ以上含む要素です。",
+		"expectation": "表のどこかに<td>も1つ以上含まれています。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "表に、`<th>`が見出しとなる`<td>`が1つ以上あります。"
+			},
+			{
+				"state": "fail",
+				"explanation": "表に`<th>`はありますが、`<td>`はどこにもありません。"
+			}
+		]
+	},
+	"target-size-minimum": {
+		"title": "ポインターのターゲットは24x24px以上であるか、他のターゲットとの十分な間隔がある必要があります",
+		"description": "ポインターで操作できるターゲットの実効的なヒット領域が24×24 CSSピクセル以上であるか、認められた例外（例：十分な間隔）を満たしていることを確認します。",
+		"applicability": "ポインターで到達できる<button>、<summary>、<a href>、<area href>、<input>、<select>、<textarea>、およびrole=\"button\"/\"link\"を持つ要素に適用されます。ポインターで到達できるとは、レンダリングされていて、pointer-events:noneで無効化されておらず、計測可能なゼロでないサイズのボックスを持つことです。ここではアクセシビリティツリーからの除外は条件になりません。aria-hiddenのコントロールも、ポインターで押せるターゲットであることに変わりはないためです。<area>は一致対象にはなりますが、後述の理由により実際には評価されません。",
+		"expectation": "各ターゲットが24×24 CSSピクセル以上であるか、このルールがジオメトリから確認できる達成基準2.5.8の例外のいずれかを満たしています。例外とは、間隔（ターゲットを中心とする直径24pxの円が、無関係なターゲットに届かない）、テキストの流れの中にあるリンクに対するインラインの例外、ユーザーエージェントによるサイズ（スタイルが適用されていないネイティブのチェックボックスやラジオボタンで、appearanceがnoneにリセットされていないことで検出）です。小さすぎるターゲットが隣のターゲットに近すぎる場合はfailになります。例外が当てはまる可能性があってもジオメトリで確認できない場合（1つのテキストの流れの中にある2つのインラインのリンクや、必須である可能性があるSVG、canvas、イメージマップ内のターゲット）は、推測せずにcantTellとします。注記（エンジンの意図）：\n\n- このルールはDOMに基づいており、目の見えるポインターのユーザーが利用できるポインターのヒット領域を計測します。\n- 要素は、アクセシビリティツリーから除外されていても（例：aria-hidden=\"true\"）、「ポインターで操作可能」な場合があります。\n- レンダリングの抑制（display:noneなど）、ポインターの抑制（pointer-events:none）、またはジオメトリがゼロ（例：scale(0) -> 矩形がゼロ）のためにポインターで到達できないターゲットは除外します。\n\n実装しているWCAG 2.5.8の例外とその方法：\n\n- 間隔：小さすぎるターゲットを中心とする直径24pxの円が、別の（無関係な）ターゲットのボックスや、別の小さすぎるターゲット自身の円と交差してはなりません。2段階で確認します。高速な中心間距離のチェック（小さすぎるターゲット同士では正確で、それ以外では妥当な近似）と、距離のチェックでは検出しきれないケース（例：大きく細長い隣接要素の横にある小さなターゲット）に対するより精密なフォールバックとしての、elementFromPointによる周囲16点のサンプリングです。ターゲットと「他の」要素の間の祖先・子孫関係は、衝突として扱いません（isRelatedを参照）。入れ子になったインタラクティブな形状、つまり自身を囲むリンクやボタンの中にある小さなコントロールは、2つの独立したターゲットではなく1つの視覚的な領域です。このパターンは間隔の問題ではなく、nested-interactive-controls-absentが扱います。\n- インライン：テキストブロックのコンテナー内にあるリンクは、それだけでpassします（isInlineTextExceptionTarget）。間隔の衝突が同じテキストの流れの中にある別のインラインのリンクだけであるインラインのリンクは、cantTellとして報告します（isInlineLinkTarget）。インラインの例外が当てはまる可能性があっても、ジオメトリでは確認できないためです。\n- ユーザーエージェントのコントロール：スタイルが適用されていないネイティブのチェックボックス/ラジオボタンで、`appearance`が`none`にリセットされていないことで検出します（isUserAgentSizedControlを参照）。すべてのフォームコントロールではなく、チェックボックス/ラジオボタンだけに意図的に絞っています。ネイティブのレンダリングが明確に決まっているのは、この2種類だけだからです。\n- 必須/同等：確度の高い限られた一部（SVG/canvas/mapに埋め込まれたコントロール。isPlausiblyEssentialOrEquivalentを参照）だけを判定します。それ以外は、レイアウトのコンテナーから「必須」と推測せず、cantTellに委ねます。\n\n意図的に実装していない既知のギャップ：`<area>`（イメージマップのホットスポット）要素はまったく評価しません。`area[href]`は将来の互換性のためにCANDIDATE_SELECTORに含まれていますが、現時点では何もしません。`<area>`は自身のCSSボックスを持たない（HTML仕様の既定のUAスタイルシートで`display: none`。jsdomの癖ではなく仕様と照合して確認済み）ため、`getBoundingClientRect()`は常にゼロのジオメトリを返し、サイズや例外のロジックが動く前に、`isPointerReachable`の既存の`display:none`チェックで除外されます。実際の`<area>`のヒット領域は、ブラウザーが`shape`/`coords`属性と、関連付けられた`<img>`の*レンダリングされた*サイズから計算するもので、ここでの他のすべての候補とはまったく異なる計測方法です。これを適切に実装する（`coords`を解析し、`usemap`を通じて所有する`<img>`を特定し、画像のCSSによる拡大縮小後の表示サイズを考慮する）のは別の大きな機能であり、今回は試みていません。これは自動的かつ決定論的な近似であり、次のことを意図しています。\n\n- 明らかなfailには厳格であること\n- 例外を確実に判断できない場合は保守的であること",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "単独で24×24 CSSピクセルの最小サイズを満たしています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "どちらのターゲットも24×24未満で、間隔の例外で認められるよりも近くに配置されています。"
+			}
+		]
+	},
+	"td-has-header": {
+		"title": "大きな表のデータセルには関連付けられた見出しがある必要があります",
+		"description": "大きく単純な（colspan/rowspanのない）表のすべての<td>が、headers属性、上にある暗黙の列見出し<th>、または左にある暗黙の行見出し<th>によって、関連付けられた見出しを持っていることを確認します。",
+		"applicability": "4行以上かつ4列以上あり（暗黙の行見出し・列見出しの関連付けが役立つ「大きな」表。小さな表は通常、見ればわかります）、表のどこにも`colspan`/`rowspan`がない`<table>`要素です。",
+		"expectation": "すべての`<td>`が、次のいずれかによって関連付けられた見出しを持っています。\n\n- 空でない`headers`属性（ここではそのまま信頼します。それが実際の`<th>`のidに解決されるかどうかは、このルールではなく`table-headers-attr-valid`が扱います）、または\n- 暗黙の列見出し：同じ列の、それより前の行にある`<th>`、または\n- 暗黙の行見出し：同じ行の、それより前にある`<th>`。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "すべての`<td>`に、暗黙の行見出し（同じ行の前にある`<th>`）と列見出し（同じ列の前にある`<th>`）の両方があります。4x4という最小サイズは必須で、それより小さな表にはこのルールは適用されません。"
+			},
+			{
+				"state": "fail",
+				"explanation": "どこにも`<th>`がない4x4の表です。どのセルにも、行、列、`headers`属性による関連付けがありません。"
+			}
+		]
+	},
+	"textbox-name-present": {
+		"title": "テキストボックスにアクセシブルな名前があります",
+		"description": "role=\"textbox\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"textbox\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、またはtitleから、空でないアクセシブルな名前を得ています。role=\"textbox\"は作成者によってのみ名前が付けられるロールなので、サブツリーのテキストは受け付けません。カスタムのテキストボックスウィジェット内にあるテキストは、その名前として確実に公開されるとは限らないためです。ラベル付け可能な要素（<input role=\"textbox\">）では、関連付けられた<label>も有効です。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`がテキストボックスに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "サポートされているどの手段からもアクセシブルな名前が得られません。"
+			}
+		]
+	},
+	"tooltip-name-present": {
+		"title": "ツールチップにアクセシブルな名前があります",
+		"description": "role=\"tooltip\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"tooltip\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、title、または自身のサブツリーのテキストから、空でないアクセシブルな名前を得ています。role=\"tooltip\"は名前をコンテンツから算出するため、サブツリーのテキストも有効です。その際、子孫要素自身の名前（<img alt>、aria-label、title）は、テキストノードだけでなく、その子孫要素が寄与する名前として数えます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "表示されているテキスト内容がツールチップに名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "テキスト内容もアクセシブルな名前もありません。"
+			}
+		]
+	},
+	"treeitem-name-present": {
+		"title": "ツリー項目にアクセシブルな名前があります",
+		"description": "role=\"treeitem\"を持つ要素が空でないアクセシブルな名前を公開していることを確認します。",
+		"applicability": "アクセシビリティツリーに含まれ、role=\"treeitem\"を持つ要素に適用されます（role属性はフォールバックのリストではなく、そのロールだけを指定している必要があります）。一致する暗黙のロールを持っていてもrole属性がない要素は対象外です。",
+		"expectation": "要素が、aria-label、空でないテキストに解決されるaria-labelledby、title、または自身のサブツリーのテキストから、空でないアクセシブルな名前を得ています。role=\"treeitem\"は名前をコンテンツから算出するため、サブツリーのテキストも有効です。その際、子孫要素自身の名前（<img alt>、aria-label、title）は、テキストノードだけでなく、その子孫要素が寄与する名前として数えます。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "表示されているテキスト内容がツリー項目に名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "名前も内容もありません。"
+			}
+		]
+	},
+	"valid-lang": {
+		"title": "要素のlang属性は構文的に有効である必要があります",
+		"description": "空でないlang属性を持つ要素（ルートの<html>以外）が、構文的に有効な言語タグを使用していることを確認します。",
+		"applicability": "ルートの<html>以外で、空でないlang属性を持ち、かつ、その要素から実際に言語を継承する空白以外の「対象テキスト」を少しでも持つ要素に適用されます（ACT de46e4に準拠）。\n\n- 子孫のテキストやaltは、langを持つ最も近い祖先要素だけに従います。自身の空でないlangを持つ入れ子の子孫要素は、その内側すべての範囲を改めて定めるため、そのサブツリーは外側の要素の適用範囲には数えません（その入れ子の要素も評価対象であれば、そちらの適用範囲に数えます）。\n- img/area/input[type=image]の空でないalt属性は、テキストノードと同じく対象テキストとして数えます。\n- CSSによってレンダーツリーから外されているテキストやalt（display:none、hidden属性など）は数えません。aria-hiddenや画面外への配置では、テキストは除外されません。ACT自身のfailの例がどちらについても示しているとおり、除外されるのは実際にレンダリングされない場合だけです。",
+		"expectation": "langの値が、有効なBCP47言語タグの構文に一致しています。WCAG 3.1.2（一部分の言語）は、ある部分の言語がページの既定の言語と異なる場合、それをプログラムで特定できることを求めています。無効なタグでは、実在する言語をまったく特定できません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "「fr」は、構文的に有効なBCP 47言語タグです。"
+			},
+			{
+				"state": "fail",
+				"explanation": "値が有効なBCP 47の構文ではありません。"
+			}
+		]
+	},
+	"video-caption": {
+		"title": "収録済みの動画にはキャプションのトラックがある必要があります",
+		"description": "<track kind=\"captions\"|\"subtitles\">子要素を持たない<video>要素を検出し、その動画にキャプションが必要な音声トラックがあるかどうかを手動レビューに回します。",
+		"applicability": "合成されたDOM内のすべての<video>要素。",
+		"expectation": "達成基準1.2.2は収録済みの同期したメディアにキャプションを求めていますが、それは動画に情報を伝える音声トラックが実際にある場合だけです（無音や装飾的な動画には不要です）。これは静的なマークアップだけでは検証できません（jsdomはメディアをデコードしません）。そのため、このルールは`type: 'manual'`（上限はcantTellで、failにはならない）であり、「規定上は対応付けられているが静的には検証できない」同じ種類のギャップについて`media-alternative-transcript-evidence`が定めた前例に倣っています。`src`が空でない`<track kind=\"captions\">`（または`kind=\"subtitles\"`。キャプションと字幕は厳密には別の目的を持ちますが、実際には区別なく使われることがよくあります）を持つ<video>は検出しません。それ以外はすべて、人によるレビューの対象として検出します。",
+		"examples": [
+			{
+				"state": "unknown",
+				"explanation": "`<track>`要素がまったくありません。キャプションや字幕があることを示す根拠がありません。"
+			},
+			{
+				"state": "na",
+				"explanation": "実際の`src`を持つ`kind=\"captions\"`のトラックがあります。"
+			}
+		]
+	},
+	"video-poster-text-alternative-present": {
+		"title": "<video>のポスターにはテキストによる代替がある必要があります",
+		"description": "ポスター画像を持つ<video>要素が、テキストによる代替（アクセシブルな名前）を提供していることを確認します。",
+		"applicability": "次の条件を満たす<video>要素に適用されます。1) 空でないposter属性を持つ、かつ2) 支援技術に公開されている（エンジンの対象判定による）。それ以外の理由でアクセシビリティツリーから隠されている要素も、タブで移動可能であるか、IDREFの関係で参照されている場合は、引き続き対象になります（対象判定による）。role=\"presentation\"またはrole=\"none\"を持つ動画は、フォーカス可能でない場合に限り除外します。",
+		"expectation": "対象となる各<video>要素が、次の方法でポスター画像のテキストによる代替を提供しています。\n\n- アクセシブルな名前（aria-label / aria-labelledby / title）。\n\n<video>のタグ間にあるフォールバックコンテンツは受け付けません。これは<video>をサポートしないブラウザーでしかレンダリングされないため、実際には支援技術に確実に公開されるとは限りません。また、<video>はラベル付け可能な要素ではないため、ネイティブの<label for=\"...\">による関連付けも受け付けません。",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "`aria-label`が、ポスター画像を持つvideo要素に名前を付けています。"
+			},
+			{
+				"state": "fail",
+				"explanation": "アクセシブルな名前もフォールバックもありません。poster属性だけではテキストによる代替になりません。"
+			}
+		]
+	}
+}

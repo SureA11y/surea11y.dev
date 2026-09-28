@@ -13,7 +13,12 @@
     "docs:rules": "node scripts/generate-rules-data.cjs",
     "docs:rules:check": "node scripts/generate-rules-data.cjs --check",
     "docs:locales": "node scripts/generate-locale-data.cjs",
-    "docs:locales:check": "node scripts/generate-locale-data.cjs --check"
+    "docs:locales:check": "node scripts/generate-locale-data.cjs --check",
+    "check:links": "node scripts/check-links.mjs",
+    "i18n:check": "node scripts/check-i18n.mjs",
+    "check:typography": "node scripts/check-typography.mjs",
+    "check:lang": "node scripts/check-lang.mjs",
+    "i18n:mark": "node scripts/i18n-mark.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",

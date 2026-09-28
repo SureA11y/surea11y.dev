@@ -5,9 +5,13 @@ import Sidebar from "../components/Sidebar.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TableOfContents from "../components/TableOfContents.astro";
 import Footer from "../components/Footer.astro";
+import { Callout } from "../components/design-system/feedback/Callout.jsx";
 import { processHeadings } from "../utils/headings";
 import { localizeLinks } from "../utils/localizeLinks";
-import { t, resolveLocale } from "../i18n/t";
+import { markCodeNoTranslate } from "../utils/noTranslate";
+import { t } from "../i18n/t";
+import { DEFAULT_LOCALE, localeCodes, type Locale } from "../i18n/locales";
+import { localizePath, splitLocale } from "../i18n/paths";
 
 interface Props {
 	title: string;
@@ -15,21 +19,37 @@ interface Props {
 	description?: string;
 	/** Only needed for generated pages whose URL isn't in siteTree (rule detail pages). */
 	breadcrumbLabel?: string;
+	/**
+	 * The language the page's own content is written in, when it differs from
+	 * the URL's locale — i.e. an untranslated page shown in English under
+	 * /es/…. Marks the content with the right `lang`, adds a notice, and
+	 * points the canonical URL at the English original.
+	 */
+	contentLocale?: Locale;
+	/** Locales this page is actually translated into, for hreflang. Defaults to all. */
+	translatedLocales?: Locale[];
+	/**
+	 * Show the "on this page" rail (default). A page whose content needs the
+	 * width more than a short heading list (the rules catalog table) turns it off.
+	 */
+	toc?: boolean;
 }
 
-const { title, description, breadcrumbLabel } = Astro.props;
-const pageTitle = `${title} · surea11y`;
-const locale = resolveLocale(Astro.currentLocale);
-const pageDescription = description ?? t("layout.defaultDescription", locale);
+const { title, description, breadcrumbLabel, translatedLocales = localeCodes, toc = true } = Astro.props;
+const { locale, path } = splitLocale(Astro.url.pathname);
+const contentLocale = Astro.props.contentLocale ?? locale;
+const untranslated = contentLocale !== locale;
 
-const pathNoLocale = Astro.url.pathname.replace(/^\/es(?=\/|$)/, "") || "/";
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
-const enUrl = new URL(pathNoLocale, Astro.site);
-const esUrl = new URL(`/es${pathNoLocale}`, Astro.site);
+const pageTitle = `${title} · surea11y`;
+const pageDescription = description ?? t("layout.defaultDescription", contentLocale);
+
+const canonicalUrl = new URL(untranslated ? localizePath(path, contentLocale) : Astro.url.pathname, Astro.site);
+const alternates = translatedLocales.map((l) => ({ hreflang: l, href: new URL(localizePath(path, l), Astro.site) }));
+const defaultUrl = new URL(localizePath(path, DEFAULT_LOCALE), Astro.site);
 
 const rawHtml = await Astro.slots.render("default");
 const { html: headedHtml, headings } = processHeadings(rawHtml);
-const html = localizeLinks(headedHtml, locale);
+const html = markCodeNoTranslate(localizeLinks(headedHtml, locale));
 ---
 
 <html lang={locale}>
@@ -41,9 +61,8 @@ const html = localizeLinks(headedHtml, locale);
 		<title>{pageTitle}</title>
 		<meta name="description" content={pageDescription} />
 		<link rel="canonical" href={canonicalUrl} />
-		<link rel="alternate" hreflang="en" href={enUrl} />
-		<link rel="alternate" hreflang="es" href={esUrl} />
-		<link rel="alternate" hreflang="x-default" href={enUrl} />
+		{alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+		<link rel="alternate" hreflang="x-default" href={defaultUrl} />
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="surea11y" />
 		<meta property="og:title" content={pageTitle} />
@@ -56,22 +75,29 @@ const html = localizeLinks(headedHtml, locale);
 	<body>
 		<a class="skip-link" href="#main-content">{t("layout.skipToContent", locale)}</a>
 		<SiteNav locale={locale} />
-		<div class="shell">
+		<div class:list={["shell", { "no-toc": !toc }]}>
 			<details class="sidebar-toggle">
 				<summary>{t("layout.siteMenu", locale)}</summary>
 				<div class="sidebar-body"><Sidebar locale={locale} /></div>
 			</details>
 			<div class="content-col">
-				{Astro.url.pathname !== "/" && Astro.url.pathname !== "/es/" && (
+				{path !== "/" && (
 					<Breadcrumbs locale={locale} breadcrumbLabel={breadcrumbLabel} />
 				)}
 				<main id="main-content">
-					<div class="prose" set:html={html} />
+					{untranslated && (
+						<Callout tone="note" title={t("layout.untranslatedTitle", locale)} className="untranslated-notice">
+							<p>{t("layout.untranslatedBody", locale)}</p>
+						</Callout>
+					)}
+					<div class="prose" lang={untranslated ? contentLocale : undefined} set:html={html} />
 				</main>
 			</div>
-			<aside class="toc-rail">
-				<TableOfContents headings={headings} locale={locale} />
-			</aside>
+			{toc && (
+				<aside class="toc-rail">
+					<TableOfContents headings={headings} locale={locale} />
+				</aside>
+			)}
 		</div>
 		<Footer locale={locale} />
 	</body>
@@ -126,6 +152,10 @@ const html = localizeLinks(headedHtml, locale);
 	@media (min-width: 1200px) {
 		.shell {
 			grid-template-columns: 240px minmax(0, 1fr) 220px;
+		}
+
+		.shell.no-toc {
+			grid-template-columns: 240px minmax(0, 1fr);
 		}
 	}
 
@@ -193,9 +223,22 @@ const html = localizeLinks(headedHtml, locale);
 		}
 	}
 
+	main :global(.untranslated-notice) {
+		margin-bottom: var(--space-6);
+	}
+
 	.prose :global(h1) {
 		font-family: var(--font-display);
 		color: var(--text-strong);
+	}
+
+	/* A single word wider than the column (German compounds at heading size,
+	   "WCAG-Konformitätszuordnung" on a phone, or "aria-labelledby/
+	   aria-describedby" in rule text) breaks instead of pushing the page
+	   sideways. It only kicks in when the word can't fit, and code blocks
+	   don't wrap at all, so they keep scrolling inside their own box. */
+	.prose {
+		overflow-wrap: break-word;
 	}
 
 	.prose :global(h2) {
@@ -224,5 +267,12 @@ const html = localizeLinks(headedHtml, locale);
 	.prose :global(code) {
 		font-family: var(--font-mono);
 		font-size: 0.9em;
+	}
+
+	/* Long inline identifiers (engineOptions.rules[ruleId].excludeSelectors)
+	   would otherwise push the page wider than a phone screen. Code blocks
+	   keep their own horizontal scrolling. */
+	.prose :global(:not(pre) > code) {
+		overflow-wrap: anywhere;
 	}
 </style>

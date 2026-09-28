@@ -98,7 +98,7 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				This matters when reading a composite (WCAG-SC rollup) result: a composite{" "}
-				<ResultBadge state="pass" size="sm" /> means every automated check for that SC came back
+				<ResultBadge lang="en" state="pass" size="sm" /> means every automated check for that SC came back
 				clean, but <strong>if a facet has no automated coverage at all, the composite is silent
 				about that facet rather than asserting it's fine</strong>. See{" "}
 				<a href="/conformance/wcag-mapping/">Conformance</a> for the three layers (atomic rules, facets,

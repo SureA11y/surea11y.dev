@@ -1,0 +1,184 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import "../../styles/stewardship.css";
+import { Badge } from "../../components/design-system/core/Badge.jsx";
+import { Button } from "../../components/design-system/core/Button.jsx";
+import { Card } from "../../components/design-system/core/Card.jsx";
+import { sections } from "../../data/sections";
+import { localize } from "../../data/localize";
+import { localizedModule, translatedLocales } from "../../i18n/content";
+import { localeStaticPaths } from "../../i18n/paths";
+import { t, type Locale } from "../../i18n/t";
+import engine from "../../data/engine.generated.json";
+import rules from "../../data/rules.generated.json";
+
+export const getStaticPaths = localeStaticPaths;
+
+interface Props {
+	locale: Locale;
+}
+
+// Everything inside the page body follows the Overview content's language,
+// so an untranslated homepage is shown whole in English (see BaseLayout).
+const { module, locale } = localizedModule("component", "OverviewContent", Astro.props.locale);
+const { OverviewLead, OverviewContent, OverviewAbout } = module;
+const otherSections = sections.filter((section) => section.href !== "/");
+const core = "https://github.com/SureA11y/core/blob/main";
+---
+
+<BaseLayout
+	title={localize(sections[0], locale).label}
+	description={t("homepage.description", locale)}
+	contentLocale={locale}
+	translatedLocales={translatedLocales("component", "OverviewContent")}
+>
+	<!-- The page's visible lead is the tagline; the heading is there for
+	     screen-reader navigation and names the page like every other one. -->
+	<h1 class="visually-hidden">{localize(sections[0], locale).label}</h1>
+
+	<p class="tagline">{t("homepage.tagline", locale)}</p>
+	<p>{t("homepage.subtitle", locale)}</p>
+	<OverviewLead />
+	<div class="hero-actions">
+		<Button as="a" href="/getting-started/" variant="secondary">
+			{t("homepage.getStarted", locale)}
+		</Button>
+		<Button as="a" href="https://github.com/SureA11y/core" variant="outline">
+			{t("homepage.viewOnGitHub", locale)}
+		</Button>
+	</div>
+	<p class="hero-stats">
+		<a href="#checked-against-the-act-corpus">
+			{t("homepage.stats", locale, { rules: rules.length })}
+		</a>
+	</p>
+	<div class="badges">
+		{/* Package metadata labels, English in every language. */}
+		<span lang="en" translate="no">
+			<Badge label="engine" value={`v${engine.version}`} tone="neutral" />
+		</span>
+		<span lang="en" translate="no">
+			<Badge label="license" value={engine.license} tone="neutral" />
+		</span>
+	</div>
+	<p><a href={`${core}/CHANGELOG.md`}>{t("homepage.changelog", locale)}</a></p>
+
+	<OverviewContent />
+	<nav aria-label={t("homepage.exploreSections", locale)}>
+		<ul class="section-grid">
+			{
+				otherSections.map((section) => {
+					const { label, description } = localize(section, locale);
+					return (
+						<li>
+							<a class="section-card" href={section.href}>
+								<Card>
+									<p class="section-card-title">{label}</p>
+									<p>{description}</p>
+								</Card>
+							</a>
+						</li>
+					);
+				})
+			}
+		</ul>
+	</nav>
+	<OverviewAbout />
+</BaseLayout>
+
+<style>
+	.badges {
+		display: flex;
+		gap: var(--space-2);
+		margin: var(--space-4) 0 var(--space-6);
+	}
+
+	:global(.tagline) {
+		font-family: var(--font-display);
+		font-size: var(--text-lg);
+		color: var(--text-strong);
+	}
+
+	.hero-sub {
+		max-width: 60ch;
+		color: var(--text-body);
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+		margin: var(--space-4) 0;
+	}
+
+	.hero-stats {
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+	}
+
+	:global(blockquote) {
+		margin: var(--space-4) 0;
+		padding-left: var(--space-5);
+		border-left: var(--stroke-accent-bar) solid var(--accent-2);
+		font-family: var(--font-display);
+		font-size: var(--text-md);
+		color: var(--text-strong);
+	}
+
+	:global(.outcome-list) {
+		list-style: none;
+		padding: 0;
+	}
+
+	:global(.outcome-list li) {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-2);
+	}
+
+	.section-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		gap: var(--space-4);
+		margin-top: var(--space-8);
+		list-style: none;
+		margin-left: 0;
+		margin-right: 0;
+		padding: 0;
+	}
+
+	.section-grid > li {
+		margin-bottom: 0;
+	}
+
+	.section-card {
+		display: block;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.section-card:hover :global(> div) {
+		border-color: var(--border-strong);
+	}
+
+	.section-card:focus-visible {
+		outline: 2px solid var(--focus-ring);
+		outline-offset: 2px;
+		border-radius: var(--radius-sm);
+	}
+
+	.section-card :global(.section-card-title) {
+		margin: 0 0 var(--space-2);
+		font-family: var(--font-display);
+		font-size: var(--text-md);
+		color: var(--text-strong);
+	}
+
+	.section-card :global(p) {
+		margin: 0;
+		font-family: var(--font-body);
+		font-size: var(--text-sm);
+		color: var(--text-body);
+	}
+</style>
