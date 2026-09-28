@@ -67,7 +67,7 @@
 		"title": "Explizite Rolle muss für ihr Host-Element zulässig sein",
 		"description": "Prüft, dass ein explizites role=\"\"-Attribut eine der Rollen ist, die die ARIA-in-HTML-Spezifikation für das Host-Element erlaubt (z. B. ist role=\"tab\" auf <nav> nicht erlaubt).",
 		"applicability": "Gilt für Elemente mit einer expliziten, gültigen, nicht abstrakten Rolle, bei denen für die Kombination aus Host-Element und Attribut in der ARIA-in-HTML-Tabelle eine Einschränkung der zulässigen Rollen festgelegt ist (src/core/aria-helpers.js ALLOWED_ROLES_BY_ELEMENT).",
-		"expectation": "Die explizite Rolle ist eine der Rollen, die die ARIA-in-HTML-Spezifikation für dieses Host-Element erlaubt. Wird als CANTTELL statt FAIL gemeldet: Die Tabelle der zulässigen Rollen in ARIA in HTML ist eine Konformitätsanforderung an Autoren, ohne ACT-Regel und ohne WCAG-Zuordnung in irgendeiner Quelle. Die vom Autor angegebene Rolle ist trotzdem die Rolle, die assistive Technologien ausgeben; ob die Kombination jemandem schadet, hängt daher vom Widget ab, nicht von der Tabelle.",
+		"expectation": "Die explizite Rolle ist eine der Rollen, die die ARIA-in-HTML-Spezifikation für dieses Host-Element erlaubt. Wird als CANTTELL statt FAIL gemeldet: Die Tabelle der zulässigen Rollen in [[en:ARIA in HTML]] ist eine Konformitätsanforderung an Autoren, ohne ACT-Regel und ohne WCAG-Zuordnung in irgendeiner Quelle. Die vom Autor angegebene Rolle ist trotzdem die Rolle, die assistive Technologien ausgeben; ob die Kombination jemandem schadet, hängt daher vom Widget ab, nicht von der Tabelle.",
 		"examples": [
 			{
 				"state": "pass",
@@ -75,7 +75,7 @@
 			},
 			{
 				"state": "unknown",
-				"explanation": "`role=\"tab\"` gehört nicht zu den Rollen, die ARIA in HTML auf `<nav>` erlaubt."
+				"explanation": "`role=\"tab\"` gehört nicht zu den Rollen, die [[en:ARIA in HTML]] auf `<nav>` erlaubt."
 			}
 		]
 	},
@@ -291,7 +291,7 @@
 		"title": "Elemente mit role=\"text\" sollten keine fokussierbaren Nachfahren haben",
 		"description": "Prüft, dass Elemente mit role=\"text\" keinen fokussierbaren Nachfahren enthalten (Link, Button, Formularsteuerelement, tabindex, iframe oder contenteditable).",
 		"applicability": "Elemente mit einem expliziten `role=\"text\"`.",
-		"expectation": "`role=\"text\"` weist assistive Technologien an, den gesamten Teilbaum eines Elements als eine Einheit aus reinem Text zu behandeln (z. B. Text, der durch Styling optisch auf mehrere `<span>`s verteilt ist). Laut den WAI-ARIA Authoring Practices ist das nur sinnvoll, wenn dieser Teilbaum keine fokussierbaren Inhalte enthält: Ein fokussierbarer Nachfahre in einem Bereich, der als „nur Text“ gilt, ist für Tastatur- und AT-Nutzer unerreichbar oder verwirrend.",
+		"expectation": "`role=\"text\"` weist assistive Technologien an, den gesamten Teilbaum eines Elements als eine Einheit aus reinem Text zu behandeln (z. B. Text, der durch Styling optisch auf mehrere `<span>`s verteilt ist). Laut den [[en:WAI-ARIA Authoring Practices]] ist das nur sinnvoll, wenn dieser Teilbaum keine fokussierbaren Inhalte enthält: Ein fokussierbarer Nachfahre in einem Bereich, der als „nur Text“ gilt, ist für Tastatur- und AT-Nutzer unerreichbar oder verwirrend.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1155,7 +1155,7 @@
 		"title": "Seite darf nicht mehr als eine Banner-Landmark haben",
 		"description": "Prüft, dass es auf der Seite höchstens eine Banner-Landmark (role=\"banner\" oder ein nicht verschachteltes <header>) gibt.",
 		"applicability": "Gilt, sobald die Seite mindestens eine Banner-Landmark enthält (explizites role=\"banner\" oder ein implizites, nicht verschachteltes <header>; das gemeinsame Modell zur Landmark-Erkennung beschreiben die Implementierungshinweise von landmark-banner-is-top-level).",
-		"expectation": "Auf der Seite gibt es höchstens eine Banner-Landmark. Laut den WAI-ARIA Authoring Practices steht die Banner-Landmark für websitebezogene Inhalte, die die Seite als Ganzes kennzeichnen. Mehr als eine ist daher für Nutzer assistiver Technologien, die über Landmarks navigieren, mehrdeutig.",
+		"expectation": "Auf der Seite gibt es höchstens eine Banner-Landmark. Laut den [[en:WAI-ARIA Authoring Practices]] steht die Banner-Landmark für websitebezogene Inhalte, die die Seite als Ganzes kennzeichnen. Mehr als eine ist daher für Nutzer assistiver Technologien, die über Landmarks navigieren, mehrdeutig.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1854,7 +1854,7 @@
 	"svg-text-alternative-present": {
 		"title": "<svg> muss eine Textalternative bereitstellen",
 		"description": "Prüft, dass Inline-<svg>-Elemente über ein <title>-Element oder einen ARIA-Namen eine Textalternative bereitstellen (ein <desc>-Element allein zählt nicht).",
-		"applicability": "Gilt für Inline-<svg>-Elemente, die assistiven Technologien bereitgestellt werden UND offenbar etwas vermitteln sollen. „Soll etwas vermitteln“ wird deterministisch angenähert durch mindestens eines der folgenden Merkmale:\n\n- role=\"img\", role=\"graphics-symbol\" oder role=\"graphics-document\" am SVG-Wurzelelement selbst (die Rollen des WAI-ARIA Graphics Module, neben img). Erstreckt sich NICHT auf beliebige Nachfahren mit role=\"img\"/\"graphics-symbol\"/\"graphics-document\" innerhalb eines <svg>. Diese Prüfung betrifft nur die <svg>-Wurzel; role-img-text-alternative-present deckt dieselben drei Rollen auf jedem anderen Element ab, auch auf verschachtelten SVG-Formen (das eigene Fehlerbeispiel von ACT 7d6734: eine einfache `<svg>`-Wurzel mit einem verschachtelten `<circle role=\"graphics-symbol\">`).\n- aria-label / aria-labelledby vorhanden\n- <title> oder <desc> vorhanden (desc allein ist nur ein Signal für die Anwendbarkeit, siehe @expectation)\n- fokussierbar/per Tab erreichbar (z. B. tabindex, native Fokussierbarkeit)\n\nBilder mit role=\"presentation\" oder role=\"none\" sind nur ausgeschlossen, wenn sie nicht fokussierbar sind. Elemente, die ansonsten aus dem Accessibility Tree ausgeblendet sind, bleiben betroffen, wenn sie per Tab fokussierbar sind oder über IDREF-Beziehungen referenziert werden (gemäß den Eignungsprüfungen der Engine).",
+		"applicability": "Gilt für Inline-<svg>-Elemente, die assistiven Technologien bereitgestellt werden UND offenbar etwas vermitteln sollen. „Soll etwas vermitteln“ wird deterministisch angenähert durch mindestens eines der folgenden Merkmale:\n\n- role=\"img\", role=\"graphics-symbol\" oder role=\"graphics-document\" am SVG-Wurzelelement selbst (die Rollen des [[en:WAI-ARIA Graphics Module]], neben img). Erstreckt sich NICHT auf beliebige Nachfahren mit role=\"img\"/\"graphics-symbol\"/\"graphics-document\" innerhalb eines <svg>. Diese Prüfung betrifft nur die <svg>-Wurzel; role-img-text-alternative-present deckt dieselben drei Rollen auf jedem anderen Element ab, auch auf verschachtelten SVG-Formen (das eigene Fehlerbeispiel von ACT 7d6734: eine einfache `<svg>`-Wurzel mit einem verschachtelten `<circle role=\"graphics-symbol\">`).\n- aria-label / aria-labelledby vorhanden\n- <title> oder <desc> vorhanden (desc allein ist nur ein Signal für die Anwendbarkeit, siehe @expectation)\n- fokussierbar/per Tab erreichbar (z. B. tabindex, native Fokussierbarkeit)\n\nBilder mit role=\"presentation\" oder role=\"none\" sind nur ausgeschlossen, wenn sie nicht fokussierbar sind. Elemente, die ansonsten aus dem Accessibility Tree ausgeblendet sind, bleiben betroffen, wenn sie per Tab fokussierbar sind oder über IDREF-Beziehungen referenziert werden (gemäß den Eignungsprüfungen der Engine).",
 		"expectation": "Jedes betroffene <svg>-Element stellt eine Textalternative bereit über:\n\n- nicht leeren <title>-Text, ODER\n- einen ARIA-Namen (aria-label / aria-labelledby).\n\nEin <desc>-Element allein genügt NICHT: Laut [[en:SVG Accessibility API Mappings]] §7.1 trägt <desc> immer nur zur zugänglichen BESCHREIBUNG bei, nie zum zugänglichen NAMEN. Ein <svg> mit nur einem <desc> und ohne <title>/ARIA-Namen ist trotzdem „betroffen“ (desc zeigt die Absicht des Autors an), schlägt aber fehl.",
 		"examples": [
 			{

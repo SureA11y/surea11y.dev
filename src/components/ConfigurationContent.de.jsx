@@ -27,10 +27,10 @@ export function ConfigurationContent() {
 			<h2>CI-Integration</h2>
 			<p>
 				Bringen Sie ein funktionierendes Barrierefreiheits-Gate in Ihre Pipeline, ohne es von
-				Grund auf zu schreiben: Vorlagen für GitHub Actions und Bitbucket Pipelines zum direkten
+				Grund auf zu schreiben: Vorlagen für <span lang="en">GitHub Actions</span> und <span lang="en">Bitbucket Pipelines</span> zum direkten
 				Einfügen steuern einen Build über den Exit-Code der CLI, nehmen die bereits vorhandenen
 				Verstöße einer bestehenden Website in eine Baseline auf, sodass nur tatsächlich neue zum
-				Fehlschlag führen, und laden SARIF-Ergebnisse direkt in GitHub Code Scanning hoch, wo Ihr
+				Fehlschlag führen, und laden SARIF-Ergebnisse direkt in <span lang="en">GitHub Code Scanning</span> hoch, wo Ihr
 				Team ohnehin hinschaut. Die vollständigen Vorlagen finden Sie unter{" "}
 				<a href="/configuration/ci-integration/">CI-Integration</a>.
 			</p>

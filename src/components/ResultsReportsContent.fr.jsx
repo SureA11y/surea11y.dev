@@ -52,7 +52,7 @@ export function ResultsReportsContent() {
 
 			<h2>Rapport SARIF</h2>
 			<p>
-				Envoyez une analyse directement dans GitHub Code Scanning ou tout autre tableau de bord
+				Envoyez une analyse directement dans <span lang="en">GitHub Code Scanning</span> ou tout autre tableau de bord
 				compatible SARIF, sans écrire de convertisseur vous-même. Les violations deviennent des
 				résultats SARIF avec une empreinte stable, fondée sur le contenu, si bien qu’une{" "}
 				<a href="/conformance/baseline/">baseline / allowlist</a>{" "}
@@ -64,7 +64,7 @@ export function ResultsReportsContent() {
 			<h2>Rapport EARL</h2>
 			<p>
 				Un rapport d’implémentation W3C EARL/JSON-LD <strong>qui atteste le résultat de chaque
-				règle, pas seulement les échecs</strong>, le format que le groupe communautaire ACT Rules
+				règle, pas seulement les échecs</strong>, le format que le groupe communautaire <span lang="en">ACT Rules</span>
 				accepte comme preuve qu’un moteur implémente réellement ce qu’il annonce. Une preuve utile
 				quand une déclaration de conformité ACT doit être vérifiable, et pas seulement affirmée.
 				Voir <a href="/results-reports/earl-report/">Rapport EARL</a>.

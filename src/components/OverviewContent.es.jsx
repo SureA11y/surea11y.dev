@@ -99,7 +99,7 @@ export function OverviewContent() {
 			<h3 id="checked-against-the-act-corpus">Verificado contra el corpus de ACT</h3>
 			<p>
 				El motor incluye {rules.length} reglas. Cincuenta y ocho de ellas tienen una contraparte en{" "}
-				<a href="https://act-rules.github.io/">W3C ACT Rules</a> y se ejecutan contra los propios
+				<a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a> y se ejecutan contra los propios
 				casos de prueba publicados por ACT: 798 ejemplos en esas 58 reglas. El motor no falla en ninguno de los ejemplos
 				que ACT marca como aprobados o no aplicables, por lo que no informa falsos positivos frente a ese
 				corpus. Treinta y un ejemplos que ACT marca como fallidos quedan sin señalar (en su mayoría son

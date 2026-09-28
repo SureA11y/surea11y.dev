@@ -103,7 +103,7 @@ export function OverviewContent() {
 			<h3 id="checked-against-the-act-corpus">Geprüft am ACT-Korpus</h3>
 			<p>
 				Die Engine bringt {rules.length} Regeln mit. 58 davon haben eine Entsprechung in den{" "}
-				<a href="https://act-rules.github.io/">W3C ACT Rules</a> und laufen gegen die
+				<a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a> und laufen gegen die
 				veröffentlichten Testfälle von ACT: 798 Beispiele über diese 58 Regeln. Die Engine lässt
 				keines der Beispiele scheitern, die ACT als bestanden oder nicht anwendbar markiert, meldet
 				also gegenüber diesem Korpus keine Falsch-Positive. 31 Beispiele, die ACT als gescheitert

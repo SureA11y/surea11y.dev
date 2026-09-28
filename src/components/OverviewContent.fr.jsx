@@ -102,7 +102,7 @@ export function OverviewContent() {
 			<h3 id="checked-against-the-act-corpus">Vérifié sur le corpus ACT</h3>
 			<p>
 				Le moteur comprend {rules.length} règles. Cinquante-huit d’entre elles ont un équivalent
-				dans les <a href="https://act-rules.github.io/">W3C ACT Rules</a> et sont exécutées sur les
+				dans les <a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a> et sont exécutées sur les
 				cas de test publiés par ACT : 798 exemples répartis sur ces 58 règles. Le moteur n’échoue
 				sur aucun des exemples qu’ACT marque comme réussis ou inapplicables ; il ne produit donc
 				aucun faux positif sur ce corpus. Trente et un exemples qu’ACT marque en échec ne sont pas

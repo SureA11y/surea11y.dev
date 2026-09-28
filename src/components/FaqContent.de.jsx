@@ -49,7 +49,7 @@ export function FaqContent() {
 					<code>getBoundingClientRect()</code> liefert immer eine Geometrie von null. <strong>Regeln, die echtes
 					Layout brauchen, melden unter jsdom <code>notApplicable</code>, statt zu raten.</strong> Führen Sie
 					den Scan stattdessen in einem echten Browser aus (Puppeteer/Playwright — siehe{" "}
-					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> Pattern 2), um
+					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> <span lang="en">Pattern 2</span>), um
 					von diesen Regeln echte Befunde zu erhalten. Siehe{" "}
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>.
 				</p>

@@ -41,13 +41,13 @@ export function SarifReportContent() {
 				<code>--json</code>
 				が出すエンジンの生の結果の代わりに、またはそれと並べて、
 				<a href="https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html">SARIF 2.1.0</a>
-				のログを書き出します。GitHub Code Scanning（やその他のSARIFを読み込むダッシュボード）が前提とする標準形式です。
+				のログを書き出します。<span lang="en">GitHub Code Scanning</span>（やその他のSARIFを読み込むダッシュボード）が前提とする標準形式です。
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --sarif results.sarif", command: true }]} />
 			<p>
 				スキャンを実行して
 				<code>results.sarif</code>
-				を「<span lang="en">Security</span>」タブにアップロードする、そのまま貼り付けて使えるGitHub Actionsのワークフローは
+				を「<span lang="en">Security</span>」タブにアップロードする、そのまま貼り付けて使える<span lang="en">GitHub Actions</span>のワークフローは
 				<a href="/configuration/ci-integration/">CI連携</a>
 				を参照してください。
 			</p>
@@ -165,11 +165,11 @@ export function SarifReportContent() {
 			<ul>
 				<li>
 					<strong>ローカルファイルのスキャン</strong>
-					：現在の作業ディレクトリからの相対パス（区切りはスラッシュ）です。これがリポジトリ内の実在するファイルと一致すれば、GitHub Code Scanningは検出結果をインラインの注釈として表示できます。
+					：現在の作業ディレクトリからの相対パス（区切りはスラッシュ）です。これがリポジトリ内の実在するファイルと一致すれば、<span lang="en">GitHub Code Scanning</span>は検出結果をインラインの注釈として表示できます。
 				</li>
 				<li>
 					<strong>URLのスキャン</strong>
-					：スキャンしたURLそのものです。GitHub Code Scanningは検出結果を一覧には表示しますが、リポジトリ内のファイルではないURLにインラインの注釈を付けることはできません。これはSARIF／Code Scanningが検出結果とソースを結び付ける仕組みによるもので、surea11yの制限ではありません。インラインの注釈が必要なら、公開中のURLではなく、レンダリング済みのHTMLファイル（ビルド成果物など）をスキャンしてください。
+					：スキャンしたURLそのものです。<span lang="en">GitHub Code Scanning</span>は検出結果を一覧には表示しますが、リポジトリ内のファイルではないURLにインラインの注釈を付けることはできません。これはSARIF／<span lang="en">Code Scanning</span>が検出結果とソースを結び付ける仕組みによるもので、surea11yの制限ではありません。インラインの注釈が必要なら、公開中のURLではなく、レンダリング済みのHTMLファイル（ビルド成果物など）をスキャンしてください。
 				</li>
 			</ul>
 			<p>

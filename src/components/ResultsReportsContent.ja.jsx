@@ -44,7 +44,7 @@ export function ResultsReportsContent() {
 
 			<h2>SARIFレポート</h2>
 			<p>
-				変換処理を自分で書かなくても、スキャン結果をGitHub Code Scanningやその他のSARIF対応ダッシュボードへ直接渡せます。違反は内容ベースの安定したフィンガープリント付きでSARIFの結果に対応付けられるため、
+				変換処理を自分で書かなくても、スキャン結果を<span lang="en">GitHub Code Scanning</span>やその他のSARIF対応ダッシュボードへ直接渡せます。違反は内容ベースの安定したフィンガープリント付きでSARIFの結果に対応付けられるため、
 				<a href="/conformance/baseline/">ベースライン／許可リスト</a>
 				のフィルタリングもきれいに機能し、ダッシュボードは行番号がずれるたびに検出結果を見失うことなく、コミットをまたいで追跡できます。
 				<a href="/results-reports/sarif-report/">SARIFレポート</a>
@@ -55,7 +55,7 @@ export function ResultsReportsContent() {
 			<p>
 				W3CのEARL/JSON-LD形式の実装報告で、
 				<strong>失敗だけでなくすべてのルールの判定結果を表明します</strong>
-				。ACT Rulesコミュニティグループが、エンジンが主張どおりの実装をしていることの証拠として受け付ける形式です。ACTへの適合を、ただ主張するのではなく検証可能にする必要があるときに有用な証明になります。
+				。<span lang="en">ACT Rules</span>コミュニティグループが、エンジンが主張どおりの実装をしていることの証拠として受け付ける形式です。ACTへの適合を、ただ主張するのではなく検証可能にする必要があるときに有用な証明になります。
 				<a href="/results-reports/earl-report/">EARLレポート</a>
 				を参照してください。
 			</p>

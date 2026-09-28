@@ -140,7 +140,7 @@ export const bindingUsage = {
 	selenium: {
 		intro: (
 			<p>
-				<a href="https://www.selenium.dev/">Selenium WebDriver</a> es el estándar histórico para
+				<a href="https://www.selenium.dev/"><span lang="en">Selenium WebDriver</span></a> es el estándar histórico para
 				controlar navegadores reales desde cualquier lenguaje: la herramienta de automatización
 				multinavegador más consolidada, usada habitualmente para pruebas end-to-end. surea11y se
 				integra mediante la integración (<code>binding</code>){" "}

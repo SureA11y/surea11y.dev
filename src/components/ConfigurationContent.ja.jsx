@@ -18,7 +18,7 @@ export function ConfigurationContent() {
 
 			<h2>CI連携</h2>
 			<p>
-				アクセシビリティのゲートを一から書かずにパイプラインへ組み込めます。そのまま貼り付けられるGitHub ActionsとBitbucket Pipelinesのテンプレートが、CLIの終了コードでビルドを判定し、既存サイトにもともとある違反をベースラインとして記録して本当に新しい違反だけで失敗させ、SARIFの結果をチームが普段見ているGitHub Code Scanningへ直接アップロードします。テンプレートの全体は
+				アクセシビリティのゲートを一から書かずにパイプラインへ組み込めます。そのまま貼り付けられる<span lang="en">GitHub Actions</span>と<span lang="en">Bitbucket Pipelines</span>のテンプレートが、CLIの終了コードでビルドを判定し、既存サイトにもともとある違反をベースラインとして記録して本当に新しい違反だけで失敗させ、SARIFの結果をチームが普段見ている<span lang="en">GitHub Code Scanning</span>へ直接アップロードします。テンプレートの全体は
 				<a href="/configuration/ci-integration/">CI連携</a>
 				を参照してください。
 			</p>

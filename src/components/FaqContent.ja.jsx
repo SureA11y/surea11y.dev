@@ -74,7 +74,7 @@ export function FaqContent() {
 					</strong>
 					これらのルールで実際の検出結果を得るには、実際のブラウザー（Puppeteer/Playwright。
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
-					のPattern 2を参照）で実行してください。
+					の<span lang="en">Pattern 2</span>を参照）で実行してください。
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>
 					も参照してください。
 				</p>

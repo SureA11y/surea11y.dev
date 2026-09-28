@@ -20,7 +20,7 @@ export function EarlReportContent() {
 				は、スキャン結果をJSON-LD形式の
 				<a href="https://www.w3.org/TR/EARL10-Schema/">EARL 1.0</a>
 				として出力します。EARLは「このツールがこの対象をテストし、この結果を得た」ことを表すためにW3Cが公開している語彙で、
-				<a href="https://act-rules.github.io/">ACT Rules</a>
+				<a href="https://act-rules.github.io/"><span lang="en">ACT Rules</span></a>
 				コミュニティグループが実装レポートとして受け付ける形式でもあります。
 			</p>
 			<CodeBlock
@@ -41,7 +41,7 @@ export function EarlReportContent() {
 			<p>読み手は2種類いて、同じドキュメントを別々の理由で必要としています。</p>
 			<p>
 				<strong>実装レポート</strong>
-				は、ACT Rulesコミュニティグループのテストケースに対してこのエンジンがどう振る舞うかを伝えるものです。これによって、エンジンがほかの実装と並んで掲載されます。掲載は推奨を意味せず、W3Cがデータを検証するわけでもありません。正確な言い方は
+				は、<span lang="en">ACT Rules</span>コミュニティグループのテストケースに対してこのエンジンがどう振る舞うかを伝えるものです。これによって、エンジンがほかの実装と並んで掲載されます。掲載は推奨を意味せず、W3Cがデータを検証するわけでもありません。正確な言い方は
 				<em>「ACT実装として掲載されている」</em>
 				であり、
 				<em>「W3C認定」</em>
@@ -146,7 +146,7 @@ export function EarlReportContent() {
 				<code>non-text-content</code>
 				）。
 				<code>normativeMappings</code>
-				にはUnderstanding文書への参照やWCAG以外の規格も含まれており、これらは本物の達成基準と同じく
+				には<span lang="en">Understanding</span>文書への参照やWCAG以外の規格も含まれており、これらは本物の達成基準と同じく
 				<code>standard: "WCAG"</code>
 				と
 				<code>requirement</code>

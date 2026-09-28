@@ -35,7 +35,7 @@ export function SarifReportContent() {
 			<p>
 				<code>--sarif &lt;path&gt;</code> schreibt ein Log im Format{" "}
 				<a href="https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html">SARIF 2.1.0</a>,
-				dem Standardformat, das GitHub Code Scanning (und andere Dashboards, die SARIF lesen)
+				dem Standardformat, das <span lang="en">GitHub Code Scanning</span> (und andere Dashboards, die SARIF lesen)
 				erwartet, statt oder zusätzlich zum rohen Engine-Ergebnis von <code>--json</code>.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --sarif results.sarif", command: true }]} />
@@ -133,12 +133,12 @@ export function SarifReportContent() {
 				<li>
 					<strong>Scans lokaler Dateien</strong>: ein Pfad relativ zum aktuellen Arbeitsverzeichnis
 					(mit Schrägstrichen). Entspricht er einer echten Datei in Ihrem Repository, kann GitHub
-					Code Scanning den Befund als Inline-Annotation anzeigen.
+					<span lang="en">Code Scanning</span> den Befund als Inline-Annotation anzeigen.
 				</li>
 				<li>
-					<strong>URL-Scans</strong>: die gescannte URL selbst. GitHub Code Scanning listet den
+					<strong>URL-Scans</strong>: die gescannte URL selbst. <span lang="en">GitHub Code Scanning</span> listet den
 					Befund trotzdem auf, kann aber keine Inline-Annotation an eine URL hängen, die keine
-					Datei im Repository ist. Das liegt daran, wie SARIF und Code Scanning Befunde mit dem
+					Datei im Repository ist. Das liegt daran, wie SARIF und <span lang="en">Code Scanning</span> Befunde mit dem
 					Quellcode verknüpfen, und ist keine Einschränkung von surea11y. Wenn Sie
 					Inline-Annotationen brauchen, scannen Sie die gerenderte HTML-Datei (z. B. ein
 					Build-Artefakt) statt einer Live-URL.

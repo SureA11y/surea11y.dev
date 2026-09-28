@@ -54,7 +54,7 @@ export function CliUsageContent() {
 				HTTP(S)-GET — und führt nie JavaScript der Seite aus. Für clientseitig gerenderte Seiten
 				verwenden Sie stattdessen eines der Bindings oder rufen die Engine direkt in einem
 				echten, gesteuerten Browser auf (siehe{" "}
-				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> Pattern 2).
+				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> <span lang="en">Pattern 2</span>).
 			</p>
 			<p>
 				Vollständige Referenz der Flags, Vertrag für eigene Regeln und CI-Rezepte:{" "}

@@ -142,7 +142,7 @@ export const bindingUsage = {
 	selenium: {
 		intro: (
 			<p>
-				<a href="https://www.selenium.dev/">Selenium WebDriver</a> ist der langjährige Standard,
+				<a href="https://www.selenium.dev/"><span lang="en">Selenium WebDriver</span></a> ist der langjährige Standard,
 				um echte Browser aus jeder Sprache heraus zu steuern — das etablierteste
 				browserübergreifende Automatisierungswerkzeug, häufig für End-to-End-Tests eingesetzt.
 				surea11y wird über das Binding{" "}

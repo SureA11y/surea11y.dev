@@ -26,10 +26,10 @@ export function ConfigurationContent() {
 			<h2>Integración con CI</h2>
 			<p>
 				Consigue una puerta de accesibilidad funcionando en tu pipeline de CI sin escribirla desde cero:
-				plantillas listas para pegar de GitHub Actions y Bitbucket Pipelines que condicionan una
+				plantillas listas para pegar de <span lang="en">GitHub Actions</span> y <span lang="en">Bitbucket Pipelines</span> que condicionan una
 				compilación al propio código de salida de la CLI, establecen una línea base de las violaciones
 				preexistentes de un sitio ya existente para que solo falles en las genuinamente nuevas, y
-				suben resultados SARIF directamente a GitHub Code Scanning donde tu equipo ya mira. Ver{" "}
+				suben resultados SARIF directamente a <span lang="en">GitHub Code Scanning</span> donde tu equipo ya mira. Ver{" "}
 				<a href="/configuration/ci-integration/">Integración con CI</a> para las plantillas
 				completas.
 			</p>

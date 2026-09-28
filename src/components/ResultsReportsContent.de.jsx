@@ -53,7 +53,7 @@ export function ResultsReportsContent() {
 
 			<h2>SARIF-Bericht</h2>
 			<p>
-				Speisen Sie einen Scan direkt in GitHub Code Scanning oder jedes andere Dashboard ein,
+				Speisen Sie einen Scan direkt in <span lang="en">GitHub Code Scanning</span> oder jedes andere Dashboard ein,
 				das SARIF verarbeitet, ohne selbst einen Konverter zu schreiben. Verstöße werden auf
 				SARIF-Ergebnisse mit einem stabilen, inhaltsbasierten Fingerprint abgebildet. So filtert
 				eine <a href="/conformance/baseline/">Baseline / Allowlist</a> weiterhin sauber, und ein
@@ -65,7 +65,7 @@ export function ResultsReportsContent() {
 			<h2>EARL-Bericht</h2>
 			<p>
 				Ein W3C-Implementierungsbericht in EARL/JSON-LD, der <strong>das Ergebnis jeder Regel
-				festhält, nicht nur die Fehlschläge</strong> — das Format, das die ACT Rules Community
+				festhält, nicht nur die Fehlschläge</strong> — das Format, das die <span lang="en">ACT Rules</span> Community
 				Group als Nachweis akzeptiert, dass eine Engine tatsächlich implementiert, was sie
 				behauptet. Ein nützlicher Beleg, wenn eine Aussage zur ACT-Konformität überprüfbar sein
 				muss und nicht nur behauptet werden soll. Siehe{" "}

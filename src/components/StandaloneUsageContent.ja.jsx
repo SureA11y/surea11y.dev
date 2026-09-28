@@ -74,7 +74,7 @@ export function StandaloneUsageContent() {
 				<code>require('@surea11y/core')</code>
 				を直接呼び出すのが、もう1つのスタンドアロンな方法です。
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
-				のPattern 1/Pattern 2にあたります。実際のブラウザーなしでNode上のjsdomを使う方法と、バインディングを経由せずにPuppeteer/Playwrightを自分で操作する方法です。
+				の<span lang="en">Pattern 1</span>/<span lang="en">Pattern 2</span>にあたります。実際のブラウザーなしでNode上のjsdomを使う方法と、バインディングを経由せずにPuppeteer/Playwrightを自分で操作する方法です。
 			</p>
 		</>
 	);

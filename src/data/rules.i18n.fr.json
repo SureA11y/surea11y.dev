@@ -65,17 +65,17 @@
 	},
 	"aria-allowed-role": {
 		"title": "Le rôle explicite doit être autorisé pour son élément hôte",
-		"description": "Vérifie qu’un attribut role=\"\" explicite fait partie des rôles que la spécification ARIA in HTML autorise pour l’élément hôte (p. ex. role=\"tab\" n’est pas autorisé sur <nav>).",
-		"applicability": "S’applique aux éléments dotés d’un rôle explicite, valide et non abstrait, lorsque la combinaison élément hôte/attribut fait l’objet d’une contrainte de rôles autorisés dans la table ARIA in HTML (src/core/aria-helpers.js ALLOWED_ROLES_BY_ELEMENT).",
-		"expectation": "Le rôle explicite fait partie des rôles que la spécification ARIA in HTML autorise pour cet élément hôte. Signalé en `cantTell` plutôt qu’en `fail` : la table des rôles autorisés d’ARIA in HTML est une exigence de conformité pour les auteurs, sans règle ACT ni correspondance WCAG dans aucune source. Le rôle demandé par l’auteur reste celui que les technologies d’assistance exposent ; savoir si la combinaison gêne quelqu’un dépend donc du widget, pas de la table.",
+		"description": "Vérifie qu’un attribut role=\"\" explicite fait partie des rôles que la spécification [[en:ARIA in HTML]] autorise pour l’élément hôte (p. ex. role=\"tab\" n’est pas autorisé sur <nav>).",
+		"applicability": "S’applique aux éléments dotés d’un rôle explicite, valide et non abstrait, lorsque la combinaison élément hôte/attribut fait l’objet d’une contrainte de rôles autorisés dans la table [[en:ARIA in HTML]] (src/core/aria-helpers.js ALLOWED_ROLES_BY_ELEMENT).",
+		"expectation": "Le rôle explicite fait partie des rôles que la spécification [[en:ARIA in HTML]] autorise pour cet élément hôte. Signalé en `cantTell` plutôt qu’en `fail` : la table des rôles autorisés d’[[en:ARIA in HTML]] est une exigence de conformité pour les auteurs, sans règle ACT ni correspondance WCAG dans aucune source. Le rôle demandé par l’auteur reste celui que les technologies d’assistance exposent ; savoir si la combinaison gêne quelqu’un dépend donc du widget, pas de la table.",
 		"examples": [
 			{
 				"state": "pass",
-				"explanation": "`role=\"navigation\"` est autorisé sur `<nav>` par la spécification ARIA in HTML (c’est aussi le rôle implicite de l’élément)."
+				"explanation": "`role=\"navigation\"` est autorisé sur `<nav>` par la spécification [[en:ARIA in HTML]] (c’est aussi le rôle implicite de l’élément)."
 			},
 			{
 				"state": "unknown",
-				"explanation": "`role=\"tab\"` ne fait pas partie des rôles qu’ARIA in HTML autorise sur `<nav>`."
+				"explanation": "`role=\"tab\"` ne fait pas partie des rôles qu’[[en:ARIA in HTML]] autorise sur `<nav>`."
 			}
 		]
 	},
@@ -178,7 +178,7 @@
 	"aria-prohibited-attr": {
 		"title": "Les attributs de nommage ARIA ne doivent pas être utilisés sur les rôles qui les interdisent",
 		"description": "Vérifie qu’aria-label/aria-labelledby ne sont pas présents sur des rôles WAI-ARIA dont la spécification interdit explicitement le nommage ARIA (p. ex. generic, emphasis, strong, paragraph).",
-		"applicability": "S’applique (a) aux éléments dont le rôle explicite et valide est l’un des rôles ARIA 1.2 dotés d’une liste documentée « [[en:Prohibited ARIA States and Properties]] » pour les attributs de nommage (rôles de pure sémantique textuelle ou rôles structurels sans nommage : caption, code, deletion, emphasis, generic, insertion, mark, none, paragraph, presentation, strong, subscript, suggestion, superscript, time), et (b) aux éléments sans aucun rôle : un ensemble choisi de balises HTML natives dont on a vérifié qu’elles n’ont pas de rôle implicite (voir ROLELESS_NATIVE_TAGS ci-dessous), ou tout élément personnalisé autonome (une balise avec trait d’union, définie par l’auteur selon la spécification Custom Elements ; voir isRolelessCustomElementTag ci-dessous). Dans les deux cas, uniquement les éléments qui portent aussi aria-label ou aria-labelledby.",
+		"applicability": "S’applique (a) aux éléments dont le rôle explicite et valide est l’un des rôles ARIA 1.2 dotés d’une liste documentée « [[en:Prohibited ARIA States and Properties]] » pour les attributs de nommage (rôles de pure sémantique textuelle ou rôles structurels sans nommage : caption, code, deletion, emphasis, generic, insertion, mark, none, paragraph, presentation, strong, subscript, suggestion, superscript, time), et (b) aux éléments sans aucun rôle : un ensemble choisi de balises HTML natives dont on a vérifié qu’elles n’ont pas de rôle implicite (voir ROLELESS_NATIVE_TAGS ci-dessous), ou tout élément personnalisé autonome (une balise avec trait d’union, définie par l’auteur selon la spécification [[en:Custom Elements]] ; voir isRolelessCustomElementTag ci-dessous). Dans les deux cas, uniquement les éléments qui portent aussi aria-label ou aria-labelledby.",
 		"expectation": "Les attributs interdits ne doivent pas être présents sur (a) ; pour (b), l’attribut de nommage est au mieux peu fiable (rien qui tienne compte du nom accessible pour s’y rattacher) et au pire ignoré silencieusement par les technologies d’assistance. Voir la note d’implémentation de la branche sans rôle ci-dessous pour la répartition des niveaux de confiance qui en découle.",
 		"examples": [
 			{
@@ -291,7 +291,7 @@
 		"title": "Les éléments role=\"text\" ne devraient avoir aucun descendant focalisable",
 		"description": "Vérifie que les éléments dotés de role=\"text\" ne contiennent aucun descendant focalisable (lien, bouton, contrôle de formulaire, tabindex, iframe ou contenteditable).",
 		"applicability": "Éléments dotés d’un `role=\"text\"` explicite.",
-		"expectation": "`role=\"text\"` indique aux technologies d’assistance de traiter tout le sous-arbre d’un élément comme une seule unité de texte brut (p. ex. un texte découpé visuellement en plusieurs `<span>` pour la mise en forme). Selon les WAI-ARIA Authoring Practices, cela n’a de sens que si ce sous-arbre ne contient aucun contenu focalisable : un descendant focalisable dans une zone « ceci n’est que du texte » est inaccessible ou déroutant pour les utilisateurs du clavier ou de technologies d’assistance.",
+		"expectation": "`role=\"text\"` indique aux technologies d’assistance de traiter tout le sous-arbre d’un élément comme une seule unité de texte brut (p. ex. un texte découpé visuellement en plusieurs `<span>` pour la mise en forme). Selon les [[en:WAI-ARIA Authoring Practices]], cela n’a de sens que si ce sous-arbre ne contient aucun contenu focalisable : un descendant focalisable dans une zone « ceci n’est que du texte » est inaccessible ou déroutant pour les utilisateurs du clavier ou de technologies d’assistance.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1155,7 +1155,7 @@
 		"title": "La page ne doit pas contenir plus d’un landmark banner",
 		"description": "Vérifie que la page contient au plus un landmark banner (role=\"banner\" ou un <header> non imbriqué).",
 		"applicability": "S’applique dès que la page contient au moins un landmark banner (role=\"banner\" explicite, ou <header> implicite non imbriqué ; voir les notes d’implémentation de landmark-banner-is-top-level pour le modèle de détection des landmarks commun).",
-		"expectation": "La page contient au plus un landmark banner. D’après les WAI-ARIA Authoring Practices, le landmark banner représente le contenu propre au site qui identifie la page dans son ensemble ; en avoir plusieurs est donc ambigu pour les utilisateurs de technologies d’assistance qui naviguent par landmarks.",
+		"expectation": "La page contient au plus un landmark banner. D’après les [[en:WAI-ARIA Authoring Practices]], le landmark banner représente le contenu propre au site qui identifie la page dans son ensemble ; en avoir plusieurs est donc ambigu pour les utilisateurs de technologies d’assistance qui naviguent par landmarks.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1854,8 +1854,8 @@
 	"svg-text-alternative-present": {
 		"title": "<svg> doit fournir une alternative textuelle",
 		"description": "Vérifie que les éléments <svg> en ligne fournissent une alternative textuelle au moyen d’un élément <title> ou d’un nom ARIA (un élément <desc> seul ne suffit pas).",
-		"applicability": "S’applique aux éléments <svg> en ligne exposés aux technologies d’assistance ET qui semblent destinés à transmettre une information. « Destiné à transmettre une information » est approché de façon déterministe par au moins l’un des critères suivants :\n\n- role=\"img\", role=\"graphics-symbol\" ou role=\"graphics-document\" sur l’élément racine SVG lui-même (les rôles du WAI-ARIA Graphics Module, en plus de img). Cela ne s’étend PAS à n’importe quel descendant role=\"img\"/\"graphics-symbol\"/\"graphics-document\" imbriqué dans un <svg>. Le périmètre de cette vérification se limite à la racine <svg> ; role-img-text-alternative-present couvre ces trois mêmes rôles sur tout autre élément, y compris les formes SVG imbriquées (l’exemple en échec d’ACT 7d6734 lui-même : une racine `<svg>` nue contenant un `<circle role=\"graphics-symbol\">` imbriqué).\n- présence d’aria-label / aria-labelledby\n- présence de <title> ou <desc> (desc seul n’est qu’un signal d’applicabilité, voir @expectation)\n- focalisable/atteignable par tabulation (par ex. tabindex, focalisabilité native)\n\nLes images avec role=\"presentation\" ou role=\"none\" ne sont exclues que si elles ne sont pas focalisables. Les éléments autrement masqués de l’arbre d’accessibilité restent applicables s’ils sont focalisables par tabulation ou référencés par des relations IDREF (selon les vérifications d’éligibilité du moteur).",
-		"expectation": "Chaque élément <svg> applicable fournit une alternative textuelle au moyen :\n\n- d’un texte <title> non vide, OU\n- d’un nom ARIA (aria-label / aria-labelledby).\n\nUn élément <desc> seul ne suffit PAS : d’après la spécification SVG Accessibility API Mappings, §7.1, <desc> ne contribue jamais qu’à la DESCRIPTION accessible, jamais au NOM accessible. Un <svg> doté seulement d’un <desc>, sans <title> ni nom ARIA, reste « applicable » (desc signale une intention de l’auteur) mais échoue.",
+		"applicability": "S’applique aux éléments <svg> en ligne exposés aux technologies d’assistance ET qui semblent destinés à transmettre une information. « Destiné à transmettre une information » est approché de façon déterministe par au moins l’un des critères suivants :\n\n- role=\"img\", role=\"graphics-symbol\" ou role=\"graphics-document\" sur l’élément racine SVG lui-même (les rôles du [[en:WAI-ARIA Graphics Module]], en plus de img). Cela ne s’étend PAS à n’importe quel descendant role=\"img\"/\"graphics-symbol\"/\"graphics-document\" imbriqué dans un <svg>. Le périmètre de cette vérification se limite à la racine <svg> ; role-img-text-alternative-present couvre ces trois mêmes rôles sur tout autre élément, y compris les formes SVG imbriquées (l’exemple en échec d’ACT 7d6734 lui-même : une racine `<svg>` nue contenant un `<circle role=\"graphics-symbol\">` imbriqué).\n- présence d’aria-label / aria-labelledby\n- présence de <title> ou <desc> (desc seul n’est qu’un signal d’applicabilité, voir @expectation)\n- focalisable/atteignable par tabulation (par ex. tabindex, focalisabilité native)\n\nLes images avec role=\"presentation\" ou role=\"none\" ne sont exclues que si elles ne sont pas focalisables. Les éléments autrement masqués de l’arbre d’accessibilité restent applicables s’ils sont focalisables par tabulation ou référencés par des relations IDREF (selon les vérifications d’éligibilité du moteur).",
+		"expectation": "Chaque élément <svg> applicable fournit une alternative textuelle au moyen :\n\n- d’un texte <title> non vide, OU\n- d’un nom ARIA (aria-label / aria-labelledby).\n\nUn élément <desc> seul ne suffit PAS : d’après la spécification [[en:SVG Accessibility API Mappings]], §7.1, <desc> ne contribue jamais qu’à la DESCRIPTION accessible, jamais au NOM accessible. Un <svg> doté seulement d’un <desc>, sans <title> ni nom ARIA, reste « applicable » (desc signale une intention de l’auteur) mais échoue.",
 		"examples": [
 			{
 				"state": "pass",
