@@ -25,6 +25,12 @@ const { label, description } = localize(rulesSection, locale);
 const localizedRules = rules.map((r) => localizeRule(r, locale));
 const automatic = localizedRules.filter((r) => r.type === "automatic");
 const manual = localizedRules.filter((r) => r.type === "manual");
+// "{outcome}" stays in the translated heading so each language places the
+// <code> where its word order needs it.
+const heading = (key: string, n: number) => t(key, locale, { n }).split("{outcome}");
+const [autoBefore, autoAfter] = heading("rulesIndex.automaticHeading", automatic.length);
+const [manualBefore, manualAfter] = heading("rulesIndex.manualHeading", manual.length);
+
 const available = translatedLocales("component", "RulesIntroContent").filter((l) =>
 	rules.every((r) => isRuleTranslated(r.ruleId, l))
 );
@@ -34,9 +40,9 @@ const available = translatedLocales("component", "RulesIntroContent").filter((l)
 	<h1>{label}</h1>
 	<RulesIntroContent />
 
-	<h2>{t("rulesIndex.automaticHeading", locale, { n: automatic.length })} <code>fail</code></h2>
+	<h2>{autoBefore}<code>fail</code>{autoAfter}</h2>
 	<RulesTable caption={t("rulesIndex.automaticCaption", locale, { n: automatic.length })} rows={automatic} locale={locale} />
 
-	<h2>{t("rulesIndex.manualHeading", locale, { n: manual.length })} <code>cantTell</code></h2>
+	<h2>{manualBefore}<code>cantTell</code>{manualAfter}</h2>
 	<RulesTable caption={t("rulesIndex.manualCaption", locale, { n: manual.length })} rows={manual} locale={locale} />
 </BaseLayout>

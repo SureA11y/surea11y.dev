@@ -15,7 +15,8 @@
     "docs:locales": "node scripts/generate-locale-data.cjs",
     "docs:locales:check": "node scripts/generate-locale-data.cjs --check",
     "check:links": "node scripts/check-links.mjs",
-    "i18n:check": "node scripts/check-i18n.mjs"
+    "i18n:check": "node scripts/check-i18n.mjs",
+    "check:typography": "node scripts/check-typography.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",

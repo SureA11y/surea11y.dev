@@ -23,3 +23,36 @@ a:focus-visible {
 	outline: 2px solid var(--focus-ring);
 	outline-offset: 2px;
 }
+
+/* Japanese. The brand fonts carry no Japanese glyphs, so each stack keeps
+   them first (Latin text, numbers and code look the same as on every other
+   page) and then names Japanese system fonts explicitly: left to a generic
+   fallback, some systems pick a Chinese face for kanji. Set on :lang(ja) so
+   it also covers a Japanese page's chrome around English fallback content. */
+:lang(ja) {
+	--font-ja: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic",
+		Meiryo, "Noto Sans JP", "Noto Sans CJK JP", sans-serif;
+	--font-body: "Public Sans", var(--font-ja);
+	--font-display: "Space Grotesk", var(--font-ja);
+	--font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, "Noto Sans Mono CJK JP", monospace;
+	/* Kanji and kana need more vertical room than Latin text at the same size. */
+	--leading-relaxed: 1.8;
+	--leading-snug: 1.45;
+	/* Line-breaking rules for Japanese punctuation (no line starting with 。、」 etc.). */
+	line-break: strict;
+	/* Where supported, adds the small gap between Japanese and Latin text
+	   that the translations deliberately leave out as characters. */
+	text-autospace: normal;
+}
+
+/* Break headings between phrases rather than between any two characters. */
+:lang(ja) :is(h1, h2, h3, .tagline) {
+	word-break: auto-phrase;
+}
+
+/* Japanese has no italic; slanted kana and kanji read as a rendering fault.
+   Emphasis becomes weight instead. */
+:lang(ja) :is(em, i) {
+	font-style: normal;
+	font-weight: 600;
+}
