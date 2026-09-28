@@ -65,17 +65,17 @@
 	},
 	"aria-allowed-role": {
 		"title": "明示的なロールはホスト要素で許可されている必要があります",
-		"description": "明示的なrole=\"\"属性が、ARIA in HTML仕様でそのホスト要素に許可されているロールの1つであることを確認します（例：<nav>ではrole=\"tab\"は許可されていない）。",
-		"applicability": "有効で抽象的でない明示的なロールを持つ要素のうち、ホスト要素と属性の組み合わせについて、ARIA in HTMLの表（src/core/aria-helpers.jsのALLOWED_ROLES_BY_ELEMENT）に許可ロールの制約が定められているものに適用されます。",
-		"expectation": "明示的なロールは、ARIA in HTML仕様でそのホスト要素に許可されているロールの1つです。FAILではなくCANTTELLとして報告されます。ARIA in HTMLの許可ロール表は作成者向けの適合要件であり、対応するACTルールもなく、どの資料にもWCAGとの対応付けがありません。作成者が指定したロールは、そのまま支援技術に公開されるロールでもあるため、その組み合わせが誰かに不利益を与えるかどうかは表ではなくウィジェット次第です。",
+		"description": "明示的なrole=\"\"属性が、[[en:ARIA in HTML]]仕様でそのホスト要素に許可されているロールの1つであることを確認します（例：<nav>ではrole=\"tab\"は許可されていない）。",
+		"applicability": "有効で抽象的でない明示的なロールを持つ要素のうち、ホスト要素と属性の組み合わせについて、[[en:ARIA in HTML]]の表（src/core/aria-helpers.jsのALLOWED_ROLES_BY_ELEMENT）に許可ロールの制約が定められているものに適用されます。",
+		"expectation": "明示的なロールは、[[en:ARIA in HTML]]仕様でそのホスト要素に許可されているロールの1つです。FAILではなくCANTTELLとして報告されます。[[en:ARIA in HTML]]の許可ロール表は作成者向けの適合要件であり、対応するACTルールもなく、どの資料にもWCAGとの対応付けがありません。作成者が指定したロールは、そのまま支援技術に公開されるロールでもあるため、その組み合わせが誰かに不利益を与えるかどうかは表ではなくウィジェット次第です。",
 		"examples": [
 			{
 				"state": "pass",
-				"explanation": "`role=\"navigation\"`はARIA in HTML仕様で`<nav>`に許可されています（この要素の暗黙のロールでもあります）。"
+				"explanation": "`role=\"navigation\"`は[[en:ARIA in HTML]]仕様で`<nav>`に許可されています（この要素の暗黙のロールでもあります）。"
 			},
 			{
 				"state": "unknown",
-				"explanation": "`role=\"tab\"`は、ARIA in HTMLが`<nav>`に許可しているロールではありません。"
+				"explanation": "`role=\"tab\"`は、[[en:ARIA in HTML]]が`<nav>`に許可しているロールではありません。"
 			}
 		]
 	},
@@ -178,7 +178,7 @@
 	"aria-prohibited-attr": {
 		"title": "名前付けを禁止するロールにはARIAの名前付け属性を使わない必要があります",
 		"description": "仕様で明示的にARIAによる名前付けが禁止されているWAI-ARIAロール（例：generic、emphasis、strong、paragraph）に、aria-label/aria-labelledbyが指定されていないことを確認します。",
-		"applicability": "次の要素に適用されます。(a) 明示的で有効なロールが、名前付け属性について「[[en:Prohibited ARIA States and Properties]]」の一覧が定められたARIA 1.2のロール（純粋にテキストの意味を表すロール、または名前を付けない構造ロール：caption、code、deletion、emphasis、generic、insertion、mark、none、paragraph、presentation、strong、subscript、suggestion、superscript、time）である要素。(b) ロールをまったく持たない要素。暗黙のロールを持たないことを確認済みのネイティブHTMLタグの厳選リスト（後述のROLELESS_NATIVE_TAGSを参照）、または任意の自律カスタム要素（Custom Elements仕様に基づく、作成者定義のハイフン付きタグ。後述のisRolelessCustomElementTagを参照）が該当します。いずれの場合も、aria-labelまたはaria-labelledbyを持つ要素だけが対象です。",
+		"applicability": "次の要素に適用されます。(a) 明示的で有効なロールが、名前付け属性について「[[en:Prohibited ARIA States and Properties]]」の一覧が定められたARIA 1.2のロール（純粋にテキストの意味を表すロール、または名前を付けない構造ロール：caption、code、deletion、emphasis、generic、insertion、mark、none、paragraph、presentation、strong、subscript、suggestion、superscript、time）である要素。(b) ロールをまったく持たない要素。暗黙のロールを持たないことを確認済みのネイティブHTMLタグの厳選リスト（後述のROLELESS_NATIVE_TAGSを参照）、または任意の自律カスタム要素（[[en:Custom Elements]]仕様に基づく、作成者定義のハイフン付きタグ。後述のisRolelessCustomElementTagを参照）が該当します。いずれの場合も、aria-labelまたはaria-labelledbyを持つ要素だけが対象です。",
 		"expectation": "(a) では禁止された属性があってはいけません。(b) では名前付け属性はよくて不確実（アクセシブルな名前を扱う仕組みがない）、悪ければ支援技術に何の通知もなく無視されます。これによって生じる確度の分かれ方については、後述のロールなしの場合の実装メモを参照してください。",
 		"examples": [
 			{
@@ -291,7 +291,7 @@
 		"title": "role=\"text\"の要素はフォーカス可能な子孫を持たないことが推奨されます",
 		"description": "role=\"text\"を持つ要素が、フォーカス可能な子孫（リンク、ボタン、フォームコントロール、tabindex、iframe、contenteditable）を含まないことを確認します。",
 		"applicability": "明示的な`role=\"text\"`を持つ要素。",
-		"expectation": "`role=\"text\"`は、要素のサブツリー全体をひとまとまりのプレーンテキストとして扱うよう支援技術に指示します（例：スタイルのために複数の`<span>`に分割されたテキスト）。WAI-ARIA Authoring Practicesによれば、これが意味を持つのはサブツリーにフォーカス可能なコンテンツがない場合だけです。「ただのテキスト」とされた領域の中にフォーカス可能な子孫があると、キーボードや支援技術のユーザーはそこに到達できないか、混乱することになります。",
+		"expectation": "`role=\"text\"`は、要素のサブツリー全体をひとまとまりのプレーンテキストとして扱うよう支援技術に指示します（例：スタイルのために複数の`<span>`に分割されたテキスト）。[[en:WAI-ARIA Authoring Practices]]によれば、これが意味を持つのはサブツリーにフォーカス可能なコンテンツがない場合だけです。「ただのテキスト」とされた領域の中にフォーカス可能な子孫があると、キーボードや支援技術のユーザーはそこに到達できないか、混乱することになります。",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1155,7 +1155,7 @@
 		"title": "ページ内のbannerランドマークは1つまでである必要があります",
 		"description": "ページ内のbannerランドマーク（role=\"banner\"、または入れ子になっていない<header>）が多くても1つであることを確認します。",
 		"applicability": "ページにbannerランドマーク（明示的なrole=\"banner\"、または暗黙的で入れ子になっていない<header>）が1つ以上ある場合に適用されます。共通のランドマーク検出モデルについては、landmark-banner-is-top-levelの実装メモを参照してください。",
-		"expectation": "ページ内のbannerランドマークは多くても1つです。WAI-ARIA Authoring Practicesによれば、bannerランドマークはページ全体を識別するサイト単位のコンテンツを表すため、複数あるとランドマークでナビゲーションする支援技術のユーザーにとって曖昧になります。",
+		"expectation": "ページ内のbannerランドマークは多くても1つです。[[en:WAI-ARIA Authoring Practices]]によれば、bannerランドマークはページ全体を識別するサイト単位のコンテンツを表すため、複数あるとランドマークでナビゲーションする支援技術のユーザーにとって曖昧になります。",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1854,7 +1854,7 @@
 	"svg-text-alternative-present": {
 		"title": "<svg>にはテキストによる代替がある必要があります",
 		"description": "インラインの<svg>要素が、<title>要素またはARIAによる名前によって、テキストによる代替を提供していることを確認します（<desc>要素だけでは有効になりません）。",
-		"applicability": "支援技術に公開され、かつ情報を伝えることを意図していると見られるインラインの<svg>要素に適用されます。「情報を伝えることを意図している」かどうかは、次の少なくとも1つに当てはまるかどうかで決定論的に近似します。\n\n- SVGのルート要素自体にrole=\"img\"、role=\"graphics-symbol\"、またはrole=\"graphics-document\"がある（imgと並ぶWAI-ARIA Graphics Moduleのロール）。<svg>内に入れ子になった任意のrole=\"img\"/\"graphics-symbol\"/\"graphics-document\"の子孫要素には適用されません。このチェックの範囲は<svg>ルートだけです。他のすべての要素（入れ子になったSVGの図形を含む）にある同じ3つのロールは、role-img-text-alternative-presentが扱います（ACT 7d6734自身のfailの例：入れ子になった`<circle role=\"graphics-symbol\">`を持つ、何も付いていない`<svg>`ルート）。\n- aria-label / aria-labelledbyがある\n- <title>または<desc>がある（descは適用範囲の手がかりにすぎません。@expectationを参照）\n- フォーカス可能/タブで移動可能である（例：tabindex、ネイティブのフォーカス可能性）\n\nrole=\"presentation\"またはrole=\"none\"を持つ画像は、フォーカス可能でない場合に限り除外します。それ以外の理由でアクセシビリティツリーから隠されている要素も、タブで移動可能かつフォーカス可能であるか、IDREFの関係で参照されている場合は、引き続き対象になります（エンジンの対象判定による）。",
+		"applicability": "支援技術に公開され、かつ情報を伝えることを意図していると見られるインラインの<svg>要素に適用されます。「情報を伝えることを意図している」かどうかは、次の少なくとも1つに当てはまるかどうかで決定論的に近似します。\n\n- SVGのルート要素自体にrole=\"img\"、role=\"graphics-symbol\"、またはrole=\"graphics-document\"がある（imgと並ぶ[[en:WAI-ARIA Graphics Module]]のロール）。<svg>内に入れ子になった任意のrole=\"img\"/\"graphics-symbol\"/\"graphics-document\"の子孫要素には適用されません。このチェックの範囲は<svg>ルートだけです。他のすべての要素（入れ子になったSVGの図形を含む）にある同じ3つのロールは、role-img-text-alternative-presentが扱います（ACT 7d6734自身のfailの例：入れ子になった`<circle role=\"graphics-symbol\">`を持つ、何も付いていない`<svg>`ルート）。\n- aria-label / aria-labelledbyがある\n- <title>または<desc>がある（descは適用範囲の手がかりにすぎません。@expectationを参照）\n- フォーカス可能/タブで移動可能である（例：tabindex、ネイティブのフォーカス可能性）\n\nrole=\"presentation\"またはrole=\"none\"を持つ画像は、フォーカス可能でない場合に限り除外します。それ以外の理由でアクセシビリティツリーから隠されている要素も、タブで移動可能かつフォーカス可能であるか、IDREFの関係で参照されている場合は、引き続き対象になります（エンジンの対象判定による）。",
 		"expectation": "対象となる各<svg>要素が、次のいずれかによってテキストによる代替を提供しています。\n\n- 空でない<title>のテキスト、または\n- ARIAによる名前（aria-label / aria-labelledby）。\n\n<desc>要素だけではこれを満たしません。[[en:SVG Accessibility API Mappings]]仕様の§7.1によれば、<desc>が寄与するのはアクセシブルな説明（[[en:DESCRIPTION]]）だけであり、アクセシブルな名前（[[en:NAME]]）には決して寄与しないためです。<desc>だけを持ち、<title>/ARIAによる名前がない<svg>も「適用対象」ではあります（descは作成者の意図を示すため）が、failになります。",
 		"examples": [
 			{

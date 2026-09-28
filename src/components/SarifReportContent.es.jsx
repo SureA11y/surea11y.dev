@@ -35,13 +35,13 @@ export function SarifReportContent() {
 			<p>
 				<code>--sarif &lt;path&gt;</code> escribe un registro{" "}
 				<a href="https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html">SARIF 2.1.0</a>{" "}
-				(el formato estándar que espera GitHub Code Scanning y otros paneles que consumen SARIF),
+				(el formato estándar que espera <span lang="en">GitHub Code Scanning</span> y otros paneles que consumen SARIF),
 				en lugar del resultado sin procesar del motor de <code>--json</code>, o además de él.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --sarif results.sarif", command: true }]} />
 			<p>
 				Ver <a href="/configuration/ci-integration/">integración con CI</a> para un flujo de trabajo
-				de GitHub Actions listo para usar que ejecuta un análisis y sube{" "}
+				de <span lang="en">GitHub Actions</span> listo para usar que ejecuta un análisis y sube{" "}
 				<code>results.sarif</code> a la pestaña "<span lang="en">Security</span>".
 			</p>
 
@@ -142,12 +142,12 @@ export function SarifReportContent() {
 				<li>
 					<strong>Análisis de archivos locales</strong>: una ruta relativa al directorio de trabajo
 					actual (con barras diagonales). Si esto coincide con un archivo real de tu repositorio,
-					GitHub Code Scanning puede mostrar el hallazgo como una anotación en línea.
+					<span lang="en">GitHub Code Scanning</span> puede mostrar el hallazgo como una anotación en línea.
 				</li>
 				<li>
-					<strong>Análisis de URL</strong>: la propia URL analizada. GitHub Code Scanning seguirá
+					<strong>Análisis de URL</strong>: la propia URL analizada. <span lang="en">GitHub Code Scanning</span> seguirá
 					listando el hallazgo, pero no puede adjuntar una anotación en línea a una URL que no es un
-					archivo del repositorio: esto es inherente a cómo SARIF/Code Scanning asocian los
+					archivo del repositorio: esto es inherente a cómo SARIF/<span lang="en">Code Scanning</span> asocian los
 					hallazgos con el código fuente, no una limitación de surea11y. Si necesitas anotaciones en
 					línea, analiza el archivo HTML renderizado (por ejemplo, un artefacto de compilación)
 					en lugar de una URL en vivo.

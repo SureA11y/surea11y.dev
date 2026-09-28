@@ -594,7 +594,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				Pourquoi en avoir besoin : le <code>&lt;mat-select&gt;</code> d'Angular Material construit
+				Pourquoi en avoir besoin : le <code>&lt;mat-select&gt;</code> d'<span lang="en">Angular Material</span> construit
 				sa structure ARIA interne d'une manière qui déclenche un faux positif sur{" "}
 				<code>aria-required-children</code> en particulier, alors que le composant est correct par
 				ailleurs. Avec le seul <code>excludeSelectors</code> global, l'unique moyen de faire taire

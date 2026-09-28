@@ -61,7 +61,7 @@ export function KnownLimitationsContent() {
 					<code>target-size-minimum</code> (WCAG 2.5.8, qui nécessite un vrai{" "}
 					<code>getBoundingClientRect()</code>), renvoient <code>notApplicable</code> sous jsdom
 					seul plutôt que de deviner. Exécutez l’analyse dans un vrai navigateur
-					(Puppeteer/Playwright, voir le Pattern 2 de{" "}
+					(Puppeteer/Playwright, voir le <span lang="en">Pattern 2</span> de{" "}
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>) pour obtenir
 					de vrais résultats de ces règles.
 				</li>
@@ -137,8 +137,8 @@ export function KnownLimitationsContent() {
 				<li>
 					<strong>Balisage statique et état du DOM en direct / après hydratation.</strong> La
 					logique des règles elle-même ne dépend pas de la provenance du DOM : elle évalue le DOM
-					qu’on lui fournit, qu’il s’agisse de HTML statique analysé par jsdom (Pattern 1) ou d’un
-					onglet de navigateur réel déjà chargé et hydraté (Pattern 2, voir{" "}
+					qu’on lui fournit, qu’il s’agisse de HTML statique analysé par jsdom (<span lang="en">Pattern 1</span>) ou d’un
+					onglet de navigateur réel déjà chargé et hydraté (<span lang="en">Pattern 2</span>, voir{" "}
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
 					). En revanche, la CLI (<code>npx @surea11y/cli scan &lt;url&gt;</code>) ne récupère que
 					du HTML statique, sans exécuter de JS ; voir{" "}
@@ -155,7 +155,7 @@ export function KnownLimitationsContent() {
 					<code>aria-checked-state-mismatch</code> est plafonnée à <code>manual</code>/<code>cantTell</code>{" "}
 					plutôt qu’à un <code>fail</code> strict. Si vous avez besoin de la précision du DOM en
 					direct pour les vérifications sensibles à l’hydratation, exécutez la bibliothèque
-					directement sur une page déjà chargée via le Pattern 2, et non via la CLI qui récupère
+					directement sur une page déjà chargée via le <span lang="en">Pattern 2</span>, et non via la CLI qui récupère
 					du HTML statique.
 				</li>
 			</ul>

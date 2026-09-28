@@ -20,7 +20,7 @@ export function EarlReportContent() {
 				<a href="https://www.w3.org/TR/EARL10-Schema/">EARL 1.0</a> in JSON-LD aus: das Vokabular,
 				das das W3C veröffentlicht, um festzuhalten „dieses Tool hat diese Sache getestet und
 				dieses Ergebnis bekommen“, und das Format, das die Community Group der{" "}
-				<a href="https://act-rules.github.io/">ACT Rules</a> als Implementierungsbericht
+				<a href="https://act-rules.github.io/"><span lang="en">ACT Rules</span></a> als Implementierungsbericht
 				akzeptiert.
 			</p>
 			<CodeBlock
@@ -40,7 +40,7 @@ export function EarlReportContent() {
 			<h2>Wofür er gedacht ist</h2>
 			<p>Zwei Zielgruppen, die dasselbe Dokument aus unterschiedlichen Gründen wollen.</p>
 			<p>
-				Ein <strong>Implementierungsbericht</strong> zeigt der ACT Rules Community Group, wie sich
+				Ein <strong>Implementierungsbericht</strong> zeigt der <span lang="en">ACT Rules Community Group</span>, wie sich
 				diese Engine bei ihren Testfällen verhält; darüber wird eine Engine neben den anderen
 				Implementierungen gelistet. Eine Listung ist keine Empfehlung, und das W3C prüft die Daten
 				nicht. Korrekt heißt es <em>„als ACT-Implementierung gelistet“</em>, nie{" "}

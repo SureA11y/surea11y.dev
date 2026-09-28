@@ -117,9 +117,9 @@ export function TestMatchersUsageContent() {
 				]}
 			/>
 			<p>
-				… ou sur n’importe quel <code>container</code> de testing-library (celui de React Testing
-				Library, le <code>wrapper.element</code> de Vue Test Utils, ceux d’Angular Testing Library
-				et de Svelte Testing Library), puisque tous exposent un élément DOM rendu de la même façon :
+				… ou sur n’importe quel <code>container</code> de testing-library (celui de <span lang="en">React Testing
+				Library</span>, le <code>wrapper.element</code> de <span lang="en">Vue Test Utils</span>, ceux d’<span lang="en">Angular Testing Library</span>
+				et de <span lang="en">Svelte Testing Library</span>), puisque tous exposent un élément DOM rendu de la même façon :
 			</p>
 			<CodeBlock
 				lang="js"

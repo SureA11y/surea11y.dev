@@ -153,7 +153,7 @@ export const bindingUsage = {
 	selenium: {
 		intro: (
 			<p>
-				<a href="https://www.selenium.dev/">Selenium WebDriver</a>
+				<a href="https://www.selenium.dev/"><span lang="en">Selenium WebDriver</span></a>
 				は、あらゆる言語から実際のブラウザーを操作するための昔からの標準です。クロスブラウザーの自動化ツールとして最も定着しており、E2Eテストによく使われます。surea11yは
 				<a href="https://github.com/SureA11y/selenium"><code>@surea11y/selenium</code></a>
 				バインディングで連携します。

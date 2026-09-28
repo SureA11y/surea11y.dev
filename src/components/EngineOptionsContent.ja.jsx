@@ -411,7 +411,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				これが必要になる理由：Angular Materialの<code>&lt;mat-select&gt;</code>は、内部のARIA構造の組み立て方が原因で、コンポーネント自体には問題がないのに<code>aria-required-children</code>でだけ誤検出を起こします。グローバルな<code>excludeSelectors</code>しかなければ、この誤検出を消す方法は<code>excludeSelectors: ['mat-select']</code>だけです。しかしそうすると<code>mat-select</code>は<code>contrast-minimum</code>や<code>aria-allowed-attr</code>を含む<em>他のすべてのルール</em>からも見えなくなり、何の問題もなかったチェックのカバレッジまで黙って失われます。上の例なら、誤判定する1つのルールを除くすべてのルールから<code>mat-select</code>が引き続き完全に見えます。
+				これが必要になる理由：<span lang="en">Angular Material</span>の<code>&lt;mat-select&gt;</code>は、内部のARIA構造の組み立て方が原因で、コンポーネント自体には問題がないのに<code>aria-required-children</code>でだけ誤検出を起こします。グローバルな<code>excludeSelectors</code>しかなければ、この誤検出を消す方法は<code>excludeSelectors: ['mat-select']</code>だけです。しかしそうすると<code>mat-select</code>は<code>contrast-minimum</code>や<code>aria-allowed-attr</code>を含む<em>他のすべてのルール</em>からも見えなくなり、何の問題もなかったチェックのカバレッジまで黙って失われます。上の例なら、誤判定する1つのルールを除くすべてのルールから<code>mat-select</code>が引き続き完全に見えます。
 			</p>
 			<p>
 				あるルールに実際に適用される除外は、グローバルなリストとそのルール独自のリストの<strong>和集合</strong>です。どちらかに一致する要素は、そのルールの対象候補から外れます。不合格になりうる要素がすべてこの方法で除外されたルールは、<code>occurrences: []</code>とともに<code>outcome: 'pass'</code>または<code>'notApplicable'</code>（対象がない場合のそのルール自身の慣例に従います）を報告します。空の<code>occurrences</code>配列を伴う<code>outcome: 'fail'</code>になることはありません。その形はスキーマの別の箇所で「このルールが例外を投げた」ことを表すために予約されているからです（<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）。

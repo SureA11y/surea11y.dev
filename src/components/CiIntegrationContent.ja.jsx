@@ -10,7 +10,7 @@ export function CiIntegrationContent() {
 				<a href="https://github.com/SureA11y/cli#readme">CLI</a>
 				（
 				<code>npx @surea11y/cli scan ...</code>
-				）をGitHub ActionsとBitbucket Pipelinesで実行する、そのまま貼り付けられるテンプレートです。CLIではなく自分のNodeスクリプトからライブラリーを直接呼び出す場合は、
+				）を<span lang="en">GitHub Actions</span>と<span lang="en">Bitbucket Pipelines</span>で実行する、そのまま貼り付けられるテンプレートです。CLIではなく自分のNodeスクリプトからライブラリーを直接呼び出す場合は、
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
 					<code>INTEGRATION.md</code>
 				</a>
@@ -33,7 +33,7 @@ export function CiIntegrationContent() {
 				は使い方の誤りまたはスキャンのエラー）。基本的な合否のゲートに、追加のスクリプトは必要ありません。
 			</p>
 
-			<h2>GitHub Actions</h2>
+			<h2><span lang="en">GitHub Actions</span></h2>
 			<h3>基本：終了コードでゲートする</h3>
 			<CodeBlock
 				lang="yaml"
@@ -79,7 +79,7 @@ export function CiIntegrationContent() {
 				を参照してください。
 			</p>
 
-			<h3>SARIFをGitHub Code Scanningにアップロードする</h3>
+			<h3>SARIFを<span lang="en">GitHub Code Scanning</span>にアップロードする</h3>
 			<p>
 				<code>upload-sarif</code>
 				には
@@ -126,14 +126,14 @@ export function CiIntegrationContent() {
 				<a href="/results-reports/sarif-report/">SARIFレポートの形式</a>
 				と、既知の制限事項も確認してください。チェックアウトした
 				<strong>ローカルファイル</strong>
-				をスキャンした場合はCode ScanningのUIにインラインの注釈が付きますが、
+				をスキャンした場合は<span lang="en">Code Scanning</span>のUIにインラインの注釈が付きますが、
 				<strong>公開中のURL</strong>
-				をスキャンした場合は付きません（SARIF/Code Scanningが検出結果を関連付けられるのは、リポジトリ内の実在するファイルだけです）。
+				をスキャンした場合は付きません（SARIF/<span lang="en">Code Scanning</span>が検出結果を関連付けられるのは、リポジトリ内の実在するファイルだけです）。
 			</p>
 
-			<h2>Bitbucket Pipelines</h2>
+			<h2><span lang="en">Bitbucket Pipelines</span></h2>
 			<p>
-				Bitbucket Pipelinesには、GitHub Code Scanningに相当するSARIF対応の組み込みダッシュボードがありません。そのため、実用的な連携ポイントは
+				<span lang="en">Bitbucket Pipelines</span>には、<span lang="en">GitHub Code Scanning</span>に相当するSARIF対応の組み込みダッシュボードがありません。そのため、実用的な連携ポイントは
 				<code>--sarif</code>
 				ではなく、CLIの終了コード（と、必要に応じてダウンロード可能なパイプラインの成果物としての
 				<code>--html</code>
@@ -168,7 +168,7 @@ export function CiIntegrationContent() {
 
 			<h2>無料枠やプライベートリポジトリの実行時間制限</h2>
 			<p>
-				パイプラインサービスの無料枠に実行時間の制限がある場合（たとえばBitbucket Pipelinesの無料枠は、プライベートワークスペースで月50ビルド分です）、静的なHTMLやサーバーでレンダリングされたHTMLを
+				パイプラインサービスの無料枠に実行時間の制限がある場合（たとえば<span lang="en">Bitbucket Pipelines</span>の無料枠は、プライベートワークスペースで月50ビルド分です）、静的なHTMLやサーバーでレンダリングされたHTMLを
 				<code>jsdom</code>
 				ベースでスキャンする方法（CLIが行っていること）は、実際のブラウザーを操作するよりはるかに低コストです。その代わりに失うもの（クライアントサイドでレンダリングされるコンテンツと実際のCSSレイアウトは対象外）については
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#what-it-can-and-cant-scan">

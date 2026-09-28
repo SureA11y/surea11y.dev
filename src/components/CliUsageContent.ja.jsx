@@ -66,7 +66,7 @@ export function CliUsageContent() {
 				<strong>静的なHTMLだけ</strong>
 				です。ローカルファイルか、HTTP(S) GETで取得した生のレスポンスボディを読み、ページのJavaScriptは一切実行しません。クライアントサイドでレンダリングされるページには、いずれかのバインディングを使うか、実際に操作しているブラウザーに対してエンジンを直接呼び出してください（
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
-				のPattern 2を参照）。
+				の<span lang="en">Pattern 2</span>を参照）。
 			</p>
 			<p>
 				フラグの完全なリファレンス、カスタムルールの契約、CIのレシピは

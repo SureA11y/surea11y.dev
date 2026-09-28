@@ -9,7 +9,7 @@ export function CiIntegrationContent() {
 			<p>
 				Vorlagen zum direkten Einfügen, die die{" "}
 				<a href="https://github.com/SureA11y/cli#readme">CLI</a> (
-				<code>npx @surea11y/cli scan ...</code>) in GitHub Actions und Bitbucket Pipelines
+				<code>npx @surea11y/cli scan ...</code>) in <span lang="en">GitHub Actions</span> und <span lang="en">Bitbucket Pipelines</span>
 				einbinden. Wenn Sie die Bibliothek statt über die CLI direkt aus Ihrem eigenen
 				Node-Skript aufrufen, lesen Sie stattdessen{" "}
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
@@ -25,7 +25,7 @@ export function CiIntegrationContent() {
 				zusätzliches Skript nötig.
 			</p>
 
-			<h2>GitHub Actions</h2>
+			<h2><span lang="en">GitHub Actions</span></h2>
 			<h3>Einfach: Gating über den Exit-Code</h3>
 			<CodeBlock
 				lang="yaml"
@@ -72,7 +72,7 @@ export function CiIntegrationContent() {
 				behoben werden.
 			</p>
 
-			<h3>SARIF zu GitHub Code Scanning hochladen</h3>
+			<h3>SARIF zu <span lang="en">GitHub Code Scanning</span> hochladen</h3>
 			<p>
 				<code>upload-sarif</code> benötigt die Berechtigung <code>security-events: write</code>{" "}
 				und <strong>lässt den Job selbst nicht fehlschlagen</strong> — kombinieren Sie es mit
@@ -115,14 +115,14 @@ export function CiIntegrationContent() {
 				Siehe <a href="/results-reports/sarif-report/">das SARIF-Berichtsformat</a> und eine
 				bekannte Einschränkung: Der Scan einer <strong>lokalen Datei</strong> in Ihrem Checkout
 				erhält Inline-Annotationen in der Code-Scanning-Oberfläche; der Scan einer{" "}
-				<strong>Live-URL</strong> nicht (SARIF/Code Scanning kann einen Befund nur einer
+				<strong>Live-URL</strong> nicht (SARIF/<span lang="en">Code Scanning</span> kann einen Befund nur einer
 				tatsächlichen Datei im Repository zuordnen).
 			</p>
 
-			<h2>Bitbucket Pipelines</h2>
+			<h2><span lang="en">Bitbucket Pipelines</span></h2>
 			<p>
-				Bitbucket Pipelines hat kein eingebautes Dashboard für SARIF, das mit GitHub Code
-				Scanning vergleichbar wäre. Der praktische Integrationspunkt ist daher der Exit-Code der
+				<span lang="en">Bitbucket Pipelines</span> hat kein eingebautes Dashboard für SARIF, das mit <span lang="en">GitHub Code
+				Scanning</span> vergleichbar wäre. Der praktische Integrationspunkt ist daher der Exit-Code der
 				CLI (optional ergänzt um <code>--html</code> als herunterladbares Pipeline-Artefakt),
 				nicht <code>--sarif</code>.
 			</p>
@@ -154,7 +154,7 @@ export function CiIntegrationContent() {
 			<h2>Minutenlimits bei Free-Tier und privaten Repositories</h2>
 			<p>
 				Wenn das Free-Tier Ihres Pipeline-Anbieters minutenbegrenzt ist (das Free-Tier von
-				Bitbucket Pipelines umfasst zum Beispiel 50 Build-Minuten pro Monat für private
+				<span lang="en">Bitbucket Pipelines</span> umfasst zum Beispiel 50 Build-Minuten pro Monat für private
 				Workspaces), ist ein <code>jsdom</code>-basierter Scan von statischem oder
 				serverseitig gerendertem HTML (das, was die CLI macht) deutlich günstiger, als einen
 				echten Browser zu steuern — in{" "}

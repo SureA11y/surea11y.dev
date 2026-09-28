@@ -26,10 +26,10 @@ export function ConfigurationContent() {
 			<h2>Intégration CI</h2>
 			<p>
 				Mettez en place un contrôle d’accessibilité fonctionnel dans votre pipeline sans l’écrire
-				de zéro : des modèles GitHub Actions et Bitbucket Pipelines prêts à copier font échouer un
+				de zéro : des modèles <span lang="en">GitHub Actions</span> et <span lang="en">Bitbucket Pipelines</span> prêts à copier font échouer un
 				build selon le code de sortie de la CLI, enregistrent une baseline des violations déjà
 				présentes sur un site existant pour n’échouer que sur les nouvelles, et envoient les
-				résultats SARIF directement dans GitHub Code Scanning, là où votre équipe regarde déjà. Voir{" "}
+				résultats SARIF directement dans <span lang="en">GitHub Code Scanning</span>, là où votre équipe regarde déjà. Voir{" "}
 				<a href="/configuration/ci-integration/">Intégration CI</a> pour les modèles complets.
 			</p>
 

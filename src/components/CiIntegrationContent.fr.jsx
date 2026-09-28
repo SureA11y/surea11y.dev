@@ -9,7 +9,7 @@ export function CiIntegrationContent() {
 			<p>
 				Des modèles prêts à copier qui encapsulent la{" "}
 				<a href="https://github.com/SureA11y/cli#readme">CLI</a> (
-				<code>npx @surea11y/cli scan ...</code>) dans GitHub Actions et Bitbucket Pipelines. Si
+				<code>npx @surea11y/cli scan ...</code>) dans <span lang="en">GitHub Actions</span> et <span lang="en">Bitbucket Pipelines</span>. Si
 				vous appelez la bibliothèque directement depuis votre propre script Node plutôt que via la
 				CLI, consultez plutôt{" "}
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
@@ -24,7 +24,7 @@ export function CiIntegrationContent() {
 				nécessaire pour un contrôle réussite/échec de base.
 			</p>
 
-			<h2>GitHub Actions</h2>
+			<h2><span lang="en">GitHub Actions</span></h2>
 			<h3>Base : contrôle par le code de sortie</h3>
 			<CodeBlock
 				lang="yaml"
@@ -70,7 +70,7 @@ export function CiIntegrationContent() {
 				« connu » ou « nouveau », et pour régénérer le fichier au fil des corrections.
 			</p>
 
-			<h3>Envoyer le SARIF vers GitHub Code Scanning</h3>
+			<h3>Envoyer le SARIF vers <span lang="en">GitHub Code Scanning</span></h3>
 			<p>
 				<code>upload-sarif</code> nécessite la permission <code>security-events: write</code> et{" "}
 				<strong>ne fait pas échouer le job lui-même</strong> : associez-le à une étape de contrôle
@@ -112,15 +112,15 @@ export function CiIntegrationContent() {
 			<p>
 				Voir <a href="/results-reports/sarif-report/">le format du rapport SARIF</a>, ainsi qu’une
 				limite connue : l’analyse d’un <strong>fichier local</strong> de votre checkout produit des
-				annotations en ligne dans l’interface de Code Scanning, celle d’une{" "}
-				<strong>URL en ligne</strong> non (SARIF/Code Scanning ne peut associer un résultat qu’à un
+				annotations en ligne dans l’interface de <span lang="en">Code Scanning</span>, celle d’une{" "}
+				<strong>URL en ligne</strong> non (SARIF/<span lang="en">Code Scanning</span> ne peut associer un résultat qu’à un
 				vrai fichier du dépôt).
 			</p>
 
-			<h2>Bitbucket Pipelines</h2>
+			<h2><span lang="en">Bitbucket Pipelines</span></h2>
 			<p>
-				Bitbucket Pipelines n’a pas de tableau de bord intégré exploitant SARIF équivalent à GitHub
-				Code Scanning ; le point d’intégration pratique est donc le code de sortie de la CLI (plus,
+				<span lang="en">Bitbucket Pipelines</span> n’a pas de tableau de bord intégré exploitant SARIF équivalent à GitHub
+				<span lang="en">Code Scanning</span> ; le point d’intégration pratique est donc le code de sortie de la CLI (plus,
 				éventuellement, <code>--html</code> comme artefact de pipeline téléchargeable) plutôt que{" "}
 				<code>--sarif</code>.
 			</p>
@@ -151,7 +151,7 @@ export function CiIntegrationContent() {
 			<h2>Limites de minutes des offres gratuites et dépôts privés</h2>
 			<p>
 				Si l’offre gratuite de votre fournisseur de pipelines est limitée en minutes (celle de
-				Bitbucket Pipelines est par exemple de 50 minutes de build par mois sur les espaces de
+				<span lang="en">Bitbucket Pipelines</span> est par exemple de 50 minutes de build par mois sur les espaces de
 				travail privés), une analyse basée sur <code>jsdom</code> de HTML statique ou rendu côté
 				serveur (ce que fait la CLI) coûte bien moins cher que de piloter un vrai navigateur ; voir{" "}
 				<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#what-it-can-and-cant-scan">

@@ -585,7 +585,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				Wozu das gut ist: <code>&lt;mat-select&gt;</code> aus Angular Material baut seine
+				Wozu das gut ist: <code>&lt;mat-select&gt;</code> aus <span lang="en">Angular Material</span> baut seine
 				interne ARIA-Struktur so auf, dass speziell bei <code>aria-required-children</code> ein
 				Falsch-Positiv entsteht, obwohl die Komponente ansonsten in Ordnung ist. Mit nur dem
 				globalen <code>excludeSelectors</code> lässt sich dieses Falsch-Positiv nur über{" "}

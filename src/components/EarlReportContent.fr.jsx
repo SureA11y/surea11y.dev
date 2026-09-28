@@ -19,7 +19,7 @@ export function EarlReportContent() {
 				<code>@surea11y/core/earl</code> produit les résultats d’analyse au format{" "}
 				<a href="https://www.w3.org/TR/EARL10-Schema/">EARL 1.0</a> en JSON-LD : le vocabulaire
 				publié par le W3C pour affirmer « cet outil a testé tel élément et obtenu tel résultat »,
-				et le format que le groupe communautaire <a href="https://act-rules.github.io/">ACT Rules</a>{" "}
+				et le format que le groupe communautaire <a href="https://act-rules.github.io/"><span lang="en">ACT Rules</span></a>{" "}
 				accepte comme rapport d’implémentation.
 			</p>
 			<CodeBlock
@@ -39,7 +39,7 @@ export function EarlReportContent() {
 			<h2>À quoi il sert</h2>
 			<p>Deux publics, qui veulent le même document pour des raisons différentes.</p>
 			<p>
-				Un <strong>rapport d’implémentation</strong> indique au groupe communautaire ACT Rules
+				Un <strong>rapport d’implémentation</strong> indique au groupe communautaire <span lang="en">ACT Rules</span>
 				comment ce moteur se comporte sur ses cas de test, et c’est ce qui permet à un moteur
 				d’être listé aux côtés des autres implémentations. Être listé ne vaut pas approbation, et
 				le W3C ne vérifie pas les données : la formulation exacte est{" "}
@@ -126,7 +126,7 @@ export function EarlReportContent() {
 			<p>
 				Les id de critères sont dérivés du titre du critère lui-même (<code>Non-text Content</code> →{" "}
 				<code>non-text-content</code>). <code>normativeMappings</code> contient aussi des références
-				aux documents Understanding et à des normes autres que les WCAG, qui partagent{" "}
+				aux documents <span lang="en">Understanding</span> et à des normes autres que les WCAG, qui partagent{" "}
 				<code>standard: "WCAG"</code> et un <code>requirement</code> avec les vrais critères ; un
 				critère de succès est l’entrée qui indique un niveau de conformité et ne revendique aucun
 				autre type de document, et seules ces entrées sont lues.

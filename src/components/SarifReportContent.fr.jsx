@@ -35,14 +35,14 @@ export function SarifReportContent() {
 			<p>
 				<code>--sarif &lt;path&gt;</code> écrit un journal{" "}
 				<a href="https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html">SARIF 2.1.0</a>{" "}
-				(le format standard qu’attendent GitHub Code Scanning et les autres tableaux de bord
+				(le format standard qu’attendent <span lang="en">GitHub Code Scanning</span> et les autres tableaux de bord
 				compatibles SARIF) à la place du résultat brut du moteur produit par <code>--json</code>,
 				ou en plus de celui-ci.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --sarif results.sarif", command: true }]} />
 			<p>
-				Voir <a href="/configuration/ci-integration/">Intégration CI</a> pour un workflow GitHub
-				Actions prêt à copier qui lance une analyse et envoie <code>results.sarif</code> vers
+				Voir <a href="/configuration/ci-integration/">Intégration CI</a> pour un workflow <span lang="en">GitHub
+				Actions</span> prêt à copier qui lance une analyse et envoie <code>results.sarif</code> vers
 				l’onglet « <span lang="en">Security</span> ».
 			</p>
 
@@ -134,12 +134,12 @@ export function SarifReportContent() {
 				<li>
 					<strong>Analyse de fichiers locaux</strong> : un chemin relatif au répertoire de travail
 					courant (avec des barres obliques). S’il correspond à un vrai fichier de votre dépôt,
-					GitHub Code Scanning peut afficher le résultat sous forme d’annotation en ligne.
+					<span lang="en">GitHub Code Scanning</span> peut afficher le résultat sous forme d’annotation en ligne.
 				</li>
 				<li>
-					<strong>Analyse d’URL</strong> : l’URL analysée elle-même. GitHub Code Scanning listera
+					<strong>Analyse d’URL</strong> : l’URL analysée elle-même. <span lang="en">GitHub Code Scanning</span> listera
 					quand même le résultat, mais ne peut pas associer une annotation en ligne à une URL qui
-					n’est pas un fichier du dépôt : cela tient à la façon dont SARIF et Code Scanning
+					n’est pas un fichier du dépôt : cela tient à la façon dont SARIF et <span lang="en">Code Scanning</span>
 					rattachent les résultats au code source, ce n’est pas une limite de surea11y. Si vous
 					avez besoin d’annotations en ligne, analysez le fichier HTML rendu (par exemple un
 					artefact de build) plutôt qu’une URL en direct.

@@ -65,7 +65,7 @@ export function StandaloneUsageContent() {
 			</p>
 			<p>
 				<code>require('@surea11y/core')</code> direkt, ohne Binding, ist der andere
-				Standalone-Weg — das entspricht Pattern 1/Pattern 2 in{" "}
+				Standalone-Weg — das entspricht <span lang="en">Pattern 1</span>/<span lang="en">Pattern 2</span> in{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom in Node
 				ohne echten Browser, oder Puppeteer/Playwright selbst steuern, statt über ein Binding zu
 				gehen.

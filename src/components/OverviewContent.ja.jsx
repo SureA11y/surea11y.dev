@@ -116,7 +116,7 @@ export function OverviewContent() {
 			<h3 id="checked-against-the-act-corpus">ACTコーパスによる検証</h3>
 			<p>
 				エンジンには{rules.length}件のルールがあります。そのうち58件は
-				<a href="https://act-rules.github.io/">W3C ACT Rules</a>
+				<a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a>
 				に対応するルールがあり、ACTが公開しているテストケース（この58件のルールにわたる798件の例）に対して実行しています。ACTがpassedまたはinapplicableとしている例をエンジンがfailにしたものは1件もなく、このコーパスに対して誤検出はありません。ACTがfailedとしている例のうち31件は検出していません。その多くは、見出しがその下の内容を説明しているかどうかといった、判断を要するものです。1件ずつの理由は
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>
 				にまとめています。

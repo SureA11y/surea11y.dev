@@ -119,9 +119,9 @@ export function TestMatchersUsageContent() {
 				]}
 			/>
 			<p>
-				...oder mit jedem <code>container</code> einer Testing Library, ob von React Testing
-				Library, <code>wrapper.element</code> von Vue Test Utils, Angular Testing Library oder
-				Svelte Testing Library, denn alle stellen ein gerendertes DOM-Element auf dieselbe Weise
+				...oder mit jedem <code>container</code> einer <span lang="en">Testing Library</span>, ob von <span lang="en">React Testing
+				Library</span>, <code>wrapper.element</code> von <span lang="en">Vue Test Utils</span>, <span lang="en">Angular Testing Library</span> oder
+				<span lang="en">Svelte Testing Library</span>, denn alle stellen ein gerendertes DOM-Element auf dieselbe Weise
 				bereit:
 			</p>
 			<CodeBlock
@@ -231,7 +231,7 @@ export function TestMatchersUsageContent() {
 				<code>document.title</code>/<code>document.documentElement</code>, weil die Frage, ob{" "}
 				<em>die Seite</em> einen Titel hat, für ein beliebiges Komponenten-Snippet keinen Sinn
 				ergibt. Übergeben Sie ein <code>Element</code> (einen <code>container</code> einer
-				Testing Library, <code>document.body</code>), melden diese Regeln{" "}
+				<span lang="en">Testing Library</span>, <code>document.body</code>), melden diese Regeln{" "}
 				<code>notApplicable</code> statt <code>fail</code>, sodass ein fehlendes{" "}
 				<code>&lt;title&gt;</code> nie einen Test auf Komponentenebene scheitern lässt; übergeben
 				Sie <code>document</code> selbst, werden sie tatsächlich ausgewertet. Wenn Sie{" "}

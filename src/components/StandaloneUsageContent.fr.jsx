@@ -66,7 +66,7 @@ export function StandaloneUsageContent() {
 			</p>
 			<p>
 				Appeler directement <code>require('@surea11y/core')</code>, sans aucun binding, est
-				l’autre voie standalone : ce sont les Pattern 1 et Pattern 2 de{" "}
+				l’autre voie standalone : ce sont les <span lang="en">Pattern 1</span> et <span lang="en">Pattern 2</span> de{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>, à savoir jsdom
 				dans Node sans vrai navigateur, ou piloter vous-même Puppeteer/Playwright au lieu de
 				passer par un binding.

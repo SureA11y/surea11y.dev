@@ -60,7 +60,7 @@ export function KnownLimitationsContent() {
 					braucht ein echtes <code>getBoundingClientRect()</code>), melden unter reinem jsdom{" "}
 					<code>notApplicable</code>, statt zu raten. Führen Sie sie in einem echten Browser aus
 					(Puppeteer/Playwright, siehe{" "}
-					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> Pattern 2), um von
+					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> <span lang="en">Pattern 2</span>), um von
 					diesen Regeln echte Befunde zu bekommen.
 				</li>
 				<li>
@@ -132,8 +132,8 @@ export function KnownLimitationsContent() {
 				<li>
 					<strong>Statisches Markup vs. Live-DOM bzw. Zustand nach der Hydration.</strong> Die
 					Regellogik selbst ist unabhängig von der DOM-Quelle: Sie wertet das DOM aus, das sie
-					bekommt, ob von jsdom geparstes statisches HTML (Pattern 1) oder ein bereits geladener,
-					bereits hydrierter Tab in einem echten Browser (Pattern 2, siehe{" "}
+					bekommt, ob von jsdom geparstes statisches HTML (<span lang="en">Pattern 1</span>) oder ein bereits geladener,
+					bereits hydrierter Tab in einem echten Browser (<span lang="en">Pattern 2</span>, siehe{" "}
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
 					). Die CLI (<code>npx @surea11y/cli scan &lt;url&gt;</code>) holt dagegen ausschließlich
 					statisches HTML, ohne JS-Ausführung; siehe{" "}
@@ -149,7 +149,7 @@ export function KnownLimitationsContent() {
 					Deshalb ist <code>aria-checked-state-mismatch</code> auf <code>manual</code>/
 					<code>cantTell</code> begrenzt statt auf ein hartes <code>fail</code>. Wenn Sie für
 					hydrationsempfindliche Prüfungen die Genauigkeit des Live-DOM brauchen, führen Sie die
-					Bibliothek direkt über Pattern 2 gegen eine bereits geladene Seite aus, nicht über die
+					Bibliothek direkt über <span lang="en">Pattern 2</span> gegen eine bereits geladene Seite aus, nicht über die
 					CLI mit statischem Abruf.
 				</li>
 			</ul>

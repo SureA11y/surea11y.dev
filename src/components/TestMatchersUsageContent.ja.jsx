@@ -139,11 +139,11 @@ export function TestMatchersUsageContent() {
 				]}
 			/>
 			<p>
-				Testing Library系の
+				<span lang="en">Testing Library</span>系の
 				<code>container</code>
-				にも使えます。React Testing Library、Vue Test Utilsの
+				にも使えます。<span lang="en">React Testing Library</span>、<span lang="en">Vue Test Utils</span>の
 				<code>wrapper.element</code>
-				、Angular Testing Library、Svelte Testing Libraryのいずれも、レンダリングされたDOM要素を同じ形で公開しているからです。
+				、<span lang="en">Angular Testing Library</span>、<span lang="en">Svelte Testing Library</span>のいずれも、レンダリングされたDOM要素を同じ形で公開しているからです。
 			</p>
 			<CodeBlock
 				lang="js"
@@ -274,7 +274,7 @@ export function TestMatchersUsageContent() {
 				<em>ページ</em>
 				にタイトルがあるかを問うのは意味がないからです。
 				<code>Element</code>
-				（Testing Libraryの
+				（<span lang="en">Testing Library</span>の
 				<code>container</code>
 				や
 				<code>document.body</code>

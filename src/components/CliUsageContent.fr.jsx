@@ -54,7 +54,7 @@ export function CliUsageContent() {
 				fichier local ou du corps brut d’une requête HTTP(S) GET, et n’exécute jamais le
 				JavaScript de la page. Pour les pages rendues côté client, utilisez plutôt l’un des
 				bindings, ou appelez directement le moteur dans un vrai navigateur piloté (voir{" "}
-				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>, Pattern 2).
+				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>, <span lang="en">Pattern 2</span>).
 			</p>
 			<p>
 				Référence complète des flags, contrat des règles personnalisées et recettes de CI :{" "}

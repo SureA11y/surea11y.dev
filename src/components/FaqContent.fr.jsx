@@ -51,7 +51,7 @@ export function FaqContent() {
 					<strong>Les règles qui ont besoin d’une vraie mise en page indiquent{" "}
 					<code>notApplicable</code> sous jsdom plutôt que de deviner.</strong> Passez plutôt par
 					un vrai navigateur (Puppeteer/Playwright, voir{" "}
-					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>, Pattern 2)
+					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>, <span lang="en">Pattern 2</span>)
 					pour obtenir de vrais résultats de ces règles. Voir{" "}
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>.
 				</p>
