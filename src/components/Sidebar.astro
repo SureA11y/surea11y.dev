@@ -2,16 +2,15 @@
 import { siteTree } from "../data/siteTree";
 import { localize } from "../data/localize";
 import { t, type Locale } from "../i18n/t";
+import { localizePath, splitLocale } from "../i18n/paths";
 
 interface Props {
 	locale?: Locale;
 }
 
 const { locale = "en" } = Astro.props;
-const localePrefix = locale === "es" ? "/es" : "";
-const withLocale = (href: string) => `${localePrefix}${href}`;
-const currentPath =
-	locale === "es" ? Astro.url.pathname.replace(/^\/es(?=\/|$)/, "") || "/" : Astro.url.pathname;
+const withLocale = (href: string) => localizePath(href, locale);
+const currentPath = splitLocale(Astro.url.pathname).path;
 const isSectionActive = (href: string) =>
 	href === "/" ? currentPath === "/" : currentPath.startsWith(href);
 ---
@@ -32,7 +31,7 @@ const isSectionActive = (href: string) =>
 							</a>
 							{hasChildren && (
 								<details open={open}>
-									<summary aria-label={`${label} ${t("sidebar.subpages", locale)}`} />
+									<summary aria-label={t("sidebar.subpages", locale, { section: label })} />
 								</details>
 							)}
 						</div>
@@ -83,7 +82,6 @@ const isSectionActive = (href: string) =>
 		min-height: var(--target-min);
 		padding: 0 var(--space-3);
 		border-radius: var(--radius-sm);
-		border-bottom: 2px solid transparent;
 		color: var(--text-body);
 		font-family: var(--font-body);
 		font-size: var(--text-sm);
@@ -103,9 +101,18 @@ const isSectionActive = (href: string) =>
 		outline-offset: -2px;
 	}
 
-	.tree-section-head a[aria-current="page"] {
+	/* Current page: a very light accent tint plus a bar on the left edge.
+	   The bar is the cue that doesn't rely on colour, and as a real border
+	   (not a shadow) it survives Windows High Contrast mode, where
+	   backgrounds are dropped. Only the current link has a border at all,
+	   and its padding shrinks by the bar's width so the text doesn't shift. */
+	.tree-section-head a[aria-current="page"],
+	.tree-children a[aria-current="page"] {
 		color: var(--accent);
-		border-bottom-color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 8%, transparent);
+		border-left: 3px solid var(--accent);
+		border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+		padding-left: calc(var(--space-3) - 3px);
 	}
 
 	.tree-section-head details {
@@ -158,12 +165,11 @@ const isSectionActive = (href: string) =>
 	}
 
 	.tree-children a {
-		display: inline-flex;
+		display: flex;
 		align-items: center;
 		min-height: var(--target-min);
 		padding: 0 var(--space-3);
 		border-radius: var(--radius-sm);
-		border-bottom: 2px solid transparent;
 		color: var(--text-muted);
 		font-family: var(--font-body);
 		font-size: var(--text-sm);
@@ -179,8 +185,4 @@ const isSectionActive = (href: string) =>
 		outline-offset: -2px;
 	}
 
-	.tree-children a[aria-current="page"] {
-		color: var(--accent);
-		border-bottom-color: var(--accent);
-	}
 </style>

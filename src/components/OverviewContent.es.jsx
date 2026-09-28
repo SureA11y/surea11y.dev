@@ -27,14 +27,14 @@ export function OverviewLead() {
 				Lo que lo distingue es lo que hace con los casos que las pruebas automatizadas no pueden resolver. Implementa
 				el{" "}
 				<a href="https://www.w3.org/TR/act-rules-format/">
-					Accessibility Conformance Testing (ACT) Rules Format
+					<span lang="en">Accessibility Conformance Testing (ACT) Rules Format</span>
 				</a>{" "}
 				abierto del W3C, validado con el corpus público de casos de prueba de ACT, en lugar de evaluarse
 				únicamente con sus propias pruebas. Informa hallazgos, ausencia de hallazgos y, de forma poco habitual,
 				incertidumbre explícita, de modo que los resultados son auditables en lugar de tranquilizadores.
 			</p>
 			<p>
-				<em>Sure</em> significa certeza sobre lo que se sabe, y honestidad sobre lo que no. Te dice lo que
+				<em><span lang="en">Sure</span></em> significa certeza sobre lo que se sabe, y honestidad sobre lo que no. Te dice lo que
 				no te puede decir.
 			</p>
 		</>
@@ -70,19 +70,19 @@ export function OverviewContent() {
 			</p>
 			<ul className="outcome-list">
 				<li>
-					<ResultBadge state="fail" /> (<code>fail</code>): una violación demostrable a partir del DOM.
+					<ResultBadge lang="en" state="fail" /> (<code>fail</code>): una violación demostrable a partir del DOM.
 					Reservado para casos objetivos y normativos.
 				</li>
 				<li>
-					<ResultBadge state="pass" /> (<code>pass</code>): se cumple la condición específica de esta regla.{" "}
+					<ResultBadge lang="en" state="pass" /> (<code>pass</code>): se cumple la condición específica de esta regla.{" "}
 					<strong>No es una afirmación de que la página sea accesible.</strong>
 				</li>
 				<li>
-					<ResultBadge state="unknown" /> (<code>cantTell</code>): una persona tiene que decidir esto, y
+					<ResultBadge lang="en" state="unknown" /> (<code>cantTell</code>): una persona tiene que decidir esto, y
 					el resultado indica qué era ambiguo.
 				</li>
 				<li>
-					<ResultBadge state="na" /> (<code>notApplicable</code>): la precondición de la regla no está
+					<ResultBadge lang="en" state="na" /> (<code>notApplicable</code>): la precondición de la regla no está
 					presente.
 				</li>
 			</ul>
@@ -99,7 +99,7 @@ export function OverviewContent() {
 			<h3 id="checked-against-the-act-corpus">Verificado contra el corpus de ACT</h3>
 			<p>
 				El motor incluye {rules.length} reglas. Cincuenta y ocho de ellas tienen una contraparte en{" "}
-				<a href="https://act-rules.github.io/">W3C ACT Rules</a> y se ejecutan contra los propios
+				<a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a> y se ejecutan contra los propios
 				casos de prueba publicados por ACT: 798 ejemplos en esas 58 reglas. El motor no falla en ninguno de los ejemplos
 				que ACT marca como aprobados o no aplicables, por lo que no informa falsos positivos frente a ese
 				corpus. Treinta y un ejemplos que ACT marca como fallidos quedan sin señalar (en su mayoría son

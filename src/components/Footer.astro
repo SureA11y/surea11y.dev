@@ -1,5 +1,6 @@
 ---
 import { t, type Locale } from "../i18n/t";
+import { localizePath } from "../i18n/paths";
 
 interface Props {
 	locale?: Locale;
@@ -7,18 +8,17 @@ interface Props {
 
 const { locale = "en" } = Astro.props;
 const year = new Date().getFullYear();
-const localePrefix = locale === "es" ? "/es" : "";
 ---
 
 <footer class="site-footer">
 	<p>
 		{t("footer.copyright", locale, { year })}
 	</p>
-	<nav aria-label="Footer">
+	<nav aria-label={t("footer.nav", locale)}>
 		<ul>
-			<li><a href={`${localePrefix}/#about-the-project`}>{t("footer.about", locale)}</a></li>
+			<li><a href={`${localizePath("/", locale)}#about-the-project`}>{t("footer.about", locale)}</a></li>
 			<li><a href="https://github.com/SureA11y/core/issues">{t("footer.reportIssue", locale)}</a></li>
-			<li><a href={`${localePrefix}/accessibility-statement/`}>{t("footer.a11yStatement", locale)}</a></li>
+			<li><a href={localizePath("/accessibility-statement/", locale)}>{t("footer.a11yStatement", locale)}</a></li>
 		</ul>
 	</nav>
 </footer>

@@ -318,8 +318,9 @@ whole `SectionMenu.astro` component are gone).
 - `src/components/Breadcrumbs.astro` — derived from `siteTree` and the
   current URL for every hand-written page automatically. The 132 generated
   `/rules/[slug]/` pages aren't (and shouldn't be) in `siteTree`, so
-  `rules/[slug]/index.astro` is the one call site that passes an explicit
-  `breadcrumbLabel={rule.title}` prop.
+  `[...lang]/rules/[slug]/index.astro` passes an explicit
+  `breadcrumbLabel` prop, as does `[...page].astro` for the one registry
+  page outside the tree (the accessibility statement).
 - `src/layouts/BaseLayout.astro` now captures each page's own slotted
   content as an HTML string (`Astro.slots.render`), runs it through
   `processHeadings`, and re-renders it via `set:html` alongside `Sidebar`/
@@ -332,8 +333,137 @@ whole `SectionMenu.astro` component are gone).
   arriving through `set:html` must use `:global()`**, since Astro's
   `data-astro-cid-*` scoping is baked in per source file before
   `slots.render()` ever captures the string; a page's own scoped selectors
-  (e.g. `index.astro`'s `.section-card`) still work unmodified since their
+  (e.g. the homepage's `.section-card`) still work unmodified since their
   scope attribute travels with the markup.
+
+## Languages (i18n)
+
+English at the root, every other language under its own prefix (`/es/…`).
+Reworked from a hard-coded English/Spanish pair into an N-language setup
+ahead of adding French, German and Japanese — one list of languages, one
+route file per page shape instead of one per page per language, and English
+fallback for anything not yet translated.
+
+- `src/i18n/locales.ts` — the one list of languages (`code` + the
+  language's own name, shown in the switcher). Everything else reads it:
+  Astro's `i18n` config and the sitemap in `astro.config.mjs` (imported
+  straight from the `.ts`), routes, the switcher, hreflang, `localizeLinks`.
+- `src/i18n/paths.ts` — the URL scheme in one place: `localizePath`,
+  `splitLocale` (the layout and nav derive the locale from the URL with it,
+  not `Astro.currentLocale`), `localeStaticPaths` for `[...lang]` routes.
+- Routes: `src/pages/[...page].astro` builds every entry of the page
+  registry `src/data/pages.ts` (href, English title, content component or
+  binding key) once per locale — adding a page is a registry entry plus
+  its content component, no per-language route files. The homepage and the
+  rules catalog/rule pages keep their own markup under `src/pages/[...lang]/`.
+  `from/[source]` (referral redirects) is untouched.
+- Strings: `src/i18n/<code>.json`, loaded automatically by `t.ts`.
+  English source text for nav labels and page titles stays in the data
+  files (`sections.ts`, `*Sections.ts`, `pages.ts`); translations of it go
+  in the locale's dictionary as `nav:<href>`, `nav:<href>:description`,
+  `page:<href>:title`, `page:<href>:description` (read via `tOr`). A label
+  that's the same in every language (Cypress, CLI) is still listed in the
+  locale's file, so "present" always means "reviewed".
+- Prose: `Name.jsx` is English, `Name.<code>.jsx` its translation, with the
+  same exports; `src/i18n/content.ts` picks the file. Rule prose:
+  `src/data/rules.i18n.<code>.json`, merged by `localizeRule`.
+- **Untranslated pages build anyway**, in English: the route passes
+  `contentLocale="en"` to `BaseLayout`, which marks the content
+  `lang="en"` (the chrome stays in the reader's language), shows a short
+  "not translated yet" `Callout`, points `canonical` at the English page,
+  and leaves the locale out of that page's hreflang set. Title and
+  description follow the content's language, so nothing reads as a
+  translated heading over English prose. Rule pages decide per rule.
+- The language switcher is a plain link while there are two languages and
+  a no-JS `<details>` menu from three on (tested with a throwaway `fr`
+  entry, then removed).
+- Lists of links joined in running text use `Intl.ListFormat`
+  (`UsageBindingSection`), not a translated "and" — punctuation differs by
+  language.
+- Heading slugs (`src/utils/headings.ts`) fold Latin accents and keep any
+  other letter, so Spanish/French/German headings get readable ids
+  (`como-funciona`, not `c-mo-funciona`) and Japanese ones get non-empty
+  ids. This changed every auto-generated Spanish id once; nothing on the
+  site linked to the old ones (link audit clean).
+- `npm run i18n:check` — per-locale coverage (interface strings, nav/page
+  titles, content pages, rule pages) and hard errors for unknown keys,
+  mismatched `{placeholders}`, a translation whose exports differ from the
+  English file, or a rule overlay that doesn't match the catalog.
+  `--strict` also fails on anything missing; `--locale=fr` narrows it.
+- Outdated translations: `src/i18n/translation-sources.json` holds, per
+  locale and unit (`content:components/FaqContent`, `string:<key>`,
+  `rule:<id>`), a fingerprint of the English each translation was made
+  from; `i18n:check` lists units whose English has changed since, and
+  `npm run i18n:mark` records a unit as current after updating it (see
+  README "Keeping translations current"). Logic shared in
+  `scripts/lib/i18n-units.mjs`. Baseline recorded 2026-09-28 with every
+  translation current (git history showed no English-only change after any
+  Spanish file was written).
+- `npm run check:links` — the post-build link/anchor audit described
+  above, now a script; also flags a localized page linking out of its own
+  locale (links carrying `hreflang`, i.e. the switcher, are exempt).
+
+**Adding a language** (`fr` as the example):
+
+1. Add `{ code: "fr", name: "Français" }` to `src/i18n/locales.ts`. The
+   site builds every page under `/fr/` straight away, in English, with the
+   notice.
+2. `src/i18n/fr.json`: every key from `en.json` first (the site chrome and
+   the notice itself), then the `nav:`/`page:` keys `npm run i18n:check
+   -- --locale=fr` lists.
+3. `Name.fr.jsx` next to each content component, and
+   `src/data/bindingUsage.fr.jsx`; keep code, option names, outcome
+   values (`passed`, `cantTell`, …) and hand-authored `id`s untranslated.
+4. `src/data/rules.i18n.fr.json` for rule pages (same shape as the `es` one).
+5. `npm run build && npm run check:links && npm run i18n:check`.
+
+**French and German** were added on 2026-09-28, complete from the start
+(all interface strings, nav/page titles, 24 content pages, 132 rule pages;
+`i18n:check` shows no gaps). Translated from the English source, not the
+Spanish. Conventions, so later edits stay consistent:
+
+- Code, option/field names, rule ids, outcome values (`pass`, `fail`,
+  `cantTell`, …), CLI transcripts and code comments stay English; every
+  code block was verified byte-identical to the English page's.
+- French: "vous"; non-breaking space before `: ; ? !` and inside « » in
+  prose (not in code); typographic apostrophes. Terms: règle, moteur,
+  analyse, rapport, binding (m.), critère de succès, conformité, revue
+  manuelle, paramètres régionaux (page name) / `locale` (option), landmark,
+  arbre d'accessibilité, nom accessible, technologies d'assistance.
+- German: "Sie"; „…" quotes. Terms: Regel, Engine, Scan, Bericht, Binding
+  (das), Erfolgskriterium, Konformität, Barrierefreiheit, manuelle Prüfung,
+  Locales, Accessibility Tree, zugänglicher Name, Landmark, assistive
+  Technologien. Gender-neutral wording where a person is described
+  (Nutzende, Fachperson).
+- Official W3C French/German names are used for WCAG criterion titles
+  (e.g. 4.1.1 "Analyse syntaxique" / "Syntaxanalyse").
+- Sample page text inside examples ("Read more", "Save changes") and
+  engine output strings stay English, since they refer to the English
+  markup or real output.
+- Link text naming another page uses that page's nav label from the
+  locale's dictionary.
+
+**Japanese** was added the same day, also complete. What it needed beyond
+translation, and what to keep in mind when editing it:
+
+- `spaced: false` on its `locales.ts` entry; `wordSeparator()` returns ""
+  for it. Sentences containing links or code are whole-sentence templates
+  rendered by `src/i18n/Trans.jsx` ("See {policy} for…"), never fragments
+  joined with spaces, in every language.
+- JSX turns a line break between two lines of text into a space. In
+  Japanese content files, a paragraph's text stays on one line, lines break
+  only next to a tag, and there are no `{" "}` joins. No spaces between
+  Japanese and Latin text or code either; `text-autospace` adds the visual
+  gap. `npm run check:typography` catches violations in the build.
+- `:lang(ja)` in `global.css`: Japanese system fonts named after the brand
+  fonts, taller line height, strict line breaking, phrase-aware heading
+  breaks, bold instead of italic.
+- Style: です・ます, full-width punctuation, 「」 quotes, official WAIC names
+  for WCAG criteria. Terms: ルール, エンジン, スキャン, 判定結果, バインディング,
+  達成基準, 適合性, 複合ルール, 構成ルール, ファセット, アクセシブルな名前,
+  アクセシビリティツリー, 支援技術, 誤検出.
+- The engine itself has no `ja` locale (`locales.generated.json`:
+  en/de/es/fr), so Japanese pages document English engine output.
 
 ## Why Astro without Starlight
 
@@ -341,7 +471,7 @@ Decided over Starlight specifically because `design_system/components/`
 turned out to be a real React component library, not just tokens, and the
 goal is genuine control over layout/styling built from those components —
 not a themed docs framework fought into shape. Page-per-rule generation from
-structured data is done (`src/pages/rules/[slug]/index.astro`,
+structured data is done (`src/pages/[...lang]/rules/[slug]/index.astro`,
 `getStaticPaths()` over `rules.generated.json`) — a plain JSON import and
 dynamic route, not Astro's `astro:content` collections API; the data didn't
 need a content-collection schema, just a build-time array.
@@ -381,7 +511,7 @@ for anything newer than this file before assuming there's nothing left.
 
 Done after an external review of the live site flagged gaps:
 
-- **Homepage hero**: `src/pages/index.astro` now has a tagline, a
+- **Homepage hero**: `src/pages/[...lang]/index.astro` now has a tagline, a
   Get started/View on GitHub CTA pair, and a compact ACT-corpus stat line
   (linking to `OverviewContent.jsx`'s own `#checked-against-the-act-corpus`
   section) above the existing technical content, which is otherwise
@@ -430,7 +560,7 @@ Done after an external review of the live site flagged gaps:
 
 - **Project stewardship ("About the project")**: a short `<h2 id="about-the-project">`
   section, `OverviewAbout` in `OverviewContent.jsx`/`.es.jsx`, rendered by
-  both homepages *after* the six-card section grid, as the last thing before
+  the homepage (every locale) *after* the six-card section grid, as the last thing before
   the footer — the cards close the documentation part of the page, About
   closes the page itself (moved there from above the cards; it read as part
   of the docs flow when the cards came after it) (independent open source, npm +
@@ -448,7 +578,7 @@ Done after an external review of the live site flagged gaps:
   brand's editorial accent), a display-type lead sentence, and a byline
   (credit label → name → role → LinkedIn) behind the same violet accent bar
   the Philosophy blockquote uses. Styles live in `src/styles/stewardship.css`,
-  imported by both homepages; selectors are `.prose`-prefixed to outrank
+  imported by the homepage; selectors are `.prose`-prefixed to outrank
   `BaseLayout`'s scoped `.prose :global(h2/p)`. The id is explicit and
   identical in both languages because the footer link is shared and `localizeLinks` only rewrites the path, not the anchor;
   the ES ACT-corpus `<h3>` got an explicit `id` for the same reason (the hero

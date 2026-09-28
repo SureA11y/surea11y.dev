@@ -19,7 +19,7 @@ export function EarlReportContent() {
 				<code>@surea11y/core/earl</code> convierte los resultados de un análisis en{" "}
 				<a href="https://www.w3.org/TR/EARL10-Schema/">EARL 1.0</a> en JSON-LD: el vocabulario que
 				publica el W3C para declarar "esta herramienta probó esto y obtuvo este resultado", y el
-				formato que el grupo comunitario <a href="https://act-rules.github.io/">ACT Rules</a> acepta
+				formato que el grupo comunitario <a href="https://act-rules.github.io/"><span lang="en">ACT Rules</span></a> acepta
 				como informe de implementación.
 			</p>
 			<CodeBlock
@@ -39,7 +39,7 @@ export function EarlReportContent() {
 			<h2>Para qué sirve</h2>
 			<p>Dos audiencias, y ambas quieren el mismo documento por razones distintas.</p>
 			<p>
-				Un <strong>informe de implementación</strong> le dice al grupo comunitario ACT Rules cómo se
+				Un <strong>informe de implementación</strong> le dice al grupo comunitario <span lang="en">ACT Rules</span> cómo se
 				comporta este motor frente a sus casos de prueba, que es lo que permite que un motor aparezca
 				listado junto a las demás implementaciones. Estar listado no es un aval y el W3C no verifica
 				los datos: la formulación correcta es <em>"listado como implementación ACT"</em>, nunca{" "}
@@ -140,7 +140,7 @@ export function EarlReportContent() {
 			<p>
 				Los ids de criterio se derivan del propio título del criterio (<code>Non-text Content</code> →{" "}
 				<code>non-text-content</code>). <code>normativeMappings</code> también lleva referencias a
-				documentos Understanding y estándares que no son WCAG, que comparten{" "}
+				documentos <span lang="en">Understanding</span> y estándares que no son WCAG, que comparten{" "}
 				<code>standard: "WCAG"</code> y un <code>requirement</code> con el criterio real; un Criterio
 				de Éxito es la entrada que declara un nivel de conformidad y no reclama ningún otro tipo de
 				documento, y solo esas entradas se leen.

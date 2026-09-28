@@ -1,0 +1,257 @@
+import React from "react";
+import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
+import { DataTable } from "./design-system/data/DataTable.jsx";
+
+const core = "https://github.com/SureA11y/core/blob/main";
+
+const precedenceRows = [
+	{
+		id: "fail",
+		condition: (
+			<>
+				構成ルールのいずれかが
+				<code>fail</code>
+			</>
+		),
+		outcome: <code>fail</code>,
+	},
+	{
+		id: "canttell",
+		condition: (
+			<>
+				<code>fail</code>
+				はないが、構成ルールのいずれかが
+				<code>cantTell</code>
+				、または一覧にある構成ルールが1つでも実行されなかった
+			</>
+		),
+		outcome: <code>cantTell</code>,
+	},
+	{
+		id: "na",
+		condition: (
+			<>
+				すべての構成ルールが
+				<code>notApplicable</code>
+			</>
+		),
+		outcome: <code>notApplicable</code>,
+	},
+	{
+		id: "pass",
+		condition: "それ以外（すべて実行され、failもcantTellもなく、すべてがN/Aではない）",
+		outcome: <code>pass</code>,
+	},
+];
+
+export function WcagMappingContent() {
+	return (
+		<>
+			<p>
+				個々のルールの結果がWCAGの達成基準（SC）とどう関係するか、そして全体の適合性についてsurea11yが言えること・言えないことを説明します。
+			</p>
+
+			<h2>3つの層</h2>
+			<ol>
+				<li>
+					<strong>アトミックルール</strong>
+					（
+					<code>checksResults[]</code>
+					）：それぞれが1つの規範的な判定を行います。たとえば「この
+					<code>&lt;img&gt;</code>
+					には
+					<code>alt</code>
+					属性があるか」です。132件すべては
+					<a href="/rules/">ルールカタログ</a>
+					を参照してください。
+				</li>
+				<li>
+					<strong>ファセット</strong>
+					：WCAGの達成基準は、たいてい1つのルールで決定論的に判定できる範囲より大きなものです。内部では、各達成基準を名前付きの「ファセット」に分けています（たとえば1.1.1「非テキストコンテンツ」には
+					<code>img-alt-attr-present</code>
+					、
+					<code>text-alternative-quality</code>
+					、
+					<code>decorative-null</code>
+					などのファセットがあります）。ファセットは
+					<code>src/coverage/wcag-facets.js</code>
+					で管理され、それぞれ
+					<code>full</code>
+					（ルールが高い確度で判定する）、
+					<code>partial</code>
+					（ルールがその
+					<em>一部</em>
+					を判定する。各ルールの範囲に関する注記を参照）、
+					<code>manual</code>
+					（安全な自動化のヒューリスティックがまったくない）のいずれかに分類されています。
+					<code>npm run coverage</code>
+					を実行すると、達成基準ごとのファセットの内訳である
+					<code>coverage/coverage-report.md</code>
+					が再生成されます。
+				</li>
+				<li>
+					<strong>複合ルール（WCAG達成基準ごとの集約ルール）</strong>
+					（
+					<code>rulesResults[]</code>
+					）：1つの達成基準に対応するすべてのアトミックルールを自動生成で集約したものです。何十ものアトミックな結果を自分でまとめなくても、達成基準ごとにpass／fail／cantTell／notApplicableの判定が1つ得られます。
+					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-34`}>
+						全一覧
+					</a>
+					を参照してください（たとえば
+					<code>wcag-1.1.1-non-text-content</code>
+					は21件のアトミックルールを集約しています）。
+				</li>
+			</ol>
+
+			<h2>複合ルールの判定結果の決まり方</h2>
+			<p>その複合ルールを構成するアトミックルールに対して、決まった優先順位で決定論的に評価されます。</p>
+			<DataTable
+				caption="複合ルールの判定結果の優先順位"
+				rowKey="id"
+				columns={[
+					{ key: "condition", label: "条件", wrap: true, width: "75%" },
+					{ key: "outcome", label: "複合ルールの判定結果", width: "25%" },
+				]}
+				rows={precedenceRows}
+			/>
+			<p>
+				つまり、
+				<strong>
+					複合ルールの
+					<code>pass</code>
+					は、「この達成基準について適用される自動チェックはすべて問題なかった」という本物の決定論的な結果です。ただし、それだけでWCAGへの適合を主張するものではありません。
+				</strong>
+				その達成基準のいずれかのファセットにまったく自動カバレッジがない場合（
+				<code>coverage-report.md</code>
+				を参照）、複合ルールの
+				<code>pass</code>
+				はそのファセットについて問題ないと主張しているのではなく、何も言っていないのです。複合ルールの
+				<code>pass</code>
+				を「達成基準を完全に検証済み」とみなす前に、ファセットの表と照らし合わせてください。
+			</p>
+			<p>
+				複合ルールの
+				<code>data.details.contributors</code>
+				配列（
+				<a href="/results-reports/output-schema/">出力スキーマ</a>
+				を参照）には、すべてのアトミックルールとそれぞれの判定結果が並びます。複合ルールをブラックボックスとして扱うのではなく、どのファセットが
+				<code>fail</code>
+				／
+				<code>cantTell</code>
+				の原因になったのかを正確に確認するのに使ってください。
+			</p>
+
+			<h2>適合レベル（A／AA／AAA）を対象にする</h2>
+			<p>
+				<code>runOnly.tags</code>
+				（または
+				<code>engineOptions.tags.include</code>
+				）に、対象にしたいレベルのタグを渡します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.0 A and AA. Both tags are required: they are not cumulative.",
+					"runDomRulesInPage(url, null, {}, { tags: ['wcag2a', 'wcag2aa'] });",
+				]}
+			/>
+			<p>
+				<strong>レベルのタグは入れ子になっていません。ここで最も間違えやすい点です。</strong>
+				ルールには、対応する達成基準ごとにレベルのタグが1つ付くだけで、それ以上は付きません。AAの達成基準だけに対応するルールには
+				<code>wcag2aa</code>
+				が付き、
+				<code>wcag2a</code>
+				は
+				<em>付きません</em>
+				。そのため
+				<code>{"{ tags: ['wcag2aa'] }"}</code>
+				だけを指定すると、A＋AAを対象にする約100件のルールではなく、2.0のAAの達成基準に対応する10件のルールだけが実行されます。対象にするレベルはすべて列挙してください。
+			</p>
+			<p>
+				WCAGのバージョンについても同じです。2.1や2.2で追加された達成基準には、追加されたバージョンのタグしか付きません。そのため、適合の対象全体はタグの集合の和になります。バージョンごとの既成のタグセット（WCAG 2.2で追加ではなく削除された1つの達成基準を含む）は
+				<a href="/configuration/engine-options/#filtering-by-wcag-version">エンジンオプションのガイド</a>
+				を参照してください。
+			</p>
+			<p>
+				<strong>削除された達成基準は自動的に処理されます。</strong>
+				どの実行でも、対象とするWCAGのバージョン（
+				<code>engineOptions.wcagVersion</code>
+				、なければバージョンのタグから導かれるもの、それもなければ
+				<code>2.2</code>
+				）が決まり、
+				<code>engine.wcagVersion</code>
+				として報告されます。2.2を対象にした場合、SC 4.1.1「構文解析」だけに対応するルールは
+				<code>fail</code>
+				を報告できません。ルールは実行されて検出箇所を報告しますが、判定結果は
+				<code>cantTell</code>
+				になり、その読み替えを説明する
+				<code>wcagVersionScope</code>
+				フィールドが付きます。そのため、デフォルトのスキャンがWCAG 2.2に含まれない達成基準で失敗することはなく、2.0／2.1のスキャンでは引き続き4.1.1の本当の判定が得られます。
+			</p>
+			<p>
+				アトミックルールとは違い、複合ルールは累積的に
+				<em>絞り込まれます</em>
+				。ランナーは
+				<code>tags</code>
+				で指定された最も高いレベルを読み取り、それより上のレベルの複合ルールをすべて除外します。そのため
+				<code>{"['wcag2a', 'wcag2aa']"}</code>
+				を指定すると、AAAだけの達成基準については
+				<code>rulesResults</code>
+				のエントリーが返りません。正確な優先順位が必要なら、
+				<code>src/core/dom-runner.js</code>
+				の
+				<code>inferTargetLevelFromRunOnly</code>
+				／
+				<code>isAllowedByTargetLevel</code>
+				を参照してください。
+			</p>
+			<p>
+				<code>tags</code>
+				を完全に省略すると（デフォルト）、すべてのレベルのすべてのルールが実行され、複合ルールの除外も行われません。
+			</p>
+
+			<h2>このエンジンにはわからないこと</h2>
+			<p>
+				<strong>WCAGへの完全な適合を証明できる自動ツールはありません。このツールも同じです。</strong>
+				これはsurea11yに固有の制限ではなく、WCAGそのものに内在するものです。達成基準のうち無視できない割合が、人間の判断（代替テキストが単に
+				<em>ある</em>
+				だけでなく
+				<em>正確</em>
+				か、エラーメッセージが
+				<em>理解できる</em>
+				か）や、このエンジンの静的なDOMスキャンというアーキテクチャではまったくできない動的なテスト（キーボードトラップの検出、拡大時の実際のレイアウト／リフロー）を必要とします。何が対象外で、なぜそうなのかの明示的な全一覧は
+				<a href="/help/known-limitations/">既知の制限事項</a>
+				を参照してください。
+			</p>
+			<p>
+				surea11yが
+				<em>確実に</em>
+				提供できるのは次のことです。
+			</p>
+			<ul>
+				<li>
+					すべての
+					<code>fail</code>
+					は、対象にしたバージョンにおける本物の、決定論的な、規範上の違反です。推測ではありません。
+				</li>
+				<li>
+					すべての
+					<code>cantTell</code>
+					は、不確かさを握りつぶしたものではなく、人間によるレビューが必要だという明示的なフラグです。
+				</li>
+				<li>
+					ファセットのカバレッジ表を見れば、どの達成基準のどの部分に自動カバレッジがまったくないかが正確にわかります。つまり、
+					<code>pass</code>
+					が網羅的なのではなく何も言っていないのはどこかがわかります。
+				</li>
+			</ul>
+			<p>
+				対象レベルのすべての達成基準で複合ルールが
+				<code>pass</code>
+				なら、それは
+				<em>そのレベルで自動化できるチェックがすべて問題なかった</em>
+				という意味です。適合性のうち自動化できる部分を正確に述べたものであって、WCAG自体が求める手動レビューの代わりではありません。
+			</p>
+		</>
+	);
+}

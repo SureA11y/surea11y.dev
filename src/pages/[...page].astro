@@ -1,0 +1,66 @@
+---
+/**
+ * Builds every entry in src/data/pages.ts once per locale ("/faq/" and
+ * "/es/faq/" alike). Page-specific markup belongs in the content component,
+ * not here.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { UsageBindingSection } from "../components/UsageBindingSection.jsx";
+import { contentPages, type ContentPage } from "../data/pages";
+import { sections } from "../data/sections";
+import { siteTree } from "../data/siteTree";
+import { localize } from "../data/localize";
+import { localizedModule, translatedLocales } from "../i18n/content";
+import { localeCodes, type Locale } from "../i18n/locales";
+import { localizePath } from "../i18n/paths";
+import { tOr } from "../i18n/t";
+
+export function getStaticPaths() {
+	return localeCodes.flatMap((locale) =>
+		contentPages.map((page) => ({
+			params: { page: localizePath(page.href, locale).replace(/^\/|\/$/g, "") },
+			props: { page, locale },
+		}))
+	);
+}
+
+interface Props {
+	page: ContentPage;
+	locale: Locale;
+}
+
+const { page, locale } = Astro.props;
+
+const source = page.binding
+	? { kind: "data" as const, name: "bindingUsage" }
+	: { kind: "component" as const, name: page.content! };
+const { module, locale: contentLocale } = localizedModule(source.kind, source.name, locale);
+const available = translatedLocales(source.kind, source.name);
+
+// Title and description follow the content's language: an untranslated page
+// is shown whole in English rather than a translated heading over English prose.
+const navEntry = sections.find((s) => s.href === page.href);
+const title = tOr(`page:${page.href}:title`, contentLocale, page.title);
+const description = page.description
+	? tOr(`page:${page.href}:description`, contentLocale, page.description)
+	: navEntry
+		? localize(navEntry, contentLocale).description
+		: undefined;
+
+// Pages outside the nav tree (the accessibility statement) name themselves in the breadcrumb.
+const inTree = siteTree.some((s) => s.href === page.href || s.children.some((c) => c.href === page.href));
+
+const Content = page.binding ? null : (module[page.content!] as any);
+const binding = page.binding ? (module.bindingUsage as any)[page.binding] : null;
+---
+
+<BaseLayout
+	title={title}
+	description={description}
+	breadcrumbLabel={inTree ? undefined : title}
+	contentLocale={contentLocale}
+	translatedLocales={available}
+>
+	<h1>{title}</h1>
+	{binding ? <UsageBindingSection {...binding} locale={contentLocale} /> : <Content />}
+</BaseLayout>

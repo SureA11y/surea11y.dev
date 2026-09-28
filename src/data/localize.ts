@@ -1,24 +1,22 @@
-import type { Locale } from "../i18n/t";
-
-export interface LocalizedOverride {
-	label?: string;
-	description?: string;
-}
+import { tOr, type Locale } from "../i18n/t";
 
 interface Localizable {
+	href: string;
 	label: string;
 	description?: string;
-	i18n?: { es?: LocalizedOverride };
 }
 
-/** Resolves a nav/section entry's label+description for a locale, falling back to its English text. */
-export function localize<T extends Localizable>(
-	entry: T,
-	locale: Locale
-): { label: string; description?: string } {
-	const override = locale === "es" ? entry.i18n?.es : undefined;
+/**
+ * Resolves a nav/section entry's label+description for a locale. English
+ * lives on the entry itself; translations live in each locale's dictionary
+ * under "nav:<href>" and "nav:<href>:description", falling back to English.
+ */
+export function localize(entry: Localizable, locale: Locale): { label: string; description?: string } {
 	return {
-		label: override?.label ?? entry.label,
-		description: override?.description ?? entry.description,
+		label: tOr(`nav:${entry.href}`, locale, entry.label),
+		description:
+			entry.description === undefined
+				? undefined
+				: tOr(`nav:${entry.href}:description`, locale, entry.description),
 	};
 }

@@ -9,7 +9,7 @@ export function CiIntegrationContent() {
 			<p>
 				Plantillas listas para pegar que envuelven la{" "}
 				<a href="https://github.com/SureA11y/cli#readme">CLI</a> (
-				<code>npx @surea11y/cli scan ...</code>) en GitHub Actions y Bitbucket Pipelines. Si llamas a la
+				<code>npx @surea11y/cli scan ...</code>) en <span lang="en">GitHub Actions</span> y <span lang="en">Bitbucket Pipelines</span>. Si llamas a la
 				librería directamente desde tu propio script de Node en lugar de usar la CLI, consulta en su
 				lugar{" "}
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
@@ -25,7 +25,7 @@ export function CiIntegrationContent() {
 				no se necesita scripting adicional para un control básico de aprobado/fallido.
 			</p>
 
-			<h2>GitHub Actions</h2>
+			<h2><span lang="en">GitHub Actions</span></h2>
 			<h3>Básico: controlar según el código de salida</h3>
 			<CodeBlock
 				lang="yaml"
@@ -71,7 +71,7 @@ export function CiIntegrationContent() {
 				"conocido" frente a "nuevo", y cómo regenerar el archivo a medida que se corrigen violaciones.
 			</p>
 
-			<h3>Subir SARIF a GitHub Code Scanning</h3>
+			<h3>Subir SARIF a <span lang="en">GitHub Code Scanning</span></h3>
 			<p>
 				<code>upload-sarif</code> necesita el permiso <code>security-events: write</code> y{" "}
 				<strong>no hace fallar el <code>job</code> por sí mismo</strong>: combínalo con un paso de control
@@ -113,15 +113,15 @@ export function CiIntegrationContent() {
 			<p>
 				Consulta <a href="/results-reports/sarif-report/">el formato del informe SARIF</a> y una
 				limitación conocida: un análisis de un <strong>archivo local</strong> en tu checkout obtiene
-				anotaciones en línea en la interfaz de Code Scanning; un análisis de una{" "}
-				<strong>URL en vivo</strong> no las obtiene (SARIF/Code Scanning solo puede asociar un hallazgo
+				anotaciones en línea en la interfaz de <span lang="en">Code Scanning</span>; un análisis de una{" "}
+				<strong>URL en vivo</strong> no las obtiene (SARIF/<span lang="en">Code Scanning</span> solo puede asociar un hallazgo
 				con un archivo real del repositorio).
 			</p>
 
-			<h2>Bitbucket Pipelines</h2>
+			<h2><span lang="en">Bitbucket Pipelines</span></h2>
 			<p>
-				Bitbucket Pipelines no tiene un panel integrado que consuma SARIF equivalente a GitHub Code
-				Scanning, así que el código de salida de la CLI (más, opcionalmente, <code>--html</code> como
+				<span lang="en">Bitbucket Pipelines</span> no tiene un panel integrado que consuma SARIF equivalente a <span lang="en">GitHub Code
+				Scanning</span>, así que el código de salida de la CLI (más, opcionalmente, <code>--html</code> como
 				artefacto descargable del pipeline de CI) es el punto de integración práctico en lugar de{" "}
 				<code>--sarif</code>.
 			</p>
@@ -153,7 +153,7 @@ export function CiIntegrationContent() {
 			<h2>Límites de minutos en el nivel gratuito/repos privados</h2>
 			<p>
 				Si el nivel gratuito de tu proveedor de pipelines de CI tiene un límite de minutos (el nivel
-				gratuito de Bitbucket Pipelines es de 50 minutos de compilación al mes en workspaces privados,
+				gratuito de <span lang="en">Bitbucket Pipelines</span> es de 50 minutos de compilación al mes en workspaces privados,
 				por ejemplo), un análisis basado en <code>jsdom</code> de HTML estático/renderizado en el
 				servidor (lo que hace la CLI) es mucho más económico que controlar un navegador real mediante
 				automatización. Consulta{" "}

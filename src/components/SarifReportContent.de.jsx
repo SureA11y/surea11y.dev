@@ -1,0 +1,178 @@
+import React from "react";
+import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
+import { DataTable } from "./design-system/data/DataTable.jsx";
+
+const core = "https://github.com/SureA11y/core/blob/main";
+
+const sarifLevelRows = [
+	{ id: "fail", outcome: <code>fail</code>, level: <code>error</code>, meaning: "Deterministischer Verstoß: der Fall, an dem die CI scheitern soll." },
+	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "Braucht menschliche Prüfung: wird angezeigt, sollte aber allein keinen Build blockieren." },
+];
+
+const sarifFieldRows = [
+	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
+	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code></> },
+	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>Das gescannte Ziel; siehe <a href="#sarif-locations">Fundorte</a> weiter unten.</> },
+	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, sofern vorhanden.</> },
+	{
+		id: "fingerprint",
+		field: <code>results[].partialFingerprints["surea11y/violation/v1"]</code>,
+		source: (
+			<>
+				Derselbe Identitätsschlüssel <code>ruleId + reasonCode + html</code>, den{" "}
+				<a href="/conformance/baseline/">Baseline / Allowlist</a> (<code>computeBaselineKey</code>)
+				verwendet: ein stabiler, inhaltsbasierter Fingerprint statt eines positionsbasierten.
+			</>
+		),
+	},
+	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <><code>severity</code>/<code>confidence</code> des Ergebnisses selbst, dazu derselbe <code>reasonCode</code> und dasselbe <code>html</code>-Snippet, auf denen der Fingerprint oben beruht. Rein informativ, nicht Teil des SARIF-Schemas selbst.</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code> und ein <code>wcag-&lt;SC&gt;</code>-Tag pro <code>meta.normativeMappings[].requirement</code>.</> },
+];
+
+export function SarifReportContent() {
+	return (
+		<>
+			<p>
+				<code>--sarif &lt;path&gt;</code> schreibt ein Log im Format{" "}
+				<a href="https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html">SARIF 2.1.0</a>,
+				dem Standardformat, das <span lang="en">GitHub Code Scanning</span> (und andere Dashboards, die SARIF lesen)
+				erwartet, statt oder zusätzlich zum rohen Engine-Ergebnis von <code>--json</code>.
+			</p>
+			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --sarif results.sarif", command: true }]} />
+			<p>
+				Unter <a href="/configuration/ci-integration/">CI-Integration</a> finden Sie einen
+				GitHub-Actions-Workflow zum direkten Einfügen, der einen Scan ausführt und{" "}
+				<code>results.sarif</code> in den Tab „<span lang="en">Security</span>“ hochlädt.
+			</p>
+
+			<h2>Warum ein eigenes Format neben <code>--json</code></h2>
+			<p>
+				Das rohe Ergebnis von <code>--json</code> (siehe <a href="/results-reports/output-schema/">Ausgabeschema</a>)
+				ist der eigene Vertrag dieser Engine, versioniert und stabil gemäß{" "}
+				<a href={`${core}/docs/API_STABILITY.md`}><code>API_STABILITY.md</code></a>. SARIF ist ein
+				anderer, extern definierter Vertrag, eigens für Code-Scanning-Dashboards gebaut. Ein
+				Eintrag in <code>checksResults[]</code> und ein SARIF-<code>result</code> entsprechen sich
+				nicht 1:1, deshalb <strong>ist das eine echte Umwandlung, keine erneute
+				Serialisierung</strong>.
+			</p>
+
+			<h2>Was zu einem SARIF-Ergebnis wird</h2>
+			<p>
+				<strong>Nur <code>fail</code>- und <code>cantTell</code>-Vorkommen erzeugen SARIF-Ergebnisse</strong>{" "}
+				(derselbe Ansatz „nur Verstöße“ wie beim{" "}
+				<a href="/results-reports/html-report/">HTML-Bericht</a>).
+			</p>
+			<p>
+				Eine <code>notApplicable</code>-Prüfung ist nicht immer leer: Eine Regel kann ein
+				Vorkommen anhängen, das erklärt, warum sie nichts zu beurteilen hatte; die Kontrastregeln
+				tun das, wenn kein Text einen berechenbaren Hintergrund hatte. Diese Vorkommen werden nie
+				zu Ergebnissen (ein Konsument behandelt jedes Ergebnis als Alarm, und „wurde nicht
+				ausgewertet“ ist keiner), aber sie werden auch nicht verworfen. Sie stehen als Einträge
+				der Stufe <code>note</code> in{" "}
+				<code>runs[0].invocations[0].toolExecutionNotices</code>, jeweils mit der Regel, aus der
+				sie stammen, in <code>associatedRule.id</code>:
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={[
+					'"invocations": [',
+					"  {",
+					'    "executionSuccessful": true,',
+					'    "toolExecutionNotices": [',
+					"      {",
+					'        "level": "note",',
+					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
+					'        "associatedRule": { "id": "contrast-minimum" }',
+					"      }",
+					"    ]",
+					"  }",
+					"]",
+				]}
+			/>
+			<p>
+				<strong>So liest eine Pipeline, die nur SARIF auswertet, Stille nicht als
+				Unbedenklichkeitsbescheinigung</strong>: Keine Kontrast-Alarme können bedeuten, dass die
+				Seite in Ordnung ist, oder dass der Kontrast nie berechenbar war, und nur der Hinweis
+				unterscheidet die beiden Fälle. Der Block wird nur ausgegeben, wenn es etwas zu sagen gibt;
+				ein Lauf ohne Meldungen hat also gar keinen <code>invocations</code>-Schlüssel.
+			</p>
+			<DataTable
+				rowKey="id"
+				columns={[
+					{ key: "outcome", label: "Engine-Ergebnis", width: "22%" },
+					{ key: "level", label: "SARIF-Stufe", width: "18%" },
+					{ key: "meaning", label: "Bedeutung", wrap: true },
+				]}
+				rows={sarifLevelRows}
+			/>
+			<p>
+				Jede ausgeführte Regel (unabhängig davon, ob sie ein Ergebnis erzeugt hat) wird einmal in{" "}
+				<code>runs[0].tool.driver.rules</code> aufgeführt, wobei{" "}
+				<code>defaultConfiguration.level</code> aus dem <code>type</code> der Regel abgeleitet
+				wird: <code>automatic</code> (kann <code>fail</code> melden) → <code>error</code>,{" "}
+				<code>manual</code> (begrenzt auf <code>cantTell</code>) → <code>warning</code>.
+			</p>
+
+			<h2>Feldzuordnung</h2>
+			<DataTable
+				rowKey="id"
+				columns={[
+					{ key: "field", label: "SARIF-Feld", width: "36%", wrap: true },
+					{ key: "source", label: "Quelle", wrap: true },
+				]}
+				rows={sarifFieldRows}
+			/>
+
+			<h2 id="sarif-locations">Fundorte</h2>
+			<p>
+				Ein DOM-basierter Scan hat keine Zeile oder Spalte zu melden, deshalb ist{" "}
+				<code>physicalLocation.artifactLocation.uri</code> das gescannte Ziel selbst, keine
+				Position in einer Quelldatei:
+			</p>
+			<ul>
+				<li>
+					<strong>Scans lokaler Dateien</strong>: ein Pfad relativ zum aktuellen Arbeitsverzeichnis
+					(mit Schrägstrichen). Entspricht er einer echten Datei in Ihrem Repository, kann GitHub
+					<span lang="en">Code Scanning</span> den Befund als Inline-Annotation anzeigen.
+				</li>
+				<li>
+					<strong>URL-Scans</strong>: die gescannte URL selbst. <span lang="en">GitHub Code Scanning</span> listet den
+					Befund trotzdem auf, kann aber keine Inline-Annotation an eine URL hängen, die keine
+					Datei im Repository ist. Das liegt daran, wie SARIF und <span lang="en">Code Scanning</span> Befunde mit dem
+					Quellcode verknüpfen, und ist keine Einschränkung von surea11y. Wenn Sie
+					Inline-Annotationen brauchen, scannen Sie die gerenderte HTML-Datei (z. B. ein
+					Build-Artefakt) statt einer Live-URL.
+				</li>
+			</ul>
+			<p>
+				<code>occurrence.selector</code> wird zusätzlich als{" "}
+				<code>logicalLocations[].fullyQualifiedName</code> mitgeführt, sodass ein Konsument, der
+				logische Fundorte liest, auch ohne brauchbaren physischen Fundort erfährt, um welches
+				Element es geht.
+			</p>
+
+			<h2>Kombination mit <code>--baseline</code></h2>
+			<p>
+				Ein generischer SARIF-Konsument kennt kein eigenes Konzept für „bekannt, nicht daran
+				scheitern“. Die einzige getreue Art, eine Baseline in der SARIF-Ausgabe zu berücksichtigen,
+				ist daher,{" "}
+				<strong>bereits bekannte <code>fail</code>-Vorkommen ganz wegzulassen, statt sie auf{" "}
+				<code>warning</code> herabzustufen</strong>:
+			</p>
+			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --baseline baseline.json --sarif results.sarif", command: true }]} />
+			<p>
+				<code>cantTell</code>-Vorkommen werden nie durch eine Baseline gefiltert: Der
+				Baseline-Mechanismus erfasst ausschließlich <code>fail</code>-Vorkommen (passend zu{" "}
+				<code>--write-baseline</code>, siehe{" "}
+				<a href="/conformance/baseline/">Baseline / Allowlist</a>).
+			</p>
+
+			<h2>Kombination mit <code>--html</code>/<code>--json</code></h2>
+			<p>
+				<code>--sarif</code>, <code>--html</code> und <code>--json</code> sind unabhängige
+				Ausgabe-Flags: Übergeben Sie in einem Lauf jede beliebige Kombination; jedes schreibt bzw.
+				gibt seinen eigenen Bericht aus demselben einzelnen Scan aus.
+			</p>
+		</>
+	);
+}
