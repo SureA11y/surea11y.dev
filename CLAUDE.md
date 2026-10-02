@@ -501,9 +501,8 @@ correcting meaning, obligation levels and terminology per the conventions
 above. `meta-refresh-no-exceptions` said "must not use a meta refresh at
 all", but a delay of 0 passes. The English is now fixed at the source
 (`core`'s rule module and `src/i18n/en.json`, plus the regenerated
-`RULE_CATALOG.md`) to "must not use a timed meta refresh". de/fr/ja match
-it; `es` (and `core`'s own de/es/fr engine messages) still say "at all",
-and `i18n:check` lists `es` as outdated. `meta-viewport-large` still
+`RULE_CATALOG.md`) to "must not use a timed meta refresh". Every locale
+matches it now, here and in `core`'s engine messages. `meta-viewport-large` still
 differs on purpose: the English calls it "AAA-level", but it has
 `wcagSc: []` / Best Practices, so the translations drop "AAA". Fix the
 English, and `es`, to match.

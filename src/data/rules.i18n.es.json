@@ -339,7 +339,7 @@
 		"title": "El atributo `autocomplete` debe tener un valor válido",
 		"description": "Comprueba que un atributo autocomplete no vacío sea \"on\"/\"off\" o una lista de tokens de detalle de autorrelleno bien formada.",
 		"applicability": "Se aplica a controles de formulario (input, select, textarea) con un atributo autocomplete no vacío. Los controles deshabilitados (el atributo disabled, incluido un control deshabilitado por un fieldset ancestro deshabilitado, o aria-disabled=\"true\") y los tipos de input con valor fijo están exentos, como en ACT 73f2c2.",
-		"expectation": "El valor es \"on\"/\"off\" por sí solo, o una lista bien formada de tokens de detalle de autocompletado: un token \"section-*\" opcional, luego un token \"shipping\"/\"billing\" opcional, luego un token de modalidad de contacto opcional (home/work/mobile/fax/pager), luego exactamente un token de nombre de campo reconocido (name, email, street-address, cc-number, tel, ...), seguido opcionalmente de \"webauthn\". El nombre de campo además debe ajustarse al control: el estándar HTML asigna a cada nombre de campo un grupo de controles, y cada grupo solo se permite en algunos tipos de input (street-address solo en textarea o select; email solo en inputs text, search o email; etc.). Un valor mal formado o inadecuado significa que el campo no se identifica de forma fiable para la tecnología de asistencia que depende de autocomplete para describir el propósito esperado de la entrada.",
+		"expectation": "El valor es \"on\"/\"off\" por sí solo, o una lista bien formada de tokens de detalle de autocompletado: un token \"section-*\" opcional, luego un token \"shipping\"/\"billing\" opcional, luego un token de modalidad de contacto opcional (home/work/mobile/fax/pager), luego exactamente un token de nombre de campo reconocido (name, email, street-address, cc-number, tel, ...), seguido opcionalmente de \"webauthn\". Un valor mal formado significa que el campo no se identifica de forma fiable para la tecnología de asistencia que depende de autocomplete para describir el propósito esperado de la entrada.",
 		"examples": [
 			{
 				"state": "pass",
@@ -1385,8 +1385,8 @@
 		]
 	},
 	"meta-refresh-no-exceptions": {
-		"title": "La página no debe usar `meta refresh` en absoluto (AAA)",
-		"description": "Comprueba que <meta http-equiv=\"refresh\"> no esté presente en absoluto, independientemente del retardo. Esta es la contraparte más estricta, de nivel AAA, de la comprobación de nivel A que solo considera el retardo positivo.",
+		"title": "La página no debe usar un `meta refresh` temporizado (AAA)",
+		"description": "Comprueba que <meta http-equiv=\"refresh\"> no establezca un retardo positivo, por largo que sea; una redirección inmediata (retardo 0) pasa. Esta es la contraparte más estricta, de nivel AAA, de la comprobación de nivel A, que exime los retardos de más de 20 horas.",
 		"applicability": "Se aplica al primer elemento <meta http-equiv=\"refresh\">, en orden del documento, con un atributo content válido; según los pasos declarativos compartidos de refresco de HTML, un documento solo actúa sobre su primer `meta refresh` válido, por lo que uno posterior (válido o no) es inerte y queda fuera del alcance.",
 		"expectation": "Al ejecutar los pasos declarativos compartidos de refresco sobre el valor content de ese elemento se obtiene un retardo de exactamente 0. Una redirección inmediata (delay=0) sigue pasando en AAA, igual que en la regla de nivel A. No hay nada que interrumpa la lectura del usuario cuando no se muestra nada antes. Cualquier retardo positivo hace que la regla devuelva `fail`, sin la exención de más de 20 horas de la regla de nivel A: en AAA, WCAG 2.2.4 ([[en:Interruptions]]) y 3.2.5 ([[en:Change on Request]]) exigen que un cambio de contexto automático *temporizado* ocurra únicamente a petición del usuario, sin importar la duración del temporizador.",
 		"examples": [
