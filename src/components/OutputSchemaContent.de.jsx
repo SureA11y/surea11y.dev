@@ -70,6 +70,59 @@ const topLevelRows = [
 			</>
 		),
 	},
+	{
+		id: "engine.profile",
+		field: <code>engine.profile</code>,
+		meaning: (
+			<>
+				Nur vorhanden, wenn ein <code>engineOptions.profile</code> die Regeln dieses Laufs
+				ausgewählt hat, und nennt das Profil in Kleinbuchstaben. Fehlt, wenn keines angefordert
+				wurde, und auch, wenn eines angefordert, aber nicht angewendet wurde (unbekannter Name oder
+				ein include in <code>runOnly</code> oder <code>engineOptions</code> hat stattdessen die
+				Regeln gewählt) — sein Vorhandensein bestätigt also, dass ein Lauf wirklich dieses Profil
+				als Ziel hatte. Siehe{" "}
+				<a href="/configuration/engine-options/#conformance-profiles">Konformitätsprofile</a>.
+			</>
+		),
+	},
+	{
+		id: "engine.profileExcludes",
+		field: <code>engine.profileExcludes</code>,
+		meaning: (
+			<>
+				Nur vorhanden, wenn das angewendete Profil Regeln auslässt:{" "}
+				<code>{"{ rules, criteria }"}</code>, die genannten Regeln und die WCAG-Kriterien, die es
+				erlässt. Deren Regeln und WCAG-Zusammenfassungen sind nicht gelaufen. Kein eingebautes
+				Profil lässt etwas aus.
+			</>
+		),
+	},
+	{
+		id: "engine.optInRules",
+		field: <code>engine.optInRules</code>,
+		meaning: (
+			<>
+				Nur vorhanden, wenn <code>engineOptions.optInRules</code> mindestens eine Opt-in-Regel
+				ausgeführt hat, die die übrige Auswahl nicht ausgeführt hätte. Listet ihre Tags auf. Sein
+				Vorhandensein bedeutet, dass das Ergebnis Regeln für Anforderungen jenseits der Zielnorm
+				enthält, ein fail also kein WCAG-Verstoß sein muss. Siehe{" "}
+				<a href="/configuration/engine-options/#running-every-rule-optinrules">Alle Regeln ausführen</a>.
+			</>
+		),
+	},
+	{
+		id: "engine.mappings",
+		field: <code>engine.mappings</code>,
+		meaning: (
+			<>
+				Nur vorhanden, wenn der Lauf in <code>meta.normativeMappings</code> eine andere Norm als
+				WCAG nennt, über <code>engineOptions.mappings</code> oder das Profil einer Norm. Listet sie
+				in kanonischer Schreibweise: <code>"en301549"</code> für alle Versionen,{" "}
+				<code>"en301549:V3.2.1"</code> für eine. Fehlt es, nennt jedes Ergebnis nur WCAG. Siehe{" "}
+				<a href="/configuration/engine-options/#other-standards-mappings">Andere Normen</a>.
+			</>
+		),
+	},
 	{ id: "url", field: <code>url</code>, meaning: <>Das übergebene Argument <code>pageUrl</code>, oder <code>document.location.href</code>, wenn Sie <code>null</code> übergeben oder es weggelassen haben, oder <code>null</code>, wenn keins von beiden verfügbar ist.</> },
 	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> zum Zeitpunkt des Scans, oder <code>null</code>.</> },
 	{
@@ -119,10 +172,11 @@ const topLevelRows = [
 		field: <code>rulesResults</code>,
 		meaning: (
 			<>
-				Ein Eintrag pro <strong>zusammengesetzter Regel (Zusammenfassung pro
-				WCAG-Erfolgskriterium)</strong>, die gelaufen ist, siehe{" "}
-				<a href="#composite-result">Ein zusammengesetztes Ergebnis</a> und{" "}
-				<a href="/conformance/wcag-mapping/">Konformität</a>. Leeres Array, wenn keine
+				Ein Eintrag pro <strong>zusammengesetzter Regel (Zusammenfassung)</strong>, die gelaufen
+				ist, siehe <a href="#composite-result">Ein zusammengesetztes Ergebnis</a> und{" "}
+				<a href="/conformance/wcag-mapping/">Konformität</a>. Normalerweise eine pro
+				WCAG-Erfolgskriterium; ein Lauf unter dem Profil einer Norm mit eigenen Zusammenfassungen
+				erhält auch diese (mit <code>meta.standard</code>). Leeres Array, wenn keine
 				zusammengesetzte Regel zum aktuellen <code>runOnly</code>- bzw. Tag-Filter passte.
 			</>
 		),
@@ -293,7 +347,9 @@ export function OutputSchemaContent() {
 					"    tag: string,",
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
-					'    wcagVersion: "2.0" | "2.1" | "2.2"',
+					'    wcagVersion: "2.0" | "2.1" | "2.2",',
+					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508"',
+					'    mappings?: string[]    // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"  },",
 					"  url: string | null,",
 					"  title: string | null,",
@@ -386,7 +442,7 @@ export function OutputSchemaContent() {
 					"    deprecated: boolean,",
 					"    deprecation: object | null,",
 					'    category: "perceivable" | "operable" | "understandable" | "robust" | null,',
-					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel: string }>,",
+					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel?: string, wcagSc?: string[] }>,",
 					"    standard: string | null,",
 					"    applicability: string,",
 					"    expectation: string,",
@@ -396,6 +452,8 @@ export function OutputSchemaContent() {
 					"  },",
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
+					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
@@ -429,7 +487,25 @@ export function OutputSchemaContent() {
 					WCAG-Erfolgskriterium; <code>[]</code> bei Regeln ohne formale WCAG-Zuordnung (das sind die
 					Hinweisregeln mit <code>type: "manual"</code> sowie die automatische Best-Practice-Regel{" "}
 					<code>aria-allowed-role</code>). Wie diese
-					zusammengefasst werden, steht unter <a href="/conformance/wcag-mapping/">Konformität</a>.
+					zusammengefasst werden, steht unter <a href="/conformance/wcag-mapping/">Konformität</a>.{" "}
+					<strong>Die Liste enthält nicht nur WCAG.</strong> Fordert der Scan eine andere Norm an (
+					<code>engineOptions.mappings</code> oder das Profil einer Norm), folgt auf jedes
+					WCAG-Kriterium die entsprechende Anforderung dieser Norm, etwa die EN-301-549-Klausel, die
+					es wiedergibt (
+					<code>{'{ standard: "EN 301 549", version: "V3.2.1" | "V4.1.1", requirement: "9.1.1.1", title, wcagSc: ["1.1.1"] }'}</code>
+					, ein Eintrag pro Version, die das Kriterium enthält); außerdem kann eine Regel die
+					Understanding-Dokumente der WCAG zitieren (<code>type: "Understanding"</code>). Filtern Sie
+					nach <code>standard</code> (und nach fehlendem <code>type</code>), bevor Sie{" "}
+					<code>requirement</code> als Erfolgskriterium lesen. Der WCAG-Eintrag einer
+					zusammengesetzten Regel steht immer zuerst. Siehe{" "}
+					<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>.
+				</li>
+				<li>
+					<strong><code>rollupIds</code></strong> listet die zusammengesetzten Regeln in{" "}
+					<code>rulesResults</code>, die diese Regel in diesem Lauf gruppieren. Eine leere Liste
+					bedeutet, dass die Befunde der Regel in keiner Zusammenfassung erscheinen; wer nur{" "}
+					<code>rulesResults</code> liest, sieht sie also nie. <code>heading-order</code> gehört zum
+					Beispiel zu keiner WCAG-Zusammenfassung.
 				</li>
 				<li>
 					<strong><code>wcagVersionScope</code></strong>: nur vorhanden, wenn die WCAG-Zielversion
@@ -443,6 +519,11 @@ export function OutputSchemaContent() {
 					<strong>nie</strong> über <code>error</code> gemeldet: Es ist nichts schiefgegangen.
 					Siehe{" "}
 					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtern nach WCAG-Version</a>.
+				</li>
+				<li>
+					<strong><code>data</code></strong>: nur bei einer Regel vorhanden, die unabhängig von
+					ihrem Ergebnis etwas über die ganze Seite meldet. Keine Core-Regel tut das derzeit. Wie{" "}
+					<code>data.details</code> bei einem Vorkommen ist es kein stabiler Vertrag.
 				</li>
 				<li>
 					<strong><code>error</code></strong>: nur in drei Fällen vorhanden: Die
@@ -558,7 +639,9 @@ export function OutputSchemaContent() {
 			<p>
 				Zusammengesetzte Regeln fassen mehrere atomare Regeln zu einem WCAG-Erfolgskriterium
 				zusammen (z. B. fasst <code>wcag-1.1.1-non-text-content</code> 21 atomare Regeln
-				zusammen). Die Struktur ist dieselbe Hülle wie bei einem Prüfergebnis, mit
+				zusammen). Unter dem Profil einer Norm mit eigenen Zusammenfassungen gibt es zusätzlich
+				diese, mit dem Wortlaut der Norm als <code>title</code> und ihrem Namen als{" "}
+				<code>meta.standard</code>. Die Struktur ist dieselbe Hülle wie bei einem Prüfergebnis, mit
 				spezifischen <code>data.details</code> für zusammengesetzte Regeln:
 			</p>
 			<CodeBlock
@@ -571,6 +654,9 @@ export function OutputSchemaContent() {
 					"  data: {",
 					"    details: {",
 					'      reasonCode: string,       // e.g. "composite.rollup.fail.anyFail"',
+					"      standard?: string,        // a standard's own rollup only, with version and criterion",
+					"      version?: string,",
+					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId this composite rolls up",
 					"      contributors: Array<{ testId: string, outcome: string, severity: string | null }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",

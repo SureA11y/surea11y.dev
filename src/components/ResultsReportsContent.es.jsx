@@ -5,6 +5,7 @@ const formatRows = [
 	{ format: <code>JSON</code>, use: "Integración, almacenamiento y procesamiento propio", audience: "Desarrollo y plataformas" },
 	{ format: "HTML", use: "Revisión humana de un análisis concreto", audience: "QA y auditoría" },
 	{ format: "SARIF", use: "Integración con herramientas de análisis de código", audience: "Equipos de desarrollo y seguridad" },
+	{ format: "JUnit", use: "Vistas de pruebas de los paneles de CI", audience: "Equipos de desarrollo y QA" },
 	{ format: "EARL", use: "Interoperabilidad y evidencia de conformidad con ACT", audience: "Estándares, investigación y conformidad" },
 ];
 
@@ -13,9 +14,10 @@ export function ResultsReportsContent() {
 		<>
 			<p>
 				Cada análisis se devuelve como un único objeto JSON plano: nada oculto, nada que tengas que
-				volver a derivar. Los tres formatos de informe siguientes se construyen directamente sobre
+				volver a derivar. Los cuatro formatos de informe siguientes se construyen directamente sobre
 				ese mismo objeto, cada uno pensado para un lector distinto: una persona revisando una
-				pestaña del navegador, un panel de CI que solo entiende SARIF, o el propio formato de
+				pestaña del navegador, un panel de análisis de código que solo entiende SARIF, una vista
+				de pruebas de CI que lee JUnit, o el propio formato de
 				informe de implementación del W3C. Elige la forma que se ajuste a quién va a mirarlo
 				realmente.
 			</p>
@@ -59,6 +61,16 @@ export function ResultsReportsContent() {
 				limpieza y un panel puede seguir un hallazgo a través de commits en lugar de perderlo cada
 				vez que cambia un número de línea. Ver{" "}
 				<a href="/results-reports/sarif-report/">Informe SARIF</a>.
+			</p>
+
+			<h2>Informe JUnit</h2>
+			<p>
+				Lleva los resultados de accesibilidad a la vista de pruebas que tu CI ya tiene (el widget
+				de merge requests de GitLab, la pestaña Tests de Azure DevOps, Jenkins, CircleCI), junto a
+				tus pruebas unitarias. Cada criterio de WCAG es una suite y cada regla una prueba, así que
+				un defecto repetido en una página es una sola prueba fallida y los recuentos se mantienen
+				estables entre ejecuciones. <code>cantTell</code> llega como prueba omitida, visible sin
+				poner la compilación en rojo. Ver <a href="/results-reports/junit-report/">Informe JUnit</a>.
 			</p>
 
 			<h2>Informe EARL</h2>

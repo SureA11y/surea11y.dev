@@ -26,7 +26,8 @@ const sarifFieldRows = [
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <><code>severity</code>/<code>confidence</code> des Ergebnisses selbst, dazu derselbe <code>reasonCode</code> und dasselbe <code>html</code>-Snippet, auf denen der Fingerprint oben beruht. Rein informativ, nicht Teil des SARIF-Schemas selbst.</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code> und ein <code>wcag-&lt;SC&gt;</code>-Tag pro <code>meta.normativeMappings[].requirement</code>.</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code> und ein <code>wcag-&lt;SC&gt;</code>-Tag pro WCAG-Erfolgskriterium in <code>meta.normativeMappings</code>. Einträge zu Understanding-Dokumenten erhalten kein Tag. Jede EN-301-549-Klausel, die das Ergebnis trägt (nur wenn der Scan sie angefordert hat, siehe <a href="/configuration/engine-options/#other-standards-mappings">Andere Normen</a>), erhält ein Tag <code>en301549-&lt;Klausel&gt;</code>, z. B. <code>en301549-9.1.1.1</code>: Klauselnummern sind in jeder Version, die sie enthält, gleich, daher trägt das Tag keine Version.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code> und <code>optInRules</code> aus der <code>engine</code> des Ergebnisses: das Konformitätsziel des Laufs, damit ein Dashboard einen WCAG-2.1-Lauf von einem 2.2-Lauf unterscheiden kann, und die Tags der Opt-in-Regeln, die er über dieses Ziel hinaus hinzugefügt hat, falls vorhanden. Fehlt bei Ergebnissen von Engines, die diese Felder noch nicht kennen.</> },
 ];
 
 export function SarifReportContent() {

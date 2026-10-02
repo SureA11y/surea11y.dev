@@ -30,14 +30,17 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   and each rule's JSDoc, the same API this doc's own generator calls.
 - `../core/docs/RULE_EXAMPLES.md` — one verified `Passed`/`Failed` (or
   `Flagged`/`Not applicable` for manual rules) example pair per rule, all
-  132. Hand-curated, not generated, not yet CI-checked. This one *is*
+  of them. Hand-curated, not generated, not yet CI-checked. This one *is*
   parsed (`scripts/generate-rules-data.cjs`) — it's the only source for the
-  example pairs, there's no API for them. Two format exceptions the parser
-  already handles: `manual-review` has one example, not a pair (no
-  `notApplicable` branch), and `duplicate-id`'s `**Failed**` heading carries
-  a trailing annotation on the same line.
+  example pairs, there's no API for them. Format variations the parser
+  handles: one to three examples per rule (`manual-review` has one; a rule
+  with a tiered outcome adds a third, `Flagged (cantTell)`); an annotation
+  after the bold heading (`duplicate-id`) is dropped; a qualifier inside it
+  (`**Passed (in a browser)**`) becomes an example `context`, mapped to a
+  translated label via `EXAMPLE_CONTEXT` and `rulePage.exampleContext.*` —
+  an unknown qualifier fails the generator rather than being dropped.
 - `scripts/generate-rules-data.cjs` — writes `src/data/rules.generated.json`
-  (132 rules: catalog fields + applicability/expectation + example pairs +
+  (one entry per rule: catalog fields + applicability/expectation + example pairs +
   `relatedRuleIds`, computed by stripping a rule id's last hyphen segment
   and grouping ids that share the remainder). `npm run docs:rules` to
   regenerate, `npm run docs:rules:check` to verify it's current — same
@@ -484,10 +487,13 @@ translation, and what to keep in mind when editing it:
   with targets) or 「声明」. Keep
   「必要があります」 for genuine "must"s only; "must not" titles use
   「〜してはいけません」.
-- The engine itself has no `ja` locale (`locales.generated.json`:
-  en/de/es/fr), so Japanese pages document English engine output. The
-  Locales and Configuration pages say so explicitly: this site's Japanese
+- The engine ships a `ja` locale since core 1.8.0, so Japanese engine
+  output exists too; the Locales page still notes that this site's Japanese
   translation is separate from the engine's report languages.
+- Rule prose marks other-language text with `[[<code>:…]]` (`[[en:…]]`,
+  `[[fr:…]]`, …), rendered by `RuleText` as `<span lang>`;
+  `check:lang` skips any element marked with a language other than the
+  page's.
 
 **Translation review (2026-09-28)**: de, fr and ja were reviewed line by
 line against the English (all 132 rules, every content page, dictionaries),

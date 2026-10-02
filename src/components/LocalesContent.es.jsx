@@ -38,7 +38,7 @@ const localeReasonRows = [
 		reason: <code>unknown-locale</code>,
 		meaning: (
 			<>
-				El proyecto no tiene esa traducción en absoluto, así que se usó inglés. <code>ja</code> y{" "}
+				El proyecto no tiene esa traducción en absoluto, así que se usó inglés. <code>ko</code> y{" "}
 				<code>pt-BR</code> caen ambos aquí actualmente.
 			</>
 		),
@@ -89,7 +89,7 @@ export function LocalesContent() {
 					{ key: "locale", label: "Configuración regional", width: "18%" },
 					{ key: "file", label: "Archivo", width: "24%" },
 					{ key: "keys", label: "Claves", width: "12%" },
-					{ key: "untranslated", label: "Valores que siguen en inglés", wrap: true },
+					{ key: "untranslated", label: "Valores idénticos al inglés", wrap: true },
 				]}
 				rows={localeCoverageRows.map((r) => ({
 					...r,
@@ -100,6 +100,13 @@ export function LocalesContent() {
 					),
 				}))}
 			/>
+			<p>
+				La última columna cuenta los valores que coinciden carácter por carácter con el texto en
+				inglés. Eso detecta una clave que nadie ha traducido aún, pero también cuenta una palabra
+				que simplemente es igual en ambos idiomas, como <em lang="es">Selector</em> en español o{" "}
+				<em lang="fr">Orientation</em> e <em lang="fr">Interruptions</em> en francés: eso es lo
+				que reflejan los recuentos distintos de cero de arriba.
+			</p>
 			<p>
 				Los archivos de configuración regional son JSON simples: un mapa plano de clave a cadena traducida, en el
 				mismo orden de claves que <code>en.json</code>. No contienen nada más, así que contribuir
@@ -169,7 +176,7 @@ export function LocalesContent() {
 					'"engine": {',
 					'  "tag": "a11ycore",',
 					'  "schemaVersion": "1.0.0",',
-					'  "locale": { "requested": "ja", "resolved": "en", "reason": "unknown-locale" }',
+					'  "locale": { "requested": "ko", "resolved": "en", "reason": "unknown-locale" }',
 					"}",
 				]}
 			/>
@@ -214,7 +221,7 @@ export function LocalesContent() {
 			/>
 			<p>
 				El paquete está dividido porque viaja por la red a cada página que lo usa, y ninguna página
-				necesita los cuatro idiomas. Mantener el inglés incorporado y el resto como opcional redujo
+				necesita todos los idiomas. Mantener el inglés incorporado y el resto como opcional redujo
 				unos 280 KB de la descarga y evita que siga creciendo a medida que se añaden idiomas. Nada
 				más cambia: el paquete de Node y las integraciones no se ven afectados.
 			</p>
@@ -222,7 +229,10 @@ export function LocalesContent() {
 				lang="html"
 				lines={[
 					'<script src="surea11y.browser.js"></script>',
-					'<script src="surea11y.i18n.de.js"></script>',
+					'<script src="surea11y.i18n.ja.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(location.href, null, { locale: 'ja' }, null);",
+					"</script>",
 				]}
 			/>
 			<p>
@@ -249,13 +259,54 @@ export function LocalesContent() {
 			/>
 			<p>Las claves que no proporciones recurren al valor por defecto normalmente, así que una sobrescritura parcial es válida.</p>
 
+			<h2 id="language-specific-matching">Coincidencia específica por idioma</h2>
+			<p>
+				Cinco reglas juzgan el texto por frases conocidas, así que llevan listas de palabras además
+				de mensajes: <code>link-name-quality</code> ("<span lang="en">click here</span>",
+				「<span lang="ja">こちら</span>」), <code>heading-quality</code> ("<span lang="en">Untitled</span>",
+				「<span lang="ja">見出し</span>」), <code>form-control-label-quality</code>{" "}
+				("<span lang="en">Label</span>", 「<span lang="ja">入力欄</span>」),{" "}
+				<code>page-title-patterns</code> ("<span lang="en">Home</span>",
+				「<span lang="ja">トップページ</span>」) y <code>media-alternative-transcript-evidence</code>{" "}
+				("<span lang="en">transcript</span>", 「<span lang="ja">文字起こし</span>」). Cada lista
+				cubre <code>en</code>, <code>de</code>, <code>es</code>, <code>fr</code> y <code>ja</code>.
+				La regla <code>skip-link</code> reconoce la redacción de los enlaces de salto en esos mismos
+				cinco idiomas.
+			</p>
+			<p>
+				El inglés se comprueba siempre. La lista del idioma propio del elemento, tomado del atributo{" "}
+				<code>lang</code> más cercano (el del elemento <code>&lt;html&gt;</code> para el título de la
+				página), se añade encima. Comprobar todas las listas en todas partes marcaría palabras que
+				son genéricas en un idioma y un nombre real en otro, como "<span lang="fr">Suite</span>" o
+				"<span lang="fr">Plus</span>" en una página en inglés. Las palabras de transcripción son la
+				excepción: son distintivas en todos los idiomas y una página puede enlazar una transcripción
+				en otro idioma, así que se comprueban todas siempre. El texto se normaliza primero en NFKC,
+				así que coinciden las formas de ancho completo como 「<span lang="ja">見出し２</span>」.
+			</p>
+			<p>
+				<code>page-title-patterns</code> también cuenta cada carácter chino, japonés o coreano como
+				dos al decidir si un título es demasiado corto, ya que 「<span lang="ja">お問い合わせ</span>」
+				es un título completo de seis caracteres.
+			</p>
+
 			<h2>Dónde se usan las claves</h2>
-			<p>Dos espacios de nombres de claves independientes, ambos resueltos de la misma manera:</p>
+			<p>Varios espacios de nombres de claves, todos resueltos de la misma manera:</p>
 			<ul>
 				<li>
 					<strong>A nivel de regla</strong>: <code>meta.i18n.titleKey</code> / <code>meta.i18n.descriptionKey</code>,{" "}
 					resuelven el <code>title</code>/<code>description</code> de una regla en cada entrada
 					de <code>checksResults[]</code>.
+				</li>
+				<li>
+					<strong>Informe HTML</strong>: las claves <code>report_*</code> etiquetan la página que
+					genera <code>@surea11y/core/report</code>: encabezados, columnas de tabla, nombres de
+					resultados y gravedades, el titular, el paginador. El informe las lee en el idioma al que
+					se resolvió el análisis, así que un diccionario también traduce el informe.
+				</li>
+				<li>
+					<strong>A nivel de compuesto</strong>: el <code>title</code>/<code>description</code> de
+					cada resultado agregado de <code>rulesResults[]</code>, con el nombre publicado del
+					criterio de conformidad en cada idioma.
 				</li>
 				<li>
 					<strong>A nivel de ocurrencia</strong>: <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,

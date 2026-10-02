@@ -62,9 +62,60 @@ const topLevelRows = [
 				4.1.1 Parsing cannot <code>fail</code> under a 2.2 target</strong> (see{" "}
 				<code>checksResults[i].wcagVersionScope</code> below). Reported once per result: a run has
 				one target throughout.
-			</>
-		),
-	},
+				</>
+				),
+				},
+				{
+					id: "engine.profile",
+					field: <code>engine.profile</code>,
+					meaning: (
+						<>
+							Present only when an <code>engineOptions.profile</code> selected this run's rules, and
+							names the profile, lowercased. Absent when none was asked for, and also when one was asked
+							for but did not apply (unknown name, or an include in <code>runOnly</code> or{" "}
+							<code>engineOptions</code> chose the rules instead), so its presence is how you confirm a
+							run really targeted that profile. See{" "}
+							<a href="/configuration/engine-options/#conformance-profiles">Conformance profiles</a>.
+						</>
+					),
+				},
+				{
+					id: "engine.profileExcludes",
+					field: <code>engine.profileExcludes</code>,
+					meaning: (
+						<>
+							Present only when the applied profile leaves rules out: <code>{"{ rules, criteria }"}</code>,
+							the rules it names and the WCAG criteria it waives. Their rules and WCAG rollups did not
+							run. No built-in profile leaves anything out.
+						</>
+					),
+				},
+				{
+					id: "engine.optInRules",
+					field: <code>engine.optInRules</code>,
+					meaning: (
+						<>
+							Present only when <code>engineOptions.optInRules</code> ran at least one opt-in rule that
+							the rest of the selection would not have run. Lists their tags. Its presence means the
+							result includes rules for requirements beyond the targeted standard, so a failure may not
+							be a WCAG failure. See{" "}
+							<a href="/configuration/engine-options/#running-every-rule-optinrules">Running every rule</a>.
+						</>
+					),
+				},
+				{
+					id: "engine.mappings",
+					field: <code>engine.mappings</code>,
+					meaning: (
+						<>
+							Present only when the run names a standard besides WCAG in{" "}
+							<code>meta.normativeMappings</code>, through <code>engineOptions.mappings</code> or a
+							standard's profile. Lists them canonically: <code>"en301549"</code> for every version,{" "}
+							<code>"en301549:V3.2.1"</code> for one. Absent means every result names WCAG only. See{" "}
+							<a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>.
+						</>
+					),
+				},
 	{ id: "url", field: <code>url</code>, meaning: <>The <code>pageUrl</code> argument you passed in, or <code>document.location.href</code> if you passed <code>null</code>/omitted it, or <code>null</code> if neither is available.</> },
 	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> at scan time, or <code>null</code>.</> },
 	{
@@ -112,9 +163,11 @@ const topLevelRows = [
 		field: <code>rulesResults</code>,
 		meaning: (
 			<>
-				One entry per <strong>composite (WCAG-SC rollup) rule</strong> that ran — see{" "}
+				One entry per <strong>composite (rollup) rule</strong> that ran — see{" "}
 				<a href="#composite-result">A composite result</a> and{" "}
-				<a href="/conformance/wcag-mapping/">Conformance</a>. Empty array if no composite matched the current{" "}
+				<a href="/conformance/wcag-mapping/">Conformance</a>. Normally one per WCAG Success
+				Criterion; a run under the profile of a standard with rollups of its own also gets those (
+				<code>meta.standard</code> set). Empty array if no composite matched the current{" "}
 				<code>runOnly</code>/tag filter.
 			</>
 		),
@@ -277,7 +330,9 @@ export function OutputSchemaContent() {
 					"    tag: string,",
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
-					'    wcagVersion: "2.0" | "2.1" | "2.2"',
+					'    wcagVersion: "2.0" | "2.1" | "2.2",',
+					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508"',
+					'    mappings?: string[]    // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"  },",
 					"  url: string | null,",
 					"  title: string | null,",
@@ -365,7 +420,7 @@ export function OutputSchemaContent() {
 					"    deprecated: boolean,",
 					"    deprecation: object | null,",
 					'    category: "perceivable" | "operable" | "understandable" | "robust" | null,',
-					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel: string }>,",
+					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel?: string, wcagSc?: string[] }>,",
 					"    standard: string | null,",
 					"    applicability: string,",
 					"    expectation: string,",
@@ -375,6 +430,8 @@ export function OutputSchemaContent() {
 					"  },",
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
+					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
@@ -406,8 +463,25 @@ export function OutputSchemaContent() {
 					<strong><code>meta.normativeMappings</code></strong> is how a check result ties back to
 					a WCAG Success Criterion — <code>[]</code> for rules with no formal WCAG mapping (this
 					engine calls them advisory <code>type: "manual"</code> rules). See{" "}
-					<a href="/conformance/wcag-mapping/">Conformance</a> for how these roll up.
-				</li>
+					<a href="/conformance/wcag-mapping/">Conformance</a> for how these roll up.{" "}
+					<strong>The list is not WCAG-only.</strong> When the scan asks for another standard (
+					<code>engineOptions.mappings</code>, or a standard's profile), each WCAG criterion is
+					followed by that standard's corresponding requirement, such as the EN 301 549 clause
+					that restates it (
+					<code>{'{ standard: "EN 301 549", version: "V3.2.1" | "V4.1.1", requirement: "9.1.1.1", title, wcagSc: ["1.1.1"] }'}</code>
+					, one entry per version that includes the criterion); and a rule may also cite WCAG's
+					Understanding documents (<code>type: "Understanding"</code>). Filter on{" "}
+					<code>standard</code> (and on the absence of <code>type</code>) before reading{" "}
+					<code>requirement</code> as a Success Criterion. A composite's WCAG entry is always
+					first. See <a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>.
+					</li>
+					<li>
+						<strong><code>rollupIds</code></strong> lists the composites in{" "}
+						<code>rulesResults</code> that group this rule in this run. An empty list means the
+						rule's findings appear in no rollup, so a consumer that reads only{" "}
+						<code>rulesResults</code> never sees them; <code>heading-order</code>, for instance,
+						belongs to no WCAG rollup.
+					</li>
 				<li>
 					<strong><code>wcagVersionScope</code></strong>: only present when the run's target WCAG
 					version turned this rule's <code>fail</code> into a <code>cantTell</code> — today that
@@ -419,7 +493,12 @@ export function OutputSchemaContent() {
 					Absent on every other result, and <strong>never</strong> reported through{" "}
 					<code>error</code>: nothing went wrong. See{" "}
 					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtering by WCAG version</a>.
-				</li>
+					</li>
+					<li>
+						<strong><code>data</code></strong>: present only on a rule that reports something about
+						the whole page, whatever its outcome. No core rule does today. Like{" "}
+						<code>data.details</code> on an occurrence, it is not a stable contract.
+					</li>
 				<li>
 					<strong><code>error</code></strong>: only present in three cases — the rule implementation
 					threw an uncaught exception, the manual-fail coercion above fired, or every occurrence
@@ -524,8 +603,10 @@ export function OutputSchemaContent() {
 			<h2 id="composite-result">A composite result (<code>rulesResults[i]</code>)</h2>
 			<p>
 				Composites roll multiple atomic rules up to one WCAG Success Criterion (e.g.{" "}
-				<code>wcag-1.1.1-non-text-content</code> rolls up 21 atomic rules). Shape is the same
-				envelope as a check result, with composite-specific <code>data.details</code>:
+				<code>wcag-1.1.1-non-text-content</code> rolls up 21 atomic rules). Under the profile of a
+				standard with rollups of its own, there are also those, with the standard's wording as{" "}
+				<code>title</code> and its name as <code>meta.standard</code>. Shape is the same envelope
+				as a check result, with composite-specific <code>data.details</code>:
 			</p>
 			<CodeBlock
 				lines={[
@@ -537,6 +618,9 @@ export function OutputSchemaContent() {
 					"  data: {",
 					"    details: {",
 					'      reasonCode: string,       // e.g. "composite.rollup.fail.anyFail"',
+					"      standard?: string,        // a standard's own rollup only, with version and criterion",
+					"      version?: string,",
+					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId this composite rolls up",
 					"      contributors: Array<{ testId: string, outcome: string, severity: string | null }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",

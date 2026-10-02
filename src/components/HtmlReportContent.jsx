@@ -34,11 +34,17 @@ export function HtmlReportContent() {
 				<li>
 					<strong>WCAG rollup</strong>: grouped by conformance level (A / AA / AAA), sourced
 					directly from the engine's own <code>rulesResults[]</code> composite rollups (see{" "}
-					<a href="/conformance/wcag-mapping/">Conformance</a>) — one row per Success Criterion, its outcome, a
-					pass/fail/needs-review/n/a breakdown, and which atomic rules contributed. This is real
-					engine data, not an invented grouping — the same rollup you'd get from the raw JSON's{" "}
-					<code>rulesResults</code>.
-				</li>
+					<a href="/conformance/wcag-mapping/">Conformance</a>) — one row per Success Criterion (with
+					the EN 301 549 clause that restates it, where there is one and the scan asked for EN 301
+					549 clauses), its outcome, a pass/fail/needs-review/n/a breakdown, and which atomic rules
+					contributed. This is real engine data, not an invented grouping — the same rollup you'd
+					get from the raw JSON's <code>rulesResults</code>.
+					</li>
+					<li>
+						<strong>A standard's own rollup</strong>: only when the scan ran the rules of a standard
+						that has rollups of its own (its profile, or <code>engineOptions.optInRules</code>), one
+						row per rollup, with the standard's wording, the breakdown and the contributing rules.
+					</li>
 				<li>
 					<strong>Full technical data</strong> (collapsed by default): a scorecard (tiles per
 					outcome) and a searchable, filterable (by outcome), paginated table of every individual
@@ -47,12 +53,28 @@ export function HtmlReportContent() {
 			</ul>
 			<p>
 				The meta bar under the header carries the rule count, occurrence count, engine tag, schema
-				version, and the locale the scan resolved to. Locale fallback is per-string and invisible
-				in the text itself, so{" "}
+				version, the WCAG version the scan targeted, the <code>engineOptions.profile</code> it used
+				(when there was one), the opt-in rule tags <code>engineOptions.optInRules</code> added (when
+				it added any), and the locale the scan resolved to. Locale fallback is per-string and
+				invisible in the text itself, so{" "}
 				<strong>a report requested in a language the engine does not carry reads as an ordinary
 				English one</strong> — the chip names the requested locale alongside the resolved one
 				when the two differ. See <a href="/configuration/locales/">Locales</a>.
-			</p>
+				</p>
+				<p>
+					The whole page is written in the locale the scan resolved to: headings, table columns,
+					outcome and severity names, the headline, the pager, and the date format.{" "}
+					<code>&lt;html lang&gt;</code> names that locale. The outcome codes in the occurrence
+					filters (<code>fail</code>, <code>cantTell</code>, …) stay as they are, because they are the
+					values a reader searches for in the JSON result.
+				</p>
+				<p>
+					One case keeps English labels: a scan in a language the engine does not ship, run with a
+					caller-supplied <code>engineOptions.messages</code> dictionary. That dictionary is not part
+					of the result, so the report cannot read labels from it; its findings are then marked with
+					their own language (<code>lang="nl"</code>, for instance), so a screen reader still reads
+					them with the right voice.
+				</p>
 
 			<h2>Library usage</h2>
 			<CodeBlock

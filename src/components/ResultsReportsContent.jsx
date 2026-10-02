@@ -5,6 +5,7 @@ const formatRows = [
 	{ format: <code>JSON</code>, use: "Integration, storage, and your own processing", audience: "Developers and platforms" },
 	{ format: "HTML", use: "Human review of one concrete scan", audience: "QA and audit" },
 	{ format: "SARIF", use: "Integration with code-analysis tooling", audience: "Development and security teams" },
+	{ format: "JUnit", use: "Test views in CI dashboards", audience: "Development and QA teams" },
 	{ format: "EARL", use: "Interoperability and ACT-conformance evidence", audience: "Standards, research, and conformance" },
 ];
 
@@ -13,9 +14,10 @@ export function ResultsReportsContent() {
 		<>
 			<p>
 				Every scan comes back as one plain JSON object — nothing hidden, nothing you have to
-				re-derive. The three report formats below are built directly on top of that same object,
-				each one shaped for a different reader: a human scanning a browser tab, a CI dashboard that
-				only speaks SARIF, or the W3C's own implementation-reporting format. Pick the shape that
+				re-derive. The four report formats below are built directly on top of that same object,
+				each one shaped for a different reader: a human scanning a browser tab, a code-scanning
+				dashboard that only speaks SARIF, a CI test view that reads JUnit, or the W3C's own
+				implementation-reporting format. Pick the shape that
 				matches who's actually going to look at it.
 			</p>
 			<DataTable
@@ -56,6 +58,16 @@ export function ResultsReportsContent() {
 				still filters cleanly and a dashboard can track a
 				finding across commits instead of losing it every time a line number shifts. See{" "}
 				<a href="/results-reports/sarif-report/">SARIF report</a>.
+			</p>
+
+			<h2>JUnit report</h2>
+			<p>
+				Put accessibility results in the test view your CI already has — GitLab's merge request
+				widget, Azure DevOps' Tests tab, Jenkins, CircleCI — next to your unit tests. Each WCAG
+				criterion is a suite and each rule a test, so a defect repeated across a page is one
+				failing test, and counts stay stable between runs. <code>cantTell</code> arrives as a
+				skipped test, visible without turning the build red. See{" "}
+				<a href="/results-reports/junit-report/">JUnit report</a>.
 			</p>
 
 			<h2>EARL report</h2>

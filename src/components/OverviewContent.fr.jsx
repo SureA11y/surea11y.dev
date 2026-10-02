@@ -129,7 +129,7 @@ export function OverviewContent() {
 				<li><strong>Sortie stable et lisible par machine.</strong> Les identifiants de règle restent les mêmes quelle que soit la langue.</li>
 				<li><strong>Indépendant du framework.</strong> S’exécute dans jsdom ou dans n’importe quel framework d’automatisation de navigateur.</li>
 				<li><strong>Extensible.</strong> Ajoutez des règles personnalisées, enregistrez des politiques et filtrez les analyses par ID de règle, tag ou version WCAG.</li>
-				<li><strong>Rapports localisés.</strong> Les messages lisibles par un humain peuvent être traduits sans toucher aux données lisibles par machine ; <code>en</code>, <code>fr</code>, <code>de</code> et <code>es</code> sont fournis aujourd’hui.</li>
+				<li><strong>Rapports localisés.</strong> Les messages lisibles par un humain peuvent être traduits sans toucher aux données lisibles par machine ; <code>en</code>, <code>fr</code>, <code>de</code>, <code>es</code> et <code>ja</code> sont fournis aujourd’hui.</li>
 			</ul>
 
 			<h2>Philosophie</h2>

@@ -135,6 +135,22 @@ export function KnownLimitationsContent() {
 					au-delà d’environ 1000.
 				</li>
 				<li>
+					<strong>
+						Dans un vrai navigateur, certaines règles modifient la page le temps de leur
+						vérification, et les scripts de la page peuvent réagir.
+					</strong>{" "}
+					Pour mesurer ce que dessine le navigateur, <code>css-hidden-focus</code> donne le focus
+					aux éléments comme le ferait le clavier, et désactive les transitions sur l’élément qu’il
+					mesure ; <code>text-spacing-content-loss</code> ajoute une feuille de style avec
+					l’espacement de WCAG 1.4.12. Tout cela est rétabli avant que la règle ne se termine : le
+					focus, la position de défilement, les attributs style et la feuille de style ajoutée. Ce
+					qui ne peut pas être rétabli, c’est ce que font les scripts de la page en réaction, puisque
+					donner le focus à un élément déclenche ses gestionnaires <code>focus</code> : un carrousel
+					peut passer à la diapositive focalisée ou activer un bouton. Les résultats n’en sont pas
+					affectés, mais si vous analysez une page que vous continuez d’utiliser, rechargez-la
+					ensuite.
+				</li>
+				<li>
 					<strong>Balisage statique et état du DOM en direct / après hydratation.</strong> La
 					logique des règles elle-même ne dépend pas de la provenance du DOM : elle évalue le DOM
 					qu’on lui fournit, qu’il s’agisse de HTML statique analysé par jsdom (<span lang="en">Pattern 1</span>) ou d’un

@@ -1,4 +1,5 @@
 import React from "react";
+import rules from "../data/rules.generated.json";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
 
@@ -12,7 +13,7 @@ export function RuleOrganizationContent() {
 	return (
 		<>
 			<p>
-				This describes how the 132 rules in the <a href="/rules/">catalog</a> are structured —
+				This describes how the {rules.length} rules in the <a href="/rules/">catalog</a> are structured —
 				useful for making sense of a result, or for finding the rule you're looking for. It
 				reflects what already exists in the ruleset, not an abstract design.
 			</p>
@@ -81,7 +82,7 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				Rules never mix families: each one queries one kind of element, using helpers appropriate
-				to it. That's also why the ruleset has 132 narrow rules rather than a dozen broad ones —
+				to it. That's also why the ruleset has {rules.length} narrow rules rather than a dozen broad ones —
 				two checks that differ in what they decide, what they target, or what WCAG facet they
 				cover are kept as separate rules rather than merged, so a result never has to be
 				untangled after the fact to say what specifically was found.

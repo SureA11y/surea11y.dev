@@ -37,7 +37,7 @@ const localeReasonRows = [
 		reason: <code>unknown-locale</code>,
 		meaning: (
 			<>
-				The project has no such translation at all, so English was used. <code>ja</code> and{" "}
+				The project has no such translation at all, so English was used. <code>ko</code> and{" "}
 				<code>pt-BR</code> both land here today.
 			</>
 		),
@@ -78,7 +78,7 @@ export function LocalesContent() {
 					{ key: "locale", label: "Locale", width: "18%" },
 					{ key: "file", label: "File", width: "24%" },
 					{ key: "keys", label: "Keys", width: "12%" },
-					{ key: "untranslated", label: "Values still in English", wrap: true },
+					{ key: "untranslated", label: "Values identical to English", wrap: true },
 				]}
 				rows={localeCoverageRows.map((r) => ({
 					...r,
@@ -89,6 +89,12 @@ export function LocalesContent() {
 					),
 				}))}
 			/>
+			<p>
+				The last column counts values that match the English text character for character. That
+				catches a key nobody has translated yet, but it also counts a word that is simply the same
+				in both languages — French <em>Orientation</em> or <em>Interruptions</em>, Spanish{" "}
+				<em>Selector</em> — which is what the non-zero counts above are.
+			</p>
 			<p>
 				Locale files are plain JSON: a flat map of key to translated string, in the same key
 				order as <code>en.json</code>. Nothing else lives in them, so contributing a language
@@ -158,7 +164,7 @@ export function LocalesContent() {
 					'"engine": {',
 					'  "tag": "a11ycore",',
 					'  "schemaVersion": "1.0.0",',
-					'  "locale": { "requested": "ja", "resolved": "en", "reason": "unknown-locale" }',
+					'  "locale": { "requested": "ko", "resolved": "en", "reason": "unknown-locale" }',
 					"}",
 				]}
 			/>
@@ -201,7 +207,7 @@ export function LocalesContent() {
 			/>
 			<p>
 				The bundle is split because it travels over the network to every page that uses it, and
-				no page needs all four languages. Keeping English inline and the rest optional took about
+				no page needs every language. Keeping English inline and the rest optional took about
 				280 KB off the download and stops it growing as languages are added. Nothing else
 				changes: the Node package and the bindings are unaffected.
 			</p>
@@ -209,7 +215,10 @@ export function LocalesContent() {
 				lang="html"
 				lines={[
 					'<script src="surea11y.browser.js"></script>',
-					'<script src="surea11y.i18n.de.js"></script>',
+					'<script src="surea11y.i18n.ja.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(location.href, null, { locale: 'ja' }, null);",
+					"</script>",
 				]}
 			/>
 			<p>
@@ -235,13 +244,49 @@ export function LocalesContent() {
 			/>
 			<p>Keys you don't supply fall back normally, so a partial override is fine.</p>
 
+			<h2 id="language-specific-matching">Language-specific matching</h2>
+			<p>
+				Five rules judge text by known phrases, so they carry word lists as well as messages:{" "}
+				<code>link-name-quality</code> ("click here", 「こちら」), <code>heading-quality</code>{" "}
+				("Untitled", 「見出し」), <code>form-control-label-quality</code> ("Label", 「入力欄」),{" "}
+				<code>page-title-patterns</code> ("Home", 「トップページ」) and{" "}
+				<code>media-alternative-transcript-evidence</code> ("transcript", 「文字起こし」). Each list
+				covers <code>en</code>, <code>de</code>, <code>es</code>, <code>fr</code> and <code>ja</code>.
+				The <code>skip-link</code> rule recognises skip-link wording in the same five languages.
+			</p>
+			<p>
+				English is always checked. The list for the element's own language, taken from the nearest{" "}
+				<code>lang</code> attribute (the <code>&lt;html&gt;</code> element's for a page title), is
+				added on top. Checking every list everywhere would flag words that are generic in one
+				language and a real name in another, such as "Suite" or "Plus" on an English page.
+				Transcript words are the exception: they are distinctive in every language and a page can
+				link a transcript in another language, so all of them are always checked. Text is
+				NFKC-normalized first, so full-width forms such as 「見出し２」 match.
+			</p>
+			<p>
+				<code>page-title-patterns</code> also counts each Chinese, Japanese or Korean character as
+				two when deciding whether a title is too short, since 「お問い合わせ」 is a complete title in
+				six characters.
+			</p>
+
 			<h2>Where keys are used</h2>
-			<p>Two independent key namespaces, both resolved the same way:</p>
+			<p>Several key namespaces, all resolved the same way:</p>
 			<ul>
 				<li>
 					<strong>Rule-level</strong>: <code>meta.i18n.titleKey</code> / <code>meta.i18n.descriptionKey</code>{" "}
 					— resolve a rule's <code>title</code>/<code>description</code> on every{" "}
 					<code>checksResults[]</code> entry.
+				</li>
+				<li>
+					<strong>HTML report</strong>: the <code>report_*</code> keys label the page{" "}
+					<code>@surea11y/core/report</code> renders — headings, table columns, outcome and severity
+					names, the headline, the pager. The report reads them in the locale the scan resolved to,
+					so a dictionary translates the report too.
+				</li>
+				<li>
+					<strong>Composite-level</strong>: each <code>rulesResults[]</code> rollup's{" "}
+					<code>title</code>/<code>description</code>, using each language's published name for the
+					Success Criterion.
 				</li>
 				<li>
 					<strong>Occurrence-level</strong>: <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,

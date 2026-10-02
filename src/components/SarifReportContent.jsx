@@ -26,7 +26,8 @@ const sarifFieldRows = [
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>The result's own <code>severity</code>/<code>confidence</code>, plus the same <code>reasonCode</code> and <code>html</code> snippet the fingerprint above is keyed on — informational, not part of SARIF's own schema.</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, and a <code>wcag-&lt;SC&gt;</code> tag per <code>meta.normativeMappings[].requirement</code>.</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, and a <code>wcag-&lt;SC&gt;</code> tag per WCAG Success Criterion in <code>meta.normativeMappings</code>. Understanding-document entries get no tag. Each EN 301 549 clause the result carries (only when the scan asked for them, see <a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>) gets an <code>en301549-&lt;clause&gt;</code> tag, e.g. <code>en301549-9.1.1.1</code>: clause numbers are the same in every version that has them, so the tag carries no version.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code> and <code>optInRules</code> from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, and the opt-in rule tags it added beyond that target when it added any. Omitted for results from engines that predate those fields.</> },
 ];
 
 export function SarifReportContent() {

@@ -17,7 +17,9 @@ export function ConformanceContent() {
 				Mira exactamente cómo encajan entre sí las reglas atómicas, las facetas de cobertura y las
 				reglas compuestas de resultado agregado por SC de WCAG, para que un <code>pass</code> compuesto signifique
 				algo concreto en lugar de un vago "parece estar bien". Apunta a un nivel de conformidad (A,
-				AA o AAA) en cualquier versión de WCAG con un único conjunto de etiquetas, y obtén una
+				AA o AAA) en cualquier versión de WCAG con un único conjunto de etiquetas o un perfil con
+				nombre, asocia cada resultado a la cláusula de EN 301 549 que reformula su criterio cuando
+				ese es el estándar con el que informas, y obtén una
 				respuesta directa a la pregunta que de verdad importa: qué puede decirte este tipo de
 				resultado automatizado, y dónde se detiene. Ver{" "}
 				<a href="/conformance/wcag-mapping/">Mapeo de conformidad con WCAG</a>.

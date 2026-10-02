@@ -53,7 +53,7 @@ export function WcagMappingContent() {
 				<li>
 					<strong>Atomic rules</strong> (<code>checksResults[]</code>) — one normative decision
 					each, e.g. "does this <code>&lt;img&gt;</code> have an <code>alt</code> attribute." See{" "}
-					<a href="/rules/">the rule catalog</a> for all 132.
+					<a href="/rules/">the rule catalog</a> for every one.
 				</li>
 				<li>
 					<strong>Facets</strong> — a WCAG SC is usually bigger than any one rule can decide
@@ -123,8 +123,11 @@ export function WcagMappingContent() {
 				mapped only to an AA criterion is tagged <code>wcag2aa</code> and <em>not</em>{" "}
 				<code>wcag2a</code>. Asking for <code>{"{ tags: ['wcag2aa'] }"}</code> on its own
 				therefore runs the 10 rules mapped to a 2.0 AA criterion, not the ~100 that make up an A
-				+ AA target. List every level you mean.
-			</p>
+				+ AA target. List every level you mean, or let{" "}
+				<code>engineOptions.profile</code> (<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>,{" "}
+				<code>en301549-v3.2.1</code>, <code>section508</code>) do it for you; see{" "}
+				<a href="/configuration/engine-options/#conformance-profiles">Conformance profiles</a>.
+				</p>
 			<p>
 				The same applies across WCAG versions — a criterion introduced in 2.1 or 2.2 carries only
 				its own origin tag — so a full conformance target is a union of tag sets. See{" "}
@@ -154,6 +157,74 @@ export function WcagMappingContent() {
 				composite suppression.
 			</p>
 
+			<h2 id="en-301-549">EN 301 549</h2>
+			<p>
+				Chapter 9 of EN 301 549 restates the WCAG Level A and AA Success Criteria as clauses
+				numbered <code>9.</code> plus the criterion's own number: WCAG 1.4.3 is clause 9.1.4.3.
+				When a scan asks for them, every atomic and composite result carries, after its WCAG
+				entries in <code>meta.normativeMappings</code>, the clause for each of its criteria, once
+				per version of the standard that includes that criterion. A scan asks with{" "}
+				<code>engineOptions.mappings: ['en301549']</code> (both versions) or{" "}
+				<code>['en301549:V3.2.1']</code> (one), or by targeting an EN 301 549 profile, which adds
+				the version it names; by default results name WCAG only (see{" "}
+				<a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>).
+			</p>
+			<DataTable
+				rowKey="version"
+				columns={[
+					{ key: "version", label: "Version", width: "20%" },
+					{ key: "builtOn", label: "Built on", wrap: true },
+					{ key: "differs", label: "Differs from the other in", wrap: true },
+				]}
+				rows={[
+					{ version: "V3.2.1 (2021-03)", builtOn: "WCAG 2.1 A and AA, 50 criteria", differs: "Includes 9.4.1.1 Parsing" },
+					{
+						version: "V4.1.1 (2026-09)",
+						builtOn: "WCAG 2.2 A and AA, 55 criteria",
+						differs: "Adds 2.4.11, 2.5.7, 2.5.8, 3.2.6, 3.3.7, 3.3.8; 9.4.1.1 is void",
+					},
+				]}
+			/>
+			<p>
+				Each clause entry also names the criterion it restates, as{" "}
+				<code>{'wcagSc: ["1.4.3"]'}</code>, so a view grouped by criterion (
+				<a href="/results-reports/junit-report/">JUnit</a>'s suites, the{" "}
+				<a href="/results-reports/html-report/">HTML report</a>'s rollup) puts it under the right one
+				even on a rule mapped to several. AAA criteria have no clause in either version. The catalogs
+				name the clauses under the same options: <code>{"getChecksCatalog({ mappings: ['en301549'] })"}</code>{" "}
+				in each entry's <code>normativeMappings</code>, and composite entries returned by{" "}
+				<code>{"getRulesCatalog({ mappings: ['en301549'] })"}</code> as{" "}
+				<code>meta.standardMappings</code>, so the clauses a criterion maps to can be read without
+				running a scan.
+			</p>
+			<p>
+				The table is public as <code>@surea11y/core/en301549</code>, for tools that need the reverse
+				view, such as which criteria a version requires that a scan did not cover:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { EN301549_CLAUSES, en301549ClausesForSc } = require('@surea11y/core/en301549');",
+					"",
+					"Object.keys(EN301549_CLAUSES['V3.2.1']);  // the 50 WCAG 2.1 A and AA criteria V3.2.1 restates",
+					"en301549ClausesForSc('2.5.8');            // [{ version: 'V4.1.1', clause: '9.2.5.8', title: 'Target size (minimum)' }]",
+				]}
+			/>
+			<p>
+				<strong>This is a correspondence between two published documents, not a conformance
+				claim</strong>: a clause on a result says which EN 301 549 requirement that WCAG criterion
+				is, nothing more. Which version a given law requires is outside the engine.
+			</p>
+			<p>
+				EN 301 549 is one entry in a registry of standards that the runner, the rule catalog and
+				the reporters all read, so another standard can be added the same way, with its own
+				profiles, rules and rollups. How to register one is in{" "}
+				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
+					<code>WCAG_CONFORMANCE.md</code>
+				</a>
+				, the contributor guide on GitHub.
+			</p>
+
 			<h2>What this engine cannot tell you</h2>
 			<p>
 				<strong>No automated tool — this one included — can certify full WCAG conformance.</strong> That's not a
@@ -168,8 +239,13 @@ export function WcagMappingContent() {
 			<p>What surea11y <em>can</em> give you, honestly:</p>
 			<ul>
 				<li>
-					Every <code>fail</code> is a real, deterministic, normative violation under the version
-					you targeted — never a guess.
+					Every <code>fail</code> is a real, deterministic, normative violation of the standard and
+					version you targeted — never a guess. By default that standard is WCAG: a rule for a
+					requirement only another standard makes is opt-in and runs only when you target that
+					standard (see <a href="/configuration/engine-options/#opt-in-rules">Opt-in rules</a>), so a
+					WCAG scan never fails a page for something WCAG does not require. The one exception is a run
+					that asks for every rule (<code>engineOptions.optInRules</code>): it targets no single
+					standard, and says so in <code>engine.optInRules</code>.
 				</li>
 				<li>
 					Every <code>cantTell</code> is an explicit flag for human review, not a swallowed

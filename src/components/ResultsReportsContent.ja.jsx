@@ -5,6 +5,7 @@ const formatRows = [
 	{ format: <code>JSON</code>, use: "連携、保存、独自の処理", audience: "開発者、プラットフォーム" },
 	{ format: "HTML", use: "特定の1回のスキャンを人がレビューする", audience: "QA、監査" },
 	{ format: "SARIF", use: "コード解析ツールとの連携", audience: "開発チーム、セキュリティチーム" },
+	{ format: "JUnit", use: "CIダッシュボードのテストビュー", audience: "開発チーム、QAチーム" },
 	{ format: "EARL", use: "相互運用性、ACTルール実装の根拠", audience: "標準化、研究、適合性" },
 ];
 
@@ -12,7 +13,7 @@ export function ResultsReportsContent() {
 	return (
 		<>
 			<p>
-				スキャン結果はすべて1つのプレーンなJSONオブジェクトとして返ります。隠れた情報はなく、後から導き直す必要もありません。以下の3つのレポート形式は、どれもこのオブジェクトをそのまま土台にしており、それぞれ別の読み手に合わせた形になっています。ブラウザーのタブで目を通す人、SARIFしか扱えないCIダッシュボード、そしてW3C自身の実装報告形式です。実際に誰が見るのかに合った形式を選んでください。
+				スキャン結果はすべて1つのプレーンなJSONオブジェクトとして返ります。隠れた情報はなく、後から導き直す必要もありません。以下の4つのレポート形式は、どれもこのオブジェクトをそのまま土台にしており、それぞれ別の読み手に合わせた形になっています。ブラウザーのタブで目を通す人、SARIFしか扱えないコード解析ダッシュボード、JUnitを読むCIのテストビュー、そしてW3C自身の実装報告形式です。実際に誰が見るのかに合った形式を選んでください。
 			</p>
 			<DataTable
 				rowKey="format"
@@ -48,6 +49,13 @@ export function ResultsReportsContent() {
 				<a href="/conformance/baseline/">ベースライン／許可リスト</a>
 				のフィルタリングも確実に機能し、ダッシュボードは行番号がずれるたびに検出結果を見失うことなく、コミットをまたいで追跡できます。
 				<a href="/results-reports/sarif-report/">SARIFレポート</a>
+				を参照してください。
+			</p>
+
+			<h2>JUnitレポート</h2>
+			<p>
+				アクセシビリティの結果を、CIにすでにあるテストビュー（GitLabのマージリクエストのウィジェット、<span lang="en">Azure DevOps</span>のTestsタブ、Jenkins、CircleCI）に、ユニットテストと並べて表示できます。WCAGの達成基準ごとに1つのスイート、ルールごとに1つのテストになるため、ページ内で繰り返される不具合も1つの失敗したテストにまとまり、件数は実行ごとに安定します。<code>cantTell</code>はスキップされたテストとして表示され、ビルドを赤にせずに確認できます。詳しくは
+				<a href="/results-reports/junit-report/">JUnitレポート</a>
 				を参照してください。
 			</p>
 

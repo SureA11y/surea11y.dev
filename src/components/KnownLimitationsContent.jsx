@@ -119,6 +119,20 @@ export function KnownLimitationsContent() {
 					nest 100-300 deep, which is comfortably fast — it becomes noticeable past roughly 1000.
 				</li>
 				<li>
+					<strong>
+						In a real browser, some rules change the page for the time of their check, and the
+						page's own scripts can react.
+					</strong>{" "}
+					To measure what the browser draws, <code>css-hidden-focus</code> focuses elements as the
+					keyboard would, and switches transitions off on the element it measures;{" "}
+					<code>text-spacing-content-loss</code> adds a style sheet with the WCAG 1.4.12 spacing.
+					All of this is put back before the rule returns: focus, scroll position, style attributes
+					and the added style sheet. What cannot be put back is what the page's scripts do in
+					response, since focusing an element fires its <code>focus</code> handlers: a carousel may
+					move to the focused slide or enable a button. The findings are not affected, but if you
+					scan a page you go on using, reload it afterwards.
+				</li>
+				<li>
 					<strong>Static markup vs. live/post-hydration DOM state.</strong> The rule logic itself
 					is DOM-source-agnostic — it evaluates whatever DOM it's handed, whether that's
 					jsdom-parsed static HTML (Pattern 1) or an already-loaded, already-hydrated real browser

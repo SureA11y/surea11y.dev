@@ -39,7 +39,7 @@ const localeReasonRows = [
 		meaning: (
 			<>
 				Das Projekt hat überhaupt keine solche Übersetzung, deshalb wurde Englisch verwendet.{" "}
-				<code>ja</code> und <code>pt-BR</code> landen derzeit beide hier.
+				<code>ko</code> und <code>pt-BR</code> landen derzeit beide hier.
 			</>
 		),
 	},
@@ -80,7 +80,7 @@ export function LocalesContent() {
 					{ key: "locale", label: "Locale", width: "18%" },
 					{ key: "file", label: "Datei", width: "24%" },
 					{ key: "keys", label: "Schlüssel", width: "12%" },
-					{ key: "untranslated", label: "Noch englische Werte", wrap: true },
+					{ key: "untranslated", label: "Mit Englisch identische Werte", wrap: true },
 				]}
 				rows={localeCoverageRows.map((r) => ({
 					...r,
@@ -91,6 +91,13 @@ export function LocalesContent() {
 					),
 				}))}
 			/>
+			<p>
+				Die letzte Spalte zählt Werte, die Zeichen für Zeichen dem englischen Text entsprechen. Das
+				findet einen Schlüssel, den noch niemand übersetzt hat, zählt aber auch ein Wort, das in
+				beiden Sprachen schlicht gleich ist, etwa französisch <em lang="fr">Orientation</em> oder{" "}
+				<em lang="fr">Interruptions</em> und spanisch <em lang="es">Selector</em>: Genau das zeigen
+				die Werte über null oben.
+			</p>
 			<p>
 				Locale-Dateien sind einfaches JSON: eine flache Zuordnung von Schlüssel zu übersetztem
 				String, in derselben Schlüsselreihenfolge wie <code>en.json</code>. Sonst steht nichts
@@ -162,7 +169,7 @@ export function LocalesContent() {
 					'"engine": {',
 					'  "tag": "a11ycore",',
 					'  "schemaVersion": "1.0.0",',
-					'  "locale": { "requested": "ja", "resolved": "en", "reason": "unknown-locale" }',
+					'  "locale": { "requested": "ko", "resolved": "en", "reason": "unknown-locale" }',
 					"}",
 				]}
 			/>
@@ -208,7 +215,7 @@ export function LocalesContent() {
 			/>
 			<p>
 				Das Bundle ist aufgeteilt, weil es über das Netzwerk an jede Seite geht, die es nutzt, und
-				keine Seite alle vier Sprachen braucht. Englisch inline und den Rest optional zu halten,
+				keine Seite alle Sprachen braucht. Englisch inline und den Rest optional zu halten,
 				hat den Download um etwa 280 KB verkleinert und verhindert, dass er mit jeder neuen
 				Sprache wächst. Sonst ändert sich nichts: Das Node-Paket und die Bindings sind nicht
 				betroffen.
@@ -217,7 +224,10 @@ export function LocalesContent() {
 				lang="html"
 				lines={[
 					'<script src="surea11y.browser.js"></script>',
-					'<script src="surea11y.i18n.de.js"></script>',
+					'<script src="surea11y.i18n.ja.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(location.href, null, { locale: 'ja' }, null);",
+					"</script>",
 				]}
 			/>
 			<p>
@@ -245,13 +255,55 @@ export function LocalesContent() {
 			/>
 			<p>Schlüssel, die Sie nicht übergeben, fallen normal zurück; eine teilweise Überschreibung ist also kein Problem.</p>
 
+			<h2 id="language-specific-matching">Sprachspezifischer Abgleich</h2>
+			<p>
+				Fünf Regeln beurteilen Text anhand bekannter Formulierungen und bringen daher neben
+				Meldungen auch Wortlisten mit: <code>link-name-quality</code> („<span lang="en">click here</span>“,
+				„<span lang="ja">こちら</span>“), <code>heading-quality</code> („<span lang="en">Untitled</span>“,
+				„<span lang="ja">見出し</span>“), <code>form-control-label-quality</code>{" "}
+				(„<span lang="en">Label</span>“, „<span lang="ja">入力欄</span>“),{" "}
+				<code>page-title-patterns</code> („<span lang="en">Home</span>“,
+				„<span lang="ja">トップページ</span>“) und <code>media-alternative-transcript-evidence</code>{" "}
+				(„<span lang="en">transcript</span>“, „<span lang="ja">文字起こし</span>“). Jede Liste deckt{" "}
+				<code>en</code>, <code>de</code>, <code>es</code>, <code>fr</code> und <code>ja</code> ab.
+				Die Regel <code>skip-link</code> erkennt Skip-Link-Formulierungen in denselben fünf
+				Sprachen.
+			</p>
+			<p>
+				Englisch wird immer geprüft. Die Liste der eigenen Sprache des Elements, aus dem nächsten{" "}
+				<code>lang</code>-Attribut (bei einem Seitentitel dem des <code>&lt;html&gt;</code>-Elements),
+				kommt hinzu. Alle Listen überall zu prüfen, würde Wörter melden, die in einer Sprache
+				generisch und in einer anderen ein echter Name sind, etwa „<span lang="fr">Suite</span>“ oder
+				„Plus“ auf einer englischen Seite. Transkript-Wörter sind die Ausnahme: Sie sind in jeder
+				Sprache eindeutig, und eine Seite kann ein Transkript in einer anderen Sprache verlinken,
+				daher werden sie immer alle geprüft. Text wird zuerst nach NFKC normalisiert, sodass auch
+				Formen voller Breite wie „<span lang="ja">見出し２</span>“ erkannt werden.
+			</p>
+			<p>
+				<code>page-title-patterns</code> zählt außerdem jedes chinesische, japanische oder
+				koreanische Zeichen doppelt, wenn es entscheidet, ob ein Titel zu kurz ist, da
+				„<span lang="ja">お問い合わせ</span>“ mit sechs Zeichen ein vollständiger Titel ist.
+			</p>
+
 			<h2>Wo Schlüssel verwendet werden</h2>
-			<p>Zwei unabhängige Schlüssel-Namensräume, beide auf dieselbe Weise aufgelöst:</p>
+			<p>Mehrere Schlüssel-Namensräume, alle auf dieselbe Weise aufgelöst:</p>
 			<ul>
 				<li>
 					<strong>Regelebene</strong>: <code>meta.i18n.titleKey</code> / <code>meta.i18n.descriptionKey</code>{" "}
 					lösen <code>title</code>/<code>description</code> einer Regel in jedem Eintrag von{" "}
 					<code>checksResults[]</code> auf.
+				</li>
+				<li>
+					<strong>HTML-Bericht</strong>: Die <code>report_*</code>-Schlüssel beschriften die Seite,
+					die <code>@surea11y/core/report</code> erzeugt — Überschriften, Tabellenspalten, Namen von
+					Ergebnissen und Schweregraden, die Kopfzeile, die Seitennavigation. Der Bericht liest sie
+					in der Locale, auf die der Scan aufgelöst wurde; ein Wörterbuch übersetzt also auch den
+					Bericht.
+				</li>
+				<li>
+					<strong>Auf Ebene der zusammengesetzten Regeln</strong>: <code>title</code>/
+					<code>description</code> jeder Zusammenfassung in <code>rulesResults[]</code>, mit dem
+					veröffentlichten Namen des Erfolgskriteriums in jeder Sprache.
 				</li>
 				<li>
 					<strong>Vorkommensebene</strong>: <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,

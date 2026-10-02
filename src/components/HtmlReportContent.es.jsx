@@ -37,9 +37,16 @@ export function HtmlReportContent() {
 					<strong>Resumen por WCAG</strong>: agrupado por nivel de conformidad (A / AA / AAA),
 					obtenido directamente de los resultados agregados compuestos <code>rulesResults[]</code> propios del
 					motor (ver <a href="/conformance/wcag-mapping/">Conformidad</a>): una fila por Criterio
-					de Éxito, su resultado, un desglose de aprobado/fallido/necesita revisión/n.a. y qué
+					de Éxito (con la cláusula de EN 301 549 que lo reformula, cuando la hay y el análisis pidió
+					cláusulas de EN 301 549), su resultado, un desglose de aprobado/fallido/necesita revisión/n.a. y qué
 					reglas atómicas contribuyeron. Son datos reales del motor, no una agrupación inventada:
 					el mismo resultado agregado que obtendrías del <code>rulesResults</code> del JSON sin procesar.
+				</li>
+				<li>
+					<strong>Resultado agregado propio de un estándar</strong>: solo cuando el análisis ejecutó
+					las reglas de un estándar que tiene sus propios resultados agregados (su perfil, o{" "}
+					<code>engineOptions.optInRules</code>), una fila por resultado agregado, con la redacción
+					del estándar, el desglose y las reglas que contribuyeron.
 				</li>
 				<li>
 					<strong>Datos técnicos completos</strong> (contraído por defecto): una tarjeta resumen
@@ -49,11 +56,27 @@ export function HtmlReportContent() {
 			</ul>
 			<p>
 				La barra de metadatos bajo la cabecera lleva el recuento de reglas, el recuento de
-				ocurrencias, la etiqueta del motor, la versión del esquema y el idioma al que se resolvió el
-				análisis. El mecanismo de reserva de idioma es por cadena de texto e invisible en el propio texto, así
+				ocurrencias, la etiqueta del motor, la versión del esquema, la versión de WCAG a la que
+				apuntó el análisis, el <code>engineOptions.profile</code> que usó (si hubo uno), las
+				etiquetas de reglas opcionales que añadió <code>engineOptions.optInRules</code> (si añadió
+				alguna) y el idioma al que se resolvió el análisis. El mecanismo de reserva de idioma es por cadena de texto e invisible en el propio texto, así
 				que <strong>un informe solicitado en un idioma que el motor no soporta se lee como uno en
 				inglés normal</strong>; el chip nombra el idioma solicitado junto al resuelto cuando ambos
 				difieren. Ver <a href="/configuration/locales/">Locales</a>.
+			</p>
+			<p>
+				Toda la página está escrita en el idioma al que se resolvió el análisis: encabezados,
+				columnas de tabla, nombres de resultados y gravedades, el titular, el paginador y el formato
+				de fecha. <code>&lt;html lang&gt;</code> nombra ese idioma. Los códigos de resultado de los
+				filtros de ocurrencias (<code>fail</code>, <code>cantTell</code>, …) se mantienen tal cual,
+				porque son los valores que un lector busca en el resultado JSON.
+			</p>
+			<p>
+				Un caso conserva las etiquetas en inglés: un análisis en un idioma que el motor no incluye,
+				ejecutado con un diccionario <code>engineOptions.messages</code> propio. Ese diccionario no
+				forma parte del resultado, así que el informe no puede leer etiquetas de él; sus hallazgos
+				se marcan entonces con su propio idioma (<code>lang="nl"</code>, por ejemplo), para que un
+				lector de pantalla los lea con la voz adecuada.
 			</p>
 
 			<h2>Uso como biblioteca</h2>

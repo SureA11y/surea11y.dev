@@ -14,7 +14,8 @@ export function ConfigurationContent() {
 			<h2>Engine-Optionen</h2>
 			<p>
 				Beschränken Sie einen Scan auf genau die Regeln, die Sie wollen — nach ID, nach Tag oder
-				nach WCAG-Version (2.0, 2.1 oder 2.2) —, damit ein Lauf das meldet, wofür Sie tatsächlich
+				nach WCAG-Version (2.0, 2.1 oder 2.2) oder über ein benanntes Konformitätsprofil wie
+				WCAG 2.2 AA, EN 301 549 oder Section 508 —, damit ein Lauf das meldet, wofür Sie tatsächlich
 				verantwortlich sind, nicht mehr und nicht weniger. Nehmen Sie Widgets, die
 				bekanntermaßen störende Befunde liefern, global oder für eine einzelne Regel vom Scan
 				aus, ohne überall sonst Abdeckung zu verlieren, stellen Sie ein, wie streng die Kontrastprüfungen für einen
@@ -31,7 +32,8 @@ export function ConfigurationContent() {
 				Einfügen steuern einen Build über den Exit-Code der CLI, nehmen die bereits vorhandenen
 				Verstöße einer bestehenden Website in eine Baseline auf, sodass nur tatsächlich neue zum
 				Fehlschlag führen, und laden SARIF-Ergebnisse direkt in <span lang="en">GitHub Code Scanning</span> hoch, wo Ihr
-				Team ohnehin hinschaut. Die vollständigen Vorlagen finden Sie unter{" "}
+				Team ohnehin hinschaut. Rezepte für GitLab CI und Azure DevOps bringen die Ergebnisse als
+				JUnit in deren eigene Testansichten. Die vollständigen Vorlagen finden Sie unter{" "}
 				<a href="/configuration/ci-integration/">CI-Integration</a>.
 			</p>
 
@@ -41,7 +43,7 @@ export function ConfigurationContent() {
 				am schnellsten liest — jeder Regeltitel sowie Zusammenfassung und Hinweis jedes
 				Vorkommens werden aus einem schlüsselbasierten Wörterbuch aufgelöst, mit einem Fallback
 				auf Englisch pro String statt einer Leerstelle oder eines Fehlers. Heute sind
-				vier Sprachen verfügbar (Englisch, Französisch, Deutsch, Spanisch), und ein Ergebnis gibt
+				fünf Sprachen verfügbar (Englisch, Französisch, Deutsch, Spanisch, Japanisch), und ein Ergebnis gibt
 				immer genau an, welche Locale verwendet wurde, sodass nichts unbemerkt schlechter wird.
 				Abdeckung und wie Sie ein eigenes Wörterbuch bereitstellen, finden Sie unter{" "}
 				<a href="/configuration/locales/">Locales</a>.

@@ -131,9 +131,15 @@ const OUTCOME_STATE = {
   'Not applicable': 'na'
 };
 
+// An outcome heading can say where the outcome holds ("**Passed (in a
+// browser)**"); the page shows it as a translated label, keyed here.
+const EXAMPLE_CONTEXT = {
+  'in a browser': 'browser'
+};
+
 // One rule (manual-review) genuinely has only one outcome -- it has no
-// notApplicable branch, so there's no pair to show. Every other rule has
-// exactly two. An outcome heading may carry a trailing annotation on the
+// notApplicable branch, so there's no pair to show. A rule with a tiered
+// outcome adds a third, Flagged (cantTell), example. An outcome heading may carry a trailing annotation on the
 // same line (duplicate-id's "**Failed** (with `engineOptions...`)"); only
 // the bracketed word itself is the outcome.
 function parseExamples(md) {
@@ -153,7 +159,16 @@ function parseExamples(md) {
         continue;
       }
 
-      const outcome = heading[1].trim();
+      let outcome = heading[1].trim();
+      let context = null;
+      const qualified = /^(.+?) \(([^)]+)\)$/.exec(outcome);
+      if (!OUTCOME_STATE[outcome] && qualified && OUTCOME_STATE[qualified[1]]) {
+        context = EXAMPLE_CONTEXT[qualified[2]];
+        if (!context) {
+          throw new Error(`generate-rules-data: unrecognized example context "${qualified[2]}" for rule "${ruleId}"`);
+        }
+        outcome = qualified[1];
+      }
       const state = OUTCOME_STATE[outcome];
       if (!state) {
         throw new Error(`generate-rules-data: unrecognized outcome "${outcome}" for rule "${ruleId}"`);
@@ -182,13 +197,14 @@ function parseExamples(md) {
       pairs.push({
         outcome,
         state,
+        ...(context ? { context } : {}),
         html: htmlLines.join('\n'),
         explanation: explanationLines.join(' ').trim()
       });
     }
 
-    if (pairs.length !== 1 && pairs.length !== 2) {
-      throw new Error(`generate-rules-data: expected 1 or 2 example pairs for "${ruleId}", found ${pairs.length}`);
+    if (pairs.length < 1 || pairs.length > 3) {
+      throw new Error(`generate-rules-data: expected 1 to 3 examples for "${ruleId}", found ${pairs.length}`);
     }
     examples.set(ruleId, pairs);
   }

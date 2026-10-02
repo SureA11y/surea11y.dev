@@ -9,7 +9,7 @@ export function CiIntegrationContent() {
 			<p>
 				Vorlagen zum direkten Einfügen, die die{" "}
 				<a href="https://github.com/SureA11y/cli#readme">CLI</a> (
-				<code>npx @surea11y/cli scan ...</code>) in <span lang="en">GitHub Actions</span> und <span lang="en">Bitbucket Pipelines</span>{" "}
+				<code>npx @surea11y/cli scan ...</code>) in <span lang="en">GitHub Actions</span>, <span lang="en">Bitbucket Pipelines</span>, <span lang="en">GitLab CI</span> und <span lang="en">Azure DevOps</span>{" "}
 				einbinden. Wenn Sie die Bibliothek statt über die CLI direkt aus Ihrem eigenen
 				Node-Skript aufrufen, lesen Sie stattdessen{" "}
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
@@ -149,6 +149,64 @@ export function CiIntegrationContent() {
 				<a href="/results-reports/html-report/">den HTML-Bericht</a>) wird als herunterladbares
 				Build-Artefakt angehängt, sodass jemand im Review ihn öffnen kann, ohne den Scan lokal
 				erneut auszuführen.
+			</p>
+
+			<h2 id="junit-test-reports">JUnit-Testberichte</h2>
+			<p>
+				GitLab, Azure DevOps, Jenkins und CircleCI zeigen JUnit-XML in ihren eigenen Testansichten:
+				Jedes WCAG-Kriterium wird zu einer Suite und jede Regel zu einem Test (siehe{" "}
+				<a href="/results-reports/junit-report/">JUnit-Bericht</a>). Speichern Sie den Scan als JSON,
+				erzeugen Sie den Bericht mit <code>@surea11y/core/junit</code> und behalten Sie den Exit-Code
+				der CLI für das Gate. Der Render-Schritt braucht <code>@surea11y/core</code> in den eigenen{" "}
+				<code>devDependencies</code> des Projekts.
+			</p>
+			<h3><span lang="en">GitLab CI</span></h3>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"a11y:",
+					"  image: node:20",
+					"  script:",
+					"    - npm ci",
+					"    - npm run build",
+					"    - npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
+					"    - node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
+					"    - exit ${scan_exit:-0}",
+					"  artifacts:",
+					"    when: always",
+					"    reports:",
+					"      junit: a11y.junit.xml",
+				]}
+			/>
+			<p>
+				<code>when: always</code> lädt den Bericht auch dann hoch, wenn der Exit-Code des Scans den
+				Job fehlschlagen lässt — also genau dann, wenn sich ein Blick in das Merge-Request-Widget
+				lohnt.
+			</p>
+			<h3><span lang="en">Azure DevOps</span></h3>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"steps:",
+					"  - script: |",
+					"      npm ci",
+					"      npm run build",
+					"      npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
+					"      node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
+					"      exit ${scan_exit:-0}",
+					"    displayName: Accessibility scan",
+					"  - task: PublishTestResults@2",
+					"    condition: succeededOrFailed()",
+					"    inputs:",
+					"      testResultsFormat: JUnit",
+					"      testResultsFiles: a11y.junit.xml",
+				]}
+			/>
+			<p>
+				<code>cantTell</code>-Regeln erscheinen als übersprungene Tests, nie als Fehlschläge. Soll
+				das Gate auch an ihnen scheitern, übergeben Sie <code>{"{ cantTellAs: 'failure' }"}</code>{" "}
+				als zweites Argument an <code>renderJunitReport</code>; das ändert den Bericht, nicht den
+				Exit-Code der CLI.
 			</p>
 
 			<h2>Minutenlimits bei Free-Tier und privaten Repositories</h2>

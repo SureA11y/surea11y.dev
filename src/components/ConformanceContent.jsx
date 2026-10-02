@@ -16,7 +16,8 @@ export function ConformanceContent() {
 				See exactly how atomic rules, coverage facets, and composite WCAG-SC rollup rules fit
 				together, so a composite <code>pass</code> means something specific rather than a vague
 				"looks fine." Target a conformance level (A, AA, or AAA) across any WCAG version with one
-				tag set, and get a straight answer to the question that actually matters: what can this
+				tag set or a named profile, map every result to the EN 301 549 clause that restates its
+				criterion when that's the standard you report against, and get a straight answer to the question that actually matters: what can this
 				kind of automated result tell you, and where does it stop. See{" "}
 				<a href="/conformance/wcag-mapping/">WCAG conformance mapping</a>.
 			</p>

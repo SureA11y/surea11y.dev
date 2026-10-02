@@ -1,6 +1,6 @@
 import { DEFAULT_LOCALE, type Locale } from "../i18n/locales";
 
-type Example = { outcome: string; state: string; html: string; explanation: string };
+type Example = { outcome: string; state: string; context?: string; html: string; explanation: string };
 type Rule = {
 	ruleId: string;
 	title: string;
@@ -16,6 +16,7 @@ type RuleOverlay = {
 	applicability: string;
 	expectation: string;
 	examples: { state: string; explanation: string }[];
+	deprecationReason?: string;
 };
 
 // One overlay per locale, rules.i18n.<locale>.json, picked up automatically.
@@ -48,5 +49,8 @@ export function localizeRule<T extends Rule>(rule: T, locale: Locale): T {
 			...example,
 			explanation: t.examples[i]?.explanation ?? example.explanation,
 		})),
+		...(t.deprecationReason && rule.deprecation
+			? { deprecation: { ...(rule.deprecation as object), reason: t.deprecationReason } }
+			: {}),
 	};
 }

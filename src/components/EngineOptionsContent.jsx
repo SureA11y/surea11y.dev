@@ -38,6 +38,46 @@ const optionRows = [
 		),
 	},
 	{
+		id: "profile",
+		option: <code>profile</code>,
+		meaning: (
+			<>
+				Optional named conformance target: <code>'wcag22-aa'</code>, <code>'en301549-v4.1.1'</code>,{" "}
+				<code>'en301549-v3.2.1'</code> or <code>'section508'</code>. Selects rules by the matching
+				tag set when nothing else includes any, and the WCAG target follows from those tags.
+				Reported back as <code>engine.profile</code> when it took effect; otherwise ignored with a
+				console warning. See <a href="#conformance-profiles">"Conformance profiles"</a> above.
+			</>
+		),
+	},
+	{
+		id: "mappings",
+		option: <code>mappings</code>,
+		meaning: (
+			<>
+				Optional standards besides WCAG whose requirements <code>meta.normativeMappings</code>{" "}
+				names: <code>'en301549'</code>, <code>'en301549:V3.2.1'</code> or{" "}
+				<code>'en301549:V4.1.1'</code>, as an array or comma-separated string. Default none, so
+				results name WCAG only; an EN 301 549 profile adds its own version. Reported back as{" "}
+				<code>engine.mappings</code> when any applies. See{" "}
+				<a href="#other-standards-mappings">"Other standards"</a> above.
+			</>
+		),
+	},
+	{
+		id: "optInRules",
+		option: <code>optInRules</code>,
+		meaning: (
+			<>
+				Optional: <code>'all'</code>, or a list of opt-in rule tags, as an array or comma-separated
+				string. Unlocks those rules outside their standard's profile; the rest of the selection
+				still decides what runs. Reported back as <code>engine.optInRules</code> when it ran a rule
+				the selection would not have run otherwise; unknown tags are ignored with a console
+				warning. See <a href="#running-every-rule-optinrules">"Running every rule"</a> above.
+			</>
+		),
+	},
+	{
 		id: "messages",
 		option: <code>messages</code>,
 		meaning: (
@@ -190,9 +230,9 @@ const optionRows = [
 			<>
 				Suppresses the engine's automatic <code>selector</code>/<code>html</code> fill-in. Since
 				every rule was migrated to report its element rather than build occurrences by hand
-				(1.5.0), that fill-in is the path almost all of the engine's 132 rules take: setting{" "}
+				(1.5.0), that fill-in is the path almost all rules take: setting{" "}
 				<code>includeSelector: false</code> / <code>includeHtml: false</code> strips selectors and
-				HTML snippets from the large majority of them. A handful still assemble those fields
+				HTML snippets from nearly every rule. A handful still assemble those fields
 				themselves inside <code>runInPage</code> and are unaffected — among them{" "}
 				<code>contrast-minimum</code>/<code>contrast-enhanced</code> (whose findings are text
 				runs, not elements), <code>page-title-present</code> and{" "}
@@ -211,8 +251,10 @@ const optionRows = [
 				<code>excludeSelectors</code> specifically — read by the engine itself before the rule
 				ever runs. See{" "}
 				<a href="#rule-scoped-excludeselectors">"Rule-scoped excludeSelectors"</a> below. Any
-				other key is passthrough only: <strong>no shipped rule currently reads{" "}
-				<code>ctx.config</code></strong> for anything besides <code>excludeSelectors</code>.
+				other key is passthrough only: <strong>no shipped rule takes anything else from it.</strong>{" "}
+				A rule's declared settings, such as <code>contrast-minimum</code>'s thresholds, are its
+				standard's, so a caller's value for one is dropped: a result naming WCAG 1.4.3 is always
+				decided at 4.5:1.
 			</>
 		),
 	},
@@ -221,10 +263,12 @@ const optionRows = [
 		option: <code>probes</code>,
 		meaning: (
 			<>
-				An optional, JSON-safe evidence object your host application can supply (depth- and
-				size-capped by the engine before rules see it, via <code>ctx.inputs.probes</code>) — for
-				future rules that might accept externally-supplied signals (e.g. real layout measurements
-				a static DOM scan can't compute itself). <strong>Not consumed by any current rule.</strong>
+				An optional, JSON-safe evidence object your host application supplies, for what a scan of
+				one page cannot see, such as the site's other pages. The engine caps it before rules read
+				it (<code>ctx.inputs.probes</code>): six levels deep, 200 items per array, 50 keys per
+				object, 2,000 characters per string. <code>crawl.pageTitles</code> (
+				<code>{"{ pages: [{ url, title }] }"}</code>) is read by <code>page-title-patterns</code>,
+				to look for generic and templated titles across a site.
 			</>
 		),
 	},
@@ -461,6 +505,212 @@ export function EngineOptionsContent() {
 				conformance failure.
 			</p>
 
+			<h3 id="conformance-profiles">Conformance profiles</h3>
+			<p>
+				<code>engineOptions.profile</code> names a conformance target instead of spelling out its
+				tag set:
+			</p>
+			<DataTable
+				rowKey="profile"
+				columns={[
+					{ key: "profile", label: "Profile", width: "20%" },
+					{ key: "tags", label: "Runs the rules tagged", wrap: true },
+					{ key: "target", label: "WCAG target", width: "12%" },
+					{ key: "why", label: "Why", wrap: true },
+				]}
+				rows={[
+					{
+						profile: <code>wcag22-aa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>,{" "}
+								<code>wcag22a</code>, <code>wcag22aa</code>
+							</>
+						),
+						target: "2.2",
+						why: "WCAG 2.2 Level A and AA",
+					},
+					{
+						profile: <code>en301549-v4.1.1</code>,
+						tags: (
+							<>
+								same as <code>wcag22-aa</code>
+							</>
+						),
+						target: "2.2",
+						why: "EN 301 549 V4.1.1 chapter 9 restates WCAG 2.2 A and AA",
+					},
+					{
+						profile: <code>en301549-v3.2.1</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>
+							</>
+						),
+						target: "2.1",
+						why: "EN 301 549 V3.2.1 chapter 9 restates WCAG 2.1 A and AA, including 4.1.1 Parsing",
+					},
+					{
+						profile: <code>section508</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>
+							</>
+						),
+						target: "2.0",
+						why: "The Revised 508 Standards incorporate WCAG 2.0 A and AA",
+					},
+				]}
+			/>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<p>
+				The WCAG target follows from the tags the same way it does for a hand-written set (see{" "}
+				<a href="#filtering-by-wcag-version">"Filtering by WCAG version"</a> above), so under{" "}
+				<code>en301549-v3.2.1</code> a duplicate id can still <code>fail</code>, and under{" "}
+				<code>en301549-v4.1.1</code> it cannot. Names are matched case-insensitively. A run that
+				used a profile reports it back as <code>engine.profile</code>.
+			</p>
+			<p>
+				Precedence: anything that <em>includes</em> rules selects them instead of the profile — a{" "}
+				<code>runOnly</code> with <code>tags</code>, <code>includeRuleIds</code> or{" "}
+				<code>includeTestIds</code>, or an <code>include</code> in{" "}
+				<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>. Excludes still
+				apply on top of the profile, whether they come from <code>runOnly</code> (
+				<code>excludeTags</code>, <code>excludeRuleIds</code>, <code>excludeTestIds</code>, so a
+				binding's <code>disableTags()</code> narrows the profile rather than replacing it) or, when
+				there is no <code>runOnly</code> filter, from <code>engineOptions</code> (
+				<code>tags.exclude</code>, <code>rules.exclude</code>, <code>tests.exclude</code>), and an
+				explicit <code>engineOptions.wcagVersion</code> still wins over the version the profile
+				implies. A profile that does not take effect — an unknown name, or one overridden as above
+				— is not an error: the run proceeds as if none was given, logs a{" "}
+				<code>console.warn</code> saying why, and carries no <code>engine.profile</code>.
+			</p>
+			<p>
+				<strong>A profile only chooses which rules run.</strong> It says nothing about whether
+				passing them meets the standard it is named after: most Success Criteria need human
+				judgement no automated rule covers (see{" "}
+				<a href="/conformance/wcag-mapping/#what-this-engine-cannot-tell-you">
+					what this engine cannot tell you
+				</a>
+				).
+			</p>
+			<p>
+				An EN 301 549 profile also switches on the EN 301 549 clauses of the version it targets, as
+				if <code>mappings: ['en301549:V4.1.1']</code> (or <code>V3.2.1</code>) had been passed; see{" "}
+				<a href="#other-standards-mappings">"Other standards"</a> below. A standard with
+				requirements of its own can also be added to the engine as a profile, bringing its own
+				profile names, rules and rollups; how that works is in{" "}
+				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
+					<code>WCAG_CONFORMANCE.md</code>
+				</a>
+				, the contributor guide for registering a standard. The engine ships no such standard
+				today.
+			</p>
+
+			<h3 id="opt-in-rules">Opt-in rules</h3>
+			<p>
+				Some rules check a standard's own requirements, ones WCAG does not make: a national
+				standard may require a doctype, or forbid presentational attributes such as{" "}
+				<code>bgcolor</code>. A <code>fail</code> from such a rule is a failure of that standard,
+				not of WCAG, so these rules are <strong>off by default</strong>. Each carries its
+				standard's rule tag and runs only when the selection asks for it:
+			</p>
+			<ul>
+				<li>through the standard's profile, which lists the tag,</li>
+				<li>
+					by that tag (<code>{"tags: { include: '<tag>' }"}</code>, alone or with others),
+				</li>
+				<li>
+					by its id (<code>{"rules: { include: '<rule id>' }"}</code>, or{" "}
+					<code>runOnly.includeRuleIds</code>),
+				</li>
+				<li>
+					by the id of one of its standard's own rollups that groups it, or
+				</li>
+				<li>
+					by unlocking it with <code>engineOptions.optInRules</code>, below.
+				</li>
+			</ul>
+			<p>
+				Nothing else selects one: not a default run, not a WCAG tag set, not a WCAG or EN 301 549
+				profile, not a WCAG rollup id. Excludes apply to them as to any rule. Selecting the tag
+				alone runs that standard's own rules, not the WCAG rules it is also mapped to, so it answers
+				"what does the standard require beyond WCAG" and is not an audit against it. For an audit,
+				use the standard's profile. None of the engine's built-in standards has opt-in rules today.
+			</p>
+
+			<h3 id="running-every-rule-optinrules">Running every rule (<code>optInRules</code>)</h3>
+			<p>
+				To run every rule the engine has, whatever standard it belongs to, leave out the profile
+				and unlock the opt-in rules:
+			</p>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { optInRules: 'all' }, null);"]} />
+			<p>
+				<code>'all'</code> unlocks every standard's opt-in rules; a list of tags unlocks only those.
+				It lifts the gate and nothing else: the rest of the selection still decides which rules
+				run. So with no filter and no profile, as above, the run covers every rule and every
+				standard's rollups; under <code>profile: 'wcag22-aa'</code> it still runs the WCAG rules
+				only, since opt-in rules carry no WCAG tag. Excludes apply as usual. A tag that is not an
+				opt-in tag is ignored with a <code>console.warn</code>.
+			</p>
+			<p>
+				This is for seeing everything the engine can report, during development or when exploring
+				a site. <strong>It is not a conformance target</strong>: such a run fails a page for things
+				WCAG allows and only another standard forbids. The result says so:{" "}
+				<code>engine.optInRules</code> lists the tags whose rules ran, and the HTML report, SARIF
+				and JUnit show it next to the profile.
+			</p>
+
+			<h3 id="other-standards-mappings">Other standards (<code>mappings</code>)</h3>
+			<p>
+				Every result's <code>meta.normativeMappings</code> names the WCAG Success Criteria it tests.{" "}
+				<code>engineOptions.mappings</code> adds the requirement of another standard that
+				corresponds to each one. By default it adds none: a clause of a standard you do not audit
+				against is noise in every SARIF tag, JUnit property and report.
+			</p>
+			<DataTable
+				rowKey="value"
+				columns={[
+					{ key: "value", label: "Value", width: "34%" },
+					{ key: "adds", label: "Adds", wrap: true },
+				]}
+				rows={[
+					{
+						value: <code>'en301549'</code>,
+						adds: "The EN 301 549 chapter 9 clause for each criterion, in every version that has it (V3.2.1 and V4.1.1)",
+					},
+					{
+						value: (
+							<>
+								<code>'en301549:V3.2.1'</code>, <code>'en301549:V4.1.1'</code>
+							</>
+						),
+						adds: "The same, for that version only",
+					},
+				]}
+			/>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
+			<p>
+				It takes an array or a comma-separated string, names and versions matched
+				case-insensitively. Under <code>profile: 'en301549-v4.1.1'</code> the V4.1.1 clauses are
+				there without asking, and <code>mappings</code> can add more. A name or version the engine
+				has no table for is ignored with a <code>console.warn</code>. A run that carries any other
+				standard reports which in <code>engine.mappings</code>, canonically spelled (
+				<code>["en301549:V3.2.1"]</code>, or <code>["en301549"]</code> for every version).
+			</p>
+			<p>
+				It changes only what a result names, never which rules run or their outcomes. The rule
+				catalog follows the same option: <code>getChecksCatalog(engineOptions)</code>,{" "}
+				<code>getCheckDefById(ruleId, engineOptions)</code>,{" "}
+				<code>getChecksForRunOnly(runOnly, engineOptions)</code>,{" "}
+				<code>getRulesCatalog(engineOptions)</code> and{" "}
+				<code>getCompositeRuleById(id, engineOptions)</code> name the standards a scan with those
+				options would, so a catalog entry and a result always agree. A rule added through{" "}
+				<code>customRules</code> keeps exactly the mappings it declares. What the clauses are and
+				how the two versions differ is on{" "}
+				<a href="/conformance/wcag-mapping/#en-301-549">WCAG mapping</a>.
+			</p>
+
 			<h3>Via <code>engineOptions</code> (no <code>runOnly</code>)</h3>
 			<p>Same filtering, expressed as comma-separated strings (or arrays) nested in <code>engineOptions</code>:</p>
 			<CodeBlock
@@ -488,6 +738,9 @@ export function EngineOptionsContent() {
 					"const engineOptions = {",
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
+					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
+					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
+					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
 					"  messages: { de: { /* key: text */ } },  // optional caller-supplied dictionaries; win over built-in ones",
 					"  includeHiddenElements: false,    // default false — set true to evaluate hidden/collapsed subtrees too",
 					"  includeShadowDom: true,          // default true — opt OUT with false to skip open shadow roots",

@@ -24,6 +24,7 @@
 	"rulePage.confidence": "confidence: {value}",
 	"rulePage.severity": "severity: {value}",
 	"rulePage.exampleCodeLabel": "Example HTML for {ruleId}",
+	"rulePage.exampleContext.browser": "In a browser",
 	"common.deprecated": "deprecated",
 	"rulesTable.ruleId": "Rule ID",
 	"rulesTable.title": "Title",

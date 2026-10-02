@@ -39,10 +39,17 @@ export function HtmlReportContent() {
 					<strong>WCAG-Zusammenfassung</strong>: gruppiert nach Konformitätsstufe (A / AA / AAA),
 					direkt aus den zusammengesetzten Zusammenfassungen der Engine in{" "}
 					<code>rulesResults[]</code> (siehe <a href="/conformance/wcag-mapping/">Konformität</a>)
-					— eine Zeile pro Erfolgskriterium mit seinem Ergebnis, einer Aufschlüsselung nach
+					— eine Zeile pro Erfolgskriterium (mit der EN-301-549-Klausel, die es wiedergibt, sofern es
+					eine gibt und der Scan EN-301-549-Klauseln angefordert hat) mit seinem Ergebnis, einer Aufschlüsselung nach
 					bestanden/nicht bestanden/zu prüfen/nicht anwendbar und den atomaren Regeln, die dazu
 					beigetragen haben. Das sind echte Engine-Daten, keine erfundene Gruppierung — dieselbe
 					Zusammenfassung, die Sie auch aus <code>rulesResults</code> im rohen JSON erhalten.
+				</li>
+				<li>
+					<strong>Eigene Zusammenfassung einer Norm</strong>: nur wenn der Scan die Regeln einer
+					Norm mit eigenen Zusammenfassungen ausgeführt hat (über ihr Profil oder{" "}
+					<code>engineOptions.optInRules</code>), eine Zeile pro Zusammenfassung, mit dem Wortlaut der
+					Norm, der Aufschlüsselung und den beitragenden Regeln.
 				</li>
 				<li>
 					<strong>Vollständige technische Daten</strong> (standardmäßig eingeklappt): eine
@@ -52,12 +59,30 @@ export function HtmlReportContent() {
 			</ul>
 			<p>
 				Die Meta-Leiste unter dem Kopf enthält die Anzahl der Regeln, die Anzahl der Vorkommen,
-				das Engine-Tag, die Schema-Version und die Locale, auf die der Scan aufgelöst wurde. Der
+				das Engine-Tag, die Schema-Version, die WCAG-Version, auf die der Scan zielte, das
+				verwendete <code>engineOptions.profile</code> (falls es eines gab), die Tags der Opt-in-Regeln,
+				die <code>engineOptions.optInRules</code> hinzugefügt hat (falls welche), und die Locale, auf
+				die der Scan aufgelöst wurde. Der
 				Fallback der Locale erfolgt pro String und ist im Text selbst nicht sichtbar, daher{" "}
 				<strong>liest sich ein Bericht, der in einer Sprache angefordert wurde, die die Engine
 				nicht mitbringt, wie ein gewöhnlicher englischer</strong> — der Chip nennt die
 				angeforderte Locale neben der aufgelösten, wenn sich beide unterscheiden. Siehe{" "}
 				<a href="/configuration/locales/">Locales</a>.
+			</p>
+			<p>
+				Die ganze Seite ist in der Locale geschrieben, auf die der Scan aufgelöst wurde:
+				Überschriften, Tabellenspalten, Namen von Ergebnissen und Schweregraden, die Kopfzeile, die
+				Seitennavigation und das Datumsformat. <code>&lt;html lang&gt;</code> nennt diese Locale. Die
+				Ergebniscodes in den Filtern für Vorkommen (<code>fail</code>, <code>cantTell</code>, …)
+				bleiben unverändert, da es die Werte sind, nach denen man im JSON-Ergebnis sucht.
+			</p>
+			<p>
+				Ein Fall behält englische Beschriftungen: ein Scan in einer Sprache, die die Engine nicht
+				mitbringt, mit einem selbst bereitgestellten Wörterbuch in <code>engineOptions.messages</code>.
+				Dieses Wörterbuch ist nicht Teil des Ergebnisses, daher kann der Bericht keine
+				Beschriftungen daraus lesen; seine Befunde werden dann mit ihrer eigenen Sprache
+				ausgezeichnet (zum Beispiel <code>lang="nl"</code>), damit ein Screenreader sie mit der
+				richtigen Stimme vorliest.
 			</p>
 
 			<h2>Verwendung als Bibliothek</h2>

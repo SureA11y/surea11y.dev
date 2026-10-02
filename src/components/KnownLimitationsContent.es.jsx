@@ -134,6 +134,21 @@ export function KnownLimitationsContent() {
 					vuelve perceptible a partir de aproximadamente 1000.
 				</li>
 				<li>
+					<strong>
+						En un navegador real, algunas reglas modifican la página mientras dura su comprobación, y
+						los propios scripts de la página pueden reaccionar.
+					</strong>{" "}
+					Para medir lo que dibuja el navegador, <code>css-hidden-focus</code> enfoca elementos como
+					lo haría el teclado y desactiva las transiciones en el elemento que mide;{" "}
+					<code>text-spacing-content-loss</code> añade una hoja de estilo con el espaciado de WCAG
+					1.4.12. Todo esto se restablece antes de que la regla termine: el foco, la posición de
+					desplazamiento, los atributos style y la hoja de estilo añadida. Lo que no se puede
+					restablecer es lo que hagan los scripts de la página en respuesta, ya que enfocar un
+					elemento dispara sus manejadores <code>focus</code>: un carrusel puede pasar a la
+					diapositiva enfocada o activar un botón. Los hallazgos no se ven afectados, pero si
+					analizas una página que sigues usando, recárgala después.
+				</li>
+				<li>
 					<strong>Marcado estático frente a estado del DOM en vivo o posterior a la hidratación.</strong>{" "}
 					La lógica de las reglas en sí es agnóstica respecto al origen del DOM: evalúa cualquier
 					DOM que reciba, ya sea HTML estático analizado por jsdom (Patrón 1) o una pestaña de

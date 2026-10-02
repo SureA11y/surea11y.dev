@@ -1,4 +1,5 @@
 import React from "react";
+import { wordSeparator } from "../i18n/locales";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { Tag } from "./design-system/core/Tag.jsx";
 import { t } from "../i18n/t";
@@ -42,7 +43,7 @@ export function RulesTable({ caption, rows, locale = "en" }) {
 					<RuleText text={value} />
 					{row.deprecated ? (
 						<>
-							{" "}
+							{wordSeparator(locale)}
 							<Tag tone="accent">{t("common.deprecated", locale)}</Tag>
 						</>
 					) : null}

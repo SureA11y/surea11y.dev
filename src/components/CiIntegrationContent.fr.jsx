@@ -9,7 +9,7 @@ export function CiIntegrationContent() {
 			<p>
 				Des modèles prêts à copier qui encapsulent la{" "}
 				<a href="https://github.com/SureA11y/cli#readme">CLI</a> (
-				<code>npx @surea11y/cli scan ...</code>) dans <span lang="en">GitHub Actions</span> et <span lang="en">Bitbucket Pipelines</span>. Si
+				<code>npx @surea11y/cli scan ...</code>) dans <span lang="en">GitHub Actions</span>, <span lang="en">Bitbucket Pipelines</span>, <span lang="en">GitLab CI</span> et <span lang="en">Azure DevOps</span>. Si
 				vous appelez la bibliothèque directement depuis votre propre script Node plutôt que via la
 				CLI, consultez plutôt{" "}
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
@@ -146,6 +146,64 @@ export function CiIntegrationContent() {
 				autre entrée <code>script</code> ; <code>a11y-report.html</code> (voir{" "}
 				<a href="/results-reports/html-report/">le rapport HTML</a>) est joint comme artefact de build
 				téléchargeable, pour qu’un relecteur puisse l’ouvrir sans relancer l’analyse en local.
+			</p>
+
+			<h2 id="junit-test-reports">Rapports de tests JUnit</h2>
+			<p>
+				GitLab, Azure DevOps, Jenkins et CircleCI affichent le JUnit XML dans leurs propres vues de
+				tests : chaque critère WCAG devient une suite et chaque règle un test (voir{" "}
+				<a href="/results-reports/junit-report/">le rapport JUnit</a>). Enregistrez l’analyse en
+				JSON, produisez le rapport avec <code>@surea11y/core/junit</code>, et gardez le code de
+				sortie de la CLI pour le contrôle. L’étape de rendu a besoin de <code>@surea11y/core</code>{" "}
+				dans les <code>devDependencies</code> du projet lui-même.
+			</p>
+			<h3><span lang="en">GitLab CI</span></h3>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"a11y:",
+					"  image: node:20",
+					"  script:",
+					"    - npm ci",
+					"    - npm run build",
+					"    - npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
+					"    - node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
+					"    - exit ${scan_exit:-0}",
+					"  artifacts:",
+					"    when: always",
+					"    reports:",
+					"      junit: a11y.junit.xml",
+				]}
+			/>
+			<p>
+				<code>when: always</code> envoie le rapport même quand le code de sortie de l’analyse fait
+				échouer le job, c’est-à-dire précisément quand le widget de la merge request mérite d’être
+				lu.
+			</p>
+			<h3><span lang="en">Azure DevOps</span></h3>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"steps:",
+					"  - script: |",
+					"      npm ci",
+					"      npm run build",
+					"      npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
+					"      node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
+					"      exit ${scan_exit:-0}",
+					"    displayName: Accessibility scan",
+					"  - task: PublishTestResults@2",
+					"    condition: succeededOrFailed()",
+					"    inputs:",
+					"      testResultsFormat: JUnit",
+					"      testResultsFiles: a11y.junit.xml",
+				]}
+			/>
+			<p>
+				Les règles <code>cantTell</code> arrivent sous forme de tests ignorés, jamais d’échecs. Pour
+				qu’elles bloquent aussi, passez <code>{"{ cantTellAs: 'failure' }"}</code> comme second
+				argument de <code>renderJunitReport</code> ; cela modifie le rapport, pas le code de sortie de
+				la CLI.
 			</p>
 
 			<h2>Limites de minutes des offres gratuites et dépôts privés</h2>

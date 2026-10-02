@@ -138,7 +138,7 @@ export function OverviewContent() {
 				<li><strong>安定した機械可読の出力。</strong>ルールIDは言語によって変わりません。</li>
 				<li><strong>フレームワークに依存しない。</strong>jsdomでも、どのブラウザー自動化フレームワークの中でも実行できます。</li>
 				<li><strong>拡張可能。</strong>カスタムルールの追加、ポリシーの登録、ルールID・タグ・WCAGバージョンによるスキャンの絞り込みができます。</li>
-				<li><strong>ローカライズされたレポート。</strong>人が読むメッセージは、機械可読のデータに影響を与えずに翻訳できます。現在は<code>en</code>、<code>fr</code>、<code>de</code>、<code>es</code>に対応しています。</li>
+				<li><strong>ローカライズされたレポート。</strong>人が読むメッセージは、機械可読のデータに影響を与えずに翻訳できます。現在は<code>en</code>、<code>fr</code>、<code>de</code>、<code>es</code>、<code>ja</code>に対応しています。</li>
 			</ul>
 
 			<h2>考え方</h2>
