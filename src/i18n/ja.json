@@ -39,7 +39,7 @@
 	"homepage.description": "Playwright、Cypress、Puppeteer、Selenium、WebdriverIO、Jest/Vitest、CI向けの決定論的なWCAG 2.2アクセシビリティテスト。W3CのACTルールコーパスで検証済みで、判断できないことは判断できないと伝えます。",
 	"homepage.tagline": "判断できないことを、判断できないと伝えるアクセシビリティテスト。",
 	"homepage.subtitle": "Playwright、Cypress、Puppeteer、Selenium、WebdriverIO、Jest/Vitest、CIパイプライン向けの決定論的なアクセシビリティテスト。",
-	"homepage.stats": "アクセシビリティルール{rules}件 · うち58件をACTコーパスで検証 · 参照ケース798件 · 決定論的な結果 · 不確実性を明示",
+	"homepage.stats": "アクセシビリティルール{rules}件 · うち59件をACTコーパスで検証 · 参照ケース821件 · 決定論的な結果 · 不確実性を明示",
 	"homepage.changelog": "最新リリースの変更点を見る",
 	"homepage.getStarted": "はじめる",
 	"homepage.viewOnGitHub": "GitHubで見る",

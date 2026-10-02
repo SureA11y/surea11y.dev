@@ -102,11 +102,11 @@ export function OverviewContent() {
 
 			<h3 id="checked-against-the-act-corpus">Geprüft am ACT-Korpus</h3>
 			<p>
-				Die Engine bringt {rules.length} Regeln mit. 58 davon haben eine Entsprechung in den{" "}
+				Die Engine bringt {rules.length} Regeln mit. 59 davon haben eine Entsprechung in den{" "}
 				<a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a> und laufen gegen die
-				veröffentlichten Testfälle von ACT: 798 Beispiele über diese 58 Regeln. Für keines der
+				veröffentlichten Testfälle von ACT: 821 Beispiele über diese 59 Regeln. Für keines der
 				Beispiele, die ACT als bestanden oder nicht anwendbar markiert, meldet die Engine{" "}
-				<code>fail</code>; gegenüber diesem Korpus gibt es also keine Falsch-Positive. 31 Beispiele,
+				<code>fail</code>; gegenüber diesem Korpus gibt es also keine Falsch-Positive. 30 Beispiele,
 				die ACT als nicht bestanden markiert, erkennt die Engine dagegen nicht: Sie meldet dafür
 				weder <code>fail</code> noch <code>cantTell</code>. Meist geht es um Ermessensfragen wie die,
 				ob eine Überschrift den Inhalt darunter beschreibt. Jedes einzelne, mit Begründung, steht in{" "}

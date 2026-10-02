@@ -170,7 +170,7 @@ export function EarlReportContent() {
 				es producir un falso positivo: fallar un ejemplo que la regla dice que debería pasar o que
 				es inaplicable. Esa es la condición que vale la pena vigilar, y es una propiedad de las
 				reglas, no de este informe. Según la última ejecución completa, el motor produce{" "}
-				<strong>cero falsos positivos</strong> entre los 798 ejemplos ACT que cubren sus 58 reglas
+				<strong>cero falsos positivos</strong> entre los 821 ejemplos ACT que cubren sus 59 reglas
 				asociadas. Ver{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}>
 					<code>ACT_RULE_MAPPING.md</code>
