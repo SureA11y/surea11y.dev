@@ -619,10 +619,9 @@ Done after an external review of the live site flagged gaps:
   domain has settled, and a real Open Graph image (1200×630) — no such
   asset exists in `design_system` yet, so `og:image`/`twitter:image` are
   omitted rather than pointing at nothing. Deployment to surea11y.dev is
-  a manual step outside this repo (`wrangler.jsonc` configures the
-  Cloudflare target, but nothing here runs `wrangler deploy` — no CI
-  workflow, no deploy script in `package.json`), so a merged commit isn't
-  live until that's run separately.
+  automatic: Cloudflare builds and deploys on every push to `main`
+  (configured on the Cloudflare side; `wrangler.jsonc` here sets the
+  target), so a commit pushed to `main` goes live without a separate step.
 - **Accessibility statement wording**: "Every change also goes through a
   complete manual accessibility audit" (`AccessibilityStatementContent.jsx`)
   overstated what actually happens — there's no process guaranteeing a full
