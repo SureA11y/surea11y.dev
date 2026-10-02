@@ -18,7 +18,8 @@ export function ConformanceContent() {
 				les règles composites d’agrégation par critère de succès WCAG, pour qu’un <code>pass</code>{" "}
 				composite signifie quelque chose de précis plutôt qu’un vague « ça a l’air correct ». Ciblez
 				un niveau de conformité (A, AA ou AAA) sur n’importe quelle version de WCAG avec un seul jeu
-				de tags, et obtenez une réponse claire à la question qui compte vraiment : que peut vous
+				de tags ou un profil nommé, rattachez chaque résultat à la clause d’EN 301 549 qui reprend son
+				critère quand c’est la norme sur laquelle vous rendez compte, et obtenez une réponse claire à la question qui compte vraiment : que peut vous
 				dire ce type de résultat automatisé, et où s’arrête-t-il ? Voir{" "}
 				<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>.
 			</p>

@@ -41,6 +41,48 @@ const optionRows = [
 		),
 	},
 	{
+		id: "profile",
+		option: <code>profile</code>,
+		meaning: (
+			<>
+				Cible de conformité nommée, facultative : <code>'wcag22-aa’</code>,{" "}
+				<code>'en301549-v4.1.1'</code>, <code>'en301549-v3.2.1'</code> ou <code>'section508'</code>.
+				Sélectionne les règles d’après le jeu de tags correspondant quand rien d’autre n’en inclut,
+				et la cible WCAG découle de ces tags. Renvoyée dans <code>engine.profile</code> quand elle a
+				pris effet ; sinon ignorée avec un avertissement dans la console. Voir{" "}
+				<a href="#conformance-profiles">« Profils de conformité »</a> ci-dessus.
+			</>
+		),
+	},
+	{
+		id: "mappings",
+		option: <code>mappings</code>,
+		meaning: (
+			<>
+				Normes facultatives autres que WCAG dont <code>meta.normativeMappings</code> nomme les
+				exigences : <code>'en301549'</code>, <code>'en301549:V3.2.1'</code> ou{" "}
+				<code>'en301549:V4.1.1'</code>, sous forme de tableau ou de chaîne séparée par des virgules.
+				Aucune par défaut : les résultats ne nomment alors que WCAG ; un profil EN 301 549 ajoute sa
+				propre version. Renvoyé dans <code>engine.mappings</code> quand une norme s’applique. Voir{" "}
+				<a href="#other-standards-mappings">« Autres normes »</a> ci-dessus.
+			</>
+		),
+	},
+	{
+		id: "optInRules",
+		option: <code>optInRules</code>,
+		meaning: (
+			<>
+				Facultatif : <code>'all’</code>, ou une liste de tags de règles optionnelles, sous forme de
+				tableau ou de chaîne séparée par des virgules. Débloque ces règles hors du profil de leur
+				norme ; le reste de la sélection décide toujours de ce qui s’exécute. Renvoyé dans{" "}
+				<code>engine.optInRules</code> quand il a exécuté une règle que la sélection n’aurait pas
+				exécutée autrement ; les tags inconnus sont ignorés avec un avertissement dans la console.
+				Voir <a href="#running-every-rule-optinrules">« Exécuter toutes les règles »</a> ci-dessus.
+			</>
+		),
+	},
+	{
 		id: "messages",
 		option: <code>messages</code>,
 		meaning: (
@@ -202,9 +244,9 @@ const optionRows = [
 				Désactive le remplissage automatique de <code>selector</code>/<code>html</code> par le
 				moteur. Depuis que toutes les règles ont été migrées pour signaler leur élément plutôt
 				que construire leurs occurrences à la main (1.5.0), ce remplissage est le chemin que
-				suivent presque toutes les 132 règles du moteur : définir{" "}
+				suivent presque toutes les règles : définir{" "}
 				<code>includeSelector: false</code> / <code>includeHtml: false</code> retire les
-				sélecteurs et les extraits HTML de la grande majorité d’entre elles. Quelques-unes
+				sélecteurs et les extraits HTML de presque toutes. Quelques-unes
 				assemblent encore ces champs elles-mêmes dans <code>runInPage</code> et ne sont pas
 				concernées, parmi lesquelles <code>contrast-minimum</code>/<code>contrast-enhanced</code>{" "}
 				(dont les constats portent sur des segments de texte, pas sur des éléments),{" "}
@@ -223,9 +265,10 @@ const optionRows = [
 				<code>excludeSelectors</code> en particulier, lu par le moteur lui-même avant même que la
 				règle s’exécute. Voir{" "}
 				<a href="#rule-scoped-excludeselectors">« excludeSelectors par règle »</a> ci-dessous.
-				Toute autre clé est simplement transmise : <strong>aucune règle livrée ne lit
-				actuellement <code>ctx.config</code></strong> pour autre chose que{" "}
-				<code>excludeSelectors</code>.
+				Toute autre clé est simplement transmise : <strong>aucune règle livrée n’en tire quoi que
+				ce soit d’autre.</strong> Les paramètres déclarés par une règle, comme les seuils de{" "}
+				<code>contrast-minimum</code>, sont ceux de sa norme : une valeur fournie par l’appelant
+				est donc ignorée, et un résultat qui nomme WCAG 1.4.3 est toujours décidé à 4,5:1.
 			</>
 		),
 	},
@@ -234,12 +277,13 @@ const optionRows = [
 		option: <code>probes</code>,
 		meaning: (
 			<>
-				Un objet de preuves facultatif, sérialisable en JSON, que votre application hôte peut
-				fournir (le moteur en plafonne la profondeur et la taille avant que les règles ne le
-				voient, via <code>ctx.inputs.probes</code>), destiné à de futures règles susceptibles
-				d’accepter des signaux externes (par exemple de vraies mesures de mise en page qu’une
-				analyse statique du DOM ne peut pas calculer elle-même).{" "}
-				<strong>Aucune règle actuelle ne l’utilise.</strong>
+				Un objet de preuves facultatif, sérialisable en JSON, que fournit votre application hôte,
+				pour ce que l’analyse d’une seule page ne peut pas voir, comme les autres pages du site. Le
+				moteur le plafonne avant que les règles ne le lisent (<code>ctx.inputs.probes</code>) : six
+				niveaux de profondeur, 200 éléments par tableau, 50 clés par objet, 2 000 caractères par
+				chaîne. <code>page-title-patterns</code> lit <code>crawl.pageTitles</code> (
+				<code>{"{ pages: [{ url, title }] }"}</code>) pour repérer les titres génériques et issus
+				de gabarits sur tout un site.
 			</>
 		),
 	},
@@ -488,6 +532,218 @@ export function EngineOptionsContent() {
 				qu’en dise la norme) ; ce n’est simplement pas un échec de conformité 2.2.
 			</p>
 
+			<h3 id="conformance-profiles">Profils de conformité</h3>
+			<p>
+				<code>engineOptions.profile</code> nomme une cible de conformité au lieu d’en détailler le
+				jeu de tags :
+			</p>
+			<DataTable
+				rowKey="profile"
+				columns={[
+					{ key: "profile", label: "Profil", width: "20%" },
+					{ key: "tags", label: "Exécute les règles taguées", wrap: true },
+					{ key: "target", label: "Cible WCAG", width: "12%" },
+					{ key: "why", label: "Pourquoi", wrap: true },
+				]}
+				rows={[
+					{
+						profile: <code>wcag22-aa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>,{" "}
+								<code>wcag22a</code>, <code>wcag22aa</code>
+							</>
+						),
+						target: "2.2",
+						why: "WCAG 2.2 niveaux A et AA",
+					},
+					{
+						profile: <code>en301549-v4.1.1</code>,
+						tags: (
+							<>
+								comme <code>wcag22-aa</code>
+							</>
+						),
+						target: "2.2",
+						why: "Le chapitre 9 d’EN 301 549 V4.1.1 reprend WCAG 2.2 A et AA",
+					},
+					{
+						profile: <code>en301549-v3.2.1</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>
+							</>
+						),
+						target: "2.1",
+						why: "Le chapitre 9 d’EN 301 549 V3.2.1 reprend WCAG 2.1 A et AA, y compris 4.1.1 Analyse syntaxique",
+					},
+					{
+						profile: <code>section508</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>
+							</>
+						),
+						target: "2.0",
+						why: "Les normes révisées de la Section 508 intègrent WCAG 2.0 A et AA",
+					},
+				]}
+			/>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<p>
+				La cible WCAG se déduit des tags comme pour un jeu écrit à la main (voir{" "}
+				<a href="#filtering-by-wcag-version">« Filtrer par version de WCAG »</a> ci-dessus) : sous{" "}
+				<code>en301549-v3.2.1</code>, un id dupliqué peut encore donner <code>fail</code>, et sous{" "}
+				<code>en301549-v4.1.1</code>, non. Les noms ne tiennent pas compte de la casse. Une exécution
+				qui a utilisé un profil le renvoie dans <code>engine.profile</code>.
+			</p>
+			<p>
+				Priorité : tout ce qui <em>inclut</em> des règles les sélectionne à la place du profil — un{" "}
+				<code>runOnly</code> avec <code>tags</code>, <code>includeRuleIds</code> ou{" "}
+				<code>includeTestIds</code>, ou un <code>include</code> dans{" "}
+				<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>. Les exclusions
+				s’appliquent toujours par-dessus le profil, qu’elles viennent de <code>runOnly</code> (
+				<code>excludeTags</code>, <code>excludeRuleIds</code>, <code>excludeTestIds</code> : le{" "}
+				<code>disableTags()</code> d’un binding restreint donc le profil au lieu de le remplacer) ou,
+				en l’absence de filtre <code>runOnly</code>, d’<code>engineOptions</code> (
+				<code>tags.exclude</code>, <code>rules.exclude</code>, <code>tests.exclude</code>), et un{" "}
+				<code>engineOptions.wcagVersion</code> explicite l’emporte toujours sur la version
+				qu’implique le profil. Un profil sans effet (nom inconnu, ou profil supplanté comme
+				ci-dessus) n’est pas une erreur : l’exécution se poursuit comme si aucun n’avait été donné,
+				émet un <code>console.warn</code> qui en donne la raison, et ne porte pas{" "}
+				<code>engine.profile</code>.
+			</p>
+			<p>
+				<strong>Un profil ne fait que choisir les règles qui s’exécutent.</strong> Il ne dit rien sur
+				le fait que les réussir satisfait la norme dont il porte le nom : la plupart des critères de
+				succès exigent un jugement humain qu’aucune règle automatisée ne couvre (voir{" "}
+				<a href="/conformance/wcag-mapping/#what-this-engine-cannot-tell-you">
+					ce que ce moteur ne peut pas vous dire
+				</a>
+				).
+			</p>
+			<p>
+				Un profil EN 301 549 active aussi les clauses d’EN 301 549 de la version qu’il vise, comme si{" "}
+				<code>mappings: ['en301549:V4.1.1']</code> (ou <code>V3.2.1</code>) avait été passé ; voir{" "}
+				<a href="#other-standards-mappings">« Autres normes »</a> ci-dessous. Une norme dotée
+				d’exigences propres peut aussi être ajoutée au moteur sous forme de profil, avec ses propres
+				noms de profil, règles et agrégations ; le fonctionnement est décrit dans{" "}
+				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
+					<code>WCAG_CONFORMANCE.md</code>
+				</a>
+				, le guide des contributeurs pour enregistrer une norme. Le moteur n’en fournit aucune
+				aujourd’hui.
+			</p>
+
+			<h3 id="opt-in-rules">Règles optionnelles</h3>
+			<p>
+				Certaines règles vérifient des exigences propres à une norme, que WCAG n’impose pas : une
+				norme nationale peut exiger un doctype, ou interdire des attributs de présentation comme{" "}
+				<code>bgcolor</code>. Un <code>fail</code> d’une telle règle est un échec au regard de cette
+				norme, pas de WCAG : ces règles sont donc <strong>désactivées par défaut</strong>. Chacune
+				porte le tag de règle de sa norme et ne s’exécute que lorsque la sélection la demande :
+			</p>
+			<ul>
+				<li>par le profil de la norme, qui liste le tag,</li>
+				<li>
+					par ce tag (<code>{"tags: { include: '<tag>' }"}</code>, seul ou avec d’autres),
+				</li>
+				<li>
+					par son id (<code>{"rules: { include: '<rule id>' }"}</code>, ou{" "}
+					<code>runOnly.includeRuleIds</code>),
+				</li>
+				<li>par l’id d’une agrégation propre à sa norme qui la regroupe, ou</li>
+				<li>
+					en la débloquant avec <code>engineOptions.optInRules</code>, ci-dessous.
+				</li>
+			</ul>
+			<p>
+				Rien d’autre ne la sélectionne : ni une exécution par défaut, ni un jeu de tags WCAG, ni un
+				profil WCAG ou EN 301 549, ni un id d’agrégation WCAG. Les exclusions s’y appliquent comme à
+				toute règle. Sélectionner le tag seul exécute les règles propres à cette norme, pas les
+				règles WCAG auxquelles elle est aussi rattachée : cela répond à « qu’exige la norme au-delà
+				de WCAG » et ne constitue pas un audit au regard de celle-ci. Pour un audit, utilisez le
+				profil de la norme. Aucune des normes intégrées au moteur n’a de règles optionnelles
+				aujourd’hui.
+			</p>
+
+			<h3 id="running-every-rule-optinrules">Exécuter toutes les règles (<code>optInRules</code>)</h3>
+			<p>
+				Pour exécuter toutes les règles du moteur, quelle que soit la norme à laquelle elles
+				appartiennent, omettez le profil et débloquez les règles optionnelles :
+			</p>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { optInRules: 'all' }, null);"]} />
+			<p>
+				<code>'all’</code> débloque les règles optionnelles de toutes les normes ; une liste de tags
+				ne débloque que celles-ci. L’option lève le verrou, rien de plus : le reste de la sélection
+				décide toujours des règles exécutées. Sans filtre ni profil, comme ci-dessus, l’exécution
+				couvre donc toutes les règles et les agrégations de toutes les normes ; sous{" "}
+				<code>profile: 'wcag22-aa’</code>, elle n’exécute toujours que les règles WCAG, puisque les
+				règles optionnelles ne portent aucun tag WCAG. Les exclusions s’appliquent comme d’habitude.
+				Un tag qui n’est pas un tag de règle optionnelle est ignoré avec un{" "}
+				<code>console.warn</code>.
+			</p>
+			<p>
+				C’est fait pour voir tout ce que le moteur peut signaler, pendant le développement ou en
+				explorant un site. <strong>Ce n’est pas une cible de conformité</strong> : une telle
+				exécution fait échouer une page pour des choses que WCAG permet et que seule une autre norme
+				interdit. Le résultat le dit : <code>engine.optInRules</code> liste les tags dont les règles
+				se sont exécutées, et le rapport HTML, SARIF et JUnit l’affichent à côté du profil.
+			</p>
+
+			<h3 id="other-standards-mappings">Autres normes (<code>mappings</code>)</h3>
+			<p>
+				Le <code>meta.normativeMappings</code> de chaque résultat nomme les critères de succès WCAG
+				qu’il teste. <code>engineOptions.mappings</code> y ajoute l’exigence d’une autre norme qui
+				correspond à chacun. Par défaut, il n’en ajoute aucune : une clause d’une norme au regard de
+				laquelle vous n’auditez pas n’est que du bruit dans chaque tag SARIF, propriété JUnit et
+				rapport.
+			</p>
+			<DataTable
+				rowKey="value"
+				columns={[
+					{ key: "value", label: "Valeur", width: "34%" },
+					{ key: "adds", label: "Ajoute", wrap: true },
+				]}
+				rows={[
+					{
+						value: <code>'en301549'</code>,
+						adds: "La clause du chapitre 9 d’EN 301 549 pour chaque critère, dans toutes les versions qui la contiennent (V3.2.1 et V4.1.1)",
+					},
+					{
+						value: (
+							<>
+								<code>'en301549:V3.2.1'</code>, <code>'en301549:V4.1.1'</code>
+							</>
+						),
+						adds: "La même chose, pour cette version seulement",
+					},
+				]}
+			/>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
+			<p>
+				L’option accepte un tableau ou une chaîne séparée par des virgules, noms et versions sans
+				tenir compte de la casse. Sous <code>profile: 'en301549-v4.1.1'</code>, les clauses V4.1.1
+				sont présentes sans les demander, et <code>mappings</code> peut en ajouter d’autres. Un nom
+				ou une version pour lesquels le moteur n’a pas de table est ignoré avec un{" "}
+				<code>console.warn</code>. Une exécution qui porte une autre norme indique laquelle dans{" "}
+				<code>engine.mappings</code>, sous forme canonique (<code>["en301549:V3.2.1"]</code>, ou{" "}
+				<code>["en301549"]</code> pour toutes les versions).
+			</p>
+			<p>
+				Elle ne change que ce que nomme un résultat, jamais les règles exécutées ni leurs
+				résultats. Le catalogue des règles suit la même option :{" "}
+				<code>getChecksCatalog(engineOptions)</code>,{" "}
+				<code>getCheckDefById(ruleId, engineOptions)</code>,{" "}
+				<code>getChecksForRunOnly(runOnly, engineOptions)</code>,{" "}
+				<code>getRulesCatalog(engineOptions)</code> et{" "}
+				<code>getCompositeRuleById(id, engineOptions)</code> nomment les normes que nommerait une
+				analyse avec ces options : une entrée du catalogue et un résultat concordent donc toujours.
+				Une règle ajoutée via <code>customRules</code> garde exactement les correspondances qu’elle
+				déclare. Ce que sont les clauses et ce qui distingue les deux versions est expliqué dans{" "}
+				<a href="/conformance/wcag-mapping/#en-301-549">la correspondance WCAG</a>.
+			</p>
+
 			<h3>Avec <code>engineOptions</code> (sans <code>runOnly</code>)</h3>
 			<p>
 				Le même filtrage, exprimé sous forme de chaînes séparées par des virgules (ou de
@@ -519,6 +775,9 @@ export function EngineOptionsContent() {
 					"const engineOptions = {",
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
+					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
+					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
+					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
 					"  messages: { de: { /* key: text */ } },  // optional caller-supplied dictionaries; win over built-in ones",
 					"  includeHiddenElements: false,    // default false — set true to evaluate hidden/collapsed subtrees too",
 					"  includeShadowDom: true,          // default true — opt OUT with false to skip open shadow roots",

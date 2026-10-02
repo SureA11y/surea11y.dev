@@ -5,6 +5,7 @@ const formatRows = [
 	{ format: <code>JSON</code>, use: "Integration, Speicherung und eigene Weiterverarbeitung", audience: "Entwicklungsteams und Plattformen" },
 	{ format: "HTML", use: "Menschliche Prüfung eines konkreten Scans", audience: "QA und Audit" },
 	{ format: "SARIF", use: "Integration in Werkzeuge zur Codeanalyse", audience: "Entwicklungs- und Security-Teams" },
+	{ format: "JUnit", use: "Testansichten von CI-Dashboards", audience: "Entwicklungs- und QA-Teams" },
 	{ format: "EARL", use: "Interoperabilität und ACT-Implementierungsberichte", audience: "Standards, Forschung und Konformität" },
 ];
 
@@ -13,9 +14,10 @@ export function ResultsReportsContent() {
 		<>
 			<p>
 				Jeder Scan liefert ein einziges, einfaches JSON-Objekt — nichts verborgen, nichts, das Sie
-				selbst neu herleiten müssen. Die drei Berichtsformate unten bauen direkt auf genau diesem
+				selbst neu herleiten müssen. Die vier Berichtsformate unten bauen direkt auf genau diesem
 				Objekt auf, und jedes ist für ein anderes Publikum gemacht: einen Menschen, der einen Browser-Tab
-				durchsieht, ein CI-Dashboard, das nur SARIF versteht, oder das eigene Format des W3C für
+				durchsieht, ein Codeanalyse-Dashboard, das nur SARIF versteht, eine CI-Testansicht, die JUnit
+				liest, oder das eigene Format des W3C für
 				Implementierungsberichte. Wählen Sie die Form, die zu denen passt, die das Ergebnis
 				tatsächlich ansehen werden.
 			</p>
@@ -60,6 +62,17 @@ export function ResultsReportsContent() {
 				Dashboard kann einen Befund über Commits hinweg verfolgen, statt ihn jedes Mal zu
 				verlieren, wenn sich eine Zeilennummer verschiebt. Siehe{" "}
 				<a href="/results-reports/sarif-report/">SARIF-Bericht</a>.
+			</p>
+
+			<h2>JUnit-Bericht</h2>
+			<p>
+				Bringen Sie Barrierefreiheitsergebnisse in die Testansicht, die Ihre CI ohnehin hat — das
+				Merge-Request-Widget von GitLab, den Tests-Tab von Azure DevOps, Jenkins, CircleCI —, neben
+				Ihre Unit-Tests. Jedes WCAG-Kriterium ist eine Suite und jede Regel ein Test, sodass ein auf
+				einer Seite wiederholter Fehler ein einziger fehlgeschlagener Test ist und die Zahlen
+				zwischen Läufen stabil bleiben. <code>cantTell</code> erscheint als übersprungener Test,
+				sichtbar, ohne den Build rot zu färben. Siehe{" "}
+				<a href="/results-reports/junit-report/">JUnit-Bericht</a>.
 			</p>
 
 			<h2>EARL-Bericht</h2>

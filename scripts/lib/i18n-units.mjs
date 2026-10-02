@@ -8,7 +8,8 @@
  *   string:footer.about             an interface string (en.json key), or a
  *   string:nav:/help/               nav label / page title from site data
  *   rule:accesskeys                 one rule's prose (title, description,
- *                                   applicability, expectation, examples)
+ *                                   applicability, expectation, examples,
+ *                                   deprecation reason)
  *
  * src/i18n/translation-sources.json records, per locale and unit, the
  * fingerprint of the English source when that translation was written or
@@ -74,7 +75,14 @@ const fingerprint = (text) =>
 	crypto.createHash("sha256").update(text.replace(/\s+/g, " ").trim()).digest("hex").slice(0, 12);
 
 const ruleText = (r) =>
-	[r.title, r.description, r.applicability, r.expectation, ...r.examples.map((e) => e.explanation)].join("\n");
+	[
+		r.title,
+		r.description,
+		r.applicability,
+		r.expectation,
+		...r.examples.map((e) => e.explanation),
+		...(r.deprecation?.reason ? [r.deprecation.reason] : []),
+	].join("\n");
 
 /** Current fingerprint of the English source of every unit. */
 export function englishFingerprints() {

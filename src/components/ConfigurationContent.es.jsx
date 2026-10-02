@@ -14,7 +14,8 @@ export function ConfigurationContent() {
 			<h2>Opciones del motor</h2>
 			<p>
 				Limita un análisis exactamente a las reglas que quieres, por ID, por etiqueta o por
-				versión de conformidad de WCAG (2.0, 2.1 o 2.2), para que una ejecución informe solo de lo
+				versión de conformidad de WCAG (2.0, 2.1 o 2.2), o nombrando un perfil de conformidad como
+				WCAG 2.2 AA, EN 301 549 o Section 508, para que una ejecución informe solo de lo
 				que realmente eres responsable, ni más ni menos. Silencia widgets globalmente ruidosos conocidos
 				o para una sola regla sin perder cobertura en el resto, ajusta cuán agresivas son las
 				comprobaciones de contraste para un auditor humano frente a una puerta de CI desatendida, e
@@ -29,7 +30,8 @@ export function ConfigurationContent() {
 				plantillas listas para pegar de <span lang="en">GitHub Actions</span> y <span lang="en">Bitbucket Pipelines</span> que condicionan una
 				compilación al propio código de salida de la CLI, establecen una línea base de las violaciones
 				preexistentes de un sitio ya existente para que solo falles en las genuinamente nuevas, y
-				suben resultados SARIF directamente a <span lang="en">GitHub Code Scanning</span> donde tu equipo ya mira. Ver{" "}
+				suben resultados SARIF directamente a <span lang="en">GitHub Code Scanning</span> donde tu equipo ya mira. Las recetas para GitLab CI y Azure DevOps llevan los resultados a
+				sus propias vistas de pruebas como JUnit. Ver{" "}
 				<a href="/configuration/ci-integration/">Integración con CI</a> para las plantillas
 				completas.
 			</p>
@@ -39,8 +41,8 @@ export function ConfigurationContent() {
 				Entrega hallazgos que tu equipo realmente pueda accionar en el idioma que lea más rápido:
 				cada título de regla y el resumen y la pista de cada ocurrencia se resuelven desde un
 				diccionario basado en claves, con una alternativa elegante por cadena de texto al inglés en
-				lugar de un vacío o un error. Hoy se incluyen cuatro configuraciones regionales (inglés,
-				francés, alemán, español), y un resultado siempre te dice exactamente qué configuración
+				lugar de un vacío o un error. Hoy se incluyen cinco configuraciones regionales (inglés,
+				francés, alemán, español, japonés), y un resultado siempre te dice exactamente qué configuración
 				regional usó, así que nada se degrada
 				en silencio sin que lo sepas. Ver <a href="/configuration/locales/">Locales</a> para la
 				cobertura y cómo aportar tu propio diccionario.

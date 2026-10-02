@@ -1,4 +1,5 @@
 import React from "react";
+import rules from "../data/rules.generated.json";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
 
@@ -12,7 +13,7 @@ export function RuleOrganizationContent() {
 	return (
 		<>
 			<p>
-				Cette page décrit la structure des 132 règles du <a href="/rules/">catalogue</a>, ce qui
+				Cette page décrit la structure des {rules.length} règles du <a href="/rules/">catalogue</a>, ce qui
 				aide à interpréter un résultat ou à trouver la règle que vous cherchez. Elle reflète ce qui
 				existe déjà dans le jeu de règles, pas une conception abstraite.
 			</p>
@@ -87,7 +88,7 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				Les règles ne mélangent jamais les familles : chacune interroge un seul type d’élément,
-				avec les helpers adaptés. C’est aussi pourquoi le jeu compte 132 règles ciblées plutôt
+				avec les helpers adaptés. C’est aussi pourquoi le jeu compte {rules.length} règles ciblées plutôt
 				qu’une douzaine de règles larges : deux vérifications qui diffèrent par ce qu’elles
 				tranchent, ce qu’elles ciblent ou la facette WCAG qu’elles couvrent restent des règles
 				distinctes au lieu d’être fusionnées, pour qu’un résultat n’ait jamais à être démêlé après

@@ -130,7 +130,7 @@ export function OverviewContent() {
 				<li><strong>Stabile maschinenlesbare Ausgabe.</strong> Regel-IDs bleiben unabhängig von der Sprache stabil.</li>
 				<li><strong>Framework-unabhängig.</strong> Läuft in jsdom oder in jedem Framework zur Browser-Automatisierung.</li>
 				<li><strong>Erweiterbar.</strong> Eigene Regeln hinzufügen, Policies registrieren und Scans nach Regel-IDs, Tags oder WCAG-Version filtern.</li>
-				<li><strong>Lokalisierte Berichte.</strong> Lesbare Meldungen lassen sich übersetzen, ohne die maschinenlesbaren Daten zu berühren; derzeit mit <code>en</code>, <code>fr</code>, <code>de</code> und <code>es</code>.</li>
+				<li><strong>Lokalisierte Berichte.</strong> Lesbare Meldungen lassen sich übersetzen, ohne die maschinenlesbaren Daten zu berühren; derzeit mit <code>en</code>, <code>fr</code>, <code>de</code>, <code>es</code> und <code>ja</code>.</li>
 			</ul>
 
 			<h2>Philosophie</h2>

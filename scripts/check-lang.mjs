@@ -38,14 +38,18 @@ function walk(dir) {
 	});
 }
 
-function textOf(html) {
+function textOf(html, locale) {
 	const main = html.match(/<main[\s\S]*<\/main>/)?.[0] ?? "";
 	let s = main
 		.replace(/<(pre|code|script|style)\b[\s\S]*?<\/\1>/g, " ¦ ")
 		.replace(/<!--[\s\S]*?-->/g, "");
-	// Drop elements marked English or untranslatable, innermost first.
+	// Drop elements marked as another language or untranslatable, innermost first.
+	const marked = new RegExp(
+		`<(\\w+)\\b[^>]*\\s(?:lang="(?!${locale}")[a-z]{2,3}"|translate="no")[^>]*>(?:(?!<\\1\\b)[\\s\\S])*?<\\/\\1>`,
+		"g"
+	);
 	for (let i = 0; i < 5; i++) {
-		s = s.replace(/<(\w+)\b[^>]*\s(?:lang="en"|translate="no")[^>]*>(?:(?!<\1\b)[\s\S])*?<\/\1>/g, " ¦ ");
+		s = s.replace(marked, " ¦ ");
 	}
 	return s
 		.replace(/<\/?(p|div|li|h\d|td|th|caption|summary|dt|dd|blockquote|figcaption)\b[^>]*>/g, "\n")
@@ -91,7 +95,7 @@ for (const locale of LOCALES) {
 	const found = new Map();
 	for (const file of walk(root)) {
 		const route = "/" + path.relative(DIST, path.dirname(file)).split(path.sep).join("/") + "/";
-		for (const line of textOf(fs.readFileSync(file, "utf8")).split("\n")) {
+		for (const line of textOf(fs.readFileSync(file, "utf8"), locale).split("\n")) {
 			for (const c of candidates(line, locale)) {
 				if (!found.has(c)) found.set(c, new Set());
 				found.get(c).add(route);

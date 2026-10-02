@@ -50,6 +50,7 @@ export const contentPages: ContentPage[] = [
 	{ href: "/results-reports/output-schema/", title: "Output schema", content: "OutputSchemaContent" },
 	{ href: "/results-reports/html-report/", title: "HTML report", content: "HtmlReportContent" },
 	{ href: "/results-reports/sarif-report/", title: "SARIF report", content: "SarifReportContent" },
+	{ href: "/results-reports/junit-report/", title: "JUnit report", content: "JunitReportContent" },
 	{ href: "/results-reports/earl-report/", title: "EARL report", content: "EarlReportContent" },
 
 	{ href: "/conformance/", title: "Conformance", content: "ConformanceContent" },

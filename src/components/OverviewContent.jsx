@@ -123,7 +123,7 @@ export function OverviewContent() {
 				<li><strong>Stable machine-readable output.</strong> Rule identifiers remain stable regardless of language.</li>
 				<li><strong>Framework independent.</strong> Run inside jsdom or any browser automation framework.</li>
 				<li><strong>Extensible.</strong> Add custom rules, register policies and filter scans by rule IDs, tags or WCAG version.</li>
-				<li><strong>Localized reporting.</strong> Human-readable messages can be translated without affecting machine-readable data — ships with <code>en</code>, <code>fr</code>, <code>de</code>, and <code>es</code> today.</li>
+				<li><strong>Localized reporting.</strong> Human-readable messages can be translated without affecting machine-readable data — ships with <code>en</code>, <code>fr</code>, <code>de</code>, <code>es</code>, and <code>ja</code> today.</li>
 			</ul>
 
 			<h2>Philosophy</h2>

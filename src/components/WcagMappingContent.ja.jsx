@@ -61,7 +61,7 @@ export function WcagMappingContent() {
 					<code>&lt;img&gt;</code>
 					には
 					<code>alt</code>
-					属性があるか」です。132件すべては
+					属性があるか」です。すべてのルールは
 					<a href="/rules/">ルールカタログ</a>
 					を参照してください。
 				</li>
@@ -165,7 +165,11 @@ export function WcagMappingContent() {
 				<em>付きません</em>
 				。そのため
 				<code>{"{ tags: ['wcag2aa'] }"}</code>
-				だけを指定すると、A＋AAを対象にする約100件のルールではなく、2.0のAAの達成基準に対応する10件のルールだけが実行されます。対象にするレベルはすべて列挙してください。
+				だけを指定すると、A＋AAを対象にする約100件のルールではなく、2.0のAAの達成基準に対応する10件のルールだけが実行されます。対象にするレベルはすべて列挙するか、
+				<code>engineOptions.profile</code>
+				（<code>wcag22-aa</code>、<code>en301549-v4.1.1</code>、<code>en301549-v3.2.1</code>、<code>section508</code>）に任せてください。
+				<a href="/configuration/engine-options/#conformance-profiles">適合性プロファイル</a>
+				を参照してください。
 			</p>
 			<p>
 				WCAGのバージョンについても同じです。2.1や2.2で追加された達成基準には、追加されたバージョンのタグしか付きません。そのため、適合の対象全体はタグの集合の和になります。バージョンごとの既成のタグセット（WCAG 2.2で追加ではなく削除された1つの達成基準を含む）は
@@ -210,7 +214,49 @@ export function WcagMappingContent() {
 				を完全に省略すると（デフォルト）、すべてのレベルのすべてのルールが実行され、複合ルールの除外も行われません。
 			</p>
 
-			<h2>このエンジンにはわからないこと</h2>
+			<h2 id="en-301-549">EN 301 549</h2>
+			<p>
+				EN 301 549の第9章は、WCAGのレベルAとAAの達成基準を、<code>9.</code>に達成基準の番号を続けた条項として再掲しています。WCAG 1.4.3は条項9.1.4.3です。スキャンが要求した場合、アトミックルールと複合ルールのすべての結果は、<code>meta.normativeMappings</code>のWCAGのエントリーの後に、各達成基準の条項を、その達成基準を含む規格のバージョンごとに1つずつ持ちます。スキャンは<code>engineOptions.mappings: ['en301549']</code>（両方のバージョン）や<code>['en301549:V3.2.1']</code>（1つ）で要求するか、EN 301 549のプロファイルを対象にして要求します。プロファイルはその名前のバージョンを追加します。デフォルトでは、結果はWCAGだけを示します（<a href="/configuration/engine-options/#other-standards-mappings">ほかの規格</a>を参照）。
+			</p>
+			<DataTable
+				rowKey="version"
+				columns={[
+					{ key: "version", label: "バージョン", width: "20%" },
+					{ key: "builtOn", label: "基になったもの", wrap: true },
+					{ key: "differs", label: "もう一方との違い", wrap: true },
+				]}
+				rows={[
+					{ version: "V3.2.1 (2021-03)", builtOn: "WCAG 2.1 A・AA、50の達成基準", differs: "9.4.1.1構文解析を含む" },
+					{ version: "V4.1.1 (2026-09)", builtOn: "WCAG 2.2 A・AA、55の達成基準", differs: "2.4.11、2.5.7、2.5.8、3.2.6、3.3.7、3.3.8を追加。9.4.1.1は無効" },
+				]}
+			/>
+			<p>
+				条項の各エントリーは、再掲している達成基準も<code>{'wcagSc: ["1.4.3"]'}</code>として示します。そのため、達成基準ごとにまとめたビュー（<a href="/results-reports/junit-report/">JUnit</a>のスイート、<a href="/results-reports/html-report/">HTMLレポート</a>の集約）は、複数の達成基準に対応するルールでも正しい達成基準の下に置けます。AAAの達成基準には、どちらのバージョンにも条項がありません。カタログも同じオプションで条項を示します。<code>{"getChecksCatalog({ mappings: ['en301549'] })"}</code>では各エントリーの<code>normativeMappings</code>に、<code>{"getRulesCatalog({ mappings: ['en301549'] })"}</code>が返す複合ルールのエントリーでは<code>meta.standardMappings</code>に入るので、スキャンを実行しなくても達成基準の条項を読み取れます。
+			</p>
+			<p>
+				この表は<code>@surea11y/core/en301549</code>として公開されています。あるバージョンが求める達成基準のうちスキャンが網羅しなかったものなど、逆方向の見方が必要なツール向けです。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { EN301549_CLAUSES, en301549ClausesForSc } = require('@surea11y/core/en301549');",
+					"",
+					"Object.keys(EN301549_CLAUSES['V3.2.1']);  // the 50 WCAG 2.1 A and AA criteria V3.2.1 restates",
+					"en301549ClausesForSc('2.5.8');            // [{ version: 'V4.1.1', clause: '9.2.5.8', title: 'Target size (minimum)' }]",
+				]}
+			/>
+			<p>
+				<strong>これは公開された2つの文書の対応関係であり、適合の主張ではありません。</strong>結果に付いた条項は、そのWCAGの達成基準がEN 301 549のどの要件に当たるかを示すだけです。特定の法律がどのバージョンを求めるかは、エンジンの範囲外です。
+			</p>
+			<p>
+				EN 301 549は、ランナー、ルールカタログ、レポート生成のすべてが読む規格の登録簿の1つのエントリーです。そのため、ほかの規格も同じ方法で、独自のプロファイル、ルール、集約とともに追加できます。登録の方法は、GitHub上のコントリビューター向けガイドである
+				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
+					<code>WCAG_CONFORMANCE.md</code>
+				</a>
+				を参照してください。
+			</p>
+
+			<h2 id="what-this-engine-cannot-tell-you">このエンジンにはわからないこと</h2>
 			<p>
 				<strong>WCAGへの完全な適合を証明できる自動ツールはありません。このツールも同じです。</strong>
 				これはsurea11yに固有の制限ではなく、WCAGそのものに内在するものです。達成基準のうち無視できない割合が、人間の判断（代替テキストが単に
@@ -232,7 +278,7 @@ export function WcagMappingContent() {
 				<li>
 					すべての
 					<code>fail</code>
-					は、対象にしたバージョンにおける本物の、決定論的な、規範上の違反です。推測ではありません。
+					は、対象にした規格とバージョンにおける本物の、決定論的な、規範上の違反です。推測ではありません。デフォルトではその規格はWCAGです。ほかの規格だけが求める要件のルールはオプトインで、その規格を対象にしたときだけ実行されます（<a href="/configuration/engine-options/#opt-in-rules">オプトインルール</a>を参照）。そのため、WCAGのスキャンが、WCAGが求めていないことでページを不合格にすることはありません。唯一の例外はすべてのルールを要求する実行（<code>engineOptions.optInRules</code>）で、特定の規格を対象にせず、そのことを<code>engine.optInRules</code>に示します。
 				</li>
 				<li>
 					すべての

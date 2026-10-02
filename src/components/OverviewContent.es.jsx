@@ -126,7 +126,7 @@ export function OverviewContent() {
 				<li><strong>Salida estable y legible por máquina.</strong> Los identificadores de regla permanecen estables sin importar el idioma.</li>
 				<li><strong>Independiente del framework.</strong> Se ejecuta dentro de jsdom o de cualquier framework de automatización de navegador.</li>
 				<li><strong>Extensible.</strong> Agrega reglas personalizadas, registra políticas y filtra análisis por ID de regla, etiquetas o versión de WCAG.</li>
-				<li><strong>Informes localizados.</strong> Los mensajes legibles por humanos se pueden traducir sin afectar los datos legibles por máquina: hoy incluye <code>en</code>, <code>fr</code>, <code>de</code> y <code>es</code>.</li>
+				<li><strong>Informes localizados.</strong> Los mensajes legibles por humanos se pueden traducir sin afectar los datos legibles por máquina: hoy incluye <code>en</code>, <code>fr</code>, <code>de</code>, <code>es</code> y <code>ja</code>.</li>
 			</ul>
 
 			<h2>Filosofía</h2>

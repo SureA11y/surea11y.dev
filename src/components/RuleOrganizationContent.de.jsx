@@ -1,4 +1,5 @@
 import React from "react";
+import rules from "../data/rules.generated.json";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
 
@@ -12,7 +13,7 @@ export function RuleOrganizationContent() {
 	return (
 		<>
 			<p>
-				Hier wird beschrieben, wie die 132 Regeln im <a href="/rules/">Katalog</a> aufgebaut sind
+				Hier wird beschrieben, wie die {rules.length} Regeln im <a href="/rules/">Katalog</a> aufgebaut sind
 				— nützlich, um ein Ergebnis einzuordnen oder die gesuchte Regel zu finden. Es gibt wieder,
 				was im Regelwerk bereits existiert, kein abstraktes Konzept.
 			</p>
@@ -85,7 +86,7 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				Regeln mischen nie Familien: Jede fragt eine Art von Element ab, mit dafür geeigneten
-				Helfern. Deshalb hat das Regelwerk auch 132 eng gefasste Regeln statt eines Dutzends
+				Helfern. Deshalb hat das Regelwerk auch {rules.length} eng gefasste Regeln statt eines Dutzends
 				breiter — zwei Prüfungen, die sich darin unterscheiden, was sie entscheiden, worauf sie
 				zielen oder welche WCAG-Facette sie abdecken, bleiben getrennte Regeln, statt
 				zusammengelegt zu werden. So muss ein Ergebnis nie nachträglich entwirrt werden, um zu

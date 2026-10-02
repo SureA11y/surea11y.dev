@@ -24,6 +24,33 @@ const optionRows = [
 		),
 	},
 	{
+		id: "profile",
+		option: <code>profile</code>,
+		meaning: (
+			<>
+				名前付きの適合性の目標（省略可）：<code>'wcag22-aa'</code>、<code>'en301549-v4.1.1'</code>、<code>'en301549-v3.2.1'</code>、<code>'section508'</code>。ほかに含める指定がない場合に、対応するタグセットでルールを選び、WCAGの対象バージョンはそのタグから決まります。効果があった場合は<code>engine.profile</code>として返し、なかった場合はコンソールに警告を出して無視します。前述の<a href="#conformance-profiles">「適合性プロファイル」</a>を参照してください。
+			</>
+		),
+	},
+	{
+		id: "mappings",
+		option: <code>mappings</code>,
+		meaning: (
+			<>
+				<code>meta.normativeMappings</code>が要件を示す、WCAG以外の規格（省略可）：<code>'en301549'</code>、<code>'en301549:V3.2.1'</code>、<code>'en301549:V4.1.1'</code>を、配列またはカンマ区切りの文字列で指定します。デフォルトはなしで、結果はWCAGだけを示します。EN 301 549のプロファイルは自身のバージョンを追加します。いずれかが適用された場合は<code>engine.mappings</code>として返します。前述の<a href="#other-standards-mappings">「ほかの規格」</a>を参照してください。
+			</>
+		),
+	},
+	{
+		id: "optInRules",
+		option: <code>optInRules</code>,
+		meaning: (
+			<>
+				省略可：<code>'all'</code>、またはオプトインルールのタグのリストを、配列またはカンマ区切りの文字列で指定します。それらのルールを規格のプロファイルの外で解除し、何を実行するかは引き続きほかの選択が決めます。ほかの選択では実行されなかったルールを実行した場合は<code>engine.optInRules</code>として返し、不明なタグはコンソールに警告を出して無視します。前述の<a href="#running-every-rule-optinrules">「すべてのルールを実行する」</a>を参照してください。
+			</>
+		),
+	},
+	{
 		id: "messages",
 		option: <code>messages</code>,
 		meaning: (
@@ -122,7 +149,7 @@ const optionRows = [
 		),
 		meaning: (
 			<>
-				エンジンによる<code>selector</code>/<code>html</code>の自動補完を抑制します。すべてのルールが検出箇所を自前で組み立てるのをやめ、要素を報告する方式に移行して以降（1.5.0）、エンジンの132件のルールのほぼすべてがこの自動補完を通ります。そのため<code>includeSelector: false</code> / <code>includeHtml: false</code>を指定すると、大多数のルールからセレクターとHTMLスニペットが取り除かれます。ただし、いくつかのルールは今も<code>runInPage</code>の中でこれらのフィールドを自分で組み立てており、影響を受けません。<code>contrast-minimum</code>/<code>contrast-enhanced</code>（検出結果が要素ではなくテキストの連なりであるため）、<code>page-title-present</code>、<code>identical-links-same-purpose</code>などがそうです。<strong>つまり出力は大幅に絞られますが、結果のどこにもセレクターやHTMLが<em>含まれない</em>ことまでは保証されません。</strong>
+				エンジンによる<code>selector</code>/<code>html</code>の自動補完を抑制します。すべてのルールが検出箇所を自前で組み立てるのをやめ、要素を報告する方式に移行して以降（1.5.0）、ほぼすべてのルールがこの自動補完を通ります。そのため<code>includeSelector: false</code> / <code>includeHtml: false</code>を指定すると、ほぼすべてのルールからセレクターとHTMLスニペットが取り除かれます。ただし、いくつかのルールは今も<code>runInPage</code>の中でこれらのフィールドを自分で組み立てており、影響を受けません。<code>contrast-minimum</code>/<code>contrast-enhanced</code>（検出結果が要素ではなくテキストの連なりであるため）、<code>page-title-present</code>、<code>identical-links-same-purpose</code>などがそうです。<strong>つまり出力は大幅に絞られますが、結果のどこにもセレクターやHTMLが<em>含まれない</em>ことまでは保証されません。</strong>
 			</>
 		),
 	},
@@ -131,7 +158,7 @@ const optionRows = [
 		option: <code>rules[ruleId]</code>,
 		meaning: (
 			<>
-				そのルールに<code>ctx.config</code>として渡されます。また<code>excludeSelectors</code>に限っては、ルールが実行される前にエンジン自身が読み取ります。後述の<a href="#rule-scoped-excludeselectors">「ルール単位のexcludeSelectors」</a>を参照してください。それ以外のキーは受け渡されるだけです。<strong>現在同梱されているルールで、<code>excludeSelectors</code>以外の目的で<code>ctx.config</code>を読むものはありません</strong>。
+				そのルールに<code>ctx.config</code>として渡されます。また<code>excludeSelectors</code>に限っては、ルールが実行される前にエンジン自身が読み取ります。後述の<a href="#rule-scoped-excludeselectors">「ルール単位のexcludeSelectors」</a>を参照してください。それ以外のキーは受け渡されるだけです。<strong>同梱されているルールで、ここからほかに何かを受け取るものはありません。</strong>ルールが宣言する設定（<code>contrast-minimum</code>のしきい値など）はその規格のものなので、呼び出し側が渡した値は破棄されます。WCAG 1.4.3を示す結果は、常に4.5:1で判定されます。
 			</>
 		),
 	},
@@ -140,7 +167,7 @@ const optionRows = [
 		option: <code>probes</code>,
 		meaning: (
 			<>
-				ホストアプリケーションから渡せる、JSONとして安全な省略可能の証拠オブジェクトです（ルールに渡る前にエンジンが深さとサイズを制限し、ルールからは<code>ctx.inputs.probes</code>として参照します）。外部から与えられるシグナル（静的なDOMスキャンでは計算できない、実際のレイアウトの計測値など）を受け付ける将来のルールのためのものです。<strong>現在のルールはどれもこれを使用しません。</strong>
+				サイトのほかのページなど、1ページのスキャンでは見えないもののために、ホストアプリケーションが渡す、JSONとして安全な省略可能の証拠オブジェクトです。ルールが読む前にエンジンが制限します（<code>ctx.inputs.probes</code>）。深さは6階層、配列は200項目、オブジェクトは50キー、文字列は2,000文字までです。<code>page-title-patterns</code>は<code>crawl.pageTitles</code>（<code>{"{ pages: [{ url, title }] }"}</code>）を読み、サイト全体で汎用的なタイトルやテンプレートのままのタイトルを探します。
 			</>
 		),
 	},
@@ -317,6 +344,146 @@ export function EngineOptionsContent() {
 				現在このタグを持つルールは<code>duplicate-id</code>だけです。除外しなければ、実際にある問題を報告します。IDの重複は、規格の定めにかかわらず<code>&lt;label for&gt;</code>、フラグメントリンク、<code>getElementById</code>を壊します。ただ、2.2の適合性の違反にはならないというだけです。
 			</p>
 
+			<h3 id="conformance-profiles">適合性プロファイル</h3>
+			<p>
+				<code>engineOptions.profile</code>は、タグセットを書き出す代わりに適合性の目標を名前で指定します。
+			</p>
+			<DataTable
+				rowKey="profile"
+				columns={[
+					{ key: "profile", label: "プロファイル", width: "20%" },
+					{ key: "tags", label: "実行するルールのタグ", wrap: true },
+					{ key: "target", label: "WCAGの対象", width: "12%" },
+					{ key: "why", label: "理由", wrap: true },
+				]}
+				rows={[
+					{
+						profile: <code>wcag22-aa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>,{" "}
+								<code>wcag22a</code>, <code>wcag22aa</code>
+							</>
+						),
+						target: "2.2",
+						why: "WCAG 2.2のレベルAとAA",
+					},
+					{
+						profile: <code>en301549-v4.1.1</code>,
+						tags: (
+							<>
+								<code>wcag22-aa</code>と同じ
+							</>
+						),
+						target: "2.2",
+						why: "EN 301 549 V4.1.1の第9章はWCAG 2.2のAとAAを再掲しています",
+					},
+					{
+						profile: <code>en301549-v3.2.1</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>
+							</>
+						),
+						target: "2.1",
+						why: "EN 301 549 V3.2.1の第9章はWCAG 2.1のAとAAを再掲しています（4.1.1構文解析を含む）",
+					},
+					{
+						profile: <code>section508</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>
+							</>
+						),
+						target: "2.0",
+						why: "改訂版のSection 508基準はWCAG 2.0のAとAAを取り込んでいます",
+					},
+				]}
+			/>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<p>
+				WCAGの対象バージョンは、手書きのタグセットと同じようにタグから決まります（前述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照）。そのため<code>en301549-v3.2.1</code>では重複したidが<code>fail</code>になりえますが、<code>en301549-v4.1.1</code>ではなりません。名前の大文字と小文字は区別しません。プロファイルを使った実行は、それを<code>engine.profile</code>として返します。
+			</p>
+			<p>
+				優先順位：ルールを<em>含める</em>指定はすべて、プロファイルの代わりにルールを選びます。<code>tags</code>、<code>includeRuleIds</code>、<code>includeTestIds</code>を持つ<code>runOnly</code>、または<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>の<code>include</code>です。除外はプロファイルの上に引き続き適用されます。<code>runOnly</code>の除外（<code>excludeTags</code>、<code>excludeRuleIds</code>、<code>excludeTestIds</code>。そのためバインディングの<code>disableTags()</code>はプロファイルを置き換えるのではなく絞り込みます）でも、<code>runOnly</code>のフィルターがない場合の<code>engineOptions</code>の除外（<code>tags.exclude</code>、<code>rules.exclude</code>、<code>tests.exclude</code>）でも同じです。また、明示的な<code>engineOptions.wcagVersion</code>は、プロファイルが示すバージョンより常に優先されます。効果のないプロファイル（不明な名前や、上記のように上書きされたもの）はエラーではありません。実行は指定がなかったものとして続き、理由を示す<code>console.warn</code>を出力し、<code>engine.profile</code>は含まれません。
+			</p>
+			<p>
+				<strong>プロファイルが選ぶのは、実行するルールだけです。</strong>それらに合格すれば名前の由来となった規格を満たすかどうかについては何も示しません。ほとんどの達成基準には、自動化されたルールでは扱えない人の判断が必要です（<a href="/conformance/wcag-mapping/#what-this-engine-cannot-tell-you">このエンジンにはわからないこと</a>を参照）。
+			</p>
+			<p>
+				EN 301 549のプロファイルは、<code>mappings: ['en301549:V4.1.1']</code>（または<code>V3.2.1</code>）を渡したのと同じように、対象バージョンのEN 301 549の条項も有効にします。後述の<a href="#other-standards-mappings">「ほかの規格」</a>を参照してください。独自の要件を持つ規格も、独自のプロファイル名、ルール、集約とともにプロファイルとしてエンジンに追加できます。その仕組みは、規格の登録方法を説明したコントリビューター向けガイド
+				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
+					<code>WCAG_CONFORMANCE.md</code>
+				</a>
+				を参照してください。現在、エンジンにそのような規格は同梱されていません。
+			</p>
+
+			<h3 id="opt-in-rules">オプトインルール</h3>
+			<p>
+				一部のルールは、WCAGが求めていない、規格独自の要件を確認します。例えば国内規格がdoctypeを求めたり、<code>bgcolor</code>のような表示用の属性を禁止したりする場合です。そのようなルールの<code>fail</code>はその規格の不合格であってWCAGの不合格ではないため、これらのルールは<strong>デフォルトでは無効</strong>です。各ルールは規格のルールタグを持ち、選択がそれを求めたときだけ実行されます。
+			</p>
+			<ul>
+				<li>そのタグを含む、規格のプロファイルによって</li>
+				<li>
+					そのタグによって（<code>{"tags: { include: '<tag>' }"}</code>。単独でもほかと組み合わせても）
+				</li>
+				<li>
+					そのidによって（<code>{"rules: { include: '<rule id>' }"}</code>、または<code>runOnly.includeRuleIds</code>）
+				</li>
+				<li>そのルールをまとめる、規格独自の集約のidによって</li>
+				<li>
+					後述の<code>engineOptions.optInRules</code>で解除することによって
+				</li>
+			</ul>
+			<p>
+				それ以外ではオプトインルールは選ばれません。デフォルトの実行、WCAGのタグセット、WCAGやEN 301 549のプロファイル、WCAGの集約のidのどれでもありません。除外はほかのルールと同じように適用されます。タグだけを選ぶと、その規格独自のルールは実行されますが、その規格が対応付けられているWCAGのルールは実行されません。つまり「その規格がWCAGを超えて何を求めるか」には答えますが、その規格に対する監査にはなりません。監査には規格のプロファイルを使ってください。現在、エンジンに組み込まれた規格にオプトインルールを持つものはありません。
+			</p>
+
+			<h3 id="running-every-rule-optinrules">すべてのルールを実行する（<code>optInRules</code>）</h3>
+			<p>
+				どの規格に属するかにかかわらずエンジンのすべてのルールを実行するには、プロファイルを省き、オプトインルールを解除します。
+			</p>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { optInRules: 'all' }, null);"]} />
+			<p>
+				<code>'all'</code>はすべての規格のオプトインルールを解除し、タグのリストを渡すとそのタグのルールだけを解除します。解除するのは制限だけで、どのルールを実行するかは引き続きほかの選択が決めます。そのため、上のようにフィルターもプロファイルもなければ、すべてのルールとすべての規格の集約が実行されます。<code>profile: 'wcag22-aa'</code>の下では、オプトインルールはWCAGのタグを持たないため、実行されるのは引き続きWCAGのルールだけです。除外は通常どおり適用されます。オプトインのタグでないタグは<code>console.warn</code>を出して無視します。
+			</p>
+			<p>
+				これは、開発中やサイトを調べるときに、エンジンが報告できるものをすべて見るためのものです。<strong>適合性の目標ではありません。</strong>このような実行は、WCAGが認めていてほかの規格だけが禁じていることでもページを不合格にします。結果はそれを示します。<code>engine.optInRules</code>は実行されたルールのタグを列挙し、HTMLレポート、SARIF、JUnitはそれをプロファイルの横に表示します。
+			</p>
+
+			<h3 id="other-standards-mappings">ほかの規格（<code>mappings</code>）</h3>
+			<p>
+				各結果の<code>meta.normativeMappings</code>は、それが確認するWCAGの達成基準を示します。<code>engineOptions.mappings</code>は、それぞれに対応するほかの規格の要件を追加します。デフォルトでは何も追加しません。監査の対象でない規格の条項は、SARIFのタグ、JUnitのプロパティ、レポートのすべてでノイズになるからです。
+			</p>
+			<DataTable
+				rowKey="value"
+				columns={[
+					{ key: "value", label: "値", width: "34%" },
+					{ key: "adds", label: "追加されるもの", wrap: true },
+				]}
+				rows={[
+					{
+						value: <code>'en301549'</code>,
+						adds: "各達成基準に対応するEN 301 549第9章の条項（それを含むすべてのバージョン：V3.2.1とV4.1.1）",
+					},
+					{
+						value: (
+							<>
+								<code>'en301549:V3.2.1'</code>, <code>'en301549:V4.1.1'</code>
+							</>
+						),
+						adds: "同じものを、そのバージョンだけについて",
+					},
+				]}
+			/>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
+			<p>
+				配列またはカンマ区切りの文字列を受け付け、名前とバージョンの大文字と小文字は区別しません。<code>profile: 'en301549-v4.1.1'</code>の下ではV4.1.1の条項は指定しなくても含まれ、<code>mappings</code>でさらに追加できます。エンジンに表がない名前やバージョンは<code>console.warn</code>を出して無視します。ほかの規格を含む実行は、それを正規の表記で<code>engine.mappings</code>に示します（<code>["en301549:V3.2.1"]</code>、すべてのバージョンなら<code>["en301549"]</code>）。
+			</p>
+			<p>
+				変わるのは結果が示す内容だけで、実行されるルールやその判定結果は変わりません。ルールカタログも同じオプションに従います。<code>getChecksCatalog(engineOptions)</code>、<code>getCheckDefById(ruleId, engineOptions)</code>、<code>getChecksForRunOnly(runOnly, engineOptions)</code>、<code>getRulesCatalog(engineOptions)</code>、<code>getCompositeRuleById(id, engineOptions)</code>は、そのオプションでスキャンした場合と同じ規格を示すため、カタログのエントリーと結果は常に一致します。<code>customRules</code>で追加したルールは、宣言した対応付けをそのまま保ちます。条項の内容と2つのバージョンの違いは<a href="/conformance/wcag-mapping/#en-301-549">WCAG適合性との対応</a>を参照してください。
+			</p>
+
 			<h3><code>engineOptions</code>で指定する（<code>runOnly</code>なし）</h3>
 			<p>同じ絞り込みを、<code>engineOptions</code>内にネストしたカンマ区切りの文字列（または配列）で表します。</p>
 			<CodeBlock
@@ -340,6 +507,9 @@ export function EngineOptionsContent() {
 					"const engineOptions = {",
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
+					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
+					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
+					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
 					"  messages: { de: { /* key: text */ } },  // optional caller-supplied dictionaries; win over built-in ones",
 					"  includeHiddenElements: false,    // default false — set true to evaluate hidden/collapsed subtrees too",
 					"  includeShadowDom: true,          // default true — opt OUT with false to skip open shadow roots",

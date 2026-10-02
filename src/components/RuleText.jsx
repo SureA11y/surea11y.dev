@@ -6,23 +6,25 @@ import React from "react";
  *
  *   `code`            -> <code>, left untranslated
  *   *word*            -> <em>
- *   [[en:Read more]]  -> <span lang="en">, for English kept inside a
- *                        translation (sample page text, engine output, spec
- *                        quotes), so screen readers switch voice for it
+ *   [[en:Read more]]  -> <span lang="en">, for text in another language kept
+ *                        inside a translation (sample page text, engine output,
+ *                        spec quotes), so screen readers switch voice for it
  *
  * Backtick spans are split out first, so markup-like characters inside code
  * are never interpreted.
  */
 const CODE = /(`[^`]+`)/;
-const INLINE = /(\[\[en:[^\]]+\]\]|\*[^*\s][^*]*\*)/;
+const INLINE = /(\[\[[a-z]{2,3}:[^\]]+\]\]|\*[^*\s][^*]*\*)/;
+const FOREIGN = /^\[\[([a-z]{2,3}):([^\]]+)\]\]$/;
 
 function renderInline(text, keyPrefix) {
 	return text.split(INLINE).map((part, i) => {
 		const key = `${keyPrefix}-${i}`;
-		if (part.startsWith("[[en:") && part.endsWith("]]")) {
+		const foreign = FOREIGN.exec(part);
+		if (foreign) {
 			return (
-				<span key={key} lang="en">
-					{part.slice(5, -2)}
+				<span key={key} lang={foreign[1]}>
+					{foreign[2]}
 				</span>
 			);
 		}
@@ -47,6 +49,6 @@ export function RuleText({ text }) {
 export function plainRuleText(text) {
 	return text
 		.replace(/`([^`]+)`/g, "$1")
-		.replace(/\[\[en:([^\]]+)\]\]/g, "$1")
+		.replace(/\[\[[a-z]{2,3}:([^\]]+)\]\]/g, "$1")
 		.replace(/\*([^*\s][^*]*)\*/g, "$1");
 }

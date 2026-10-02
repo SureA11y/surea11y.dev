@@ -17,7 +17,9 @@ export function ConformanceContent() {
 				Sehen Sie genau, wie atomare Regeln, Abdeckungsfacetten und zusammengesetzte Regeln pro
 				WCAG-Erfolgskriterium zusammenspielen, sodass ein zusammengesetztes <code>pass</code> etwas
 				Bestimmtes bedeutet statt eines vagen „sieht gut aus“. Zielen Sie mit einem einzigen Tag-Set auf
-				eine Konformitätsstufe (A, AA oder AAA) über jede WCAG-Version hinweg, und erhalten Sie eine klare
+				eine Konformitätsstufe (A, AA oder AAA) über jede WCAG-Version hinweg oder nutzen Sie ein
+				benanntes Profil, ordnen Sie jedem Ergebnis die Klausel von EN 301 549 zu, die sein Kriterium
+				wiedergibt, wenn Sie nach dieser Norm berichten, und erhalten Sie eine klare
 				Antwort auf die Frage, auf die es tatsächlich ankommt: Was kann ein solches automatisiertes
 				Ergebnis Ihnen sagen, und wo hört es auf? Siehe{" "}
 				<a href="/conformance/wcag-mapping/">WCAG-Konformitätszuordnung</a>.

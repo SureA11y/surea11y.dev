@@ -127,9 +127,14 @@ export function RulePage({ rule, locale = "en" }) {
 			) : null}
 
 			<h2>{t("rulePage.examples", locale)}</h2>
-			{rule.examples.map((example) => (
-				<div className="example" key={example.outcome}>
-					<ResultBadge lang="en" state={example.state} />
+			{rule.examples.map((example, i) => (
+				<div className="example" key={i}>
+					<div className="example-heading">
+						<ResultBadge lang="en" state={example.state} />
+						{example.context ? (
+							<span className="example-context">{t(`rulePage.exampleContext.${example.context}`, locale)}</span>
+						) : null}
+					</div>
 					<CodeBlock
 						lang="html"
 						lines={example.html.split("\n")}

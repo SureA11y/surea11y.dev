@@ -69,6 +69,59 @@ const topLevelRows = [
 			</>
 		),
 	},
+	{
+		id: "engine.profile",
+		field: <code>engine.profile</code>,
+		meaning: (
+			<>
+				Présent seulement quand un <code>engineOptions.profile</code> a sélectionné les règles de
+				cette exécution ; nomme le profil, en minuscules. Absent quand aucun n’a été demandé, et
+				aussi quand un profil a été demandé mais ne s’est pas appliqué (nom inconnu, ou un include
+				dans <code>runOnly</code> ou <code>engineOptions</code> a choisi les règles à sa place) : sa
+				présence est donc ce qui confirme qu’une exécution a vraiment visé ce profil. Voir{" "}
+				<a href="/configuration/engine-options/#conformance-profiles">Profils de conformité</a>.
+			</>
+		),
+	},
+	{
+		id: "engine.profileExcludes",
+		field: <code>engine.profileExcludes</code>,
+		meaning: (
+			<>
+				Présent seulement quand le profil appliqué écarte des règles :{" "}
+				<code>{"{ rules, criteria }"}</code>, les règles qu’il nomme et les critères WCAG dont il
+				dispense. Leurs règles et agrégations WCAG ne se sont pas exécutées. Aucun profil intégré
+				n’écarte quoi que ce soit.
+			</>
+		),
+	},
+	{
+		id: "engine.optInRules",
+		field: <code>engine.optInRules</code>,
+		meaning: (
+			<>
+				Présent seulement quand <code>engineOptions.optInRules</code> a exécuté au moins une règle
+				optionnelle que le reste de la sélection n’aurait pas exécutée. Liste leurs tags. Sa
+				présence signifie que le résultat inclut des règles pour des exigences au-delà de la norme
+				visée : un échec peut donc ne pas être un échec WCAG. Voir{" "}
+				<a href="/configuration/engine-options/#running-every-rule-optinrules">Exécuter toutes les règles</a>.
+			</>
+		),
+	},
+	{
+		id: "engine.mappings",
+		field: <code>engine.mappings</code>,
+		meaning: (
+			<>
+				Présent seulement quand l’exécution nomme une norme autre que WCAG dans{" "}
+				<code>meta.normativeMappings</code>, via <code>engineOptions.mappings</code> ou le profil
+				d’une norme. Les liste sous forme canonique : <code>"en301549"</code> pour toutes les
+				versions, <code>"en301549:V3.2.1"</code> pour une seule. Son absence signifie que chaque
+				résultat ne nomme que WCAG. Voir{" "}
+				<a href="/configuration/engine-options/#other-standards-mappings">Autres normes</a>.
+			</>
+		),
+	},
 	{ id: "url", field: <code>url</code>, meaning: <>L’argument <code>pageUrl</code> que vous avez passé, ou <code>document.location.href</code> si vous avez passé <code>null</code> ou l’avez omis, ou <code>null</code> si ni l’un ni l’autre n’est disponible.</> },
 	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> au moment de l’analyse, ou <code>null</code>.</> },
 	{
@@ -117,9 +170,11 @@ const topLevelRows = [
 		field: <code>rulesResults</code>,
 		meaning: (
 			<>
-				Une entrée par <strong>règle composite (agrégation par critère de succès WCAG)</strong>{" "}
+				Une entrée par <strong>règle composite (agrégation)</strong>{" "}
 				exécutée ; voir <a href="#composite-result">Un résultat composite</a> et{" "}
-				<a href="/conformance/wcag-mapping/">Conformité</a>. Tableau vide si aucun composite ne
+				<a href="/conformance/wcag-mapping/">Conformité</a>. En principe une par critère de succès
+				WCAG ; une exécution sous le profil d’une norme dotée de ses propres agrégations reçoit aussi
+				celles-ci (avec <code>meta.standard</code>). Tableau vide si aucun composite ne
 				correspond au filtre <code>runOnly</code>/tags en cours.
 			</>
 		),
@@ -289,7 +344,9 @@ export function OutputSchemaContent() {
 					"    tag: string,",
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
-					'    wcagVersion: "2.0" | "2.1" | "2.2"',
+					'    wcagVersion: "2.0" | "2.1" | "2.2",',
+					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508"',
+					'    mappings?: string[]    // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"  },",
 					"  url: string | null,",
 					"  title: string | null,",
@@ -381,7 +438,7 @@ export function OutputSchemaContent() {
 					"    deprecated: boolean,",
 					"    deprecation: object | null,",
 					'    category: "perceivable" | "operable" | "understandable" | "robust" | null,',
-					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel: string }>,",
+					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel?: string, wcagSc?: string[] }>,",
 					"    standard: string | null,",
 					"    applicability: string,",
 					"    expectation: string,",
@@ -391,6 +448,8 @@ export function OutputSchemaContent() {
 					"  },",
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
+					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
@@ -426,7 +485,23 @@ export function OutputSchemaContent() {
 					correspondance WCAG formelle (ce moteur les appelle des règles indicatives{" "}
 					<code>type: "manual"</code>). Voir{" "}
 					<a href="/conformance/wcag-mapping/">Conformité</a> pour la façon dont elles sont
-					agrégées.
+					agrégées. <strong>La liste n’est pas réservée à WCAG.</strong> Quand l’analyse demande
+					une autre norme (<code>engineOptions.mappings</code>, ou le profil d’une norme), chaque
+					critère WCAG est suivi de l’exigence correspondante de cette norme, comme la clause d’EN
+					301 549 qui le reprend (
+					<code>{'{ standard: "EN 301 549", version: "V3.2.1" | "V4.1.1", requirement: "9.1.1.1", title, wcagSc: ["1.1.1"] }'}</code>
+					, une entrée par version qui inclut le critère) ; une règle peut aussi citer les documents
+					Understanding de WCAG (<code>type: "Understanding"</code>). Filtrez sur{" "}
+					<code>standard</code> (et sur l’absence de <code>type</code>) avant de lire{" "}
+					<code>requirement</code> comme un critère de succès. L’entrée WCAG d’un composite vient
+					toujours en premier. Voir <a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>.
+				</li>
+				<li>
+					<strong><code>rollupIds</code></strong> liste les composites de{" "}
+					<code>rulesResults</code> qui regroupent cette règle dans cette exécution. Une liste vide
+					signifie que les résultats de la règle n’apparaissent dans aucune agrégation : qui ne lit
+					que <code>rulesResults</code> ne les voit jamais ; <code>heading-order</code>, par
+					exemple, n’appartient à aucune agrégation WCAG.
 				</li>
 				<li>
 					<strong><code>wcagVersionScope</code></strong> : présent uniquement lorsque la version
@@ -440,6 +515,12 @@ export function OutputSchemaContent() {
 					tous les autres résultats, et <strong>jamais</strong> signalé via <code>error</code> :
 					rien ne s’est mal passé. Voir{" "}
 					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtrer par version de WCAG</a>.
+				</li>
+				<li>
+					<strong><code>data</code></strong> : présent seulement sur une règle qui rapporte quelque
+					chose sur la page entière, quel que soit son résultat. Aucune règle du cœur ne le fait
+					aujourd’hui. Comme <code>data.details</code> sur une occurrence, ce n’est pas un contrat
+					stable.
 				</li>
 				<li>
 					<strong><code>error</code></strong> : présent dans trois cas seulement. L’implémentation
@@ -552,7 +633,9 @@ export function OutputSchemaContent() {
 			<h2 id="composite-result">Un résultat composite (<code>rulesResults[i]</code>)</h2>
 			<p>
 				Les composites agrègent plusieurs règles atomiques en un seul critère de succès WCAG (par
-				ex. <code>wcag-1.1.1-non-text-content</code> agrège 21 règles atomiques). Leur forme
+				ex. <code>wcag-1.1.1-non-text-content</code> agrège 21 règles atomiques). Sous le profil d’une norme dotée de ses propres agrégations,
+				il y a aussi celles-ci, avec la formulation de la norme comme <code>title</code> et son nom
+				comme <code>meta.standard</code>. Leur forme
 				reprend l’enveloppe d’un résultat de vérification, avec un <code>data.details</code>{" "}
 				propre aux composites :
 			</p>
@@ -566,6 +649,9 @@ export function OutputSchemaContent() {
 					"  data: {",
 					"    details: {",
 					'      reasonCode: string,       // e.g. "composite.rollup.fail.anyFail"',
+					"      standard?: string,        // a standard’s own rollup only, with version and criterion",
+					"      version?: string,",
+					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId this composite rolls up",
 					"      contributors: Array<{ testId: string, outcome: string, severity: string | null }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",

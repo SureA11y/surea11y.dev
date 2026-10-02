@@ -23,7 +23,8 @@ const LOCALE_NAMES = {
   en: 'English',
   fr: 'French',
   de: 'German',
-  es: 'Spanish'
+  es: 'Spanish',
+  ja: 'Japanese'
 };
 
 function parseArgs(argv) {

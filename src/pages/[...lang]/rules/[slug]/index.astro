@@ -59,6 +59,18 @@ const available = localeCodes.filter((l) => isRuleTranslated(ruleId, l));
 		margin-top: var(--space-6);
 	}
 
+	:global(.example-heading) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	:global(.example-context) {
+		color: var(--text-muted);
+		font-size: var(--text-sm);
+	}
+
 	:global(.related-rules) {
 		display: flex;
 		flex-wrap: wrap;

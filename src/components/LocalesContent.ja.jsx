@@ -44,7 +44,7 @@ const localeReasonRows = [
 		meaning: (
 			<>
 				プロジェクトにその言語の翻訳がまったくないため、英語が使われました。現時点では
-				<code>ja</code>
+				<code>ko</code>
 				も
 				<code>pt-BR</code>
 				もこれに該当します。
@@ -78,7 +78,7 @@ export function LocalesContent() {
 	return (
 		<>
 			<p>
-				ルールのtitle／description、検出箇所のsummary／hintはすべて、キーによる辞書引きでローカライズされます。言語ごとにハードコードしているわけではありません。このページで扱うのは、エンジンが結果やレポートに出力するメッセージの言語です。このドキュメントサイトの日本語訳とは別のもので、エンジン自体には現在、日本語の辞書はありません（下の表を参照）。日本語を指定しても、メッセージは英語で返ります。
+				ルールのtitle／description、検出箇所のsummary／hintはすべて、キーによる辞書引きでローカライズされます。言語ごとにハードコードしているわけではありません。このページで扱うのは、エンジンが結果やレポートに出力するメッセージの言語です。このドキュメントサイトの日本語訳とは別のものです。エンジンには日本語（<code>ja</code>）の辞書も同梱されており、WCAGの用語はWAICによるWCAG 2.2の日本語訳に従っています。
 			</p>
 
 			<h2>現在のロケール対応状況</h2>
@@ -88,7 +88,7 @@ export function LocalesContent() {
 					{ key: "locale", label: "ロケール", width: "18%" },
 					{ key: "file", label: "ファイル", width: "24%" },
 					{ key: "keys", label: "キー数", width: "12%" },
-					{ key: "untranslated", label: "英語のままの値", wrap: true },
+					{ key: "untranslated", label: "英語と同一の値", wrap: true },
 				]}
 				rows={localeCoverageRows.map((r) => ({
 					...r,
@@ -99,6 +99,9 @@ export function LocalesContent() {
 					),
 				}))}
 			/>
+			<p>
+				最後の列は、英語のテキストと1文字残らず一致する値の数です。まだ誰も翻訳していないキーを見つけられますが、フランス語の「<span lang="fr">Orientation</span>」「<span lang="fr">Interruptions</span>」やスペイン語の「<span lang="es">Selector</span>」のように、両方の言語で単に同じ語も数えます。上の表で0以外になっているのはそうした語です。
+			</p>
 			<p>
 				ロケールファイルはただのJSONで、キーから翻訳済み文字列へのフラットなマップを
 				<code>en.json</code>
@@ -197,7 +200,7 @@ export function LocalesContent() {
 					'"engine": {',
 					'  "tag": "a11ycore",',
 					'  "schemaVersion": "1.0.0",',
-					'  "locale": { "requested": "ja", "resolved": "en", "reason": "unknown-locale" }',
+					'  "locale": { "requested": "ko", "resolved": "en", "reason": "unknown-locale" }',
 					"}",
 				]}
 			/>
@@ -247,13 +250,16 @@ export function LocalesContent() {
 				rows={dictionaryLocationRows}
 			/>
 			<p>
-				バンドルを分けているのは、それを使うすべてのページにネットワーク経由で配信されるうえ、4つの言語をすべて必要とするページはないからです。英語だけを内蔵し、残りを任意にしたことで、ダウンロードサイズが約280 KB減り、言語を追加しても増えなくなりました。それ以外は何も変わりません。Nodeパッケージとバインディングには影響しません。
+				バンドルを分けているのは、それを使うすべてのページにネットワーク経由で配信されるうえ、すべての言語を必要とするページはないからです。英語だけを内蔵し、残りを任意にしたことで、ダウンロードサイズが約280 KB減り、言語を追加しても増えなくなりました。それ以外は何も変わりません。Nodeパッケージとバインディングには影響しません。
 			</p>
 			<CodeBlock
 				lang="html"
 				lines={[
 					'<script src="surea11y.browser.js"></script>',
-					'<script src="surea11y.i18n.de.js"></script>',
+					'<script src="surea11y.i18n.ja.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(location.href, null, { locale: 'ja' }, null);",
+					"</script>",
 				]}
 			/>
 			<p>
@@ -284,8 +290,46 @@ export function LocalesContent() {
 			/>
 			<p>渡さなかったキーは通常どおりフォールバックするので、一部だけの上書きでも問題ありません。</p>
 
+			<h2 id="language-specific-matching">言語ごとの照合</h2>
+			<p>
+				5つのルールは既知の語句でテキストを判断するため、メッセージに加えて語のリストを持っています。
+				<code>link-name-quality</code>
+				（「<span lang="en">click here</span>」「こちら」）、
+				<code>heading-quality</code>
+				（「<span lang="en">Untitled</span>」「見出し」）、
+				<code>form-control-label-quality</code>
+				（「<span lang="en">Label</span>」「入力欄」）、
+				<code>page-title-patterns</code>
+				（「<span lang="en">Home</span>」「トップページ」）、
+				<code>media-alternative-transcript-evidence</code>
+				（「<span lang="en">transcript</span>」「文字起こし」）です。各リストは
+				<code>en</code>
+				、
+				<code>de</code>
+				、
+				<code>es</code>
+				、
+				<code>fr</code>
+				、
+				<code>ja</code>
+				に対応しています。
+				<code>skip-link</code>
+				ルールも、同じ5つの言語でスキップリンクの表現を認識します。
+			</p>
+			<p>
+				英語は常に確認します。それに加えて、最も近い
+				<code>lang</code>
+				属性（ページタイトルの場合は
+				<code>&lt;html&gt;</code>
+				要素のもの）から得た要素自身の言語のリストを確認します。すべてのリストをどこでも確認すると、ある言語では一般的な語でも別の言語では実際の名前になる語、例えば英語のページの「<span lang="fr">Suite</span>」や「<span lang="fr">Plus</span>」を検出してしまうためです。文字起こしを表す語は例外です。どの言語でも紛れがなく、ページが別の言語の文字起こしにリンクすることもあるため、常にすべて確認します。テキストは最初にNFKC正規化するので、「見出し２」のような全角の形も一致します。
+			</p>
+			<p>
+				<code>page-title-patterns</code>
+				は、タイトルが短すぎるかを判断するとき、中国語、日本語、韓国語の文字を1文字につき2文字として数えます。「お問い合わせ」は6文字で完結したタイトルだからです。
+			</p>
+
 			<h2>キーが使われる場所</h2>
-			<p>互いに独立した2つのキー名前空間があり、どちらも同じ方法で解決されます。</p>
+			<p>複数のキー名前空間があり、どれも同じ方法で解決されます。</p>
 			<ul>
 				<li>
 					<strong>ルール単位</strong>
@@ -300,6 +344,24 @@ export function LocalesContent() {
 					／
 					<code>description</code>
 					を解決します。
+				</li>
+				<li>
+					<strong>HTMLレポート</strong>
+					：
+					<code>report_*</code>
+					キーは、
+					<code>@surea11y/core/report</code>
+					が生成するページのラベルです。見出し、表の列、判定結果と重大度の名前、見出し文、ページ送りが該当します。レポートはスキャンで解決されたロケールでこれらを読むため、辞書を翻訳すればレポートも翻訳されます。
+				</li>
+				<li>
+					<strong>複合ルール単位</strong>
+					：
+					<code>rulesResults[]</code>
+					の各集約の
+					<code>title</code>
+					／
+					<code>description</code>
+					を解決します。達成基準の名前には、各言語で公開されている名称を使います。
 				</li>
 				<li>
 					<strong>検出箇所単位</strong>

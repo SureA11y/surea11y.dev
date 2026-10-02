@@ -10,7 +10,7 @@ export function CiIntegrationContent() {
 				<a href="https://github.com/SureA11y/cli#readme">CLI</a>
 				（
 				<code>npx @surea11y/cli scan ...</code>
-				）を<span lang="en">GitHub Actions</span>と<span lang="en">Bitbucket Pipelines</span>で実行する、そのまま貼り付けられるテンプレートです。CLIではなく自分のNodeスクリプトからライブラリーを直接呼び出す場合は、
+				）を<span lang="en">GitHub Actions</span>、<span lang="en">Bitbucket Pipelines</span>、<span lang="en">GitLab CI</span>、<span lang="en">Azure DevOps</span>で実行する、そのまま貼り付けられるテンプレートです。CLIではなく自分のNodeスクリプトからライブラリーを直接呼び出す場合は、
 				<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
 					<code>INTEGRATION.md</code>
 				</a>
@@ -164,6 +164,68 @@ export function CiIntegrationContent() {
 				（
 				<a href="/results-reports/html-report/">HTMLレポート</a>
 				を参照）はダウンロード可能なビルド成果物として添付されるので、レビュー担当者はローカルでスキャンを再実行せずにレポートを開けます。
+			</p>
+
+			<h2 id="junit-test-reports">JUnitのテストレポート</h2>
+			<p>
+				GitLab、<span lang="en">Azure DevOps</span>、Jenkins、CircleCIは、<span lang="en">JUnit XML</span>をそれぞれのテストビューに表示します。WCAGの達成基準がスイートに、ルールがテストになります（
+				<a href="/results-reports/junit-report/">JUnitレポート</a>
+				を参照）。スキャン結果をJSONとして保存し、
+				<code>@surea11y/core/junit</code>
+				でレポートを生成し、ゲートにはCLIの終了コードを使います。生成のステップには、プロジェクト自身の
+				<code>devDependencies</code>
+				に
+				<code>@surea11y/core</code>
+				が必要です。
+			</p>
+			<h3><span lang="en">GitLab CI</span></h3>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"a11y:",
+					"  image: node:20",
+					"  script:",
+					"    - npm ci",
+					"    - npm run build",
+					"    - npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
+					"    - node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
+					"    - exit ${scan_exit:-0}",
+					"  artifacts:",
+					"    when: always",
+					"    reports:",
+					"      junit: a11y.junit.xml",
+				]}
+			/>
+			<p>
+				<code>when: always</code>
+				を指定すると、スキャンの終了コードでジョブが失敗した場合にもレポートをアップロードします。マージリクエストのウィジェットを読む価値があるのは、まさにそのときです。
+			</p>
+			<h3><span lang="en">Azure DevOps</span></h3>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"steps:",
+					"  - script: |",
+					"      npm ci",
+					"      npm run build",
+					"      npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
+					"      node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
+					"      exit ${scan_exit:-0}",
+					"    displayName: Accessibility scan",
+					"  - task: PublishTestResults@2",
+					"    condition: succeededOrFailed()",
+					"    inputs:",
+					"      testResultsFormat: JUnit",
+					"      testResultsFiles: a11y.junit.xml",
+				]}
+			/>
+			<p>
+				<code>cantTell</code>
+				のルールは、失敗ではなくスキップされたテストとして表示されます。これもゲートの対象にするには、
+				<code>renderJunitReport</code>
+				の2番目の引数に
+				<code>{"{ cantTellAs: 'failure' }"}</code>
+				を渡します。変わるのはレポートであり、CLIの終了コードではないことに注意してください。
 			</p>
 
 			<h2>無料枠やプライベートリポジトリの実行時間制限</h2>

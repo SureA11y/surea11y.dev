@@ -42,6 +42,42 @@ const topLevelRows = [
 			</>
 		),
 	},
+	{
+		id: "engine.profile",
+		field: <code>engine.profile</code>,
+		meaning: (
+			<>
+				<code>engineOptions.profile</code>がこの実行のルールを選んだ場合にだけ含まれ、プロファイル名を小文字で示します。プロファイルを要求しなかった場合はなく、要求しても適用されなかった場合（不明な名前、または<code>runOnly</code>や<code>engineOptions</code>のincludeが代わりにルールを選んだ場合）もありません。そのため、これがあることで、実行が本当にそのプロファイルを対象にしたことを確認できます。<a href="/configuration/engine-options/#conformance-profiles">適合性プロファイル</a>を参照してください。
+			</>
+		),
+	},
+	{
+		id: "engine.profileExcludes",
+		field: <code>engine.profileExcludes</code>,
+		meaning: (
+			<>
+				適用されたプロファイルがルールを除外する場合にだけ含まれます。<code>{"{ rules, criteria }"}</code>で、指定されたルールと、免除されるWCAGの達成基準です。それらのルールとWCAGの集約は実行されていません。組み込みのプロファイルで何かを除外するものはありません。
+			</>
+		),
+	},
+	{
+		id: "engine.optInRules",
+		field: <code>engine.optInRules</code>,
+		meaning: (
+			<>
+				<code>engineOptions.optInRules</code>が、ほかの選択では実行されなかったオプトインルールを少なくとも1つ実行した場合にだけ含まれ、そのタグを列挙します。これがある場合、結果には対象の規格を超える要件のルールが含まれるため、不合格がWCAGの不合格とは限りません。<a href="/configuration/engine-options/#running-every-rule-optinrules">すべてのルールを実行する</a>を参照してください。
+			</>
+		),
+	},
+	{
+		id: "engine.mappings",
+		field: <code>engine.mappings</code>,
+		meaning: (
+			<>
+				実行が<code>meta.normativeMappings</code>でWCAG以外の規格を示す場合（<code>engineOptions.mappings</code>または規格のプロファイルによる）にだけ含まれます。正規の表記で列挙し、すべてのバージョンなら<code>"en301549"</code>、1つなら<code>"en301549:V3.2.1"</code>です。ない場合、どの結果もWCAGだけを示します。<a href="/configuration/engine-options/#other-standards-mappings">ほかの規格</a>を参照してください。
+			</>
+		),
+	},
 	{ id: "url", field: <code>url</code>, meaning: <>渡した<code>pageUrl</code>引数です。<code>null</code>を渡したか省略した場合は<code>document.location.href</code>、どちらも得られない場合は<code>null</code>になります。</> },
 	{ id: "title", field: <code>title</code>, meaning: <>スキャン時点の<code>document.title</code>、または<code>null</code>です。</> },
 	{
@@ -81,7 +117,7 @@ const topLevelRows = [
 		field: <code>rulesResults</code>,
 		meaning: (
 			<>
-				実行された<strong>複合ルール（WCAG達成基準の集約ルール）</strong>ごとに1件のエントリです。<a href="#composite-result">複合ルールの結果</a>と<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。現在の<code>runOnly</code>やタグのフィルターに一致する複合ルールがなければ空の配列です。
+				実行された<strong>複合ルール（集約ルール）</strong>ごとに1件のエントリです。<a href="#composite-result">複合ルールの結果</a>と<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。通常はWCAGの達成基準ごとに1件ですが、独自の集約を持つ規格のプロファイルで実行した場合は、それらも含まれます（<code>meta.standard</code>が設定されます）。現在の<code>runOnly</code>やタグのフィルターに一致する複合ルールがなければ空の配列です。
 			</>
 		),
 	},
@@ -196,7 +232,9 @@ export function OutputSchemaContent() {
 					"    tag: string,",
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
-					'    wcagVersion: "2.0" | "2.1" | "2.2"',
+					'    wcagVersion: "2.0" | "2.1" | "2.2",',
+					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508"',
+					'    mappings?: string[]    // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"  },",
 					"  url: string | null,",
 					"  title: string | null,",
@@ -268,7 +306,7 @@ export function OutputSchemaContent() {
 					"    deprecated: boolean,",
 					"    deprecation: object | null,",
 					'    category: "perceivable" | "operable" | "understandable" | "robust" | null,',
-					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel: string }>,",
+					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel?: string, wcagSc?: string[] }>,",
 					"    standard: string | null,",
 					"    applicability: string,",
 					"    expectation: string,",
@@ -278,6 +316,8 @@ export function OutputSchemaContent() {
 					"  },",
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
+					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
@@ -296,10 +336,16 @@ export function OutputSchemaContent() {
 					<strong><code>type: "manual"</code>のルールが<code>outcome: "fail"</code>を報告することはありません。</strong>手動ルール自身のロジックが<code>fail</code>と判断した場合、エンジンはそれを<code>cantTell</code>に強制変換し、<code>error</code>に説明を追記します。これは一元的に適用される仕組み（<code>policy.coerceManualFailToCantTell</code>。<code>a11y</code>ポリシー契約ではデフォルトで有効です。<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>を参照）で、各ルールが気にかける必要はありません。<code>fail</code>は、決定論的な<code>type: "automatic"</code>の検出結果だけのためにあります。
 				</li>
 				<li>
-					<strong><code>meta.normativeMappings</code></strong>は、チェック結果をWCAGの達成基準に結び付けるものです。WCAGとの正式な対応がないルールでは<code>[]</code>になります（このエンジンでは、そのほとんどが参考情報の<code>type: "manual"</code>ルールです）。これらがどう集約されるかは<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。
+					<strong><code>meta.normativeMappings</code></strong>は、チェック結果をWCAGの達成基準に結び付けるものです。WCAGとの正式な対応がないルールでは<code>[]</code>になります（このエンジンでは、そのほとんどが参考情報の<code>type: "manual"</code>ルールです）。これらがどう集約されるかは<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。<strong>このリストはWCAGだけのものではありません。</strong>スキャンが別の規格を要求した場合（<code>engineOptions.mappings</code>、または規格のプロファイル）、WCAGの各達成基準の後に、その規格で対応する要件が続きます。例えば、その達成基準を再掲するEN 301 549の条項です（<code>{'{ standard: "EN 301 549", version: "V3.2.1" | "V4.1.1", requirement: "9.1.1.1", title, wcagSc: ["1.1.1"] }'}</code>。その達成基準を含むバージョンごとに1件）。また、ルールがWCAGのUnderstanding文書を引用することもあります（<code>type: "Understanding"</code>）。<code>requirement</code>を達成基準として読む前に、<code>standard</code>（と<code>type</code>がないこと）で絞り込んでください。複合ルールのWCAGのエントリーは常に先頭です。<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>を参照してください。
+				</li>
+				<li>
+					<strong><code>rollupIds</code></strong>は、この実行でこのルールをまとめている<code>rulesResults</code>内の複合ルールを列挙します。空のリストは、そのルールの検出結果がどの集約にも現れないことを意味するため、<code>rulesResults</code>だけを読む利用者には決して見えません。例えば<code>heading-order</code>はどのWCAGの集約にも属していません。
 				</li>
 				<li>
 					<strong><code>wcagVersionScope</code></strong>：スキャンの対象WCAGバージョンによって、このルールの<code>fail</code>が<code>cantTell</code>に変わった場合にだけ含まれます。現時点では、デフォルトの2.2を対象としたときの、SC 4.1.1（構文解析）に対応するルール（<code>duplicate-id</code>）がこれに当たります。2.2でその達成基準が削除されたためです。<code>removedSc</code>は存在しなくなった達成基準、<code>target</code>はそれを削除したバージョン、<code>coercedFrom</code>はルール自身が報告した判定結果です。検出箇所はルール自身のもので、手を加えていません。捨てられたものは何もなく、変わったのは適合の判定だけです。それ以外の結果には含まれず、<code>error</code>で報告されることも<strong>ありません</strong>。何も問題は起きていないからです。<a href="/configuration/engine-options/#filtering-by-wcag-version">WCAGバージョンによる絞り込み</a>を参照してください。
+				</li>
+				<li>
+					<strong><code>data</code></strong>：判定結果にかかわらずページ全体について何かを報告するルールにだけ含まれます。現在、コアのルールでこれを使うものはありません。検出箇所の<code>data.details</code>と同じく、安定した契約ではありません。
 				</li>
 				<li>
 					<strong><code>error</code></strong>：次の3つの場合にだけ含まれます。ルールの実装が捕捉されない例外を投げた場合、上記の手動ルールの強制変換が行われた場合、そして<code>fail</code>の結果のすべての検出箇所で祖先をたどる処理が内部の深さ制限に達し（フラグが立った内容が実際に公開されているかをエンジンが確認できず）、結果全体が同じように<code>cantTell</code>に強制変換された場合です。例外を投げたルールは、必ず<code>outcome: "cantTell"</code>、<code>occurrences: []</code>、例外メッセージを設定した<code>error</code>として現れます。エンジンは、壊れたルール1つでスキャン全体をクラッシュさせることはありません。
@@ -370,7 +416,7 @@ export function OutputSchemaContent() {
 
 			<h2 id="composite-result">複合ルールの結果（<code>rulesResults[i]</code>）</h2>
 			<p>
-				複合ルールは、複数のアトミックルールを1つのWCAG達成基準に集約します（例：<code>wcag-1.1.1-non-text-content</code>は21件のアトミックルールを集約します）。形はチェック結果と同じ外枠で、<code>data.details</code>が複合ルール固有の内容になります。
+				複合ルールは、複数のアトミックルールを1つのWCAG達成基準に集約します（例：<code>wcag-1.1.1-non-text-content</code>は21件のアトミックルールを集約します）。独自の集約を持つ規格のプロファイルでは、それらの集約もあり、規格の文言が<code>title</code>に、規格の名前が<code>meta.standard</code>に入ります。形はチェック結果と同じ外枠で、<code>data.details</code>が複合ルール固有の内容になります。
 			</p>
 			<CodeBlock
 				lines={[
@@ -382,6 +428,9 @@ export function OutputSchemaContent() {
 					"  data: {",
 					"    details: {",
 					'      reasonCode: string,       // e.g. "composite.rollup.fail.anyFail"',
+					"      standard?: string,        // a standard's own rollup only, with version and criterion",
+					"      version?: string,",
+					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId this composite rolls up",
 					"      contributors: Array<{ testId: string, outcome: string, severity: string | null }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",

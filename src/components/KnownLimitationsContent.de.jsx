@@ -130,6 +130,21 @@ export function KnownLimitationsContent() {
 					300 Ebenen tief, was problemlos schnell ist; spürbar wird es ab etwa 1000.
 				</li>
 				<li>
+					<strong>
+						In einem echten Browser verändern einige Regeln die Seite für die Dauer ihrer Prüfung,
+						und die Skripte der Seite können darauf reagieren.
+					</strong>{" "}
+					Um zu messen, was der Browser zeichnet, fokussiert <code>css-hidden-focus</code> Elemente
+					wie die Tastatur und schaltet Übergänge an dem Element ab, das es misst;{" "}
+					<code>text-spacing-content-loss</code> fügt ein Stylesheet mit den Abständen aus WCAG
+					1.4.12 hinzu. All das wird zurückgesetzt, bevor die Regel endet: Fokus,
+					Scrollposition, style-Attribute und das hinzugefügte Stylesheet. Nicht zurücksetzen lässt
+					sich, was die Skripte der Seite daraufhin tun, denn das Fokussieren eines Elements löst
+					seine <code>focus</code>-Handler aus: Ein Karussell springt vielleicht zur fokussierten
+					Folie oder aktiviert einen Button. Die Befunde sind davon nicht betroffen, aber wenn Sie
+					eine Seite scannen, die Sie weiter benutzen, laden Sie sie danach neu.
+				</li>
+				<li>
 					<strong>Statisches Markup vs. Live-DOM bzw. Zustand nach der Hydration.</strong> Die
 					Regellogik selbst ist unabhängig von der DOM-Quelle: Sie wertet das DOM aus, das sie
 					bekommt, ob von jsdom geparstes statisches HTML (<span lang="en">Pattern 1</span>) oder ein bereits geladener,

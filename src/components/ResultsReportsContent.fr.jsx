@@ -5,6 +5,7 @@ const formatRows = [
 	{ format: <code>JSON</code>, use: "Intégration, stockage et traitements propres", audience: "Développeurs et plateformes" },
 	{ format: "HTML", use: "Revue humaine d’une analyse précise", audience: "QA et audit" },
 	{ format: "SARIF", use: "Intégration avec les outils d’analyse de code", audience: "Équipes de développement et de sécurité" },
+	{ format: "JUnit", use: "Vues de tests des tableaux de bord de CI", audience: "Équipes de développement et QA" },
 	{ format: "EARL", use: "Interopérabilité et rapport d’implémentation ACT", audience: "Normes, recherche et conformité" },
 ];
 
@@ -12,10 +13,10 @@ export function ResultsReportsContent() {
 	return (
 		<>
 			<p>
-				Chaque analyse renvoie un unique objet JSON : rien de caché, rien à reconstituer. Les trois
+				Chaque analyse renvoie un unique objet JSON : rien de caché, rien à reconstituer. Les quatre
 				formats de rapport ci-dessous reposent directement sur ce même objet, chacun pensé pour un
-				lecteur différent : une personne qui parcourt un onglet de navigateur, un tableau de bord de
-				CI qui ne comprend que SARIF, ou le format de rapport d’implémentation du W3C lui-même.
+				lecteur différent : une personne qui parcourt un onglet de navigateur, un tableau de bord
+				d’analyse de code qui ne comprend que SARIF, une vue de tests de CI qui lit JUnit, ou le format de rapport d’implémentation du W3C lui-même.
 				Choisissez la forme adaptée à la personne qui va réellement le lire.
 			</p>
 			<DataTable
@@ -59,6 +60,16 @@ export function ResultsReportsContent() {
 				filtre toujours de façon fiable et qu’un tableau de bord peut suivre un constat d’un commit à
 				l’autre au lieu de le perdre dès qu’un numéro de ligne change. Voir{" "}
 				<a href="/results-reports/sarif-report/">Rapport SARIF</a>.
+			</p>
+
+			<h2>Rapport JUnit</h2>
+			<p>
+				Affichez les résultats d’accessibilité dans la vue de tests dont votre CI dispose déjà (le
+				widget de merge request de GitLab, l’onglet Tests d’Azure DevOps, Jenkins, CircleCI), à côté
+				de vos tests unitaires. Chaque critère WCAG est une suite et chaque règle un test : un défaut
+				répété sur une page est un seul test en échec, et les décomptes restent stables d’une
+				exécution à l’autre. <code>cantTell</code> arrive sous forme de test ignoré, visible sans
+				faire passer le build au rouge. Voir <a href="/results-reports/junit-report/">Rapport JUnit</a>.
 			</p>
 
 			<h2>Rapport EARL</h2>

@@ -1,4 +1,5 @@
 import React from "react";
+import rules from "../data/rules.generated.json";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
 
@@ -12,7 +13,7 @@ export function RuleOrganizationContent() {
 	return (
 		<>
 			<p>
-				Esto describe cómo están estructuradas las 132 reglas del <a href="/rules/">catálogo</a>, útil
+				Esto describe cómo están estructuradas las {rules.length} reglas del <a href="/rules/">catálogo</a>, útil
 				para interpretar un resultado o para encontrar la regla que buscas. Refleja lo que ya existe en
 				el conjunto de reglas, no un diseño abstracto.
 			</p>
@@ -83,7 +84,7 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				Las reglas nunca mezclan familias: cada una consulta un tipo de elemento, usando las funciones
-				auxiliares apropiadas para él. Por eso también el conjunto de reglas tiene 132 reglas específicas en lugar
+				auxiliares apropiadas para él. Por eso también el conjunto de reglas tiene {rules.length} reglas específicas en lugar
 				de una docena de reglas amplias: dos comprobaciones que difieren en lo que deciden, a qué
 				apuntan o qué faceta de WCAG cubren se mantienen como reglas separadas en lugar de fusionarse,
 				de modo que un resultado nunca tiene que desambiguarse posteriormente para decir qué se

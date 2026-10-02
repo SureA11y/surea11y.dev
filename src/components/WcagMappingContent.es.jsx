@@ -58,7 +58,7 @@ export function WcagMappingContent() {
 				<li>
 					<strong>Reglas atómicas</strong> (<code>checksResults[]</code>): una decisión normativa
 					cada una, por ejemplo "¿tiene este <code>&lt;img&gt;</code> un atributo{" "}
-					<code>alt</code>?". Ver <a href="/rules/">el catálogo de reglas</a> para las 132.
+					<code>alt</code>?". Ver <a href="/rules/">el catálogo de reglas</a> para todas.
 				</li>
 				<li>
 					<strong>Facetas</strong>: un SC de WCAG suele ser más grande de lo que una sola regla
@@ -132,7 +132,10 @@ export function WcagMappingContent() {
 				más: una regla asociada solo a un criterio AA lleva la etiqueta <code>wcag2aa</code> y{" "}
 				<em>no</em> <code>wcag2a</code>. Pedir <code>{"{ tags: ['wcag2aa'] }"}</code> por sí solo,
 				por tanto, ejecuta las 10 reglas asociadas a un criterio AA de la versión 2.0, no las
-				aproximadamente 100 que forman un objetivo A + AA. Enumera cada nivel que quieras.
+				aproximadamente 100 que forman un objetivo A + AA. Enumera cada nivel que quieras, o deja que{" "}
+				<code>engineOptions.profile</code> (<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>,{" "}
+				<code>en301549-v3.2.1</code>, <code>section508</code>) lo haga por ti; ver{" "}
+				<a href="/configuration/engine-options/#conformance-profiles">Perfiles de conformidad</a>.
 			</p>
 			<p>
 				Lo mismo aplica entre versiones de WCAG (un criterio introducido en 2.1 o 2.2 lleva solo su
@@ -168,7 +171,72 @@ export function WcagMappingContent() {
 				nivel, sin ninguna supresión de compuestos.
 			</p>
 
-			<h2>Lo que este motor no puede decirte</h2>
+			<h2 id="en-301-549">EN 301 549</h2>
+			<p>
+				El capítulo 9 de EN 301 549 reformula los criterios de éxito de nivel A y AA de WCAG como
+				cláusulas numeradas <code>9.</code> más el número del propio criterio: WCAG 1.4.3 es la
+				cláusula 9.1.4.3. Cuando un análisis las pide, cada resultado atómico y compuesto lleva, tras
+				sus entradas de WCAG en <code>meta.normativeMappings</code>, la cláusula de cada uno de sus
+				criterios, una vez por cada versión del estándar que incluye ese criterio. Un análisis las
+				pide con <code>engineOptions.mappings: ['en301549']</code> (ambas versiones) o{" "}
+				<code>['en301549:V3.2.1']</code> (una), o apuntando a un perfil de EN 301 549, que añade la
+				versión que nombra; por defecto los resultados solo nombran WCAG (ver{" "}
+				<a href="/configuration/engine-options/#other-standards-mappings">Otros estándares</a>).
+			</p>
+			<DataTable
+				rowKey="version"
+				columns={[
+					{ key: "version", label: "Versión", width: "20%" },
+					{ key: "builtOn", label: "Basada en", wrap: true },
+					{ key: "differs", label: "Se diferencia de la otra en", wrap: true },
+				]}
+				rows={[
+					{ version: "V3.2.1 (2021-03)", builtOn: "WCAG 2.1 A y AA, 50 criterios", differs: "Incluye 9.4.1.1 Procesamiento" },
+					{ version: "V4.1.1 (2026-09)", builtOn: "WCAG 2.2 A y AA, 55 criterios", differs: "Añade 2.4.11, 2.5.7, 2.5.8, 3.2.6, 3.3.7, 3.3.8; 9.4.1.1 queda sin efecto" },
+				]}
+			/>
+			<p>
+				Cada entrada de cláusula nombra también el criterio que reformula, como{" "}
+				<code>{'wcagSc: ["1.4.3"]'}</code>, para que una vista agrupada por criterio (las suites de{" "}
+				<a href="/results-reports/junit-report/">JUnit</a>, el resultado agregado del{" "}
+				<a href="/results-reports/html-report/">informe HTML</a>) la sitúe bajo el correcto incluso
+				en una regla asociada a varios. Los criterios AAA no tienen cláusula en ninguna versión. Los
+				catálogos nombran las cláusulas con las mismas opciones:{" "}
+				<code>{"getChecksCatalog({ mappings: ['en301549'] })"}</code> en el{" "}
+				<code>normativeMappings</code> de cada entrada, y las entradas compuestas que devuelve{" "}
+				<code>{"getRulesCatalog({ mappings: ['en301549'] })"}</code> como{" "}
+				<code>meta.standardMappings</code>, así que las cláusulas de un criterio se pueden leer sin
+				ejecutar un análisis.
+			</p>
+			<p>
+				La tabla es pública como <code>@surea11y/core/en301549</code>, para herramientas que
+				necesitan la vista inversa, como qué criterios exige una versión que un análisis no cubrió:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { EN301549_CLAUSES, en301549ClausesForSc } = require('@surea11y/core/en301549');",
+					"",
+					"Object.keys(EN301549_CLAUSES['V3.2.1']);  // the 50 WCAG 2.1 A and AA criteria V3.2.1 restates",
+					"en301549ClausesForSc('2.5.8');            // [{ version: 'V4.1.1', clause: '9.2.5.8', title: 'Target size (minimum)' }]",
+				]}
+			/>
+			<p>
+				<strong>Es una correspondencia entre dos documentos publicados, no una declaración de
+				conformidad</strong>: una cláusula en un resultado dice qué requisito de EN 301 549 es ese
+				criterio de WCAG, nada más. Qué versión exige una ley concreta queda fuera del motor.
+			</p>
+			<p>
+				EN 301 549 es una entrada de un registro de estándares que leen el ejecutor, el catálogo de
+				reglas y los generadores de informes, así que otro estándar se puede añadir de la misma
+				forma, con sus propios perfiles, reglas y resultados agregados. Cómo registrar uno está en{" "}
+				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
+					<code>WCAG_CONFORMANCE.md</code>
+				</a>
+				, la guía para contribuidores en GitHub.
+			</p>
+
+			<h2 id="what-this-engine-cannot-tell-you">Lo que este motor no puede decirte</h2>
 			<p>
 				<strong>
 					Ninguna herramienta automatizada, esta incluida, puede certificar la conformidad WCAG
@@ -186,8 +254,13 @@ export function WcagMappingContent() {
 			<p>Lo que surea11y <em>sí</em> puede darte, con honestidad:</p>
 			<ul>
 				<li>
-					Cada <code>fail</code> es una violación normativa real, determinista, bajo la versión que
-					elegiste como objetivo, nunca una suposición.
+					Cada <code>fail</code> es una violación normativa real, determinista, del estándar y la
+					versión que elegiste como objetivo, nunca una suposición. Por defecto ese estándar es WCAG:
+					una regla para un requisito que solo impone otro estándar es opcional y solo se ejecuta
+					cuando apuntas a ese estándar (ver <a href="/configuration/engine-options/#opt-in-rules">Reglas opcionales</a>),
+					así que un análisis de WCAG nunca hace fallar una página por algo que WCAG no exige. La única
+					excepción es una ejecución que pide todas las reglas (<code>engineOptions.optInRules</code>):
+					no apunta a ningún estándar concreto, y lo indica en <code>engine.optInRules</code>.
 				</li>
 				<li>
 					Cada <code>cantTell</code> es una señal explícita para revisión humana, no una
