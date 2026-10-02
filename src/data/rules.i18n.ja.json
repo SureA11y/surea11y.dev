@@ -339,7 +339,7 @@
 		"title": "autocomplete属性は有効な自動入力の値である必要があります",
 		"description": "空でないautocomplete属性が、\"on\"/\"off\"、または正しい形式の自動入力詳細トークンリストであることを確認します。",
 		"applicability": "空でないautocomplete属性を持つフォームコントロール（input、select、textarea）に適用されます。無効なコントロール（disabled属性。無効な祖先のfieldsetによって無効になっているコントロールも含む。またはaria-disabled=\"true\"）と、値が固定されたinputの種類は、ACT 73f2c2と同様に対象外です。",
-		"expectation": "値が単独の\"on\"/\"off\"であるか、正しい形式の自動入力詳細トークンのリストです。任意の\"section-*\"トークン、次に任意の\"shipping\"/\"billing\"トークン、次に任意の連絡手段トークン（home/work/mobile/fax/pager）、次にちょうど1つの認識されたフィールド名トークン（name、email、street-address、cc-number、tel、...）が続き、その後に\"webauthn\"を付けることもできます。フィールド名はコントロールにも合っていなければなりません。HTML Standardは各フィールド名にコントロールのグループを割り当てており、各グループは一部のinputの種類でしか使えません（street-addressはtextareaかselectのみ、emailはtext、search、emailのinputのみ、など）。形式が正しくない、または合わない値は、入力の目的を伝えるためにautocompleteに頼る支援技術に対して、フィールドが確実に識別されないことを意味します。",
+		"expectation": "値が単独の\"on\"/\"off\"であるか、正しい形式の自動入力詳細トークンのリストです。任意の\"section-*\"トークン、次に任意の\"shipping\"/\"billing\"トークン、次に任意の連絡手段トークン（home/work/mobile/fax/pager）、次にちょうど1つの認識されたフィールド名トークン（name、email、street-address、cc-number、tel、...）が続き、その後に\"webauthn\"を付けることもできます。形式が正しくない値は、入力の目的を伝えるためにautocompleteに頼る支援技術に対して、フィールドが確実に識別されないことを意味します。",
 		"examples": [
 			{
 				"state": "pass",
