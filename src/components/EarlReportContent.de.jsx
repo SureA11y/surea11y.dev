@@ -153,7 +153,7 @@ export function EarlReportContent() {
 				Ergebnis erzeugen: ein Beispiel scheitern lassen, das laut Regel bestehen soll oder nicht anwendbar
 				ist. Das ist die Schwelle, auf die es ankommt, und sie ist eine Eigenschaft der Regeln,
 				nicht dieses Berichts. Beim letzten vollständigen Lauf erzeugte die Engine{" "}
-				<strong>null falsch positive Ergebnisse</strong> über die 798 ACT-Beispiele hinweg, die ihre 58
+				<strong>null falsch positive Ergebnisse</strong> über die 821 ACT-Beispiele hinweg, die ihre 59
 				zugeordneten Regeln abdecken. Siehe{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>, und
 				führen Sie <code>scripts/act-testcase-check.js</code> für die aktuelle Zahl erneut aus,

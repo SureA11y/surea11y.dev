@@ -96,11 +96,11 @@ export function OverviewContent() {
 
 			<h3>Checked against the ACT corpus</h3>
 			<p>
-				The engine ships {rules.length} rules. Fifty-eight of them have a{" "}
+				The engine ships {rules.length} rules. Fifty-nine of them have a{" "}
 				<a href="https://act-rules.github.io/">W3C ACT Rules</a> counterpart and run against
-				ACT's own published test cases — 798 examples across those 58 rules. The engine fails
+				ACT's own published test cases — 821 examples across those 59 rules. The engine fails
 				none of the examples ACT marks passed or inapplicable, so it reports no false positives
-				against that corpus. Thirty-one examples ACT marks failed go unflagged — mostly judgement
+				against that corpus. Thirty examples ACT marks failed go unflagged — mostly judgement
 				calls, such as whether a heading describes the content under it — see{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a> for every
 				one, with the reasoning.
