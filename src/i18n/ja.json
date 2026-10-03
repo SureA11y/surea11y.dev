@@ -25,7 +25,7 @@
 	"rulePage.deprecatedPolicyLink": "ルールIDの非推奨ポリシー",
 	"rulePage.confidence": "確度：{value}",
 	"rulePage.severity": "重大度：{value}",
-	"rulePage.exampleCodeLabel": "{ruleId}のHTMLの例",
+	"rulePage.exampleCodeLabel": "例{n}（{outcome}）：{ruleId}のHTML",
 	"rulePage.exampleContext.browser": "ブラウザーで実行した場合",
 	"common.deprecated": "非推奨",
 	"rulesTable.ruleId": "ルールID",
