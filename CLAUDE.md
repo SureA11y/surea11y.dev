@@ -671,9 +671,10 @@ Done after an external review of the live site flagged gaps:
   `twitter:card` (`summary`, not `summary_large_image` — no OG image exists
   yet, see below). Per-page descriptions set so far: the homepage and the
   six other top-level section indexes, reusing `sections.ts`'s existing
-  one-line descriptions where one already existed. Still open: submitting
-  the sitemap to Google Search Console / Bing Webmaster Tools once the
-  domain has settled, and a real Open Graph image (1200×630) — no such
+  one-line descriptions where one already existed. `sitemap-index.xml`
+  was submitted to Google Search Console on 2026-09-28 (Domain property,
+  already verified; Bing Webmaster Tools not done yet — it can import from
+  Search Console). Still open: a real Open Graph image (1200×630) — no such
   asset exists in `design_system` yet, so `og:image`/`twitter:image` are
   omitted rather than pointing at nothing. Deployment to surea11y.dev is
   automatic from GitHub Actions: a push to `main` goes live only after the
