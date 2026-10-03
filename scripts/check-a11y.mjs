@@ -15,7 +15,8 @@
  *                                  per-page manual-review
  *
  * Usage: npm run build && npm run check:a11y
- *   --widths=375,1280   viewport widths (CSS px), default 375,1280
+ *   --widths=375,1280   viewport widths (CSS px), default 375,1280; CI runs
+ *                       one job per width
  *   --pages=/,/rules/   only these routes, for a quick local look
  */
 import fs from "node:fs";
@@ -183,7 +184,10 @@ function markdown(summaries, environment) {
 			lines.push("");
 		}
 	}
-	if (summaries.some((s) => s.findings.size)) lines.push("HTML reports for each page with findings are in the `a11y-results` artifact.", "");
+	if (summaries.some((s) => s.findings.size)) {
+		const artifact = summaries.length === 1 ? `a11y-results-${summaries[0].width}` : "a11y-results";
+		lines.push(`HTML reports for each page with findings are in the \`${artifact}\` artifact.`, "");
+	}
 	return lines.join("\n");
 }
 
