@@ -580,9 +580,13 @@ Open English-source issues found in that review, not yet decided:
   so Japanese pages are measured in a real CJK font.
 - **deploy**: push to `main` only, after both: `npx wrangler deploy` with
   secrets `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`. It replaces
-  Cloudflare's git-triggered build (turn that off once one deploy from
-  Actions has worked): the org's free plan can't require checks on a
-  private repo, so the deploy job's `needs` is the gate.
+  Cloudflare's git-triggered build, which was disconnected on 2026-10-03
+  after the first deploy from Actions worked: the org's free plan can't
+  require checks on a private repo, so the deploy job's `needs` is the
+  gate. Don't reconnect that build, or pushes to `main` go live without
+  the checks and the scan. Wrangler also reports the Worker's default
+  `surea11y-dev.rumoroso.workers.dev` address, which serves the same site
+  (a "workers.dev" toggle in the Worker's settings).
 - `.github/dependabot.yml`: `@surea11y/*` weekly (grouped), Actions monthly.
 
 Decisions and follow-ups (more widths, dark mode, publishing results on
@@ -672,9 +676,10 @@ Done after an external review of the live site flagged gaps:
   domain has settled, and a real Open Graph image (1200×630) — no such
   asset exists in `design_system` yet, so `og:image`/`twitter:image` are
   omitted rather than pointing at nothing. Deployment to surea11y.dev is
-  automatic: Cloudflare builds and deploys on every push to `main`
-  (configured on the Cloudflare side; `wrangler.jsonc` here sets the
-  target), so a commit pushed to `main` goes live without a separate step.
+  automatic from GitHub Actions: a push to `main` goes live only after the
+  site checks and the accessibility scan pass (see "CI, accessibility scan
+  and deploy"; `wrangler.jsonc` sets the target Worker, `surea11y-dev`).
+  Until 2026-10-03 Cloudflare built and deployed every push itself.
 - **Accessibility statement wording**: "Every change also goes through a
   complete manual accessibility audit" (`AccessibilityStatementContent.jsx`)
   overstated what actually happens — there's no process guaranteeing a full
