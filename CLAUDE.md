@@ -53,6 +53,15 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   stable contract apart from `reasonCode`, linking to the Output schema's
   `#occurrence`. A locale whose rule overlay has no `reports` yet shows
   the English list marked `lang="en"` (`reportsLang` in `localizeRule`).
+  **Pending, at core's next release (1.9.1 or 1.10.0) with `@reports`:**
+  the site shows rule text from core `main` (`d7b4725`) while displaying
+  1.9.0. When that release is out, make `@surea11y/core` a pinned
+  devDependency, point both generators at `node_modules/@surea11y/core`
+  instead of `../core` (the package ships `src/` and `docs/`; the locale
+  generator still needs `scripts/i18n-report.js` and `src/i18n/*.json`
+  from core, or an exported function), and add `docs:rules:check` and
+  `docs:locales:check` to CI, which leaves them out until then. See
+  `internal-notes/surea11y-dev-a11y-ci.design.md` §8.1, decision 4.
 - **Configuration, Results & Reports, Conformance, and Help are
   each split into per-topic subpages**, not one long page: every section
   index (`/configuration/`, `/results-reports/`, `/conformance/`,
