@@ -46,7 +46,7 @@ jobs:
         run: npm run check:lang
       # docs:rules:check and docs:locales:check read ../core and stay local
       # until the generators read the @surea11y/core package; see CLAUDE.md.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
@@ -75,7 +75,7 @@ jobs:
         run: sudo apt-get install -y --no-install-recommends fonts-noto-cjk
       - name: Scan every page at 375 and 1280 px
         run: npm run check:a11y
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: a11y-results
