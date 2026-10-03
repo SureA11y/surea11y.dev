@@ -2,7 +2,11 @@ import React from "react";
 
 /* The generic data table. ResultsTable is the specialised sibling for findings;
    use this one for runs, pages, packages, rules — anything without a result
-   state. Hairlines, no zebra, no shadow: depth comes from the raised header. */
+   state. Hairlines, no zebra, no shadow: depth comes from the raised header.
+   Cells and headers wrap and never clip: with automatic layout a column is
+   never narrower than its longest word, so text a reader spaces out (WCAG
+   1.4.12) widens its column instead of being cut off, and the table scrolls
+   sideways in its wrapper when it no longer fits, as it does below minWidth. */
 export function DataTable({
   columns = [],
   rows = [],
@@ -18,15 +22,32 @@ export function DataTable({
   stickyHeader = false,
   empty = "Nothing to show yet.",
   footer,
+  /** Accessible name of the scrolling wrapper. Defaults to the caption. */
+  label,
+  /** Below this width the table scrolls sideways rather than squeezing its columns. */
+  minWidth = "36rem",
+  className,
   style,
   ...rest
 }) {
   const pad = dense ? "9px var(--space-4)" : "var(--space-3) var(--space-4)";
   const sortable = typeof onSort === "function";
+  /* The wrapper scrolls: sideways below minWidth, and down under a height
+     cap with stickyHeader. A scroll container has to be reachable by
+     keyboard, so with a name it is a focusable region. Style its focus with
+     .ds-data-table:focus-visible; inline styles cannot. */
+  const name = label || (typeof caption === "string" ? caption : undefined);
 
   return (
-    <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", overflow: "auto", ...style }} {...rest}>
-      <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", fontFamily: "var(--font-body)" }}>
+    <div
+      role={name ? "region" : undefined}
+      aria-label={name}
+      tabIndex={name ? 0 : undefined}
+      className={className ? `ds-data-table ${className}` : "ds-data-table"}
+      style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", overflow: "auto", ...style }}
+      {...rest}
+    >
+      <table style={{ width: "100%", minWidth, borderCollapse: "collapse", tableLayout: "auto", fontFamily: "var(--font-body)" }}>
         {caption ? (
           <caption style={{
             captionSide: "top", textAlign: "left",
@@ -59,7 +80,7 @@ export function DataTable({
                     fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", fontWeight: 600,
                     letterSpacing: "var(--tracking-label)", textTransform: "uppercase",
                     color: active ? "var(--text-strong)" : "var(--text-muted)",
-                    whiteSpace: "nowrap",
+                    overflowWrap: "break-word",
                   }}
                 >
                   {sortable && c.sortable !== false ? (
@@ -112,8 +133,7 @@ export function DataTable({
                       fontSize: c.mono ? "var(--text-sm)" : "var(--text-base)",
                       color: c.muted ? "var(--text-muted)" : "var(--text-strong)",
                       fontVariantNumeric: "tabular-nums",
-                      whiteSpace: c.wrap ? "normal" : "nowrap",
-                      overflow: "hidden", textOverflow: "ellipsis",
+                      overflowWrap: "break-word",
                     }}
                   >
                     {c.render ? c.render(r[c.key], r) : (r[c.key] == null ? "—" : r[c.key])}

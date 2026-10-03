@@ -21,6 +21,7 @@ export function ResultsReportsContent() {
 				matches who's actually going to look at it.
 			</p>
 			<DataTable
+				label="Output formats"
 				rowKey="format"
 				columns={[
 					{ key: "format", label: "Format" },

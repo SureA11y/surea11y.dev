@@ -275,4 +275,10 @@ const html = markCodeNoTranslate(localizeLinks(headedHtml, locale));
 	.prose :global(:not(pre) > code) {
 		overflow-wrap: anywhere;
 	}
+
+	/* Except in a table: its wrapper scrolls sideways, so an identifier keeps
+	   its column wide enough to stay whole instead of breaking at any letter. */
+	.prose :global(.ds-data-table code) {
+		overflow-wrap: normal;
+	}
 </style>

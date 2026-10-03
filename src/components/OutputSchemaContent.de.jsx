@@ -399,6 +399,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Felder des Ergebnisses auf oberster Ebene"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Feld", width: "22%" },
@@ -624,6 +625,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Felder eines Vorkommens"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Feld", width: "22%" },
@@ -642,6 +644,7 @@ export function OutputSchemaContent() {
 				und nicht entschieden hat, daher entfernt die Engine es dort.
 			</p>
 			<DataTable
+				label="Unsicherheitscodes"
 				rowKey="id"
 				columns={[
 					{ key: "code", label: "code", width: "20%" },
@@ -717,6 +720,7 @@ export function OutputSchemaContent() {
 
 			<h2>Ergebniswerte</h2>
 			<DataTable
+				label="Ergebniswerte"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Ergebnis", width: "16%" },

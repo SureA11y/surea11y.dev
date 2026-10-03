@@ -111,6 +111,7 @@ export function SarifReportContent() {
 				a run with nothing to report has no <code>invocations</code> key at all.
 			</p>
 			<DataTable
+				label="Engine outcomes as SARIF levels"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Engine outcome", width: "22%" },
@@ -129,6 +130,7 @@ export function SarifReportContent() {
 
 			<h2>Field mapping</h2>
 			<DataTable
+				label="SARIF field mapping"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "SARIF field", width: "36%", wrap: true },

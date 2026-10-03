@@ -213,6 +213,7 @@ export function TestMatchersUsageContent() {
 
 			<h2>API</h2>
 			<DataTable
+				label="マッチャーのパラメーター"
 				rowKey="id"
 				columns={[
 					{ key: "param", label: "引数", width: "18%" },

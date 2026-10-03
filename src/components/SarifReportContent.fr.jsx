@@ -117,6 +117,7 @@ export function SarifReportContent() {
 				une exécution sans rien à rapporter n’a donc aucune clé <code>invocations</code>.
 			</p>
 			<DataTable
+				label="Résultats du moteur en niveaux SARIF"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Résultat du moteur", width: "22%" },
@@ -135,6 +136,7 @@ export function SarifReportContent() {
 
 			<h2>Correspondance des champs</h2>
 			<DataTable
+				label="Correspondance des champs SARIF"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Champ SARIF", width: "36%", wrap: true },

@@ -75,6 +75,7 @@ export function LocalesContent() {
 
 			<h2>Langues actuellement couvertes</h2>
 			<DataTable
+				label="Couverture des langues"
 				rowKey="id"
 				columns={[
 					{ key: "locale", label: "Langue", width: "18%" },
@@ -181,6 +182,7 @@ export function LocalesContent() {
 				valeurs suivantes :
 			</p>
 			<DataTable
+				label="Valeurs de locale.reason"
 				rowKey="id"
 				columns={[
 					{ key: "reason", label: "reason", width: "26%" },
@@ -207,6 +209,7 @@ export function LocalesContent() {
 			<h2>Où se trouvent les dictionnaires</h2>
 			<p>Les langues disponibles dépendent de la manière dont vous chargez le moteur.</p>
 			<DataTable
+				label="Provenance des dictionnaires"
 				rowKey="id"
 				columns={[
 					{ key: "how", label: "Mode de chargement", width: "36%" },

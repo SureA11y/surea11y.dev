@@ -352,6 +352,7 @@ export function EngineOptionsContent() {
 				most common integration mistake — see <a href="/help/faq/">the FAQ</a>.
 			</p>
 			<DataTable
+				label="runOnly fields"
 				rowKey="field"
 				columns={[
 					{ key: "field", label: "Field", width: "22%" },
@@ -511,6 +512,7 @@ export function EngineOptionsContent() {
 				tag set:
 			</p>
 			<DataTable
+				label="Conformance profiles"
 				rowKey="profile"
 				columns={[
 					{ key: "profile", label: "Profile", width: "20%" },
@@ -669,6 +671,7 @@ export function EngineOptionsContent() {
 				against is noise in every SARIF tag, JUnit property and report.
 			</p>
 			<DataTable
+				label="mappings values"
 				rowKey="value"
 				columns={[
 					{ key: "value", label: "Value", width: "34%" },
@@ -783,6 +786,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<DataTable
+				label="Other engineOptions"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Option", width: "22%" },

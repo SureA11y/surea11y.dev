@@ -116,6 +116,7 @@ export function SarifReportContent() {
 				ein Lauf ohne Meldungen hat also gar keinen <code>invocations</code>-Schlüssel.
 			</p>
 			<DataTable
+				label="Engine-Ergebnisse als SARIF-Stufen"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Engine-Ergebnis", width: "22%" },
@@ -134,6 +135,7 @@ export function SarifReportContent() {
 
 			<h2>Feldzuordnung</h2>
 			<DataTable
+				label="SARIF-Feldzuordnung"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "SARIF-Feld", width: "36%", wrap: true },

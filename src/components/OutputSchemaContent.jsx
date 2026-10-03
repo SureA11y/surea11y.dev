@@ -380,6 +380,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Top-level result fields"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Field", width: "22%" },
@@ -591,6 +592,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Occurrence fields"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Field", width: "22%" },
@@ -608,6 +610,7 @@ export function OutputSchemaContent() {
 				not, so the engine drops it.
 			</p>
 			<DataTable
+				label="Uncertainty codes"
 				rowKey="id"
 				columns={[
 					{ key: "code", label: "code", width: "20%" },
@@ -678,6 +681,7 @@ export function OutputSchemaContent() {
 
 			<h2>Outcome values</h2>
 			<DataTable
+				label="Outcome values"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Outcome", width: "16%" },

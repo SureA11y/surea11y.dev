@@ -125,6 +125,7 @@ export function SarifReportContent() {
 				no tiene ninguna clave <code>invocations</code>.
 			</p>
 			<DataTable
+				label="Resultados del motor como niveles SARIF"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Resultado del motor", width: "22%" },
@@ -143,6 +144,7 @@ export function SarifReportContent() {
 
 			<h2>Correspondencia de campos</h2>
 			<DataTable
+				label="Correspondencia de campos SARIF"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Campo SARIF", width: "36%", wrap: true },

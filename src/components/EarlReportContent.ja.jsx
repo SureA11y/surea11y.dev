@@ -155,6 +155,7 @@ export function EarlReportContent() {
 
 			<h2>判定結果</h2>
 			<DataTable
+				label="EARLでのエンジンの判定結果"
 				rowKey="id"
 				columns={[
 					{ key: "engine", label: "エンジン", width: "30%" },
@@ -202,6 +203,7 @@ export function EarlReportContent() {
 
 			<h2>オプション</h2>
 			<DataTable
+				label="EARLレポートのオプション"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "オプション", width: "22%" },

@@ -50,6 +50,7 @@ export function OverviewContent() {
 				を自動的に取り込みます。
 			</p>
 			<DataTable
+				label="インストールするパッケージ"
 				rowKey="id"
 				columns={[
 					{ key: "want", label: "やりたいこと", wrap: true },

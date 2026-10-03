@@ -78,19 +78,8 @@ export function RulesTable({ caption, rows, locale = "en" }) {
 		},
 	];
 
-	// The fixed columns above add up to 38rem; .rules-table in global.css gives
-	// the table a minimum width so Title keeps at least 16rem, and the wrapper
-	// scrolls horizontally (focusable, labelled) when the column is narrower.
-	return (
-		<DataTable
-			caption={caption}
-			columns={columns}
-			rows={rows}
-			rowKey="ruleId"
-			className="rules-table"
-			role="region"
-			aria-label={caption}
-			tabIndex={0}
-		/>
-	);
+	// The fixed columns above add up to 38rem; a 54rem minimum keeps Title at
+	// 16rem or more, and DataTable scrolls sideways (focusable, named by the
+	// caption) when there isn't room.
+	return <DataTable caption={caption} columns={columns} rows={rows} rowKey="ruleId" minWidth="54rem" />;
 }

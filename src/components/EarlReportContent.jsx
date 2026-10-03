@@ -130,6 +130,7 @@ export function EarlReportContent() {
 
 			<h2>Outcomes</h2>
 			<DataTable
+				label="Engine outcomes in EARL"
 				rowKey="id"
 				columns={[
 					{ key: "engine", label: "Engine", width: "30%" },
@@ -179,6 +180,7 @@ export function EarlReportContent() {
 
 			<h2>Options</h2>
 			<DataTable
+				label="EARL report options"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Option", width: "22%" },

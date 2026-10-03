@@ -398,6 +398,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Champs du résultat de premier niveau"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Champ", width: "22%" },
@@ -622,6 +623,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Champs d’une occurrence"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Champ", width: "22%" },
@@ -640,6 +642,7 @@ export function OutputSchemaContent() {
 				donc le moteur le retire.
 			</p>
 			<DataTable
+				label="Codes d’incertitude"
 				rowKey="id"
 				columns={[
 					{ key: "code", label: "code", width: "20%" },
@@ -715,6 +718,7 @@ export function OutputSchemaContent() {
 
 			<h2>Valeurs de résultat</h2>
 			<DataTable
+				label="Valeurs de résultat"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Résultat", width: "16%" },
