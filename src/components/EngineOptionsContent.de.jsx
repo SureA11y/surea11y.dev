@@ -371,6 +371,7 @@ export function EngineOptionsContent() {
 				ist der mit Abstand häufigste Integrationsfehler, siehe <a href="/help/faq/">die FAQ</a>.
 			</p>
 			<DataTable
+				label="Felder von runOnly"
 				rowKey="field"
 				columns={[
 					{ key: "field", label: "Feld", width: "22%" },
@@ -536,6 +537,7 @@ export function EngineOptionsContent() {
 				auszuschreiben:
 			</p>
 			<DataTable
+				label="Konformitätsprofile"
 				rowKey="profile"
 				columns={[
 					{ key: "profile", label: "Profil", width: "20%" },
@@ -695,6 +697,7 @@ export function EngineOptionsContent() {
 				jedem Bericht.
 			</p>
 			<DataTable
+				label="Werte von mappings"
 				rowKey="value"
 				columns={[
 					{ key: "value", label: "Wert", width: "34%" },
@@ -810,6 +813,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<DataTable
+				label="Weitere engineOptions"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Option", width: "22%" },

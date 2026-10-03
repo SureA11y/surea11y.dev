@@ -21,13 +21,31 @@ const sarifFieldRows = [
 			<>
 				La misma clave de identidad <code>ruleId + reasonCode + html</code> que usa{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code>):
-				una huella basada en el contenido y estable, no basada en la posición.
+				una huella basada en el contenido y estable, no basada en la posición, para los consumidores
+				que la leen.
+			</>
+		),
+	},
+	{
+		id: "lineHash",
+		field: <code>results[].partialFingerprints.primaryLocationLineHash</code>,
+		source: (
+			<>
+				Un hash de esa clave, <code>&lt;16 hex digits&gt;:&lt;n&gt;</code>, donde <code>n</code> cuenta
+				un hallazgo repetido en la página (el mismo componente defectuoso dos veces). <span lang="en">GitHub
+				Code Scanning</span> empareja las alertas entre subidas solo por este campo. Un hallazgo del DOM
+				no tiene ninguna línea a la que la acción de subida de GitHub pueda aplicar el hash, así que
+				sin él las alertas se emparejaban por posición, y corregir un hallazgo podía cerrar la alerta
+				de otro. Si vienes de core 1.8 o anterior, la primera subida cierra las alertas existentes y
+				las vuelve a abrir como nuevas, una sola vez; un descarte hecho en GitHub hay que volver a
+				hacerlo.
 			</>
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>El propio <code>severity</code>/<code>confidence</code> del resultado, más el mismo <code>reasonCode</code> y fragmento <code>html</code> sobre el que se calcula la huella anterior: informativo, no forma parte del propio esquema de SARIF.</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, y una etiqueta <code>wcag-&lt;SC&gt;</code> por cada criterio de conformidad de WCAG en <code>meta.normativeMappings</code>. Las entradas de documentos Understanding no reciben etiqueta. Cada cláusula de EN 301 549 que lleve el resultado (solo cuando el análisis las pidió, ver <a href="/configuration/engine-options/#other-standards-mappings">Otros estándares</a>) recibe una etiqueta <code>en301549-&lt;cláusula&gt;</code>, por ejemplo <code>en301549-9.1.1.1</code>: los números de cláusula son los mismos en todas las versiones que los tienen, así que la etiqueta no lleva versión.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code> y <code>optInRules</code> del <code>engine</code> del resultado: el objetivo de conformidad que usó la ejecución, para que un panel distinga una ejecución de WCAG 2.1 de una de 2.2, y las etiquetas de reglas opcionales que añadió más allá de ese objetivo, cuando añadió alguna. Se omiten en resultados de motores anteriores a esos campos.</> },
+	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>La opción <code>category</code>, con una <code>/</code> final añadida si no la tiene (GitHub lee todo lo que hay hasta la última barra como la categoría). Ausente cuando no se indica ninguna categoría. Ver <a href="#scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</a>.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> y <code>environment</code> del <code>engine</code> del resultado: el objetivo de conformidad que usó la ejecución, para que un panel distinga una ejecución de WCAG 2.1 de una de 2.2, las etiquetas de reglas opcionales que añadió más allá de ese objetivo, cuando añadió alguna, y las condiciones en que se renderizó la página (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code>; ver <a href="/results-reports/output-schema/">Esquema de salida</a>). Se omiten en resultados de motores anteriores a esos campos.</> },
 ];
 
 export function SarifReportContent() {
@@ -107,6 +125,7 @@ export function SarifReportContent() {
 				no tiene ninguna clave <code>invocations</code>.
 			</p>
 			<DataTable
+				label="Resultados del motor como niveles SARIF"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Resultado del motor", width: "22%" },
@@ -125,6 +144,7 @@ export function SarifReportContent() {
 
 			<h2>Correspondencia de campos</h2>
 			<DataTable
+				label="Correspondencia de campos SARIF"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Campo SARIF", width: "36%", wrap: true },
@@ -159,6 +179,39 @@ export function SarifReportContent() {
 				<code>logicalLocations[].fullyQualifiedName</code>, así que un consumidor que lea las
 				ubicaciones lógicas igual obtiene la señal de "qué elemento" incluso sin una ubicación
 				física utilizable.
+			</p>
+
+			<h2 id="scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</h2>
+			<p>
+				Una regla que depende del diseño puede fallar con un ancho de viewport y cumplirse con otro
+				(ver <a href="/help/known-limitations/">Limitaciones conocidas</a>), así que una página
+				analizada con dos anchos son dos análisis, no uno. Da a cada uno su propia categoría:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { renderSarifReport } = require('@surea11y/core/sarif');",
+					"",
+					"for (const width of [390, 1280]) {",
+					"  // ...scan the page at this width into `result`...",
+					"  fs.writeFileSync(`a11y-${width}.sarif`, renderSarifReport(result, { category: `a11y-${width}` }));",
+					"}",
+				]}
+			/>
+			<p>
+				y sube cada archivo por separado. <span lang="en">GitHub Code Scanning</span> trata cada
+				categoría como un análisis propio. Dentro de una categoría, una subida posterior sustituye a
+				la anterior, y una alerta que no aparece en ella se cierra, así que dos anchos subidos con la
+				misma categoría abrirían y cerrarían una alerta propia de un ancho en cada ejecución. GitHub
+				también rechaza un único archivo SARIF que contenga dos ejecuciones de la misma herramienta y
+				la misma categoría. <code>github/codeql-action/upload-sarif</code> tiene una entrada{" "}
+				<code>category</code> que hace lo mismo cuando el archivo no lleva ninguna.
+			</p>
+			<p>
+				La identidad del hallazgo no incluye el viewport, y no le hace falta: el mismo elemento con
+				el mismo defecto es el mismo hallazgo con cualquier ancho, y la categoría es lo que mantiene
+				separados los análisis. <code>runs[0].properties.environment</code> registra el viewport que
+				usó cada ejecución.
 			</p>
 
 			<h2>

@@ -60,8 +60,13 @@ export function HtmlReportContent() {
 				La barre de métadonnées sous l’en-tête indique le nombre de règles, le nombre
 				d’occurrences, le tag du moteur, la version du schéma, la version de WCAG visée par
 				l’analyse, le <code>engineOptions.profile</code> utilisé (s’il y en a un), les tags de règles
-				optionnelles ajoutés par <code>engineOptions.optInRules</code> (s’il en a ajouté) et la
-				langue retenue pour l’analyse. Le repli de langue se fait chaîne par chaîne et ne se voit pas dans le texte
+				optionnelles ajoutés par <code>engineOptions.optInRules</code> (s’il en a ajouté), les
+				conditions dans lesquelles la page a été rendue et la langue retenue pour l’analyse. Ces
+				conditions sont le viewport (avec le ratio de pixels de l’appareil lorsqu’il ne vaut pas 1)
+				et le schéma de couleurs, ainsi que les polices web lorsqu’elles étaient encore en cours de
+				chargement ; une analyse sans mise en page, dans jsdom, l’indique à la place. Un constat
+				qui dépend de la mise en page peut apparaître ou disparaître selon la largeur du viewport :
+				la pastille indique donc la largeur que décrit le rapport. Le repli de langue se fait chaîne par chaîne et ne se voit pas dans le texte
 				lui-même, donc{" "}
 				<strong>un rapport demandé dans une langue que le moteur ne propose pas se lit comme un
 				rapport anglais ordinaire</strong> : la pastille indique la langue demandée à côté de la

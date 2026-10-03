@@ -374,6 +374,7 @@ export function EngineOptionsContent() {
 				<a href="/help/faq/">la FAQ</a>).
 			</p>
 			<DataTable
+				label="Champs de runOnly"
 				rowKey="field"
 				columns={[
 					{ key: "field", label: "Champ", width: "22%" },
@@ -538,6 +539,7 @@ export function EngineOptionsContent() {
 				jeu de tags :
 			</p>
 			<DataTable
+				label="Profils de conformité"
 				rowKey="profile"
 				columns={[
 					{ key: "profile", label: "Profil", width: "20%" },
@@ -700,6 +702,7 @@ export function EngineOptionsContent() {
 				rapport.
 			</p>
 			<DataTable
+				label="Valeurs de mappings"
 				rowKey="value"
 				columns={[
 					{ key: "value", label: "Valeur", width: "34%" },
@@ -820,6 +823,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<DataTable
+				label="Autres options engineOptions"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Option", width: "22%" },

@@ -152,6 +152,31 @@ export function KnownLimitationsContent() {
 					If you need live-DOM accuracy for hydration-sensitive checks, run the library directly
 					against an already-loaded page via Pattern 2, not the static-fetch CLI.
 				</li>
+				<li>
+					<strong>A layout is measured at one viewport, with the fonts the page has at that
+					moment.</strong> Rules that measure what the browser draws,{" "}
+					<a href="/rules/text-spacing-content-loss/">
+						<code>text-spacing-content-loss</code>
+					</a>
+					,{" "}
+					<a href="/rules/target-size-minimum/">
+						<code>target-size-minimum</code>
+					</a>{" "}
+					and{" "}
+					<a href="/rules/skip-link/">
+						<code>skip-link</code>
+					</a>
+					, hold for the viewport the page was scanned at: a responsive page can cut text off, or
+					shrink a target, at one width and not at another, and text measured before its web font
+					loads is a different width. The result records both in{" "}
+					<a href="/results-reports/output-schema/">
+						<code>engine.environment</code>
+					</a>
+					, and the findings of those rules repeat their viewport and say what was measured (how far
+					text went past the edge, how big a target is and how close its neighbour), so a finding
+					that differs between runs can be traced to the conditions. Scan at each width you care
+					about, and wait for <code>document.fonts.ready</code> before scanning.
+				</li>
 			</ul>
 
 			<h2>Not attempted: judgment calls that aren't automatable safely</h2>

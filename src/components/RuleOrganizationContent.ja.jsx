@@ -73,6 +73,7 @@ export function RuleOrganizationContent() {
 				の形です。まずルールが対象とする要素や仕組み、次にそれについてどんな問いを立てるかを表します。いちばんわかりやすい例は画像の代替テキストのファミリー（WCAG 1.1.1）です。
 			</p>
 			<DataTable
+				label="ルールIDの例"
 				rowKey="id"
 				columns={[
 					{ key: "ruleId", label: "ルールID", mono: true },

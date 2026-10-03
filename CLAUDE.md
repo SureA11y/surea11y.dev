@@ -45,7 +45,23 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   and grouping ids that share the remainder). `npm run docs:rules` to
   regenerate, `npm run docs:rules:check` to verify it's current — same
   committed-artifact relationship as the tokens/components below. Requires
-  `../core/src/core.js` to be built and current.
+  `../core/src/core.js` to be built and current. Reads three JSDoc tags
+  from each rule module: `@applicability`, `@expectation` and `@reports`
+  (since core `d7b4725`, after 1.9.0: the fields a rule's findings carry
+  in `data.details`, one `- ` line each). `@reports` renders on rule pages
+  as "What a finding reports", with a note that those fields aren't a
+  stable contract apart from `reasonCode`, linking to the Output schema's
+  `#occurrence`. A locale whose rule overlay has no `reports` yet shows
+  the English list marked `lang="en"` (`reportsLang` in `localizeRule`).
+  **Pending, at core's next release (1.9.1 or 1.10.0) with `@reports`:**
+  the site shows rule text from core `main` (`d7b4725`) while displaying
+  1.9.0. When that release is out, make `@surea11y/core` a pinned
+  devDependency, point both generators at `node_modules/@surea11y/core`
+  instead of `../core` (the package ships `src/` and `docs/`; the locale
+  generator still needs `scripts/i18n-report.js` and `src/i18n/*.json`
+  from core, or an exported function), and add `docs:rules:check` and
+  `docs:locales:check` to CI (`ci.yml`), which leaves them out until then. See
+  `internal-notes/surea11y-dev-a11y-ci.design.md` §8.1, decision 4.
 - **Configuration, Results & Reports, Conformance, and Help are
   each split into per-topic subpages**, not one long page: every section
   index (`/configuration/`, `/results-reports/`, `/conformance/`,
@@ -69,7 +85,7 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   you), not just describe its contents — per explicit voice feedback: this
   site is also selling the tool, not just documenting it, so index prose
   shouldn't read cold. Stayed inside the locked brand voice doing it
-  (`../design_system/CLAUDE.md`): plain and certain, sells through
+  (`../branding/CLAUDE.md`): plain and certain, sells through
   specificity and confidence, never through hype words like "empower" or
   "solutions." Each subpage's content lives in its own `.jsx` component
   (never raw `.astro` markup — see the whitespace-bug note below) with the
@@ -235,7 +251,10 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   that keeps `RULE_AUTHORING.md` itself GitHub-only. Linked from
   `/rules/`'s intro paragraph, since nothing else on the site pointed to
   it.
-- `../design_system/tokens/*.css` — design tokens (colors, typography,
+- The design system lives in `../branding` (GitHub `rumoroso/branding`);
+  `rumoroso/design_system` is an older, stale copy. "design_system" below
+  means this repo.
+- `../branding/tokens/*.css` — design tokens (colors, typography,
   spacing, motion, elevation, radius). Copied into `src/styles/tokens/`
   here; that's the source of truth, re-copy if it changes rather than
   editing the copies in this repo. `colors.css` was re-copied after
@@ -244,7 +263,7 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   bullets. `:root` now carries the light-surface values by default;
   `[data-surface="dark"]` is the opt-in override (the terminal/`CodeBlock`
   stays on it unconditionally, deliberately, not via that attribute).
-- `../design_system/components/` — 18 React (JSX) components (`Badge`,
+- `../branding/components/` — 18 React (JSX) components (`Badge`,
   `Button`, `Card`, `CodeBlock`, `Tag`, etc.), organized by category
   (brand/core/data/disclosure/feedback/forms/navigation/results). No
   `package.json` there — it's an exported design canvas (`.dc.html`
@@ -278,8 +297,14 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   design-system copies — `.astro` frontmatter can't write JSX, so anything
   needing a `render`/composed-JSX callback (the catalog table's link/Tag
   cells, a rule page's tag row and example blocks) has to live in a real
-  `.jsx` file.
-- `../design_system/CLAUDE.md` — locked brand decisions (voice, naming,
+  `.jsx` file. `DataTable` (since `branding` 78197e5) never clips: cells
+  wrap with automatic layout, the table scrolls sideways below `minWidth`
+  (36rem; the rules catalog passes 54rem), and the wrapper is a focusable
+  region named by `label` or `caption` — so give every table one, in every
+  language. Its focus ring is `.ds-data-table:focus-visible` in
+  `global.css`; `BaseLayout` turns off inline code's `overflow-wrap:
+  anywhere` inside tables so identifiers keep their column wide instead.
+- `../branding/CLAUDE.md` — locked brand decisions (voice, naming,
   color meanings, type). Site copy and any new components should follow it.
 
 ## Navigation and layout
@@ -535,6 +560,34 @@ Open English-source issues found in that review, not yet decided:
   glued-word JSX bugs (`OutputSchemaContent.es.jsx`,
   `SarifReportContent.es.jsx`, `WcagMappingContent.es.jsx`,
   `TestMatchersUsageContent.es.jsx`).
+
+## CI, accessibility scan and deploy
+
+`.github/workflows/ci.yml`, on every PR, push to `main` and manual run:
+
+- **check**: `npm ci`, build, `check:links`, `i18n:check --strict`,
+  `check:typography`, and `check:lang` (advisory, never fails). Uploads
+  `dist/` so the scan and the deploy use this one build.
+- **a11y**: `npm run check:a11y` (`scripts/check-a11y.mjs`) scans every
+  built page except `/from/` redirects in Chromium with
+  `@surea11y/playwright` and the pinned `@surea11y/core`, profile
+  `wcag22-aa` (the statement's WCAG 2.2 AA), at 375 and 1280 px, after
+  `document.fonts.ready`. Any `fail` or unscannable page fails the run;
+  `cantTell` never does. Writes `a11y-results/summary.md` (also the run
+  summary) and core's HTML report per page with a finding (artifact).
+  `--widths=` and `--pages=` narrow a local run. Installs `fonts-noto-cjk`
+  so Japanese pages are measured in a real CJK font.
+- **deploy**: push to `main` only, after both: `npx wrangler deploy` with
+  secrets `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`. It replaces
+  Cloudflare's git-triggered build (turn that off once one deploy from
+  Actions has worked): the org's free plan can't require checks on a
+  private repo, so the deploy job's `needs` is the gate.
+- `.github/dependabot.yml`: `@surea11y/*` weekly (grouped), Actions monthly.
+
+Decisions and follow-ups (more widths, dark mode, publishing results on
+the site, PR previews, the data checks) are in
+`internal-notes/surea11y-dev-a11y-ci.design.md` §8.1. The site passed with
+zero failures at both widths when this went in (2026-10-03).
 
 ## Why Astro without Starlight
 

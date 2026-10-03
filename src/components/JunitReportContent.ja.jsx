@@ -126,6 +126,7 @@ export function JunitReportContent() {
 					'      <property name="schemaVersion" value="1.0.0"/>',
 					'      <property name="wcagVersion" value="2.2"/>',
 					'      <property name="profile" value="wcag22-aa"/>',
+					'      <property name="layout" value="false"/>',
 					'      <property name="locale" value="en"/>',
 					'      <property name="url" value="https://example.test/"/>',
 					"    </properties>",
@@ -146,7 +147,10 @@ export function JunitReportContent() {
 					スイートは複合ルールではなく各ルール自身のWCAGとの対応から作られるため、複合ルールを除外していても、実行されたすべてのルールが報告されます。複合ルールが実行された場合は、スイートのタイトルと<code>criterionOutcome</code>プロパティを提供します。2つの達成基準に対応するルールは両方のスイートに現れます。どの達成基準にも対応しないルールは、<code>classname="other"</code>を持つ最後の<code>Other checks</code>スイートに入ります。
 				</li>
 				<li>
-					実行の<code>engine</code>、<code>schemaVersion</code>、<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>、<code>locale</code>、<code>url</code>は、結果にある場合だけ、各スイートのプロパティとして繰り返されます。
+					実行の<code>engine</code>、<code>schemaVersion</code>、<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>、<a href="/results-reports/output-schema/"><code>engine.environment</code></a>にあるレンダリングの条件（<code>layout</code>と、ブラウザーでは<code>1280x720</code>の形の<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>fonts</code>）、<code>locale</code>、<code>url</code>は、結果にある場合だけ、各スイートのプロパティとして繰り返されます。ビューポートの幅によって出たり消えたりする失敗は、実行が使った幅までたどれます。上の例はjsdomでのスキャンなので、レイアウトがありません。
+				</li>
+				<li>
+					複数のビューポート幅でスキャンしたページは、どの幅でも同じスイート名とテスト名になるため、CIのテスト表示でまとめられてしまうことがあります。幅ごとに1つのファイルを書き出し、CIのレポート設定でファイルを幅ごとに名前付けするかグループ化してください。<code>viewport</code>プロパティには、そのファイルがどの幅を表しているかが記録されます。
 				</li>
 				<li>
 					スイートは達成基準の番号順（1.4.10より1.4.3が先）、テストケースはルールのid順に並びます。
@@ -158,6 +162,7 @@ export function JunitReportContent() {
 
 			<h2>判定結果</h2>
 			<DataTable
+				label="JUnitでのルールの判定結果"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "ルールの判定結果", width: "18%" },
@@ -172,6 +177,7 @@ export function JunitReportContent() {
 
 			<h2>オプション</h2>
 			<DataTable
+				label="JUnitレポートのオプション"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "オプション", width: "22%" },

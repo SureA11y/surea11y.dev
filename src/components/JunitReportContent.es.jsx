@@ -138,6 +138,7 @@ export function JunitReportContent() {
 					'      <property name="schemaVersion" value="1.0.0"/>',
 					'      <property name="wcagVersion" value="2.2"/>',
 					'      <property name="profile" value="wcag22-aa"/>',
+					'      <property name="layout" value="false"/>',
 					'      <property name="locale" value="en"/>',
 					'      <property name="url" value="https://example.test/"/>',
 					"    </properties>",
@@ -167,9 +168,22 @@ export function JunitReportContent() {
 				</li>
 				<li>
 					<code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
-					<code>profile</code>, <code>optInRules</code>, <code>locale</code> y <code>url</code> de la
-					ejecución se repiten como propiedades en cada suite, cada una solo cuando el resultado la
-					tiene.
+					<code>profile</code>, <code>optInRules</code>, las condiciones de renderizado de{" "}
+					<a href="/results-reports/output-schema/">
+						<code>engine.environment</code>
+					</a>{" "}
+					(<code>layout</code> y, en un navegador, <code>viewport</code> como <code>1280x720</code>,{" "}
+					<code>devicePixelRatio</code>, <code>colorScheme</code> y <code>fonts</code>),{" "}
+					<code>locale</code> y <code>url</code> de la ejecución se repiten como propiedades en cada
+					suite, cada una solo cuando el resultado la tiene. Un fallo que aparece y desaparece con el
+					ancho del viewport se puede atribuir al ancho que usó la ejecución. El ejemplo anterior es
+					un análisis en jsdom, que no tiene diseño.
+				</li>
+				<li>
+					Una página analizada con varios anchos de viewport da los mismos nombres de suite y de
+					test con cada ancho, y una vista de tests de CI puede fusionarlos. Escribe un archivo por
+					ancho, y nombra o agrupa los archivos por ancho en la configuración de informes de la CI;
+					la propiedad <code>viewport</code> registra qué ancho describe un archivo.
 				</li>
 				<li>
 					Las suites se ordenan por criterio, numéricamente (1.4.3 antes que 1.4.10), y los testcases
@@ -184,6 +198,7 @@ export function JunitReportContent() {
 
 			<h2>Resultados</h2>
 			<DataTable
+				label="Resultados de las reglas en JUnit"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Resultado de la regla", width: "18%" },
@@ -201,6 +216,7 @@ export function JunitReportContent() {
 
 			<h2>Opciones</h2>
 			<DataTable
+				label="Opciones del informe JUnit"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Opción", width: "22%" },

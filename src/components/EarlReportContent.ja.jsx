@@ -155,6 +155,7 @@ export function EarlReportContent() {
 
 			<h2>判定結果</h2>
 			<DataTable
+				label="EARLでのエンジンの判定結果"
 				rowKey="id"
 				columns={[
 					{ key: "engine", label: "エンジン", width: "30%" },
@@ -194,6 +195,7 @@ export function EarlReportContent() {
 				<code>engineOptions</code>
 				でスキャンしても、表しているのは1つのリソースであり、コンテキスト上も同じsourceを持つ2つの対象を表現する手段がないからです。
 				<strong>同じURLの同じルールについて2つの結果がアサーションを持つ場合は、後のものが優先されます。</strong>
+				同じページを2つのビューポート幅でスキャンした場合も同じです。EARLにはページがレンダリングされた条件を表す語彙がないため、複数の幅から作ったレポートには、各ルールについて最後の幅のアサーションだけが残ります。幅の違いが重要なら、幅ごとに1つのレポートを生成してください。
 			</p>
 			<p>
 				出力は決定論的です。対象はsource順、アサーションはルールID順に並び、同じ入力であれば順序を問わずバイト単位で同一の出力になります。だからこそ、2つのエンジンバージョン間の差分に意味が生まれます。
@@ -201,6 +203,7 @@ export function EarlReportContent() {
 
 			<h2>オプション</h2>
 			<DataTable
+				label="EARLレポートのオプション"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "オプション", width: "22%" },

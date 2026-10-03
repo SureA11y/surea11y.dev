@@ -51,6 +51,7 @@ export function OverviewContent() {
 				testen passt; jedes bringt <code>@surea11y/core</code> automatisch mit:
 			</p>
 			<DataTable
+				label="Wahl des passenden Pakets"
 				rowKey="id"
 				columns={[
 					{ key: "want", label: "Ich möchte…", wrap: true },

@@ -137,6 +137,7 @@ export function JunitReportContent() {
 					'      <property name="schemaVersion" value="1.0.0"/>',
 					'      <property name="wcagVersion" value="2.2"/>',
 					'      <property name="profile" value="wcag22-aa"/>',
+					'      <property name="layout" value="false"/>',
 					'      <property name="locale" value="en"/>',
 					'      <property name="url" value="https://example.test/"/>',
 					"    </properties>",
@@ -165,8 +166,21 @@ export function JunitReportContent() {
 				</li>
 				<li>
 					The run's <code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
-					<code>profile</code>, <code>optInRules</code>, <code>locale</code> and <code>url</code>{" "}
-					are repeated as properties on every suite, each only when the result has it.
+					<code>profile</code>, <code>optInRules</code>, the rendering conditions from{" "}
+					<a href="/results-reports/output-schema/">
+						<code>engine.environment</code>
+					</a>{" "}
+					(<code>layout</code>, and in a browser <code>viewport</code> as <code>1280x720</code>,{" "}
+					<code>devicePixelRatio</code>, <code>colorScheme</code> and <code>fonts</code>),{" "}
+					<code>locale</code> and <code>url</code> are repeated as properties on every suite, each
+					only when the result has it. A failure that comes and goes with the viewport width can be
+					traced to the width the run used. The example above is a jsdom scan, which has no layout.
+				</li>
+				<li>
+					A page scanned at several viewport widths gives the same suite and test names at each
+					width, and a CI test view may merge them. Write one file per width, and name or group the
+					files by width in the CI's report settings; the <code>viewport</code> property records
+					which width a file describes.
 				</li>
 				<li>
 					Suites are ordered by criterion, numerically (1.4.3 before 1.4.10), and testcases by rule
@@ -181,6 +195,7 @@ export function JunitReportContent() {
 
 			<h2>Outcomes</h2>
 			<DataTable
+				label="Rule outcomes in JUnit"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Rule outcome", width: "18%" },
@@ -198,6 +213,7 @@ export function JunitReportContent() {
 
 			<h2>Options</h2>
 			<DataTable
+				label="JUnit report options"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Option", width: "22%" },

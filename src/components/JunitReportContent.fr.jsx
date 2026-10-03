@@ -140,6 +140,7 @@ export function JunitReportContent() {
 					'      <property name="schemaVersion" value="1.0.0"/>',
 					'      <property name="wcagVersion" value="2.2"/>',
 					'      <property name="profile" value="wcag22-aa"/>',
+					'      <property name="layout" value="false"/>',
 					'      <property name="locale" value="en"/>',
 					'      <property name="url" value="https://example.test/"/>',
 					"    </properties>",
@@ -169,9 +170,24 @@ export function JunitReportContent() {
 				</li>
 				<li>
 					<code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
-					<code>profile</code>, <code>optInRules</code>, <code>locale</code> et <code>url</code> de
-					l’exécution sont répétés comme propriétés sur chaque suite, chacun seulement quand le
-					résultat le contient.
+					<code>profile</code>, <code>optInRules</code>, les conditions de rendu issues de{" "}
+					<a href="/results-reports/output-schema/">
+						<code>engine.environment</code>
+					</a>{" "}
+					(<code>layout</code> et, dans un navigateur, <code>viewport</code> sous la forme{" "}
+					<code>1280x720</code>, <code>devicePixelRatio</code>, <code>colorScheme</code> et{" "}
+					<code>fonts</code>), <code>locale</code> et <code>url</code> de l’exécution sont répétés
+					comme propriétés sur chaque suite, chacun seulement quand le résultat le contient. Un échec
+					qui apparaît ou disparaît selon la largeur du viewport peut ainsi être rattaché à la
+					largeur utilisée par l’exécution. L’exemple ci-dessus est une analyse jsdom, qui n’a pas
+					de mise en page.
+				</li>
+				<li>
+					Une page analysée à plusieurs largeurs de viewport donne les mêmes noms de suites et de
+					tests à chaque largeur, et la vue des tests d’une CI peut les fusionner. Écrivez un
+					fichier par largeur, et nommez ou regroupez les fichiers par largeur dans les réglages de
+					rapport de la CI ; la propriété <code>viewport</code> enregistre la largeur que décrit
+					un fichier.
 				</li>
 				<li>
 					Les suites sont triées par critère, numériquement (1.4.3 avant 1.4.10), et les testcases
@@ -186,6 +202,7 @@ export function JunitReportContent() {
 
 			<h2>Résultats</h2>
 			<DataTable
+				label="Résultats des règles dans JUnit"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Résultat de la règle", width: "18%" },
@@ -203,6 +220,7 @@ export function JunitReportContent() {
 
 			<h2>Options</h2>
 			<DataTable
+				label="Options du rapport JUnit"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Option", width: "22%" },

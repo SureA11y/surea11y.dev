@@ -134,6 +134,7 @@ export function EarlReportContent() {
 
 			<h2>Résultats</h2>
 			<DataTable
+				label="Résultats du moteur dans EARL"
 				rowKey="id"
 				columns={[
 					{ key: "engine", label: "Moteur", width: "30%" },
@@ -173,7 +174,11 @@ export function EarlReportContent() {
 				seule ressource, et le contexte n’a aucun moyen d’exprimer deux sujets ayant la même
 				source.{" "}
 				<strong>Lorsque deux résultats portent sur la même règle pour la même URL, le dernier
-				l’emporte.</strong>
+				l’emporte.</strong> Cela vaut aussi pour la même page analysée à deux largeurs de
+				viewport : EARL n’a aucun terme pour les conditions dans lesquelles une page a été rendue,
+				si bien qu’un rapport construit à partir de plusieurs largeurs ne garde, pour chaque règle,
+				que l’assertion de la dernière largeur. Produisez un rapport par largeur si les largeurs
+				comptent.
 			</p>
 			<p>
 				La sortie est déterministe : les sujets sont triés par source, les assertions par id de
@@ -183,6 +188,7 @@ export function EarlReportContent() {
 
 			<h2>Options</h2>
 			<DataTable
+				label="Options du rapport EARL"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Option", width: "22%" },
