@@ -171,7 +171,10 @@ export function EarlReportContent() {
 				mit unterschiedlichen <code>engineOptions</code> scannt, beschreibt immer noch eine
 				Ressource, und der Kontext kann keine zwei Subjekte mit derselben Quelle ausdrücken.{" "}
 				<strong>Treffen zwei Ergebnisse eine Aussage zur selben Regel für dieselbe URL, gewinnt
-				das letzte.</strong>
+				das letzte.</strong> Das gilt auch für dieselbe Seite, gescannt bei zwei Viewport-Breiten:
+				EARL hat keinen Begriff für die Bedingungen, unter denen eine Seite dargestellt wurde, daher
+				behält ein Bericht aus mehreren Breiten für jede Regel nur die Aussage der letzten Breite.
+				Erzeugen Sie einen Bericht pro Breite, wenn die Breiten eine Rolle spielen.
 			</p>
 			<p>
 				Die Ausgabe ist deterministisch: Subjekte werden nach Quelle sortiert, Aussagen nach

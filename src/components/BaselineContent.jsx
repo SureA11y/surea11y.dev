@@ -109,6 +109,28 @@ export function BaselineContent() {
 				periodically to clean these up.
 			</p>
 
+			<h2 id="scanning-at-several-viewport-widths">Scanning at several viewport widths</h2>
+			<p>
+				A baseline entry doesn't record the viewport, and matching doesn't use it: the same element
+				with the same defect matches at any width. That suits a page whose findings don't depend on
+				its layout. A layout-dependent rule, such as{" "}
+				<a href="/rules/text-spacing-content-loss/">
+					<code>text-spacing-content-loss</code>
+				</a>{" "}
+				or{" "}
+				<a href="/rules/target-size-minimum/">
+					<code>target-size-minimum</code>
+				</a>
+				, can fail at one width and not at another, so for a page scanned at several widths, keep{" "}
+				<strong>one baseline per width</strong>: <code>a11y-baseline-390.json</code>,{" "}
+				<code>a11y-baseline-1280.json</code>.
+			</p>
+			<p>
+				A single baseline written from every width still gates correctly, since a finding is new
+				only when no entry matches it. But each run then reports the other widths' findings as
+				stale, so the stale count stops telling you what was fixed.
+			</p>
+
 			<h2>File format</h2>
 			<CodeBlock
 				lang="json"

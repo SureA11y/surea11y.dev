@@ -174,6 +174,33 @@ export function KnownLimitationsContent() {
 					directement sur une page déjà chargée via le <span lang="en">Pattern 2</span>, et non via la CLI qui récupère
 					du HTML statique.
 				</li>
+				<li>
+					<strong>Une mise en page est mesurée à un seul viewport, avec les polices dont la page
+					dispose à ce moment-là.</strong> Les règles qui mesurent ce que dessine le navigateur,{" "}
+					<a href="/rules/text-spacing-content-loss/">
+						<code>text-spacing-content-loss</code>
+					</a>
+					,{" "}
+					<a href="/rules/target-size-minimum/">
+						<code>target-size-minimum</code>
+					</a>{" "}
+					et{" "}
+					<a href="/rules/skip-link/">
+						<code>skip-link</code>
+					</a>
+					, valent pour le viewport auquel la page a été analysée : une page responsive peut couper
+					du texte, ou rétrécir une cible, à une largeur et pas à une autre, et un texte mesuré
+					avant le chargement de sa police web n’a pas la même largeur. Le résultat enregistre les
+					deux dans{" "}
+					<a href="/results-reports/output-schema/">
+						<code>engine.environment</code>
+					</a>
+					, et les constats de ces règles reprennent leur viewport et indiquent ce qui a été mesuré
+					(de combien le texte a dépassé le bord, la taille d’une cible et sa proximité avec sa
+					voisine) : un constat qui diffère d’une exécution à l’autre peut ainsi être rattaché aux
+					conditions. Analysez à chaque largeur qui vous importe, et attendez{" "}
+					<code>document.fonts.ready</code> avant d’analyser.
+				</li>
 			</ul>
 
 			<h2>Non tentées : des jugements qu’on ne peut pas automatiser sans risque</h2>

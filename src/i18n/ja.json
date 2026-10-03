@@ -12,6 +12,8 @@
 	"languageSwitcher.label": "言語",
 	"rulePage.appliesTo": "適用範囲：",
 	"rulePage.expectation": "期待される結果：",
+	"rulePage.reports": "検出結果が報告する内容：",
+	"rulePage.reportsNote": "これらの{details}のフィールドは、検出結果を読み解き、再現するのに役立ちます。{reasonCode}を除き、安定した契約ではありません。マイナーリリースで名前が変わったり、なくなったりすることがあるため、これらに依存した実装はしないでください。{schema}を参照してください。",
 	"rulePage.examples": "例",
 	"rulePage.relatedRules": "関連するルール",
 	"rulePage.viewSource": "ソースコードを見る",

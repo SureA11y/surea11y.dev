@@ -116,6 +116,31 @@ const topLevelRows = [
 						</>
 					),
 				},
+				{
+					id: "engine.environment",
+					field: <code>engine.environment</code>,
+					meaning: (
+						<>
+							The conditions the page was rendered under, read from the page when the scan starts,
+							before any rule runs. Rules that measure the layout, such as{" "}
+							<a href="/rules/text-spacing-content-loss/">
+								<code>text-spacing-content-loss</code>
+							</a>
+							, can give another outcome for the same markup at another viewport width or while web
+							fonts are still loading, so this is what you need to reproduce a run.{" "}
+							<code>layout</code> is whether the page had one: <code>false</code> in jsdom and other
+							DOM emulators, and then it is the only field. In a browser, <code>viewport</code> is{" "}
+							<code>innerWidth</code>/<code>innerHeight</code> in CSS pixels,{" "}
+							<code>devicePixelRatio</code> the page's (browser zoom shows here too),{" "}
+							<code>colorScheme</code> what <code>prefers-color-scheme</code> matches, and{" "}
+							<code>fonts</code> is <code>"loading"</code> while any of the page's font faces is still
+							loading, <code>"loaded"</code> otherwise. A field the page can't report is left out.
+							Reading these adds no nondeterminism: like the DOM, they are input. For results you can
+							compare between runs, wait for <code>document.fonts.ready</code> before scanning. Each
+							frame in a <a href="#cross-frame-result">cross-frame result</a> carries its own.
+						</>
+					),
+				},
 	{ id: "url", field: <code>url</code>, meaning: <>The <code>pageUrl</code> argument you passed in, or <code>document.location.href</code> if you passed <code>null</code>/omitted it, or <code>null</code> if neither is available.</> },
 	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> at scan time, or <code>null</code>.</> },
 	{
@@ -250,7 +275,9 @@ const occurrenceRows = [
 		meaning: (
 			<>
 				Present on most occurrences: why the engine considered this element eligible (or not)
-				under whichever eligibility model the rule used. <code>eligible</code> is that result;{" "}
+				under whichever eligibility model the rule used. <code>eligible</code> is that result
+				(absent on the page-level findings of <code>bypass-blocks-present</code>,{" "}
+				<code>html-lang-attr-present</code> and <code>page-title-present</code>);{" "}
 				<code>targetSet</code> says which model produced it (<code>'dom'</code>: raw DOM/CSS
 				visibility — most rules; <code>'acc'</code>: accessibility-tree eligibility).{" "}
 				<code>accEligible</code> mirrors <code>eligible</code> only when <code>targetSet</code> is{" "}
@@ -274,7 +301,7 @@ const occurrenceRows = [
 				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>
 					<code>API_STABILITY.md</code>
 				</a>
-				.
+				. Each rule's page lists the fields its findings carry, under “What a finding reports”.
 			</>
 		),
 	},
@@ -331,8 +358,15 @@ export function OutputSchemaContent() {
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
-					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508"',
-					'    mappings?: string[]    // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					"    environment: {",
+					"      layout: boolean,",
+					"      viewport?: { width: number, height: number },  // CSS px",
+					"      devicePixelRatio?: number,",
+					'      colorScheme?: "light" | "dark",',
+					'      fonts?: "loaded" | "loading"',
+					"    }",
 					"  },",
 					"  url: string | null,",
 					"  title: string | null,",
@@ -518,7 +552,7 @@ export function OutputSchemaContent() {
 				</li>
 			</ul>
 
-			<h2>An occurrence (<code>occurrences[i]</code>)</h2>
+			<h2 id="occurrence">An occurrence (<code>occurrences[i]</code>)</h2>
 			<p>
 				Normally present only when <code>outcome</code> is <code>fail</code> or{" "}
 				<code>cantTell</code>: a <code>pass</code> result has <code>occurrences: []</code>, since
@@ -549,8 +583,8 @@ export function OutputSchemaContent() {
 					"    needed?: string,       // what would settle the question",
 					"    evidence?: object      // what the rule did establish, rule-specific",
 					"  },",
-					"  data: {",
-					"    visibilityFilter?: { eligible: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
+					"  data?: {               // absent on manual-review's page-level finding",
+					"    visibilityFilter?: { eligible?: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
 					"    details?: object   // rule-specific, non-normative — see below",
 					"  }",
 					"}",
@@ -613,7 +647,9 @@ export function OutputSchemaContent() {
 					"{",
 					'  ruleId: string,              // e.g. "wcag-1.1.1-non-text-content"',
 					'  outcome: "pass" | "fail" | "cantTell" | "notApplicable",',
-					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // same as a check result",
+					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // as on a check result, except that",
+					"                                // meta.normativeMappings names the criterion in a shorter form:",
+					"                                // { standard, requirement, level }",
 					"  occurrences: [],              // always empty — composites are rollups, not element-level findings",
 					"  data: {",
 					"    details: {",

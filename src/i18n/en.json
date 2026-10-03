@@ -12,6 +12,8 @@
 	"languageSwitcher.label": "Language",
 	"rulePage.appliesTo": "Applies to.",
 	"rulePage.expectation": "Expectation.",
+	"rulePage.reports": "What a finding reports.",
+	"rulePage.reportsNote": "These {details} fields help to read and reproduce a finding. Apart from {reasonCode}, they are not a stable contract: a field may be renamed or dropped in a minor release, so don’t build on them. See {schema}.",
 	"rulePage.examples": "Examples",
 	"rulePage.relatedRules": "Related rules",
 	"rulePage.viewSource": "View source",

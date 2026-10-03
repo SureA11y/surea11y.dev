@@ -173,6 +173,32 @@ export function KnownLimitationsContent() {
 					directamente contra una página ya cargada mediante el Patrón 2, no la CLI de obtención
 					estática.
 				</li>
+				<li>
+					<strong>El diseño se mide en un único viewport, con las fuentes que tiene la página en
+					ese momento.</strong> Las reglas que miden lo que dibuja el navegador,{" "}
+					<a href="/rules/text-spacing-content-loss/">
+						<code>text-spacing-content-loss</code>
+					</a>
+					,{" "}
+					<a href="/rules/target-size-minimum/">
+						<code>target-size-minimum</code>
+					</a>{" "}
+					y{" "}
+					<a href="/rules/skip-link/">
+						<code>skip-link</code>
+					</a>
+					, valen para el viewport en el que se analizó la página: una página adaptable puede
+					recortar texto, o encoger un objetivo, con un ancho y no con otro, y un texto medido
+					antes de que cargue su fuente web tiene otro ancho. El resultado registra ambas cosas en{" "}
+					<a href="/results-reports/output-schema/">
+						<code>engine.environment</code>
+					</a>
+					, y los hallazgos de esas reglas repiten su viewport e indican lo que se midió (cuánto
+					sobrepasó el texto el borde, qué tamaño tiene un objetivo y a qué distancia está su
+					vecino), de modo que un hallazgo que difiere entre ejecuciones se puede atribuir a las
+					condiciones. Analiza con cada ancho que te importe, y espera a{" "}
+					<code>document.fonts.ready</code> antes de analizar.
+				</li>
 			</ul>
 
 			<h2>Comprobaciones no implementadas: decisiones que no pueden automatizarse de forma segura</h2>

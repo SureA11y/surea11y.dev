@@ -157,6 +157,10 @@ export function KnownLimitationsContent() {
 					<code>cantTell</code>
 					までに抑えているのはそのためです。ハイドレーションの影響を受けるチェックでライブDOMの正確さが必要なら、静的に取得するCLIではなく、パターン2で読み込み済みのページに対してライブラリを直接実行してください。
 				</li>
+				<li>
+					<strong>レイアウトは、1つのビューポートで、その時点でページが持っているフォントを使って計測されます。</strong>
+					ブラウザーが描画する内容を計測するルール（<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>、<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>、<a href="/rules/skip-link/"><code>skip-link</code></a>）の結果は、ページをスキャンしたビューポートでのみ成り立ちます。レスポンシブなページは、ある幅ではテキストを切ったりターゲットを小さくしたりしても、別の幅ではそうしないことがあります。また、Webフォントの読み込み前に計測したテキストは、幅が異なります。結果はその両方を<a href="/results-reports/output-schema/"><code>engine.environment</code></a>に記録し、これらのルールの検出結果は、ビューポートを繰り返し記録したうえで、何を計測したか（テキストが端からどれだけはみ出したか、ターゲットの大きさと隣のターゲットとの近さ）を示します。そのため、実行によって異なる検出結果を、その条件までたどることができます。必要な幅ごとにスキャンし、スキャンの前に<code>document.fonts.ready</code>を待ってください。
+				</li>
 			</ul>
 
 			<h2>対象外：安全に自動化できない判断</h2>
