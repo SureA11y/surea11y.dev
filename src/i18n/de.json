@@ -25,7 +25,7 @@
 	"rulePage.deprecatedPolicyLink": "der Richtlinie zur Abkündigung von Regel-IDs",
 	"rulePage.confidence": "Konfidenz: {value}",
 	"rulePage.severity": "Schweregrad: {value}",
-	"rulePage.exampleCodeLabel": "Beispiel-HTML für {ruleId}",
+	"rulePage.exampleCodeLabel": "Beispiel {n}, {outcome}: HTML für {ruleId}",
 	"rulePage.exampleContext.browser": "In einem Browser",
 	"common.deprecated": "veraltet",
 	"rulesTable.ruleId": "Regel-ID",

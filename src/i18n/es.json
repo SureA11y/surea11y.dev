@@ -25,7 +25,7 @@
 	"rulePage.deprecatedPolicyLink": "la política de obsolescencia de ID de regla",
 	"rulePage.confidence": "confianza: {value}",
 	"rulePage.severity": "gravedad: {value}",
-	"rulePage.exampleCodeLabel": "HTML de ejemplo para {ruleId}",
+	"rulePage.exampleCodeLabel": "Ejemplo {n}, {outcome}: HTML para {ruleId}",
 	"rulePage.exampleContext.browser": "En un navegador",
 	"common.deprecated": "obsoleta",
 	"rulesTable.ruleId": "ID de regla",
