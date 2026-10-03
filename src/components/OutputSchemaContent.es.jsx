@@ -392,6 +392,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Campos de nivel superior del resultado"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Campo", width: "22%" },
@@ -612,6 +613,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Campos de una ocurrencia"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Campo", width: "22%" },
@@ -629,6 +631,7 @@ export function OutputSchemaContent() {
 				afirmando que la regla decidió y no decidió a la vez, así que el motor la omite.
 			</p>
 			<DataTable
+				label="Códigos de incertidumbre"
 				rowKey="id"
 				columns={[
 					{ key: "code", label: "code", width: "20%" },
@@ -703,6 +706,7 @@ export function OutputSchemaContent() {
 
 			<h2>Valores de outcome</h2>
 			<DataTable
+				label="Valores de outcome"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Resultado", width: "16%" },

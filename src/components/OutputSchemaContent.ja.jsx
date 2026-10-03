@@ -264,6 +264,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="トップレベルの結果のフィールド"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "フィールド", width: "22%" },
@@ -402,6 +403,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="検出箇所のフィールド"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "フィールド", width: "22%" },
@@ -415,6 +417,7 @@ export function OutputSchemaContent() {
 				<code>cantTell</code>は、エンジンが判定しなかったことを示します。<code>uncertainty</code>は<strong>その理由</strong>を閉じた語彙で示すので、利用側は要約の文字列を解析しなくても、理由に応じて処理を分けられます。含まれるのは<code>cantTell</code>の層の検出箇所だけです。<code>fail</code>の層の検出箇所に付いていれば、ルールが判定したと同時に判定しなかったと主張することになるため、エンジンはそれを取り除きます。
 			</p>
 			<DataTable
+				label="不確実性コード"
 				rowKey="id"
 				columns={[
 					{ key: "code", label: "code", width: "20%" },
@@ -463,6 +466,7 @@ export function OutputSchemaContent() {
 
 			<h2>判定結果の値</h2>
 			<DataTable
+				label="判定結果の値"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "判定結果", width: "16%" },

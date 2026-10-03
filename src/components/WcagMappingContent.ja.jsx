@@ -219,6 +219,7 @@ export function WcagMappingContent() {
 				EN 301 549の第9章は、WCAGのレベルAとAAの達成基準を、<code>9.</code>に達成基準の番号を続けた条項として再掲しています。WCAG 1.4.3は条項9.1.4.3です。スキャンが要求した場合、アトミックルールと複合ルールのすべての結果は、<code>meta.normativeMappings</code>のWCAGのエントリーの後に、各達成基準の条項を、その達成基準を含む規格のバージョンごとに1つずつ持ちます。スキャンは<code>engineOptions.mappings: ['en301549']</code>（両方のバージョン）や<code>['en301549:V3.2.1']</code>（1つ）で要求するか、EN 301 549のプロファイルを対象にして要求します。プロファイルはその名前のバージョンを追加します。デフォルトでは、結果はWCAGだけを示します（<a href="/configuration/engine-options/#other-standards-mappings">ほかの規格</a>を参照）。
 			</p>
 			<DataTable
+				label="EN 301 549のバージョン"
 				rowKey="version"
 				columns={[
 					{ key: "version", label: "バージョン", width: "20%" },

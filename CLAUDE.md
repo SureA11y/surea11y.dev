@@ -76,7 +76,7 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   you), not just describe its contents — per explicit voice feedback: this
   site is also selling the tool, not just documenting it, so index prose
   shouldn't read cold. Stayed inside the locked brand voice doing it
-  (`../design_system/CLAUDE.md`): plain and certain, sells through
+  (`../branding/CLAUDE.md`): plain and certain, sells through
   specificity and confidence, never through hype words like "empower" or
   "solutions." Each subpage's content lives in its own `.jsx` component
   (never raw `.astro` markup — see the whitespace-bug note below) with the
@@ -242,7 +242,10 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   that keeps `RULE_AUTHORING.md` itself GitHub-only. Linked from
   `/rules/`'s intro paragraph, since nothing else on the site pointed to
   it.
-- `../design_system/tokens/*.css` — design tokens (colors, typography,
+- The design system lives in `../branding` (GitHub `rumoroso/branding`);
+  `rumoroso/design_system` is an older, stale copy. "design_system" below
+  means this repo.
+- `../branding/tokens/*.css` — design tokens (colors, typography,
   spacing, motion, elevation, radius). Copied into `src/styles/tokens/`
   here; that's the source of truth, re-copy if it changes rather than
   editing the copies in this repo. `colors.css` was re-copied after
@@ -251,7 +254,7 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   bullets. `:root` now carries the light-surface values by default;
   `[data-surface="dark"]` is the opt-in override (the terminal/`CodeBlock`
   stays on it unconditionally, deliberately, not via that attribute).
-- `../design_system/components/` — 18 React (JSX) components (`Badge`,
+- `../branding/components/` — 18 React (JSX) components (`Badge`,
   `Button`, `Card`, `CodeBlock`, `Tag`, etc.), organized by category
   (brand/core/data/disclosure/feedback/forms/navigation/results). No
   `package.json` there — it's an exported design canvas (`.dc.html`
@@ -285,8 +288,14 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   design-system copies — `.astro` frontmatter can't write JSX, so anything
   needing a `render`/composed-JSX callback (the catalog table's link/Tag
   cells, a rule page's tag row and example blocks) has to live in a real
-  `.jsx` file.
-- `../design_system/CLAUDE.md` — locked brand decisions (voice, naming,
+  `.jsx` file. `DataTable` (since `branding` 78197e5) never clips: cells
+  wrap with automatic layout, the table scrolls sideways below `minWidth`
+  (36rem; the rules catalog passes 54rem), and the wrapper is a focusable
+  region named by `label` or `caption` — so give every table one, in every
+  language. Its focus ring is `.ds-data-table:focus-visible` in
+  `global.css`; `BaseLayout` turns off inline code's `overflow-wrap:
+  anywhere` inside tables so identifiers keep their column wide instead.
+- `../branding/CLAUDE.md` — locked brand decisions (voice, naming,
   color meanings, type). Site copy and any new components should follow it.
 
 ## Navigation and layout

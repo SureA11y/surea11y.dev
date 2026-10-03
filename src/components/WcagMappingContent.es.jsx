@@ -184,6 +184,7 @@ export function WcagMappingContent() {
 				<a href="/configuration/engine-options/#other-standards-mappings">Otros estándares</a>).
 			</p>
 			<DataTable
+				label="Versiones de EN 301 549"
 				rowKey="version"
 				columns={[
 					{ key: "version", label: "Versión", width: "20%" },

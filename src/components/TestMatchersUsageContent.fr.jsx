@@ -187,6 +187,7 @@ export function TestMatchersUsageContent() {
 
 			<h2>API</h2>
 			<DataTable
+				label="Paramètres du matcher"
 				rowKey="id"
 				columns={[
 					{ key: "param", label: "Paramètre", width: "18%" },

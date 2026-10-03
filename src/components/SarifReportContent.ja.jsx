@@ -129,6 +129,7 @@ export function SarifReportContent() {
 				キー自体がありません。
 			</p>
 			<DataTable
+				label="エンジンの判定結果とSARIFのレベル"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "エンジンの判定結果", width: "22%" },
@@ -159,6 +160,7 @@ export function SarifReportContent() {
 
 			<h2>フィールドの対応</h2>
 			<DataTable
+				label="SARIFのフィールドの対応"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "SARIFのフィールド", width: "36%", wrap: true },

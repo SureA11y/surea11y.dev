@@ -20,6 +20,7 @@ export function ResultsReportsContent() {
 				Choisissez la forme adaptée à la personne qui va réellement le lire.
 			</p>
 			<DataTable
+				label="Formats de sortie"
 				rowKey="format"
 				columns={[
 					{ key: "format", label: "Format" },

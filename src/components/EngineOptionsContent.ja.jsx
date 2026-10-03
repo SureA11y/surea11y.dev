@@ -228,6 +228,7 @@ export function EngineOptionsContent() {
 				<strong><code>runOnly</code>は、配列そのものではなく、このオブジェクト形式で渡す必要があります。</strong><code>runOnly: ['img-alt-present']</code>（単なる配列）は<strong>何の通知もなく無視され</strong>、エンジンはすべてのルールを実行します。統合時に最もよくある間違いです。<a href="/help/faq/">よくある質問</a>を参照してください。
 			</p>
 			<DataTable
+				label="runOnlyのフィールド"
 				rowKey="field"
 				columns={[
 					{ key: "field", label: "フィールド", width: "22%" },
@@ -349,6 +350,7 @@ export function EngineOptionsContent() {
 				<code>engineOptions.profile</code>は、タグセットを書き出す代わりに適合性の目標を名前で指定します。
 			</p>
 			<DataTable
+				label="適合性のプロファイル"
 				rowKey="profile"
 				columns={[
 					{ key: "profile", label: "プロファイル", width: "20%" },
@@ -456,6 +458,7 @@ export function EngineOptionsContent() {
 				各結果の<code>meta.normativeMappings</code>は、それが確認するWCAGの達成基準を示します。<code>engineOptions.mappings</code>は、それぞれに対応するほかの規格の要件を追加します。デフォルトでは何も追加しません。監査の対象でない規格の条項は、SARIFのタグ、JUnitのプロパティ、レポートのすべてでノイズになるからです。
 			</p>
 			<DataTable
+				label="mappingsの値"
 				rowKey="value"
 				columns={[
 					{ key: "value", label: "値", width: "34%" },
@@ -552,6 +555,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<DataTable
+				label="その他のengineOptions"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "オプション", width: "22%" },
