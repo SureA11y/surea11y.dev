@@ -14,7 +14,13 @@ updates:
         patterns:
           - "@surea11y/*"
 
+  # One PR for all action updates: upload-artifact and download-artifact
+  # pass the build between jobs and should move together.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      actions:
+        patterns:
+          - "*"
