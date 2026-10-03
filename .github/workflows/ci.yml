@@ -53,9 +53,16 @@ jobs:
           retention-days: 7
 
   a11y:
-    name: Accessibility scan (WCAG 2.2 AA)
+    name: Accessibility scan (WCAG 2.2 AA, ${{ matrix.width }} px)
     needs: check
     runs-on: ubuntu-latest
+    # One job per width, in parallel: the run finishes about four minutes
+    # sooner for one more job setup (~1.5 billed minutes). Both always
+    # finish, so a failure at one width doesn't hide the other's results.
+    strategy:
+      fail-fast: false
+      matrix:
+        width: [375, 1280]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -73,12 +80,12 @@ jobs:
       # them, layout rules would measure text in a font no reader sees.
       - name: Install CJK fonts
         run: sudo apt-get install -y --no-install-recommends fonts-noto-cjk
-      - name: Scan every page at 375 and 1280 px
-        run: npm run check:a11y
+      - name: Scan every page at ${{ matrix.width }} px
+        run: npm run check:a11y -- --widths=${{ matrix.width }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: a11y-results
+          name: a11y-results-${{ matrix.width }}
           path: a11y-results/
           retention-days: 14
 

@@ -571,7 +571,8 @@ Open English-source issues found in that review, not yet decided:
 - **a11y**: `npm run check:a11y` (`scripts/check-a11y.mjs`) scans every
   built page except `/from/` redirects in Chromium with
   `@surea11y/playwright` and the pinned `@surea11y/core`, profile
-  `wcag22-aa` (the statement's WCAG 2.2 AA), at 375 and 1280 px, after
+  `wcag22-aa` (the statement's WCAG 2.2 AA), at 375 and 1280 px (one
+  parallel job each, artifacts `a11y-results-<width>`), after
   `document.fonts.ready`. Any `fail` or unscannable page fails the run;
   `cantTell` never does. Writes `a11y-results/summary.md` (also the run
   summary) and core's HTML report per page with a finding (artifact).
