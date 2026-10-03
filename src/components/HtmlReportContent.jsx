@@ -55,7 +55,11 @@ export function HtmlReportContent() {
 				The meta bar under the header carries the rule count, occurrence count, engine tag, schema
 				version, the WCAG version the scan targeted, the <code>engineOptions.profile</code> it used
 				(when there was one), the opt-in rule tags <code>engineOptions.optInRules</code> added (when
-				it added any), and the locale the scan resolved to. Locale fallback is per-string and
+				it added any), the conditions the page was rendered under, and the locale the scan resolved
+				to. The conditions are the viewport (with the device pixel ratio when it isn't 1) and the
+				colour scheme, and the web fonts when they were still loading; a scan with no layout, in
+				jsdom, says so instead. A layout-dependent finding can come and go with the viewport width,
+				so the chip says which width the report describes. Locale fallback is per-string and
 				invisible in the text itself, so{" "}
 				<strong>a report requested in a language the engine does not carry reads as an ordinary
 				English one</strong> — the chip names the requested locale alongside the resolved one

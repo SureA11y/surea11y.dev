@@ -21,13 +21,31 @@ const sarifFieldRows = [
 			<>
 				Derselbe Identitätsschlüssel <code>ruleId + reasonCode + html</code>, den{" "}
 				<a href="/conformance/baseline/">Baseline / Allowlist</a> (<code>computeBaselineKey</code>)
-				verwendet: ein stabiler, inhaltsbasierter Fingerprint statt eines positionsbasierten.
+				verwendet: ein stabiler, inhaltsbasierter Fingerprint statt eines positionsbasierten, für
+				Konsumenten, die ihn auslesen.
+			</>
+		),
+	},
+	{
+		id: "lineHash",
+		field: <code>results[].partialFingerprints.primaryLocationLineHash</code>,
+		source: (
+			<>
+				Ein Hash dieses Schlüssels, <code>&lt;16 hex digits&gt;:&lt;n&gt;</code>, wobei{" "}
+				<code>n</code> einen auf der Seite wiederholten Befund zählt (dieselbe fehlerhafte
+				Komponente zweimal). <span lang="en">GitHub Code Scanning</span> ordnet Alerts zwischen
+				Uploads allein über dieses Feld zu. Ein DOM-Befund hat keine Zeile, die die Upload-Action
+				von GitHub hashen könnte; ohne das Feld wurden Alerts daher nach Position zugeordnet, und
+				das Beheben eines Befunds konnte den Alert eines anderen schließen. Wer von core 1.8 oder
+				älter kommt, sieht beim ersten Upload einmalig, dass die bestehenden Alerts geschlossen und
+				als neue wieder geöffnet werden; ein in GitHub verworfener Alert muss erneut verworfen werden.
 			</>
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <><code>severity</code>/<code>confidence</code> des Ergebnisses selbst, dazu derselbe <code>reasonCode</code> und dasselbe <code>html</code>-Snippet, auf denen der Fingerprint oben beruht. Rein informativ, nicht Teil des SARIF-Schemas selbst.</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code> und ein <code>wcag-&lt;SC&gt;</code>-Tag pro WCAG-Erfolgskriterium in <code>meta.normativeMappings</code>. Einträge zu Understanding-Dokumenten erhalten kein Tag. Jede EN-301-549-Klausel, die das Ergebnis trägt (nur wenn der Scan sie angefordert hat, siehe <a href="/configuration/engine-options/#other-standards-mappings">Andere Normen</a>), erhält ein Tag <code>en301549-&lt;Klausel&gt;</code>, z. B. <code>en301549-9.1.1.1</code>: Klauselnummern sind in jeder Version, die sie enthält, gleich, daher trägt das Tag keine Version.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code> und <code>optInRules</code> aus der <code>engine</code> des Ergebnisses: das Konformitätsziel des Laufs, damit ein Dashboard einen WCAG-2.1-Lauf von einem 2.2-Lauf unterscheiden kann, und die Tags der Opt-in-Regeln, die er über dieses Ziel hinaus hinzugefügt hat, falls vorhanden. Fehlt bei Ergebnissen von Engines, die diese Felder noch nicht kennen.</> },
+	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>Die Option <code>category</code>, mit angehängtem <code>/</code>, falls sie keinen hat (GitHub liest alles bis zum letzten Schrägstrich als Kategorie). Fehlt, wenn keine Kategorie angegeben ist. Siehe <a href="#scanning-at-several-viewport-widths">Scannen bei mehreren Viewport-Breiten</a>.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> und <code>environment</code> aus der <code>engine</code> des Ergebnisses: das Konformitätsziel des Laufs, damit ein Dashboard einen WCAG-2.1-Lauf von einem 2.2-Lauf unterscheiden kann, die Tags der Opt-in-Regeln, die er über dieses Ziel hinaus hinzugefügt hat, falls vorhanden, und die Bedingungen, unter denen die Seite dargestellt wurde (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code>; siehe <a href="/results-reports/output-schema/">Ausgabeschema</a>). Fehlt bei Ergebnissen von Engines, die diese Felder noch nicht kennen.</> },
 ];
 
 export function SarifReportContent() {
@@ -150,6 +168,41 @@ export function SarifReportContent() {
 				<code>logicalLocations[].fullyQualifiedName</code> mitgeführt, sodass ein Konsument, der
 				logische Fundorte liest, auch ohne brauchbaren physischen Fundort erfährt, um welches
 				Element es geht.
+			</p>
+
+			<h2 id="scanning-at-several-viewport-widths">Scannen bei mehreren Viewport-Breiten</h2>
+			<p>
+				Eine layoutabhängige Regel kann bei einer Viewport-Breite fehlschlagen und bei einer anderen
+				bestehen (siehe{" "}
+				<a href="/help/known-limitations/">Bekannte Einschränkungen</a>), daher sind zwei Breiten
+				einer Seite zwei Analysen, nicht eine. Geben Sie jeder ihre eigene Kategorie:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { renderSarifReport } = require('@surea11y/core/sarif');",
+					"",
+					"for (const width of [390, 1280]) {",
+					"  // ...scan the page at this width into `result`...",
+					"  fs.writeFileSync(`a11y-${width}.sarif`, renderSarifReport(result, { category: `a11y-${width}` }));",
+					"}",
+				]}
+			/>
+			<p>
+				und laden Sie jede Datei einzeln hoch. <span lang="en">GitHub Code Scanning</span> behandelt
+				jede Kategorie als eigene Analyse. Innerhalb einer Kategorie ersetzt ein späterer Upload den
+				früheren, und ein Alert, der darin fehlt, wird geschlossen; zwei Breiten, die unter derselben
+				Kategorie hochgeladen werden, würden einen breitenspezifischen Alert also bei jedem Lauf
+				öffnen und wieder schließen. GitHub lehnt außerdem eine einzelne SARIF-Datei ab, die zwei
+				Runs desselben Tools und derselben Kategorie enthält.{" "}
+				<code>github/codeql-action/upload-sarif</code> hat einen Input <code>category</code>, der
+				dieselbe Aufgabe übernimmt, wenn die Datei keine Kategorie trägt.
+			</p>
+			<p>
+				Die Identität eines Befunds enthält den Viewport nicht und muss es auch nicht: Dasselbe
+				Element mit demselben Mangel ist bei jeder Breite derselbe Befund, und die Kategorie hält die
+				Analysen auseinander. <code>runs[0].properties.environment</code> hält den Viewport fest,
+				den jeder Lauf verwendet hat.
 			</p>
 
 			<h2>Kombination mit <code>--baseline</code></h2>

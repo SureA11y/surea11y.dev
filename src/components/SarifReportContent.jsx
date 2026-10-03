@@ -21,13 +21,30 @@ const sarifFieldRows = [
 			<>
 				The same <code>ruleId + reasonCode + html</code> identity key used by{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code>)
-				— a stable, content-based fingerprint rather than a position-based one.
+				— a stable, content-based fingerprint rather than a position-based one, for consumers that
+				read it.
+			</>
+		),
+	},
+	{
+		id: "lineHash",
+		field: <code>results[].partialFingerprints.primaryLocationLineHash</code>,
+		source: (
+			<>
+				A hash of that key, <code>&lt;16 hex digits&gt;:&lt;n&gt;</code>, where <code>n</code> counts a
+				finding repeated on the page (the same broken component twice). GitHub Code Scanning matches
+				alerts between uploads on this field alone. A DOM finding has no line for GitHub's upload
+				action to hash, so without it alerts were matched by position, and fixing one finding could
+				close another's alert. Coming from core 1.8 or earlier, the first upload closes the existing
+				alerts and opens them again as new ones, once; a dismissal made in GitHub has to be made
+				again.
 			</>
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>The result's own <code>severity</code>/<code>confidence</code>, plus the same <code>reasonCode</code> and <code>html</code> snippet the fingerprint above is keyed on — informational, not part of SARIF's own schema.</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, and a <code>wcag-&lt;SC&gt;</code> tag per WCAG Success Criterion in <code>meta.normativeMappings</code>. Understanding-document entries get no tag. Each EN 301 549 clause the result carries (only when the scan asked for them, see <a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>) gets an <code>en301549-&lt;clause&gt;</code> tag, e.g. <code>en301549-9.1.1.1</code>: clause numbers are the same in every version that has them, so the tag carries no version.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code> and <code>optInRules</code> from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, and the opt-in rule tags it added beyond that target when it added any. Omitted for results from engines that predate those fields.</> },
+	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>The <code>category</code> option, with a trailing <code>/</code> added if it has none (GitHub reads everything up to the last slash as the category). Absent when no category is given. See <a href="#scanning-at-several-viewport-widths">Scanning at several viewport widths</a>.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> and <code>environment</code> from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, the opt-in rule tags it added beyond that target when it added any, and the conditions the page was rendered under (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code>; see <a href="/results-reports/output-schema/">Output schema</a>). Omitted for results from engines that predate those fields.</> },
 ];
 
 export function SarifReportContent() {
@@ -144,6 +161,38 @@ export function SarifReportContent() {
 				<code>occurrence.selector</code> is additionally carried as a{" "}
 				<code>logicalLocations[].fullyQualifiedName</code>, so a consumer that reads logical
 				locations still gets the "which element" signal even without a usable physical location.
+			</p>
+
+			<h2 id="scanning-at-several-viewport-widths">Scanning at several viewport widths</h2>
+			<p>
+				A layout-dependent rule can fail at one viewport width and pass at another (see{" "}
+				<a href="/help/known-limitations/">Known limitations</a>), so a page scanned at two widths is
+				two analyses, not one. Give each its own category:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { renderSarifReport } = require('@surea11y/core/sarif');",
+					"",
+					"for (const width of [390, 1280]) {",
+					"  // ...scan the page at this width into `result`...",
+					"  fs.writeFileSync(`a11y-${width}.sarif`, renderSarifReport(result, { category: `a11y-${width}` }));",
+					"}",
+				]}
+			/>
+			<p>
+				and upload each file separately. GitHub Code Scanning treats each category as its own
+				analysis. Within one category, a later upload replaces the earlier one, and an alert missing
+				from it is closed, so two widths uploaded under the same category would open and close a
+				width-specific alert on every run. GitHub also rejects a single SARIF file holding two runs
+				from the same tool and category. <code>github/codeql-action/upload-sarif</code> has a{" "}
+				<code>category</code> input that does the same job when the file carries none.
+			</p>
+			<p>
+				The finding's identity doesn't include the viewport, and doesn't need to: the same element
+				with the same defect is the same finding at any width, and the category is what keeps the
+				analyses apart. <code>runs[0].properties.environment</code> records the viewport each run
+				used.
 			</p>
 
 			<h2>Combining with <code>--baseline</code></h2>

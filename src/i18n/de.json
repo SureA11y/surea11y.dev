@@ -12,6 +12,8 @@
 	"languageSwitcher.label": "Sprache",
 	"rulePage.appliesTo": "Anwendbarkeit.",
 	"rulePage.expectation": "Erwartung.",
+	"rulePage.reports": "Was ein Befund meldet.",
+	"rulePage.reportsNote": "Diese Felder in {details} helfen, einen Befund zu lesen und zu reproduzieren. Außer {reasonCode} sind sie kein stabiler Vertrag: Ein Feld kann in einer Minor-Version umbenannt werden oder wegfallen, bauen Sie also nicht darauf auf. Siehe {schema}.",
 	"rulePage.examples": "Beispiele",
 	"rulePage.relatedRules": "Verwandte Regeln",
 	"rulePage.viewSource": "Quellcode ansehen",

@@ -121,6 +121,32 @@ const topLevelRows = [
 			</>
 		),
 	},
+	{
+		id: "engine.environment",
+		field: <code>engine.environment</code>,
+		meaning: (
+			<>
+				Las condiciones en que se renderizó la página, leídas de la página al empezar el análisis,
+				antes de que se ejecute ninguna regla. Las reglas que miden el diseño, como{" "}
+				<a href="/rules/text-spacing-content-loss/">
+					<code>text-spacing-content-loss</code>
+				</a>
+				, pueden dar otro resultado para el mismo marcado con otro ancho de viewport o mientras las
+				fuentes web aún se están cargando, así que esto es lo que necesitas para reproducir una
+				ejecución. <code>layout</code> indica si la página tenía diseño: <code>false</code> en jsdom
+				y otros emuladores de DOM, y entonces es el único campo. En un navegador,{" "}
+				<code>viewport</code> es <code>innerWidth</code>/<code>innerHeight</code> en píxeles CSS,{" "}
+				<code>devicePixelRatio</code> el de la página (el zoom del navegador también se refleja
+				aquí), <code>colorScheme</code> lo que coincide con <code>prefers-color-scheme</code>, y{" "}
+				<code>fonts</code> es <code>"loading"</code> mientras alguna de las fuentes de la página aún
+				se está cargando, <code>"loaded"</code> en caso contrario. Un campo que la página no puede
+				informar se omite. Leerlos no añade no determinismo: igual que el DOM, son entrada. Para
+				obtener resultados que puedas comparar entre ejecuciones, espera a{" "}
+				<code>document.fonts.ready</code> antes de analizar. Cada frame de un{" "}
+				<a href="#cross-frame-result">resultado entre frames</a> lleva el suyo.
+			</>
+		),
+	},
 	{ id: "url", field: <code>url</code>, meaning: <>El argumento <code>pageUrl</code> que pasaste, o <code>document.location.href</code> si pasaste <code>null</code>/lo omitiste, o <code>null</code> si ninguno está disponible.</> },
 	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> en el momento del análisis o <code>null</code>.</> },
 	{
@@ -259,7 +285,9 @@ const occurrenceRows = [
 			<>
 				Presente en la mayoría de las ocurrencias: por qué el motor consideró este elemento
 				elegible (o no) según el modelo de elegibilidad que usó la regla. <code>eligible</code>{" "}
-				es ese resultado; <code>targetSet</code> indica qué modelo lo produjo (<code>'dom'</code>:
+				es ese resultado (ausente en los hallazgos de nivel de página de{" "}
+				<code>bypass-blocks-present</code>, <code>html-lang-attr-present</code> y{" "}
+				<code>page-title-present</code>); <code>targetSet</code> indica qué modelo lo produjo (<code>'dom'</code>:
 				visibilidad de DOM/CSS en bruto, la mayoría de las reglas; <code>'acc'</code>:
 				elegibilidad del árbol de accesibilidad). <code>accEligible</code> refleja{" "}
 				<code>eligible</code> solo cuando <code>targetSet</code> es <code>'acc'</code>; en caso
@@ -284,7 +312,8 @@ const occurrenceRows = [
 				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>
 					<code>API_STABILITY.md</code>
 				</a>
-				.
+				. La página de cada regla enumera los campos que llevan sus hallazgos, en “Qué informa un
+				hallazgo”.
 			</>
 		),
 	},
@@ -341,8 +370,15 @@ export function OutputSchemaContent() {
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
-					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508"',
-					'    mappings?: string[]    // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					"    environment: {",
+					"      layout: boolean,",
+					"      viewport?: { width: number, height: number },  // CSS px",
+					"      devicePixelRatio?: number,",
+					'      colorScheme?: "light" | "dark",',
+					'      fonts?: "loaded" | "loading"',
+					"    }",
 					"  },",
 					"  url: string | null,",
 					"  title: string | null,",
@@ -536,7 +572,7 @@ export function OutputSchemaContent() {
 				</li>
 			</ul>
 
-			<h2>Una ocurrencia (<code>occurrences[i]</code>)</h2>
+			<h2 id="occurrence">Una ocurrencia (<code>occurrences[i]</code>)</h2>
 			<p>
 				Normalmente presente solo cuando <code>outcome</code> es <code>fail</code> o{" "}
 				<code>cantTell</code>: un resultado <code>pass</code> tiene <code>occurrences: []</code>,
@@ -568,8 +604,8 @@ export function OutputSchemaContent() {
 					"    needed?: string,       // what would settle the question",
 					"    evidence?: object      // what the rule did establish, rule-specific",
 					"  },",
-					"  data: {",
-					"    visibilityFilter?: { eligible: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
+					"  data?: {               // absent on manual-review's page-level finding",
+					"    visibilityFilter?: { eligible?: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
 					"    details?: object   // rule-specific, non-normative — see below",
 					"  }",
 					"}",
@@ -635,7 +671,9 @@ export function OutputSchemaContent() {
 					"{",
 					'  ruleId: string,              // e.g. "wcag-1.1.1-non-text-content"',
 					'  outcome: "pass" | "fail" | "cantTell" | "notApplicable",',
-					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // same as a check result",
+					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // as on a check result, except that",
+					"                                // meta.normativeMappings names the criterion in a shorter form:",
+					"                                // { standard, requirement, level }",
 					"  occurrences: [],              // always empty — composites are rollups, not element-level findings",
 					"  data: {",
 					"    details: {",

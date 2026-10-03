@@ -78,6 +78,15 @@ const topLevelRows = [
 			</>
 		),
 	},
+	{
+		id: "engine.environment",
+		field: <code>engine.environment</code>,
+		meaning: (
+			<>
+				ページがレンダリングされた条件です。スキャンの開始時、どのルールも実行される前にページから読み取ります。<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>のようにレイアウトを計測するルールは、同じマークアップでも、ビューポートの幅が違ったり、Webフォントがまだ読み込み中だったりすると別の判定結果になることがあるため、実行を再現するにはこの情報が必要です。<code>layout</code>はページにレイアウトがあったかどうかです。jsdomなどのDOMエミュレーターでは<code>false</code>になり、その場合はこれが唯一のフィールドです。ブラウザーでは、<code>viewport</code>はCSSピクセル単位の<code>innerWidth</code>／<code>innerHeight</code>、<code>devicePixelRatio</code>はページのデバイスピクセル比（ブラウザーのズームもここに表れます）、<code>colorScheme</code>は<code>prefers-color-scheme</code>が一致する値、<code>fonts</code>はページのフォントフェイスのいずれかがまだ読み込み中なら<code>"loading"</code>、それ以外は<code>"loaded"</code>です。ページが報告できないフィールドは省略されます。これらを読み取っても非決定性は加わりません。DOMと同じく、入力だからです。実行間で比較できる結果が必要なら、スキャンの前に<code>document.fonts.ready</code>を待ってください。<a href="#cross-frame-result">フレームをまたぐ結果</a>では、各フレームがそれぞれ独自の値を持ちます。
+			</>
+		),
+	},
 	{ id: "url", field: <code>url</code>, meaning: <>渡した<code>pageUrl</code>引数です。<code>null</code>を渡したか省略した場合は<code>document.location.href</code>、どちらも得られない場合は<code>null</code>になります。</> },
 	{ id: "title", field: <code>title</code>, meaning: <>スキャン時点の<code>document.title</code>、または<code>null</code>です。</> },
 	{
@@ -176,7 +185,7 @@ const occurrenceRows = [
 		field: <code>data.visibilityFilter</code>,
 		meaning: (
 			<>
-				ほとんどの検出箇所に含まれます。ルールが使った対象判定のモデルのもとで、エンジンがこの要素を対象とみなした（またはみなさなかった）理由です。<code>eligible</code>がその結果で、<code>targetSet</code>はどのモデルによる判定かを示します（<code>'dom'</code>：DOM/CSS上の可視性そのもの。ほとんどのルールはこちら。<code>'acc'</code>：アクセシビリティツリー上で対象となるかどうか）。<code>accEligible</code>は<code>targetSet</code>が<code>'acc'</code>のときだけ<code>eligible</code>と同じ値になり、それ以外は<code>null</code>です。<code>reasons</code>は、<code>eligible: false</code>のときの機械可読な除外コードのリストです。
+				ほとんどの検出箇所に含まれます。ルールが使った対象判定のモデルのもとで、エンジンがこの要素を対象とみなした（またはみなさなかった）理由です。<code>eligible</code>がその結果で（<code>bypass-blocks-present</code>、<code>html-lang-attr-present</code>、<code>page-title-present</code>のページ単位の検出結果には含まれません）、<code>targetSet</code>はどのモデルによる判定かを示します（<code>'dom'</code>：DOM/CSS上の可視性そのもの。ほとんどのルールはこちら。<code>'acc'</code>：アクセシビリティツリー上で対象となるかどうか）。<code>accEligible</code>は<code>targetSet</code>が<code>'acc'</code>のときだけ<code>eligible</code>と同じ値になり、それ以外は<code>null</code>です。<code>reasons</code>は、<code>eligible: false</code>のときの機械可読な除外コードのリストです。
 			</>
 		),
 	},
@@ -185,7 +194,7 @@ const occurrenceRows = [
 		field: <code>data.details</code>,
 		meaning: (
 			<>
-				ルール固有の構造化データ（計算した指標、解決済みの参照など）です。<strong>規範的なものではありません</strong>。より詳しいUIの構築やデバッグには役立ちますが、<code>outcome</code>/<code>severity</code>の意味を変えることはありません。形はルールごとに異なるので、安定した契約ではなく、ベストエフォートの補足情報として扱ってください。唯一の例外が<code>data.details.reasonCode</code>で、これは安定して<strong>います</strong>。ルールの検出結果のうち<em>どれ</em>であるかを識別し、<code>ruleId</code>、<code>html</code>とともに、ベースラインとSARIFのキーになるフィンガープリントを構成します。<a href={`${core}/docs/API_STABILITY.md#finding-identity`}><code>API_STABILITY.md</code></a>を参照してください。
+				ルール固有の構造化データ（計算した指標、解決済みの参照など）です。<strong>規範的なものではありません</strong>。より詳しいUIの構築やデバッグには役立ちますが、<code>outcome</code>/<code>severity</code>の意味を変えることはありません。形はルールごとに異なるので、安定した契約ではなく、ベストエフォートの補足情報として扱ってください。唯一の例外が<code>data.details.reasonCode</code>で、これは安定して<strong>います</strong>。ルールの検出結果のうち<em>どれ</em>であるかを識別し、<code>ruleId</code>、<code>html</code>とともに、ベースラインとSARIFのキーになるフィンガープリントを構成します。<a href={`${core}/docs/API_STABILITY.md#finding-identity`}><code>API_STABILITY.md</code></a>を参照してください。各ルールのページには、その検出結果が持つフィールドが「検出結果が報告する内容」の下に記載されています。
 			</>
 		),
 	},
@@ -233,8 +242,15 @@ export function OutputSchemaContent() {
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
-					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508"',
-					'    mappings?: string[]    // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					"    environment: {",
+					"      layout: boolean,",
+					"      viewport?: { width: number, height: number },  // CSS px",
+					"      devicePixelRatio?: number,",
+					'      colorScheme?: "light" | "dark",',
+					'      fonts?: "loaded" | "loading"',
+					"    }",
 					"  },",
 					"  url: string | null,",
 					"  title: string | null,",
@@ -355,7 +371,7 @@ export function OutputSchemaContent() {
 				</li>
 			</ul>
 
-			<h2>検出箇所（<code>occurrences[i]</code>）</h2>
+			<h2 id="occurrence">検出箇所（<code>occurrences[i]</code>）</h2>
 			<p>
 				通常は<code>outcome</code>が<code>fail</code>または<code>cantTell</code>のときにだけ含まれます。このエンジンは合格した要素を列挙せず、フラグを立てた要素だけを報告するため、<code>pass</code>の結果は<code>occurrences: []</code>になります。
 			</p>
@@ -378,8 +394,8 @@ export function OutputSchemaContent() {
 					"    needed?: string,       // what would settle the question",
 					"    evidence?: object      // what the rule did establish, rule-specific",
 					"  },",
-					"  data: {",
-					"    visibilityFilter?: { eligible: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
+					"  data?: {               // absent on manual-review's page-level finding",
+					"    visibilityFilter?: { eligible?: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
 					"    details?: object   // rule-specific, non-normative — see below",
 					"  }",
 					"}",
@@ -423,7 +439,9 @@ export function OutputSchemaContent() {
 					"{",
 					'  ruleId: string,              // e.g. "wcag-1.1.1-non-text-content"',
 					'  outcome: "pass" | "fail" | "cantTell" | "notApplicable",',
-					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // same as a check result",
+					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // as on a check result, except that",
+					"                                // meta.normativeMappings names the criterion in a shorter form:",
+					"                                // { standard, requirement, level }",
 					"  occurrences: [],              // always empty — composites are rollups, not element-level findings",
 					"  data: {",
 					"    details: {",

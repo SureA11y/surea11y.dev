@@ -166,7 +166,10 @@ export function EarlReportContent() {
 				different <code>engineOptions</code> is still describing one resource, and the context has
 				no way to express two subjects with the same source.{" "}
 				<strong>Where two results assert on the same rule for the same URL, the last one
-				wins.</strong>
+				wins.</strong> That includes the same page scanned at two viewport widths: EARL has no term
+				for the conditions a page was rendered under, so a report built from several widths keeps
+				only the last width's assertion for each rule. Render one report per width if the widths
+				matter.
 			</p>
 			<p>
 				Output is deterministic: subjects sort by source, assertions by rule id, and the same

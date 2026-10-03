@@ -45,7 +45,14 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   and grouping ids that share the remainder). `npm run docs:rules` to
   regenerate, `npm run docs:rules:check` to verify it's current — same
   committed-artifact relationship as the tokens/components below. Requires
-  `../core/src/core.js` to be built and current.
+  `../core/src/core.js` to be built and current. Reads three JSDoc tags
+  from each rule module: `@applicability`, `@expectation` and `@reports`
+  (since core `d7b4725`, after 1.9.0: the fields a rule's findings carry
+  in `data.details`, one `- ` line each). `@reports` renders on rule pages
+  as "What a finding reports", with a note that those fields aren't a
+  stable contract apart from `reasonCode`, linking to the Output schema's
+  `#occurrence`. A locale whose rule overlay has no `reports` yet shows
+  the English list marked `lang="en"` (`reportsLang` in `localizeRule`).
 - **Configuration, Results & Reports, Conformance, and Help are
   each split into per-topic subpages**, not one long page: every section
   index (`/configuration/`, `/results-reports/`, `/conformance/`,

@@ -167,6 +167,33 @@ export function KnownLimitationsContent() {
 					Bibliothek direkt über <span lang="en">Pattern 2</span> gegen eine bereits geladene Seite aus, nicht über die
 					CLI mit statischem Abruf.
 				</li>
+				<li>
+					<strong>Ein Layout wird bei einem einzigen Viewport gemessen, mit den Schriften, die die
+					Seite in diesem Moment hat.</strong> Regeln, die messen, was der Browser zeichnet,{" "}
+					<a href="/rules/text-spacing-content-loss/">
+						<code>text-spacing-content-loss</code>
+					</a>
+					,{" "}
+					<a href="/rules/target-size-minimum/">
+						<code>target-size-minimum</code>
+					</a>{" "}
+					und{" "}
+					<a href="/rules/skip-link/">
+						<code>skip-link</code>
+					</a>
+					, gelten für den Viewport, bei dem die Seite gescannt wurde: Eine responsive Seite kann
+					bei einer Breite Text abschneiden oder ein Ziel verkleinern und bei einer anderen nicht,
+					und Text, der gemessen wird, bevor seine Webfont geladen ist, hat eine andere Breite. Das
+					Ergebnis hält beides in{" "}
+					<a href="/results-reports/output-schema/">
+						<code>engine.environment</code>
+					</a>{" "}
+					fest, und die Befunde dieser Regeln wiederholen ihren Viewport und nennen, was gemessen
+					wurde (wie weit Text über den Rand hinausging, wie groß ein Ziel ist und wie nah sein
+					Nachbar liegt), sodass sich ein Befund, der zwischen Läufen abweicht, auf die Bedingungen
+					zurückführen lässt. Scannen Sie bei jeder Breite, die Ihnen wichtig ist, und warten Sie vor
+					dem Scan auf <code>document.fonts.ready</code>.
+				</li>
 			</ul>
 
 			<h2>Nicht versucht: Ermessensfragen, die sich nicht sicher automatisieren lassen</h2>

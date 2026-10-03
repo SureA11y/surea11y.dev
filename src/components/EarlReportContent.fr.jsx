@@ -173,7 +173,11 @@ export function EarlReportContent() {
 				seule ressource, et le contexte n’a aucun moyen d’exprimer deux sujets ayant la même
 				source.{" "}
 				<strong>Lorsque deux résultats portent sur la même règle pour la même URL, le dernier
-				l’emporte.</strong>
+				l’emporte.</strong> Cela vaut aussi pour la même page analysée à deux largeurs de
+				viewport : EARL n’a aucun terme pour les conditions dans lesquelles une page a été rendue,
+				si bien qu’un rapport construit à partir de plusieurs largeurs ne garde, pour chaque règle,
+				que l’assertion de la dernière largeur. Produisez un rapport par largeur si les largeurs
+				comptent.
 			</p>
 			<p>
 				La sortie est déterministe : les sujets sont triés par source, les assertions par id de

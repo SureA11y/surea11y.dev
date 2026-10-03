@@ -59,7 +59,12 @@ export function HtmlReportContent() {
 				ocurrencias, la etiqueta del motor, la versión del esquema, la versión de WCAG a la que
 				apuntó el análisis, el <code>engineOptions.profile</code> que usó (si hubo uno), las
 				etiquetas de reglas opcionales que añadió <code>engineOptions.optInRules</code> (si añadió
-				alguna) y el idioma al que se resolvió el análisis. El mecanismo de reserva de idioma es por cadena de texto e invisible en el propio texto, así
+				alguna), las condiciones en que se renderizó la página y el idioma al que se resolvió el
+				análisis. Las condiciones son el viewport (con la relación de píxeles del dispositivo cuando
+				no es 1) y el esquema de color, y las fuentes web cuando aún se estaban cargando; un
+				análisis sin diseño, en jsdom, lo indica en su lugar. Un hallazgo que depende del diseño
+				puede aparecer y desaparecer con el ancho del viewport, así que el chip indica qué ancho
+				describe el informe. El mecanismo de reserva de idioma es por cadena de texto e invisible en el propio texto, así
 				que <strong>un informe solicitado en un idioma que el motor no soporta se lee como uno en
 				inglés normal</strong>; el chip nombra el idioma solicitado junto al resuelto cuando ambos
 				difieren. Ver <a href="/configuration/locales/">Locales</a>.

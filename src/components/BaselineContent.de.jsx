@@ -120,6 +120,29 @@ export function BaselineContent() {
 				regelmäßig mit <code>--write-baseline</code> neu, um diese Einträge zu bereinigen.
 			</p>
 
+			<h2 id="scanning-at-several-viewport-widths">Scannen bei mehreren Viewport-Breiten</h2>
+			<p>
+				Ein Baseline-Eintrag hält den Viewport nicht fest, und das Matching verwendet ihn nicht:
+				Dasselbe Element mit demselben Mangel passt bei jeder Breite. Das passt zu einer Seite,
+				deren Befunde nicht von ihrem Layout abhängen. Eine layoutabhängige Regel wie{" "}
+				<a href="/rules/text-spacing-content-loss/">
+					<code>text-spacing-content-loss</code>
+				</a>{" "}
+				oder{" "}
+				<a href="/rules/target-size-minimum/">
+					<code>target-size-minimum</code>
+				</a>{" "}
+				kann bei einer Breite fehlschlagen und bei einer anderen nicht. Führen Sie daher für eine
+				Seite, die bei mehreren Breiten gescannt wird, <strong>eine Baseline pro Breite</strong>:{" "}
+				<code>a11y-baseline-390.json</code>, <code>a11y-baseline-1280.json</code>.
+			</p>
+			<p>
+				Eine einzige Baseline, die aus allen Breiten geschrieben wurde, steuert den Build trotzdem
+				korrekt, denn ein Befund ist nur dann neu, wenn kein Eintrag auf ihn passt. Dann meldet aber
+				jeder Lauf die Befunde der anderen Breiten als veraltet, und die Zahl der veralteten
+				Einträge sagt Ihnen nicht mehr, was behoben wurde.
+			</p>
+
 			<h2>Dateiformat</h2>
 			<CodeBlock
 				lang="json"

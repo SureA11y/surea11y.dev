@@ -24,13 +24,23 @@ const sarifFieldRows = [
 				<code>computeBaselineKey</code>
 				）で使うものと同じ
 				<code>ruleId + reasonCode + html</code>
-				の識別キーです。位置ではなく内容に基づく、安定したフィンガープリントです。
+				の識別キーです。位置ではなく内容に基づく、安定したフィンガープリントで、これを読む利用側のためのものです。
+			</>
+		),
+	},
+	{
+		id: "lineHash",
+		field: <code>results[].partialFingerprints.primaryLocationLineHash</code>,
+		source: (
+			<>
+				そのキーのハッシュで、<code>&lt;16 hex digits&gt;:&lt;n&gt;</code>の形です。<code>n</code>は、ページ上で繰り返される検出結果（同じ壊れたコンポーネントが2つある場合など）を数えます。<span lang="en">GitHub Code Scanning</span>は、アップロード間のアラートをこのフィールドだけで照合します。DOMの検出結果には、GitHubのアップロードアクションがハッシュ化できる行がありません。そのため、これがなかったときはアラートが位置で照合され、ある検出結果を修正すると別の検出結果のアラートが閉じることがありました。core 1.8以前から移行すると、最初のアップロードで既存のアラートがいったん閉じられ、新しいアラートとして開き直されます。これは一度だけです。GitHubで行った却下（dismiss）は、もう一度行う必要があります。
 			</>
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code>／<code>.confidence</code>／<code>.reasonCode</code>／<code>.html</code></>, source: <>結果自身の<code>severity</code>／<code>confidence</code>と、上のフィンガープリントのキーになっているのと同じ<code>reasonCode</code>と<code>html</code>の断片です。参考情報であり、SARIF自体のスキーマには含まれません。</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>、<code>automatic</code>／<code>manual</code>、そして<code>meta.normativeMappings</code>内のWCAG達成基準ごとに1つの<code>wcag-&lt;SC&gt;</code>タグです。Understanding文書のエントリーにはタグを付けません。結果が持つEN 301 549の各条項（スキャンが要求した場合のみ。<a href="/configuration/engine-options/#other-standards-mappings">ほかの規格</a>を参照）には<code>en301549-&lt;条項&gt;</code>タグ（例：<code>en301549-9.1.1.1</code>）が付きます。条項番号はそれを含むどのバージョンでも同じなので、タグにバージョンは含めません。</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <>結果の<code>engine</code>にある<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>です。実行が使った適合性の目標を示すので、ダッシュボードはWCAG 2.1の実行と2.2の実行を区別できます。その目標を超えてオプトインルールのタグを追加した場合は、それも示します。これらのフィールドより前のエンジンの結果では省略されます。</> },
+	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <><code>category</code>オプションの値で、末尾に<code>/</code>がなければ追加します（GitHubは最後のスラッシュまでをカテゴリーとして読むためです）。カテゴリーを指定しない場合は含まれません。<a href="#scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</a>を参照してください。</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <>結果の<code>engine</code>にある<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>、<code>environment</code>です。実行が使った適合性の目標を示すので、ダッシュボードはWCAG 2.1の実行と2.2の実行を区別できます。その目標を超えてオプトインルールのタグを追加した場合は、それも示します。また、ページがレンダリングされた条件（<code>layout</code>、<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>fonts</code>。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）も示します。これらのフィールドより前のエンジンの結果では省略されます。</> },
 ];
 
 export function SarifReportContent() {
@@ -178,6 +188,28 @@ export function SarifReportContent() {
 				は
 				<code>logicalLocations[].fullyQualifiedName</code>
 				としても記録されるので、論理的な位置を読む利用側なら、使える物理的な位置がなくても「どの要素か」という情報を得られます。
+			</p>
+
+			<h2 id="scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</h2>
+			<p>
+				レイアウトに依存するルールは、あるビューポート幅では<code>fail</code>になり、別の幅では<code>pass</code>になることがあります（<a href="/help/known-limitations/">既知の制限事項</a>を参照）。そのため、2つの幅でスキャンしたページは、1つの分析ではなく2つの分析です。それぞれに独自のカテゴリーを指定してください。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { renderSarifReport } = require('@surea11y/core/sarif');",
+					"",
+					"for (const width of [390, 1280]) {",
+					"  // ...scan the page at this width into `result`...",
+					"  fs.writeFileSync(`a11y-${width}.sarif`, renderSarifReport(result, { category: `a11y-${width}` }));",
+					"}",
+				]}
+			/>
+			<p>
+				そのうえで、各ファイルを別々にアップロードします。<span lang="en">GitHub Code Scanning</span>は、カテゴリーごとに独立した分析として扱います。1つのカテゴリー内では、後のアップロードが前のものを置き換え、そこに含まれないアラートは閉じられます。そのため、2つの幅を同じカテゴリーでアップロードすると、幅に固有のアラートが実行のたびに開いたり閉じたりします。また、GitHubは、同じツールとカテゴリーの実行を2つ含む1つのSARIFファイルを拒否します。<code>github/codeql-action/upload-sarif</code>には<code>category</code>入力があり、ファイルにカテゴリーがない場合は同じ役割を果たします。
+			</p>
+			<p>
+				検出結果の識別にはビューポートは含まれず、含める必要もありません。同じ要素の同じ欠陥は、どの幅でも同じ検出結果であり、分析を分けておくのはカテゴリーの役割です。<code>runs[0].properties.environment</code>には、各実行が使ったビューポートが記録されます。
 			</p>
 
 			<h2>

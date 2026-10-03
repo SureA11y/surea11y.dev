@@ -7,7 +7,7 @@
  * src/data/engine.generated.json (version/license) from ../core/package.json,
  * so pages that display those values never drift from the actual package.
  *
- * The applicability/expectation JSDoc parsing (jsdocTag/reflow/readRuleMeta
+ * The applicability/expectation/reports JSDoc parsing (jsdocTag/reflow/readRuleMeta
  * below) mirrors ../core/scripts/generate-rule-catalog.js -- that logic
  * isn't exported anywhere, so keep the two in sync if it changes.
  *
@@ -118,6 +118,7 @@ function readRuleMeta(checksDirAbs) {
     meta.set(mod.id, {
       applicability: jsdocTag(source, 'applicability'),
       expectation: jsdocTag(source, 'expectation'),
+      reports: jsdocTag(source, 'reports'),
       sourcePath: path.relative(CORE_DIR, file).split(path.sep).join('/')
     });
   }
@@ -274,6 +275,7 @@ function main() {
         deprecation: r.deprecation || null,
         applicability: m.applicability,
         expectation: m.expectation,
+        reports: m.reports,
         sourcePath: m.sourcePath,
         relatedRuleIds: related.get(r.ruleId) || [],
         examples: ex

@@ -21,13 +21,31 @@ const sarifFieldRows = [
 			<>
 				La même clé d’identité <code>ruleId + reasonCode + html</code> que celle utilisée par{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code>) :
-				une empreinte stable fondée sur le contenu plutôt que sur la position.
+				une empreinte stable fondée sur le contenu plutôt que sur la position, pour les
+				consommateurs qui la lisent.
+			</>
+		),
+	},
+	{
+		id: "lineHash",
+		field: <code>results[].partialFingerprints.primaryLocationLineHash</code>,
+		source: (
+			<>
+				Un hachage de cette clé, <code>&lt;16 hex digits&gt;:&lt;n&gt;</code>, où <code>n</code> compte
+				un constat répété sur la page (le même composant défectueux deux fois). <span lang="en">GitHub Code Scanning</span>{" "}
+				fait correspondre les alertes d’un envoi à l’autre sur ce seul champ. Un constat issu du DOM
+				n’a pas de ligne que l’action d’envoi de GitHub pourrait hacher ; sans ce champ, les alertes
+				étaient donc mises en correspondance par position, et corriger un constat pouvait fermer
+				l’alerte d’un autre. Si vous venez de core 1.8 ou d’une version antérieure, le premier envoi
+				ferme les alertes existantes et les rouvre comme nouvelles, une seule fois ; une alerte
+				ignorée dans GitHub doit l’être à nouveau.
 			</>
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>Les <code>severity</code>/<code>confidence</code> du résultat lui-même, plus le même <code>reasonCode</code> et le même extrait <code>html</code> sur lesquels repose l’empreinte ci-dessus ; à titre informatif, hors du schéma propre à SARIF.</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, et un tag <code>wcag-&lt;SC&gt;</code> par critère de succès WCAG présent dans <code>meta.normativeMappings</code>. Les entrées de documents Understanding n’ont pas de tag. Chaque clause d’EN 301 549 que porte le résultat (seulement quand l’analyse les a demandées, voir <a href="/configuration/engine-options/#other-standards-mappings">Autres normes</a>) reçoit un tag <code>en301549-&lt;clause&gt;</code>, p. ex. <code>en301549-9.1.1.1</code> : les numéros de clause sont les mêmes dans toutes les versions qui les contiennent, le tag ne porte donc pas de version.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code> et <code>optInRules</code> issus de l’<code>engine</code> du résultat : la cible de conformité utilisée par l’exécution, pour qu’un tableau de bord distingue une exécution WCAG 2.1 d’une exécution 2.2, et les tags de règles optionnelles qu’elle a ajoutés au-delà de cette cible, s’il y en a. Omis pour les résultats de moteurs antérieurs à ces champs.</> },
+	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>L’option <code>category</code>, avec un <code>/</code> final ajouté s’il n’y en a pas (GitHub lit tout ce qui précède la dernière barre oblique comme la catégorie). Absent lorsqu’aucune catégorie n’est fournie. Voir <a href="#scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</a>.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> et <code>environment</code> issus de l’<code>engine</code> du résultat : la cible de conformité utilisée par l’exécution, pour qu’un tableau de bord distingue une exécution WCAG 2.1 d’une exécution 2.2, les tags de règles optionnelles qu’elle a ajoutés au-delà de cette cible, s’il y en a, et les conditions dans lesquelles la page a été rendue (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code> ; voir <a href="/results-reports/output-schema/">Schéma de sortie</a>). Omis pour les résultats de moteurs antérieurs à ces champs.</> },
 ];
 
 export function SarifReportContent() {
@@ -151,6 +169,40 @@ export function SarifReportContent() {
 				<code>logicalLocations[].fullyQualifiedName</code>, de sorte qu’un consommateur qui lit les
 				emplacements logiques sait tout de même « quel élément » est concerné, même sans
 				emplacement physique exploitable.
+			</p>
+
+			<h2 id="scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</h2>
+			<p>
+				Une règle qui dépend de la mise en page peut échouer à une largeur de viewport et réussir à
+				une autre (voir{" "}
+				<a href="/help/known-limitations/">Limites connues</a>) ; une page analysée à deux largeurs
+				correspond donc à deux analyses, pas à une seule. Donnez à chacune sa propre catégorie :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { renderSarifReport } = require('@surea11y/core/sarif');",
+					"",
+					"for (const width of [390, 1280]) {",
+					"  // ...scan the page at this width into `result`...",
+					"  fs.writeFileSync(`a11y-${width}.sarif`, renderSarifReport(result, { category: `a11y-${width}` }));",
+					"}",
+				]}
+			/>
+			<p>
+				puis envoyez chaque fichier séparément. <span lang="en">GitHub Code Scanning</span> traite chaque catégorie comme
+				une analyse à part entière. Au sein d’une même catégorie, un envoi ultérieur remplace le
+				précédent, et une alerte qui n’y figure plus est fermée : deux largeurs envoyées sous la
+				même catégorie ouvriraient et fermeraient donc à chaque exécution une alerte propre à une
+				largeur. GitHub rejette aussi un fichier SARIF unique contenant deux exécutions du même
+				outil et de la même catégorie. <code>github/codeql-action/upload-sarif</code> a une entrée{" "}
+				<code>category</code> qui joue le même rôle lorsque le fichier n’en porte pas.
+			</p>
+			<p>
+				L’identité du constat n’inclut pas le viewport, et n’en a pas besoin : le même élément avec
+				le même défaut est le même constat à n’importe quelle largeur, et c’est la catégorie qui
+				sépare les analyses. <code>runs[0].properties.environment</code> enregistre le viewport
+				utilisé par chaque exécution.
 			</p>
 
 			<h2>Combiner avec <code>--baseline</code></h2>

@@ -8,7 +8,7 @@
  *   string:footer.about             an interface string (en.json key), or a
  *   string:nav:/help/               nav label / page title from site data
  *   rule:accesskeys                 one rule's prose (title, description,
- *                                   applicability, expectation, examples,
+ *                                   applicability, expectation, reports, examples,
  *                                   deprecation reason)
  *
  * src/i18n/translation-sources.json records, per locale and unit, the
@@ -80,6 +80,7 @@ const ruleText = (r) =>
 		r.description,
 		r.applicability,
 		r.expectation,
+		...(r.reports ? [r.reports] : []),
 		...r.examples.map((e) => e.explanation),
 		...(r.deprecation?.reason ? [r.deprecation.reason] : []),
 	].join("\n");
