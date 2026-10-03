@@ -1,0 +1,108 @@
+# Checks every change, scans the built site with @surea11y/core, and deploys
+# main to surea11y.dev only when both pass. The site is built once; the scan
+# and the deploy use that same build, so what goes live is what was scanned.
+#
+# Deploying from here replaces Cloudflare's own git-triggered build: the
+# org's free plan can't require checks on a private repo, so the gate is the
+# deploy job's `needs`. Secrets: CLOUDFLARE_API_TOKEN (Workers edit) and
+# CLOUDFLARE_ACCOUNT_ID.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  # A newer push to a PR makes the older run pointless; on main, let each
+  # run finish so no deploy is cut off halfway.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Build and site checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Links and anchors
+        run: npm run check:links
+      - name: Translations (complete and current)
+        run: npm run i18n:check -- --strict
+      - name: Japanese typography
+        run: npm run check:typography
+      # Lists candidates for a person to review; never fails.
+      - name: Language marking (advisory)
+        run: npm run check:lang
+      # docs:rules:check and docs:locales:check read ../core and stay local
+      # until the generators read the @surea11y/core package; see CLAUDE.md.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  a11y:
+    name: Accessibility scan (WCAG 2.2 AA)
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      # The Japanese pages name system fonts an Ubuntu runner lacks; without
+      # them, layout rules would measure text in a font no reader sees.
+      - name: Install CJK fonts
+        run: sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+      - name: Scan every page at 375 and 1280 px
+        run: npm run check:a11y
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a11y-results
+          path: a11y-results/
+          retention-days: 14
+
+  deploy:
+    name: Deploy to surea11y.dev
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [check, a11y]
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: wrangler deploy
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

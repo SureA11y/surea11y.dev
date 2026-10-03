@@ -18,6 +18,7 @@
     "i18n:check": "node scripts/check-i18n.mjs",
     "check:typography": "node scripts/check-typography.mjs",
     "check:lang": "node scripts/check-lang.mjs",
+    "check:a11y": "node scripts/check-a11y.mjs",
     "i18n:mark": "node scripts/i18n-mark.mjs"
   },
   "dependencies": {
@@ -33,6 +34,9 @@
     "esbuild": true
   },
   "devDependencies": {
+    "@surea11y/core": "1.9.0",
+    "@surea11y/playwright": "1.1.0",
+    "playwright": "1.63.0",
     "wrangler": "^4.133.0"
   }
 }
