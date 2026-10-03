@@ -22,6 +22,7 @@ export function ResultsReportsContent() {
 				realmente.
 			</p>
 			<DataTable
+				label="Formatos de salida"
 				rowKey="format"
 				columns={[
 					{ key: "format", label: "Formato" },

@@ -122,6 +122,34 @@ const topLevelRows = [
 			</>
 		),
 	},
+	{
+		id: "engine.environment",
+		field: <code>engine.environment</code>,
+		meaning: (
+			<>
+				Les conditions dans lesquelles la page a été rendue, lues sur la page au début de
+				l’analyse, avant l’exécution de toute règle. Les règles qui mesurent la mise en page,
+				comme{" "}
+				<a href="/rules/text-spacing-content-loss/">
+					<code>text-spacing-content-loss</code>
+				</a>
+				, peuvent donner un autre résultat pour le même balisage à une autre largeur de viewport
+				ou pendant que des polices web sont encore en cours de chargement : c’est donc ce dont
+				vous avez besoin pour reproduire une exécution. <code>layout</code> indique si la page
+				avait une mise en page : <code>false</code> dans jsdom et les autres émulateurs de DOM, et
+				c’est alors le seul champ. Dans un navigateur, <code>viewport</code> vaut{" "}
+				<code>innerWidth</code>/<code>innerHeight</code> en pixels CSS,{" "}
+				<code>devicePixelRatio</code> celui de la page (le zoom du navigateur s’y reflète aussi),{" "}
+				<code>colorScheme</code> ce à quoi correspond <code>prefers-color-scheme</code>, et{" "}
+				<code>fonts</code> vaut <code>"loading"</code> tant qu’une des polices de la page est
+				encore en cours de chargement, <code>"loaded"</code> sinon. Un champ que la page ne peut
+				pas fournir est omis. Lire ces valeurs n’ajoute aucun non-déterminisme : comme le DOM, ce
+				sont des entrées. Pour des résultats comparables d’une exécution à l’autre, attendez{" "}
+				<code>document.fonts.ready</code> avant d’analyser. Chaque frame d’un{" "}
+				<a href="#cross-frame-result">résultat multi-frames</a> porte le sien.
+			</>
+		),
+	},
 	{ id: "url", field: <code>url</code>, meaning: <>L’argument <code>pageUrl</code> que vous avez passé, ou <code>document.location.href</code> si vous avez passé <code>null</code> ou l’avez omis, ou <code>null</code> si ni l’un ni l’autre n’est disponible.</> },
 	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> au moment de l’analyse, ou <code>null</code>.</> },
 	{
@@ -262,7 +290,9 @@ const occurrenceRows = [
 			<>
 				Présent sur la plupart des occurrences : pourquoi le moteur a jugé cet élément éligible
 				(ou non) selon le modèle d’éligibilité utilisé par la règle. <code>eligible</code> en est
-				le résultat ; <code>targetSet</code> indique quel modèle l’a produit (<code>'dom'</code> :
+				le résultat (absent sur les constats de niveau page de{" "}
+				<code>bypass-blocks-present</code>, <code>html-lang-attr-present</code> et{" "}
+				<code>page-title-present</code>) ; <code>targetSet</code> indique quel modèle l’a produit (<code>'dom'</code> :
 				visibilité DOM/CSS brute, pour la plupart des règles ; <code>'acc'</code> : éligibilité
 				selon l’arbre d’accessibilité). <code>accEligible</code> reprend <code>eligible</code>{" "}
 				uniquement lorsque <code>targetSet</code> vaut <code>'acc'</code>, sinon{" "}
@@ -287,7 +317,8 @@ const occurrenceRows = [
 				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>
 					<code>API_STABILITY.md</code>
 				</a>
-				.
+				. La page de chaque règle liste les champs que portent ses constats, sous « Ce que
+				rapporte un constat ».
 			</>
 		),
 	},
@@ -345,8 +376,15 @@ export function OutputSchemaContent() {
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
-					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508"',
-					'    mappings?: string[]    // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					"    environment: {",
+					"      layout: boolean,",
+					"      viewport?: { width: number, height: number },  // CSS px",
+					"      devicePixelRatio?: number,",
+					'      colorScheme?: "light" | "dark",',
+					'      fonts?: "loaded" | "loading"',
+					"    }",
 					"  },",
 					"  url: string | null,",
 					"  title: string | null,",
@@ -360,6 +398,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Champs du résultat de premier niveau"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Champ", width: "22%" },
@@ -543,7 +582,7 @@ export function OutputSchemaContent() {
 				</li>
 			</ul>
 
-			<h2>Une occurrence (<code>occurrences[i]</code>)</h2>
+			<h2 id="occurrence">Une occurrence (<code>occurrences[i]</code>)</h2>
 			<p>
 				Normalement présente uniquement lorsque <code>outcome</code> vaut <code>fail</code> ou{" "}
 				<code>cantTell</code> : un résultat <code>pass</code> a <code>occurrences: []</code>,
@@ -576,14 +615,15 @@ export function OutputSchemaContent() {
 					"    needed?: string,       // what would settle the question",
 					"    evidence?: object      // what the rule did establish, rule-specific",
 					"  },",
-					"  data: {",
-					"    visibilityFilter?: { eligible: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
+					"  data?: {               // absent on manual-review's page-level finding",
+					"    visibilityFilter?: { eligible?: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
 					"    details?: object   // rule-specific, non-normative — see below",
 					"  }",
 					"}",
 				]}
 			/>
 			<DataTable
+				label="Champs d’une occurrence"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Champ", width: "22%" },
@@ -602,6 +642,7 @@ export function OutputSchemaContent() {
 				donc le moteur le retire.
 			</p>
 			<DataTable
+				label="Codes d’incertitude"
 				rowKey="id"
 				columns={[
 					{ key: "code", label: "code", width: "20%" },
@@ -644,12 +685,14 @@ export function OutputSchemaContent() {
 					"{",
 					'  ruleId: string,              // e.g. "wcag-1.1.1-non-text-content"',
 					'  outcome: "pass" | "fail" | "cantTell" | "notApplicable",',
-					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // same as a check result",
+					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // as on a check result, except that",
+					"                                // meta.normativeMappings names the criterion in a shorter form:",
+					"                                // { standard, requirement, level }",
 					"  occurrences: [],              // always empty — composites are rollups, not element-level findings",
 					"  data: {",
 					"    details: {",
 					'      reasonCode: string,       // e.g. "composite.rollup.fail.anyFail"',
-					"      standard?: string,        // a standard’s own rollup only, with version and criterion",
+					"      standard?: string,        // a standard's own rollup only, with version and criterion",
 					"      version?: string,",
 					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId this composite rolls up",
@@ -675,6 +718,7 @@ export function OutputSchemaContent() {
 
 			<h2>Valeurs de résultat</h2>
 			<DataTable
+				label="Valeurs de résultat"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Résultat", width: "16%" },

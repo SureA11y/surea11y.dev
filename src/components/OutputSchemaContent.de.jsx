@@ -123,6 +123,32 @@ const topLevelRows = [
 			</>
 		),
 	},
+	{
+		id: "engine.environment",
+		field: <code>engine.environment</code>,
+		meaning: (
+			<>
+				Die Bedingungen, unter denen die Seite dargestellt wurde, beim Start des Scans aus der
+				Seite gelesen, bevor irgendeine Regel läuft. Regeln, die das Layout messen, etwa{" "}
+				<a href="/rules/text-spacing-content-loss/">
+					<code>text-spacing-content-loss</code>
+				</a>
+				, können für dasselbe Markup bei einer anderen Viewport-Breite oder während noch Webfonts
+				laden ein anderes Ergebnis liefern; das hier brauchen Sie also, um einen Lauf zu
+				reproduzieren. <code>layout</code> gibt an, ob die Seite ein Layout hatte:{" "}
+				<code>false</code> in jsdom und anderen DOM-Emulatoren, und dann ist es das einzige Feld. In
+				einem Browser ist <code>viewport</code> <code>innerWidth</code>/<code>innerHeight</code> in
+				CSS-Pixeln, <code>devicePixelRatio</code> der Wert der Seite (auch der Browser-Zoom zeigt
+				sich hier), <code>colorScheme</code> das, worauf <code>prefers-color-scheme</code> passt,
+				und <code>fonts</code> ist <code>"loading"</code>, solange noch eine der Schriften der Seite
+				lädt, sonst <code>"loaded"</code>. Ein Feld, das die Seite nicht liefern kann, fehlt. Das
+				Auslesen bringt keinen Nichtdeterminismus mit sich: Wie das DOM sind diese Werte Eingabe.
+				Für Ergebnisse, die sich zwischen Läufen vergleichen lassen, warten Sie vor dem Scan auf{" "}
+				<code>document.fonts.ready</code>. Jeder Frame in einem{" "}
+				<a href="#cross-frame-result">Frame-übergreifenden Ergebnis</a> trägt sein eigenes.
+			</>
+		),
+	},
 	{ id: "url", field: <code>url</code>, meaning: <>Das übergebene Argument <code>pageUrl</code>, oder <code>document.location.href</code>, wenn Sie <code>null</code> übergeben oder es weggelassen haben, oder <code>null</code>, wenn keins von beiden verfügbar ist.</> },
 	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> zum Zeitpunkt des Scans, oder <code>null</code>.</> },
 	{
@@ -265,7 +291,9 @@ const occurrenceRows = [
 			<>
 				Bei den meisten Vorkommen vorhanden: warum die Engine dieses Element nach dem
 				Eignungsmodell der jeweiligen Regel als geeignet (oder nicht) eingestuft hat.{" "}
-				<code>eligible</code> ist dieses Ergebnis; <code>targetSet</code> gibt an, welches Modell
+				<code>eligible</code> ist dieses Ergebnis (fehlt bei den Befunden auf Seitenebene von{" "}
+				<code>bypass-blocks-present</code>, <code>html-lang-attr-present</code> und{" "}
+				<code>page-title-present</code>); <code>targetSet</code> gibt an, welches Modell
 				es erzeugt hat (<code>'dom'</code>: reine DOM/CSS-Sichtbarkeit, die meisten Regeln;{" "}
 				<code>'acc'</code>: Eignung laut Accessibility Tree). <code>accEligible</code> spiegelt{" "}
 				<code>eligible</code> nur, wenn <code>targetSet</code> <code>'acc'</code> ist, sonst{" "}
@@ -290,7 +318,8 @@ const occurrenceRows = [
 				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>
 					<code>API_STABILITY.md</code>
 				</a>
-				.
+				. Die Seite jeder Regel listet unter „Was ein Befund meldet“ die Felder auf, die ihre
+				Befunde mitführen.
 			</>
 		),
 	},
@@ -348,8 +377,15 @@ export function OutputSchemaContent() {
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
-					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508"',
-					'    mappings?: string[]    // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					"    environment: {",
+					"      layout: boolean,",
+					"      viewport?: { width: number, height: number },  // CSS px",
+					"      devicePixelRatio?: number,",
+					'      colorScheme?: "light" | "dark",',
+					'      fonts?: "loaded" | "loading"',
+					"    }",
 					"  },",
 					"  url: string | null,",
 					"  title: string | null,",
@@ -363,6 +399,7 @@ export function OutputSchemaContent() {
 				]}
 			/>
 			<DataTable
+				label="Felder des Ergebnisses auf oberster Ebene"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Feld", width: "22%" },
@@ -547,7 +584,7 @@ export function OutputSchemaContent() {
 				</li>
 			</ul>
 
-			<h2>Ein Vorkommen (<code>occurrences[i]</code>)</h2>
+			<h2 id="occurrence">Ein Vorkommen (<code>occurrences[i]</code>)</h2>
 			<p>
 				Normalerweise nur vorhanden, wenn <code>outcome</code> <code>fail</code> oder{" "}
 				<code>cantTell</code> ist: Ein <code>pass</code>-Ergebnis hat{" "}
@@ -580,14 +617,15 @@ export function OutputSchemaContent() {
 					"    needed?: string,       // what would settle the question",
 					"    evidence?: object      // what the rule did establish, rule-specific",
 					"  },",
-					"  data: {",
-					"    visibilityFilter?: { eligible: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
+					"  data?: {               // absent on manual-review's page-level finding",
+					"    visibilityFilter?: { eligible?: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
 					"    details?: object   // rule-specific, non-normative — see below",
 					"  }",
 					"}",
 				]}
 			/>
 			<DataTable
+				label="Felder eines Vorkommens"
 				rowKey="id"
 				columns={[
 					{ key: "field", label: "Feld", width: "22%" },
@@ -606,6 +644,7 @@ export function OutputSchemaContent() {
 				und nicht entschieden hat, daher entfernt die Engine es dort.
 			</p>
 			<DataTable
+				label="Unsicherheitscodes"
 				rowKey="id"
 				columns={[
 					{ key: "code", label: "code", width: "20%" },
@@ -649,7 +688,9 @@ export function OutputSchemaContent() {
 					"{",
 					'  ruleId: string,              // e.g. "wcag-1.1.1-non-text-content"',
 					'  outcome: "pass" | "fail" | "cantTell" | "notApplicable",',
-					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // same as a check result",
+					"  severity, confidence, type, title, description, meta, engineOptions, schemaVersion,  // as on a check result, except that",
+					"                                // meta.normativeMappings names the criterion in a shorter form:",
+					"                                // { standard, requirement, level }",
 					"  occurrences: [],              // always empty — composites are rollups, not element-level findings",
 					"  data: {",
 					"    details: {",
@@ -679,6 +720,7 @@ export function OutputSchemaContent() {
 
 			<h2>Ergebniswerte</h2>
 			<DataTable
+				label="Ergebniswerte"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Ergebnis", width: "16%" },

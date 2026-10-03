@@ -2,9 +2,10 @@ import React from "react";
 import { Tag } from "./design-system/core/Tag.jsx";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { ResultBadge } from "./design-system/results/ResultBadge.jsx";
+import { RESULT_STATES } from "./design-system/results/resultStates.js";
 import { Callout } from "./design-system/feedback/Callout.jsx";
 import { RuleText } from "./RuleText.jsx";
-import { t } from "../i18n/t";
+import { t, tOr } from "../i18n/t";
 import { Trans } from "../i18n/Trans.jsx";
 import { wordSeparator } from "../i18n/locales";
 
@@ -20,7 +21,7 @@ function LabeledRichText({ label, text, locale }) {
 			.filter(Boolean);
 		const isList = lines.length > 0 && lines.every((line) => line.startsWith("- "));
 		if (isList) {
-			return (
+			const list = (
 				<ul key={i}>
 					{lines.map((line, j) => (
 						<li key={j}>
@@ -28,6 +29,17 @@ function LabeledRichText({ label, text, locale }) {
 						</li>
 					))}
 				</ul>
+			);
+			// A text that is only a list (a rule's field list) still needs its label.
+			return i === 0 ? (
+				<React.Fragment key={i}>
+					<p>
+						<strong>{label}</strong>
+					</p>
+					{list}
+				</React.Fragment>
+			) : (
+				list
 			);
 		}
 		return (
@@ -125,6 +137,32 @@ export function RulePage({ rule, locale = "en" }) {
 			{rule.expectation ? (
 				<LabeledRichText label={t("rulePage.expectation", locale)} text={rule.expectation} locale={locale} />
 			) : null}
+			{rule.reports ? (
+				<div className="rule-reports">
+					<div lang={rule.reportsLang}>
+						<LabeledRichText
+							label={t("rulePage.reports", rule.reportsLang || locale)}
+							text={rule.reports}
+							locale={rule.reportsLang || locale}
+						/>
+					</div>
+					<p>
+						<Trans
+							k="rulePage.reportsNote"
+							locale={locale}
+							values={{
+								details: <code>data.details</code>,
+								reasonCode: <code>reasonCode</code>,
+								schema: (
+									<a href="/results-reports/output-schema/#occurrence">
+										{tOr("nav:/results-reports/output-schema/", locale, "Output schema")}
+									</a>
+								),
+							}}
+						/>
+					</p>
+				</div>
+			) : null}
 
 			<h2>{t("rulePage.examples", locale)}</h2>
 			{rule.examples.map((example, i) => (
@@ -138,7 +176,13 @@ export function RulePage({ rule, locale = "en" }) {
 					<CodeBlock
 						lang="html"
 						lines={example.html.split("\n")}
-						aria-label={t("rulePage.exampleCodeLabel", locale, { ruleId: rule.ruleId })}
+						// Numbered, and with the badge's own outcome word, so that the
+						// examples' regions don't share a name.
+						aria-label={t("rulePage.exampleCodeLabel", locale, {
+							n: i + 1,
+							outcome: RESULT_STATES[example.state].word,
+							ruleId: rule.ruleId,
+						})}
 					/>
 					<p>
 						<RuleText text={example.explanation} />

@@ -48,6 +48,7 @@ export function GettingStartedContent() {
 				</p>
 			</Callout>
 			<DataTable
+				label="どれを選ぶか"
 				rowKey="need"
 				columns={[
 					{ key: "need", label: "目的", wrap: true },

@@ -10,7 +10,7 @@ export interface DataTableColumn {
   mono?: boolean;
   /** Muted text colour for secondary columns. */
   muted?: boolean;
-  /** Allow the cell to wrap instead of truncating. */
+  /** No longer needed: every cell wraps. Accepted and ignored, so existing column lists keep working. */
   wrap?: boolean;
   /** Opt a column out of sorting. */
   sortable?: boolean;
@@ -33,7 +33,13 @@ export interface DataTableProps {
   onRowClick?: (key: string | number, row: any) => void;
   /** 36px rows — dense tool UI only. */
   dense?: boolean;
+  /** Keeps the header in view while the body scrolls. Needs a height cap on the wrapper. */
   stickyHeader?: boolean;
+  /** Accessible name of the scrolling wrapper, which makes it a focusable region. Defaults to `caption`; set it when there is no caption. */
+  label?: string;
+  /** Below this width the table scrolls sideways instead of squeezing its columns. Default "36rem". */
+  minWidth?: string;
+  className?: string;
   /** Empty-state sentence. Say what is missing, plainly. */
   empty?: React.ReactNode;
   /** Mono uppercase footer row, e.g. a total. */

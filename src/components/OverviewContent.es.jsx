@@ -51,6 +51,7 @@ export function OverviewContent() {
 				<code>@surea11y/core</code> por ti:
 			</p>
 			<DataTable
+				label="Qué paquete instalar"
 				rowKey="id"
 				columns={[
 					{ key: "want", label: "Quiero…", wrap: true },

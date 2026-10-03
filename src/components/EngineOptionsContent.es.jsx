@@ -377,6 +377,7 @@ export function EngineOptionsContent() {
 				<a href="/help/faq/">las preguntas frecuentes</a>.
 			</p>
 			<DataTable
+				label="Campos de runOnly"
 				rowKey="field"
 				columns={[
 					{ key: "field", label: "Campo", width: "22%" },
@@ -549,6 +550,7 @@ export function EngineOptionsContent() {
 				conjunto de etiquetas:
 			</p>
 			<DataTable
+				label="Perfiles de conformidad"
 				rowKey="profile"
 				columns={[
 					{ key: "profile", label: "Perfil", width: "20%" },
@@ -709,6 +711,7 @@ export function EngineOptionsContent() {
 				que no auditas es ruido en cada etiqueta SARIF, propiedad JUnit e informe.
 			</p>
 			<DataTable
+				label="Valores de mappings"
 				rowKey="value"
 				columns={[
 					{ key: "value", label: "Valor", width: "34%" },
@@ -825,6 +828,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<DataTable
+				label="Otras engineOptions"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Opción", width: "22%" },

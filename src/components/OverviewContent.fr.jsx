@@ -52,6 +52,7 @@ export function OverviewContent() {
 				tester actuelle ; chacun installe <code>@surea11y/core</code> pour vous :
 			</p>
 			<DataTable
+				label="Quel paquet installer"
 				rowKey="id"
 				columns={[
 					{ key: "want", label: "Je veux…", wrap: true },

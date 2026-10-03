@@ -59,6 +59,7 @@ export function RuleOrganizationContent() {
 				Beispiel:
 			</p>
 			<DataTable
+				label="Beispiele für Regel-IDs"
 				rowKey="id"
 				columns={[
 					{ key: "ruleId", label: "Regel-ID", mono: true },

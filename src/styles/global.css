@@ -38,15 +38,9 @@ a:focus-visible {
 	border: 0;
 }
 
-/* Rules catalog table (RulesTable). Its fixed columns take 38rem; this
-   keeps the Title column at 16rem or more, and the wrapper (overflow: auto,
-   set by DataTable) scrolls sideways when there isn't room, instead of the
-   Title column collapsing to nothing. */
-.rules-table table {
-	min-width: 54rem;
-}
-
-.rules-table:focus-visible {
+/* DataTable's wrapper scrolls sideways below the table's minimum width and
+   is then a focusable region; inline styles can't draw its focus ring. */
+.ds-data-table:focus-visible {
 	outline: 2px solid var(--focus-ring);
 	outline-offset: 2px;
 }

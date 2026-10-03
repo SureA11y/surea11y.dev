@@ -118,6 +118,30 @@ export function BaselineContent() {
 				périodiquement la baseline avec <code>--write-baseline</code> pour les nettoyer.
 			</p>
 
+			<h2 id="scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</h2>
+			<p>
+				Une entrée de baseline n’enregistre pas le viewport, et la correspondance ne s’en sert pas :
+				le même élément avec le même défaut correspond quelle que soit la largeur. Cela convient à
+				une page dont les constats ne dépendent pas de sa mise en page. Une règle qui dépend de la
+				mise en page, comme{" "}
+				<a href="/rules/text-spacing-content-loss/">
+					<code>text-spacing-content-loss</code>
+				</a>{" "}
+				ou{" "}
+				<a href="/rules/target-size-minimum/">
+					<code>target-size-minimum</code>
+				</a>
+				, peut échouer à une largeur et pas à une autre ; pour une page analysée à plusieurs
+				largeurs, gardez donc <strong>une baseline par largeur</strong> :{" "}
+				<code>a11y-baseline-390.json</code>, <code>a11y-baseline-1280.json</code>.
+			</p>
+			<p>
+				Une baseline unique écrite à partir de toutes les largeurs bloque toujours correctement,
+				puisqu’un constat n’est nouveau que si aucune entrée ne lui correspond. Mais chaque
+				exécution signale alors les constats des autres largeurs comme obsolètes, si bien que le
+				nombre d’entrées obsolètes ne vous dit plus ce qui a été corrigé.
+			</p>
+
 			<h2>Format du fichier</h2>
 			<CodeBlock
 				lang="json"

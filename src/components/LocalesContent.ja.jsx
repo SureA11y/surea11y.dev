@@ -83,6 +83,7 @@ export function LocalesContent() {
 
 			<h2>現在のロケール対応状況</h2>
 			<DataTable
+				label="ロケールの対応状況"
 				rowKey="id"
 				columns={[
 					{ key: "locale", label: "ロケール", width: "18%" },
@@ -215,6 +216,7 @@ export function LocalesContent() {
 				は次のいずれかです。
 			</p>
 			<DataTable
+				label="locale.reasonの値"
 				rowKey="id"
 				columns={[
 					{ key: "reason", label: "reason", width: "26%" },
@@ -242,6 +244,7 @@ export function LocalesContent() {
 			<h2>辞書の置き場所</h2>
 			<p>使える言語は、エンジンの読み込み方によって決まります。</p>
 			<DataTable
+				label="辞書の出どころ"
 				rowKey="id"
 				columns={[
 					{ key: "how", label: "読み込み方", width: "36%" },

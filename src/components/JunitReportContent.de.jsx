@@ -141,6 +141,7 @@ export function JunitReportContent() {
 					'      <property name="schemaVersion" value="1.0.0"/>',
 					'      <property name="wcagVersion" value="2.2"/>',
 					'      <property name="profile" value="wcag22-aa"/>',
+					'      <property name="layout" value="false"/>',
 					'      <property name="locale" value="en"/>',
 					'      <property name="url" value="https://example.test/"/>',
 					"    </properties>",
@@ -170,9 +171,23 @@ export function JunitReportContent() {
 				</li>
 				<li>
 					<code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
-					<code>profile</code>, <code>optInRules</code>, <code>locale</code> und <code>url</code> des
-					Laufs werden als Eigenschaften in jeder Suite wiederholt, jeweils nur, wenn das Ergebnis sie
-					enthält.
+					<code>profile</code>, <code>optInRules</code>, die Darstellungsbedingungen aus{" "}
+					<a href="/results-reports/output-schema/">
+						<code>engine.environment</code>
+					</a>{" "}
+					(<code>layout</code> und in einem Browser <code>viewport</code> als <code>1280x720</code>,{" "}
+					<code>devicePixelRatio</code>, <code>colorScheme</code> und <code>fonts</code>),{" "}
+					<code>locale</code> und <code>url</code> des Laufs werden als Eigenschaften in jeder Suite
+					wiederholt, jeweils nur, wenn das Ergebnis sie enthält. Ein Fehlschlag, der je nach
+					Viewport-Breite auftaucht oder verschwindet, lässt sich so auf die Breite zurückführen, die
+					der Lauf verwendet hat. Das Beispiel oben ist ein jsdom-Scan, der kein Layout hat.
+				</li>
+				<li>
+					Eine bei mehreren Viewport-Breiten gescannte Seite ergibt bei jeder Breite dieselben Namen
+					für Suites und Tests, und eine Testansicht in der CI führt sie womöglich zusammen. Schreiben
+					Sie eine Datei pro Breite, und benennen oder gruppieren Sie die Dateien in den
+					Berichtseinstellungen der CI nach Breite; die Eigenschaft <code>viewport</code> hält fest,
+					welche Breite eine Datei beschreibt.
 				</li>
 				<li>
 					Suites sind nach Kriterium numerisch sortiert (1.4.3 vor 1.4.10), Testcases nach Regel-id.
@@ -186,6 +201,7 @@ export function JunitReportContent() {
 
 			<h2>Ergebnisse</h2>
 			<DataTable
+				label="Regelergebnisse in JUnit"
 				rowKey="id"
 				columns={[
 					{ key: "outcome", label: "Ergebnis der Regel", width: "18%" },
@@ -203,6 +219,7 @@ export function JunitReportContent() {
 
 			<h2>Optionen</h2>
 			<DataTable
+				label="Optionen des JUnit-Berichts"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Option", width: "22%" },

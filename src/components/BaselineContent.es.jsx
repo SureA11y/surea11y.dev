@@ -117,6 +117,29 @@ export function BaselineContent() {
 				periódicamente para limpiarlas.
 			</p>
 
+			<h2 id="scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</h2>
+			<p>
+				Una entrada del baseline no registra el viewport, y la comparación no lo usa: el mismo
+				elemento con el mismo defecto coincide con cualquier ancho. Eso encaja con una página cuyos
+				hallazgos no dependen de su diseño. Una regla que depende del diseño, como{" "}
+				<a href="/rules/text-spacing-content-loss/">
+					<code>text-spacing-content-loss</code>
+				</a>{" "}
+				o{" "}
+				<a href="/rules/target-size-minimum/">
+					<code>target-size-minimum</code>
+				</a>
+				, puede fallar con un ancho y no con otro, así que para una página analizada con varios
+				anchos, mantén <strong>un baseline por ancho</strong>: <code>a11y-baseline-390.json</code>,{" "}
+				<code>a11y-baseline-1280.json</code>.
+			</p>
+			<p>
+				Un único baseline escrito a partir de todos los anchos sigue bloqueando correctamente, ya
+				que un hallazgo solo es nuevo cuando ninguna entrada coincide con él. Pero entonces cada
+				ejecución informa de los hallazgos de los demás anchos como obsoletos, así que el recuento
+				de obsoletos deja de decirte qué se corrigió.
+			</p>
+
 			<h2>Formato del archivo</h2>
 			<CodeBlock
 				lang="json"

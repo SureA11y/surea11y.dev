@@ -1,0 +1,20 @@
+# Each new @surea11y release gets a PR, and the PR's CI scans the whole site
+# with it before it's adopted: the site doubles as a real-world test of core.
+# Other npm dependencies are updated by hand; too noisy for a site this size.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    allow:
+      - dependency-name: "@surea11y/*"
+    groups:
+      surea11y:
+        patterns:
+          - "@surea11y/*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

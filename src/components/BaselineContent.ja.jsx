@@ -114,6 +114,14 @@ export function BaselineContent() {
 				でベースラインを再生成して整理してください。
 			</p>
 
+			<h2 id="scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</h2>
+			<p>
+				ベースラインのエントリーはビューポートを記録せず、照合にも使いません。同じ要素の同じ欠陥は、どの幅でも一致します。これは、検出結果がレイアウトに左右されないページに適しています。<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>や<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>のようにレイアウトに依存するルールは、ある幅では<code>fail</code>になり、別の幅ではならないことがあります。そのため、複数の幅でスキャンするページでは、<strong>幅ごとに1つのベースライン</strong>を用意してください（<code>a11y-baseline-390.json</code>、<code>a11y-baseline-1280.json</code>）。
+			</p>
+			<p>
+				すべての幅から書き出した1つのベースラインでも、ゲートは正しく機能します。検出結果が新規になるのは、どのエントリーにも一致しない場合だけだからです。ただしその場合、各実行がほかの幅の検出結果をstale（古い）として報告するため、staleの件数から何が修正されたかを読み取れなくなります。
+			</p>
+
 			<h2>ファイル形式</h2>
 			<CodeBlock
 				lang="json"

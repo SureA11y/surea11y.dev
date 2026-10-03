@@ -7,6 +7,7 @@ type Rule = {
 	description: string;
 	applicability: string;
 	expectation: string;
+	reports?: string;
 	examples: Example[];
 	[key: string]: unknown;
 };
@@ -15,6 +16,7 @@ type RuleOverlay = {
 	description: string;
 	applicability: string;
 	expectation: string;
+	reports?: string;
 	examples: { state: string; explanation: string }[];
 	deprecationReason?: string;
 };
@@ -45,6 +47,10 @@ export function localizeRule<T extends Rule>(rule: T, locale: Locale): T {
 		description: t.description,
 		applicability: t.applicability,
 		expectation: t.expectation,
+		// Field lists are added to the English first; until one is translated,
+		// the page shows the English list, marked as English.
+		reports: t.reports ?? rule.reports,
+		reportsLang: rule.reports && !t.reports ? DEFAULT_LOCALE : undefined,
 		examples: rule.examples.map((example, i) => ({
 			...example,
 			explanation: t.examples[i]?.explanation ?? example.explanation,

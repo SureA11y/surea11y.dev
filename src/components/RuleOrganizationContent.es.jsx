@@ -57,6 +57,7 @@ export function RuleOrganizationContent() {
 				(WCAG 1.1.1) es el ejemplo más claro:
 			</p>
 			<DataTable
+				label="Ejemplos de ID de regla"
 				rowKey="id"
 				columns={[
 					{ key: "ruleId", label: "ID de regla", mono: true },

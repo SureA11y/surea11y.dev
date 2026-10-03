@@ -148,6 +148,7 @@ export function EarlReportContent() {
 
 			<h2>Resultados</h2>
 			<DataTable
+				label="Resultados del motor en EARL"
 				rowKey="id"
 				columns={[
 					{ key: "engine", label: "Motor", width: "30%" },
@@ -192,7 +193,11 @@ export function EarlReportContent() {
 				<strong>
 					Cuando dos resultados hacen una aserción sobre la misma regla para la misma URL, gana el
 					último.
-				</strong>
+				</strong>{" "}
+				Eso incluye la misma página analizada con dos anchos de viewport: EARL no tiene ningún
+				término para las condiciones en que se renderizó una página, así que un informe construido a
+				partir de varios anchos conserva solo la aserción del último ancho para cada regla. Genera
+				un informe por ancho si los anchos importan.
 			</p>
 			<p>
 				La salida es determinista: los sujetos se ordenan por fuente, las aserciones por ID de regla,
@@ -202,6 +207,7 @@ export function EarlReportContent() {
 
 			<h2>Opciones</h2>
 			<DataTable
+				label="Opciones del informe EARL"
 				rowKey="id"
 				columns={[
 					{ key: "option", label: "Opción", width: "22%" },

@@ -1,5 +1,7 @@
 # build output
 dist/
+# accessibility scan output (npm run check:a11y)
+a11y-results/
 # generated types
 .astro/
 

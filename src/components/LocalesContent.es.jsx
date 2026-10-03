@@ -84,6 +84,7 @@ export function LocalesContent() {
 
 			<h2>Cobertura actual de configuración regional</h2>
 			<DataTable
+				label="Cobertura de configuraciones regionales"
 				rowKey="id"
 				columns={[
 					{ key: "locale", label: "Configuración regional", width: "18%" },
@@ -186,6 +187,7 @@ export function LocalesContent() {
 				diccionario que se usó, y <code>reason</code> es uno de los siguientes:
 			</p>
 			<DataTable
+				label="Valores de locale.reason"
 				rowKey="id"
 				columns={[
 					{ key: "reason", label: "reason", width: "26%" },
@@ -212,6 +214,7 @@ export function LocalesContent() {
 			<h2>Dónde viven los diccionarios</h2>
 			<p>Qué idiomas están disponibles depende de cómo cargues el motor.</p>
 			<DataTable
+				label="De dónde proceden los diccionarios"
 				rowKey="id"
 				columns={[
 					{ key: "how", label: "Cómo lo cargas", width: "36%" },
