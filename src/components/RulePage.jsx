@@ -164,6 +164,27 @@ export function RulePage({ rule, locale = "en" }) {
 				</div>
 			) : null}
 
+			{rule.margin ? (
+				<p className="rule-margin">
+					<strong>{t("rulePage.margin", locale)}</strong>
+					{wordSeparator(locale)}
+					<Trans
+						k={rule.margin.limit === "max" ? "rulePage.marginBody.max" : "rulePage.marginBody.min"}
+						locale={locale}
+						values={{
+							measure: <code>{rule.margin.measure}</code>,
+							unit: t(rule.margin.unit === "px" ? "rulePage.marginUnit.px" : "rulePage.marginUnit.ratio", locale),
+							margin: <code>margin</code>,
+							schema: (
+								<a href="/results-reports/output-schema/#margin">
+									{tOr("nav:/results-reports/output-schema/", locale, "Output schema")}
+								</a>
+							),
+						}}
+					/>
+				</p>
+			) : null}
+
 			<h2>{t("rulePage.examples", locale)}</h2>
 			{rule.examples.map((example, i) => (
 				<div className="example" key={i}>

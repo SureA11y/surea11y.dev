@@ -79,6 +79,28 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>
+						Ein Scan bei geöffnetem modalem Dialog sieht den Dialog, nicht die Seite.
+					</strong>{" "}
+					Ein mit <code>showModal()</code> geöffnetes <code>&lt;dialog&gt;</code> (oder ein
+					geöffnetes <code>&lt;dialog aria-modal="true"&gt;</code>) macht den Rest des Dokuments
+					inert, und Browser geben assistiven Technologien nur den Dialog weiter. Die Engine folgt
+					dem: Inhalt hinter dem Dialog bleibt bei allen Regeln außen vor, wie anderer verborgener
+					Inhalt auch, und die Regeln zur Struktur der Seite selbst (
+					<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
+					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
+					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
+					<a href="/rules/region/"><code>region</code></a>) melden <code>notApplicable</code>, da
+					der Scan diese Struktur nicht sehen kann. Scannen Sie die Seite bei geschlossenem Dialog
+					erneut, um zu beurteilen, was dahinter liegt. Zwei Grenzen: Ein modales{" "}
+					<code>&lt;dialog&gt;</code> in einem Shadow Root wird nicht erkannt, und ein eigenes
+					Modal aus einem Element mit <code>role="dialog"</code> und <code>inert</code> oder{" "}
+					<code>aria-hidden</code> auf dem Rest der Seite wird nur über diese Attribute behandelt,
+					die die Seite verbergen, den Strukturregeln aber nicht mitteilen, dass ein Dialog offen
+					ist. Verhält sich wie axe-core; IBM Equal Access und Siteimprove Alfa beurteilen die Seite
+					hinter dem Dialog, als wäre nichts geöffnet.
+				</li>
+				<li>
+					<strong>
 						<code>&lt;dialog&gt;</code> und andere Elemente, die das Standard-Stylesheet des
 						Browsers ausblendet
 					</strong>{" "}
@@ -192,7 +214,51 @@ export function KnownLimitationsContent() {
 					wurde (wie weit Text über den Rand hinausging, wie groß ein Ziel ist und wie nah sein
 					Nachbar liegt), sodass sich ein Befund, der zwischen Läufen abweicht, auf die Bedingungen
 					zurückführen lässt. Scannen Sie bei jeder Breite, die Ihnen wichtig ist, und warten Sie vor
-					dem Scan auf <code>document.fonts.ready</code>.
+					dem Scan, bis die Seite fertig geladen ist: <code>waitForPageReady()</code> wartet auf das
+					load-Ereignis, die Webfonts und die Bilder (siehe{" "}
+					<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, wie es vor einem Scan aufgerufen wird), und das Ergebnis hält in{" "}
+					<code>engine.environment</code> fest, ob noch Schriften oder Bilder geladen wurden.
+				</li>
+				<li>
+					<strong>
+						Die Kontrastregeln messen Text gegen die Hintergründe seiner Vorfahren und prüfen im
+						Browser, ob dort noch etwas anderes gezeichnet wird.
+					</strong>{" "}
+					Text, der über einem Geschwisterelement, über einem <code>&lt;img&gt;</code>-Headerbild,
+					über einem <code>::before</code>-Overlay positioniert oder mit einem negativen Margin über
+					einen anderen Block gezogen ist, liegt auf einer Fläche, die keinem seiner Vorfahren
+					gehört. Im Browser misst die Engine die Zeilenboxen des Textes und sucht nach Elementen,
+					die eine Hintergrundfarbe, ein Hintergrundbild oder ersetzten Inhalt (<code>img</code>,{" "}
+					<code>video</code>, <code>canvas</code>, <code>svg</code>, <code>iframe</code>) zeichnen
+					und mindestens etwa eine Glyphe einer Zeile abdecken, sowie nach einem positionierten{" "}
+					<code>::before</code> oder <code>::after</code> mit einer Farbe oder einem Verlauf.
+					Findet sie eins, fragt <a href="/rules/contrast-computable/"><code>contrast-computable</code></a>{" "}
+					zu diesem Text mit dem <code>reasonCode</code> <code>BACKGROUND_OVERLAP</code> nach, und
+					die Regeln, die ein Kontrastverhältnis berechnen, lassen ihn aus. Sie ermittelt nicht,
+					welche von zwei überlappenden Boxen oben gezeichnet wird, und berechnet daher kein
+					Verhältnis gegen die gefundene Fläche. Drei Grenzen halten das Rauschen gering, und jede
+					kann einen Fall übersehen: Es zählt nur, was innerhalb des nächsten Vorfahren mit
+					deckendem Hintergrund gezeichnet wird (eine weiße Karte über einem Headerbild verdeckt das
+					Bild), feste und sticky Boxen bleiben außen vor (ein Cookie-Banner oder Header verdeckt
+					Text, statt hinter ihm zu liegen), und eine einfarbige Fläche in der Farbe des bereits
+					gemessenen Hintergrunds wird ignoriert. Unter jsdom gibt es kein Layout, also wird nichts
+					gefunden, und Text wird nur gegen seine Vorfahren gemessen.
+				</li>
+				<li>
+					<strong>Kontrast wird in sRGB berechnet.</strong> Farben in <code>oklch()</code>,{" "}
+					<code>oklab()</code>, <code>lab()</code>, <code>lch()</code> oder <code>color()</code>{" "}
+					(auch die berechnete Form von <code>color-mix()</code> und relativen Farben) werden nach
+					sRGB umgerechnet, wie ein Standardbildschirm sie zeigt; eine Farbe außerhalb von sRGB,
+					etwa ein gesättigtes <code>display-p3</code>-Rot, wird auf dessen Rand beschnitten, so
+					wie Chromium sie auf einem sRGB-Bildschirm zeichnet. Ein Wide-Gamut-Bildschirm kann diese
+					Farbe gesättigter zeigen, als das Verhältnis annimmt. Eine Hintergrundfarbe, die die
+					Engine nicht umrechnen kann, ein <code>color()</code> in einem ihr unbekannten Farbraum,
+					wird nicht als transparent behandelt: <code>contrast-computable</code> fragt zu diesem
+					Text mit dem <code>reasonCode</code> <code>BACKGROUND_UNPARSABLE</code> nach, und die
+					anderen Kontrastregeln lassen ihn aus.
 				</li>
 			</ul>
 

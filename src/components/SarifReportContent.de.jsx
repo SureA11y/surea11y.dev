@@ -11,7 +11,7 @@ const sarifLevelRows = [
 
 const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
-	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code></> },
+	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code>. Ein Vorkommen ohne Zusammenfassung (etwa das einer eigenen Regel) verwendet den Titel der Regel oder ihre ID, da GitHub ein Ergebnis mit leerem Text ablehnt.</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>Das gescannte Ziel; siehe <a href="#sarif-locations">Fundorte</a> weiter unten.</> },
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, sofern vorhanden.</> },
 	{
@@ -44,6 +44,7 @@ const sarifFieldRows = [
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <><code>severity</code>/<code>confidence</code> des Ergebnisses selbst, dazu derselbe <code>reasonCode</code> und dasselbe <code>html</code>-Snippet, auf denen der Fingerprint oben beruht. Rein informativ, nicht Teil des SARIF-Schemas selbst.</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code> und ein <code>wcag-&lt;SC&gt;</code>-Tag pro WCAG-Erfolgskriterium in <code>meta.normativeMappings</code>. Einträge zu Understanding-Dokumenten erhalten kein Tag. Jede EN-301-549-Klausel, die das Ergebnis trägt (nur wenn der Scan sie angefordert hat, siehe <a href="/configuration/engine-options/#other-standards-mappings">Andere Normen</a>), erhält ein Tag <code>en301549-&lt;Klausel&gt;</code>, z. B. <code>en301549-9.1.1.1</code>: Klauselnummern sind in jeder Version, die sie enthält, gleich, daher trägt das Tag keine Version.</> },
+	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>Die Option <code>toolVersion</code>, falls angegeben (ein Tool, das die Engine einbettet, übergibt seine eigene); sonst <code>engine.version</code>, das Engine-Release, das das Ergebnis erzeugt hat. <code>"0.0.0"</code> nur bei einem Ergebnis ohne diesen Wert, aus einem Release vor 1.10.0.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>Die Option <code>category</code>, mit angehängtem <code>/</code>, falls sie keinen hat (GitHub liest alles bis zum letzten Schrägstrich als Kategorie). Fehlt, wenn keine Kategorie angegeben ist. Siehe <a href="#scanning-at-several-viewport-widths">Scannen bei mehreren Viewport-Breiten</a>.</> },
 	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> und <code>environment</code> aus der <code>engine</code> des Ergebnisses: das Konformitätsziel des Laufs, damit ein Dashboard einen WCAG-2.1-Lauf von einem 2.2-Lauf unterscheiden kann, die Tags der Opt-in-Regeln, die er über dieses Ziel hinaus hinzugefügt hat, falls vorhanden, und die Bedingungen, unter denen die Seite dargestellt wurde (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code>; siehe <a href="/results-reports/output-schema/">Ausgabeschema</a>). Fehlt bei Ergebnissen von Engines, die diese Felder noch nicht kennen.</> },
 ];
@@ -130,7 +131,7 @@ export function SarifReportContent() {
 				<code>runs[0].tool.driver.rules</code> aufgeführt, wobei{" "}
 				<code>defaultConfiguration.level</code> aus dem <code>type</code> der Regel abgeleitet
 				wird: <code>automatic</code> (kann <code>fail</code> melden) → <code>error</code>,{" "}
-				<code>manual</code> (begrenzt auf <code>cantTell</code>) → <code>warning</code>.
+				<code>manual</code> (nie <code>fail</code>) → <code>warning</code>.
 			</p>
 
 			<h2>Feldzuordnung</h2>
@@ -152,9 +153,13 @@ export function SarifReportContent() {
 			</p>
 			<ul>
 				<li>
-					<strong>Scans lokaler Dateien</strong>: ein Pfad relativ zum aktuellen Arbeitsverzeichnis
-					(mit Schrägstrichen). Entspricht er einer echten Datei in Ihrem Repository, kann{" "}
-					<span lang="en">GitHub Code Scanning</span> den Befund als Inline-Annotation anzeigen.
+					<strong>Scans lokaler Dateien</strong>: Eine Datei im aktuellen Arbeitsverzeichnis wird zu
+					einem Pfad relativ dazu, mit Schrägstrichen und prozentkodierten Segmenten (
+					<code>build%20out/index.html</code>). Entspricht er einer echten Datei in Ihrem Repository,
+					kann <span lang="en">GitHub Code Scanning</span> den Befund als Inline-Annotation anzeigen.
+					Eine Datei außerhalb des Arbeitsverzeichnisses wird zu einer absoluten{" "}
+					<code>file:</code>-URL, nicht zu einem relativen Pfad, der mit <code>../</code> aus dem
+					Repository hinausführt und den ein Consumer nicht auflösen könnte.
 				</li>
 				<li>
 					<strong>URL-Scans</strong>: die gescannte URL selbst. <span lang="en">GitHub Code Scanning</span> listet den

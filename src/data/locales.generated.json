@@ -1,11 +1,11 @@
 {
-  "totalKeys": 844,
+  "totalKeys": 865,
   "locales": [
     {
       "id": "en",
       "name": "English",
       "file": "src/i18n/en.json",
-      "keys": 844,
+      "keys": 865,
       "stillEnglish": null,
       "missing": 0,
       "orphaned": 0,
@@ -15,7 +15,7 @@
       "id": "de",
       "name": "German",
       "file": "src/i18n/de.json",
-      "keys": 844,
+      "keys": 865,
       "stillEnglish": 0,
       "missing": 0,
       "orphaned": 0,
@@ -25,8 +25,8 @@
       "id": "es",
       "name": "Spanish",
       "file": "src/i18n/es.json",
-      "keys": 844,
-      "stillEnglish": 2,
+      "keys": 865,
+      "stillEnglish": 0,
       "missing": 0,
       "orphaned": 0,
       "canonical": false
@@ -35,8 +35,8 @@
       "id": "fr",
       "name": "French",
       "file": "src/i18n/fr.json",
-      "keys": 844,
-      "stillEnglish": 3,
+      "keys": 865,
+      "stillEnglish": 0,
       "missing": 0,
       "orphaned": 0,
       "canonical": false
@@ -45,7 +45,7 @@
       "id": "ja",
       "name": "Japanese",
       "file": "src/i18n/ja.json",
-      "keys": 844,
+      "keys": 865,
       "stillEnglish": 0,
       "missing": 0,
       "orphaned": 0,

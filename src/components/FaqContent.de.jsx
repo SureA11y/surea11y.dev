@@ -7,19 +7,80 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2>„Ich habe <code>runOnly: ['some-rule-id']</code> übergeben, aber trotzdem liefen alle Regeln“</h2>
+				<h2 id="runonly-threw">
+					„<code>runOnly</code> hat einen Fehler geworfen: <span lang="en">no rule or tag named …</span>,
+					oder <span lang="en">either rule ids or tags</span>“
+				</h2>
 				<p>
-					<strong><code>runOnly</code> muss ein Objekt sein, kein nacktes Array.</strong>{" "}
-					<code>runOnly: ['img-alt-present']</code> wird stillschweigend ignoriert (die Engine
-					fällt auf „alles ausführen“ zurück), weil diese Form keines der Felder enthält, die die
-					Engine tatsächlich prüft (<code>includeRuleIds</code>, <code>tags</code> usw.). Zu einem
-					nackten Array greift man schnell, deshalb lohnt es sich, das zuerst zu prüfen.
+					Seit 1.10.0 wird ein <code>runOnly</code>, das als nacktes Array oder als String übergeben
+					wird, als Regel-IDs oder als Tags gelesen, so wie axe-core es liest (siehe{" "}
+					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>). In zwei
+					Fällen wirft es einen Fehler:
 				</p>
-				<p>Lösung:</p>
-				<CodeBlock lang="js" lines={["runOnly: { includeRuleIds: ['img-alt-present'] }"]} />
+				<ul>
+					<li>
+						<strong>Ein Wert, der weder eine Regel noch einen Tag benennt</strong>, meist ein
+						Tippfehler: <code>runOnly: ['img-alt-presnt']</code>. Prüfen Sie die ID gegen{" "}
+						<code>getChecksCatalog()</code>.
+					</li>
+					<li>
+						<strong>Regel-IDs und Tags in einem Array</strong>:{" "}
+						<code>runOnly: ['img-alt-present', 'wcag2a']</code>. Verwenden Sie die Objektform, um
+						sie zu kombinieren:
+					</li>
+				</ul>
+				<CodeBlock
+					lang="js"
+					lines={[
+						"runOnly: {",
+						"  includeRuleIds: ['img-alt-present'],",
+						"  tags: ['wcag2a'],",
+						"  includeMode: 'or',",
+						"}",
+					]}
+				/>
+				<p>Vor 1.10.0 wurde ein nacktes Array ignoriert, und alle Regeln liefen.</p>
 				<p>
-					Die vollständige Form finden Sie in <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>.
+					Die Objektform, <code>{"{ includeRuleIds }"}</code>, <code>{"{ tags }"}</code> oder{" "}
+					<code>{"{ type: 'tag', values }"}</code>, sowie <code>engineOptions.rules.include</code> /{" "}
+					<code>.tags.include</code> werfen ebenfalls einen Fehler, mit{" "}
+					<code>code: 'INVALID_RUN_ONLY'</code>, wenn kein Wert in der Liste eine Regel oder einen
+					Tag benennt (<code>runOnly.tags: no tag named "wcag2.2aa".</code>). Früher liefen dann gar
+					keine Regeln, was sich wie ein Scan ohne Befunde liest. Ein einzelner unbekannter Wert
+					neben bekannten, oder in einer Ausschlussliste, erzeugt nur ein{" "}
+					<code>console.warn</code>.
 				</p>
+			</article>
+
+			<article>
+				<h2 id="contextselector-matched-nothing">
+					„Mein eingegrenzter Scan meldet alles als <code>notApplicable</code>“ oder „
+					<code>contextSelector</code> hat einen Fehler geworfen:{" "}
+					<span lang="en">… is not a valid CSS selector</span>“
+				</h2>
+				<p>
+					Seit 1.10.0 scannt ein <code>contextSelector</code>, der auf kein Element passt, nichts,
+					und einer, den der Browser nicht parsen kann, wirft einen Fehler (siehe{" "}
+					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>).
+				</p>
+				<ul>
+					<li>
+						<strong>Alles ist <code>notApplicable</code></strong>: Sehen Sie sich{" "}
+						<code>result.contextMatch</code> an. <code>elementCount: 0</code> bedeutet, dass der
+						Selektor auf nichts gepasst hat, und <code>unmatchedSelectors</code> nennt ihn. Prüfen
+						Sie ihn auf Tippfehler, oder ob das Element beim Scan schon auf der Seite ist (etwa
+						Inhalt, den ein Skript erst nach dem Laden rendert).
+					</li>
+					<li>
+						<strong>
+							Der Scan hat mit <code>code: 'INVALID_CONTEXT_SELECTOR'</code> einen Fehler geworfen
+						</strong>
+						: Der Selektor in der Meldung und in der Eigenschaft <code>selector</code> des Fehlers
+						ist kein gültiges CSS, zum Beispiel <code>'#main['</code> oder ein{" "}
+						<code>&gt;&gt;&gt;</code>-Kombinator.
+					</li>
+				</ul>
+				<p>Vor 1.10.0 wurde in beiden Fällen stattdessen die ganze Seite gescannt.</p>
 			</article>
 
 			<article>

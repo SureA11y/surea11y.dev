@@ -7,20 +7,79 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2>« J’ai transmis <code>runOnly: ['some-rule-id']</code> mais toutes les règles ont quand même été exécutées »</h2>
+				<h2 id="runonly-threw">
+					« <code>runOnly</code> a levé une erreur : <span lang="en">no rule or tag named …</span>,
+					ou <span lang="en">either rule ids or tags</span> »
+				</h2>
 				<p>
-					<strong><code>runOnly</code> doit être un objet, pas un simple tableau.</strong>{" "}
-					<code>runOnly: ['img-alt-present']</code> est ignoré sans avertissement (le moteur
-					revient à « tout exécuter »), parce que cette forme ne contient aucun des champs que le
-					moteur vérifie réellement (<code>includeRuleIds</code>, <code>tags</code>, etc.). On a
-					facilement le réflexe d’écrire un simple tableau, c’est donc la première chose à
-					vérifier.
+					Depuis la version 1.10.0, un <code>runOnly</code> passé sous forme de simple tableau ou
+					de chaîne est lu comme des identifiants de règles ou comme des tags, comme le fait
+					axe-core (voir <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>).
+					Il lève une erreur dans deux cas :
 				</p>
-				<p>Correction :</p>
-				<CodeBlock lang="js" lines={["runOnly: { includeRuleIds: ['img-alt-present'] }"]} />
+				<ul>
+					<li>
+						<strong>Une valeur qui ne désigne aucune règle ni aucun tag</strong>, en général une
+						faute de frappe : <code>runOnly: ['img-alt-presnt']</code>. Vérifiez l’identifiant
+						avec <code>getChecksCatalog()</code>.
+					</li>
+					<li>
+						<strong>Des identifiants de règles et des tags dans un même tableau</strong> :{" "}
+						<code>runOnly: ['img-alt-present', 'wcag2a']</code>. Utilisez la forme objet pour les
+						combiner :
+					</li>
+				</ul>
+				<CodeBlock
+					lang="js"
+					lines={[
+						"runOnly: {",
+						"  includeRuleIds: ['img-alt-present'],",
+						"  tags: ['wcag2a'],",
+						"  includeMode: 'or',",
+						"}",
+					]}
+				/>
+				<p>Avant la version 1.10.0, un simple tableau était ignoré et toutes les règles s’exécutaient.</p>
 				<p>
-					Voir <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a> pour la structure complète.
+					La forme objet, <code>{"{ includeRuleIds }"}</code>, <code>{"{ tags }"}</code> ou{" "}
+					<code>{"{ type: 'tag', values }"}</code>, ainsi que{" "}
+					<code>engineOptions.rules.include</code> / <code>.tags.include</code>, lèvent aussi une
+					erreur, avec <code>code: 'INVALID_RUN_ONLY'</code>, quand aucune valeur de la liste ne
+					désigne une règle ou un tag (<code>runOnly.tags: no tag named "wcag2.2aa".</code>).
+					Auparavant, elles n’exécutaient aucune règle, ce qui se lit comme une analyse sans
+					constat. Une seule valeur inconnue à côté de valeurs connues, ou dans une liste
+					d’exclusion, ne produit qu’un <code>console.warn</code>.
 				</p>
+			</article>
+
+			<article>
+				<h2 id="contextselector-matched-nothing">
+					« Mon analyse ciblée renvoie <code>notApplicable</code> partout », ou « <code>contextSelector</code>{" "}
+					a levé une erreur :{" "}
+					<span lang="en">… is not a valid CSS selector</span> »
+				</h2>
+				<p>
+					Depuis la version 1.10.0, un <code>contextSelector</code> qui ne correspond à aucun
+					élément n’analyse rien, et un sélecteur que le navigateur ne sait pas interpréter lève
+					une erreur (voir <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>).
+				</p>
+				<ul>
+					<li>
+						<strong>Tout est <code>notApplicable</code></strong> : regardez{" "}
+						<code>result.contextMatch</code>. <code>elementCount: 0</code> signifie que le
+						sélecteur n’a rien trouvé, et <code>unmatchedSelectors</code> le nomme. Vérifiez qu’il
+						ne contient pas de faute de frappe, ou que l’élément est déjà sur la page au moment de
+						l’analyse (un contenu rendu par un script après le chargement, par exemple).
+					</li>
+					<li>
+						<strong>
+							L’analyse a levé une erreur avec <code>code: 'INVALID_CONTEXT_SELECTOR'</code>
+						</strong> : le sélecteur cité dans le message, et dans la propriété <code>selector</code> de
+						l’erreur, n’est pas du CSS valide, par exemple <code>'#main['</code> ou un combinateur{" "}
+						<code>&gt;&gt;&gt;</code>.
+					</li>
+				</ul>
+				<p>Avant la version 1.10.0, dans les deux cas, toute la page était analysée.</p>
 			</article>
 
 			<article>

@@ -87,7 +87,9 @@ const optionRows = [
 				carry. Keys you omit fall back normally, so a partial override is fine. This is how the
 				standalone browser bundle receives a locale side file, and it is the only way to get a
 				dictionary into a page context, since the in-page runner is serialized and cannot read
-				files. See <a href="/configuration/locales/">Locales</a>.
+				files. It is not echoed back on each result's <code>engineOptions</code>, unlike the
+				other options; <code>engine.locale</code> reports the dictionary used. See{" "}
+				<a href="/configuration/locales/">Locales</a>.
 			</>
 		),
 	},
@@ -100,7 +102,10 @@ const optionRows = [
 				mechanisms such as <code>display:none</code>, <code>[hidden]</code>, closed{" "}
 				<code>&lt;details&gt;</code>, and hidden rendering-only host elements (with descendants
 				excluded too). Set <code>true</code> to include those hidden/collapsed subtrees in
-				evaluation (legacy/static-markup behavior).
+				evaluation (legacy/static-markup behavior). It widens what the shared queries return;
+				most rules then judge only what is in the accessibility tree, since a hidden element has
+				no name or role to check, so for them it changes nothing. It matters for rules about
+				markup itself, such as a broken ID reference.
 			</>
 		),
 	},
@@ -198,7 +203,15 @@ const optionRows = [
 				<code>visibility</code>, <code>opacity</code>, ancestor-hiding, etc.{" "}
 				<code>'styleAndGeometry'</code>: adds real layout checks (
 				<code>getClientRects()</code>/<code>getBoundingClientRect()</code>) on top of that — text
-				with no client rects, or zero width/height, is excluded too. Reach for{" "}
+				with no client rects, or zero width/height, is excluded too, and so is text entirely
+				above or left of the page, where no scrolling reaches (the <code>left: -9999px</code>{" "}
+				technique), and text an ancestor with <code>overflow: hidden</code> or{" "}
+				<code>clip</code> cuts off completely (<code>height: 0; overflow: hidden</code>, a
+				carousel slide out of view). A box that scrolls (<code>auto</code>,{" "}
+				<code>scroll</code>) does not exclude its text, since a reader can reach it. In both
+				modes, text with a font size of 0 or a fully transparent color is excluded, since nothing
+				is drawn; transparent text that lets a background show through its glyphs (
+				<code>background-clip: text</code>) is not, and is asked about instead. Reach for{" "}
 				<code>'styleAndGeometry'</code> when running under a real browser/Playwright-Puppeteer (
 				<code>runa11yCoreInPage</code>) and you want contrast findings to reflect actual rendered
 				layout rather than just computed style; under plain jsdom (<code>runDomRulesInPage</code>
@@ -346,10 +359,14 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong><code>runOnly</code> must be this object shape, not a bare array.</strong>{" "}
-				<code>runOnly: ['img-alt-present']</code> (a plain array) is{" "}
-				<strong>silently ignored</strong>; the engine runs every rule instead. This is the single
-				most common integration mistake — see <a href="/help/faq/">the FAQ</a>.
+				A bare array or string works as shorthand, the way axe-core takes it:{" "}
+				<code>runOnly: ['img-alt-present', 'button-name-present']</code> runs those rules (a
+				composite id brings in its rules), and <code>runOnly: ['wcag2a', 'wcag2aa']</code> is the
+				same as <code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>. An array can't mix rule ids and
+				tags, and every value has to name a rule (built-in, composite or one of{" "}
+				<code>engineOptions.customRules</code>) or a tag: anything else throws, so a typo can't
+				quietly run every rule or none. Use the object form to combine ids and tags or to
+				exclude. Before 1.10.0 a bare array was ignored and every rule ran.
 			</p>
 			<DataTable
 				label="runOnly fields"
@@ -391,14 +408,33 @@ export function EngineOptionsContent() {
 				equivalent.
 			</p>
 			<p>
+				Names are checked, here and in <code>engineOptions.rules</code>/<code>.tags</code> below.
+				An include list (<code>includeRuleIds</code>, <code>tags</code>, the legacy{" "}
+				<code>values</code>, <code>rules.include</code>, <code>tags.include</code>) in which no
+				value names a rule or a tag throws, with <code>code: 'INVALID_RUN_ONLY'</code> and a
+				message naming the field and the values, since it would select nothing and a run of no
+				rules reads as a clean pass. A value that names nothing beside ones that do, or in an
+				exclude list, is ignored with a <code>console.warn</code>. Before 1.10.0 every such value
+				was ignored silently. <code>includeTestIds</code>/<code>excludeTestIds</code> are not
+				checked.
+			</p>
+			<p>
 				Rule IDs are bare (no engine prefix), e.g. <code>'img-alt-present'</code>. For backward
 				compatibility, matching also accepts a legacy <code>a11ycore-</code>-prefixed form of the
 				same id (<code>'a11ycore-img-alt-present'</code>).
 			</p>
 			<p>
-				A <strong>legacy tag-filter shape</strong> is also accepted as the whole{" "}
-				<code>runOnly</code> value: <code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>{" "}
-				— equivalent to <code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>.
+				axe-core's <strong><code>{"{ type, values }"}</code> shape</strong> is also accepted as
+				the whole <code>runOnly</code> value:{" "}
+				<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code> is{" "}
+				<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>, and{" "}
+				<code>{"{ type: 'rule', values: ['img-alt-present'] }"}</code> is{" "}
+				<code>{"{ includeRuleIds: ['img-alt-present'] }"}</code> (<code>'tags'</code> and{" "}
+				<code>'rules'</code> work too). Any other <code>type</code> throws{" "}
+				<code>INVALID_RUN_ONLY</code>, and so does a <code>runOnly</code> that is a number or a
+				boolean, or an object none of whose keys the engine reads (
+				<code>{"{ includeRuleId: [...] }"}</code>): each used to run every rule. An empty array,
+				string or object still means every rule.
 			</p>
 
 			<h3 id="filtering-by-wcag-version">Filtering by WCAG version (2.0, 2.1, 2.2)</h3>
@@ -835,9 +871,10 @@ export function EngineOptionsContent() {
 				candidates. A rule whose only would-be-failing elements are all excluded this way reports{" "}
 				<code>outcome: 'pass'</code> or <code>'notApplicable'</code> (matching that rule's own
 				no-candidates convention), with <code>occurrences: []</code> — never{" "}
-				<code>outcome: 'fail'</code> with an empty <code>occurrences</code> array, since that
-				exact shape is reserved elsewhere in the schema to mean "this rule threw" (see{" "}
-				<a href="/results-reports/output-schema/">the output schema</a>).
+				<code>outcome: 'fail'</code> with an empty <code>occurrences</code> array, since a
+				built-in rule's <code>fail</code> always names what failed. (A rule that throws is a
+				different case: it reports <code>cantTell</code> with <code>error</code> set, see{" "}
+				<a href="/results-reports/output-schema/">the output schema</a>.)
 			</p>
 			<p>
 				Accepts the same forms as the global option: an array (
@@ -921,7 +958,9 @@ export function EngineOptionsContent() {
 					"    id: 'org-no-inline-onclick',",
 					"    meta: { title: 'No inline onclick handlers', defaultSeverity: 'moderate' },",
 					"    runInPage(ctx) {",
-					"      const els = ctx.helpers.queryAll('[onclick]');",
+					"      // queryAllSmart applies excludeSelectors, the scope's shadow roots and",
+					"      // the hidden-content filter; queryAll is the plain light-DOM query.",
+					"      const els = ctx.helpers.queryAllSmart('[onclick]');",
 					"      const occurrences = els.map((el) => ({",
 					"        selector: ctx.helpers.buildSelector(el),",
 					"        html: el.outerHTML,",
@@ -980,13 +1019,23 @@ export function EngineOptionsContent() {
 					<code>engineOptions</code> crosses a JSON/structured-clone boundary that cannot carry a
 					live <code>Function</code> reference but can carry a string. The engine reconstructs a
 					string via <code>new Function</code>, the same mechanism the build uses to embed every
-					built-in rule's source into the in-page runner.
+					built-in rule's source into the in-page runner. Any function's source works: an arrow
+					function, a <code>function</code> declaration, or a method written in shorthand as in
+					the example above (<code>{"runInPage(ctx) {…}"}</code>, <code>async</code> too), whose{" "}
+					<code>toString()</code> is not an expression on its own. Reconstruction needs{" "}
+					<code>eval</code> to be allowed, so a page whose Content Security Policy forbids{" "}
+					<code>'unsafe-eval'</code> skips a rule given as a string; pass a real function there.
 				</li>
 				<li>
 					<code>meta</code> gets identical defaulting/validation to a build-time rule — omit
-					anything you don't need; <code>severity</code> defaults to <code>moderate</code>,{" "}
-					<code>confidence</code> to <code>medium</code>, <code>type</code> to{" "}
-					<code>automatic</code>, etc.
+					anything you don't need; <code>defaultSeverity</code> defaults to{" "}
+					<code>moderate</code>, <code>defaultConfidence</code> to <code>medium</code>,{" "}
+					<code>type</code> to <code>automatic</code>, etc. A value outside its set (
+					<code>minor</code>/<code>moderate</code>/<code>serious</code>/<code>critical</code>;{" "}
+					<code>high</code>/<code>medium</code>/<code>low</code>; <code>automatic</code>/
+					<code>manual</code>, any case) is a meta that fails validation, and the rule is skipped.
+					A <code>severity</code> a rule returns outside the set is replaced by its default, with
+					a note in <code>error</code>.
 				</li>
 				<li>
 					A custom rule whose <code>id</code> collides with a built-in one{" "}
@@ -997,13 +1046,35 @@ export function EngineOptionsContent() {
 					when there's no collision) — see <a href="/results-reports/output-schema/">the output schema</a>.
 				</li>
 				<li>
-					An invalid descriptor (missing/non-string <code>id</code>, or a <code>runInPage</code>{" "}
-					that isn't a function and isn't a reconstructable source string) is silently skipped —
-					the rest of the scan, including every built-in rule, still runs normally. This isn't a
+					A custom rule can report a margin as a built-in rule does: declare{" "}
+					<code>meta.margin</code> (<code>{"{ measure, unit, limit }"}</code>) and return{" "}
+					<code>marginCandidates</code> (see{" "}
+					<a href={`${core}/docs/RULE_AUTHORING.md#metamargin`}>
+						<code>RULE_AUTHORING.md</code>, <code>meta.margin</code>
+					</a>
+					, the rule-authoring guide on GitHub). A malformed <code>meta.margin</code> is ignored,
+					so that rule reports no margin; the scan carries on.
+				</li>
+				<li>
+					An invalid descriptor (missing/non-string <code>id</code>, a <code>runInPage</code>{" "}
+					that isn't a function and isn't a reconstructable source string, a <code>meta</code>{" "}
+					that fails validation, such as <code>deprecated: true</code> without{" "}
+					<code>deprecation</code>, an id another custom rule in the list already has, or the id
+					of a composite rule) is skipped with a <code>console.warn</code> naming the rule and the
+					reason, and listed in the result's <code>skippedCustomRules</code> — the rest of the scan, including every built-in rule, still runs normally. This isn't a
 					validation gap to fix: a custom rule is arbitrary caller-supplied code, so "fail this
 					one entry closed, don't abort the scan" is the safer default, mirroring how a{" "}
 					<em>built-in</em> rule that throws is contained to a <code>cantTell</code> for that rule
 					rather than crashing the run.
+				</li>
+				<li>
+					Rules run synchronously. A <code>runInPage</code> or <code>applicability</code> that
+					returns a Promise (an <code>async</code> function) is reported as <code>cantTell</code>{" "}
+					with an <code>error</code> saying so, as is a <code>runInPage</code> that returns
+					anything but a result object. An <code>outcome</code> outside <code>pass</code>,{" "}
+					<code>fail</code>, <code>cantTell</code> and <code>notApplicable</code> (such as{" "}
+					<code>'failed'</code>) becomes <code>cantTell</code>, and <code>error</code> names the
+					value returned.
 				</li>
 				<li>
 					Results appear in <code>checksResults</code> exactly like any other rule's, including
@@ -1016,11 +1087,35 @@ export function EngineOptionsContent() {
 			<h2><code>contextSelector</code> (2nd runner argument, not an <code>engineOptions</code> field)</h2>
 			<p>
 				A CSS selector (or array of selectors) scoping the scan to one or more subtrees, resolved
-				via <code>document.querySelectorAll</code> (all matches, not just the first), falling
-				back to <code>document.documentElement</code>/<code>document.body</code> if nothing
-				matches. Pass <code>null</code> to scan the whole document.
+				via <code>document.querySelectorAll</code> (all matches, not just the first). Pass{" "}
+				<code>null</code> to scan the whole document.
 			</p>
 			<ul>
+				<li>
+					<strong>A selector that matches nothing scans nothing.</strong> Every rule reports{" "}
+					<code>notApplicable</code>, the page-level rules included, and the result's{" "}
+					<code>contextMatch</code> says so:{" "}
+					<code>{"{ elementCount: 0, unmatchedSelectors: ['#mian'] }"}</code> (see{" "}
+					<a href="/results-reports/output-schema/#top-level-result">the output schema</a>). The
+					run also logs a <code>console.warn</code>. A scope the page doesn't have is not widened
+					to the whole page: a result for content you never asked about, a whole-page{" "}
+					<code>pass</code> among it, would read as a result for the part you did. In an array, a
+					selector that matches nothing is listed in <code>unmatchedSelectors</code> while the
+					others are scanned as usual, so content that is only sometimes on the page, such as a
+					cookie banner, can sit in the list. Before 1.10.0 a scope that matched nothing fell
+					back to the whole document, without a word in the result.
+				</li>
+				<li>
+					<strong>A selector the browser can't parse throws</strong>, alone or in an array,
+					before any rule runs:{" "}
+					<code>contextSelector: "#main[" is not a valid CSS selector.</code> The error carries{" "}
+					<code>code: 'INVALID_CONTEXT_SELECTOR'</code> and <code>selector</code>, the selector
+					that failed. Unlike a selector that matches nothing, it is always a mistake in the call.{" "}
+					<code>runa11yCoreAcrossFrames</code> rejects with the same error. An error crossing{" "}
+					<code>page.evaluate</code> (Playwright, Puppeteer) keeps only its message, which is why
+					the message names the option and the selector. Before 1.10.0 an invalid selector was
+					skipped, so on its own it scanned the whole document.
+				</li>
 				<li>
 					<strong>A single string</strong> may itself be a comma-separated selector list
 					(ordinary CSS union semantics) — <code>'#a, #b'</code> scans both <code>#a</code> and{" "}
@@ -1032,8 +1127,40 @@ export function EngineOptionsContent() {
 					form exists for callers building the list programmatically.
 				</li>
 				<li>
+					<strong>Shadow DOM.</strong> With <code>includeShadowDom</code> (the default), a scope
+					includes the shadow roots inside it, and a scope that is itself a shadow host includes
+					its own shadow root. The selector is matched against the document, so it can't select
+					an element <em>inside</em> a shadow root; scope to its host instead.
+				</li>
+				<li>
 					Overlapping/nested regions are deduped automatically — an element reachable from more
 					than one matched root is only ever reported once, not once per region.
+				</li>
+				<li>
+					<strong>What a scoped result means.</strong> Most rules judge each element on its own,
+					and judge the elements in scope exactly as in a whole-page scan. Two kinds of rule
+					depend on the page around them. Whole-page rules (<code>page-title-present</code>,{" "}
+					<code>landmark-one-main</code> and the rest listed under <code>fragment</code> above)
+					report <code>notApplicable</code>. Rules that compare elements across the page (
+					<code>landmark-unique</code>, <code>landmark-no-duplicate-banner</code>,{" "}
+					<code>-contentinfo</code> and <code>-main</code>,{" "}
+					<code>landmark-banner-is-top-level</code>, <code>-complementary-</code>,{" "}
+					<code>-contentinfo-</code> and <code>-main-is-top-level</code>,{" "}
+					<code>accesskeys</code>, <code>heading-order</code>,{" "}
+					<code>identical-links-same-purpose</code>, <code>identical-iframes-same-purpose</code>)
+					still report what they find inside the scope, since two landmarks there sharing a name
+					share it on any page, but report <code>notApplicable</code> instead of{" "}
+					<code>pass</code>: the scan saw only part of the page, so it cannot say the page is
+					fine. <code>duplicate-id</code> and <code>duplicate-id-aria</code> compare each element
+					in scope with the whole document, since its duplicate can sit outside the scope, and
+					report an element in scope whose id appears anywhere else. Their <code>pass</code>{" "}
+					means no element in the scope shares its id with another element on the page; a
+					duplicate pair entirely outside the scope is not reported, as with every rule, so it
+					does not say the whole page is free of duplicates. <code>target-size-minimum</code>{" "}
+					judges the targets in scope against neighbours anywhere in the document, since the
+					spacing exception depends on what the page puts next to a target.{" "}
+					<code>text-spacing-content-loss</code> judges the text in scope, and checks whether it
+					comes to overlap text anywhere on the page.
 				</li>
 			</ul>
 		</>

@@ -84,7 +84,7 @@ export function BaselineContent() {
 				<code>"DEFAULT"</code>
 				）、
 				<code>html</code>
-				は検出箇所のouterHTMLのスニペットです。位置ではなく内容に基づくので、指摘された要素自体のマークアップが変わらない限り、要素がページ内で移動しても（並べ替え、無関係な兄弟要素の追加や削除）一致し続けます。
+				は検出箇所のouterHTMLのスニペットです。位置ではなく内容に基づくので、指摘された要素自体のマークアップが変わらない限り、要素がページ内で移動しても（並べ替え、無関係な兄弟要素の追加や削除）一致し続けます。<code>&lt;html&gt;</code>や<code>&lt;body&gt;</code>で報告される、ページそのものについての検出結果（<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>、<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>、<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>）では、スニペットは開始タグだけなので、ページの内容を編集しても新しい検出結果にはなりません。スニペットは、各タグの属性を名前順に、クラス名を並べ替えたうえで比較されます。そのため、前回のビルドが<code>src class="a b"</code>と書いたところを今回のビルドが<code>class="b a" src</code>と書いても一致します。比較は照合の時点で行われるので、この変更より前に書かれたベースラインファイルも引き続き一致します。
 				<code>selector</code>
 				もベースラインファイルに記録されますが、差分を読む人のための手がかりにすぎず、照合には一切使いません。
 			</p>

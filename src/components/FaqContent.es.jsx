@@ -7,19 +7,79 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2>"Pasé <code>runOnly: ['some-rule-id']</code> pero de todas formas se ejecutaron todas las reglas"</h2>
+				<h2 id="runonly-threw">
+					"<code>runOnly</code> lanzó un error: <span lang="en">no rule or tag named …</span>, o{" "}
+					<span lang="en">either rule ids or tags</span>"
+				</h2>
 				<p>
-					<strong><code>runOnly</code> debe ser un objeto, no un array simple.</strong>{" "}
-					<code>runOnly: ['img-alt-present']</code> se ignora silenciosamente (el motor termina
-					ejecutando "todas las reglas"), porque esa forma no tiene ninguno de los campos que el motor
-					realmente comprueba (<code>includeRuleIds</code>, <code>tags</code>, etc.). Es fácil utilizar
-					por error un array simple, así que vale la pena comprobar esto primero.
+					Desde la 1.10.0, un <code>runOnly</code> dado como array simple o como cadena se lee como
+					ids de regla o como etiquetas, igual que lo lee axe-core (consulta{" "}
+					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>). Lanza un
+					error en dos casos:
 				</p>
-				<p>Solución:</p>
-				<CodeBlock lang="js" lines={["runOnly: { includeRuleIds: ['img-alt-present'] }"]} />
+				<ul>
+					<li>
+						<strong>Un valor que no nombra ninguna regla ni ninguna etiqueta</strong>, normalmente
+						una errata: <code>runOnly: ['img-alt-presnt']</code>. Comprueba el id con{" "}
+						<code>getChecksCatalog()</code>.
+					</li>
+					<li>
+						<strong>Ids de regla y etiquetas en un mismo array</strong>:{" "}
+						<code>runOnly: ['img-alt-present', 'wcag2a']</code>. Usa la forma de objeto para
+						combinarlos:
+					</li>
+				</ul>
+				<CodeBlock
+					lang="js"
+					lines={[
+						"runOnly: {",
+						"  includeRuleIds: ['img-alt-present'],",
+						"  tags: ['wcag2a'],",
+						"  includeMode: 'or',",
+						"}",
+					]}
+				/>
+				<p>Antes de la 1.10.0, un array simple se ignoraba y se ejecutaban todas las reglas.</p>
 				<p>
-					Consulta <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a> para ver la forma completa.
+					La forma de objeto, <code>{"{ includeRuleIds }"}</code>, <code>{"{ tags }"}</code> o{" "}
+					<code>{"{ type: 'tag', values }"}</code>, y <code>engineOptions.rules.include</code> /{" "}
+					<code>.tags.include</code> también lanzan un error, con{" "}
+					<code>code: 'INVALID_RUN_ONLY'</code>, cuando ningún valor de la lista nombra una regla
+					o una etiqueta (<code>runOnly.tags: no tag named "wcag2.2aa".</code>). Antes no
+					ejecutaban ninguna regla, lo que se lee como un análisis sin hallazgos. Un único valor
+					desconocido junto a otros conocidos, o en una lista de exclusión, solo registra un{" "}
+					<code>console.warn</code>.
 				</p>
+			</article>
+
+			<article>
+				<h2 id="contextselector-matched-nothing">
+					"Mi análisis acotado informa todo como <code>notApplicable</code>", o "
+					<code>contextSelector</code> lanzó un error:{" "}
+					<span lang="en">… is not a valid CSS selector</span>"
+				</h2>
+				<p>
+					Desde la 1.10.0, un <code>contextSelector</code> que no coincide con ningún elemento no
+					analiza nada, y uno que el navegador no puede interpretar lanza un error (consulta{" "}
+					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>).
+				</p>
+				<ul>
+					<li>
+						<strong>Todo es <code>notApplicable</code></strong>: mira{" "}
+						<code>result.contextMatch</code>. <code>elementCount: 0</code> significa que el
+						selector no coincidió con nada, y <code>unmatchedSelectors</code> lo nombra. Revisa si
+						tiene una errata, o si el elemento ya está en la página cuando analizas (por ejemplo,
+						contenido que un script renderiza después de la carga).
+					</li>
+					<li>
+						<strong>
+							El análisis lanzó un error con <code>code: 'INVALID_CONTEXT_SELECTOR'</code>
+						</strong>
+						: el selector del mensaje, y del campo <code>selector</code> del error, no es CSS
+						válido, por ejemplo <code>'#main['</code> o un combinador <code>&gt;&gt;&gt;</code>.
+					</li>
+				</ul>
+				<p>Antes de la 1.10.0, en ambos casos se analizaba la página entera.</p>
 			</article>
 
 			<article>

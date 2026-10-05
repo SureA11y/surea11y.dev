@@ -76,6 +76,56 @@ export function StandaloneUsageContent() {
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
 				の<span lang="en">Pattern 1</span>/<span lang="en">Pattern 2</span>にあたります。実際のブラウザーなしでNode上のjsdomを使う方法と、バインディングを経由せずにPuppeteer/Playwrightを自分で操作する方法です。
 			</p>
+
+			<h2 id="waiting-for-the-page">スキャン前にページの準備を待つ</h2>
+			<p>
+				スキャンは、その時点のページの状態を読み取ります。開いたばかりのページでは、Webフォントがまだ読み込み中だったり、画像が届いていなかったりするため、同じページでも1秒後にスキャンすると別の結果になることがあります。スキャンはこの状態を
+				<code>engine.environment.fonts</code>
+				と
+				<code>.images</code>
+				に記録します（
+				<a href="/results-reports/output-schema/">出力スキーマ</a>
+				を参照）。ただし、より良い方法は、ページが落ち着くまでスキャンしないことです。
+			</p>
+			<p>
+				その待機を行うのが
+				<code>waitForPageReady(options)</code>
+				で、バンドルでは同じグローバルに用意されています。スキャンがこれを自動で呼ぶことはないので、スキャンの直前に呼び出してください。ウィンドウの
+				<code>load</code>
+				イベント、
+				<code>document.fonts.ready</code>
+				、読み込み中のすべての画像（
+				<code>loading="lazy"</code>
+				のものを除く）を、最大
+				<code>timeoutMs</code>
+				（デフォルトは
+				<code>5000</code>
+				）まで待ちます。rejectすることはありません。時間切れになってもresolveし、
+				<code>ready: false</code>
+				とともに、まだ完了していなかったものを示します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const ready = await a11ycore.waitForPageReady({ timeoutMs: 3000 });",
+					"const result = a11ycore.runa11yCoreInPage(location.href, null, {}, null);",
+				]}
+			/>
+			<p>
+				自分で操作するドライバーからは、
+				<code>runa11yCoreInPage</code>
+				と同じ方法でページに送り込めます（
+				<code>page.evaluate(waitForPageReady, {"{ timeoutMs: 5000 }"})</code>
+				）。jsdomでは待つものがないため、すぐに
+				<code>ready: true</code>
+				でresolveします。そのほかのオプション（
+				<code>quietMs</code>
+				、
+				<code>document</code>
+				）と戻り値の詳細は、GitHub上の統合ガイド
+				<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}><code>INTEGRATION.md</code></a>
+				にあります。
+			</p>
 		</>
 	);
 }

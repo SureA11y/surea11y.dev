@@ -68,6 +68,42 @@ export function StandaloneUsageContent() {
 				no real browser, or driving Puppeteer/Playwright yourself instead of going through a
 				binding.
 			</p>
+
+			<h2 id="waiting-for-the-page">Waiting for the page before a scan</h2>
+			<p>
+				A scan reads the page as it is at that moment. On a page that has just opened, web fonts
+				may still be loading and images may not have arrived, so the same page scanned a second
+				later can give another result. The scan records this in{" "}
+				<code>engine.environment.fonts</code> and <code>.images</code> (see{" "}
+				<a href="/results-reports/output-schema/">the output schema</a>), but the better fix is
+				not to scan until the page has settled.
+			</p>
+			<p>
+				<code>waitForPageReady(options)</code> does that waiting, and the bundle puts it on the
+				same global. The scan never calls it itself; call it just before you scan. It waits for
+				the window's <code>load</code> event, for <code>document.fonts.ready</code>, and for every
+				image still loading (except <code>loading="lazy"</code> ones), for at most{" "}
+				<code>timeoutMs</code> (default <code>5000</code>). It never rejects: when the time runs
+				out it resolves anyway with <code>ready: false</code> and says what was still pending.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const ready = await a11ycore.waitForPageReady({ timeoutMs: 3000 });",
+					"const result = a11ycore.runa11yCoreInPage(location.href, null, {}, null);",
+				]}
+			/>
+			<p>
+				A driver you run yourself can send it into the page the same way as{" "}
+				<code>runa11yCoreInPage</code>: <code>page.evaluate(waitForPageReady, {"{ timeoutMs: 5000 }"})</code>.
+				In jsdom there is nothing to wait for, so it resolves at once with <code>ready: true</code>.
+				The other options (<code>quietMs</code>, <code>document</code>) and the full return value
+				are in{" "}
+				<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				, the integration guide on GitHub.
+			</p>
 		</>
 	);
 }

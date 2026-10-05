@@ -107,6 +107,9 @@ export function EarlReportContent() {
 						<code>source</code>
 					</strong>{" "}
 					es la URL analizada, o bien <code>about:blank</code> cuando un resultado no lleva ninguna.
+					Cuando varios resultados no llevan ninguna, cada uno es un sujeto propio,{" "}
+					<code>about:blank#result-&lt;n&gt;</code> según su posición en la lista (empezando por 1),
+					en lugar de fusionarse todos en uno.
 				</li>
 				<li>
 					<strong>
@@ -187,6 +190,12 @@ export function EarlReportContent() {
 			</p>
 			<CodeBlock lang="js" lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
 			<p>
+				Un resultado entre frames de <a href="/results-reports/output-schema/#cross-frame-result"><code>runa11yCoreAcrossFrames</code></a> se acepta tal
+				cual, solo o dentro del array: cada frame que respondió es un resultado más y se convierte
+				en un sujeto con su propia URL. Cualquier otra cosa que no sea un resultado de análisis,
+				como <code>null</code> o una cadena, lanza un <code>TypeError</code>.
+			</p>
+			<p>
 				Los resultados que comparten una URL se fusionan en un solo sujeto: quien llama y analiza
 				la misma página con distintas <code>engineOptions</code> sigue describiendo un único recurso,
 				y el contexto no tiene forma de expresar dos sujetos con la misma fuente.{" "}
@@ -214,7 +223,7 @@ export function EarlReportContent() {
 					{ key: "meaning", label: "Significado", wrap: true },
 				]}
 				rows={[
-					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. El nombre por defecto es <code>surea11y</code>; pasa <code>null</code> para omitir <code>assertedBy</code> por completo.</> },
+					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. El nombre por defecto es <code>surea11y</code>, y la versión, indicada como la versión (<code>release</code>) del asertor, es por defecto el <code>engine.version</code> que llevan los resultados cuando todos llevan el mismo; los resultados de versiones distintas no reciben ninguna salvo que la indiques. Pasa <code>null</code> para omitir <code>assertedBy</code> por completo.</> },
 					{ id: "mode", option: <code>mode</code>, meaning: <>Un modo de prueba EARL como <code>'earl:automatic'</code>. Se omite cuando no se proporciona.</> },
 				]}
 			/>

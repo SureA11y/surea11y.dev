@@ -99,6 +99,14 @@ export function OverviewContent() {
 				dont les résultats individuels s’agrègent en un verdict WCAG, y compris la façon dont une
 				version WCAG cible (2.0/2.1/2.2) est déterminée et appliquée.
 			</p>
+			<p>
+				Un <code>pass</code> indique aussi de combien il passe. Les règles qui mesurent une valeur
+				par rapport à un seuil (contraste, taille de cible, espacement du texte) signalent une{" "}
+				<code>margin</code> : l’élément qui s’est le plus approché de la limite tout en la
+				respectant. Un texte à 4,52:1 pour un minimum de 4,5:1 passe, et la marge le montre :
+				vous pouvez le corriger avant qu’un petit changement n’en fasse un <code>fail</code>. Voir
+				le <a href="/results-reports/output-schema/#margin">Schéma de sortie</a>.
+			</p>
 
 			<h3 id="checked-against-the-act-corpus">Vérifié sur le corpus ACT</h3>
 			<p>
@@ -124,7 +132,7 @@ export function OverviewContent() {
 
 			<h2>Principes clés</h2>
 			<ul>
-				<li><strong>Exécution déterministe.</strong> Une même entrée produit toujours la même sortie.</li>
+				<li><strong>Exécution déterministe.</strong> Une même entrée produit toujours la même sortie. Les animations et transitions en cours sont figées pendant l’analyse : une page saisie en plein fondu donne le même résultat qu’une page stabilisée.</li>
 				<li><strong>Prudent par conception.</strong> <code>fail</code> est réservé aux violations objectives et normatives, ce qui limite les fausses alertes.</li>
 				<li><strong>Traçabilité vers les normes.</strong> Les règles sont associées au critère de succès WCAG applicable chaque fois que c’est pertinent.</li>
 				<li><strong>Sortie stable et lisible par machine.</strong> Les identifiants de règle restent les mêmes quelle que soit la langue.</li>

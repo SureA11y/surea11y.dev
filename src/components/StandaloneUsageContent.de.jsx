@@ -70,6 +70,44 @@ export function StandaloneUsageContent() {
 				ohne echten Browser, oder Puppeteer/Playwright selbst steuern, statt über ein Binding zu
 				gehen.
 			</p>
+
+			<h2 id="waiting-for-the-page">Vor dem Scan auf die Seite warten</h2>
+			<p>
+				Ein Scan liest die Seite so, wie sie in diesem Moment ist. Auf einer gerade geöffneten
+				Seite laden Webfonts womöglich noch, und Bilder sind vielleicht noch nicht da; dieselbe
+				Seite kann eine Sekunde später ein anderes Ergebnis liefern. Der Scan hält das in{" "}
+				<code>engine.environment.fonts</code> und <code>.images</code> fest (siehe{" "}
+				<a href="/results-reports/output-schema/">das Ausgabeschema</a>), besser ist es aber, erst
+				zu scannen, wenn die Seite fertig geladen ist.
+			</p>
+			<p>
+				<code>waitForPageReady(options)</code> übernimmt dieses Warten, und das Bundle stellt es
+				auf demselben Global bereit. Der Scan ruft es nie selbst auf; rufen Sie es direkt vor dem
+				Scan auf. Es wartet auf das <code>load</code>-Event des Fensters, auf{" "}
+				<code>document.fonts.ready</code> und auf jedes Bild, das noch lädt (außer solchen mit{" "}
+				<code>loading="lazy"</code>), höchstens <code>timeoutMs</code> lang (Standard{" "}
+				<code>5000</code>). Es lehnt nie ab: Läuft die Zeit ab, löst es trotzdem auf, mit{" "}
+				<code>ready: false</code>, und nennt, was noch ausstand.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const ready = await a11ycore.waitForPageReady({ timeoutMs: 3000 });",
+					"const result = a11ycore.runa11yCoreInPage(location.href, null, {}, null);",
+				]}
+			/>
+			<p>
+				Ein Treiber, den Sie selbst steuern, kann es genauso in die Seite schicken wie{" "}
+				<code>runa11yCoreInPage</code>:{" "}
+				<code>page.evaluate(waitForPageReady, {"{ timeoutMs: 5000 }"})</code>. In jsdom gibt es
+				nichts zu warten, es löst also sofort mit <code>ready: true</code> auf. Die übrigen
+				Optionen (<code>quietMs</code>, <code>document</code>) und der vollständige Rückgabewert
+				stehen in{" "}
+				<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				, der Integrationsanleitung auf GitHub.
+			</p>
 		</>
 	);
 }

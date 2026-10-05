@@ -44,13 +44,23 @@ export function RuleOrganizationContent() {
 				</li>
 				<li>
 					<strong>manual（手動）</strong>
-					：人が判断しなければならないことを示します。ルールはマークアップからこの問いにまったく決着をつけられません。判定結果は
+					：人が判断しなければならないことを示します。ルールは、見つけたものが問題かどうかを判定できません。判定結果は
 					<code>cantTell</code>
-					／
+					か
 					<code>notApplicable</code>
-					までで、
+					で、判断を必要としない答えが見つかった場合に限り
+					<code>pass</code>
+					になります。
 					<code>fail</code>
 					になることはありません。
+					<a href="/rules/landmark-unique/"><code>landmark-unique</code></a>
+					は、名前が同じ2つのランドマークが問題かどうかを判定できません（内容が同一であればAPGはこれを認めています）。そのためこれは
+					<code>cantTell</code>
+					です。一方、「すべての名前が異なる」は事実なので
+					<code>pass</code>
+					です。画像のテキスト代替が正確かどうかのように、見つけた対象のすべてについて人に判断を求めるルールが
+					<code>pass</code>
+					を報告することはありません。
 				</li>
 			</ul>
 			<p>

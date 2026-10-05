@@ -38,8 +38,15 @@ export function RuleOrganizationContent() {
 				</li>
 				<li>
 					<strong>manuell</strong> — zeigt an, dass ein Mensch entscheiden muss; die Regel kann
-					die Frage anhand des Markups überhaupt nicht klären. Begrenzt auf{" "}
-					<code>cantTell</code>/<code>notApplicable</code> — nie <code>fail</code>.
+					nicht entscheiden, ob das Gefundene ein Problem ist. Meldet <code>cantTell</code> oder{" "}
+					<code>notApplicable</code>, und <code>pass</code> nur dann, wenn die Antwort gefunden wird,
+					die keine Beurteilung braucht — nie <code>fail</code>.{" "}
+					<a href="/rules/landmark-unique/"><code>landmark-unique</code></a> kann nicht entscheiden,
+					ob zwei Landmarks mit demselben Namen ein Problem sind (die APG erlaubt das, wenn ihr
+					Inhalt identisch ist), also ergibt das <code>cantTell</code>; „alle Namen unterscheiden
+					sich“ ist dagegen eine Tatsache, also ergibt das <code>pass</code>. Eine Regel, die eine
+					Person jedes gefundene Ziel beurteilen lässt, etwa ob die Textalternative eines Bildes
+					zutrifft, meldet nie <code>pass</code>.
 				</li>
 			</ul>
 			<p>

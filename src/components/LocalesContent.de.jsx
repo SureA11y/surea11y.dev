@@ -14,6 +14,28 @@ const localeCoverageRows = localeData.locales.map((l) => ({
 	untranslated: l.canonical ? "— (der kanonische Satz bzw. Fallback)" : String(l.stillEnglish),
 }));
 
+// Sample output for getLocaleCoverage(), built from the same generated data
+// as the table above so the numbers can't drift apart.
+const coverageSampleLines = [
+	"const { getLocaleCoverage } = require('@surea11y/core');",
+	"",
+	"getLocaleCoverage();",
+	"// {",
+	"//   sourceLocale: 'en',",
+	`//   totalKeys: ${localeData.totalKeys},`,
+	"//   locales: [",
+	...localeData.locales
+		.filter((l) => !l.canonical)
+		.slice(0, 2)
+		.map(
+			(l) =>
+				`//     { locale: '${l.id}', total: ${l.keys}, translated: ${l.keys - l.stillEnglish}, missing: ${l.missing}, orphaned: [], percent: ${Math.round(((l.keys - l.stillEnglish) / l.keys) * 1000) / 10} },`,
+		),
+	"//     ...",
+	"//   ]",
+	"// }",
+];
+
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "Sie haben genau das bekommen, was Sie angefordert haben, und dieses Wörterbuch enthält jeden Schlüssel." },
 	{
@@ -81,7 +103,7 @@ export function LocalesContent() {
 					{ key: "locale", label: "Locale", width: "18%" },
 					{ key: "file", label: "Datei", width: "24%" },
 					{ key: "keys", label: "Schlüssel", width: "12%" },
-					{ key: "untranslated", label: "Mit Englisch identische Werte", wrap: true },
+					{ key: "untranslated", label: "Unübersetzt", wrap: true },
 				]}
 				rows={localeCoverageRows.map((r) => ({
 					...r,
@@ -93,11 +115,39 @@ export function LocalesContent() {
 				}))}
 			/>
 			<p>
-				Die letzte Spalte zählt Werte, die Zeichen für Zeichen dem englischen Text entsprechen. Das
-				findet einen Schlüssel, den noch niemand übersetzt hat, zählt aber auch ein Wort, das in
-				beiden Sprachen schlicht gleich ist, etwa französisch <em lang="fr">Orientation</em> oder{" "}
-				<em lang="fr">Interruptions</em> und spanisch <em lang="es">Selector</em>: Genau das zeigen
-				die Werte über null oben.
+				„Unübersetzt“ zählt Werte, die Zeichen für Zeichen dem englischen Text entsprechen,
+				außer Wörtern, die in einer Sprache zu Recht gleich sind: französisch{" "}
+				<em lang="fr">Orientation</em>, <em lang="fr">Interruptions</em> und{" "}
+				<em lang="fr">Occurrences</em>, deutsch <em>Element</em>, spanisch{" "}
+				<em lang="es">Selector</em>. Diese sind als solche aufgeführt, jeweils mit dem englischen
+				Text, gegen den sie geprüft wurden, und zählen als übersetzt. Ändert sich das Englische,
+				gilt der Eintrag nicht mehr, und der String zählt als unübersetzt, bis ihn jemand erneut
+				prüft. Ein englisches Wort in einem sonst übersetzten Satz sieht die Zählung nicht; das
+				findet man beim Lesen des Textes, und in den Locales oben ist keines mehr übrig.
+			</p>
+
+			<h3 id="reading-coverage-from-the-package">Abdeckung aus dem Paket lesen</h3>
+			<p>
+				Dieselben Zahlen sind zur Laufzeit verfügbar, aus den Wörterbüchern, die das installierte
+				Paket mitbringt. Ein Tool oder eine Dokumentationsseite kann sie also anzeigen, ohne das
+				Repository auszuchecken:
+			</p>
+			<CodeBlock lang="js" lines={coverageSampleLines} />
+			<p>
+				Pro Locale ist <code>total</code> die Zahl der englischen Schlüssel, an der sie gemessen
+				wird, <code>translated</code>, wie viele ihrer Werte sich vom Englischen unterscheiden oder
+				als zu Recht gleich aufgeführt sind, <code>missing</code>, wie viele Schlüssel ihr fehlen
+				(sie erscheinen auf Englisch), und <code>orphaned</code> die Schlüssel, die sie hat, das
+				Englische aber nicht. <code>total - translated</code> ist die Spalte „Unübersetzt“ oben,
+				fehlende Schlüssel eingeschlossen. Schlüssel, die ein Profil bewusst aus einer Locale
+				weglässt, werden nicht gezählt. Der Abdeckungsbericht des Repositorys und diese Funktion
+				teilen sich eine Implementierung und stimmen daher immer überein; der Bericht zählt die
+				Wörterbücher von core und die jedes Profils getrennt, diese Funktion das
+				zusammengeführte Wörterbuch, das ein Scan verwendet. Sie ist ein unterstützter Export (
+				<a href={`${core}/docs/API_STABILITY.md#extension-points`}>
+					<code>API_STABILITY.md</code>, Erweiterungspunkte
+				</a>
+				).
 			</p>
 			<p>
 				Locale-Dateien sind einfaches JSON: eine flache Zuordnung von Schlüssel zu übersetztem

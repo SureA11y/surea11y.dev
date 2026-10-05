@@ -14,6 +14,28 @@ const localeCoverageRows = localeData.locales.map((l) => ({
 	untranslated: l.canonical ? "— (the canonical/fallback set)" : String(l.stillEnglish),
 }));
 
+// Sample output for getLocaleCoverage(), built from the same generated data
+// as the table above so the numbers can't drift apart.
+const coverageSampleLines = [
+	"const { getLocaleCoverage } = require('@surea11y/core');",
+	"",
+	"getLocaleCoverage();",
+	"// {",
+	"//   sourceLocale: 'en',",
+	`//   totalKeys: ${localeData.totalKeys},`,
+	"//   locales: [",
+	...localeData.locales
+		.filter((l) => !l.canonical)
+		.slice(0, 2)
+		.map(
+			(l) =>
+				`//     { locale: '${l.id}', total: ${l.keys}, translated: ${l.keys - l.stillEnglish}, missing: ${l.missing}, orphaned: [], percent: ${Math.round(((l.keys - l.stillEnglish) / l.keys) * 1000) / 10} },`,
+		),
+	"//     ...",
+	"//   ]",
+	"// }",
+];
+
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "You got exactly what you asked for, and that dictionary carries every key." },
 	{
@@ -79,7 +101,7 @@ export function LocalesContent() {
 					{ key: "locale", label: "Locale", width: "18%" },
 					{ key: "file", label: "File", width: "24%" },
 					{ key: "keys", label: "Keys", width: "12%" },
-					{ key: "untranslated", label: "Values identical to English", wrap: true },
+					{ key: "untranslated", label: "Untranslated", wrap: true },
 				]}
 				rows={localeCoverageRows.map((r) => ({
 					...r,
@@ -91,10 +113,36 @@ export function LocalesContent() {
 				}))}
 			/>
 			<p>
-				The last column counts values that match the English text character for character. That
-				catches a key nobody has translated yet, but it also counts a word that is simply the same
-				in both languages — French <em>Orientation</em> or <em>Interruptions</em>, Spanish{" "}
-				<em>Selector</em> — which is what the non-zero counts above are.
+				"Untranslated" counts values that match the English text character for character, apart
+				from words that are rightly the same in a language — French <em>Orientation</em>,{" "}
+				<em>Interruptions</em> and <em>Occurrences</em>, German <em>Element</em>, Spanish{" "}
+				<em>Selector</em>. Those are listed as such, each with the English text it was checked
+				against, and counted as translated. If the English changes, the entry no longer applies
+				and the string counts as untranslated until someone checks it again. The count cannot see
+				an English word left inside an otherwise translated sentence; that is found by reading the
+				text, and none remain in the locales above.
+			</p>
+
+			<h3 id="reading-coverage-from-the-package">Reading coverage from the package</h3>
+			<p>
+				The same numbers are available at run time, from the dictionaries the installed package
+				ships, so a tool or a docs site can show them without a checkout of the repository:
+			</p>
+			<CodeBlock lang="js" lines={coverageSampleLines} />
+			<p>
+				Per locale, <code>total</code> is the number of English keys it is measured against,{" "}
+				<code>translated</code> how many of its values differ from English or are listed as
+				rightly the same, <code>missing</code> how many keys it lacks (they show in English), and{" "}
+				<code>orphaned</code> the keys it has that English does not.{" "}
+				<code>total - translated</code> is the "Untranslated" column above, missing keys included.
+				Keys a profile leaves out of a locale by choice are not counted. The repository's own
+				coverage report and this function share one implementation, so they always agree; the
+				report counts core's dictionaries and each profile's separately, this function the merged
+				dictionary a scan uses. It is a supported export (
+				<a href={`${core}/docs/API_STABILITY.md#extension-points`}>
+					<code>API_STABILITY.md</code>, extension points
+				</a>
+				).
 			</p>
 			<p>
 				Locale files are plain JSON: a flat map of key to translated string, in the same key

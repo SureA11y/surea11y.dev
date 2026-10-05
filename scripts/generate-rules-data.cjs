@@ -1,14 +1,17 @@
 'use strict';
 
 /**
- * Generate src/data/rules.generated.json from ../core's compiled catalog
- * (getChecksCatalog) plus its rule-module JSDoc headers and
- * ../core/docs/RULE_EXAMPLES.md's hand-authored example pairs. Also writes
- * src/data/engine.generated.json (version/license) from ../core/package.json,
- * so pages that display those values never drift from the actual package.
+ * Generate src/data/rules.generated.json from the installed @surea11y/core
+ * package: its compiled catalog (getChecksCatalog), its rule modules' JSDoc
+ * headers (the package ships src/checks) and docs/RULE_EXAMPLES.md's
+ * hand-authored example pairs. Also writes src/data/engine.generated.json
+ * (version/license) from the package's package.json, so pages that display
+ * those values never drift from the release the site depends on. Reading the
+ * pinned devDependency rather than a ../core checkout keeps the site's rule
+ * text on a release, and lets CI check it (docs:rules:check).
  *
  * The applicability/expectation/reports JSDoc parsing (jsdocTag/reflow/readRuleMeta
- * below) mirrors ../core/scripts/generate-rule-catalog.js -- that logic
+ * below) mirrors core's scripts/generate-rule-catalog.js -- that logic
  * isn't exported anywhere, so keep the two in sync if it changes.
  *
  * Usage:
@@ -19,7 +22,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CORE_DIR = path.join(__dirname, '..', '..', 'core');
+const CORE_DIR = path.dirname(require.resolve('@surea11y/core/package.json'));
 const OUT_PATH = path.join(__dirname, '..', 'src', 'data', 'rules.generated.json');
 const ENGINE_OUT_PATH = path.join(__dirname, '..', 'src', 'data', 'engine.generated.json');
 
@@ -140,7 +143,8 @@ const EXAMPLE_CONTEXT = {
 
 // One rule (manual-review) genuinely has only one outcome -- it has no
 // notApplicable branch, so there's no pair to show. A rule with a tiered
-// outcome adds a third, Flagged (cantTell), example. An outcome heading may carry a trailing annotation on the
+// outcome adds a third, Flagged (cantTell), example, and one with several
+// distinct review cases (form-control-programmatic-label-quality) can have four. An outcome heading may carry a trailing annotation on the
 // same line (duplicate-id's "**Failed** (with `engineOptions...`)"); only
 // the bracketed word itself is the outcome.
 function parseExamples(md) {
@@ -204,8 +208,8 @@ function parseExamples(md) {
       });
     }
 
-    if (pairs.length < 1 || pairs.length > 3) {
-      throw new Error(`generate-rules-data: expected 1 to 3 examples for "${ruleId}", found ${pairs.length}`);
+    if (pairs.length < 1 || pairs.length > 4) {
+      throw new Error(`generate-rules-data: expected 1 to 4 examples for "${ruleId}", found ${pairs.length}`);
     }
     examples.set(ruleId, pairs);
   }
@@ -273,6 +277,7 @@ function main() {
         severity: r.defaultSeverity,
         deprecated: !!r.deprecated,
         deprecation: r.deprecation || null,
+        margin: r.margin || null,
         applicability: m.applicability,
         expectation: m.expectation,
         reports: m.reports,

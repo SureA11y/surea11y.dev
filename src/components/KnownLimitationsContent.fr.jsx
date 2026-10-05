@@ -82,6 +82,30 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>
+						Une analyse faite pendant qu’une boîte de dialogue modale est ouverte voit la boîte
+						de dialogue, pas la page.
+					</strong>{" "}
+					Un <code>&lt;dialog&gt;</code> ouvert avec <code>showModal()</code> (ou un{" "}
+					<code>&lt;dialog aria-modal="true"&gt;</code> ouvert) rend le reste du document inerte,
+					et les navigateurs n’exposent que la boîte de dialogue aux technologies d’assistance. Le
+					moteur fait de même : le contenu derrière la boîte de dialogue est exclu de toutes les
+					règles, comme les autres contenus masqués, et les règles qui portent sur la structure de
+					la page elle-même (<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
+					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
+					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
+					<a href="/rules/region/"><code>region</code></a>) renvoient <code>notApplicable</code>,
+					puisque l’analyse ne peut pas voir cette structure. Analysez de nouveau la page, boîte de
+					dialogue fermée, pour juger ce qui se trouve derrière. Deux limites : un{" "}
+					<code>&lt;dialog&gt;</code> modal placé dans un shadow root n’est pas détecté, et une
+					modale personnalisée construite à partir d’un élément <code>role="dialog"</code>, avec{" "}
+					<code>inert</code> ou <code>aria-hidden</code> sur le reste de la page, n’est prise en
+					compte qu’à travers ces attributs, qui masquent la page mais n’indiquent pas aux règles de
+					structure qu’une boîte de dialogue est ouverte. Même comportement qu’axe-core ; IBM Equal
+					Access et Siteimprove Alfa évaluent la page derrière la boîte de dialogue comme si rien
+					n’était ouvert.
+				</li>
+				<li>
+					<strong>
 						<code>&lt;dialog&gt;</code> et les autres éléments masqués par la feuille de style par
 						défaut du navigateur
 					</strong>{" "}
@@ -198,8 +222,54 @@ export function KnownLimitationsContent() {
 					, et les constats de ces règles reprennent leur viewport et indiquent ce qui a été mesuré
 					(de combien le texte a dépassé le bord, la taille d’une cible et sa proximité avec sa
 					voisine) : un constat qui diffère d’une exécution à l’autre peut ainsi être rattaché aux
-					conditions. Analysez à chaque largeur qui vous importe, et attendez{" "}
-					<code>document.fonts.ready</code> avant d’analyser.
+					conditions. Analysez à chaque largeur qui vous importe, et attendez que la page soit
+					stable avant d’analyser : <code>waitForPageReady()</code> attend l’événement load, les
+					polices web et les images (voir{" "}
+					<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, qui montre comment l’appeler avant une analyse), et le résultat enregistre dans{" "}
+					<code>engine.environment</code> si des polices ou des images étaient encore en cours de
+					chargement.
+				</li>
+				<li>
+					<strong>
+						Les règles de contraste mesurent le texte par rapport aux arrière-plans de ses
+						ancêtres et, dans un navigateur, vérifient si autre chose est peint à cet endroit.
+					</strong>{" "}
+					Un texte positionné au-dessus d’un élément frère, d’une image <code>&lt;img&gt;</code>{" "}
+					d’en-tête, d’une superposition <code>::before</code>, ou ramené sur un autre bloc par une
+					marge négative repose sur un rendu qui n’appartient à aucun de ses ancêtres. Dans un
+					navigateur, le moteur mesure les boîtes de ligne du texte et cherche les éléments qui
+					peignent une couleur d’arrière-plan, une image d’arrière-plan ou un contenu remplacé (
+					<code>img</code>, <code>video</code>, <code>canvas</code>, <code>svg</code>,{" "}
+					<code>iframe</code>) et couvrent au moins environ un glyphe d’une ligne, ainsi qu’un{" "}
+					<code>::before</code> ou <code>::after</code> positionné avec une couleur ou un dégradé ;
+					quand il en trouve un, <a href="/rules/contrast-computable/"><code>contrast-computable</code></a>{" "}
+					pose la question pour ce texte avec le <code>reasonCode</code>{" "}
+					<code>BACKGROUND_OVERLAP</code>, et les règles qui calculent un rapport de contraste
+					l’écartent. Il ne détermine pas laquelle de deux boîtes qui se chevauchent est peinte
+					au-dessus, et ne calcule donc pas de rapport par rapport au rendu trouvé. Trois limites
+					réduisent le bruit, et chacune peut manquer un cas : seul compte le rendu situé à
+					l’intérieur de l’ancêtre le plus proche du texte qui a un arrière-plan opaque (une carte
+					blanche posée sur une image d’en-tête masque l’image), les boîtes fixes et sticky sont
+					écartées (une bannière de cookies ou un en-tête recouvre le texte plutôt que de se
+					trouver derrière), et un rendu uni de la même couleur que l’arrière-plan déjà mesuré est
+					ignoré. Sous jsdom, il n’y a pas de mise en page : rien n’est trouvé, et le texte est
+					mesuré par rapport à ses seuls ancêtres.
+				</li>
+				<li>
+					<strong>Le contraste est calculé en sRGB.</strong> Les couleurs exprimées en{" "}
+					<code>oklch()</code>, <code>oklab()</code>, <code>lab()</code>, <code>lch()</code> ou{" "}
+					<code>color()</code> (y compris la forme calculée de <code>color-mix()</code> et des
+					couleurs relatives) sont converties en sRGB, comme un écran standard les affiche ; une
+					couleur hors de sRGB, comme un rouge <code>display-p3</code> saturé, est ramenée à sa
+					limite, ce que Chromium dessine sur un écran sRGB. Un écran à large gamut peut afficher
+					cette couleur plus saturée que ne le suppose le rapport. Une couleur d’arrière-plan que le
+					moteur ne sait pas convertir, un <code>color()</code> dans un espace qu’il ne connaît pas,
+					n’est pas traitée comme transparente : <code>contrast-computable</code> pose la question
+					pour ce texte avec le <code>reasonCode</code> <code>BACKGROUND_UNPARSABLE</code>, et les
+					autres règles de contraste l’écartent.
 				</li>
 			</ul>
 

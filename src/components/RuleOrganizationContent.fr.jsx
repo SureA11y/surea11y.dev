@@ -39,8 +39,15 @@ export function RuleOrganizationContent() {
 				</li>
 				<li>
 					<strong>manuelle</strong> : signale qu’une personne doit trancher ; la règle ne peut pas
-					du tout résoudre la question à partir du balisage. Limitée à{" "}
-					<code>cantTell</code>/<code>notApplicable</code>, jamais <code>fail</code>.
+					trancher si ce qu’elle a trouvé pose problème. Rapporte <code>cantTell</code> ou{" "}
+					<code>notApplicable</code>, et <code>pass</code> seulement lorsque la réponse qui ne
+					demande aucun jugement est celle qui a été trouvée ; jamais <code>fail</code>.{" "}
+					<a href="/rules/landmark-unique/"><code>landmark-unique</code></a> ne peut pas trancher si
+					deux landmarks qui partagent un nom posent problème (l’APG l’admet quand leur contenu est
+					identique), c’est donc <code>cantTell</code> ; mais « tous les noms diffèrent » est un
+					fait, c’est donc <code>pass</code>. Une règle qui demande à une personne de juger chaque
+					cible qu’elle trouve, par exemple si l’alternative textuelle d’une image est exacte, ne
+					rapporte jamais <code>pass</code>.
 				</li>
 			</ul>
 			<p>

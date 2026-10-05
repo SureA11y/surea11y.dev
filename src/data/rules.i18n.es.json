@@ -2,17 +2,17 @@
 	"accesskeys": {
 		"title": "Los valores de accesskey deben ser únicos",
 		"description": "Comprueba que ningún par de elementos de la página comparta el mismo valor del atributo accesskey.",
-		"applicability": "Se aplica siempre que dos o más elementos comparten el mismo valor no vacío del atributo accesskey (sin distinguir mayúsculas y minúsculas).",
+		"applicability": "Se aplica siempre que dos o más elementos llevan un atributo accesskey no vacío: solo entonces pueden coincidir dos de ellos.",
 		"expectation": "Todos los valores de accesskey de la página son únicos. Los accesskeys duplicados hacen ambigua la activación mediante atajo de teclado: solo uno de los elementos que comparten la tecla puede alcanzarse con ella, y cuál depende del navegador o la plataforma.",
 		"reports": "- `accesskey`: la tecla compartida, en minúsculas.\n- `duplicateCount`: cuántos elementos de la página la comparten, incluido este.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "Dos elementos comparten el mismo valor de `accesskey` (\"s\"), que la mayoría de los navegadores resuelve de forma impredecible."
+				"state": "pass",
+				"explanation": "Todos los valores de `accesskey` de la página son únicos."
 			},
 			{
-				"state": "na",
-				"explanation": "Todos los valores de `accesskey` de la página son únicos."
+				"state": "unknown",
+				"explanation": "Dos elementos comparten el mismo valor de `accesskey` (\"s\"), que la mayoría de los navegadores resuelve de forma impredecible."
 			}
 		]
 	},
@@ -34,10 +34,10 @@
 	},
 	"area-alt-quality": {
 		"title": "La alternativa textual de <area> debe ser adecuada (revisión manual)",
-		"description": "Marca los elementos <area> con una alternativa textual no vacía (alt, aria-label, aria-labelledby o title) para que una persona revise si es adecuada.",
+		"description": "Marca los elementos <area> con una alternativa textual no vacía (alt, aria-label, aria-labelledby o title) para que una persona revise si es adecuada. Indica cuándo el nombre parece un nombre de archivo, una dirección web, un marcador de posición, un comienzo del tipo \"[[en:image of]]\" o es muy largo.",
 		"applicability": "Se aplica a los elementos <area> que obtienen una alternativa textual no vacía de cualquier fuente: aria-labelledby (que resuelve a texto), aria-label, alt o title. El <area> debe tener un href no vacío (si no, según la especificación HTML no es un hipervínculo) y pertenecer a un <map> al que realmente hace referencia un <img usemap>; un <area> en un mapa no usado queda fuera del alcance. El <img> que lo referencia debe renderizarse realmente (hidden/display:none/visibility lo excluyen; aria-hidden no, porque <area> no es descendiente DOM de <img>), y el propio <area> debe ser elegible: hidden, display:none e inert en el <area> o en su <map> no lo excluyen, ya que ninguno genera una caja y la detección de clics de los mapas de imagen de un navegador real ignora los tres en ese punto (verificado en Chromium y Firefox); solo esos mecanismos en un ancestro real de todo el par <img>+<map> lo hacen. role=\"presentation\"/\"none\" saca un elemento del alcance salvo que sea enfocable.",
-		"expectation": "Se requiere revisión manual para confirmar que el texto alternativo proporcionado es preciso y apropiado. Cada ocurrencia enumera todas las fuentes presentes (data.details.sources), para que la persona que revisa compruebe cada una: un title o un aria-label que no es el nombre sigue llegando a algunos usuarios.",
-		"reports": "- `name`: la alternativa textual que acaba teniendo el área, tomada de la primera fuente de `sources`.\n- `sources`: cada fuente de texto que tiene el área, en el orden en que se usan para el nombre: `aria-labelledby`, `aria-label`, `alt`, `title`.\n- `alt` (un área con atributo alt): el texto de alt.",
+		"expectation": "Se requiere revisión manual para confirmar que el texto alternativo proporcionado es preciso y apropiado. Cada ocurrencia enumera todas las fuentes presentes (data.details.sources), para que la persona que revisa compruebe cada una: un title o un aria-label que no es el nombre sigue llegando a algunos usuarios. También se comprueba en el nombre lo que la regla img-alt-quality comprueba en un alt (helpers.getTextAlternativeSignal): un nombre de archivo, una dirección web, un marcador de posición o una palabra genérica, un comienzo que dice que es una imagen, o más de 150 caracteres. Un nombre así recibe su propio resumen y su propia sugerencia; el hallazgo sigue siendo `cantTell`.",
+		"reports": "- `name`: la alternativa textual que acaba teniendo el área, tomada de la primera fuente de `sources`.\n- `sources`: cada fuente de texto que tiene el área, en el orden en que se usan para el nombre: `aria-labelledby`, `aria-label`, `alt`, `title`.\n- `altSignal`, y `length` y `limit` para `too-long`: lo que hizo que el nombre pareciera algo distinto de una descripción, como en img-alt-quality. No aparece cuando el nombre es corriente.\n- `alt` (un área con atributo alt): el texto de alt.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -108,12 +108,12 @@
 		"reports": "- `ariaChecked`: el estado que anuncia `aria-checked`: `true`, `false` o `mixed` (solo en una casilla de verificación). Un valor que no sea ninguno de estos cuenta como `false`.\n- `actualState`: el estado en que está realmente el control: `true`, `false` o `mixed` para una casilla de verificación indeterminada.\n- `type`: `checkbox` o `radio`.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "El checkbox está realmente marcado, pero `aria-checked=\"false\"` le indica a la tecnología de asistencia lo contrario."
+				"state": "pass",
+				"explanation": "`aria-checked` coincide con el estado checked real del control."
 			},
 			{
-				"state": "na",
-				"explanation": "`aria-checked` coincide con el estado checked real del control."
+				"state": "unknown",
+				"explanation": "El checkbox está realmente marcado, pero `aria-checked=\"false\"` le indica a la tecnología de asistencia lo contrario."
 			}
 		]
 	},
@@ -310,12 +310,12 @@
 		"expectation": "`role=\"text\"` indica a la tecnología de asistencia que trate todo el subárbol de un elemento como una única unidad de texto plano (p. ej. texto dividido visualmente entre varios `<span>` por estilos). Según las [[en:WAI-ARIA Authoring Practices]], esto solo tiene sentido cuando ese subárbol no contiene contenido enfocable: un descendiente enfocable dentro de una región \"esto es solo texto\" resulta inalcanzable o confuso para usuarios de teclado/tecnología de asistencia.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "`role=\"text\"` indica a la tecnología de asistencia que trate esto como una única cadena plana, pero el enlace anidado sigue siendo enfocable e interactivo por debajo."
+				"state": "pass",
+				"explanation": "No existe ningún descendiente enfocable dentro del elemento `role=\"text\"`."
 			},
 			{
-				"state": "na",
-				"explanation": "No existe ningún descendiente enfocable dentro del elemento `role=\"text\"`."
+				"state": "unknown",
+				"explanation": "`role=\"text\"` indica a la tecnología de asistencia que trate esto como una única cadena plana, pero el enlace anidado sigue siendo enfocable e interactivo por debajo."
 			}
 		]
 	},
@@ -340,7 +340,7 @@
 		"title": "Los valores de los atributos `aria-*` deben ajustarse al tipo definido",
 		"description": "Comprueba que cada atributo aria-* reconocido tenga un valor que se ajuste al tipo declarado por WAI-ARIA (booleano, triestado, token, entero, número o referencia de ID).",
 		"applicability": "Se aplica a cualquier elemento que tenga al menos un atributo aria-* reconocido (los nombres de atributo no reconocidos son competencia de aria-valid-attr y no se evalúan aquí).",
-		"expectation": "El valor de cada atributo se ajusta al tipo de valor que declara WAI-ARIA: booleano (\"true\"/\"false\"), triestado (\"true\"/\"false\"/\"mixed\"), un token de un conjunto enumerado fijo, un entero (dentro del rango que WAI-ARIA fija para él), un número real, o una referencia de ID (o lista de ellas) que resuelve a un elemento existente en el documento. Según la propia aplicabilidad de ACT 6a7281 (\"cualquier estado o propiedad que NO esté vacío\"), un valor explícitamente vacío, incluido un atributo de estilo booleano sin \"=valor\", por ejemplo `aria-checked` solo, queda fuera del alcance para todos los tipos de valor y no es una infracción: es un patrón habitual y deliberado en el marcado generado con plantillas (por ejemplo, React renderizando condicionalmente `aria-describedby={hasError ? errorId : ''}`).",
+		"expectation": "El valor de cada atributo se ajusta al tipo de valor que declara WAI-ARIA: booleano (\"true\"/\"false\"), triestado (\"true\"/\"false\"/\"mixed\"), un token de un conjunto enumerado fijo, un entero (dentro del rango que WAI-ARIA fija para él), un número real, o una referencia de ID (o lista de ellas) que resuelve a un elemento existente en el documento. Los valores booleanos, triestado y de token se leen sin distinguir mayúsculas y minúsculas, como los lee Chromium (aria-checked=\"TRUE\" está marcado). Según la propia aplicabilidad de ACT 6a7281 (\"cualquier estado o propiedad que NO esté vacío\"), un valor explícitamente vacío, incluido un atributo de estilo booleano sin \"=valor\", por ejemplo `aria-checked` solo, queda fuera del alcance para todos los tipos de valor y no es una infracción: es un patrón habitual y deliberado en el marcado generado con plantillas (por ejemplo, React renderizando condicionalmente `aria-describedby={hasError ? errorId : ''}`).",
 		"reports": "- `attr`: el atributo cuyo valor no es válido.\n- `value`: su valor tal como está escrito.\n- `valueReason`: qué tiene de incorrecto. En un `fail`: `expected-true-false`, `expected-true-false-undefined`, `expected-true-false-mixed`, `expected-integer`, `expected-number` o `invalid-token` cuando no es del tipo del atributo, `integer-out-of-range` cuando está por debajo del valor mínimo que permite ARIA, `expected-single-idref` cuando un atributo que admite un id contiene varios, `idref-not-found` cuando el id de aria-activedescendant no coincide con ningún elemento. En un `cantTell`: `idref-list-none-found` cuando ninguno de los ids de una lista coincide con un elemento, `idref-controls-not-found` para lo mismo en aria-controls.",
 		"examples": [
 			{
@@ -426,17 +426,17 @@
 	},
 	"bypass-blocks-present": {
 		"title": "La página debe ofrecer una forma de omitir bloques repetidos",
-		"description": "Comprueba que la página tenga al menos un mecanismo reconocido de omisión de bloques de WCAG 2.4.1: una región de referencia principal, un enlace de anclaje funcional dentro de la misma página, o un encabezado.",
-		"applicability": "Siempre aplicable a cualquier documento HTML con un elemento <body>: \"[[en:bypass blocks]]\" es una cuestión de página completa, siguiendo el mismo patrón que aria-hidden-body / page-title-present de evaluar el documento directamente en lugar de una raíz acotada.",
-		"expectation": "Está presente al menos una de las siguientes técnicas reconocidas de WCAG 2.4.1: (a) una región de referencia principal (<main> o [role=\"main\"]), técnica ARIA11: un usuario de lector de pantalla puede saltar directamente a ella, omitiendo en un solo paso todo lo anterior (nav, header, bloques repetidos); (b) un enlace de anclaje funcional dentro de la misma página, técnica G1/G123: un <a href=\"#id\"> (o el <a name=\"id\"> heredado) cuyo destino resuelve a un elemento existente dentro del propio árbol del enlace (DOM ligero o el mismo shadow root). No es necesario que esté ubicado antes de un <nav> ni que sea el primero en el orden de foco de teclado; (c) al menos un encabezado (<h1>-<h6> o [role=\"heading\"]) que esté a la vez incluido en el árbol de accesibilidad Y visible (no fuera de pantalla, recortado, opacity:0, o con overflow-hidden de tamaño cero), técnica H69: la navegación por encabezados es en sí misma un mecanismo de omisión reconocido por los estándares (por ejemplo, el comando \"saltar por encabezado\" de un lector de pantalla), pero la propia [[en:Expectation]] de ACT 047fe0 exige también visibilidad, ya que un encabezado solo para lector de pantalla deja a los usuarios de teclado videntes sin una forma equivalente de localizar el inicio del contenido no repetido.",
+		"description": "Comprueba que la página tenga al menos un mecanismo reconocido de omisión de bloques de WCAG 2.4.1: una región de referencia principal, un enlace de salto funcional, o un encabezado.",
+		"applicability": "Siempre aplicable a cualquier documento HTML con un elemento <body>: \"[[en:bypass blocks]]\" es una cuestión de página completa, siguiendo el mismo patrón que aria-hidden-body / page-title-present de evaluar el documento directamente en lugar de una raíz acotada. No mientras haya un diálogo modal abierto: el resto de la página es inerte entonces, así que el análisis ve el diálogo, no la página.",
+		"expectation": "Está presente al menos una de las siguientes técnicas reconocidas de WCAG 2.4.1: (a) una región de referencia principal (<main> o [role=\"main\"]), técnica ARIA11: un usuario de lector de pantalla puede saltar directamente a ella, omitiendo en un solo paso todo lo anterior (nav, header, bloques repetidos); (b) un enlace de salto funcional, técnica G1: un <a href=\"#id\"> (o el <a name=\"id\"> heredado) cuyo nombre se lee como un enlace de salto en uno de los idiomas incluidos (helpers.hasSkipLinkWording, como usa skip-link) y cuyo destino resuelve a un elemento existente dentro del propio árbol del enlace (DOM ligero o el mismo shadow root). No es necesario que esté ubicado antes de un <nav> ni que sea el primero en el orden de foco de teclado; (c) al menos un encabezado (<h1>-<h6> o [role=\"heading\"]) que esté a la vez incluido en el árbol de accesibilidad Y visible (no fuera de pantalla, recortado, opacity:0, o con overflow-hidden de tamaño cero), técnica H69: la navegación por encabezados es en sí misma un mecanismo de omisión reconocido por los estándares (por ejemplo, el comando \"saltar por encabezado\" de un lector de pantalla), pero la propia [[en:Expectation]] de ACT 047fe0 exige también visibilidad, ya que un encabezado solo para lector de pantalla deja a los usuarios de teclado videntes sin una forma equivalente de localizar el inicio del contenido no repetido.",
 		"examples": [
 			{
-				"state": "na",
-				"explanation": "Existe una región de referencia principal, un mecanismo de omisión reconocido, así que no hay nada que señalar."
+				"state": "pass",
+				"explanation": "Existe una región de referencia principal, un mecanismo de omisión reconocido."
 			},
 			{
 				"state": "unknown",
-				"explanation": "No se detectó ninguna región de referencia principal, enlace de anclaje funcional dentro de la misma página, ni encabezado visible: una solicitud de revisión, no un fallo, ya que el motor no puede confirmar a partir de una sola instantánea si la página carece de un mecanismo de omisión."
+				"explanation": "No se detectó ninguna región de referencia principal, enlace de salto funcional ni encabezado visible: una solicitud de revisión, no un fallo, ya que el motor no puede confirmar a partir de una sola instantánea si la página carece de un mecanismo de omisión."
 			}
 		]
 	},
@@ -510,7 +510,7 @@
 		"title": "El texto cumple el contraste de color mejorado (AAA)",
 		"description": "Comprueba que el texto visible tenga una proporción de contraste de al menos 7:1 (normal) o 4.5:1 (grande), cuando el contraste es calculable a partir de CSS.",
 		"applicability": "Se aplica al texto visible al que se aplica contrast-computable (véase esa regla para las condiciones de elegibilidad), acotado al texto cuyo fondo y primer plano son calculables. El texto elegible que no es calculable deja esta regla en notApplicable en lugar de cantTell: informar de esa incertidumbre corresponde a contrast-computable, de modo que las dos nunca informan del mismo texto dos veces.",
-		"expectation": "Cada nodo de texto calculable alcanza la proporción que exige el SC 1.4.6 para su tamaño: 4.5:1 para texto grande, 7:1 para el resto. El texto es grande a partir de 24px, o a partir de 14pt (unos 18.667px) cuando el peso de fuente calculado es 700 o superior.",
+		"expectation": "Cada nodo de texto calculable alcanza la proporción que exige el SC 1.4.6 para su tamaño: 4.5:1 para texto grande, 7:1 para el resto. El texto es grande a partir de 24px, o a partir de 14pt (unos 18.667px) cuando el peso de fuente calculado es 700 o superior. Margen (`contrast-ratio`): de entre el texto que alcanza su proporción, el elemento más cercano a ella, con la proporción sin redondear frente a la que exige su tamaño; `context.largeText` indica cuál. `measuredCount` cuenta los elementos cuyo contraste se calculó.",
 		"reports": "- `metrics.ratio` (un `fail`): la relación de contraste del texto, por ejemplo 4.5 para 4.5:1, sin redondear, frente a `metrics.threshold` (7, o 4.5 para texto grande).\n- `colors.foregroundHex`, `colors.backgroundHex` (un `fail`): los colores del texto y del fondo a partir de los que se calculó la relación, en hexadecimal. Un color de texto semitransparente se mezcla primero con el fondo.\n- `colors.foregroundRgba`, `colors.backgroundRgba` (un `fail`): los mismos colores como cadenas `rgba()`.\n- `typography.fontSizePx`, `typography.fontSizePt` (un `fail`): el tamaño de fuente calculado en píxeles CSS y en puntos.\n- `typography.fontWeight`, `typography.fontWeightLabel`, `typography.isBold` (un `fail`): el peso de fuente calculado como número, `bold` (700 o más) o `normal`, y si cuenta como negrita.\n- `typography.isLargeText` (un `fail`): si el texto cuenta como grande, lo que fija el umbral.\n- `assumptionsApplied`, `assumedRootCanvasColor` (un `fail`): `null` salvo que el fondo de la página nunca llegara a ser opaco y se supusiera que se asienta sobre un color de lienzo. En ese caso `assumptionsApplied` es `[\"ROOT_CANVAS_FALLBACK\"]` y `assumedRootCanvasColor` es el color supuesto.\n- `eligibleTextCount`, `computableTextCount` (el `pass`, y el resultado `notApplicable` cuando ningún texto era calculable): cuántos nodos de texto estaban en el alcance, y cuántos de ellos tenían colores que se pudieron determinar. El `pass` repite ambos en `metrics`.",
 		"examples": [
 			{
@@ -527,7 +527,7 @@
 		"title": "El texto cumple el contraste de color mínimo (AA)",
 		"description": "Comprueba que el texto visible tenga una proporción de contraste de al menos 4.5:1 (normal) o 3:1 (grande), cuando el contraste es calculable a partir de CSS.",
 		"applicability": "Se aplica al texto visible al que se aplica contrast-computable (véase esa regla para las condiciones de elegibilidad), acotado al texto cuyo fondo y primer plano son calculables. El texto elegible que no es calculable deja esta regla en notApplicable en lugar de cantTell: informar de esa incertidumbre corresponde a contrast-computable, de modo que las dos nunca informan del mismo texto dos veces.",
-		"expectation": "Cada nodo de texto calculable alcanza la proporción que exige el SC 1.4.3 para su tamaño: 3:1 para texto grande, 4.5:1 para el resto. El texto es grande a partir de 24px, o a partir de 14pt (unos 18.667px) cuando el peso de fuente calculado es 700 o superior.",
+		"expectation": "Cada nodo de texto calculable alcanza la proporción que exige el SC 1.4.3 para su tamaño: 3:1 para texto grande, 4.5:1 para el resto. El texto es grande a partir de 24px, o a partir de 14pt (unos 18.667px) cuando el peso de fuente calculado es 700 o superior. Margen (`contrast-ratio`): de entre el texto que alcanza su proporción, el elemento más cercano a ella, con la proporción sin redondear frente a la que exige su tamaño; `context.largeText` indica cuál. `measuredCount` cuenta los elementos cuyo contraste se calculó.",
 		"reports": "- `metrics.ratio` (texto por debajo del umbral): la relación de contraste del texto con su fondo (4.5 para 4.5:1), frente a `metrics.threshold`, la relación que exige su tamaño.\n- `colors.foregroundHex`, `colors.backgroundHex` (texto por debajo del umbral): el color del texto y el color de fondo que hay detrás, en hexadecimal, después de mezclar cualquier transparencia. `colors.foregroundRgba` y `colors.backgroundRgba` dan los mismos dos colores en forma `rgba()`.\n- `typography.fontSizePx`, `typography.fontSizePt` (texto por debajo del umbral): el tamaño de fuente calculado, en píxeles CSS y en puntos.\n- `typography.fontWeight`, `typography.fontWeightLabel` (texto por debajo del umbral): el peso de fuente calculado como número (400, 700) y tal como está escrito.\n- `typography.isBold`, `typography.isLargeText` (texto por debajo del umbral): si el texto cuenta como negrita, y como texto grande, el tamaño que solo necesita 3:1.\n- `assumptionsApplied`, `assumedRootCanvasColor` (texto por debajo del umbral): `null` salvo que el modo de contraste `auditorAssist` tuviera que suponer un fondo de página porque la página no establece ninguno opaco. En ese caso `assumptionsApplied` es `['ROOT_CANVAS_FALLBACK']` y `assumedRootCanvasColor` es el color supuesto (blanco por defecto).\n- `eligibleTextCount`, `computableTextCount` (el resumen cuando nada falla): cuántos nodos de texto examinó la regla, y cuántos de ellos tenían colores que pudo calcular. Se repiten en `metrics` en un `pass`.",
 		"examples": [
 			{
@@ -739,12 +739,12 @@
 		"expectation": "El encabezado tiene un nombre accesible no vacío: aria-label, aria-labelledby, contenido de texto visible no oculto a la tecnología de asistencia, o (como último recurso) un atributo title. Un encabezado vacío se anuncia como \"encabezado, nivel N\" sin nada más, lo cual resulta confuso al navegar por encabezados.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "El encabezado no tiene ningún nombre accesible: no hay nada que un lector de pantalla pueda anunciar."
+				"state": "pass",
+				"explanation": "El encabezado tiene contenido de texto visible."
 			},
 			{
-				"state": "na",
-				"explanation": "El encabezado tiene contenido de texto visible."
+				"state": "unknown",
+				"explanation": "El encabezado no tiene ningún nombre accesible: no hay nada que un lector de pantalla pueda anunciar."
 			}
 		]
 	},
@@ -756,20 +756,20 @@
 		"reports": "- `ariaName` (`TABLE_HEADER_NAME_NOT_VISIBLE_TEXT`): el nombre que la celda de encabezado obtiene de `aria-label` o `aria-labelledby` en lugar de un texto visible.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "La celda de encabezado no tiene contenido de texto ni nombre accesible."
+				"state": "pass",
+				"explanation": "La celda de encabezado tiene contenido de texto visible."
 			},
 			{
-				"state": "na",
-				"explanation": "La celda de encabezado tiene contenido de texto visible."
+				"state": "unknown",
+				"explanation": "La celda de encabezado no tiene contenido de texto ni nombre accesible."
 			}
 		]
 	},
 	"focus-order-semantics": {
 		"title": "Los elementos añadidos al orden de tabulación deben tener semántica interactiva",
-		"description": "Marca los elementos con tabindex >= 0 cuyo rol explícito es un rol estructural/de documento no interactivo (por ejemplo, heading, list, region, presentation), para revisión manual.",
+		"description": "Marca los elementos con tabindex >= 0 cuyo rol explícito es un rol estructural/de documento no interactivo (por ejemplo, heading, list, note, presentation), para revisión manual.",
 		"applicability": "Elementos con un `tabindex` explícito de `0` o superior (en el orden de tabulación) Y un atributo `role` explícito que forma parte de un conjunto seleccionado de roles claramente no interactivos, estructurales/de documento.",
-		"expectation": "Un elemento colocado deliberadamente en el orden de tabulación debe comunicar por qué es enfocable: un rol como `heading`, `list`, `region` o `presentation` no le da a la tecnología de asistencia ninguna semántica interactiva que anunciar, lo cual resulta confuso para los usuarios de teclado que llegan a él y no reciben ninguna indicación de qué ocurriría (si algo) al activarlo.",
+		"expectation": "Un elemento colocado deliberadamente en el orden de tabulación debe comunicar por qué es enfocable: un rol como `heading`, `list`, `note` o `presentation` no le da a la tecnología de asistencia ninguna semántica interactiva que anunciar, lo cual resulta confuso para los usuarios de teclado que llegan a él y no reciben ninguna indicación de qué ocurriría (si algo) al activarlo.",
 		"reports": "- `tabindex`: el `tabindex` del elemento, como número (0 o mayor).\n- `role`: el rol no interactivo que lleva el elemento.",
 		"examples": [
 			{
@@ -816,19 +816,27 @@
 		]
 	},
 	"form-control-programmatic-label-quality": {
-		"title": "Los controles de formulario no deben depender de placeholder o title como etiqueta principal",
-		"description": "Marca los controles de formulario cuyo nombre accesible calculado depende de placeholder o title como método de etiquetado principal. Se prefiere <label> o aria-labelledby.",
-		"applicability": "Se aplica a los controles de formulario nativos etiquetables expuestos a las tecnologías de asistencia:\n\n- input (excluyendo type=hidden|submit|reset|button|image)\n- select\n- textarea\n\nrole=\"presentation\"/\"none\" se excluyen solo cuando no son enfocables.",
-		"expectation": "Si un control tiene un nombre programático, no debe depender ÚNICAMENTE de:\n\n- placeholder (no vacío)\n- title (no vacío)\n\nSe prefiere un <label> asociado o aria-labelledby.",
-		"reports": "- `labelMethod`: de dónde procede la etiqueta del control: `placeholder` o `title`.\n- `sourceText`: el texto de la etiqueta, hasta 120 caracteres.",
+		"title": "Los controles de formulario deberían tener una etiqueta mostrada en pantalla",
+		"description": "Marca los controles de formulario cuyo nombre accesible procede de placeholder, title, aria-label o aria-labelledby que apunta solo a texto oculto, ninguno de los cuales es una etiqueta mostrada en pantalla. Se prefiere un <label> visible, o aria-labelledby que apunte a texto visible.",
+		"applicability": "Se aplica a los controles de formulario nativos etiquetables expuestos a las tecnologías de asistencia:\n\n- input (excluyendo type=hidden|submit|reset|button|image)\n- select\n- textarea\n\nrole=\"presentation\"/\"none\" se excluyen solo cuando no son enfocables. Se excluye un control que no se dibuja en pantalla: transparente (opacity 0, propia o de un ancestro) o recortado (como lo está el texto visualmente oculto), como ocurre con una casilla de verificación oculta tras un interruptor estilizado. No tiene una etiqueta visible que evaluar; su sustituto visible sí. Solo cuentan los controles que tienen un nombre programático: un control sin ninguno es un hallazgo de form-control-programmatic-label-present, no una cuestión de lo bueno que es su nombre.",
+		"expectation": "Si un control tiene un nombre programático, este no debería proceder ÚNICAMENTE de:\n\n- placeholder (no vacío)\n- title (no vacío)\n- aria-label\n- aria-labelledby cuyos elementos referenciados están todos sin renderizar (hidden, display:none, visibility:hidden)\n\nSe prefiere un <label> asociado o aria-labelledby que apunte a texto visible.",
+		"reports": "- `labelMethod`: de dónde procede la etiqueta del control: `placeholder`, `title`, `aria-label` o `aria-labelledby`.\n- `reasonCode`: `label_from_placeholder_primary`, `label_from_title_primary`, `label_from_aria_label_only` o `label_from_hidden_labelledby`.\n- `sourceText`: el texto de la etiqueta, hasta 120 caracteres.",
 		"examples": [
+			{
+				"state": "pass",
+				"explanation": "Un `<label>` persistente proporciona el nombre; `placeholder` aquí es solo una pista de formato."
+			},
 			{
 				"state": "unknown",
 				"explanation": "El único nombre del control proviene de `placeholder`, que desaparece en cuanto el usuario empieza a escribir."
 			},
 			{
-				"state": "na",
-				"explanation": "Un `<label>` persistente proporciona el nombre; `placeholder` aquí es solo una pista de formato."
+				"state": "unknown",
+				"explanation": "El único nombre del control procede de `title`, que solo se muestra al pasar el puntero. Ambos le dan un nombre al control, así que se cumple WCAG 4.1.2; lo que falta es una etiqueta que se muestre a todo el mundo, que es el SC 3.3.2."
+			},
+			{
+				"state": "unknown",
+				"explanation": "El único nombre del control procede de `aria-label`, que nunca se muestra en pantalla. Un texto visible junto al campo, como un botón de búsqueda, puede seguir indicando a los usuarios videntes para qué sirve, así que esto requiere que alguien lo mire, no un fallo."
 			}
 		]
 	},
@@ -857,12 +865,12 @@
 		"reports": "- `fromLevel`: el nivel de encabezado más profundo alcanzado antes de este encabezado (3 para un <h3>).\n- `toLevel`: el nivel de este encabezado, más de un nivel por debajo de `fromLevel`.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "El nivel de encabezado salta de 1 a 3, saltándose el nivel 2."
+				"state": "pass",
+				"explanation": "Cada nivel de encabezado aumenta como máximo de uno en uno."
 			},
 			{
-				"state": "na",
-				"explanation": "Cada nivel de encabezado aumenta como máximo de uno en uno."
+				"state": "unknown",
+				"explanation": "El nivel de encabezado salta de 1 a 3, saltándose el nivel 2."
 			}
 		]
 	},
@@ -937,10 +945,14 @@
 	"identical-links-same-purpose": {
 		"title": "Los enlaces con el mismo nombre accesible deben llevar al mismo destino",
 		"description": "Marca grupos de enlaces que comparten el mismo nombre accesible pero se resuelven en más de un destino distinto, para revisión manual de si cumplen el mismo propósito.",
-		"applicability": "Cualquier `a[href]` o `[role=\"link\"]` con un nombre accesible no vacío, agrupado por ese nombre (recortado, con espacios en blanco colapsados, sin distinción de mayúsculas/minúsculas).",
+		"applicability": "Conjuntos de dos o más elementos `a[href]` o `[role=\"link\"]` que comparten un nombre accesible no vacío (recortado, con espacios en blanco colapsados, sin distinción de mayúsculas/minúsculas), como en ACT b20e66. Un enlace cuyo nombre no comparte ningún otro enlace no tiene nada con lo que compararse.",
 		"expectation": "Dentro de una página, se espera que los enlaces que comparten el mismo nombre accesible cumplan el mismo propósito (es decir, que se resuelvan en el mismo destino, la URL resuelta completa, incluido cualquier fragmento). Los enlaces con el mismo texto pero distinto destino son habituales y a menudo intencionados en sitios reales (por ejemplo, enlaces \"[[en:Read more]]\" repetidos en cada tarjeta de artículo), por lo que esta regla se define como `type: 'manual'` (con tope en cantTell, nunca fail) en lugar de un fallo estricto, marcando un desajuste real de nombre/destino para el criterio humano en vez de adivinar la intención.",
 		"reports": "- `name`: el nombre accesible que comparten los enlaces, sin espacios al principio ni al final, con los espacios en blanco colapsados y en minúsculas.\n- `href`: la URL completa a la que lleva este enlace.\n- `distinctDestinationCount`: a cuántas URL distintas llevan los enlaces con este nombre, un recuento de 2 o más.",
 		"examples": [
+			{
+				"state": "pass",
+				"explanation": "Los dos enlaces llamados \"[[en:Contact us]]\" llevan a la misma página."
+			},
 			{
 				"state": "unknown",
 				"explanation": "Ambos enlaces comparten el nombre accesible \"[[en:Read more]]\" pero se resuelven en destinos distintos."
@@ -1047,13 +1059,18 @@
 	},
 	"img-alt-quality": {
 		"title": "El texto alternativo de <img> debe ser apropiado (revisión manual)",
-		"description": "Marca los elementos <img> con texto alternativo no vacío para revisión manual de su idoneidad.",
+		"description": "Marca los elementos <img> con texto alternativo no vacío para revisión manual de su idoneidad, e indica cuándo el alt parece un nombre de archivo, una dirección web, un marcador de posición, un comienzo del tipo \"[[en:image of]]\" o es muy largo.",
 		"applicability": "Se aplica a los elementos <img> cuyo atributo alt está presente y no vacío. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo deja fuera del alcance salvo que sea enfocable, en cuyo caso recupera su role. Un <img> sin ningún alt es un fallo de img-alt-present, y uno con alt=\"\" es la revisión de img-alt-decorative.",
-		"expectation": "Se requiere revisión manual para confirmar que el texto alternativo proporcionado es preciso y apropiado.",
+		"expectation": "Se requiere revisión manual para confirmar que el texto alternativo proporcionado es preciso y apropiado. Un texto alternativo que parece algo distinto de una descripción recibe su propio resumen y su propia sugerencia: un nombre de archivo (o un alt igual al propio nombre de archivo de la imagen), una dirección web, un marcador de posición o una palabra genérica como \"[[en:image]]\" o \"[[en:TBD]]\", un comienzo que dice que es una imagen (\"[[en:image of]]\", \"[[en:photo of]]\"), o un alt de más de 150 caracteres. Cada hallazgo sigue siendo `cantTell`: cada uno de estos casos puede ser correcto en su contexto.",
+		"reports": "- `altSignal`: lo que hizo que el texto alternativo pareciera sospechoso, solo en esos hallazgos: `file-name`, `url`, `placeholder`, `redundant-prefix` o `too-long`. No aparece en un hallazgo con un texto alternativo corriente. Cuando se aplican varios, se informa el primero en ese orden.\n- `length`: la longitud del texto alternativo en caracteres, solo en `too-long`.\n- `limit`: la longitud por encima de la cual el alt se considera demasiado largo (150), solo en `too-long`.",
 		"examples": [
 			{
 				"state": "unknown",
-				"explanation": "Hay un alt no vacío presente, pero \"[[en:image]]\" repite el tipo de elemento en lugar de describir lo que muestra el gráfico; merece el criterio de un revisor."
+				"explanation": "Hay un alt no vacío presente, pero \"[[en:image]]\" repite el tipo de elemento en lugar de describir lo que muestra el gráfico. El hallazgo indica que el alt es un marcador de posición o una palabra genérica (`data.details.altSignal: \"placeholder\"`), como lo hace para un nombre de archivo, una dirección web, un comienzo del tipo \"[[en:image of]]\" o un alt de más de 150 caracteres."
+			},
+			{
+				"state": "unknown",
+				"explanation": "Un texto alternativo corriente recibe la revisión general: solo una persona puede saber si describe bien la imagen en su contexto."
 			},
 			{
 				"state": "na",
@@ -1095,10 +1112,10 @@
 	},
 	"input-image-alt-quality": {
 		"title": "La alternativa textual de <input type=\"image\"> debe ser adecuada (revisión manual)",
-		"description": "Marca los elementos <input type=\"image\"> con una alternativa textual no vacía (alt, aria-label, aria-labelledby o title) para que una persona revise si es adecuada.",
+		"description": "Marca los elementos <input type=\"image\"> con una alternativa textual no vacía (alt, aria-label, aria-labelledby o title) para que una persona revise si es adecuada. Indica cuándo el nombre parece un nombre de archivo, una dirección web, un marcador de posición, un comienzo del tipo \"[[en:image of]]\" o es muy largo.",
 		"applicability": "Se aplica a los elementos <input type=\"image\"> que obtienen una alternativa textual no vacía de cualquier fuente: aria-labelledby (que resuelve a texto), aria-label, alt o title. Un elemento cuyo alt está presente pero vacío queda para input-image-alt-decorative, que pregunta por ese caso. El elemento debe estar incluido en el árbol de accesibilidad, y role=\"presentation\"/\"none\" lo saca del alcance salvo que sea enfocable, lo que restablece su rol.",
-		"expectation": "Se requiere revisión manual para confirmar que el texto alternativo proporcionado es preciso y apropiado. Cada ocurrencia enumera todas las fuentes presentes (data.details.sources), para que la persona que revisa compruebe cada una.",
-		"reports": "- `name`: la alternativa textual del control tal como se anuncia, de la primera fuente que proporciona una.\n- `sources`: cada fuente que proporciona una alternativa textual no vacía, en el orden en que se usan para el nombre. Cada elemento es `aria-labelledby`, `aria-label`, `alt` o `title`.\n- `alt` (un control con un `alt` no vacío): el texto de `alt`.",
+		"expectation": "Se requiere revisión manual para confirmar que el texto alternativo proporcionado es preciso y apropiado. Cada ocurrencia enumera todas las fuentes presentes (data.details.sources), para que la persona que revisa compruebe cada una. También se comprueba en el nombre lo que la regla img-alt-quality comprueba en un alt (helpers.getTextAlternativeSignal): un nombre de archivo, una dirección web, un marcador de posición o una palabra genérica, un comienzo que dice que es una imagen, o más de 150 caracteres. Un nombre así recibe su propio resumen y su propia sugerencia; el hallazgo sigue siendo `cantTell`.",
+		"reports": "- `name`: la alternativa textual del control tal como se anuncia, de la primera fuente que proporciona una.\n- `sources`: cada fuente que proporciona una alternativa textual no vacía, en el orden en que se usan para el nombre. Cada elemento es `aria-labelledby`, `aria-label`, `alt` o `title`.\n- `altSignal`, y `length` y `limit` para `too-long`: lo que hizo que el nombre pareciera algo distinto de una descripción, como en img-alt-quality. No aparece cuando el nombre es corriente.\n- `alt` (un control con un `alt` no vacío): el texto de `alt`.",
 		"examples": [
 			{
 				"state": "unknown",
@@ -1128,20 +1145,17 @@
 		]
 	},
 	"label-title-only": {
-		"title": "Los controles de formulario no deben usar title como única etiqueta",
-		"description": "Comprueba que un control de formulario con un atributo title también tiene una etiqueta real (elemento label, aria-label o aria-labelledby).",
-		"applicability": "Se aplica a los controles de formulario etiquetables (input, excluyendo hidden/submit/reset/button/image; select; textarea) que tienen un atributo title no vacío.",
-		"expectation": "El control también tiene una etiqueta real (un <label> envolvente o asociado, aria-label, o aria-labelledby), en lugar de depender únicamente del atributo title. Una información sobre herramientas basada solo en title no se expone de forma fiable en toda la tecnología de asistencia y no es visible hasta el hover/foco, a diferencia de una etiqueta visible persistente.",
+		"title": "Etiquetas de formulario solo con title (obsoleta)",
+		"description": "Obsoleta desde 1.10.0 y siempre notApplicable: un control de formulario etiquetado solo por su atributo title lo informa form-control-programmatic-label-quality.",
+		"applicability": "Nada. La regla está obsoleta e informa notApplicable en todas las páginas. Su id se mantiene en el catálogo, con meta.deprecated activado y deprecation.replacedBy nombrando la regla que la cubre, para que una lista runOnly, una línea base guardada o el código que busca el resultado por ruleId sigan resolviéndose hasta que el archivo se elimine en 2.0.0 (docs/API_STABILITY.md, \"[[en:Rule-ID deprecation policy]]\").",
+		"expectation": "Ninguna. El caso que informaba, un control de formulario cuya única etiqueta es su atributo title, lo informa form-control-programmatic-label-quality (label_from_title_primary), que también cubre las etiquetas solo con placeholder, bajo el SC 3.3.2. Cada hallazgo de esta regla era un segundo informe de uno que esa regla hace para el mismo elemento.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "El atributo `title` es el único mecanismo de nombrado del campo; se muestra como información sobre herramientas, no como una etiqueta visible persistente."
-			},
-			{
 				"state": "na",
-				"explanation": "Un `<label>` real ya nombra el campo; `title` es solo complementario."
+				"explanation": "Antes se marcaba como `cantTell`. `form-control-programmatic-label-quality` informa este campo una sola vez, bajo WCAG 3.3.2: el `title` le da un nombre, pero no una etiqueta que se muestre a todo el mundo."
 			}
-		]
+		],
+		"deprecationReason": "Cada hallazgo que hacía duplicaba uno que form-control-programmatic-label-quality hace para el mismo elemento, regla que también cubre las etiquetas solo con placeholder."
 	},
 	"landmark-banner-is-top-level": {
 		"title": "La región de referencia banner debe estar en el nivel superior",
@@ -1150,12 +1164,12 @@
 		"expectation": "Ningún candidato a banner tiene un ancestro que sea a su vez una región de referencia. Un banner anidado dentro de otra región de referencia no es un banner de nivel superior que abarque toda la página, y confunde la navegación basada en regiones de referencia para los usuarios de tecnología de asistencia.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "Una región de referencia banner anidada dentro de otra región de referencia ya no funciona como el único encabezado de nivel superior de la página."
+				"state": "pass",
+				"explanation": "El banner no está anidado dentro de ninguna otra región de referencia."
 			},
 			{
-				"state": "na",
-				"explanation": "El banner no está anidado dentro de ninguna otra región de referencia."
+				"state": "unknown",
+				"explanation": "Una región de referencia banner anidada dentro de otra región de referencia ya no funciona como el único encabezado de nivel superior de la página."
 			}
 		]
 	},
@@ -1166,12 +1180,12 @@
 		"expectation": "Ningún candidato a complementary tiene un ancestro que sea a su vez una región de referencia. El contenido complementary respalda el contenido principal de la página y se sitúa junto a él; anidado dentro de otra región de referencia pasa a ser en cambio una sección de esa región de referencia, que no es lo que anuncia la navegación por regiones de referencia.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "Una región de referencia complementary anidada dentro de una región de referencia navigation."
+				"state": "pass",
+				"explanation": "La región de referencia complementary no está anidada dentro de ninguna otra región de referencia."
 			},
 			{
-				"state": "na",
-				"explanation": "La región de referencia complementary no está anidada dentro de ninguna otra región de referencia."
+				"state": "unknown",
+				"explanation": "Una región de referencia complementary anidada dentro de una región de referencia navigation."
 			}
 		]
 	},
@@ -1182,12 +1196,12 @@
 		"expectation": "Ningún candidato a contentinfo tiene un ancestro que sea a su vez una región de referencia. Un contentinfo anidado dentro de otra región de referencia no es una región de pie de página de nivel superior que abarque toda la página, y confunde la navegación basada en regiones de referencia para los usuarios de tecnología de asistencia.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "Una región de referencia contentinfo anidada dentro de otra región de referencia ya no funciona como el único pie de página de nivel superior de la página."
+				"state": "pass",
+				"explanation": "El contentinfo no está anidado dentro de ninguna otra región de referencia."
 			},
 			{
-				"state": "na",
-				"explanation": "El contentinfo no está anidado dentro de ninguna otra región de referencia."
+				"state": "unknown",
+				"explanation": "Una región de referencia contentinfo anidada dentro de otra región de referencia ya no funciona como el único pie de página de nivel superior de la página."
 			}
 		]
 	},
@@ -1198,12 +1212,12 @@
 		"expectation": "Ninguna región de referencia main tiene un ancestro que sea a su vez una región de referencia. Una región main anidada dentro de otra región de referencia no es un área de contenido principal de nivel superior que abarque toda la página, y confunde la navegación basada en regiones de referencia para los usuarios de tecnología de asistencia.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "La región de referencia main está anidada dentro de una región de referencia navigation en lugar de estar en el nivel superior."
+				"state": "pass",
+				"explanation": "La región de referencia main no está anidada dentro de ninguna otra región de referencia."
 			},
 			{
-				"state": "na",
-				"explanation": "La región de referencia main no está anidada dentro de ninguna otra región de referencia."
+				"state": "unknown",
+				"explanation": "La región de referencia main está anidada dentro de una región de referencia navigation en lugar de estar en el nivel superior."
 			}
 		]
 	},
@@ -1215,12 +1229,12 @@
 		"reports": "- `count`: cuántas regiones de referencia banner expone la página a la tecnología de asistencia, frente a un límite de 1.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "Dos elementos `<header>` de nivel superior se resuelven ambos al role banner."
+				"state": "pass",
+				"explanation": "Solo existe una región de referencia banner."
 			},
 			{
-				"state": "na",
-				"explanation": "Solo existe una región de referencia banner."
+				"state": "unknown",
+				"explanation": "Dos elementos `<header>` de nivel superior se resuelven ambos al role banner."
 			}
 		]
 	},
@@ -1232,12 +1246,12 @@
 		"reports": "- `count`: cuántas regiones de referencia contentinfo expone la página a la tecnología de asistencia, frente a un límite de 1.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "Dos elementos `<footer>` de nivel superior se resuelven ambos al role contentinfo."
+				"state": "pass",
+				"explanation": "Solo existe una región de referencia contentinfo."
 			},
 			{
-				"state": "na",
-				"explanation": "Solo existe una región de referencia contentinfo."
+				"state": "unknown",
+				"explanation": "Dos elementos `<footer>` de nivel superior se resuelven ambos al role contentinfo."
 			}
 		]
 	},
@@ -1249,28 +1263,49 @@
 		"reports": "- `count`: cuántas regiones de referencia main expone la página a la tecnología de asistencia, frente a un límite de 1.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "Dos elementos `<main>` se exponen ambos a la tecnología de asistencia como regiones de referencia main."
+				"state": "pass",
+				"explanation": "Solo existe una región de referencia main."
 			},
 			{
-				"state": "na",
-				"explanation": "Solo existe una región de referencia main."
+				"state": "unknown",
+				"explanation": "Dos elementos `<main>` se exponen ambos a la tecnología de asistencia como regiones de referencia main."
 			}
 		]
 	},
 	"landmark-one-main": {
 		"title": "La página debería tener una región de referencia main",
 		"description": "Comprueba que la página tiene al menos una región de referencia main (role=\"main\" o <main>).",
-		"applicability": "Siempre se aplica a cualquier documento HTML con un elemento <body>: \"¿tiene la página una región de referencia main?\" es una cuestión de toda la página, siguiendo el mismo patrón de bypass-blocks-present de evaluar el documento directamente.",
+		"applicability": "Siempre se aplica a cualquier documento HTML con un elemento <body>: \"¿tiene la página una región de referencia main?\" es una cuestión de toda la página, siguiendo el mismo patrón de bypass-blocks-present de evaluar el documento directamente. No mientras haya un diálogo modal abierto: el resto de la página es inerte entonces, así que el análisis ve el diálogo, no la página.",
 		"expectation": "Existe en la página al menos una región de referencia main (role=\"main\" o <main>) expuesta a la tecnología de asistencia. Una página sin ninguna no da a los usuarios de TA ninguna región de referencia a la que saltar directamente para llegar al contenido principal.",
 		"examples": [
 			{
+				"state": "pass",
+				"explanation": "Existe una región de referencia `<main>`."
+			},
+			{
 				"state": "unknown",
 				"explanation": "No hay ningún `<main>` ni `role=\"main\"` en ninguna parte de la página."
+			}
+		]
+	},
+	"landmark-role-name-present": {
+		"title": "Los roles region y form deben tener un nombre accesible",
+		"description": "Comprueba que un elemento con role=\"region\" o role=\"form\" tenga un nombre accesible, sin el cual no se expone como región de referencia.",
+		"applicability": "Se aplica a los elementos cuyo primer token del atributo role es region o form, y que están incluidos en el árbol de accesibilidad.",
+		"expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-labelledby, aria-label o title. WAI-ARIA lo exige (\"[[en:Authors MUST give each element with role region a brief label]]\", y lo mismo para form), y sin él el elemento no se expone en absoluto como región de referencia, así que se pierde el rol que pidió el autor. Se informa como CANTTELL en lugar de FAIL: el requisito es de WAI-ARIA, no de un criterio de éxito de WCAG. A la tecnología de asistencia no le llega nada falso, ya que recibe un contenedor simple, así que si la pérdida de la región de referencia perjudica a alguien depende de la página.",
+		"reports": "- `role`: el rol que necesita un nombre, `region` o `form`.",
+		"examples": [
+			{
+				"state": "pass",
+				"explanation": "La región se nombra mediante su encabezado visible, así que se expone como una región de referencia llamada \"[[en:Latest news]]\"."
+			},
+			{
+				"state": "unknown",
+				"explanation": "`role=\"region\"` sin nombre: WAI-ARIA exige uno, y sin él el elemento se expone como un contenedor simple, no como una región de referencia. No es un fallo, ya que el requisito no nombra ningún criterio de WCAG; una persona decide si importa la pérdida de la región de referencia."
 			},
 			{
 				"state": "na",
-				"explanation": "Existe una región de referencia `<main>`, así que no hay nada que marcar."
+				"explanation": "Ningún `role` pide una región de referencia. Un `<section>` sin nombre no pretende serlo."
 			}
 		]
 	},
@@ -1278,16 +1313,20 @@
 		"title": "Las regiones de referencia con el mismo rol deben tener nombres únicos",
 		"description": "Comprueba que, cuando dos o más regiones de referencia comparten el mismo rol, cada una tenga un nombre accesible distinto.",
 		"applicability": "Se aplica siempre que dos o más regiones de referencia de la página compartan el mismo rol de región de referencia (banner, contentinfo, main, navigation, complementary, region, form o search).",
-		"expectation": "Entre las regiones de referencia que comparten un rol, cada una tiene un nombre accesible distinto (mediante aria-label/aria-labelledby; las regiones de referencia no se nombran a partir del contenido). Dos regiones de referencia del mismo rol con el mismo nombre (incluidas dos que se dejan sin nombrar) son indistinguibles para los usuarios de tecnología de asistencia que navegan por regiones de referencia.",
+		"expectation": "Entre las regiones de referencia que comparten un rol, cada una tiene un nombre accesible distinto (mediante aria-label/aria-labelledby; las regiones de referencia no se nombran a partir del contenido). Dos regiones de referencia del mismo rol con el mismo nombre (incluidas dos que se dejan sin nombrar) son indistinguibles para los usuarios de tecnología de asistencia que navegan por regiones de referencia. Un nombre compartido se informa como CANTTELL, nunca como fallo: las [[en:ARIA Authoring Practices]] permiten uno cuando las regiones de referencia tienen el mismo contenido y propósito, como una paginación repetida encima y debajo de una tabla, algo que solo una persona puede confirmar. Dos regiones de referencia sin nombre necesitan nombres en cualquier caso, y entonces se aplica la misma excepción a esos nombres.",
 		"reports": "- `role`: el rol de región de referencia que comparten las regiones que coinciden, como `navigation`.\n- `name`: el nombre que comparten, en minúsculas y con los espacios colapsados. Vacío cuando ninguna tiene nombre.\n- `groupSize`: cuántas regiones de referencia de ese rol comparten ese nombre.",
 		"examples": [
 			{
+				"state": "pass",
+				"explanation": "Cada región de referencia de navegación tiene un nombre accesible distinto."
+			},
+			{
 				"state": "unknown",
-				"explanation": "Dos regiones de referencia de navegación comparten el mismo nombre accesible, por lo que un usuario de lector de pantalla no puede distinguirlas en la lista de regiones de referencia."
+				"explanation": "Dos regiones de referencia de navegación comparten el mismo nombre accesible, por lo que un usuario de lector de pantalla no puede distinguirlas en la lista de regiones de referencia. Una persona comprueba si su contenido es idéntico, el único caso en que las [[en:ARIA Authoring Practices]] permiten un nombre compartido."
 			},
 			{
 				"state": "na",
-				"explanation": "Cada región de referencia de navegación tiene un nombre accesible distinto."
+				"explanation": "Ningún rol de región de referencia se usa más de una vez."
 			}
 		]
 	},
@@ -1295,7 +1334,7 @@
 		"title": "Los enlaces dentro de bloques de texto deben distinguirse del texto circundante sin depender únicamente del color",
 		"description": "Comprueba que un enlace dentro de un bloque de texto se distinga visualmente del texto que lo rodea mediante una señal que no sea el color (subrayado, grosor o estilo de fuente, borde, fondo, icono), y pregunta por los enlaces que solo se distinguen por una diferencia de color de >=3:1, que además necesitan una señal al pasar el puntero y al recibir el foco.",
 		"applicability": "Se aplica a enlaces (`<a href>` y elementos con `role=\"link\"`) cuyo elemento padre inmediato también tiene al menos un nodo de texto hijo directo con contenido no vacío (es decir, el enlace está en línea dentro de un bloque de texto, no como elemento independiente, por ejemplo no como único contenido de un <li> de navegación).",
-		"expectation": "Un enlace dentro de un bloque de texto debe distinguirse visualmente del texto que lo rodea por al menos un medio que no sea el color:\n\n- text-decoration: underline, O\n- un font-weight o font-style distinto del texto circundante, O\n- otra marca visible en el propio enlace: un borde, box-shadow u outline, un color de fondo distinto del circundante, una imagen de fondo, una imagen o svg dentro de él, o contenido ::before/::after.\n\nUn enlace sin ninguno de estos se distingue solo por el color. Cuando su color contrasta con el texto circundante al menos 3:1, la técnica G183 solo se cumple si el paso del puntero y el foco también aportan una señal que no sea el color, algo que un análisis estático no puede ver, así que el enlace se informa como cantTell. Por debajo de 3:1, con un contraste calculable con seguridad, el color es demostrablemente la única señal y el enlace falla.",
+		"expectation": "Un enlace dentro de un bloque de texto debe distinguirse visualmente del texto que lo rodea por al menos un medio que no sea el color:\n\n- text-decoration: underline, O\n- un font-weight o font-style distinto del texto circundante, O\n- otra marca visible en el propio enlace: un borde, box-shadow u outline, un color de fondo distinto del circundante, una imagen de fondo, una imagen o svg dentro de él, o contenido ::before/::after.\n\nUn enlace sin ninguno de estos se distingue solo por el color. Cuando su color contrasta con el texto circundante al menos 3:1, la técnica G183 solo se cumple si el paso del puntero y el foco también aportan una señal que no sea el color, algo que un análisis estático no puede ver, así que el enlace se informa como cantTell. Por debajo de 3:1, con un contraste calculable con seguridad, el color es demostrablemente la única señal y el enlace falla. Margen (`contrast-ratio`): de entre los enlaces que se distinguen solo por el color y alcanzan 3:1, el más cercano a ese valor, con su proporción sin redondear. Por esos enlaces también se pregunta (la señal al pasar el puntero y al recibir el foco), así que el margen aparece en un resultado cantTell o fail. `measuredCount` cuenta los enlaces cuya única señal es el color.",
 		"reports": "- `metrics.ratio` (un enlace que se distingue solo por el color): el contraste entre el color del texto del enlace y el del texto que lo rodea, como relación (3 para 3:1), frente a `metrics.threshold` (3).\n- `colors.linkForegroundHex`, `colors.surroundingTextForegroundHex` (un enlace que se distingue solo por el color): el color del texto del enlace y el del texto que lo rodea, en hexadecimal.",
 		"examples": [
 			{
@@ -1482,12 +1521,12 @@
 		"reports": "- `reasons`: cada ajuste del atributo content que limita el zoom, tal como está escrito ahí, en minúsculas, como `user-scalable=no` o `maximum-scale=2` (por debajo de 5).",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "`user-scalable=no` bloquea el zoom más allá de la escala con la que se carga la página, por debajo del objetivo de buenas prácticas del 500% de AAA."
+				"state": "pass",
+				"explanation": "`maximum-scale=5` (500%) ya cumple el límite de buenas prácticas que esta regla comprueba."
 			},
 			{
-				"state": "na",
-				"explanation": "`maximum-scale=5` (500%) ya cumple el límite de buenas prácticas que esta regla comprueba."
+				"state": "unknown",
+				"explanation": "`user-scalable=no` bloquea el zoom más allá de la escala con la que se carga la página, por debajo del objetivo de buenas prácticas del 500% de AAA."
 			}
 		]
 	},
@@ -1569,12 +1608,12 @@
 		"expectation": "El SC 1.4.2 solo se aplica cuando el audio se reproduce automáticamente durante MÁS de 3 segundos; la duración del clip no se puede conocer a partir del marcado estático (jsdom no decodifica medios), por lo que esta regla no puede determinar siquiera si el SC se aplica a un elemento dado. Está escrita deliberadamente como `type: 'manual'` (limitada a `cantTell`, nunca `fail`) en lugar de adivinar: un elemento con reproducción automática sin silenciar y sin atributo `controls` (el mecanismo nativo y verificable estáticamente para pausar/detener o ajustar el volumen) se marca para revisión manual en lugar de tratarse como una infracción determinista.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "El audio se reproduce automáticamente sin silenciar y sin atributo `controls`, sin dar al usuario ninguna forma de pausarlo o detenerlo."
+				"state": "pass",
+				"explanation": "El atributo `controls` nativo le da al usuario un mecanismo de pausa/volumen."
 			},
 			{
-				"state": "na",
-				"explanation": "El atributo `controls` nativo le da al usuario un mecanismo de pausa/volumen."
+				"state": "unknown",
+				"explanation": "El audio se reproduce automáticamente sin silenciar y sin atributo `controls`, sin dar al usuario ninguna forma de pausarlo o detenerlo."
 			},
 			{
 				"state": "unknown",
@@ -1655,16 +1694,16 @@
 	"page-has-heading-one": {
 		"title": "La página debería tener un encabezado de nivel uno",
 		"description": "Comprueba que la página tenga al menos un encabezado de nivel uno (<h1> o role=\"heading\" con aria-level=\"1\").",
-		"applicability": "Siempre aplicable a cualquier documento HTML con un elemento <body>: \"¿tiene la página un h1?\" es una cuestión de toda la página, siguiendo el mismo patrón que bypass-blocks-present de evaluar el documento directamente.",
+		"applicability": "Siempre aplicable a cualquier documento HTML con un elemento <body>: \"¿tiene la página un h1?\" es una cuestión de toda la página, siguiendo el mismo patrón que bypass-blocks-present de evaluar el documento directamente. No mientras haya un diálogo modal abierto: el resto de la página es inerte entonces, así que el análisis ve el diálogo, no la página.",
 		"expectation": "Existe al menos un encabezado de nivel 1 (<h1> nativo, o role=\"heading\" con aria-level=\"1\"). Una página sin encabezado de nivel superior no tiene un punto de entrada claro para los usuarios de tecnología de asistencia que navegan por encabezados.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "No existe ningún `<h1>` ni `role=\"heading\" aria-level=\"1\"`."
+				"state": "pass",
+				"explanation": "Existe un encabezado de nivel uno."
 			},
 			{
-				"state": "na",
-				"explanation": "Existe un encabezado de nivel uno, por lo que no hay nada que marcar."
+				"state": "unknown",
+				"explanation": "No existe ningún `<h1>` ni `role=\"heading\" aria-level=\"1\"`."
 			}
 		]
 	},
@@ -1726,12 +1765,12 @@
 		"reports": "- `role`: el rol presentacional en vigor: `presentation` o `none`. Un <img alt=\"\"> sin rol propio notifica `presentation`.\n- `conflictingAttrs`: los atributos ARIA globales que lleva el elemento, sea cual sea su valor. Cada elemento es un nombre de atributo, como `aria-label`. Vacío cuando el elemento tiene `aria-hidden=\"true\"` o solo entra en conflicto su capacidad de recibir el foco.\n- `focusable`: `true` cuando el elemento puede recibir el foco, lo que también restaura su rol.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "`role=\"presentation\"` pide a la tecnología de asistencia que omita este elemento, pero `aria-label` proporciona un nombre: según la resolución de conflictos de WAI-ARIA, el atributo global prevalece y el rol presentation se descarta, por lo que el elemento (y su nombre) vuelven al árbol de forma inesperada."
+				"state": "pass",
+				"explanation": "No hay ningún atributo de nombrado en conflicto junto con el rol presentation."
 			},
 			{
-				"state": "na",
-				"explanation": "No hay ningún atributo de nombrado en conflicto junto con el rol presentation."
+				"state": "unknown",
+				"explanation": "`role=\"presentation\"` pide a la tecnología de asistencia que omita este elemento, pero `aria-label` proporciona un nombre: según la resolución de conflictos de WAI-ARIA, el atributo global prevalece y el rol presentation se descarta, por lo que el elemento (y su nombre) vuelven al árbol de forma inesperada."
 			}
 		]
 	},
@@ -1771,16 +1810,16 @@
 	"region": {
 		"title": "El contenido de la página debería estar dentro de regiones de referencia",
 		"description": "Comprueba que el contenido bajo <body> esté contenido dentro de una región de referencia.",
-		"applicability": "Se aplica a cualquier elemento bajo <body> que lleve directamente texto visible (u otro contenido propio, ver @implementation-notes) y que no sea en sí mismo una región de referencia, una región live, un dialog, un button, un <svg>, un <iframe>/<frame>, ni un skip-link resoluble.",
+		"applicability": "Se aplica a una página cuyo <body> tiene contenido: un elemento que lleva directamente texto visible (u otro contenido propio, ver @implementation-notes) fuera de cualquier región de referencia, o una región de referencia con cualquier cosa dentro. Las regiones live, los dialog, los button, los <svg>, los <iframe>/<frame> y los skip-link resolubles no son contenido que necesite una región de referencia. No mientras haya un diálogo modal abierto: el resto de la página es inerte entonces, así que el análisis ve el diálogo, no la página.",
 		"expectation": "Cada pieza de contenido de nivel superior de la página vive dentro de una región de referencia (main, navigation, banner, contentinfo, complementary, region, form, search), de modo que los usuarios de tecnología de asistencia que navegan por regiones de referencia no se pierdan contenido que nunca se colocó dentro de una.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "Este párrafo está directamente bajo `<body>`, fuera de toda región de referencia."
+				"state": "pass",
+				"explanation": "Todo el contenido de la página está contenido dentro de una región de referencia."
 			},
 			{
-				"state": "na",
-				"explanation": "Todo el contenido de la página está contenido dentro de una región de referencia."
+				"state": "unknown",
+				"explanation": "Este párrafo está directamente bajo `<body>`, fuera de toda región de referencia."
 			}
 		]
 	},
@@ -1809,12 +1848,12 @@
 		"reports": "- `value`: el valor de `scope` tal como está escrito, sin espacios al principio ni al final.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "\"column\" no es un valor válido de `scope` (el token correcto es \"col\")."
+				"state": "pass",
+				"explanation": "\"col\" es un valor válido de `scope`."
 			},
 			{
-				"state": "na",
-				"explanation": "\"col\" es un valor válido de `scope`."
+				"state": "unknown",
+				"explanation": "\"column\" no es un valor válido de `scope` (el token correcto es \"col\")."
 			}
 		]
 	},
@@ -1874,28 +1913,28 @@
 		"reports": "- `href`: el `href` del enlace.\n- `unusableReasonCode` (un destino que no se puede usar): por qué no se puede: `ACC_TREE_INELIGIBLE` cuando está oculto del árbol de accesibilidad, `NO_CLIENT_RECTS` cuando no se renderiza, `ZERO_AREA_TARGET` cuando no tiene área.\n- `targetSelector` (un destino que no se puede usar): un selector del destino.\n- `geometryCheckEnabled` (un destino que no se puede usar): si se pudo medir la geometría del destino, lo que requiere un navegador.\n- `viewport.width`, `viewport.height` (un destino cuya geometría se midió): el viewport en el que se maquetó la página, en píxeles CSS. Un destino oculto con un ancho puede ser utilizable con otro.",
 		"examples": [
 			{
+				"state": "pass",
+				"explanation": "El destino del fragmento existe y es utilizable."
+			},
+			{
 				"state": "unknown",
 				"explanation": "El destino del fragmento del enlace no existe en ninguna parte de la página, así que activarlo no lleva a ningún sitio."
 			},
 			{
 				"state": "unknown",
 				"explanation": "También se reconoce la redacción francesa de los enlaces de salto, y falta el destino."
-			},
-			{
-				"state": "na",
-				"explanation": "El destino del fragmento existe y es utilizable."
 			}
 		]
 	},
 	"slider-name-present": {
 		"title": "Los controles deslizantes tienen un nombre accesible",
-		"description": "Comprueba que los controles deslizantes (input[type=\"range\"] y role=\"slider\") expongan un nombre accesible no vacío.",
+		"description": "Comprueba que los elementos con role=\"slider\" expongan un nombre accesible no vacío. Un <input type=\"range\"> nativo lo comprueba form-control-programmatic-label-present.",
 		"applicability": "Se aplica a elementos que tienen role=\"slider\" (el atributo debe nombrar únicamente ese rol, no una lista de reserva) que están incluidos en el árbol de accesibilidad. Un elemento con el rol implícito correspondiente pero sin atributo role queda fuera del alcance. Un <input type=\"range\"> nativo sin el rol pertenece a form-control-programmatic-label-present.",
 		"expectation": "El elemento tiene un nombre accesible no vacío procedente de aria-label, de un aria-labelledby que resuelve a texto no vacío, o de title. role=\"slider\" obtiene su nombre solo del autor (name-from-author-only), así que el texto del subárbol nunca se acepta: el texto que está dentro de un widget slider personalizado no se expone de forma fiable como su nombre. En un elemento etiquetable (<input role=\"slider\">) un <label> asociado también cuenta. En un <input> de tipo texto o en un <textarea>, el placeholder cuenta en último lugar (la última fuente de nombre de HTML-AAM): una etiqueta que solo es placeholder es una cuestión de 3.3.2, no un nombre ausente.",
 		"examples": [
 			{
 				"state": "pass",
-				"explanation": "`aria-label` nombra el input range nativo que actúa como control deslizante."
+				"explanation": "`aria-label` nombra el control deslizante. Un `<input type=\"range\">` nativo no entra en el ámbito de esta regla; lo comprueba `form-control-programmatic-label-present`."
 			},
 			{
 				"state": "fail",
@@ -2008,12 +2047,12 @@
 		"reports": "- `value`: el valor de `tabindex`, un número entero mayor que 0.",
 		"examples": [
 			{
-				"state": "unknown",
-				"explanation": "Un `tabindex` positivo saca a este elemento del orden de tabulación natural del documento y lo coloca por delante de todo lo demás, lo cual normalmente sorprende a los usuarios de teclado."
+				"state": "pass",
+				"explanation": "`tabindex=\"0\"` coloca el elemento en el orden de tabulación natural sin reordenar nada."
 			},
 			{
-				"state": "na",
-				"explanation": "`tabindex=\"0\"` coloca el elemento en el orden de tabulación natural sin reordenar nada."
+				"state": "unknown",
+				"explanation": "Un `tabindex` positivo saca a este elemento del orden de tabulación natural del documento y lo coloca por delante de todo lo demás, lo cual normalmente sorprende a los usuarios de teclado."
 			}
 		]
 	},
@@ -2086,7 +2125,7 @@
 		"title": "Los objetivos de puntero deben medir al menos 24 × 24 px o mantener una separación suficiente",
 		"description": "Comprueba que los objetivos operables mediante puntero tienen una región de impacto efectiva de al menos 24 por 24 píxeles CSS, o cumplen una excepción permitida (por ejemplo, espaciado suficiente).",
 		"applicability": "Se aplica a <button>, <summary>, <a href>, <area href>, <input>, <select>, <textarea> y elementos con role=\"button\"/\"link\" que sean alcanzables con el puntero: renderizados, no suprimidos por pointer-events:none, y con una caja medible de tamaño distinto de cero. La exclusión del árbol de accesibilidad no es un filtro aquí: un control con aria-hidden sigue siendo un objetivo que un puntero puede alcanzar. <area> coincide con el selector pero nunca se evalúa: no tiene caja propia que medir (consulta las notas de implementación).",
-		"expectation": "Cada objetivo mide al menos 24 por 24 píxeles CSS, o cumple una de las excepciones del SC 2.5.8 que esta regla puede establecer a partir de la geometría: espaciado (un círculo de 24 px de diámetro centrado en el objetivo no alcanza ningún objetivo no relacionado), la excepción en línea para un enlace dentro de un fragmento de texto corrido, o el dimensionado del agente de usuario (una casilla o botón de radio nativo sin estilizar, detectado porque appearance no se ha restablecido a none). Un objetivo de tamaño insuficiente demasiado cerca de un vecino incumple la condición. Cuando una excepción podría aplicarse pero la geometría no puede confirmarlo (dos enlaces en línea dentro del mismo fragmento de texto, o un objetivo dentro de un SVG, canvas o mapa de imagen que podría ser esencial), el resultado es `cantTell` en lugar de una suposición.",
+		"expectation": "Cada objetivo mide al menos 24 por 24 píxeles CSS, o cumple una de las excepciones del SC 2.5.8 que esta regla puede establecer a partir de la geometría: espaciado (un círculo de 24 px de diámetro centrado en el objetivo no alcanza ningún objetivo no relacionado), la excepción en línea para un enlace dentro de un fragmento de texto corrido, o el dimensionado del agente de usuario (una casilla o botón de radio nativo sin estilizar, detectado porque appearance no se ha restablecido a none). Un objetivo de tamaño insuficiente demasiado cerca de un vecino incumple la condición. Cuando una excepción podría aplicarse pero la geometría no puede confirmarlo (dos enlaces en línea dentro del mismo fragmento de texto, o un objetivo dentro de un SVG, canvas o mapa de imagen que podría ser esencial), el resultado es `cantTell` en lugar de una suposición. Margen (`target-size-px`): de entre los objetivos que miden al menos 24 por 24, el más pequeño, como el menor de su ancho y su alto frente a 24; `context.widthPx` y `context.heightPx` dan ambos. Un objetivo de menos de 24 que pasa gracias a la excepción de espaciado no es candidato. `measuredCount` cuenta todos los objetivos medidos.",
 		"reports": "- `metrics.widthPx`, `metrics.heightPx`: el tamaño del objetivo en píxeles CSS, frente a `metrics.minSizePx` (24).\n- `metrics.decidedBy`: qué comprobación determinó que el objetivo está demasiado cerca de otro: `centerDistance` o `perimeterSampling`.\n- `metrics.centerDistancePx`, `metrics.minDistancePx` (`centerDistance`): la distancia del centro del objetivo al de su vecino, frente a los 24px que necesita.\n- `metrics.perimeterHits`, `metrics.perimeterSamples`, `metrics.perimeterHitsToFail` (`perimeterSampling`): cuántos de los puntos del círculo de 24px alrededor del objetivo caen sobre otro objetivo, de cuántos, frente al número con el que falla.\n- `conflictWith`: un selector del vecino del que está demasiado cerca.\n- `conflictHitCount`: el mismo recuento que `metrics.perimeterHits`, 0 cuando decidió la distancia.\n- `measured.width`, `measured.height`: el tamaño del objetivo, sin redondear.\n- `viewport.width`, `viewport.height`: el viewport en el que se maquetó la página, en píxeles CSS. Una página adaptable puede dimensionar o colocar un objetivo de otra forma con otro ancho.",
 		"examples": [
 			{
@@ -2095,7 +2134,7 @@
 			},
 			{
 				"state": "fail",
-				"explanation": "Ambos objetivos miden menos de 24×24 y están más cerca entre sí de lo que permite la excepción de espaciado."
+				"explanation": "Ambos objetivos miden 10×10, menos de 24×24, y sus centros están a 15 px entre sí, más cerca que los 24 px que necesita la excepción de espaciado. (`padding:0` importa: el relleno predeterminado de los botones del navegador hace que cada uno sea más ancho.)"
 			}
 		]
 	},
@@ -2120,7 +2159,7 @@
 		"title": "El texto sigue siendo legible cuando el usuario aumenta el espaciado del texto",
 		"description": "Aplica el espaciado de texto de WCAG 1.4.12 en el navegador y comprueba que ningún texto quede recortado ni se superponga, y pregunta por las reglas de hoja de estilo que fuerzan el espaciado con !important.",
 		"applicability": "Se aplica a una página con texto visible. La pérdida de contenido necesita un diseño (un navegador): sin él, solo se leen las hojas de estilo.",
-		"expectation": "WCAG 1.4.12: con el interlineado a 1,5 veces el tamaño de la fuente, el espacio tras los párrafos a 2 veces, el espaciado entre letras a 0,12 veces y el espaciado entre palabras a 0,16 veces, no se pierde contenido ni funcionalidad.\n\n- En un navegador, el espaciado se aplica como una hoja de estilo que prevalece sobre la de la propia página (salvo el `!important` en línea, que informa avoid-inline-spacing), y cada línea de texto se mide antes y después frente a los ancestros que la recortan (`overflow: hidden` o `clip`). Una línea que estaba dentro y termina al menos medio fuera (la mitad de su altura, o media em de ancho) falla: el contenedor corta ese texto (TEXT_CLIPPED). Se pregunta por una línea desplazada menos (TEXT_CLIPPED_PARTLY), y también por el texto que pasa a superponerse a otro texto con el que antes no se superponía (TEXT_OVERLAPS).\n- En cualquier entorno, se pregunta por una regla de hoja de estilo que fija line-height, letter-spacing o word-spacing por debajo de esos valores con `!important` (STYLESHEET_IMPORTANT): una herramienta que añade su propia hoja de estilo a la página no puede anularla, aunque una hoja de estilo del usuario sí.\n\nSin diseño y sin ninguna regla así, la regla es notApplicable, con `data.reason: 'noLayout'`.",
+		"expectation": "WCAG 1.4.12: con el interlineado a 1,5 veces el tamaño de la fuente, el espacio tras los párrafos a 2 veces, el espaciado entre letras a 0,12 veces y el espaciado entre palabras a 0,16 veces, no se pierde contenido ni funcionalidad.\n\n- En un navegador, el espaciado se aplica como una hoja de estilo que prevalece sobre la de la propia página (salvo el `!important` en línea, que informa avoid-inline-spacing), y cada línea de texto se mide antes y después frente a los ancestros que la recortan (`overflow: hidden` o `clip`). Una línea que estaba dentro y termina al menos medio fuera (la mitad de su altura, o media em de ancho) falla: el contenedor corta ese texto (TEXT_CLIPPED). Se pregunta por una línea desplazada menos (TEXT_CLIPPED_PARTLY), y también por el texto que pasa a superponerse a otro texto con el que antes no se superponía (TEXT_OVERLAPS). Por el texto que mueve una animación que se repite indefinidamente (un marquee) se pregunta sea cual sea su desplazamiento (TEXT_CLIPPED_MOVING): pasa por el borde de todos modos, y un solo fotograma no permite saber si se pierde algo.\n- En cualquier entorno, se pregunta por una regla de hoja de estilo que fija line-height, letter-spacing o word-spacing por debajo de esos valores con `!important` (STYLESHEET_IMPORTANT): una herramienta que añade su propia hoja de estilo a la página no puede anularla, aunque una hoja de estilo del usuario sí.\n\nSin diseño y sin ninguna regla así, la regla es notApplicable, con `data.reason: 'noLayout'`.\n\n- Solo se evalúa el texto dentro del ámbito del análisis (contextSelector) y no excluido (excludeSelectors). El texto de otras partes de la página se sigue midiendo, ya que el texto dentro del ámbito puede pasar a superponerse a él. Mientras haya un diálogo modal abierto, la página que hay detrás se deja fuera por completo: el navegador la hace inerte, y el análisis evalúa el diálogo.\n- Margen (`overflow-px`): del texto que una caja de recorte conserva entero, la línea que más cerca estuvo de quedar cortada. `value` es cuánto sobrepasa el borde de la caja, negativo mientras sigue dentro, frente al mismo umbral que un hallazgo; `context.axis` y `context.text` indican qué borde y qué texto. Se mide donde el texto crece con más espaciado, el final en línea (la derecha, o la izquierda en texto de derecha a izquierda) y la parte inferior; un borde de inicio solo cuenta una vez que una línea lo ha sobrepasado. Un eje en el que la caja creció con el espaciado (un bloque de altura automática) sigue a su contenido y se deja fuera, y el texto vertical no recibe margen. Se deja fuera el texto que mueve una animación que se repite (un marquee), ya que su posición depende del punto en que se detuvo la animación, y también una caja que corta otro texto: eso es un hallazgo. `measuredCount` cuenta los pares de texto y caja de recorte comparados; como los hallazgos, el margen abarca los primeros 3.000 nodos de texto.",
 		"reports": "- `text`: el comienzo del texto, hasta 60 caracteres. No aparece en el hallazgo de una regla de hoja de estilo.\n- `metrics.overflowPx` (texto recortado): cuánto, en píxeles CSS, sobrepasó la línea el borde de la caja que la recorta, con el espaciado aplicado.\n- `metrics.thresholdPx` (texto recortado): cuánto puede sobrepasarlo antes de fallar: medio em en horizontal, o la mitad de la altura de la línea en vertical.\n- `metrics.axis` (texto recortado): `x` cuando la línea sobrepasó un lateral, `y` cuando sobrepasó la parte superior o inferior.\n- `container.widthPx`, `container.heightPx` (texto recortado): el tamaño de la caja que recorta, con el espaciado aplicado.\n- `viewport.width`, `viewport.height` (texto recortado o superpuesto): el viewport en el que se maquetó la página, en píxeles CSS. Un texto que cabe con un ancho puede quedar recortado con otro.\n- `other` (texto superpuesto): el texto con el que llega a superponerse.\n- `selector`, `property`, `value` (una regla de hoja de estilo): el selector de la regla y la declaración que fuerza el espaciado.",
 		"examples": [
 			{
@@ -2218,7 +2257,8 @@
 		"title": "La imagen de portada de `video` debe tener una alternativa textual",
 		"description": "Comprueba que los elementos <video> con una imagen poster proporcionan una alternativa textual (nombre accesible).",
 		"applicability": "Se aplica a los elementos <video> que: 1) tienen un atributo poster no vacío, Y 2) se exponen a las tecnologías de asistencia (según las comprobaciones de elegibilidad del motor). Los elementos que de otro modo estarían ocultos del árbol de accesibilidad siguen siendo aplicables si son enfocables mediante tabulación o si se referencian mediante relaciones IDREF (según las comprobaciones de elegibilidad). Los vídeos con role=\"presentation\" o role=\"none\" solo se excluyen cuando no son enfocables.",
-		"expectation": "Cada elemento <video> aplicable proporciona una alternativa textual para la imagen poster, mediante:\n\n- un nombre accesible (aria-label / aria-labelledby / title).\n\nEl contenido de reserva entre etiquetas dentro de <video> NO se acepta: solo lo renderizan los navegadores que no admiten <video>, por lo que en la práctica no se expone de forma fiable a las tecnologías de asistencia. <video> tampoco es un elemento etiquetable, así que las asociaciones nativas <label for=\"...\"> tampoco se aceptan.",
+		"expectation": "Cada elemento <video> aplicable proporciona una alternativa textual para la imagen poster, mediante:\n\n- un nombre accesible (aria-label / aria-labelledby / title).\n\nEl contenido de reserva entre etiquetas dentro de <video> NO se acepta: solo lo renderizan los navegadores que no admiten <video>, por lo que en la práctica no se expone de forma fiable a las tecnologías de asistencia. <video> tampoco es un elemento etiquetable, así que las asociaciones nativas <label for=\"...\"> tampoco se aceptan. Por un <video> sin nombre que es el único contenido de un <figure> con un <figcaption> no vacío se pregunta (cantTell) en lugar de darlo por fallido: el pie de figura nombra la figura, no el vídeo (HTML-AAM; Chromium no le da nombre al vídeo), pero puede describir el poster, y solo una persona puede saberlo.",
+		"reports": "- `reasonCode`: `VIDEO_POSTER_FIGCAPTION_REVIEW` en el hallazgo cantTell, con `figcaption`, el texto del pie de figura hasta 100 caracteres.",
 		"examples": [
 			{
 				"state": "pass",

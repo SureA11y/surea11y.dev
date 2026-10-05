@@ -11,7 +11,7 @@ const sarifLevelRows = [
 
 const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
-	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code></> },
+	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code>. Une occurrence sans résumé (celle d’une règle personnalisée, par exemple) utilise le titre de la règle, ou son id, puisque GitHub rejette un résultat dont le texte est vide.</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>La cible analysée ; voir <a href="#sarif-locations">Emplacements</a> ci-dessous.</> },
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, lorsqu’il est présent.</> },
 	{
@@ -44,6 +44,7 @@ const sarifFieldRows = [
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>Les <code>severity</code>/<code>confidence</code> du résultat lui-même, plus le même <code>reasonCode</code> et le même extrait <code>html</code> sur lesquels repose l’empreinte ci-dessus ; à titre informatif, hors du schéma propre à SARIF.</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, et un tag <code>wcag-&lt;SC&gt;</code> par critère de succès WCAG présent dans <code>meta.normativeMappings</code>. Les entrées de documents Understanding n’ont pas de tag. Chaque clause d’EN 301 549 que porte le résultat (seulement quand l’analyse les a demandées, voir <a href="/configuration/engine-options/#other-standards-mappings">Autres normes</a>) reçoit un tag <code>en301549-&lt;clause&gt;</code>, p. ex. <code>en301549-9.1.1.1</code> : les numéros de clause sont les mêmes dans toutes les versions qui les contiennent, le tag ne porte donc pas de version.</> },
+	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>L’option <code>toolVersion</code>, si elle est fournie (un outil qui enveloppe le moteur passe la sienne) ; sinon <code>engine.version</code>, la version du moteur qui a produit le résultat. <code>"0.0.0"</code> seulement pour un résultat qui n’en a pas, issu d’une version antérieure à 1.10.0.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>L’option <code>category</code>, avec un <code>/</code> final ajouté s’il n’y en a pas (GitHub lit tout ce qui précède la dernière barre oblique comme la catégorie). Absent lorsqu’aucune catégorie n’est fournie. Voir <a href="#scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</a>.</> },
 	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> et <code>environment</code> issus de l’<code>engine</code> du résultat : la cible de conformité utilisée par l’exécution, pour qu’un tableau de bord distingue une exécution WCAG 2.1 d’une exécution 2.2, les tags de règles optionnelles qu’elle a ajoutés au-delà de cette cible, s’il y en a, et les conditions dans lesquelles la page a été rendue (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code> ; voir <a href="/results-reports/output-schema/">Schéma de sortie</a>). Omis pour les résultats de moteurs antérieurs à ces champs.</> },
 ];
@@ -130,7 +131,7 @@ export function SarifReportContent() {
 				Chaque règle exécutée (qu’elle ait produit un résultat ou non) est listée une fois dans{" "}
 				<code>runs[0].tool.driver.rules</code>, avec <code>defaultConfiguration.level</code>{" "}
 				défini d’après le <code>type</code> de la règle : <code>automatic</code> (peut renvoyer
-				fail) → <code>error</code>, <code>manual</code> (plafonnée à <code>cantTell</code>) →{" "}
+				fail) → <code>error</code>, <code>manual</code> (jamais <code>fail</code>) →{" "}
 				<code>warning</code>.
 			</p>
 
@@ -153,9 +154,13 @@ export function SarifReportContent() {
 			</p>
 			<ul>
 				<li>
-					<strong>Analyse de fichiers locaux</strong> : un chemin relatif au répertoire de travail
-					courant (avec des barres obliques). S’il correspond à un vrai fichier de votre dépôt,{" "}
-					<span lang="en">GitHub Code Scanning</span> peut afficher le résultat sous forme d’annotation en ligne.
+					<strong>Analyse de fichiers locaux</strong> : un fichier situé dans le répertoire de travail
+					courant devient un chemin relatif à celui-ci, avec des barres obliques et chaque segment
+					encodé en pourcentage (<code>build%20out/index.html</code>). S’il correspond à un vrai
+					fichier de votre dépôt, <span lang="en">GitHub Code Scanning</span> peut afficher le résultat
+					sous forme d’annotation en ligne. Un fichier situé hors du répertoire de travail devient une
+					URL <code>file:</code> absolue, et non un chemin relatif qui sort du dépôt avec{" "}
+					<code>../</code>, qu’un consommateur ne pourrait pas résoudre.
 				</li>
 				<li>
 					<strong>Analyse d’URL</strong> : l’URL analysée elle-même. <span lang="en">GitHub Code Scanning</span> listera

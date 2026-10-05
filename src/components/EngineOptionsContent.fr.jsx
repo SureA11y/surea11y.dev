@@ -93,7 +93,9 @@ const optionRows = [
 				partiel ne pose aucun problème. C’est ainsi que le bundle navigateur autonome reçoit un
 				fichier de langue séparé, et c’est le seul moyen de faire entrer un dictionnaire dans le
 				contexte d’une page, puisque le runner in-page est sérialisé et ne peut pas lire de
-				fichiers. Voir <a href="/configuration/locales/">Langues</a>.
+				fichiers. Contrairement aux autres options, elle n’est pas renvoyée dans
+				l’<code>engineOptions</code> de chaque résultat ; <code>engine.locale</code> indique le
+				dictionnaire utilisé. Voir <a href="/configuration/locales/">Langues</a>.
 			</>
 		),
 	},
@@ -107,7 +109,10 @@ const optionRows = [
 				un <code>&lt;details&gt;</code> fermé et les éléments hôtes masqués servant uniquement au
 				rendu (leurs descendants sont exclus aussi). Passez-la à <code>true</code> pour inclure
 				ces sous-arbres masqués/repliés dans l’évaluation (comportement historique/balisage
-				statique).
+				statique). Elle élargit ce que renvoient les requêtes partagées ; la plupart des règles ne
+				jugent toutefois que ce qui figure dans l’arbre d’accessibilité, puisqu’un élément masqué
+				n’a ni nom ni rôle à vérifier, et pour elles cela ne change rien. Elle compte pour les
+				règles qui portent sur le balisage lui-même, comme une référence d’ID cassée.
 			</>
 		),
 	},
@@ -209,7 +214,16 @@ const optionRows = [
 				<code>visibility</code>, <code>opacity</code>, masquage par un ancêtre, etc.).{" "}
 				<code>'styleAndGeometry'</code> : ajoute par-dessus de vraies vérifications de mise en
 				page (<code>getClientRects()</code>/<code>getBoundingClientRect()</code>) ; le texte sans
-				client rects, ou de largeur/hauteur nulle, est lui aussi exclu. Optez pour{" "}
+				client rects, ou de largeur/hauteur nulle, est lui aussi exclu, de même que le texte situé
+				entièrement au-dessus ou à gauche de la page, qu’aucun défilement n’atteint (la technique{" "}
+				<code>left: -9999px</code>), et le texte qu’un ancêtre en <code>overflow: hidden</code>{" "}
+				ou <code>clip</code> coupe entièrement (<code>height: 0; overflow: hidden</code>, une
+				diapositive de carrousel hors de vue). Une boîte qui défile (<code>auto</code>,{" "}
+				<code>scroll</code>) n’exclut pas son texte, puisqu’un lecteur peut l’atteindre. Dans les
+				deux modes, le texte de taille de police 0 ou de couleur entièrement transparente est
+				exclu, puisque rien n’est dessiné ; le texte transparent qui laisse voir un arrière-plan à
+				travers ses glyphes (<code>background-clip: text</code>) ne l’est pas, et fait l’objet
+				d’une question. Optez pour{" "}
 				<code>'styleAndGeometry'</code> lorsque vous exécutez dans un vrai
 				navigateur/Playwright-Puppeteer (<code>runa11yCoreInPage</code>) et que vous voulez que
 				les constats de contraste reflètent la mise en page réellement rendue plutôt que le seul
@@ -366,12 +380,16 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong><code>runOnly</code> doit avoir exactement cette forme d’objet, et non celle d’un
-				simple tableau.</strong>{" "}
-				<code>runOnly: ['img-alt-present']</code> (un tableau brut) est{" "}
-				<strong>ignoré sans avertissement</strong> ; le moteur exécute alors toutes les règles.
-				C’est de loin l’erreur d’intégration la plus fréquente (voir{" "}
-				<a href="/help/faq/">la FAQ</a>).
+				Un tableau ou une chaîne bruts servent de raccourci, comme dans axe-core :{" "}
+				<code>runOnly: ['img-alt-present', 'button-name-present']</code> exécute ces règles (un
+				id composite entraîne ses règles), et <code>runOnly: ['wcag2a', 'wcag2aa']</code>{" "}
+				équivaut à <code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>. Un tableau ne peut pas
+				mélanger ids de règle et tags, et chaque valeur doit nommer une règle (intégrée,
+				composite ou l’une des <code>engineOptions.customRules</code>) ou un tag : toute autre
+				valeur lève une exception, pour qu’une faute de frappe ne puisse pas exécuter en silence
+				toutes les règles ou aucune. Utilisez la forme objet pour combiner ids et tags ou pour
+				exclure. Avant la 1.10.0, un tableau brut était ignoré et toutes les règles
+				s’exécutaient.
 			</p>
 			<DataTable
 				label="Champs de runOnly"
@@ -413,16 +431,36 @@ export function EngineOptionsContent() {
 				<code>includeRuleIds: ['img-alt-present', 'button-name-present']</code> sont équivalents.
 			</p>
 			<p>
+				Les noms sont vérifiés, ici et dans <code>engineOptions.rules</code>/<code>.tags</code>{" "}
+				ci-dessous. Une liste d’inclusion (<code>includeRuleIds</code>, <code>tags</code>,
+				l’ancien <code>values</code>, <code>rules.include</code>, <code>tags.include</code>) dont
+				aucune valeur ne nomme une règle ou un tag lève une exception, avec{" "}
+				<code>code: 'INVALID_RUN_ONLY'</code> et un message qui nomme le champ et les valeurs,
+				puisqu’elle ne sélectionnerait rien et qu’une exécution sans aucune règle se lit comme une
+				analyse sans constat. Une valeur qui ne nomme rien à côté d’autres qui nomment quelque
+				chose, ou dans une liste d’exclusion, est ignorée avec un <code>console.warn</code>.
+				Avant la 1.10.0, toutes ces valeurs étaient ignorées sans avertissement.{" "}
+				<code>includeTestIds</code>/<code>excludeTestIds</code> ne sont pas vérifiés.
+			</p>
+			<p>
 				Les IDs de règle sont nus (sans préfixe de moteur), par exemple{" "}
 				<code>'img-alt-present'</code>. Pour la rétrocompatibilité, la correspondance accepte
 				aussi une ancienne forme du même id préfixée par <code>a11ycore-</code>{" "}
 				(<code>'a11ycore-img-alt-present'</code>).
 			</p>
 			<p>
-				Une <strong>ancienne forme de filtre par tag</strong> est également acceptée comme valeur
-				complète de <code>runOnly</code> :{" "}
-				<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>, équivalente à{" "}
-				<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>.
+				La <strong>forme <code>{"{ type, values }"}</code> d’axe-core</strong> est également
+				acceptée comme valeur complète de <code>runOnly</code> :{" "}
+				<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code> équivaut à{" "}
+				<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>, et{" "}
+				<code>{"{ type: 'rule', values: ['img-alt-present'] }"}</code> à{" "}
+				<code>{"{ includeRuleIds: ['img-alt-present'] }"}</code> (<code>'tags'</code> et{" "}
+				<code>'rules'</code> fonctionnent aussi). Tout autre <code>type</code> lève{" "}
+				<code>INVALID_RUN_ONLY</code>, de même qu’un <code>runOnly</code> qui est un nombre ou
+				un booléen, ou un objet dont le moteur ne lit aucune clé (
+				<code>{"{ includeRuleId: [...] }"}</code>) : chacun de ces cas exécutait auparavant
+				toutes les règles. Un tableau, une chaîne ou un objet vides signifient toujours toutes
+				les règles.
 			</p>
 
 			<h3 id="filtering-by-wcag-version">Filtrer par version de WCAG (2.0, 2.1, 2.2)</h3>
@@ -875,9 +913,10 @@ export function EngineOptionsContent() {
 				auraient échoué sont exclus de cette façon renvoie <code>outcome: 'pass'</code> ou{" "}
 				<code>'notApplicable'</code> (selon sa propre convention en l’absence de candidats), avec{" "}
 				<code>occurrences: []</code>, et jamais <code>outcome: 'fail'</code> avec un tableau{" "}
-				<code>occurrences</code> vide, puisque cette forme exacte est réservée ailleurs dans le
-				schéma pour signifier « cette règle a levé une exception » (voir{" "}
-				<a href="/results-reports/output-schema/">le schéma de sortie</a>).
+				<code>occurrences</code> vide, puisque le <code>fail</code> d’une règle intégrée nomme
+				toujours ce qui a échoué. (Une règle qui lève une exception est un autre cas : elle
+				renvoie <code>cantTell</code> avec <code>error</code> renseigné, voir{" "}
+				<a href="/results-reports/output-schema/">le schéma de sortie</a>.)
 			</p>
 			<p>
 				Accepte les mêmes formes que l’option globale : un tableau (
@@ -964,7 +1003,9 @@ export function EngineOptionsContent() {
 					"    id: 'org-no-inline-onclick',",
 					"    meta: { title: 'No inline onclick handlers', defaultSeverity: 'moderate' },",
 					"    runInPage(ctx) {",
-					"      const els = ctx.helpers.queryAll('[onclick]');",
+					"      // queryAllSmart applies excludeSelectors, the scope's shadow roots and",
+					"      // the hidden-content filter; queryAll is the plain light-DOM query.",
+					"      const els = ctx.helpers.queryAllSmart('[onclick]');",
 					"      const occurrences = els.map((el) => ({",
 					"        selector: ctx.helpers.buildSelector(el),",
 					"        html: el.outerHTML,",
@@ -1028,13 +1069,26 @@ export function EngineOptionsContent() {
 					transporter une référence <code>Function</code> vivante, mais peut transporter une
 					chaîne. Le moteur reconstruit une chaîne via <code>new Function</code>, le même
 					mécanisme que le build utilise pour intégrer le source de chaque règle intégrée dans le
-					runner in-page.
+					runner in-page. Le source de n’importe quelle fonction convient : une fonction
+					fléchée, une déclaration <code>function</code> ou une méthode écrite en syntaxe abrégée
+					comme dans l’exemple ci-dessus (<code>{"runInPage(ctx) {…}"}</code>, <code>async</code>{" "}
+					aussi), dont le <code>toString()</code> n’est pas une expression à lui seul. La
+					reconstruction exige que <code>eval</code> soit autorisé : une page dont la Content
+					Security Policy interdit <code>'unsafe-eval'</code> ignore une règle fournie sous forme
+					de chaîne ; passez-y une vraie fonction.
 				</li>
 				<li>
 					<code>meta</code> bénéficie des mêmes valeurs par défaut et de la même validation
 					qu’une règle intégrée au build : omettez tout ce dont vous n’avez pas besoin ;{" "}
-					<code>severity</code> vaut par défaut <code>moderate</code>, <code>confidence</code>{" "}
-					<code>medium</code>, <code>type</code> <code>automatic</code>, etc.
+					<code>defaultSeverity</code> vaut par défaut <code>moderate</code>,{" "}
+					<code>defaultConfidence</code> <code>medium</code>, <code>type</code>{" "}
+					<code>automatic</code>, etc. Une valeur hors de son ensemble (<code>minor</code>/
+					<code>moderate</code>/<code>serious</code>/<code>critical</code> ; <code>high</code>/
+					<code>medium</code>/<code>low</code> ; <code>automatic</code>/<code>manual</code>,
+					sans tenir compte de la casse) est un <code>meta</code> qui échoue à la validation, et
+					la règle est ignorée. Une <code>severity</code> renvoyée par une règle hors de
+					l’ensemble est remplacée par sa valeur par défaut, avec une note dans{" "}
+					<code>error</code>.
 				</li>
 				<li>
 					Une règle personnalisée dont l’<code>id</code> entre en collision avec celui d’une règle
@@ -1046,15 +1100,38 @@ export function EngineOptionsContent() {
 					collision). Voir <a href="/results-reports/output-schema/">le schéma de sortie</a>.
 				</li>
 				<li>
-					Un descripteur invalide (<code>id</code> absent ou qui n’est pas une chaîne, ou{" "}
-					<code>runInPage</code> qui n’est ni une fonction ni une chaîne source reconstructible)
-					est ignoré sans avertissement ; le reste de l’analyse, y compris toutes les règles
+					Une règle personnalisée peut signaler une marge comme une règle intégrée : déclarez{" "}
+					<code>meta.margin</code> (<code>{"{ measure, unit, limit }"}</code>) et renvoyez{" "}
+					<code>marginCandidates</code> (voir{" "}
+					<a href={`${core}/docs/RULE_AUTHORING.md#metamargin`}>
+						<code>RULE_AUTHORING.md</code>, <code>meta.margin</code>
+					</a>
+					, le guide d’écriture de règles sur GitHub). Un <code>meta.margin</code> mal formé est
+					ignoré, et cette règle ne signale alors aucune marge ; l’analyse continue.
+				</li>
+				<li>
+					Un descripteur invalide (<code>id</code> absent ou qui n’est pas une chaîne,{" "}
+					<code>runInPage</code> qui n’est ni une fonction ni une chaîne source reconstructible,{" "}
+					<code>meta</code> qui échoue à la validation, comme <code>deprecated: true</code> sans{" "}
+					<code>deprecation</code>, id déjà porté par une autre règle personnalisée de la liste,
+					ou id d’une règle composite) est ignoré avec un <code>console.warn</code> qui nomme la
+					règle et la raison, et listé dans le <code>skippedCustomRules</code> du résultat ; le
+					reste de l’analyse, y compris toutes les règles
 					intégrées, s’exécute normalement. Ce n’est pas une lacune de validation à corriger :
 					une règle personnalisée est du code arbitraire fourni par l’appelant, donc « écarter
 					cette seule entrée, ne pas interrompre l’analyse » est le comportement par défaut le
 					plus sûr, à l’image d’une règle <em>intégrée</em> qui lève une exception et qui est
 					cantonnée à un <code>cantTell</code> pour cette règle au lieu de faire planter
 					l’exécution.
+				</li>
+				<li>
+					Les règles s’exécutent de façon synchrone. Un <code>runInPage</code> ou un{" "}
+					<code>applicability</code> qui renvoie une Promise (une fonction <code>async</code>)
+					est signalé comme <code>cantTell</code> avec une <code>error</code> qui l’indique, tout
+					comme un <code>runInPage</code> qui renvoie autre chose qu’un objet résultat. Un{" "}
+					<code>outcome</code> hors de <code>pass</code>, <code>fail</code>,{" "}
+					<code>cantTell</code> et <code>notApplicable</code> (comme <code>'failed'</code>)
+					devient <code>cantTell</code>, et <code>error</code> nomme la valeur renvoyée.
 				</li>
 				<li>
 					Les résultats apparaissent dans <code>checksResults</code> exactement comme ceux de
@@ -1070,11 +1147,38 @@ export function EngineOptionsContent() {
 			<p>
 				Un sélecteur CSS (ou un tableau de sélecteurs) qui limite l’analyse à un ou plusieurs
 				sous-arbres, résolu via <code>document.querySelectorAll</code> (toutes les
-				correspondances, pas seulement la première), avec repli sur{" "}
-				<code>document.documentElement</code>/<code>document.body</code> si rien ne correspond.
-				Passez <code>null</code> pour analyser le document entier.
+				correspondances, pas seulement la première). Passez <code>null</code> pour analyser le
+				document entier.
 			</p>
 			<ul>
+				<li>
+					<strong>Un sélecteur qui ne correspond à rien n’analyse rien.</strong> Toutes les règles
+					renvoient <code>notApplicable</code>, y compris celles qui portent sur la page entière,
+					et le <code>contextMatch</code> du résultat l’indique :{" "}
+					<code>{"{ elementCount: 0, unmatchedSelectors: ['#mian'] }"}</code> (voir{" "}
+					<a href="/results-reports/output-schema/#top-level-result">le schéma de sortie</a>).
+					L’exécution émet aussi un <code>console.warn</code>. Un périmètre absent de la page
+					n’est pas élargi à la page entière : un résultat sur un contenu que vous n’avez jamais
+					demandé, avec un <code>pass</code> portant sur toute la page, se lirait comme un
+					résultat sur la partie que vous avez demandée. Dans un tableau, un sélecteur qui ne
+					correspond à rien est listé dans <code>unmatchedSelectors</code> tandis que les autres
+					sont analysés normalement ; un contenu qui n’est présent que de temps en temps, comme
+					une bannière de cookies, peut donc figurer dans la liste. Avant la 1.10.0, un périmètre
+					sans correspondance se rabattait sur le document entier, sans rien en dire dans le
+					résultat.
+				</li>
+				<li>
+					<strong>Un sélecteur que le navigateur ne sait pas analyser lève une exception</strong>,
+					seul ou dans un tableau, avant l’exécution de toute règle :{" "}
+					<code>contextSelector: "#main[" is not a valid CSS selector.</code> L’erreur porte{" "}
+					<code>code: 'INVALID_CONTEXT_SELECTOR'</code> et <code>selector</code>, le sélecteur
+					fautif. Contrairement à un sélecteur qui ne correspond à rien, c’est toujours une
+					erreur dans l’appel. <code>runa11yCoreAcrossFrames</code> rejette avec la même erreur.
+					Une erreur qui traverse <code>page.evaluate</code> (Playwright, Puppeteer) ne garde que
+					son message ; c’est pourquoi le message nomme l’option et le sélecteur. Avant la
+					1.10.0, un sélecteur invalide était ignoré, si bien qu’employé seul il analysait le
+					document entier.
+				</li>
 				<li>
 					<strong>Une chaîne unique</strong> peut elle-même être une liste de sélecteurs séparés
 					par des virgules (sémantique d’union CSS ordinaire) : <code>'#a, #b'</code> analyse à
@@ -1086,9 +1190,45 @@ export function EngineOptionsContent() {
 					forme tableau existe pour les appelants qui construisent la liste par programme.
 				</li>
 				<li>
+					<strong>Shadow DOM.</strong> Avec <code>includeShadowDom</code> (par défaut), un
+					périmètre inclut les shadow roots qu’il contient, et un périmètre qui est lui-même un
+					shadow host inclut sa propre shadow root. Le sélecteur est évalué sur le document : il
+					ne peut donc pas sélectionner un élément <em>à l’intérieur</em> d’une shadow root ;
+					ciblez plutôt son hôte.
+				</li>
+				<li>
 					Les zones qui se chevauchent ou s’imbriquent sont automatiquement dédupliquées : un
 					élément atteignable depuis plusieurs racines correspondantes n’est jamais signalé
 					qu’une fois, et non une fois par zone.
+				</li>
+				<li>
+					<strong>Ce que signifie un résultat limité à un périmètre.</strong> La plupart des
+					règles jugent chaque élément isolément, et jugent les éléments du périmètre exactement
+					comme dans une analyse de la page entière. Deux sortes de règles dépendent de la page
+					qui les entoure. Les règles portant sur la page entière (
+					<code>page-title-present</code>, <code>landmark-one-main</code> et les autres listées
+					sous <code>fragment</code> ci-dessus) renvoient <code>notApplicable</code>. Les règles
+					qui comparent des éléments à l’échelle de la page (<code>landmark-unique</code>,{" "}
+					<code>landmark-no-duplicate-banner</code>, <code>-contentinfo</code> et{" "}
+					<code>-main</code>, <code>landmark-banner-is-top-level</code>,{" "}
+					<code>-complementary-</code>, <code>-contentinfo-</code> et{" "}
+					<code>-main-is-top-level</code>, <code>accesskeys</code>, <code>heading-order</code>,{" "}
+					<code>identical-links-same-purpose</code>, <code>identical-iframes-same-purpose</code>)
+					signalent toujours ce qu’elles trouvent dans le périmètre, puisque deux landmarks qui y
+					partagent un nom le partagent sur n’importe quelle page, mais renvoient{" "}
+					<code>notApplicable</code> au lieu de <code>pass</code> : l’analyse n’a vu qu’une
+					partie de la page et ne peut donc pas affirmer que la page est conforme.{" "}
+					<code>duplicate-id</code> et <code>duplicate-id-aria</code> comparent chaque élément du
+					périmètre avec le document entier, puisque son doublon peut se trouver hors du
+					périmètre, et signalent un élément du périmètre dont l’id apparaît ailleurs. Leur{" "}
+					<code>pass</code> signifie qu’aucun élément du périmètre ne partage son id avec un autre
+					élément de la page ; une paire de doublons entièrement hors du périmètre n’est pas
+					signalée, comme pour toute règle, et ce <code>pass</code> ne dit donc pas que la page
+					entière est exempte de doublons. <code>target-size-minimum</code> juge les cibles du
+					périmètre par rapport à leurs voisines n’importe où dans le document, puisque
+					l’exception d’espacement dépend de ce que la page place à côté d’une cible.{" "}
+					<code>text-spacing-content-loss</code> juge le texte du périmètre et vérifie s’il en
+					vient à chevaucher du texte ailleurs sur la page.
 				</li>
 			</ul>
 		</>
