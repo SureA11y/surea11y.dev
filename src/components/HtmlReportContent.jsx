@@ -30,7 +30,15 @@ export function HtmlReportContent() {
 					occurrences is one thing worth attention, not many), each showing severity, WCAG SC
 					chip(s), a representative occurrence, and the total occurrence count. Capped at the 24
 					highest-priority rules with an overflow note past that.
-				</li>
+					</li>
+					<li>
+						<strong>Closest to the limit</strong>: shown when the scan has margins (
+						<a href="/results-reports/output-schema/#margin"><code>margin</code> on a check result</a>).
+						One row per rule that measures against a threshold: its closest passing value, the limit,
+						the room left and the element. Pixels are rounded to whole ones, with "less than 1 px"
+						under one; ratios show two decimals. A rule that passed with little room is one a small
+						change can turn into a failure.
+					</li>
 				<li>
 					<strong>WCAG rollup</strong>: grouped by conformance level (A / AA / AAA), sourced
 					directly from the engine's own <code>rulesResults[]</code> composite rollups (see{" "}
@@ -94,9 +102,11 @@ export function HtmlReportContent() {
 				]}
 			/>
 			<p>
-				<code>renderHtmlReport(result, options)</code> is a pure function — it returns a string,{" "}
-				<strong>it never touches the filesystem itself</strong> (the CLI's <code>--html</code>{" "}
-				flag does the writing).{" "}
+				<code>renderHtmlReport(result, options)</code> returns a string and{" "}
+				<strong>never touches the filesystem itself</strong> (the CLI's <code>--html</code> flag
+				does the writing). The page is dated by the result's <code>timestamp</code> (set it with{" "}
+				<code>engineOptions.timestamp</code>), shown in UTC, so the same result always renders the
+				same page; a result without one is dated by the time of rendering.{" "}
 				<code>options.title</code> is optional (defaults to <code>"surea11y scan report"</code>).
 			</p>
 

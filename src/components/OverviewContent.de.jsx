@@ -100,6 +100,14 @@ export function OverviewContent() {
 				WCAG-Urteil zusammenfassen, einschließlich der Frage, wie eine Ziel-Version von WCAG
 				(2.0/2.1/2.2) ermittelt und angewendet wird.
 			</p>
+			<p>
+				Ein <code>pass</code> sagt auch, wie knapp er war. Regeln, die gegen einen Grenzwert messen
+				(Kontrast, Zielgröße, Textabstände), melden eine <code>margin</code>: das Element, das dem
+				Grenzwert am nächsten kam und ihn trotzdem einhielt. Text mit 4,52:1 bei einem Minimum von
+				4,5:1 besteht, und die <code>margin</code> zeigt es. So können Sie ihn korrigieren, bevor eine
+				kleine Änderung ein <code>fail</code> daraus macht. Siehe{" "}
+				<a href="/results-reports/output-schema/#margin">Ausgabeschema</a>.
+			</p>
 
 			<h3 id="checked-against-the-act-corpus">Geprüft am ACT-Korpus</h3>
 			<p>
@@ -125,7 +133,7 @@ export function OverviewContent() {
 
 			<h2>Grundprinzipien</h2>
 			<ul>
-				<li><strong>Deterministische Ausführung.</strong> Dieselbe Eingabe erzeugt immer dieselbe Ausgabe.</li>
+				<li><strong>Deterministische Ausführung.</strong> Dieselbe Eingabe erzeugt immer dieselbe Ausgabe. Laufende Animationen und Übergänge werden für den Scan angehalten, sodass eine Seite mitten in einer Einblendung dasselbe Ergebnis liefert wie eine, die zur Ruhe gekommen ist.</li>
 				<li><strong>Bewusst konservativ.</strong> <code>fail</code> ist objektiven, normativen Verstößen vorbehalten, damit es möglichst wenige Fehlalarme gibt.</li>
 				<li><strong>Rückverfolgbarkeit zu Standards.</strong> Regeln sind, wo sinnvoll, dem zutreffenden WCAG-Erfolgskriterium zugeordnet.</li>
 				<li><strong>Stabile maschinenlesbare Ausgabe.</strong> Regel-IDs bleiben unabhängig von der Sprache stabil.</li>

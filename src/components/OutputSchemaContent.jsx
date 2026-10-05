@@ -7,6 +7,20 @@ const core = "https://github.com/SureA11y/core/blob/main";
 const topLevelRows = [
 	{ id: "engine.tag", field: <code>engine.tag</code>, meaning: <>The engine's own identity tag, currently <code>"a11ycore"</code>. Every rule (built-in or custom) carries it in <code>meta.tags</code> — rule <code>ruleId</code>s themselves are bare (no prefix).</> },
 	{
+		id: "engine.version",
+		field: <code>engine.version</code>,
+		meaning: (
+			<>
+				The <code>@surea11y/core</code> release that produced the result, such as{" "}
+				<code>"1.10.0"</code>: what to quote in a bug report, and how to tell results from two
+				releases apart. A result can change between releases without its shape changing, so this
+				is not <code>schemaVersion</code>. The <a href="/results-reports/sarif-report/">SARIF</a>{" "}
+				and <a href="/results-reports/earl-report/">EARL</a> reporters use it as the tool version
+				when you give none.
+			</>
+		),
+	},
+	{
 		id: "engine.schemaVersion",
 		field: <code>engine.schemaVersion</code>,
 		meaning: (
@@ -136,8 +150,18 @@ const topLevelRows = [
 							<code>fonts</code> is <code>"loading"</code> while any of the page's font faces is still
 							loading, <code>"loaded"</code> otherwise. A field the page can't report is left out.
 							Reading these adds no nondeterminism: like the DOM, they are input. For results you can
-							compare between runs, wait for <code>document.fonts.ready</code> before scanning. Each
-							frame in a <a href="#cross-frame-result">cross-frame result</a> carries its own.
+							compare between runs, wait for <code>document.fonts.ready</code> before scanning.{" "}
+							<code>images</code> is <code>"loading"</code> while any image is still loading,{" "}
+							<code>"loaded"</code> otherwise: an image that arrives later can move what layout rules
+							measured, so for comparable results scan after the page's <code>load</code> event. An
+							image with <code>loading="lazy"</code> is left out, since it waits for the reader to
+							scroll. <code>animationsSettled</code> is how many running animations and transitions
+							the scan held still: for the scan, a finite one (a fade-in) is read at its end and one
+							that repeats for ever (a marquee, a spinner) at its start, and each is put back exactly
+							where it was afterwards, so a page scanned during a fade-in gets the same result as one
+							scanned after it. The browser never paints the held state, since the scan is one
+							synchronous task. Each frame in a <a href="#cross-frame-result">cross-frame result</a>{" "}
+							carries its own.
 						</>
 					),
 				},
@@ -168,9 +192,28 @@ const topLevelRows = [
 				The (trimmed) <code>contextSelector</code> argument you passed — a string, an array of
 				strings (multi-region scanning, see <a href="/configuration/engine-options/">Engine options</a>), or{" "}
 				<code>null</code> if none/empty.
-			</>
-		),
-	},
+				</>
+				),
+				},
+				{
+				id: "contextMatch",
+				field: <code>contextMatch</code>,
+				meaning: (
+					<>
+						How the <code>contextSelector</code> resolved, or <code>null</code> when none was given.{" "}
+						<code>elementCount</code> is how many distinct elements it matched, the roots of the scan.{" "}
+						<code>unmatchedSelectors</code> lists each selector, as you gave it, that matched no
+						element; a comma-separated string is one selector here, as it is one{" "}
+						<code>querySelectorAll</code> call.{" "}
+						<strong>An <code>elementCount</code> of 0 means nothing was scanned</strong>: the page has
+						no such scope, every entry in <code>checksResults</code> and <code>rulesResults</code> is{" "}
+						<code>notApplicable</code>, and the result says nothing about the page. Report it as a
+						scope that wasn't found, not as a clean scan. A selector the browser can't parse never
+						reaches a result: the scan throws with <code>code: 'INVALID_CONTEXT_SELECTOR'</code> (see{" "}
+						<a href="/configuration/engine-options/">Engine options</a>).
+					</>
+				),
+				},
 	{
 		id: "checksResults",
 		field: <code>checksResults</code>,
@@ -208,10 +251,25 @@ const topLevelRows = [
 				collision occurred. Also logged via <code>console.warn</code> at scan time, since a
 				same-named custom rule is as likely to be an accidental collision as a deliberate
 				override.
-			</>
-		),
-	},
-];
+				</>
+				),
+				},
+				{
+				id: "skippedCustomRules",
+				field: <code>skippedCustomRules</code>,
+				meaning: (
+					<>
+						The <code>engineOptions.customRules</code> entries that were not run, each{" "}
+						<code>{"{ id, reason }"}</code> (<code>id</code> is <code>null</code> when the entry had
+						none): no id, a <code>runInPage</code> that is not a function or can't be rebuilt from its
+						source, a <code>meta</code> that fails validation, an id another custom rule already has,
+						or a composite rule's id. Always an array; empty when every custom rule ran. Each is also
+						logged with <code>console.warn</code>. A rule listed here is in no result, so a scan that
+						leaves one out can be told apart from one where it passed.
+					</>
+				),
+				},
+				];
 
 const occurrenceRows = [
 	{
@@ -227,18 +285,37 @@ const occurrenceRows = [
 				an <code>html</code> of <code>&lt;title&gt;(missing)&lt;/title&gt;</code>, neither of which
 				is on the page. Both are constants, so the fingerprint they feed stays stable, but{" "}
 				<strong>do not treat <code>selector</code> as resolvable or <code>html</code> as real
-				markup without checking the rule reported something that exists</strong>.
-			</>
-		),
-	},
+				markup without checking the rule reported something that exists</strong>. For an element
+				in a shadow tree, <code>selector</code> resolves inside its shadow root, and{" "}
+				<code>shadowHostSelectors</code> says how to get there.
+				</>
+				),
+				},
+				{
+				id: "shadowHostSelectors",
+				field: <code>shadowHostSelectors</code>,
+				meaning: (
+					<>
+						Present only for an element inside a shadow tree: the selectors of the shadow hosts that
+						lead to it, outermost first, each resolved in the tree that holds it, so{" "}
+						<code>document.querySelector(s[0]).shadowRoot.querySelector(s[1])…shadowRoot.querySelector(selector)</code>{" "}
+						finds the element. Two components with the same content give the same{" "}
+						<code>selector</code> and differ here. Like <code>selector</code>, it is not part of a
+						finding's identity.
+					</>
+				),
+				},
 	{
 		id: "html",
 		field: <code>html</code>,
 		meaning: (
 			<>
-				An outer-HTML snippet of the flagged element — use this as your primary "which element"
-				signal when <code>includeShadowDom: true</code> (selectors don't pierce shadow
-				boundaries).
+				An outer-HTML snippet of the flagged element, cut at 2,000 characters — useful to show the
+				element, and for an element in a shadow tree read beside{" "}
+				<code>shadowHostSelectors</code>. For <code>&lt;html&gt;</code>,{" "}
+				<code>&lt;head&gt;</code> and <code>&lt;body&gt;</code>, which hold the whole page, it is
+				the start tag alone (<code>&lt;html class="x"&gt;</code>), so a page-level finding keeps
+				its identity when other content changes.
 			</>
 		),
 	},
@@ -249,7 +326,9 @@ const occurrenceRows = [
 			<>
 				The flagged element's sibling-index path from <code>documentElement</code> down to it
 				(e.g. <code>[1, 0, 2]</code>) — <code>[]</code> if the element <em>is</em>{" "}
-				<code>documentElement</code>, <code>null</code> if it couldn't be determined. A more
+				<code>documentElement</code>, <code>null</code> if it couldn't be determined, which
+				includes every element inside a shadow tree (use <code>shadowHostSelectors</code> and{" "}
+				<code>selector</code> there). A more
 				robust element-identity mechanism than <code>selector</code> alone: it survives DOM
 				changes a selector string wouldn't (an id/class rename, for instance), at{" "}
 				<strong>the cost of not being usable as an actual CSS selector</strong>.
@@ -373,9 +452,11 @@ export function OutputSchemaContent() {
 					"  timestamp: string | null,",
 					"  perfStats: object | null,",
 					"  contextSelector: string | string[] | null,",
+					"  contextMatch: { elementCount: number, unmatchedSelectors: string[] } | null,",
 					"  checksResults: CheckResult[],",
 					"  rulesResults: CompositeResult[],",
-					"  overriddenBuiltinIds: string[]",
+					"  overriddenBuiltinIds: string[],",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string }>",
 					"}",
 				]}
 			/>
@@ -429,8 +510,19 @@ export function OutputSchemaContent() {
 					<em>can</em> flatten because Playwright's <code>page.frames()</code> already gives
 					every frame regardless of nesting depth; a <code>postMessage</code> relay has no such
 					global view, so nesting is expressed structurally instead.
-				</li>
-			</ul>
+					</li>
+					<li>
+						<strong>The reporters take one top-level result, not this tree.</strong>{" "}
+						<code>renderHtmlReport</code>, <code>renderSarifReport</code>,{" "}
+						<code>renderJunitReport</code>, <code>buildBaselineEntries</code> and{" "}
+						<code>matchBaseline</code> throw a <code>TypeError</code> when handed anything but an
+						object with a <code>checksResults</code> array (a cross-frame result, an array,{" "}
+						<code>null</code> or <code>undefined</code> from a scan that broke), rather than render
+						it as a scan that found nothing. Pass <code>topFrame</code>, and each frame's{" "}
+						<code>topFrame</code>, in calls of their own. <code>renderEarlReport</code> takes the
+						tree as it is: every frame that answered becomes a subject of its own, keyed by its URL.
+					</li>
+					</ul>
 
 			<h2>A check result (<code>checksResults[i]</code>)</h2>
 			<CodeBlock
@@ -467,6 +559,19 @@ export function OutputSchemaContent() {
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
+					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
+					'    measure: string,       // "contrast-ratio" | "overflow-px" | "target-size-px" | ... (open set)',
+					'    unit: "px" | "ratio",  // open set',
+					'    limit: "min" | "max",',
+					"    threshold: number,",
+					"    value: number,",
+					"    headroom: number,      // >= 0",
+					"    measuredCount: number,",
+					"    selector?: string,",
+					"    shadowHostSelectors?: string[],  // as on an occurrence",
+					"    structuralPath?: number[],",
+					"    context?: object       // rule-specific; not a stable contract",
+					"  },",
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
@@ -533,7 +638,30 @@ export function OutputSchemaContent() {
 						<strong><code>data</code></strong>: present only on a rule that reports something about
 						the whole page, whatever its outcome. No core rule does today. Like{" "}
 						<code>data.details</code> on an occurrence, it is not a stable contract.
-					</li>
+						</li>
+						<li id="margin">
+							<strong><code>margin</code></strong>: present only on a rule that declares one in the
+							catalog (<code>getChecksCatalog()[i].margin</code>,{" "}
+							<code>{"{ measure, unit, limit }"}</code>), when at least one element met the rule's
+							threshold. It names the element that came closest to the threshold while meeting it, so
+							a pass at 4.52:1 against 4.5:1, or 0.4 px from cutting off text, can be told apart from
+							a comfortable one. It sits beside the outcome and is not a finding: it never adds,
+							removes or changes an occurrence, and baselines, SARIF, JUnit and EARL ignore it. It is
+							reported on <code>fail</code> and <code>cantTell</code> results too when some elements
+							passed. <code>limit</code> is <code>min</code> when the value must reach the threshold
+							(contrast, size) and <code>max</code> when it must stay under it (overflow);{" "}
+							<code>headroom</code> is how far inside, in <code>unit</code>, so{" "}
+							<code>value - threshold</code> for <code>min</code> and <code>threshold - value</code>{" "}
+							for <code>max</code>, never negative. <code>threshold</code> is the one that element was
+							judged against, which can differ between elements (3:1 for large text). Pixels are given
+							to one decimal: CSS pixels and thresholds such as half a 15px font are fractional, and a
+							display rounds them for people. A ratio is not rounded, as WCAG does not round contrast.
+							A tie goes to the element first in document order, so a page gives the same margin every
+							time. <code>measure</code> and <code>unit</code> are open sets that may grow in a minor
+							release; <code>context</code> is rule-specific and, like <code>data.details</code>, not a
+							stable contract. <code>getMargins(result)</code> returns every margin in a result as{" "}
+							<code>{"[{ ruleId, ...margin }]"}</code>, sorted by <code>ruleId</code>.
+						</li>
 				<li>
 					<strong><code>error</code></strong>: only present in three cases — the rule implementation
 					threw an uncaught exception, the manual-fail coercion above fired, or every occurrence
@@ -549,16 +677,28 @@ export function OutputSchemaContent() {
 					options object (after locale/contrast defaults were applied), not literally what you
 					passed in — useful for confirming what a given rule actually saw, especially the
 					resolved <code>locale</code> and <code>contrast.mode</code>/
-					<code>contrast.rootCanvasFallback</code>.
-				</li>
+					<code>contrast.rootCanvasFallback</code>. It leaves out <code>messages</code>, the
+					dictionaries the run translated with (a locale side file in the browser bundle, or your
+					own strings): they are data, not a setting, and a copy on every result made a scan tens
+					of megabytes. <code>engine.locale</code> says which dictionary was used. Two more options
+					are echoed as the rules saw them, so the result stays plain data that{" "}
+					<code>JSON.stringify</code> and <code>structuredClone</code> (<code>postMessage</code>)
+					can carry: <code>probes</code> as the capped copy rules read, and{" "}
+					<code>customRules</code> as <code>{"[{ id }]"}</code>, one entry per custom rule with an
+					id, without its functions.
+					</li>
 			</ul>
 
 			<h2 id="occurrence">An occurrence (<code>occurrences[i]</code>)</h2>
 			<p>
 				Normally present only when <code>outcome</code> is <code>fail</code> or{" "}
 				<code>cantTell</code>: a <code>pass</code> result has <code>occurrences: []</code>, since
-				this engine does not enumerate the elements it passed, only the ones it flagged.
-			</p>
+				this engine does not enumerate the elements it passed, only the ones it flagged. The
+				contrast rules are the exception: their <code>pass</code> carries one occurrence
+				describing the scan (how much text was eligible and computable), with an empty{" "}
+				<code>selector</code>, so a pass over no text can be told apart from a pass over a page of
+				it.
+				</p>
 			<p>
 				<code>notApplicable</code> is the one exception. A rule that had nothing to judge may
 				attach a single occurrence saying why, and the contrast rules do exactly that when no text
@@ -574,6 +714,7 @@ export function OutputSchemaContent() {
 					"  selector: string,",
 					"  html: string,",
 					"  structuralPath: number[] | null,",
+					"  shadowHostSelectors?: string[],",
 					"  summary: string,",
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
@@ -735,7 +876,8 @@ export function OutputSchemaContent() {
 				Scanning <code>&lt;img src="logo.png"&gt;</code> (no <code>alt</code>) and{" "}
 				<code>&lt;button&gt;&lt;/button&gt;</code> (no accessible name), scoped to just those two
 				rules via <code>runOnly: {"{ includeRuleIds: [...] }"}</code> (see{" "}
-				<a href="/configuration/engine-options/">Engine options</a> — this is <strong>not</strong> a bare array):
+				<a href="/configuration/engine-options/">Engine options</a>; since 1.10.0 a bare array of
+				rule ids does the same):
 			</p>
 			<CodeBlock
 				lang="js"
@@ -762,6 +904,7 @@ export function OutputSchemaContent() {
 					'  "timestamp": null,',
 					'  "perfStats": null,',
 					'  "contextSelector": null,',
+					'  "contextMatch": null,',
 					'  "checksResults": [',
 					"    {",
 					'      "ruleId": "button-name-present",',
@@ -801,7 +944,8 @@ export function OutputSchemaContent() {
 					"    }",
 					"  ],",
 					'  "rulesResults": [],',
-					'  "overriddenBuiltinIds": []',
+					'  "overriddenBuiltinIds": [],',
+					'  "skippedCustomRules": []',
 					"}",
 				]}
 			/>

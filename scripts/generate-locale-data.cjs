@@ -1,9 +1,10 @@
 'use strict';
 
 /**
- * Generate src/data/locales.generated.json from ../core's
- * scripts/i18n-report.js, so the locales page never hand-types coverage
- * numbers that can drift from the real dictionaries.
+ * Generate src/data/locales.generated.json from the installed
+ * @surea11y/core package's getLocaleCoverage(), so the locales page never
+ * hand-types coverage numbers that can drift from the dictionaries the
+ * release the site depends on actually ships.
  *
  * Usage:
  *   node scripts/generate-locale-data.cjs
@@ -13,7 +14,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const CORE_DIR = path.join(__dirname, '..', '..', 'core');
 const OUT_PATH = path.join(__dirname, '..', 'src', 'data', 'locales.generated.json');
 
 // The report has no notion of a language's display name -- add one here as
@@ -36,12 +36,10 @@ function parseArgs(argv) {
 function main() {
   const args = parseArgs(process.argv.slice(2));
 
-  const { generateReport } = require(path.join(CORE_DIR, 'scripts', 'i18n-report.js'));
-  const i18nDir = path.join(CORE_DIR, 'src', 'i18n');
-  const rows = generateReport(i18nDir);
-
-  const enDict = JSON.parse(fs.readFileSync(path.join(i18nDir, 'en.json'), 'utf8'));
-  const totalKeys = Object.keys(enDict).length;
+  const { getLocaleCoverage } = require('@surea11y/core');
+  const coverage = getLocaleCoverage();
+  const totalKeys = coverage.totalKeys;
+  const rows = coverage.locales;
 
   const locales = [
     {

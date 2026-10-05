@@ -34,6 +34,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Rule pages and locale coverage come from the pinned @surea11y/core,
+      # so a core bump fails here until the data is regenerated.
+      - name: Rule data matches @surea11y/core
+        run: npm run docs:rules:check
+      - name: Locale data matches @surea11y/core
+        run: npm run docs:locales:check
       - run: npm run build
       - name: Links and anchors
         run: npm run check:links
@@ -44,8 +50,6 @@ jobs:
       # Lists candidates for a person to review; never fails.
       - name: Language marking (advisory)
         run: npm run check:lang
-      # docs:rules:check and docs:locales:check read ../core and stay local
-      # until the generators read the @surea11y/core package; see CLAUDE.md.
       - uses: actions/upload-artifact@v7
         with:
           name: dist

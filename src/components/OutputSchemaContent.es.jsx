@@ -7,6 +7,21 @@ const core = "https://github.com/SureA11y/core/blob/main";
 const topLevelRows = [
 	{ id: "engine.tag", field: <code>engine.tag</code>, meaning: <>La etiqueta de identidad propia del motor, actualmente <code>"a11ycore"</code>. Cada regla (integrada o personalizada) la lleva en <code>meta.tags</code>: los <code>ruleId</code> de las reglas en sí son simples (sin prefijo).</> },
 	{
+		id: "engine.version",
+		field: <code>engine.version</code>,
+		meaning: (
+			<>
+				La versión de <code>@surea11y/core</code> que produjo el resultado, como{" "}
+				<code>"1.10.0"</code>: lo que hay que citar en un informe de error, y cómo distinguir
+				resultados de dos versiones. Un resultado puede cambiar entre versiones sin que cambie su
+				estructura, así que esto no es <code>schemaVersion</code>. Los generadores de{" "}
+				<a href="/results-reports/sarif-report/">SARIF</a> y{" "}
+				<a href="/results-reports/earl-report/">EARL</a> lo usan como versión de la herramienta
+				cuando no indicas ninguna.
+			</>
+		),
+	},
+	{
 		id: "engine.schemaVersion",
 		field: <code>engine.schemaVersion</code>,
 		meaning: (
@@ -142,7 +157,18 @@ const topLevelRows = [
 				se está cargando, <code>"loaded"</code> en caso contrario. Un campo que la página no puede
 				informar se omite. Leerlos no añade no determinismo: igual que el DOM, son entrada. Para
 				obtener resultados que puedas comparar entre ejecuciones, espera a{" "}
-				<code>document.fonts.ready</code> antes de analizar. Cada frame de un{" "}
+				<code>document.fonts.ready</code> antes de analizar. <code>images</code> es{" "}
+				<code>"loading"</code> mientras alguna imagen aún se está cargando, <code>"loaded"</code> en
+				caso contrario: una imagen que llega más tarde puede mover lo que midieron las reglas de
+				diseño, así que, para obtener resultados comparables, analiza después del evento{" "}
+				<code>load</code> de la página. Una imagen con <code>loading="lazy"</code> se omite, ya que
+				espera a que el lector desplace la página. <code>animationsSettled</code> es cuántas
+				animaciones y transiciones en curso detuvo el análisis: durante el análisis, una finita (un
+				fundido de entrada) se lee en su final y una que se repite indefinidamente (una marquesina,
+				un indicador de carga) en su inicio, y cada una se devuelve exactamente a donde estaba
+				después, así que una página analizada durante un fundido de entrada obtiene el mismo
+				resultado que una analizada después. El navegador nunca pinta el estado detenido, ya que el
+				análisis es una única tarea síncrona. Cada frame de un{" "}
 				<a href="#cross-frame-result">resultado entre frames</a> lleva el suyo.
 			</>
 		),
@@ -174,9 +200,29 @@ const topLevelRows = [
 				El argumento (recortado) <code>contextSelector</code> que pasaste: una cadena, un array
 				de cadenas (análisis multi-región, ver <a href="/configuration/engine-options/">Opciones del motor</a>), o{" "}
 				<code>null</code> si no hay ninguno o está vacío.
-			</>
-		),
-	},
+				</>
+				),
+				},
+				{
+				id: "contextMatch",
+				field: <code>contextMatch</code>,
+				meaning: (
+					<>
+						Cómo se resolvió el <code>contextSelector</code>, o <code>null</code> si no se indicó
+						ninguno. <code>elementCount</code> es cuántos elementos distintos coincidieron, las raíces
+						del análisis. <code>unmatchedSelectors</code> enumera cada selector, tal como lo pasaste, que
+						no coincidió con ningún elemento; una cadena separada por comas es aquí un solo selector,
+						igual que es una sola llamada a <code>querySelectorAll</code>.{" "}
+						<strong>Un <code>elementCount</code> de 0 significa que no se analizó nada</strong>: la
+						página no tiene ese ámbito, todas las entradas de <code>checksResults</code> y{" "}
+						<code>rulesResults</code> son <code>notApplicable</code>, y el resultado no dice nada sobre
+						la página. Infórmalo como un ámbito que no se encontró, no como un análisis sin hallazgos.
+						Un selector que el navegador no puede interpretar nunca llega a un resultado: el análisis
+						lanza una excepción con <code>code: 'INVALID_CONTEXT_SELECTOR'</code> (ver{" "}
+						<a href="/configuration/engine-options/">Opciones del motor</a>).
+					</>
+				),
+				},
 	{
 		id: "checksResults",
 		field: <code>checksResults</code>,
@@ -215,10 +261,26 @@ const topLevelRows = [
 				<code>console.warn</code> en el momento del análisis, ya que una regla personalizada con
 				el mismo nombre es tan probable que sea una colisión accidental como una sustitución
 				deliberada.
-			</>
-		),
-	},
-];
+				</>
+				),
+				},
+				{
+				id: "skippedCustomRules",
+				field: <code>skippedCustomRules</code>,
+				meaning: (
+					<>
+						Las entradas de <code>engineOptions.customRules</code> que no se ejecutaron, cada una{" "}
+						<code>{"{ id, reason }"}</code> (<code>id</code> es <code>null</code> cuando la entrada no
+						tenía): sin id, un <code>runInPage</code> que no es una función o no puede reconstruirse a
+						partir de su código fuente, un <code>meta</code> que no supera la validación, un id que ya
+						tiene otra regla personalizada, o el id de una regla compuesta. Siempre es un array; vacío
+						cuando se ejecutaron todas las reglas personalizadas. Cada una se registra también con{" "}
+						<code>console.warn</code>. Una regla listada aquí no aparece en ningún resultado, así que un
+						análisis que la dejó fuera se distingue de uno en el que pasó.
+					</>
+				),
+				},
+				];
 
 const occurrenceRows = [
 	{
@@ -235,18 +297,38 @@ const occurrenceRows = [
 				<code>&lt;title&gt;(missing)&lt;/title&gt;</code>, ninguno de los cuales está en la
 				página. Ambos son constantes, así que la huella que alimentan se mantiene estable, pero{" "}
 				<strong>no trates <code>selector</code> como resoluble ni <code>html</code> como marcado
-				real sin comprobar antes que la regla devolvió algo que existe</strong>.
-			</>
-		),
-	},
+				real sin comprobar antes que la regla devolvió algo que existe</strong>. Para un elemento
+				dentro de un árbol shadow, <code>selector</code> se resuelve dentro de su shadow root, y{" "}
+				<code>shadowHostSelectors</code> indica cómo llegar hasta él.
+				</>
+				),
+				},
+				{
+				id: "shadowHostSelectors",
+				field: <code>shadowHostSelectors</code>,
+				meaning: (
+					<>
+						Presente solo para un elemento dentro de un árbol shadow: los selectores de los shadow
+						hosts que llevan hasta él, del más externo al más interno, cada uno resuelto en el árbol
+						que lo contiene, de modo que{" "}
+						<code>document.querySelector(s[0]).shadowRoot.querySelector(s[1])…shadowRoot.querySelector(selector)</code>{" "}
+						encuentra el elemento. Dos componentes con el mismo contenido dan el mismo{" "}
+						<code>selector</code> y se distinguen aquí. Como <code>selector</code>, no forma parte de la
+						identidad de un hallazgo.
+					</>
+				),
+				},
 	{
 		id: "html",
 		field: <code>html</code>,
 		meaning: (
 			<>
-				Un fragmento de outer-HTML del elemento señalado: úsalo como tu señal principal de «qué
-				elemento es» cuando <code>includeShadowDom: true</code> (los selectores no atraviesan los
-				límites de shadow DOM).
+				Un fragmento de outer-HTML del elemento señalado, cortado a 2.000 caracteres: útil para
+				mostrar el elemento y, para un elemento dentro de un árbol shadow, para leerlo junto a{" "}
+				<code>shadowHostSelectors</code>. Para <code>&lt;html&gt;</code>,{" "}
+				<code>&lt;head&gt;</code> y <code>&lt;body&gt;</code>, que contienen la página entera, es
+				solo la etiqueta de apertura (<code>&lt;html class="x"&gt;</code>), así que un hallazgo a
+				nivel de página conserva su identidad cuando cambia el resto del contenido.
 			</>
 		),
 	},
@@ -257,7 +339,9 @@ const occurrenceRows = [
 			<>
 				La ruta de índices de hermanos del elemento señalado, desde <code>documentElement</code>{" "}
 				hasta él (por ejemplo, <code>[1, 0, 2]</code>): <code>[]</code> si el elemento{" "}
-				<em>es</em> <code>documentElement</code>, <code>null</code> si no pudo determinarse. Un
+				<em>es</em> <code>documentElement</code>, <code>null</code> si no pudo determinarse, lo que
+				incluye todo elemento dentro de un árbol shadow (usa ahí <code>shadowHostSelectors</code> y{" "}
+				<code>selector</code>). Un
 				mecanismo de identidad de elemento más robusto que <code>selector</code> por sí solo:
 				sobrevive a cambios en el DOM que una cadena de selector no soportaría (un cambio de
 				<code>id</code>/clase, por ejemplo), a costa de{" "}
@@ -385,9 +469,11 @@ export function OutputSchemaContent() {
 					"  timestamp: string | null,",
 					"  perfStats: object | null,",
 					"  contextSelector: string | string[] | null,",
+					"  contextMatch: { elementCount: number, unmatchedSelectors: string[] } | null,",
 					"  checksResults: CheckResult[],",
 					"  rulesResults: CompositeResult[],",
-					"  overriddenBuiltinIds: string[]",
+					"  overriddenBuiltinIds: string[],",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string }>",
 					"}",
 				]}
 			/>
@@ -445,8 +531,20 @@ export function OutputSchemaContent() {
 					todos los frames sin importar la profundidad de anidamiento; un relé por{" "}
 					<code>postMessage</code> no tiene esa visión global, así que el anidamiento se expresa
 					de forma estructural en su lugar.
-				</li>
-			</ul>
+					</li>
+					<li>
+						<strong>Los generadores de informes reciben un único resultado de nivel superior, no este
+						árbol.</strong> <code>renderHtmlReport</code>, <code>renderSarifReport</code>,{" "}
+						<code>renderJunitReport</code>, <code>buildBaselineEntries</code> y{" "}
+						<code>matchBaseline</code> lanzan un <code>TypeError</code> cuando reciben cualquier cosa
+						que no sea un objeto con un array <code>checksResults</code> (un resultado entre frames, un
+						array, <code>null</code> o <code>undefined</code> de un análisis que falló), en lugar de
+						presentarlo como un análisis que no encontró nada. Pasa <code>topFrame</code>, y el{" "}
+						<code>topFrame</code> de cada frame, en llamadas separadas. <code>renderEarlReport</code>{" "}
+						acepta el árbol tal cual: cada frame que respondió se convierte en un sujeto propio,
+						identificado por su URL.
+					</li>
+					</ul>
 
 			<h2>Un resultado de comprobación (<code>checksResults[i]</code>)</h2>
 			<CodeBlock
@@ -483,6 +581,19 @@ export function OutputSchemaContent() {
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
+					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
+					'    measure: string,       // "contrast-ratio" | "overflow-px" | "target-size-px" | ... (open set)',
+					'    unit: "px" | "ratio",  // open set',
+					'    limit: "min" | "max",',
+					"    threshold: number,",
+					"    value: number,",
+					"    headroom: number,      // >= 0",
+					"    measuredCount: number,",
+					"    selector?: string,",
+					"    shadowHostSelectors?: string[],  // as on an occurrence",
+					"    structuralPath?: number[],",
+					"    context?: object       // rule-specific; not a stable contract",
+					"  },",
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
@@ -552,7 +663,31 @@ export function OutputSchemaContent() {
 					<strong><code>data</code></strong>: presente solo en una regla que informa algo sobre la
 					página entera, sea cual sea su resultado. Ninguna regla del núcleo lo hace hoy. Como{" "}
 					<code>data.details</code> en una ocurrencia, no es un contrato estable.
-				</li>
+					</li>
+					<li id="margin">
+						<strong><code>margin</code></strong>: presente solo en una regla que declara uno en el
+						catálogo (<code>getChecksCatalog()[i].margin</code>,{" "}
+						<code>{"{ measure, unit, limit }"}</code>), cuando al menos un elemento alcanzó el umbral
+						de la regla. Indica el elemento que más se acercó al umbral cumpliéndolo, de modo que un{" "}
+						<code>pass</code> a 4,52:1 frente a 4,5:1, o a 0,4 px de cortar el texto, se distingue de
+						uno holgado. Va junto al resultado y no es un hallazgo: nunca añade, quita ni cambia una
+						ocurrencia, y las líneas base, SARIF, JUnit y EARL lo ignoran. También se indica en
+						resultados <code>fail</code> y <code>cantTell</code> cuando algunos elementos pasaron.{" "}
+						<code>limit</code> es <code>min</code> cuando el valor debe alcanzar el umbral (contraste,
+						tamaño) y <code>max</code> cuando debe quedar por debajo (desbordamiento);{" "}
+						<code>headroom</code> es cuánto margen queda, en <code>unit</code>, es decir,{" "}
+						<code>value - threshold</code> para <code>min</code> y <code>threshold - value</code> para{" "}
+						<code>max</code>, nunca negativo. <code>threshold</code> es el umbral con el que se juzgó
+						ese elemento, que puede variar entre elementos (3:1 para texto grande). Los píxeles se dan
+						con un decimal: los píxeles CSS y umbrales como la mitad de una fuente de 15px son
+						fraccionarios, y una interfaz los redondea para las personas. Una razón no se redondea, ya
+						que WCAG no redondea el contraste. En caso de empate gana el primer elemento en el orden del
+						documento, así que una página da siempre el mismo margen. <code>measure</code> y{" "}
+						<code>unit</code> son conjuntos abiertos que pueden crecer en una versión menor;{" "}
+						<code>context</code> es específico de cada regla y, como <code>data.details</code>, no es un
+						contrato estable. <code>getMargins(result)</code> devuelve todos los márgenes de un
+						resultado como <code>{"[{ ruleId, ...margin }]"}</code>, ordenados por <code>ruleId</code>.
+					</li>
 				<li>
 					<strong><code>error</code></strong>: presente solo en tres casos: la implementación de
 					la regla lanzó una excepción no capturada, se activó la coerción de <code>fail</code> manual descrita
@@ -569,16 +704,27 @@ export function OutputSchemaContent() {
 					<em>resuelto</em> (después de aplicar los valores predeterminados de locale/contrast),
 					no literalmente lo que pasaste: útil para confirmar qué vio realmente una regla dada,
 					especialmente el <code>locale</code> resuelto y <code>contrast.mode</code>/
-					<code>contrast.rootCanvasFallback</code>.
-				</li>
+					<code>contrast.rootCanvasFallback</code>. Omite <code>messages</code>, los diccionarios con
+					los que tradujo la ejecución (un archivo de locale aparte en el paquete para navegador, o tus
+					propias cadenas): son datos, no un ajuste, y una copia en cada resultado hacía que un
+					análisis ocupara decenas de megabytes. <code>engine.locale</code> indica qué diccionario se
+					usó. Otras dos opciones se reflejan tal como las vieron las reglas, para que el resultado
+					siga siendo datos simples que <code>JSON.stringify</code> y <code>structuredClone</code>{" "}
+					(<code>postMessage</code>) puedan transportar: <code>probes</code> como la copia limitada
+					que leen las reglas, y <code>customRules</code> como <code>{"[{ id }]"}</code>, una entrada
+					por cada regla personalizada con id, sin sus funciones.
+					</li>
 			</ul>
 
 			<h2 id="occurrence">Una ocurrencia (<code>occurrences[i]</code>)</h2>
 			<p>
 				Normalmente presente solo cuando <code>outcome</code> es <code>fail</code> o{" "}
 				<code>cantTell</code>: un resultado <code>pass</code> tiene <code>occurrences: []</code>,
-				ya que este motor no enumera los elementos que pasó, solo los que señaló.
-			</p>
+				ya que este motor no enumera los elementos que pasó, solo los que señaló. Las reglas de
+				contraste son la excepción: su <code>pass</code> lleva una ocurrencia que describe el
+				análisis (cuánto texto era elegible y calculable), con un <code>selector</code> vacío, para
+				que un <code>pass</code> sin texto se distinga de uno sobre una página llena de texto.
+				</p>
 			<p>
 				<code>notApplicable</code> es la única excepción. Una regla que no tuvo nada que juzgar
 				puede adjuntar una única occurrence explicando por qué, y las reglas de contraste hacen
@@ -595,6 +741,7 @@ export function OutputSchemaContent() {
 					"  selector: string,",
 					"  html: string,",
 					"  structuralPath: number[] | null,",
+					"  shadowHostSelectors?: string[],",
 					"  summary: string,",
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
@@ -761,8 +908,8 @@ export function OutputSchemaContent() {
 				Analizando <code>&lt;img src="logo.png"&gt;</code> (sin <code>alt</code>) y{" "}
 				<code>&lt;button&gt;&lt;/button&gt;</code> (sin nombre accesible), limitado a esas dos
 				reglas mediante <code>runOnly: {"{ includeRuleIds: [...] }"}</code> (ver{" "}
-				<a href="/configuration/engine-options/">Opciones del motor</a>; esto{" "}
-				<strong>no</strong> es un array simple):
+				<a href="/configuration/engine-options/">Opciones del motor</a>; desde la 1.10.0, un array
+				simple de ids de regla hace lo mismo):
 			</p>
 			<CodeBlock
 				lang="js"
@@ -789,6 +936,7 @@ export function OutputSchemaContent() {
 					'  "timestamp": null,',
 					'  "perfStats": null,',
 					'  "contextSelector": null,',
+					'  "contextMatch": null,',
 					'  "checksResults": [',
 					"    {",
 					'      "ruleId": "button-name-present",',
@@ -828,7 +976,8 @@ export function OutputSchemaContent() {
 					"    }",
 					"  ],",
 					'  "rulesResults": [],',
-					'  "overriddenBuiltinIds": []',
+					'  "overriddenBuiltinIds": [],',
+					'  "skippedCustomRules": []',
 					"}",
 				]}
 			/>

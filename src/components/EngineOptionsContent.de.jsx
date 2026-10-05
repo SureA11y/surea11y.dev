@@ -92,7 +92,9 @@ const optionRows = [
 				Überschreibung ist also kein Problem. Auf diesem Weg erhält das eigenständige
 				Browser-Bundle eine Locale-Zusatzdatei, und es ist die einzige Möglichkeit, ein
 				Wörterbuch in einen Seitenkontext zu bringen, da der In-Page-Runner serialisiert wird
-				und keine Dateien lesen kann. Siehe <a href="/configuration/locales/">Locales</a>.
+				und keine Dateien lesen kann. Anders als die übrigen Optionen wird es nicht im{" "}
+				<code>engineOptions</code> jedes Ergebnisses zurückgegeben; <code>engine.locale</code>{" "}
+				meldet das verwendete Wörterbuch. Siehe <a href="/configuration/locales/">Locales</a>.
 			</>
 		),
 	},
@@ -106,7 +108,11 @@ const optionRows = [
 				<code>[hidden]</code>, geschlossene <code>&lt;details&gt;</code> und verborgene, nur zum
 				Rendern dienende Host-Elemente (einschließlich ihrer Nachfahren). Setzen Sie{" "}
 				<code>true</code>, um diese verborgenen bzw. eingeklappten Teilbäume in die Auswertung
-				einzubeziehen (Legacy-Verhalten für statisches Markup).
+				einzubeziehen (Legacy-Verhalten für statisches Markup). Das erweitert, was die
+				gemeinsamen Abfragen liefern; die meisten Regeln beurteilen dann trotzdem nur, was im
+				Accessibility Tree steht, da ein verborgenes Element weder Namen noch Rolle hat, die sich
+				prüfen ließen. Für sie ändert sich also nichts. Wichtig ist es für Regeln zum Markup
+				selbst, etwa eine fehlerhafte ID-Referenz.
 			</>
 		),
 	},
@@ -209,7 +215,16 @@ const optionRows = [
 				<code>visibility</code>, <code>opacity</code>, Verbergen durch Vorfahren usw.{" "}
 				<code>'styleAndGeometry'</code>: ergänzt das um echte Layout-Prüfungen (
 				<code>getClientRects()</code>/<code>getBoundingClientRect()</code>); Text ohne Client
-				Rects oder mit Breite/Höhe null wird ebenfalls ausgeschlossen. Greifen Sie zu{" "}
+				Rects oder mit Breite/Höhe null wird ebenfalls ausgeschlossen, ebenso Text, der ganz
+				oberhalb oder links der Seite liegt, wo kein Scrollen hinkommt (die Technik{" "}
+				<code>left: -9999px</code>), und Text, den ein Vorfahr mit{" "}
+				<code>overflow: hidden</code> oder <code>clip</code> vollständig abschneidet (
+				<code>height: 0; overflow: hidden</code>, eine nicht sichtbare Karussell-Folie). Eine
+				scrollbare Box (<code>auto</code>, <code>scroll</code>) schließt ihren Text nicht aus,
+				da Lesende ihn erreichen können. In beiden Modi wird Text mit Schriftgröße 0 oder
+				vollständig transparenter Farbe ausgeschlossen, da nichts gezeichnet wird; transparenter
+				Text, durch dessen Glyphen ein Hintergrund scheint (<code>background-clip: text</code>),
+				wird nicht ausgeschlossen, sondern als Frage gemeldet. Greifen Sie zu{" "}
 				<code>'styleAndGeometry'</code>, wenn Sie in einem echten Browser bzw. mit
 				Playwright/Puppeteer (<code>runa11yCoreInPage</code>) arbeiten und Kontrastbefunde das
 				tatsächlich gerenderte Layout statt nur des berechneten Stils widerspiegeln sollen. Unter
@@ -365,10 +380,16 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong><code>runOnly</code> muss genau diese Objektform haben, kein reines Array.</strong>{" "}
-				<code>runOnly: ['img-alt-present']</code> (ein einfaches Array) wird{" "}
-				<strong>stillschweigend ignoriert</strong>; die Engine führt dann jede Regel aus. Das
-				ist der mit Abstand häufigste Integrationsfehler, siehe <a href="/help/faq/">die FAQ</a>.
+				Ein einfaches Array oder ein String funktioniert als Kurzform, so wie axe-core sie
+				liest: <code>runOnly: ['img-alt-present', 'button-name-present']</code> führt diese
+				Regeln aus (eine Composite-ID bringt ihre Regeln mit), und{" "}
+				<code>runOnly: ['wcag2a', 'wcag2aa']</code> ist dasselbe wie{" "}
+				<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>. Ein Array kann Regel-IDs und Tags
+				nicht mischen, und jeder Wert muss eine Regel (eingebaut, Composite oder eine aus{" "}
+				<code>engineOptions.customRules</code>) oder einen Tag benennen: Alles andere wirft einen
+				Fehler, damit ein Tippfehler nicht unbemerkt jede Regel oder keine ausführt. Verwenden
+				Sie die Objektform, um IDs und Tags zu kombinieren oder um auszuschließen. Vor 1.10.0
+				wurde ein einfaches Array ignoriert, und jede Regel lief.
 			</p>
 			<DataTable
 				label="Felder von runOnly"
@@ -411,15 +432,35 @@ export function EngineOptionsContent() {
 				gleichwertig.
 			</p>
 			<p>
+				Namen werden geprüft, hier und in <code>engineOptions.rules</code>/<code>.tags</code>{" "}
+				weiter unten. Eine Include-Liste (<code>includeRuleIds</code>, <code>tags</code>, das
+				ältere <code>values</code>, <code>rules.include</code>, <code>tags.include</code>), in
+				der kein Wert eine Regel oder einen Tag benennt, wirft einen Fehler mit{" "}
+				<code>code: 'INVALID_RUN_ONLY'</code> und einer Meldung, die das Feld und die Werte
+				nennt, denn sie würde nichts auswählen, und ein Lauf ohne Regeln liest sich wie ein Scan
+				ohne Befunde. Ein Wert, der nichts benennt, neben anderen, die etwas benennen, oder in
+				einer Exclude-Liste wird mit einem <code>console.warn</code> ignoriert. Vor 1.10.0
+				wurde jeder solche Wert stillschweigend ignoriert. <code>includeTestIds</code>/
+				<code>excludeTestIds</code> werden nicht geprüft.
+			</p>
+			<p>
 				Regel-IDs stehen ohne Präfix (kein Engine-Präfix), z. B. <code>'img-alt-present'</code>.
 				Aus Gründen der Abwärtskompatibilität akzeptiert der Abgleich auch eine ältere, mit{" "}
 				<code>a11ycore-</code> präfixierte Form derselben ID (<code>'a11ycore-img-alt-present'</code>).
 			</p>
 			<p>
-				Als gesamter <code>runOnly</code>-Wert wird außerdem eine{" "}
-				<strong>ältere Tag-Filter-Form</strong> akzeptiert:{" "}
-				<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>, gleichbedeutend mit{" "}
-				<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>.
+				Als gesamter <code>runOnly</code>-Wert wird außerdem die{" "}
+				<strong><code>{"{ type, values }"}</code>-Form von axe-core</strong> akzeptiert:{" "}
+				<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code> ist{" "}
+				<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>, und{" "}
+				<code>{"{ type: 'rule', values: ['img-alt-present'] }"}</code> ist{" "}
+				<code>{"{ includeRuleIds: ['img-alt-present'] }"}</code> (<code>'tags'</code> und{" "}
+				<code>'rules'</code> funktionieren auch). Jeder andere <code>type</code> wirft{" "}
+				<code>INVALID_RUN_ONLY</code>, ebenso ein <code>runOnly</code>, das eine Zahl oder ein
+				Boolean ist, oder ein Objekt, von dessen Keys die Engine keinen liest (
+				<code>{"{ includeRuleId: [...] }"}</code>): Jeder dieser Fälle führte früher jede Regel
+				aus. Ein leeres Array, ein leerer String oder ein leeres Objekt bedeutet weiterhin jede
+				Regel.
 			</p>
 
 			<h3 id="filtering-by-wcag-version">Filtern nach WCAG-Version (2.0, 2.1, 2.2)</h3>
@@ -865,9 +906,11 @@ export function EngineOptionsContent() {
 				Elemente, die sonst <code>fail</code> ergeben würden, alle auf diese Weise ausgeschlossen sind, meldet{" "}
 				<code>outcome: 'pass'</code> oder <code>'notApplicable'</code> (je nach eigener
 				Konvention der Regel für den Fall ohne Kandidaten) mit <code>occurrences: []</code>, nie{" "}
-				<code>outcome: 'fail'</code> mit leerem <code>occurrences</code>-Array, denn genau diese
-				Form ist an anderer Stelle im Schema für „diese Regel hat eine Exception geworfen“
-				reserviert (siehe <a href="/results-reports/output-schema/">das Ausgabeschema</a>).
+				<code>outcome: 'fail'</code> mit leerem <code>occurrences</code>-Array, denn das{" "}
+				<code>fail</code> einer eingebauten Regel nennt immer, was fehlgeschlagen ist. (Eine
+				Regel, die eine Exception wirft, ist ein anderer Fall: Sie meldet <code>cantTell</code>{" "}
+				mit gesetztem <code>error</code>, siehe{" "}
+				<a href="/results-reports/output-schema/">das Ausgabeschema</a>.)
 			</p>
 			<p>
 				Akzeptiert dieselben Formen wie die globale Option: ein Array (
@@ -954,7 +997,9 @@ export function EngineOptionsContent() {
 					"    id: 'org-no-inline-onclick',",
 					"    meta: { title: 'No inline onclick handlers', defaultSeverity: 'moderate' },",
 					"    runInPage(ctx) {",
-					"      const els = ctx.helpers.queryAll('[onclick]');",
+					"      // queryAllSmart applies excludeSelectors, the scope's shadow roots and",
+					"      // the hidden-content filter; queryAll is the plain light-DOM query.",
+					"      const els = ctx.helpers.queryAllSmart('[onclick]');",
 					"      const occurrences = els.map((el) => ({",
 					"        selector: ctx.helpers.buildSelector(el),",
 					"        html: el.outerHTML,",
@@ -1019,13 +1064,26 @@ export function EngineOptionsContent() {
 					keine lebende <code>Function</code>-Referenz transportieren kann, wohl aber einen String.
 					Die Engine rekonstruiert einen String über <code>new Function</code>, denselben
 					Mechanismus, mit dem der Build den Quelltext jeder eingebauten Regel in den
-					In-Page-Runner einbettet.
+					In-Page-Runner einbettet. Der Quelltext jeder Funktion funktioniert: eine
+					Pfeilfunktion, eine <code>function</code>-Deklaration oder eine Methode in Kurzschreibweise
+					wie im Beispiel oben (<code>{"runInPage(ctx) {…}"}</code>, auch <code>async</code>),
+					deren <code>toString()</code> für sich allein kein Ausdruck ist. Die Rekonstruktion
+					setzt voraus, dass <code>eval</code> erlaubt ist; eine Seite, deren Content Security
+					Policy <code>'unsafe-eval'</code> verbietet, überspringt daher eine als String
+					übergebene Regel. Übergeben Sie dort eine echte Funktion.
 				</li>
 				<li>
 					<code>meta</code> erhält dieselben Standardwerte und dieselbe Validierung wie eine
-					Regel aus dem Build. Lassen Sie weg, was Sie nicht brauchen; <code>severity</code> ist
-					standardmäßig <code>moderate</code>, <code>confidence</code> <code>medium</code>,{" "}
-					<code>type</code> <code>automatic</code> usw.
+					Regel aus dem Build. Lassen Sie weg, was Sie nicht brauchen;{" "}
+					<code>defaultSeverity</code> ist standardmäßig <code>moderate</code>,{" "}
+					<code>defaultConfidence</code> <code>medium</code>, <code>type</code>{" "}
+					<code>automatic</code> usw. Ein Wert außerhalb seiner Menge (<code>minor</code>/
+					<code>moderate</code>/<code>serious</code>/<code>critical</code>; <code>high</code>/
+					<code>medium</code>/<code>low</code>; <code>automatic</code>/<code>manual</code>,
+					Groß- und Kleinschreibung egal) ist ein <code>meta</code>, das die Validierung nicht
+					besteht, und die Regel wird übersprungen. Eine <code>severity</code>, die eine Regel
+					außerhalb der Menge zurückgibt, wird durch ihren Standardwert ersetzt, mit einem
+					Hinweis in <code>error</code>.
 				</li>
 				<li>
 					Eine eigene Regel, deren <code>id</code> mit einer eingebauten kollidiert,{" "}
@@ -1037,15 +1095,39 @@ export function EngineOptionsContent() {
 					keine Kollision gibt). Siehe <a href="/results-reports/output-schema/">das Ausgabeschema</a>.
 				</li>
 				<li>
+					Eine eigene Regel kann wie eine eingebaute eine Marge melden: Deklarieren Sie{" "}
+					<code>meta.margin</code> (<code>{"{ measure, unit, limit }"}</code>) und geben Sie{" "}
+					<code>marginCandidates</code> zurück (siehe{" "}
+					<a href={`${core}/docs/RULE_AUTHORING.md#metamargin`}>
+						<code>RULE_AUTHORING.md</code>, <code>meta.margin</code>
+					</a>
+					, die Anleitung zum Schreiben von Regeln auf GitHub). Ein fehlerhaftes{" "}
+					<code>meta.margin</code> wird ignoriert, diese Regel meldet dann keine Marge; der Scan
+					läuft weiter.
+				</li>
+				<li>
 					Ein ungültiger Deskriptor (fehlende oder nicht als String angegebene <code>id</code>,
-					oder ein <code>runInPage</code>, das weder eine Funktion noch ein rekonstruierbarer
-					Quelltext-String ist) wird stillschweigend übersprungen. Der Rest des Scans,
+					ein <code>runInPage</code>, das weder eine Funktion noch ein rekonstruierbarer
+					Quelltext-String ist, ein <code>meta</code>, das die Validierung nicht besteht, etwa{" "}
+					<code>deprecated: true</code> ohne <code>deprecation</code>, eine ID, die schon eine
+					andere eigene Regel in der Liste hat, oder die ID einer Composite-Regel) wird mit einem{" "}
+					<code>console.warn</code> übersprungen, das die Regel und den Grund nennt, und im{" "}
+					<code>skippedCustomRules</code> des Ergebnisses aufgeführt. Der Rest des Scans,
 					einschließlich jeder eingebauten Regel, läuft ganz normal weiter. Das ist keine zu
 					schließende Validierungslücke: Eine eigene Regel ist beliebiger, vom Aufrufer
 					gelieferter Code, daher ist „nur diesen einen Eintrag verwerfen, den Scan
 					nicht abbrechen“ der sicherere Standard. Das entspricht dem Umgang mit einer{" "}
 					<em>eingebauten</em> Regel, die eine Exception wirft: Sie wird auf ein{" "}
 					<code>cantTell</code> für diese Regel begrenzt, statt den Lauf abstürzen zu lassen.
+				</li>
+				<li>
+					Regeln laufen synchron. Ein <code>runInPage</code> oder <code>applicability</code>, das
+					ein Promise zurückgibt (eine <code>async</code>-Funktion), wird als{" "}
+					<code>cantTell</code> gemeldet, mit einem <code>error</code>, der das sagt, ebenso ein{" "}
+					<code>runInPage</code>, das etwas anderes als ein Ergebnisobjekt zurückgibt. Ein{" "}
+					<code>outcome</code> außerhalb von <code>pass</code>, <code>fail</code>,{" "}
+					<code>cantTell</code> und <code>notApplicable</code> (etwa <code>'failed'</code>) wird
+					zu <code>cantTell</code>, und <code>error</code> nennt den zurückgegebenen Wert.
 				</li>
 				<li>
 					Ergebnisse erscheinen in <code>checksResults</code> genau wie die jeder anderen Regel,
@@ -1060,11 +1142,37 @@ export function EngineOptionsContent() {
 			<p>
 				Ein CSS-Selektor (oder ein Array von Selektoren), der den Scan auf einen oder mehrere
 				Teilbäume eingrenzt. Aufgelöst über <code>document.querySelectorAll</code> (alle Treffer,
-				nicht nur der erste), mit Rückfall auf <code>document.documentElement</code>/
-				<code>document.body</code>, wenn nichts passt. Übergeben Sie <code>null</code>, um das
-				ganze Dokument zu scannen.
+				nicht nur der erste). Übergeben Sie <code>null</code>, um das ganze Dokument zu
+				scannen.
 			</p>
 			<ul>
+				<li>
+					<strong>Ein Selektor ohne Treffer scannt nichts.</strong> Jede Regel meldet{" "}
+					<code>notApplicable</code>, auch die seitenweiten, und das <code>contextMatch</code>{" "}
+					des Ergebnisses sagt es:{" "}
+					<code>{"{ elementCount: 0, unmatchedSelectors: ['#mian'] }"}</code> (siehe{" "}
+					<a href="/results-reports/output-schema/#top-level-result">das Ausgabeschema</a>).
+					Der Lauf gibt außerdem ein <code>console.warn</code> aus. Ein Scope, den die Seite
+					nicht hat, wird nicht auf die ganze Seite ausgeweitet: Ein Ergebnis für Inhalte, nach
+					denen Sie nie gefragt haben, darunter ein seitenweites <code>pass</code>, würde sich
+					wie ein Ergebnis für den Teil lesen, nach dem Sie gefragt haben. In einem Array wird
+					ein Selektor ohne Treffer in <code>unmatchedSelectors</code> aufgeführt, während die
+					anderen wie gewohnt gescannt werden; Inhalte, die nur manchmal auf der Seite sind,
+					etwa ein Cookie-Banner, können also in der Liste stehen. Vor 1.10.0 fiel ein Scope
+					ohne Treffer auf das ganze Dokument zurück, ohne dass das Ergebnis es erwähnte.
+				</li>
+				<li>
+					<strong>Ein Selektor, den der Browser nicht parsen kann, wirft einen Fehler</strong>,
+					allein oder in einem Array, bevor irgendeine Regel läuft:{" "}
+					<code>contextSelector: "#main[" is not a valid CSS selector.</code> Der Fehler trägt{" "}
+					<code>code: 'INVALID_CONTEXT_SELECTOR'</code> und <code>selector</code>, den
+					fehlgeschlagenen Selektor. Anders als ein Selektor ohne Treffer ist er immer ein Fehler
+					im Aufruf. <code>runa11yCoreAcrossFrames</code> lehnt mit demselben Fehler ab. Ein
+					Fehler, der <code>page.evaluate</code> (Playwright, Puppeteer) überquert, behält nur
+					seine Meldung; deshalb nennt die Meldung die Option und den Selektor. Vor 1.10.0 wurde
+					ein ungültiger Selektor übersprungen, allein angegeben scannte er also das ganze
+					Dokument.
+				</li>
 				<li>
 					<strong>Ein einzelner String</strong> kann selbst eine kommagetrennte Selektorliste sein
 					(normale CSS-Vereinigungssemantik): <code>'#a, #b'</code> scannt sowohl{" "}
@@ -1077,9 +1185,44 @@ export function EngineOptionsContent() {
 					programmatisch aufbauen.
 				</li>
 				<li>
+					<strong>Shadow DOM.</strong> Mit <code>includeShadowDom</code> (Standard) umfasst ein
+					Scope die Shadow Roots in ihm, und ein Scope, der selbst ein Shadow Host ist, umfasst
+					seine eigene Shadow Root. Der Selektor wird gegen das Dokument abgeglichen, kann also
+					kein Element <em>innerhalb</em> einer Shadow Root auswählen; grenzen Sie stattdessen auf
+					ihren Host ein.
+				</li>
+				<li>
 					Überlappende bzw. verschachtelte Bereiche werden automatisch dedupliziert: Ein Element,
 					das von mehr als einer gefundenen Wurzel aus erreichbar ist, wird nur einmal gemeldet,
 					nicht einmal pro Bereich.
+				</li>
+				<li>
+					<strong>Was ein eingegrenztes Ergebnis bedeutet.</strong> Die meisten Regeln beurteilen
+					jedes Element für sich und beurteilen die Elemente im Scope genau wie in einem Scan der
+					ganzen Seite. Zwei Arten von Regeln hängen von der Seite um sie herum ab.
+					Seitenweite Regeln (<code>page-title-present</code>, <code>landmark-one-main</code> und
+					die übrigen, die oben unter <code>fragment</code> aufgeführt sind) melden{" "}
+					<code>notApplicable</code>. Regeln, die Elemente über die Seite hinweg vergleichen (
+					<code>landmark-unique</code>, <code>landmark-no-duplicate-banner</code>,{" "}
+					<code>-contentinfo</code> und <code>-main</code>,{" "}
+					<code>landmark-banner-is-top-level</code>, <code>-complementary-</code>,{" "}
+					<code>-contentinfo-</code> und <code>-main-is-top-level</code>,{" "}
+					<code>accesskeys</code>, <code>heading-order</code>,{" "}
+					<code>identical-links-same-purpose</code>, <code>identical-iframes-same-purpose</code>),
+					melden weiterhin, was sie im Scope finden, denn zwei Landmarks, die dort einen Namen
+					teilen, teilen ihn auf jeder Seite, melden aber <code>notApplicable</code> statt{" "}
+					<code>pass</code>: Der Scan hat nur einen Teil der Seite gesehen und kann daher nicht
+					sagen, dass die Seite in Ordnung ist. <code>duplicate-id</code> und{" "}
+					<code>duplicate-id-aria</code> vergleichen jedes Element im Scope mit dem ganzen
+					Dokument, da sein Duplikat außerhalb des Scopes liegen kann, und melden ein Element im
+					Scope, dessen ID irgendwo sonst vorkommt. Ihr <code>pass</code> bedeutet, dass kein
+					Element im Scope seine ID mit einem anderen Element der Seite teilt; ein Duplikatpaar
+					ganz außerhalb des Scopes wird, wie bei jeder Regel, nicht gemeldet, es sagt also nicht,
+					dass die ganze Seite frei von Duplikaten ist. <code>target-size-minimum</code>{" "}
+					beurteilt die Ziele im Scope gegen Nachbarn irgendwo im Dokument, da die
+					Abstands-Ausnahme davon abhängt, was die Seite neben ein Ziel setzt.{" "}
+					<code>text-spacing-content-loss</code> beurteilt den Text im Scope und prüft, ob er
+					Text irgendwo auf der Seite zu überlappen beginnt.
 				</li>
 			</ul>
 		</>

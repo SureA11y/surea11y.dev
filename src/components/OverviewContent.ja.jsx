@@ -113,6 +113,16 @@ export function OverviewContent() {
 				<a href="/conformance/wcag-mapping/">適合性</a>
 				を参照してください。
 			</p>
+			<p>
+				<code>pass</code>
+				は、どれだけ余裕をもって合格したかも示します。しきい値に対して測定するルール（コントラスト、ターゲットのサイズ、テキストの間隔）は
+				<code>margin</code>
+				を報告します。しきい値を満たしつつ、最も限界に近づいた要素です。最低4.5:1に対して4.52:1のテキストは合格しますが、マージンがそれを示すため、わずかな変更で
+				<code>fail</code>
+				に変わる前に修正できます。詳しくは
+				<a href="/results-reports/output-schema/#margin">出力スキーマ</a>
+				を参照してください。
+			</p>
 
 			<h3 id="checked-against-the-act-corpus">ACTコーパスによる検証</h3>
 			<p>
@@ -133,7 +143,7 @@ export function OverviewContent() {
 
 			<h2>基本方針</h2>
 			<ul>
-				<li><strong>決定論的な実行。</strong>同じ入力からは常に同じ出力が得られます。</li>
+				<li><strong>決定論的な実行。</strong>同じ入力からは常に同じ出力が得られます。実行中のアニメーションやトランジションはスキャンの間止められるため、フェードの途中で捉えたページも、表示が落ち着いたページと同じ結果になります。</li>
 				<li><strong>意図して保守的に。</strong><code>fail</code>は客観的で規範的な違反だけに使い、誤った警告を最小限に抑えます。</li>
 				<li><strong>標準へのトレーサビリティ。</strong>ルールは、適切な場合には、該当するWCAGの達成基準に紐付けています。</li>
 				<li><strong>安定した機械可読の出力。</strong>ルールIDは言語によって変わりません。</li>

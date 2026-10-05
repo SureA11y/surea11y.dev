@@ -40,6 +40,12 @@ export function HtmlReportContent() {
 					の検出箇所があるルールごとに1枚のカード（検出箇所ごとではありません。同じ検出箇所がたくさんあるルールは、注意すべき事柄として1つであり、多数ではないからです）。各カードには重大度、WCAG達成基準のチップ、代表的な検出箇所、検出箇所の総数を表示します。表示するのは優先度の高い上位24件のルールまでで、それを超える分は注記で示します。
 				</li>
 				<li>
+					<strong>限界に最も近いもの</strong>
+					：スキャンにmarginがある場合（
+					<a href="/results-reports/output-schema/#margin">チェック結果の<code>margin</code></a>
+					）に表示されます。しきい値に対して計測するルールごとに1行で、合格した中で最も近い値、限界値、残りの余裕、要素を示します。ピクセルは整数に丸め、1未満は「1 px未満」と表示します。比は小数点以下2桁で表示します。わずかな余裕で合格したルールは、小さな変更で不合格に変わりうるルールです。
+				</li>
+				<li>
 					<strong>WCAG集約</strong>
 					：適合レベル（A / AA / AAA）ごとにまとめたもので、エンジン自身の
 					<code>rulesResults[]</code>
@@ -103,11 +109,15 @@ export function HtmlReportContent() {
 			/>
 			<p>
 				<code>renderHtmlReport(result, options)</code>
-				は純粋関数で、文字列を返します。
+				は文字列を返します。
 				<strong>関数自体がファイルシステムに触れることはありません</strong>
 				（書き込みはCLIの
 				<code>--html</code>
-				フラグが行います）。
+				フラグが行います）。ページの日付は結果の
+				<code>timestamp</code>
+				（
+				<code>engineOptions.timestamp</code>
+				で設定します）をUTCで表示したものなので、同じ結果からは常に同じページが生成されます。timestampのない結果では、レンダリングした時刻が日付になります。
 				<code>options.title</code>
 				は省略可能です（デフォルトは
 				<code>"surea11y scan report"</code>
