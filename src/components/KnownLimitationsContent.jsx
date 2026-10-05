@@ -72,6 +72,24 @@ export function KnownLimitationsContent() {
 					reported as a failure.
 				</li>
 				<li>
+					<strong>A scan taken while a modal dialog is open sees the dialog, not the page.</strong>{" "}
+					A <code>&lt;dialog&gt;</code> opened with <code>showModal()</code> (or an open{" "}
+					<code>&lt;dialog aria-modal="true"&gt;</code>) makes the rest of the document inert, and
+					browsers give assistive technology only the dialog. The engine follows that: content
+					behind the dialog is left out of every rule, as other hidden content is, and the rules
+					about the page's own structure (<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
+					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
+					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
+					<a href="/rules/region/"><code>region</code></a>) report <code>notApplicable</code>, since
+					the scan cannot see that structure. Scan the page again with the dialog closed to judge
+					what is behind it. Two limits: a modal <code>&lt;dialog&gt;</code> inside a shadow root
+					is not detected, and a custom modal built from a <code>role="dialog"</code> element with{" "}
+					<code>inert</code> or <code>aria-hidden</code> on the rest of the page is handled only
+					through those attributes, which hide the page but do not tell the structure rules a
+					dialog is open. Behaves like axe-core; IBM Equal Access and Siteimprove Alfa judge the
+					page behind the dialog as if nothing were open.
+				</li>
+				<li>
 					<strong>
 						<code>&lt;dialog&gt;</code> and other elements hidden by the default UA stylesheet
 					</strong>{" "}
@@ -175,7 +193,48 @@ export function KnownLimitationsContent() {
 					, and the findings of those rules repeat their viewport and say what was measured (how far
 					text went past the edge, how big a target is and how close its neighbour), so a finding
 					that differs between runs can be traced to the conditions. Scan at each width you care
-					about, and wait for <code>document.fonts.ready</code> before scanning.
+					about, and wait for the page to settle before scanning: <code>waitForPageReady()</code>{" "}
+					waits for the load event, web fonts and images (see{" "}
+					<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, which shows how to call it before a scan), and the result records in{" "}
+					<code>engine.environment</code> whether fonts or images were still loading.
+				</li>
+				<li>
+					<strong>
+						The contrast rules measure text against its ancestors' backgrounds, and in a browser
+						check whether anything else paints there.
+					</strong>{" "}
+					Text positioned over a sibling, over an <code>&lt;img&gt;</code> hero, over a{" "}
+					<code>::before</code> overlay, or pulled over another block by a negative margin sits on
+					paint none of its ancestors own. In a browser the engine measures the text's line boxes
+					and looks for elements that paint a background color, a background image or replaced
+					content (<code>img</code>, <code>video</code>, <code>canvas</code>, <code>svg</code>,{" "}
+					<code>iframe</code>) and cover at least about a glyph of a line, and for a positioned{" "}
+					<code>::before</code> or <code>::after</code> with a color or gradient; when it finds
+					one, <a href="/rules/contrast-computable/"><code>contrast-computable</code></a> asks about
+					the text with reason code <code>BACKGROUND_OVERLAP</code> and the ratio rules leave it
+					out. It does not work out which of two overlapping boxes is painted on top, so it does
+					not compute a ratio against the paint it found. Three limits keep the noise down, and
+					each can miss a case: only paint inside the text's nearest ancestor with an opaque
+					background counts (a white card over a hero image hides the image), fixed and sticky
+					boxes are left out (a cookie banner or header covers text rather than sitting behind
+					it), and solid paint the same color as the background already measured is ignored.
+					Under jsdom there is no layout, so nothing is found and text is measured against its
+					ancestors alone.
+				</li>
+				<li>
+					<strong>Contrast is computed in sRGB.</strong> Colors given in <code>oklch()</code>,{" "}
+					<code>oklab()</code>, <code>lab()</code>, <code>lch()</code> or <code>color()</code>{" "}
+					(the computed form of <code>color-mix()</code> and relative colors too) are converted to
+					sRGB, as a standard display shows them; one outside sRGB, such as a saturated{" "}
+					<code>display-p3</code> red, is clipped to its edge, which is what Chromium draws on an
+					sRGB screen. A wide-gamut screen can show that color more saturated than the ratio
+					assumes. A background color the engine cannot convert, a <code>color()</code> in a space
+					it does not know, is not treated as transparent: <code>contrast-computable</code> asks
+					about the text with reason code <code>BACKGROUND_UNPARSABLE</code>, and the other
+					contrast rules leave it out.
 				</li>
 			</ul>
 

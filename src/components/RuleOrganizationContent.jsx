@@ -36,9 +36,15 @@ export function RuleOrganizationContent() {
 					<code>aria-prohibited-children</code>).
 				</li>
 				<li>
-					<strong>manual</strong> — signals that a human has to decide; the rule cannot settle the
-					question from markup at all. Capped at <code>cantTell</code>/<code>notApplicable</code>{" "}
-					— never <code>fail</code>.
+					<strong>manual</strong> — signals that a human has to decide; the rule cannot decide
+					whether what it found is a problem. Reports <code>cantTell</code> or{" "}
+					<code>notApplicable</code>, and <code>pass</code> only when the answer that needs no
+					judgment is the one found — never <code>fail</code>.{" "}
+					<a href="/rules/landmark-unique/"><code>landmark-unique</code></a> cannot decide whether
+					two landmarks sharing a name are a problem (the APG allows it when their content is
+					identical), so that is <code>cantTell</code>; but "every name differs" is a fact, so that
+					is <code>pass</code>. A rule that asks a person to judge every target it finds, such as
+					whether an image's text alternative is accurate, never reports <code>pass</code>.
 				</li>
 			</ul>
 			<p>

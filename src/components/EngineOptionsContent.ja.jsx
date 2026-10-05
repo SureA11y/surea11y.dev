@@ -55,7 +55,7 @@ const optionRows = [
 		option: <code>messages</code>,
 		meaning: (
 			<>
-				省略可能な<code>{"{ [locale]: { key: text } }"}</code>です。エンジン組み込みの辞書より先に参照されるため、個々の文字列を上書きしたり、ビルドに含まれていない言語を補ったりできます。指定しなかったキーは通常どおりフォールバックするので、一部だけの上書きでも問題ありません。スタンドアロンのブラウザー用バンドルはこの仕組みでロケールの別ファイルを受け取ります。ページ内ランナーはシリアライズされていてファイルを読めないため、ページのコンテキストに辞書を渡す方法はこれしかありません。詳しくは<a href="/configuration/locales/">ロケール</a>を参照してください。
+				省略可能な<code>{"{ [locale]: { key: text } }"}</code>です。エンジン組み込みの辞書より先に参照されるため、個々の文字列を上書きしたり、ビルドに含まれていない言語を補ったりできます。指定しなかったキーは通常どおりフォールバックするので、一部だけの上書きでも問題ありません。スタンドアロンのブラウザー用バンドルはこの仕組みでロケールの別ファイルを受け取ります。ページ内ランナーはシリアライズされていてファイルを読めないため、ページのコンテキストに辞書を渡す方法はこれしかありません。ほかのオプションと違い、各結果の<code>engineOptions</code>には返されません。使われた辞書は<code>engine.locale</code>が示します。詳しくは<a href="/configuration/locales/">ロケール</a>を参照してください。
 			</>
 		),
 	},
@@ -64,7 +64,7 @@ const optionRows = [
 		option: <code>includeHiddenElements</code>,
 		meaning: (
 			<>
-				デフォルトは<code>false</code>です。ヘルパーのクエリは、<code>display:none</code>、<code>[hidden]</code>、閉じた<code>&lt;details&gt;</code>、非表示のレンダリング専用ホスト要素など、構造やCSSの仕組みで隠された要素を除外します（その子孫も除外されます）。<code>true</code>にすると、こうした非表示・折りたたみ状態のサブツリーも評価の対象になります（旧来の、静的マークアップ向けの動作）。
+				デフォルトは<code>false</code>です。ヘルパーのクエリは、<code>display:none</code>、<code>[hidden]</code>、閉じた<code>&lt;details&gt;</code>、非表示のレンダリング専用ホスト要素など、構造やCSSの仕組みで隠された要素を除外します（その子孫も除外されます）。<code>true</code>にすると、こうした非表示・折りたたみ状態のサブツリーも評価の対象になります（旧来の、静的マークアップ向けの動作）。これは共通のクエリが返す範囲を広げるものです。それでもほとんどのルールはアクセシビリティツリーにあるものだけを判定します。非表示の要素にはチェックすべき名前もロールもないため、そうしたルールでは何も変わりません。意味があるのは、壊れたID参照など、マークアップそのものを扱うルールです。
 			</>
 		),
 	},
@@ -127,7 +127,7 @@ const optionRows = [
 		option: <code>visibilityMode</code>,
 		meaning: (
 			<>
-				3つのコントラストルール（<code>contrast-minimum</code>、<code>contrast-enhanced</code>、<code>contrast-computable</code>）が、テキストノードを実際にチェック対象とするかどうかをどれだけ厳密に判断するかを制御します。<strong>他のルールはこのオプションを読みません。</strong><code>'styleOnly'</code>（デフォルト）：対象かどうかをCSSだけで判断します（<code>display</code>、<code>visibility</code>、<code>opacity</code>、祖先による非表示など）。<code>'styleAndGeometry'</code>：それに加えて実際のレイアウトをチェックします（<code>getClientRects()</code>/<code>getBoundingClientRect()</code>）。クライアント矩形を持たないテキストや、幅または高さがゼロのテキストも除外されます。実際のブラウザーやPlaywright/Puppeteer（<code>runa11yCoreInPage</code>）で実行していて、計算済みスタイルだけでなく実際に描画されたレイアウトをコントラストの検出結果に反映させたい場合は<code>'styleAndGeometry'</code>を選んでください。素のjsdom（<code>runDomRulesInPage</code>）には本物のレイアウトエンジンがないため、<code>'styleAndGeometry'</code>で加わるのは主に<code>getBoundingClientRect()</code>によるサイズゼロのチェックで、本当の意味でのクリッピングやオーバーフローの検出にはなりません。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
+				3つのコントラストルール（<code>contrast-minimum</code>、<code>contrast-enhanced</code>、<code>contrast-computable</code>）が、テキストノードを実際にチェック対象とするかどうかをどれだけ厳密に判断するかを制御します。<strong>他のルールはこのオプションを読みません。</strong><code>'styleOnly'</code>（デフォルト）：対象かどうかをCSSだけで判断します（<code>display</code>、<code>visibility</code>、<code>opacity</code>、祖先による非表示など）。<code>'styleAndGeometry'</code>：それに加えて実際のレイアウトをチェックします（<code>getClientRects()</code>/<code>getBoundingClientRect()</code>）。クライアント矩形を持たないテキストや、幅または高さがゼロのテキストも除外されます。ページの完全に上側や左側にあり、スクロールしても届かないテキスト（<code>left: -9999px</code>の手法）や、<code>overflow: hidden</code>または<code>clip</code>の祖先に完全に切り取られたテキスト（<code>height: 0; overflow: hidden</code>、表示範囲外のカルーセルのスライド）も同様です。スクロールするボックス（<code>auto</code>、<code>scroll</code>）は、読み手がそのテキストまでたどり着けるため、除外の理由になりません。どちらのモードでも、フォントサイズが0のテキストや完全に透明な色のテキストは、何も描画されないため除外されます。ただし、グリフを通して背景を見せる透明なテキスト（<code>background-clip: text</code>）は除外されず、確認が必要なものとして扱われます。実際のブラウザーやPlaywright/Puppeteer（<code>runa11yCoreInPage</code>）で実行していて、計算済みスタイルだけでなく実際に描画されたレイアウトをコントラストの検出結果に反映させたい場合は<code>'styleAndGeometry'</code>を選んでください。素のjsdom（<code>runDomRulesInPage</code>）には本物のレイアウトエンジンがないため、<code>'styleAndGeometry'</code>で加わるのは主に<code>getBoundingClientRect()</code>によるサイズゼロのチェックで、本当の意味でのクリッピングやオーバーフローの検出にはなりません。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
 			</>
 		),
 	},
@@ -225,7 +225,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong><code>runOnly</code>は、配列そのものではなく、このオブジェクト形式で渡す必要があります。</strong><code>runOnly: ['img-alt-present']</code>（単なる配列）は<strong>何の通知もなく無視され</strong>、エンジンはすべてのルールを実行します。統合時に最もよくある間違いです。<a href="/help/faq/">よくある質問</a>を参照してください。
+				axe-coreと同じく、単なる配列や文字列も省略形として使えます。<code>runOnly: ['img-alt-present', 'button-name-present']</code>はそれらのルールを実行し（複合ルールのIDはその構成ルールを含みます）、<code>runOnly: ['wcag2a', 'wcag2aa']</code>は<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>と同じ意味になります。1つの配列にルールIDとタグを混ぜることはできません。また、どの値もルール（組み込み、複合、または<code>engineOptions.customRules</code>のいずれか）かタグを指している必要があります。それ以外の値があると例外を投げるので、タイプミスのせいですべてのルールが、あるいはどのルールも、気づかれないまま実行されることはありません。IDとタグを組み合わせたり除外したりするには、オブジェクト形式を使ってください。1.10.0より前は、単なる配列は無視され、すべてのルールが実行されていました。
 			</p>
 			<DataTable
 				label="runOnlyのフィールド"
@@ -264,10 +264,13 @@ export function EngineOptionsContent() {
 				いずれも配列とカンマ区切りの文字列のどちらでも指定でき、後述の<code>engineOptions</code>の形式と揃えてあります。<code>includeRuleIds: 'img-alt-present, button-name-present'</code>と<code>includeRuleIds: ['img-alt-present', 'button-name-present']</code>は同じ意味です。
 			</p>
 			<p>
+				名前は、ここでも後述の<code>engineOptions.rules</code>/<code>.tags</code>でも検証されます。含めるリスト（<code>includeRuleIds</code>、<code>tags</code>、旧来の<code>values</code>、<code>rules.include</code>、<code>tags.include</code>）のどの値もルールやタグを指していない場合は、<code>code: 'INVALID_RUN_ONLY'</code>と、フィールドと値を示すメッセージを伴う例外を投げます。そのままでは何も選ばれず、ルールを1つも実行しない実行は問題のないスキャンのように見えてしまうからです。何も指していない値でも、ほかに有効な値と並んでいる場合や除外リストにある場合は、<code>console.warn</code>を出したうえで無視されます。1.10.0より前は、こうした値はすべて何の通知もなく無視されていました。<code>includeTestIds</code>/<code>excludeTestIds</code>は検証されません。
+			</p>
+			<p>
 				ルールIDにはエンジンのプレフィックスを付けません（例：<code>'img-alt-present'</code>）。後方互換性のため、同じIDに旧来の<code>a11ycore-</code>プレフィックスを付けた形式（<code>'a11ycore-img-alt-present'</code>）も照合できます。
 			</p>
 			<p>
-				<code>runOnly</code>の値全体として、<strong>旧来のタグフィルター形式</strong>も受け付けます。<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>は<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>と同じ意味になります。
+				<code>runOnly</code>の値全体として、axe-coreの<strong><code>{"{ type, values }"}</code>形式</strong>も受け付けます。<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>は<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>と、<code>{"{ type: 'rule', values: ['img-alt-present'] }"}</code>は<code>{"{ includeRuleIds: ['img-alt-present'] }"}</code>と同じ意味です（<code>'tags'</code>と<code>'rules'</code>も使えます）。それ以外の<code>type</code>は<code>INVALID_RUN_ONLY</code>を投げます。数値や真偽値の<code>runOnly</code>や、エンジンが読むキーを1つも持たないオブジェクト（<code>{"{ includeRuleId: [...] }"}</code>）も同様です。これらはいずれも、以前はすべてのルールを実行していました。空の配列、文字列、オブジェクトは、これまでどおりすべてのルールを意味します。
 			</p>
 
 			<h3 id="filtering-by-wcag-version">WCAGバージョンによる絞り込み（2.0、2.1、2.2）</h3>
@@ -588,7 +591,7 @@ export function EngineOptionsContent() {
 				これが必要になる理由：<span lang="en">Angular Material</span>の<code>&lt;mat-select&gt;</code>は、内部のARIA構造の組み立て方が原因で、コンポーネント自体には問題がないのに<code>aria-required-children</code>でだけ誤検出を起こします。グローバルな<code>excludeSelectors</code>しかなければ、この誤検出を消す方法は<code>excludeSelectors: ['mat-select']</code>だけです。しかしそうすると<code>mat-select</code>は<code>contrast-minimum</code>や<code>aria-allowed-attr</code>を含む<em>他のすべてのルール</em>からも見えなくなり、何の問題もなかったチェックのカバレッジまで黙って失われます。上の例なら、誤判定する1つのルールを除くすべてのルールから<code>mat-select</code>が引き続き完全に見えます。
 			</p>
 			<p>
-				あるルールに実際に適用される除外は、グローバルなリストとそのルール独自のリストの<strong>和集合</strong>です。どちらかに一致する要素は、そのルールの対象候補から外れます。不合格になりうる要素がすべてこの方法で除外されたルールは、<code>occurrences: []</code>とともに<code>outcome: 'pass'</code>または<code>'notApplicable'</code>（対象がない場合のそのルール自身の慣例に従います）を報告します。空の<code>occurrences</code>配列を伴う<code>outcome: 'fail'</code>になることはありません。その形はスキーマの別の箇所で「このルールが例外を投げた」ことを表すために予約されているからです（<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）。
+				あるルールに実際に適用される除外は、グローバルなリストとそのルール独自のリストの<strong>和集合</strong>です。どちらかに一致する要素は、そのルールの対象候補から外れます。不合格になりうる要素がすべてこの方法で除外されたルールは、<code>occurrences: []</code>とともに<code>outcome: 'pass'</code>または<code>'notApplicable'</code>（対象がない場合のそのルール自身の慣例に従います）を報告します。空の<code>occurrences</code>配列を伴う<code>outcome: 'fail'</code>になることはありません。組み込みルールの<code>fail</code>は、必ず何が不合格だったかを示すからです（例外を投げたルールは別のケースで、<code>error</code>を設定した<code>cantTell</code>を報告します。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）。
 			</p>
 			<p>
 				グローバルなオプションと同じ形式を受け付けます。配列（<code>['mat-select', 'mat-stepper']</code>）またはカンマ区切りの文字列（<code>'mat-select, mat-stepper'</code>）です。
@@ -657,7 +660,9 @@ export function EngineOptionsContent() {
 					"    id: 'org-no-inline-onclick',",
 					"    meta: { title: 'No inline onclick handlers', defaultSeverity: 'moderate' },",
 					"    runInPage(ctx) {",
-					"      const els = ctx.helpers.queryAll('[onclick]');",
+					"      // queryAllSmart applies excludeSelectors, the scope's shadow roots and",
+					"      // the hidden-content filter; queryAll is the plain light-DOM query.",
+					"      const els = ctx.helpers.queryAllSmart('[onclick]');",
 					"      const occurrences = els.map((el) => ({",
 					"        selector: ctx.helpers.buildSelector(el),",
 					"        html: el.outerHTML,",
@@ -696,16 +701,22 @@ export function EngineOptionsContent() {
 			/>
 			<ul>
 				<li>
-					<code>runInPage</code>/<code>applicability</code>には、<strong>実際の関数</strong>と<strong>関数のソース文字列</strong>（つまり<code>fn.toString()</code>）のどちらも渡せます。<code>engineOptions</code>が現在のJSレルムの外に出ない場合（素のNode/jsdomでの利用）は実際の関数を渡してください。外に出る場合は文字列を渡します。たとえばPlaywrightの<code>page.evaluate(runa11yCoreInPage, {"{ engineOptions }"})</code>呼び出しでは、<code>engineOptions</code>がJSON/構造化クローンの境界を越えるため、生きた<code>Function</code>参照は渡せませんが、文字列なら渡せます。エンジンは文字列を<code>new Function</code>で関数に戻します。ビルド時にすべての組み込みルールのソースをページ内ランナーに埋め込むのと同じ仕組みです。
+					<code>runInPage</code>/<code>applicability</code>には、<strong>実際の関数</strong>と<strong>関数のソース文字列</strong>（つまり<code>fn.toString()</code>）のどちらも渡せます。<code>engineOptions</code>が現在のJSレルムの外に出ない場合（素のNode/jsdomでの利用）は実際の関数を渡してください。外に出る場合は文字列を渡します。たとえばPlaywrightの<code>page.evaluate(runa11yCoreInPage, {"{ engineOptions }"})</code>呼び出しでは、<code>engineOptions</code>がJSON/構造化クローンの境界を越えるため、生きた<code>Function</code>参照は渡せませんが、文字列なら渡せます。エンジンは文字列を<code>new Function</code>で関数に戻します。ビルド時にすべての組み込みルールのソースをページ内ランナーに埋め込むのと同じ仕組みです。どの関数のソースでも使えます。アロー関数、<code>function</code>宣言、上の例のような省略記法のメソッド（<code>{"runInPage(ctx) {…}"}</code>、<code>async</code>も可）のいずれでもかまいません。省略記法のメソッドの<code>toString()</code>は、それだけでは式になりませんが、それでも扱えます。関数に戻すには<code>eval</code>が許可されている必要があるため、Content Security Policyで<code>'unsafe-eval'</code>を禁止しているページでは、文字列で渡したルールはスキップされます。その場合は実際の関数を渡してください。
 				</li>
 				<li>
-					<code>meta</code>には、ビルド時のルールとまったく同じデフォルト値の補完と検証が行われます。不要なものは省略してかまいません。<code>severity</code>のデフォルトは<code>moderate</code>、<code>confidence</code>は<code>medium</code>、<code>type</code>は<code>automatic</code>などです。
+					<code>meta</code>には、ビルド時のルールとまったく同じデフォルト値の補完と検証が行われます。不要なものは省略してかまいません。<code>defaultSeverity</code>のデフォルトは<code>moderate</code>、<code>defaultConfidence</code>は<code>medium</code>、<code>type</code>は<code>automatic</code>などです。値が決められた範囲（<code>minor</code>/<code>moderate</code>/<code>serious</code>/<code>critical</code>、<code>high</code>/<code>medium</code>/<code>low</code>、<code>automatic</code>/<code>manual</code>。大文字小文字は区別しません）から外れている<code>meta</code>は検証に失敗し、そのルールはスキップされます。ルールが範囲外の<code>severity</code>を返した場合は、そのルールのデフォルトに置き換えられ、<code>error</code>に注記が付きます。
 				</li>
 				<li>
 					カスタムルールの<code>id</code>が組み込みルールと重複した場合は、両方を実行するのではなく、<strong>そのスキャンでは組み込みルールを上書きします</strong>。同名のカスタムルールは、意図した上書きであるのと同じくらい偶然の衝突である可能性もあるため、衝突は必ず2つの方法で知らされます。該当するIDを示す<code>console.warn</code>と、結果のトップレベルにある<code>overriddenBuiltinIds</code>配列（衝突がなければ空）です。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照してください。
 				</li>
 				<li>
-					無効な記述子（<code>id</code>がない、または文字列でない、あるいは<code>runInPage</code>が関数でも関数に戻せるソース文字列でもない）は何の通知もなくスキップされ、組み込みルールを含むスキャンの残りは通常どおり実行されます。これは直すべき検証の抜けではありません。カスタムルールは呼び出し側が渡す任意のコードなので、「問題のあるエントリだけを安全側に倒して除外し、スキャンは中断しない」ほうが安全なデフォルトです。例外を投げた<em>組み込み</em>ルールが、スキャン全体をクラッシュさせずにそのルールの<code>cantTell</code>にとどめられるのと同じ考え方です。
+					カスタムルールも組み込みルールと同じようにマージンを報告できます。<code>meta.margin</code>（<code>{"{ measure, unit, limit }"}</code>）を宣言し、<code>marginCandidates</code>を返してください（GitHub上のルール作成ガイド<a href={`${core}/docs/RULE_AUTHORING.md#metamargin`}><code>RULE_AUTHORING.md</code>の<code>meta.margin</code></a>を参照）。形式が正しくない<code>meta.margin</code>は無視され、そのルールはマージンを報告しませんが、スキャンは続行します。
+				</li>
+				<li>
+					無効な記述子（<code>id</code>がない、または文字列でない、<code>runInPage</code>が関数でも関数に戻せるソース文字列でもない、<code>deprecation</code>のない<code>deprecated: true</code>など<code>meta</code>が検証に失敗する、リスト内の別のカスタムルールと同じIDを持つ、複合ルールのIDを使っている）は、ルール名と理由を示す<code>console.warn</code>を出してスキップされ、結果の<code>skippedCustomRules</code>に記録されます。組み込みルールを含むスキャンの残りは通常どおり実行されます。これは直すべき検証の抜けではありません。カスタムルールは呼び出し側が渡す任意のコードなので、「問題のあるエントリだけを安全側に倒して除外し、スキャンは中断しない」ほうが安全なデフォルトです。例外を投げた<em>組み込み</em>ルールが、スキャン全体をクラッシュさせずにそのルールの<code>cantTell</code>にとどめられるのと同じ考え方です。
+				</li>
+				<li>
+					ルールは同期的に実行されます。Promiseを返す<code>runInPage</code>や<code>applicability</code>（<code>async</code>関数）は、その旨を示す<code>error</code>付きの<code>cantTell</code>として報告されます。結果オブジェクト以外を返す<code>runInPage</code>も同様です。<code>pass</code>、<code>fail</code>、<code>cantTell</code>、<code>notApplicable</code>以外の<code>outcome</code>（<code>'failed'</code>など）は<code>cantTell</code>になり、<code>error</code>に返された値が示されます。
 				</li>
 				<li>
 					結果は他のルールとまったく同じように<code>checksResults</code>に現れます。<code>{"{ __node }"}</code>だけを付けた<code>fail</code>/<code>cantTell</code>の検出箇所に対して<code>selector</code>/<code>html</code>/<code>structuralPath</code>が自動補完される点も同じです（<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）。
@@ -714,9 +725,15 @@ export function EngineOptionsContent() {
 
 			<h2><code>contextSelector</code>（ランナーの第2引数。<code>engineOptions</code>のフィールドではありません）</h2>
 			<p>
-				スキャン範囲を1つ以上のサブツリーに絞るCSSセレクター（またはセレクターの配列）です。<code>document.querySelectorAll</code>で解決され（最初の一致だけでなく、すべての一致が対象）、何も一致しなければ<code>document.documentElement</code>/<code>document.body</code>にフォールバックします。ドキュメント全体をスキャンするには<code>null</code>を渡します。
+				スキャン範囲を1つ以上のサブツリーに絞るCSSセレクター（またはセレクターの配列）です。<code>document.querySelectorAll</code>で解決され（最初の一致だけでなく、すべての一致が対象）。ドキュメント全体をスキャンするには<code>null</code>を渡します。
 			</p>
 			<ul>
+				<li>
+					<strong>何にも一致しないセレクターは、何もスキャンしません。</strong>ページ単位のルールも含め、すべてのルールが<code>notApplicable</code>を報告し、結果の<code>contextMatch</code>がそのことを示します。<code>{"{ elementCount: 0, unmatchedSelectors: ['#mian'] }"}</code>（<a href="/results-reports/output-schema/#top-level-result">出力スキーマ</a>を参照）。実行時には<code>console.warn</code>も出力されます。ページにない範囲を、ページ全体に広げることはしません。求めていないコンテンツについての結果、しかもページ全体の<code>pass</code>を含む結果は、求めた部分についての結果のように読めてしまうからです。配列の場合、何にも一致しないセレクターは<code>unmatchedSelectors</code>に記録され、ほかのセレクターは通常どおりスキャンされます。そのため、Cookieバナーのように、ページにあるときとないときがあるコンテンツもリストに含めておけます。1.10.0より前は、何にも一致しない範囲はドキュメント全体にフォールバックし、結果にはそのことが何も示されませんでした。
+				</li>
+				<li>
+					<strong>ブラウザーが解析できないセレクターは、例外を投げます。</strong>単独でも配列内でも、どのルールも実行される前に<code>contextSelector: "#main[" is not a valid CSS selector.</code>というエラーになります。このエラーは<code>code: 'INVALID_CONTEXT_SELECTOR'</code>と、失敗したセレクターである<code>selector</code>を持ちます。何にも一致しないセレクターと違い、これは常に呼び出し側の誤りです。<code>runa11yCoreAcrossFrames</code>も同じエラーでrejectします。<code>page.evaluate</code>（Playwright、Puppeteer）を越えたエラーにはメッセージしか残らないため、メッセージにオプション名とセレクターが含まれています。1.10.0より前は、無効なセレクターはスキップされ、単独で指定した場合はドキュメント全体がスキャンされていました。
+				</li>
 				<li>
 					<strong>単一の文字列</strong>自体をカンマ区切りのセレクターリストにできます（通常のCSSと同じく和集合として扱われます）。<code>'#a, #b'</code>は<code>#a</code>と<code>#b</code>の両方をスキャンします。
 				</li>
@@ -724,7 +741,13 @@ export function EngineOptionsContent() {
 					<strong>文字列の配列</strong>を渡すと、各セレクターに一致したものの和集合をスキャンします。<code>['#a', '.card']</code>は<code>'#a, .card'</code>と同じ動作です。配列形式は、リストをプログラムで組み立てる呼び出し側のためにあります。
 				</li>
 				<li>
+					<strong>シャドウDOM</strong>：<code>includeShadowDom</code>（デフォルト）が有効なら、範囲にはその中のシャドウルートが含まれ、範囲自体がシャドウホストであればそのシャドウルートも含まれます。セレクターはドキュメントに対して照合されるため、シャドウルートの<em>内側</em>の要素は選択できません。代わりにそのホストを範囲に指定してください。
+				</li>
+				<li>
 					重なり合う領域や入れ子になった領域は自動的に重複除去されます。一致した複数のルートから到達できる要素も、領域ごとではなく1回だけ報告されます。
+				</li>
+				<li>
+					<strong>範囲を絞った結果の意味</strong>：ほとんどのルールは要素を1つずつ判定し、範囲内の要素をページ全体のスキャンとまったく同じように判定します。周囲のページに依存するルールは2種類あります。ページ全体を対象とするルール（<code>page-title-present</code>、<code>landmark-one-main</code>、そのほか前述の<code>fragment</code>に挙げたもの）は<code>notApplicable</code>を報告します。ページ全体で要素どうしを比較するルール（<code>landmark-unique</code>、<code>landmark-no-duplicate-banner</code>、同<code>-contentinfo</code>と<code>-main</code>、<code>landmark-banner-is-top-level</code>、同<code>-complementary-</code>、<code>-contentinfo-</code>、<code>-main-is-top-level</code>、<code>accesskeys</code>、<code>heading-order</code>、<code>identical-links-same-purpose</code>、<code>identical-iframes-same-purpose</code>）は、範囲内で見つけたものは報告します。範囲内で名前が重複している2つのランドマークは、どのページでも重複しているからです。ただし<code>pass</code>の代わりに<code>notApplicable</code>を報告します。スキャンが見たのはページの一部だけなので、ページに問題がないとは言えないからです。<code>duplicate-id</code>と<code>duplicate-id-aria</code>は、重複相手が範囲外にあることもあるため、範囲内の各要素をドキュメント全体と比較し、IDがほかのどこかにも現れる範囲内の要素を報告します。これらの<code>pass</code>は、範囲内のどの要素もページ上のほかの要素とIDを共有していないという意味です。範囲外だけにある重複のペアは、ほかのルールと同じく報告されないため、ページ全体に重複がないという意味にはなりません。<code>target-size-minimum</code>は、間隔に関する例外がターゲットの隣に何があるかで決まるため、範囲内のターゲットをドキュメント内のどこにある隣接要素とも比べて判定します。<code>text-spacing-content-loss</code>は範囲内のテキストを判定し、それがページ上のどこかのテキストと重なるようになるかを確認します。
 				</li>
 			</ul>
 		</>

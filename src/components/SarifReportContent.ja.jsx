@@ -11,7 +11,7 @@ const sarifLevelRows = [
 
 const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
-	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code>＋<code>occurrence.hint</code></> },
+	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code>＋<code>occurrence.hint</code>。要約のない検出箇所（カスタムルールのものなど）では、ルールのタイトル、またはそのIDを使います。GitHubは空のテキストを持つresultを拒否するためです。</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>スキャン対象そのものです。後述の<a href="#sarif-locations">位置情報</a>を参照してください。</> },
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>（ある場合）。</> },
 	{
@@ -39,6 +39,7 @@ const sarifFieldRows = [
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code>／<code>.confidence</code>／<code>.reasonCode</code>／<code>.html</code></>, source: <>結果自身の<code>severity</code>／<code>confidence</code>と、上のフィンガープリントのキーになっているのと同じ<code>reasonCode</code>と<code>html</code>の断片です。参考情報であり、SARIF自体のスキーマには含まれません。</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>、<code>automatic</code>／<code>manual</code>、そして<code>meta.normativeMappings</code>内のWCAG達成基準ごとに1つの<code>wcag-&lt;SC&gt;</code>タグです。Understanding文書のエントリーにはタグを付けません。結果が持つEN 301 549の各条項（スキャンが要求した場合のみ。<a href="/configuration/engine-options/#other-standards-mappings">ほかの規格</a>を参照）には<code>en301549-&lt;条項&gt;</code>タグ（例：<code>en301549-9.1.1.1</code>）が付きます。条項番号はそれを含むどのバージョンでも同じなので、タグにバージョンは含めません。</> },
+	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <><code>toolVersion</code>オプションが指定されていればその値（エンジンを組み込んだツールは自身のバージョンを渡します）、なければ結果を生成したエンジンのリリースである<code>engine.version</code>です。<code>"0.0.0"</code>になるのは、1.10.0より前のリリースによる、この値を持たない結果の場合だけです。</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <><code>category</code>オプションの値で、末尾に<code>/</code>がなければ追加します（GitHubは最後のスラッシュまでをカテゴリーとして読むためです）。カテゴリーを指定しない場合は含まれません。<a href="#scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</a>を参照してください。</> },
 	{ id: "runProps", field: <code>runs[0].properties</code>, source: <>結果の<code>engine</code>にある<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>、<code>environment</code>です。実行が使った適合性の目標を示すので、ダッシュボードはWCAG 2.1の実行と2.2の実行を区別できます。その目標を超えてオプトインルールのタグを追加した場合は、それも示します。また、ページがレンダリングされた条件（<code>layout</code>、<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>fonts</code>。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）も示します。これらのフィールドより前のエンジンの結果では省略されます。</> },
 ];
@@ -152,8 +153,8 @@ export function SarifReportContent() {
 				、
 				<code>manual</code>
 				（
-				<code>cantTell</code>
-				まで）なら
+				<code>fail</code>
+				にはならない）なら
 				<code>warning</code>
 				です。
 			</p>
@@ -178,7 +179,7 @@ export function SarifReportContent() {
 			<ul>
 				<li>
 					<strong>ローカルファイルのスキャン</strong>
-					：現在の作業ディレクトリからの相対パス（区切りはスラッシュ）です。これがリポジトリ内の実在するファイルと一致すれば、<span lang="en">GitHub Code Scanning</span>は検出結果をインラインの注釈として表示できます。
+					：現在の作業ディレクトリ内のファイルは、そこからの相対パス（区切りはスラッシュ）になり、各セグメントはパーセントエンコードされます（<code>build%20out/index.html</code>）。これがリポジトリ内の実在するファイルと一致すれば、<span lang="en">GitHub Code Scanning</span>は検出結果をインラインの注釈として表示できます。作業ディレクトリの外にあるファイルは、<code>../</code>でリポジトリの外へ出る相対パスではなく、絶対<code>file:</code> URLになります。そのような相対パスは、受け取る側が解決できないためです。
 				</li>
 				<li>
 					<strong>URLのスキャン</strong>

@@ -71,6 +71,10 @@ export function KnownLimitationsContent() {
 					を報告します。それ以外の理由で折り返さないテキストは、引き続き失敗として報告されます。
 				</li>
 				<li>
+					<strong>モーダルダイアログが開いている間に行ったスキャンは、ページではなくダイアログを見ます。</strong>
+					<code>showModal()</code>で開いた<code>&lt;dialog&gt;</code>（または開いている<code>&lt;dialog aria-modal="true"&gt;</code>）は文書の残りの部分を不活性にし、ブラウザーは支援技術にダイアログだけを渡します。エンジンもそれに従います。ダイアログの背後にあるコンテンツは、ほかの非表示のコンテンツと同じようにすべてのルールの対象外になり、ページ自体の構造に関するルール（<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>、<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>、<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>、<a href="/rules/region/"><code>region</code></a>）は、スキャンからその構造が見えないため<code>notApplicable</code>を報告します。背後にあるものを判断するには、ダイアログを閉じた状態でもう一度ページをスキャンしてください。制限が2つあります。シャドウルート内のモーダルな<code>&lt;dialog&gt;</code>は検出されません。また、<code>role="dialog"</code>の要素で作り、ページの残りの部分に<code>inert</code>や<code>aria-hidden</code>を付けた独自のモーダルは、それらの属性を通じてしか扱われません。これらの属性はページを隠しますが、ダイアログが開いていることを構造に関するルールに伝えません。axe-coreと同じ動作です。IBM Equal AccessとSiteimprove Alfaは、何も開いていないものとしてダイアログの背後のページを判定します。
+				</li>
+				<li>
 					<strong>
 						<code>&lt;dialog&gt;</code>
 						など、デフォルトのUAスタイルシートで非表示になる要素
@@ -159,7 +163,15 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>レイアウトは、1つのビューポートで、その時点でページが持っているフォントを使って計測されます。</strong>
-					ブラウザーが描画する内容を計測するルール（<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>、<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>、<a href="/rules/skip-link/"><code>skip-link</code></a>）の結果は、ページをスキャンしたビューポートでのみ成り立ちます。レスポンシブなページは、ある幅ではテキストを切ったりターゲットを小さくしたりしても、別の幅ではそうしないことがあります。また、Webフォントの読み込み前に計測したテキストは、幅が異なります。結果はその両方を<a href="/results-reports/output-schema/"><code>engine.environment</code></a>に記録し、これらのルールの検出結果は、ビューポートを繰り返し記録したうえで、何を計測したか（テキストが端からどれだけはみ出したか、ターゲットの大きさと隣のターゲットとの近さ）を示します。そのため、実行によって異なる検出結果を、その条件までたどることができます。必要な幅ごとにスキャンし、スキャンの前に<code>document.fonts.ready</code>を待ってください。
+					ブラウザーが描画する内容を計測するルール（<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>、<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>、<a href="/rules/skip-link/"><code>skip-link</code></a>）の結果は、ページをスキャンしたビューポートでのみ成り立ちます。レスポンシブなページは、ある幅ではテキストを切ったりターゲットを小さくしたりしても、別の幅ではそうしないことがあります。また、Webフォントの読み込み前に計測したテキストは、幅が異なります。結果はその両方を<a href="/results-reports/output-schema/"><code>engine.environment</code></a>に記録し、これらのルールの検出結果は、ビューポートを繰り返し記録したうえで、何を計測したか（テキストが端からどれだけはみ出したか、ターゲットの大きさと隣のターゲットとの近さ）を示します。そのため、実行によって異なる検出結果を、その条件までたどることができます。必要な幅ごとにスキャンし、スキャンの前にページが落ち着くのを待ってください。<code>waitForPageReady()</code>はloadイベント、Webフォント、画像を待ちます（スキャンの前に呼び出す方法は<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}><code>INTEGRATION.md</code></a>を参照してください）。結果には、フォントや画像がまだ読み込み中だったかどうかが<code>engine.environment</code>に記録されます。
+				</li>
+				<li>
+					<strong>コントラストのルールは、テキストを祖先の背景に対して計測し、ブラウザーでは、そこにほかの何かが描画されていないかも確認します。</strong>
+					兄弟要素の上、<code>&lt;img&gt;</code>のヒーロー画像の上、<code>::before</code>のオーバーレイの上に配置されたテキストや、負のマージンで別のブロックの上に引き寄せられたテキストは、どの祖先のものでもない描画の上にあります。ブラウザーでは、エンジンはテキストの行ボックスを計測し、背景色、背景画像、置換コンテンツ（<code>img</code>、<code>video</code>、<code>canvas</code>、<code>svg</code>、<code>iframe</code>）を描画していて、行のおよそ1グリフ分以上を覆う要素と、色やグラデーションを持つ配置済みの<code>::before</code>や<code>::after</code>を探します。見つかった場合、<a href="/rules/contrast-computable/"><code>contrast-computable</code></a>が理由コード<code>BACKGROUND_OVERLAP</code>でそのテキストについて確認を求め、コントラスト比を計算するルールはそのテキストを対象から外します。重なり合う2つのボックスのどちらが上に描画されるかは判定しないため、見つかった描画に対するコントラスト比は計算しません。ノイズを抑えるための制限が3つあり、それぞれが見落としの原因になりえます。数えるのは、テキストに最も近い不透明な背景を持つ祖先の内側にある描画だけです（ヒーロー画像の上の白いカードは画像を隠します）。固定配置とstickyのボックスは対象外です（Cookieバナーやヘッダーは、テキストの背後にあるのではなく、テキストを覆います）。すでに計測した背景と同じ色の単色の描画は無視します。jsdomにはレイアウトがないため何も見つからず、テキストは祖先に対してだけ計測されます。
+				</li>
+				<li>
+					<strong>コントラストはsRGBで計算されます。</strong>
+					<code>oklch()</code>、<code>oklab()</code>、<code>lab()</code>、<code>lch()</code>、<code>color()</code>で指定された色（<code>color-mix()</code>や相対色の計算値も含みます）は、標準的なディスプレイでの見え方と同じようにsRGBに変換されます。彩度の高い<code>display-p3</code>の赤のようにsRGBの範囲外にある色は、その範囲の端に切り詰められます。これはChromiumがsRGBの画面に描画するのと同じです。広色域の画面では、その色がコントラスト比の前提よりも鮮やかに表示されることがあります。エンジンが変換できない背景色（知らない色空間の<code>color()</code>）は透明として扱いません。<code>contrast-computable</code>が理由コード<code>BACKGROUND_UNPARSABLE</code>でそのテキストについて確認を求め、ほかのコントラストのルールはそのテキストを対象から外します。
 				</li>
 			</ul>
 

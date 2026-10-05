@@ -49,6 +49,6 @@ const available = translatedLocales("component", "RulesIntroContent").filter((l)
 	<h2>{autoBefore}<code>fail</code>{autoAfter}</h2>
 	<RulesTable caption={t("rulesIndex.automaticCaption", locale, { n: automatic.length })} rows={automatic} locale={locale} />
 
-	<h2>{manualBefore}<code>cantTell</code>{manualAfter}</h2>
+	<h2>{manualBefore}<code>fail</code>{manualAfter}</h2>
 	<RulesTable caption={t("rulesIndex.manualCaption", locale, { n: manual.length })} rows={manual} locale={locale} />
 </BaseLayout>

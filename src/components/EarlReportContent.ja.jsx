@@ -116,7 +116,9 @@ export function EarlReportContent() {
 					<strong><code>source</code></strong>
 					はスキャンしたURLです。結果にURLがない場合は
 					<code>about:blank</code>
-					になります。
+					になります。URLのない結果が複数ある場合は、すべてを1つにまとめるのではなく、それぞれをリスト内の位置（1から数えます）による
+					<code>about:blank#result-&lt;n&gt;</code>
+					という独立した対象にします。
 				</li>
 				<li>
 					<strong><code>test.title</code></strong>
@@ -191,6 +193,14 @@ export function EarlReportContent() {
 			</p>
 			<CodeBlock lang="js" lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
 			<p>
+				<a href="/results-reports/output-schema/#cross-frame-result"><code>runa11yCoreAcrossFrames</code></a>
+				によるフレームをまたぐ結果は、単独でも配列の中でも、そのまま受け取ります。応答した各フレームが1つの結果として加わり、それぞれのURLを持つ対象になります。
+				<code>null</code>
+				や文字列など、スキャン結果ではないものを渡すと
+				<code>TypeError</code>
+				を投げます。
+			</p>
+			<p>
 				URLが同じ結果は1つの対象にまとめられます。同じページを異なる
 				<code>engineOptions</code>
 				でスキャンしても、表しているのは1つのリソースであり、コンテキスト上も同じsourceを持つ2つの対象を表現する手段がないからです。
@@ -210,7 +220,7 @@ export function EarlReportContent() {
 					{ key: "meaning", label: "意味", wrap: true },
 				]}
 				rows={[
-					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>。nameのデフォルトは<code>surea11y</code>です。<code>assertedBy</code>を丸ごと省くには<code>null</code>を渡します。</> },
+					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>。nameのデフォルトは<code>surea11y</code>です。versionはassertorの<code>release</code>として出力され、すべての結果が同じ<code>engine.version</code>を持つ場合はその値がデフォルトになります。異なるリリースの結果が混在する場合は、指定しない限り<code>release</code>は付きません。<code>assertedBy</code>を丸ごと省くには<code>null</code>を渡します。</> },
 					{ id: "mode", option: <code>mode</code>, meaning: <><code>'earl:automatic'</code>などのEARLのテストモードです。指定しない場合は省略されます。</> },
 				]}
 			/>

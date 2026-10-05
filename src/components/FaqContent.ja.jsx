@@ -7,23 +7,56 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2>「<code>runOnly: ['some-rule-id']</code>を渡したのに、全ルールが実行された」</h2>
+				<h2 id="runonly-threw">
+					「<code>runOnly</code>がエラーを投げた：<span lang="en">no rule or tag named …</span>、または<span lang="en">either rule ids or tags</span>」
+				</h2>
 				<p>
-					<strong><code>runOnly</code>は配列そのものではなく、オブジェクトでなければなりません。</strong>
-					<code>runOnly: ['img-alt-present']</code>
-					は黙って無視されます（エンジンは「すべて実行」に切り替わります）。この形には、エンジンが実際に確認するフィールド（
-					<code>includeRuleIds</code>
-					、
-					<code>tags</code>
-					など）が1つもないからです。配列をそのまま渡すのはついやりがちなので、まずここを確認する価値があります。
+					1.10.0以降、配列そのものや文字列として渡した<code>runOnly</code>は、axe-coreと同じように、ルールIDかタグとして読まれます（<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>を参照してください）。次の2つの場合はエラーを投げます。
 				</p>
-				<p>修正方法：</p>
-				<CodeBlock lang="js" lines={["runOnly: { includeRuleIds: ['img-alt-present'] }"]} />
+				<ul>
+					<li>
+						<strong>どのルールもタグも指していない値</strong>
+						。たいていはタイプミスです（<code>runOnly: ['img-alt-presnt']</code>）。IDを<code>getChecksCatalog()</code>と照らし合わせてください。
+					</li>
+					<li>
+						<strong>1つの配列にルールIDとタグが混在している場合</strong>
+						（<code>runOnly: ['img-alt-present', 'wcag2a']</code>）。組み合わせるにはオブジェクト形式を使います。
+					</li>
+				</ul>
+				<CodeBlock
+					lang="js"
+					lines={[
+						"runOnly: {",
+						"  includeRuleIds: ['img-alt-present'],",
+						"  tags: ['wcag2a'],",
+						"  includeMode: 'or',",
+						"}",
+					]}
+				/>
+				<p>1.10.0より前は、配列そのものを渡すと無視され、すべてのルールが実行されていました。</p>
 				<p>
-					完全な構造は
-					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>
-					を参照してください。
+					オブジェクト形式（<code>{"{ includeRuleIds }"}</code>、<code>{"{ tags }"}</code>、<code>{"{ type: 'tag', values }"}</code>）や、<code>engineOptions.rules.include</code>／<code>.tags.include</code>も、リスト内のどの値もルールやタグを指していない場合は、<code>code: 'INVALID_RUN_ONLY'</code>付きでエラーを投げます（<code>runOnly.tags: no tag named "wcag2.2aa".</code>）。以前はルールが1つも実行されず、問題のない合格のように見えていました。既知の値と並んだ未知の値が1つだけの場合や、除外リスト内の未知の値は、<code>console.warn</code>を出力するだけです。
 				</p>
+			</article>
+
+			<article>
+				<h2 id="contextselector-matched-nothing">
+					「範囲を絞ったスキャンですべてが<code>notApplicable</code>になる」、または「<code>contextSelector</code>がエラーを投げた：<span lang="en">… is not a valid CSS selector</span>」
+				</h2>
+				<p>
+					1.10.0以降、どの要素にも一致しない<code>contextSelector</code>は何もスキャンせず、ブラウザーが解析できないものはエラーを投げます（<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>を参照してください）。
+				</p>
+				<ul>
+					<li>
+						<strong>すべてが<code>notApplicable</code>になる</strong>
+						：<code>result.contextMatch</code>を確認してください。<code>elementCount: 0</code>はセレクターが何にも一致しなかったことを意味し、<code>unmatchedSelectors</code>にそのセレクターが示されます。タイプミスがないか、またスキャンの時点でその要素がもうページ上にあるか（読み込み後にスクリプトが描画するコンテンツなど）を確認してください。
+					</li>
+					<li>
+						<strong><code>code: 'INVALID_CONTEXT_SELECTOR'</code>付きでスキャンがエラーを投げた</strong>
+						：メッセージと、エラーの<code>selector</code>に示されたセレクターが、有効なCSSではありません。たとえば<code>'#main['</code>や<code>&gt;&gt;&gt;</code>結合子です。
+					</li>
+				</ul>
+				<p>1.10.0より前は、どちらの場合もページ全体をスキャンしていました。</p>
 			</article>
 
 			<article>

@@ -7,19 +7,76 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2>"I passed <code>runOnly: ['some-rule-id']</code> but every rule still ran"</h2>
+				<h2 id="runonly-threw">
+					"<code>runOnly</code> threw: no rule or tag named …, or either rule ids or tags"
+				</h2>
 				<p>
-					<strong><code>runOnly</code> must be an object, not a bare array.</strong>{" "}
-					<code>runOnly: ['img-alt-present']</code> is silently ignored (the engine falls
-					through to "run everything"), because that shape has none of the fields the engine
-					actually checks (<code>includeRuleIds</code>, <code>tags</code>, etc.). A bare array is
-					easy to reach for, so this is worth checking first.
+					Since 1.10.0, <code>runOnly</code> given as a bare array or string is read as rule ids or
+					as tags, the way axe-core reads it (see{" "}
+					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>). It throws
+					in two cases:
 				</p>
-				<p>Fix:</p>
-				<CodeBlock lang="js" lines={["runOnly: { includeRuleIds: ['img-alt-present'] }"]} />
+				<ul>
+					<li>
+						<strong>A value that names no rule and no tag</strong>, usually a typo:{" "}
+						<code>runOnly: ['img-alt-presnt']</code>. Check the id against{" "}
+						<code>getChecksCatalog()</code>.
+					</li>
+					<li>
+						<strong>Rule ids and tags in one array</strong>:{" "}
+						<code>runOnly: ['img-alt-present', 'wcag2a']</code>. Use the object form to combine
+						them:
+					</li>
+				</ul>
+				<CodeBlock
+					lang="js"
+					lines={[
+						"runOnly: {",
+						"  includeRuleIds: ['img-alt-present'],",
+						"  tags: ['wcag2a'],",
+						"  includeMode: 'or',",
+						"}",
+					]}
+				/>
+				<p>Before 1.10.0, a bare array was ignored and every rule ran.</p>
 				<p>
-					See <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a> for the full shape.
+					The object form, <code>{"{ includeRuleIds }"}</code>, <code>{"{ tags }"}</code> or{" "}
+					<code>{"{ type: 'tag', values }"}</code>, and <code>engineOptions.rules.include</code> /{" "}
+					<code>.tags.include</code> throw too, with <code>code: 'INVALID_RUN_ONLY'</code>, when no
+					value in the list names a rule or a tag (
+					<code>runOnly.tags: no tag named "wcag2.2aa".</code>). They used to run no rule at all,
+					which reads as a clean pass. A single unknown value beside known ones, or in an exclude
+					list, only logs a <code>console.warn</code>.
 				</p>
+			</article>
+
+			<article>
+				<h2 id="contextselector-matched-nothing">
+					"My scoped scan reports everything as <code>notApplicable</code>", or "
+					<code>contextSelector</code> threw: … is not a valid CSS selector"
+				</h2>
+				<p>
+					Since 1.10.0, a <code>contextSelector</code> that matches no element scans nothing, and
+					one the browser can't parse throws (see{" "}
+					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>).
+				</p>
+				<ul>
+					<li>
+						<strong>Everything is <code>notApplicable</code></strong>: look at{" "}
+						<code>result.contextMatch</code>. <code>elementCount: 0</code> means the selector
+						matched nothing, and <code>unmatchedSelectors</code> names it. Check it for a typo, or
+						whether the element is on the page yet when you scan (content rendered by a script
+						after load, say).
+					</li>
+					<li>
+						<strong>
+							The scan threw with <code>code: 'INVALID_CONTEXT_SELECTOR'</code>
+						</strong>
+						: the selector in the message, and in the error's <code>selector</code>, isn't valid
+						CSS, for example <code>'#main['</code> or a <code>&gt;&gt;&gt;</code> combinator.
+					</li>
+				</ul>
+				<p>Before 1.10.0, both cases scanned the whole page instead.</p>
 			</article>
 
 			<article>

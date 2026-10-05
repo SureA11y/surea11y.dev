@@ -32,7 +32,15 @@ export function HtmlReportContent() {
 					gravedad, chip(s) de SC de WCAG, una ocurrencia representativa y el recuento total de
 					ocurrencias. Limitado a las 24 reglas de mayor prioridad, con una nota de desbordamiento a
 					partir de ahí.
-				</li>
+					</li>
+					<li>
+						<strong>Lo más cerca del límite</strong>: se muestra cuando el análisis tiene márgenes (
+						<a href="/results-reports/output-schema/#margin"><code>margin</code> en un resultado de comprobación</a>).
+						Una fila por cada regla que mide contra un umbral: su valor aprobado más cercano, el
+						límite, el margen que queda y el elemento. Los píxeles se redondean a enteros, con «menos
+						de 1 px» por debajo de uno; las razones muestran dos decimales. Una regla que pasó con poco
+						margen es una que un pequeño cambio puede convertir en un fallo.
+					</li>
 				<li>
 					<strong>Resumen por WCAG</strong>: agrupado por nivel de conformidad (A / AA / AAA),
 					obtenido directamente de los resultados agregados compuestos <code>rulesResults[]</code> propios del
@@ -98,9 +106,12 @@ export function HtmlReportContent() {
 				]}
 			/>
 			<p>
-				<code>renderHtmlReport(result, options)</code> es una función pura: devuelve una cadena,{" "}
+				<code>renderHtmlReport(result, options)</code> devuelve una cadena y{" "}
 				<strong>nunca toca el sistema de archivos por sí misma</strong> (el flag <code>--html</code>{" "}
-				de la CLI es el que escribe). <code>options.title</code> es opcional (por defecto{" "}
+				de la CLI es el que escribe). La página se fecha con el <code>timestamp</code> del resultado
+				(se establece con <code>engineOptions.timestamp</code>), mostrado en UTC, así que el mismo
+				resultado siempre genera la misma página; un resultado sin él se fecha con el momento en que
+				se genera. <code>options.title</code> es opcional (por defecto{" "}
 				<code>"surea11y scan report"</code>).
 			</p>
 

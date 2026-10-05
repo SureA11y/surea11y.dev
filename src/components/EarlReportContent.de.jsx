@@ -103,7 +103,9 @@ export function EarlReportContent() {
 			<ul>
 				<li>
 					<strong><code>source</code></strong> ist die gescannte URL oder{" "}
-					<code>about:blank</code>, wenn ein Ergebnis keine enthält.
+					<code>about:blank</code>, wenn ein Ergebnis keine enthält. Enthalten mehrere Ergebnisse
+					keine, wird jedes zu einem eigenen Subjekt, <code>about:blank#result-&lt;n&gt;</code> nach
+					seiner Position in der Liste (ab 1), statt dass alle zu einem zusammenfallen.
 				</li>
 				<li>
 					<strong><code>test.title</code></strong> ist die Regel-ID der Engine. In ACT-Begriffen
@@ -168,6 +170,13 @@ export function EarlReportContent() {
 			</p>
 			<CodeBlock lang="js" lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
 			<p>
+				Ein Frame-übergreifendes Ergebnis von <a href="/results-reports/output-schema/#cross-frame-result"><code>runa11yCoreAcrossFrames</code></a> wird
+				so übernommen, wie es ist, allein oder im Array: Jeder Frame, der geantwortet hat, ist ein
+				weiteres Ergebnis und wird zu einem Subjekt unter seiner eigenen URL. Alles andere, was
+				kein Scan-Ergebnis ist, etwa <code>null</code> oder ein String, wirft einen{" "}
+				<code>TypeError</code>.
+			</p>
+			<p>
 				Ergebnisse mit derselben URL werden zu einem Subjekt zusammengeführt: Wer dieselbe Seite
 				mit unterschiedlichen <code>engineOptions</code> scannt, beschreibt immer noch eine
 				Ressource, und der Kontext kann keine zwei Subjekte mit derselben Quelle ausdrücken.{" "}
@@ -192,7 +201,7 @@ export function EarlReportContent() {
 					{ key: "meaning", label: "Bedeutung", wrap: true },
 				]}
 				rows={[
-					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Der Name ist standardmäßig <code>surea11y</code>; übergeben Sie <code>null</code>, um <code>assertedBy</code> ganz wegzulassen.</> },
+					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Der Name ist standardmäßig <code>surea11y</code>, und die Version, angegeben als <code>release</code> des Assertors, standardmäßig die <code>engine.version</code>, die die Ergebnisse tragen, wenn alle dieselbe tragen; Ergebnisse aus verschiedenen Releases erhalten keine, sofern Sie keine angeben. Übergeben Sie <code>null</code>, um <code>assertedBy</code> ganz wegzulassen.</> },
 					{ id: "mode", option: <code>mode</code>, meaning: <>Ein EARL-Testmodus wie <code>'earl:automatic'</code>. Entfällt, wenn nicht angegeben.</> },
 				]}
 			/>

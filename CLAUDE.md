@@ -4,7 +4,7 @@ The docs and rules site for `@surea11y/core`. Scaffold only as of 2026-09-16 —
 Astro + `@astrojs/react`, design tokens wired in. As of the same day it also
 has: a nav/page shell (`BaseLayout`/`SiteNav`, one stub page per IA section),
 Overview turned into a section-index landing (badges + a card grid linking
-the other six sections), a real Rules catalog + 132 generated rule pages
+the other six sections), a real Rules catalog + generated rule pages (134 as of core 1.10.0)
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
 `src/components/design-system/` — see below). All seven IA sections have
@@ -30,11 +30,14 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   and each rule's JSDoc, the same API this doc's own generator calls.
 - `../core/docs/RULE_EXAMPLES.md` — one verified `Passed`/`Failed` (or
   `Flagged`/`Not applicable` for manual rules) example pair per rule, all
-  of them. Hand-curated, not generated, not yet CI-checked. This one *is*
+  of them. Hand-curated, not generated; since core 1.10.0 core's CI runs
+  every example against the engine (`rule-examples:outcomes:check`). This one *is*
   parsed (`scripts/generate-rules-data.cjs`) — it's the only source for the
   example pairs, there's no API for them. Format variations the parser
-  handles: one to three examples per rule (`manual-review` has one; a rule
-  with a tiered outcome adds a third, `Flagged (cantTell)`); an annotation
+  handles: one to four examples per rule (`manual-review` has one; a rule
+  with a tiered outcome adds a third, `Flagged (cantTell)`;
+  `form-control-programmatic-label-quality` has three `cantTell` cases, so
+  four); an annotation
   after the bold heading (`duplicate-id`) is dropped; a qualifier inside it
   (`**Passed (in a browser)**`) becomes an example `context`, mapped to a
   translated label via `EXAMPLE_CONTEXT` and `rulePage.exampleContext.*` —
@@ -44,8 +47,11 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   `relatedRuleIds`, computed by stripping a rule id's last hyphen segment
   and grouping ids that share the remainder). `npm run docs:rules` to
   regenerate, `npm run docs:rules:check` to verify it's current — same
-  committed-artifact relationship as the tokens/components below. Requires
-  `../core/src/core.js` to be built and current. Reads three JSDoc tags
+  committed-artifact relationship as the tokens/components below. Reads
+  the installed `@surea11y/core` package (the pinned devDependency, via
+  `require.resolve`), never a `../core` checkout, so the site's rule text
+  always matches a release; it ships `src/checks`, `src/core.js` and
+  `docs/`. Reads three JSDoc tags
   from each rule module: `@applicability`, `@expectation` and `@reports`
   (since core `d7b4725`, after 1.9.0: the fields a rule's findings carry
   in `data.details`, one `- ` line each). `@reports` renders on rule pages
@@ -53,14 +59,15 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   stable contract apart from `reasonCode`, linking to the Output schema's
   `#occurrence`. A locale whose rule overlay has no `reports` yet shows
   the English list marked `lang="en"` (`reportsLang` in `localizeRule`).
-  **Pending, at core's next release (1.9.1 or 1.10.0) with `@reports`:**
-  the site shows rule text from core `main` (`d7b4725`) while displaying
-  1.9.0. When that release is out, make `@surea11y/core` a pinned
-  devDependency, point both generators at `node_modules/@surea11y/core`
-  instead of `../core` (the package ships `src/` and `docs/`; the locale
-  generator still needs `scripts/i18n-report.js` and `src/i18n/*.json`
-  from core, or an exported function), and add `docs:rules:check` and
-  `docs:locales:check` to CI (`ci.yml`), which leaves them out until then. See
+  Since core 1.10.0 it also carries a rule's `margin` (`meta.margin` from
+  the catalog: `measure`, `unit`, `limit`), shown on the five rule pages
+  that report one as a "Margin." line linking to the Output schema's
+  `#margin`; unlike `@reports`, that is a stable contract.
+  `scripts/generate-locale-data.cjs` reads core's `getLocaleCoverage()`
+  (a supported export since 1.10.0) from the same package. Both
+  `docs:rules:check` and `docs:locales:check` run in CI, so a core bump
+  (Dependabot) fails until `npm run docs:rules && npm run docs:locales`
+  is run and any outdated translations are updated. See
   `internal-notes/surea11y-dev-a11y-ci.design.md` §8.1, decision 4.
 - **Configuration, Results & Reports, Conformance, and Help are
   each split into per-topic subpages**, not one long page: every section
@@ -321,7 +328,7 @@ whole `SectionMenu.astro` component are gone).
   (`gettingStartedSections`/`configurationSections`/`resultsReportsSections`/
   `conformanceSections`/`helpSections`) as children, keyed by
   section href. No new source-of-truth data. `Rules` gets one hand-picked
-  child (`/rules/organization/`) rather than enumerating all 132 generated
+  child (`/rules/organization/`) rather than enumerating all 134 generated
   rule pages.
 - `src/components/Sidebar.astro` — one `<details>` per top section used
   purely as a **toggle-state holder** (its `<summary>` carries no visible
@@ -344,7 +351,7 @@ whole `SectionMenu.astro` component are gone).
   needs `IntersectionObserver` and this site ships zero client-side JS by
   design.
 - `src/components/Breadcrumbs.astro` — derived from `siteTree` and the
-  current URL for every hand-written page automatically. The 132 generated
+  current URL for every hand-written page automatically. The generated
   `/rules/[slug]/` pages aren't (and shouldn't be) in `siteTree`, so
   `[...lang]/rules/[slug]/index.astro` passes an explicit
   `breadcrumbLabel` prop, as does `[...page].astro` for the one registry
@@ -550,9 +557,23 @@ Open English-source issues found in that review, not yet decided:
   `avoid-inline-spacing`'s fail example says "the page's own styles"
   (1.4.12 is about the user's). Rule text also exposes internal notes and
   "see below" (`target-size-minimum`, `aria-prohibited-attr`).
-- `skip-link` only recognises English link text ("skip", "jump to"),
-  which isn't documented.
+- `skip-link` only recognised English link text ("skip", "jump to"),
+  which wasn't documented. Core 1.10.0 says the wording list now covers
+  every shipped language (CHANGELOG, `bypass-blocks-present`); the rule
+  pages don't list the words either way.
 - The FAQ mentions `npm run i18n:sync`, a `core` maintainer command.
+- Found updating to core 1.10.0 (2026-10-06), both in core's released
+  1.10.0, to fix there: `region`'s applicability is cut off at "(or other
+  own content, see" on the English rule page (and in core's own
+  `RULE_CATALOG.md`), because a line in `region-manual.js`'s header starts
+  with `@implementation-notes)` and both generators read it as a new tag.
+  The es/fr/de/ja overlays translate the full intended text, so they say
+  more than the English until core rewraps that line. And 1.10.0's new
+  `BACKGROUND_OVERLAP` check counts the language switcher's menu `<ul>`
+  inside a closed `<details>` (laid out, never painted: `checkVisibility()`
+  is false), so the scan reports `contrast-computable` `cantTell` on every
+  page. Harmless to CI (`cantTell` never fails it), but noise in the
+  summary until core skips content a closed `<details>` hides.
 - Bugs outside translation: `AccessibilityStatementContent`'s issue link
   resolves to `…/core/blob/main/issues` (should be `…/core/issues`);
   `TestMatchersUsageContent`'s sample names nonexistent ids
@@ -713,6 +734,24 @@ Done after an external review of the live site flagged gaps:
   identical in both languages because the footer link is shared and `localizeLinks` only rewrites the path, not the anchor;
   the ES ACT-corpus `<h3>` got an explicit `id` for the same reason (the hero
   stat link had been pointing at a slug that only existed in English).
+
+## Core 1.10.0 update (2026-10-06)
+
+Pinned `@surea11y/core` 1.10.0 and moved both generators onto the package
+(see "Where things come from"). Content pages that adapt a core doc changed
+in 1.10.0 were updated from `git diff v1.9.0 6b057bb -- docs/` in every
+language: Engine options, Locales (`getLocaleCoverage()`), Standalone
+(`waitForPageReady`), Output schema (`margin` with `id="margin"`,
+`contextMatch`, `skippedCustomRules`, `engine.version`,
+`shadowHostSelectors`), HTML/SARIF/EARL reports, Baseline, Known
+limitations, FAQ (new `runonly-threw` and `contextselector-matched-nothing`
+entries replace the bare-array one), How rules are organized (manual rules
+may `pass`). The rules catalog's manual heading now reads "never `fail`".
+The homepage got two 1.10.0 highlights inside `OverviewContent`: a margin
+paragraph under "How its results differ" and the held-still animations in
+"Deterministic execution". Long one-line code samples can overflow into the
+TOC rail under the text-spacing check; split them over lines (the FAQ's
+`runOnly` sample was).
 
 ## Content/structure review implementation
 

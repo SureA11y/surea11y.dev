@@ -92,7 +92,16 @@ export function BaselineContent() {
 				règle n’en définit pas), et <code>html</code> est l’extrait de HTML externe de
 				l’occurrence. Cette identité repose sur le contenu et non sur la position : elle résiste au
 				déplacement de l’élément signalé dans la page (un réordonnancement, un élément frère sans
-				rapport ajouté ou supprimé) tant que le balisage propre de l’élément signalé ne change pas.{" "}
+				rapport ajouté ou supprimé) tant que le balisage propre de l’élément signalé ne change pas.
+				Pour un constat qui porte sur la page elle-même, signalé sur <code>&lt;html&gt;</code> ou{" "}
+				<code>&lt;body&gt;</code> (<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>,{" "}
+				<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>, <a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>), l’extrait se limite à
+				la balise ouvrante : modifier le contenu de la page n’en fait donc pas un nouveau constat.
+				L’extrait est comparé avec les attributs de chaque balise triés par nom et ses noms de
+				classes triés, si bien qu’un build qui écrit <code>class="b a" src</code> là où le
+				précédent écrivait <code>src class="a b"</code> correspond ; les fichiers de baseline
+				écrits avant ce changement correspondent toujours, puisque la comparaison est faite au
+				moment de la correspondance.{" "}
 				<code>selector</code> est toujours enregistré dans le fichier de baseline, mais uniquement
 				pour donner du contexte à la lecture d’un diff : il ne sert jamais à la correspondance.
 			</p>
