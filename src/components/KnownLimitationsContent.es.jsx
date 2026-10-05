@@ -81,6 +81,28 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>
+						Un análisis hecho con un diálogo modal abierto ve el diálogo, no la página.
+					</strong>{" "}
+					Un <code>&lt;dialog&gt;</code> abierto con <code>showModal()</code> (o un{" "}
+					<code>&lt;dialog aria-modal="true"&gt;</code> abierto) vuelve inerte el resto del
+					documento, y los navegadores solo exponen el diálogo a la tecnología de asistencia. El
+					motor hace lo mismo: el contenido detrás del diálogo queda fuera de todas las reglas,
+					igual que el resto del contenido oculto, y las reglas sobre la estructura de la propia
+					página (<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
+					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
+					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
+					<a href="/rules/region/"><code>region</code></a>) informan <code>notApplicable</code>,
+					porque el análisis no puede ver esa estructura. Vuelve a analizar la página con el
+					diálogo cerrado para juzgar lo que hay detrás. Dos límites: un{" "}
+					<code>&lt;dialog&gt;</code> modal dentro de un shadow root no se detecta, y un modal
+					propio construido con un elemento <code>role="dialog"</code> e <code>inert</code> o{" "}
+					<code>aria-hidden</code> en el resto de la página solo se trata a través de esos
+					atributos, que ocultan la página pero no indican a las reglas de estructura que hay un
+					diálogo abierto. Se comporta como axe-core; IBM Equal Access y Siteimprove Alfa juzgan la
+					página detrás del diálogo como si no hubiera nada abierto.
+				</li>
+				<li>
+					<strong>
 						<code>&lt;dialog&gt;</code> y otros elementos ocultos por la hoja de estilos
 						predeterminada del agente de usuario
 					</strong>{" "}
@@ -196,8 +218,51 @@ export function KnownLimitationsContent() {
 					, y los hallazgos de esas reglas repiten su viewport e indican lo que se midió (cuánto
 					sobrepasó el texto el borde, qué tamaño tiene un objetivo y a qué distancia está su
 					vecino), de modo que un hallazgo que difiere entre ejecuciones se puede atribuir a las
-					condiciones. Analiza con cada ancho que te importe, y espera a{" "}
-					<code>document.fonts.ready</code> antes de analizar.
+					condiciones. Analiza con cada ancho que te importe, y espera a que la página se
+					estabilice antes de analizar: <code>waitForPageReady()</code> espera al evento load, a
+					las fuentes web y a las imágenes (consulta{" "}
+					<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, que muestra cómo llamarla antes de un análisis), y el resultado registra en{" "}
+					<code>engine.environment</code> si las fuentes o las imágenes aún estaban cargando.
+				</li>
+				<li>
+					<strong>
+						Las reglas de contraste miden el texto frente a los fondos de sus ancestros y, en un
+						navegador, comprueban si algo más pinta ahí.
+					</strong>{" "}
+					Un texto posicionado sobre un hermano, sobre una imagen <code>&lt;img&gt;</code> de
+					cabecera, sobre una superposición <code>::before</code>, o desplazado sobre otro bloque
+					con un margen negativo queda sobre una pintura que no pertenece a ninguno de sus
+					ancestros. En un navegador, el motor mide las cajas de línea del texto y busca elementos
+					que pinten un color de fondo, una imagen de fondo o contenido reemplazado (
+					<code>img</code>, <code>video</code>, <code>canvas</code>, <code>svg</code>,{" "}
+					<code>iframe</code>) y cubran al menos más o menos un glifo de una línea, y un{" "}
+					<code>::before</code> o <code>::after</code> posicionado con un color o un degradado;
+					cuando encuentra uno, <a href="/rules/contrast-computable/"><code>contrast-computable</code></a>{" "}
+					pregunta por el texto con el código de motivo <code>BACKGROUND_OVERLAP</code> y las
+					reglas que calculan la relación de contraste lo dejan fuera. No determina cuál de dos
+					cajas superpuestas se pinta encima, así que no calcula una relación de contraste frente a
+					la pintura que encontró. Tres límites
+					reducen el ruido, y cada uno puede pasar por alto un caso: solo cuenta la pintura dentro
+					del ancestro más cercano del texto con un fondo opaco (una tarjeta blanca sobre una
+					imagen de cabecera oculta la imagen), las cajas fijas y sticky quedan fuera (un banner de
+					cookies o una cabecera cubren el texto en lugar de quedar detrás), y se ignora la pintura
+					sólida del mismo color que el fondo ya medido. Bajo jsdom no hay diseño, así que no se
+					encuentra nada y el texto se mide solo frente a sus ancestros.
+				</li>
+				<li>
+					<strong>El contraste se calcula en sRGB.</strong> Los colores dados en{" "}
+					<code>oklch()</code>, <code>oklab()</code>, <code>lab()</code>, <code>lch()</code> o{" "}
+					<code>color()</code> (también la forma calculada de <code>color-mix()</code> y de los
+					colores relativos) se convierten a sRGB, tal como los muestra una pantalla estándar; uno
+					fuera de sRGB, como un rojo <code>display-p3</code> saturado, se recorta a su borde, que
+					es lo que Chromium dibuja en una pantalla sRGB. Una pantalla de gama amplia puede mostrar
+					ese color más saturado de lo que supone la relación calculada. Un color de fondo que el motor no puede
+					convertir, un <code>color()</code> en un espacio que no conoce, no se trata como
+					transparente: <code>contrast-computable</code> pregunta por el texto con el código de
+					motivo <code>BACKGROUND_UNPARSABLE</code>, y las demás reglas de contraste lo dejan fuera.
 				</li>
 			</ul>
 

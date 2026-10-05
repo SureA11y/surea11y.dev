@@ -103,7 +103,9 @@ export function EarlReportContent() {
 			<ul>
 				<li>
 					<strong><code>source</code></strong> est l’URL analysée, ou <code>about:blank</code>{" "}
-					lorsqu’un résultat n’en contient pas.
+					lorsqu’un résultat n’en contient pas. Lorsque plusieurs résultats n’en contiennent pas,
+					chacun devient un sujet à part entière, <code>about:blank#result-&lt;n&gt;</code> selon sa
+					position dans la liste (à partir de 1), au lieu de tous fusionner en un seul.
 				</li>
 				<li>
 					<strong><code>test.title</code></strong> est l’id de règle du moteur lui-même. Au sens
@@ -169,6 +171,12 @@ export function EarlReportContent() {
 			</p>
 			<CodeBlock lang="js" lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
 			<p>
+				Un résultat multi-frames de <a href="/results-reports/output-schema/#cross-frame-result"><code>runa11yCoreAcrossFrames</code></a> est accepté tel
+				quel, seul ou dans le tableau : chaque frame qui a répondu est un résultat de plus et
+				devient un sujet sous sa propre URL. Tout le reste qui n’est pas un résultat d’analyse,
+				comme <code>null</code> ou une chaîne, lève une <code>TypeError</code>.
+			</p>
+			<p>
 				Les résultats qui partagent une URL sont fusionnés en un seul sujet : un appelant qui
 				analyse la même page avec des <code>engineOptions</code> différents décrit toujours une
 				seule ressource, et le contexte n’a aucun moyen d’exprimer deux sujets ayant la même
@@ -195,7 +203,7 @@ export function EarlReportContent() {
 					{ key: "meaning", label: "Signification", wrap: true },
 				]}
 				rows={[
-					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Le nom vaut <code>surea11y</code> par défaut ; passez <code>null</code> pour omettre entièrement <code>assertedBy</code>.</> },
+					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Le nom vaut <code>surea11y</code> par défaut, et la version, donnée comme <code>release</code> de l’assertor, vaut par défaut l’<code>engine.version</code> que portent les résultats lorsqu’ils portent tous la même ; des résultats issus de versions différentes n’ont pas de <code>release</code>, sauf si vous en indiquez une. Passez <code>null</code> pour omettre entièrement <code>assertedBy</code>.</> },
 					{ id: "mode", option: <code>mode</code>, meaning: <>Un mode de test EARL, par exemple <code>'earl:automatic'</code>. Omis s’il n’est pas fourni.</> },
 				]}
 			/>

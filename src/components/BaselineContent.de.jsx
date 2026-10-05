@@ -94,7 +94,15 @@ export function BaselineContent() {
 				Vorkommens. Das ist inhaltsbasiert statt positionsbasiert: Es bleibt stabil, wenn sich
 				das gemeldete Element auf der Seite verschiebt (eine Umsortierung, ein unabhängiges
 				Geschwisterelement kommt hinzu oder fällt weg), solange sich das Markup des gemeldeten
-				Elements selbst nicht ändert. <code>selector</code> wird zwar weiterhin in der
+				Elements selbst nicht ändert. Bei einem Befund zur Seite selbst, der an{" "}
+				<code>&lt;html&gt;</code> oder <code>&lt;body&gt;</code> gemeldet wird (<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>,{" "}
+				<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>, <a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>), ist der Ausschnitt
+				nur das Start-Tag, sodass eine Änderung am Inhalt der Seite ihn nicht neu macht. Der
+				Ausschnitt wird mit den Attributen jedes Tags nach Namen sortiert und mit sortierten
+				Klassennamen verglichen, sodass ein Build, der <code>class="b a" src</code> schreibt, wo
+				der vorige <code>src class="a b"</code> geschrieben hat, übereinstimmt; Baseline-Dateien,
+				die vorher geschrieben wurden, stimmen weiterhin überein, da der Vergleich beim Abgleich
+				erfolgt. <code>selector</code> wird zwar weiterhin in der
 				Baseline-Datei gespeichert, aber nur als Kontext für Menschen beim Lesen eines Diffs — für
 				das Matching wird er nie verwendet.
 			</p>

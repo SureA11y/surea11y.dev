@@ -11,7 +11,7 @@ const sarifLevelRows = [
 
 const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
-	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code></> },
+	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code>. An occurrence with no summary (a custom rule's, say) uses the rule's title, or its id, since GitHub rejects a result with empty text.</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>The scanned target — see <a href="#sarif-locations">Locations</a> below.</> },
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, when present.</> },
 	{
@@ -43,6 +43,7 @@ const sarifFieldRows = [
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>The result's own <code>severity</code>/<code>confidence</code>, plus the same <code>reasonCode</code> and <code>html</code> snippet the fingerprint above is keyed on — informational, not part of SARIF's own schema.</> },
 	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, and a <code>wcag-&lt;SC&gt;</code> tag per WCAG Success Criterion in <code>meta.normativeMappings</code>. Understanding-document entries get no tag. Each EN 301 549 clause the result carries (only when the scan asked for them, see <a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>) gets an <code>en301549-&lt;clause&gt;</code> tag, e.g. <code>en301549-9.1.1.1</code>: clause numbers are the same in every version that has them, so the tag carries no version.</> },
+	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>The <code>toolVersion</code> option, if given (a tool wrapping the engine passes its own); otherwise <code>engine.version</code>, the engine release that produced the result. <code>"0.0.0"</code> only for a result without one, from a release before 1.10.0.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>The <code>category</code> option, with a trailing <code>/</code> added if it has none (GitHub reads everything up to the last slash as the category). Absent when no category is given. See <a href="#scanning-at-several-viewport-widths">Scanning at several viewport widths</a>.</> },
 	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> and <code>environment</code> from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, the opt-in rule tags it added beyond that target when it added any, and the conditions the page was rendered under (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code>; see <a href="/results-reports/output-schema/">Output schema</a>). Omitted for results from engines that predate those fields.</> },
 ];
@@ -124,7 +125,7 @@ export function SarifReportContent() {
 				Every rule that ran (regardless of whether it produced a result) is listed once in{" "}
 				<code>runs[0].tool.driver.rules</code>, with <code>defaultConfiguration.level</code> set
 				from the rule's <code>type</code>: <code>automatic</code> (fail-capable) →{" "}
-				<code>error</code>, <code>manual</code> (capped at <code>cantTell</code>) →{" "}
+				<code>error</code>, <code>manual</code> (never <code>fail</code>) →{" "}
 				<code>warning</code>.
 			</p>
 
@@ -147,9 +148,12 @@ export function SarifReportContent() {
 			</p>
 			<ul>
 				<li>
-					<strong>Local file scans</strong>: a path relative to the current working directory
-					(forward-slashed). If this matches a real file in your repository, GitHub Code Scanning
-					can render the finding as an inline annotation.
+					<strong>Local file scans</strong>: a file inside the current working directory is a path
+					relative to it, forward-slashed, with each segment percent-encoded (
+					<code>build%20out/index.html</code>). If this matches a real file in your repository,
+					GitHub Code Scanning can render the finding as an inline annotation. A file outside the
+					working directory is an absolute <code>file:</code> URL, not a relative path climbing out of
+					the repository with <code>../</code>, which a consumer could not resolve.
 				</li>
 				<li>
 					<strong>URL scans</strong>: the scanned URL itself. GitHub Code Scanning will still list

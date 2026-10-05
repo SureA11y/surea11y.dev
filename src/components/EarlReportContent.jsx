@@ -101,7 +101,9 @@ export function EarlReportContent() {
 			<ul>
 				<li>
 					<strong><code>source</code></strong> is the scanned URL, or <code>about:blank</code>{" "}
-					when a result carries none.
+					when a result carries none. When several results carry none, each is a subject of its own,{" "}
+					<code>about:blank#result-&lt;n&gt;</code> by its position in the list (from 1), rather than
+					all merging into one.
 				</li>
 				<li>
 					<strong><code>test.title</code></strong> is the engine's own rule id. In ACT terms a rule
@@ -163,6 +165,12 @@ export function EarlReportContent() {
 			</p>
 			<CodeBlock lang="js" lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
 			<p>
+				A cross-frame result from <a href="/results-reports/output-schema/#cross-frame-result"><code>runa11yCoreAcrossFrames</code></a> is taken as it is,
+				alone or in the array: each frame that answered is one more result, and becomes a subject
+				under its own URL. Anything else that is not a scan result, such as <code>null</code> or a
+				string, throws a <code>TypeError</code>.
+			</p>
+			<p>
 				Results sharing a URL merge into one subject — a caller scanning the same page under
 				different <code>engineOptions</code> is still describing one resource, and the context has
 				no way to express two subjects with the same source.{" "}
@@ -187,7 +195,7 @@ export function EarlReportContent() {
 					{ key: "meaning", label: "Meaning", wrap: true },
 				]}
 				rows={[
-					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Defaults the name to <code>surea11y</code>; pass <code>null</code> to omit <code>assertedBy</code> entirely.</> },
+					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Defaults the name to <code>surea11y</code>, and the version, given as the assertor's release, to the <code>engine.version</code> the results carry when they all carry the same one; results from different releases get no release unless you give one. Pass <code>null</code> to omit <code>assertedBy</code> entirely.</> },
 					{ id: "mode", option: <code>mode</code>, meaning: <>An EARL test mode such as <code>'earl:automatic'</code>. Omitted when not supplied.</> },
 				]}
 			/>

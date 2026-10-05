@@ -7,6 +7,15 @@ const core = "https://github.com/SureA11y/core/blob/main";
 const topLevelRows = [
 	{ id: "engine.tag", field: <code>engine.tag</code>, meaning: <>エンジン自身の識別タグで、現在は<code>"a11ycore"</code>です。すべてのルール（組み込みもカスタムも）は<code>meta.tags</code>にこのタグを持ちます。ルールの<code>ruleId</code>自体にはプレフィックスが付きません。</> },
 	{
+		id: "engine.version",
+		field: <code>engine.version</code>,
+		meaning: (
+			<>
+				結果を生成した<code>@surea11y/core</code>のリリースで、<code>"1.10.0"</code>のような値です。バグ報告で示すのはこの値で、2つのリリースの結果を見分けるのにも使えます。結果は形が変わらないままリリース間で変わることがあるため、これは<code>schemaVersion</code>とは別のものです。<a href="/results-reports/sarif-report/">SARIF</a>と<a href="/results-reports/earl-report/">EARL</a>のレポーターは、ツールのバージョンが指定されていなければこの値を使います。
+			</>
+		),
+	},
+	{
 		id: "engine.schemaVersion",
 		field: <code>engine.schemaVersion</code>,
 		meaning: (
@@ -83,7 +92,7 @@ const topLevelRows = [
 		field: <code>engine.environment</code>,
 		meaning: (
 			<>
-				ページがレンダリングされた条件です。スキャンの開始時、どのルールも実行される前にページから読み取ります。<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>のようにレイアウトを計測するルールは、同じマークアップでも、ビューポートの幅が違ったり、Webフォントがまだ読み込み中だったりすると別の判定結果になることがあるため、実行を再現するにはこの情報が必要です。<code>layout</code>はページにレイアウトがあったかどうかです。jsdomなどのDOMエミュレーターでは<code>false</code>になり、その場合はこれが唯一のフィールドです。ブラウザーでは、<code>viewport</code>はCSSピクセル単位の<code>innerWidth</code>／<code>innerHeight</code>、<code>devicePixelRatio</code>はページのデバイスピクセル比（ブラウザーのズームもここに表れます）、<code>colorScheme</code>は<code>prefers-color-scheme</code>が一致する値、<code>fonts</code>はページのフォントフェイスのいずれかがまだ読み込み中なら<code>"loading"</code>、それ以外は<code>"loaded"</code>です。ページが報告できないフィールドは省略されます。これらを読み取っても非決定性は加わりません。DOMと同じく、入力だからです。実行間で比較できる結果が必要なら、スキャンの前に<code>document.fonts.ready</code>を待ってください。<a href="#cross-frame-result">フレームをまたぐ結果</a>では、各フレームがそれぞれ独自の値を持ちます。
+				ページがレンダリングされた条件です。スキャンの開始時、どのルールも実行される前にページから読み取ります。<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>のようにレイアウトを計測するルールは、同じマークアップでも、ビューポートの幅が違ったり、Webフォントがまだ読み込み中だったりすると別の判定結果になることがあるため、実行を再現するにはこの情報が必要です。<code>layout</code>はページにレイアウトがあったかどうかです。jsdomなどのDOMエミュレーターでは<code>false</code>になり、その場合はこれが唯一のフィールドです。ブラウザーでは、<code>viewport</code>はCSSピクセル単位の<code>innerWidth</code>／<code>innerHeight</code>、<code>devicePixelRatio</code>はページのデバイスピクセル比（ブラウザーのズームもここに表れます）、<code>colorScheme</code>は<code>prefers-color-scheme</code>が一致する値、<code>fonts</code>はページのフォントフェイスのいずれかがまだ読み込み中なら<code>"loading"</code>、それ以外は<code>"loaded"</code>です。ページが報告できないフィールドは省略されます。これらを読み取っても非決定性は加わりません。DOMと同じく、入力だからです。実行間で比較できる結果が必要なら、スキャンの前に<code>document.fonts.ready</code>を待ってください。<code>images</code>は、いずれかの画像がまだ読み込み中なら<code>"loading"</code>、それ以外は<code>"loaded"</code>です。後から届いた画像は、レイアウトのルールが計測したものを動かすことがあるため、比較できる結果が必要なら、ページの<code>load</code>イベントの後にスキャンしてください。<code>loading="lazy"</code>の画像は、読む人がスクロールするまで読み込まれないため除外されます。<code>animationsSettled</code>は、スキャンが静止させた実行中のアニメーションとトランジションの数です。スキャンの間、有限のもの（フェードインなど）は終了時点の状態で、無限に繰り返すもの（マーキーやスピナーなど）は開始時点の状態で読み取り、その後それぞれを元の位置に正確に戻します。そのため、フェードインの途中でスキャンしたページも、その後にスキャンしたページと同じ結果になります。スキャンは1つの同期タスクなので、静止させた状態がブラウザーに描画されることはありません。<a href="#cross-frame-result">フレームをまたぐ結果</a>では、各フレームがそれぞれ独自の値を持ちます。
 			</>
 		),
 	},
@@ -109,6 +118,15 @@ const topLevelRows = [
 		meaning: (
 			<>
 				渡した<code>contextSelector</code>引数（トリム済み）です。文字列、文字列の配列（複数領域のスキャン。<a href="/configuration/engine-options/">エンジンオプション</a>を参照）、または未指定・空の場合は<code>null</code>になります。
+			</>
+		),
+	},
+	{
+		id: "contextMatch",
+		field: <code>contextMatch</code>,
+		meaning: (
+			<>
+				<code>contextSelector</code>がどう解決されたかを示します。指定がなかった場合は<code>null</code>です。<code>elementCount</code>は一致した異なる要素の数で、これがスキャンの起点になります。<code>unmatchedSelectors</code>は、どの要素にも一致しなかったセレクターを、渡したとおりの形で列挙します。カンマ区切りの文字列は、1回の<code>querySelectorAll</code>呼び出しであるのと同じく、ここでも1つのセレクターとして扱われます。<strong><code>elementCount</code>が0なら、何もスキャンされていません</strong>。ページにその範囲がなく、<code>checksResults</code>と<code>rulesResults</code>のエントリはすべて<code>notApplicable</code>で、結果はページについて何も述べていません。検出結果のないスキャンとしてではなく、範囲が見つからなかったものとして報告してください。ブラウザーが解析できないセレクターは結果まで届かず、スキャンが<code>code: 'INVALID_CONTEXT_SELECTOR'</code>付きのエラーを投げます（<a href="/configuration/engine-options/">エンジンオプション</a>を参照）。
 			</>
 		),
 	},
@@ -139,6 +157,15 @@ const topLevelRows = [
 			</>
 		),
 	},
+	{
+		id: "skippedCustomRules",
+		field: <code>skippedCustomRules</code>,
+		meaning: (
+			<>
+				実行されなかった<code>engineOptions.customRules</code>のエントリで、それぞれ<code>{"{ id, reason }"}</code>の形です（エントリにIDがなければ<code>id</code>は<code>null</code>）。理由は、IDがない、<code>runInPage</code>が関数でないかソースから再構築できない、<code>meta</code>が検証に通らない、別のカスタムルールがすでにそのIDを持っている、複合ルールのIDである、のいずれかです。常に配列で、すべてのカスタムルールが実行されれば空です。それぞれ<code>console.warn</code>でも記録されます。ここに挙がったルールはどの結果にも含まれないため、ルールを除外したスキャンと、そのルールが<code>pass</code>になったスキャンを区別できます。
+			</>
+		),
+	},
 ];
 
 const occurrenceRows = [
@@ -147,7 +174,16 @@ const occurrenceRows = [
 		field: <code>selector</code>,
 		meaning: (
 			<>
-				フラグが立った要素を指し戻せるように組み立てた、ベストエフォートのCSSセレクターです（<code>RULE_AUTHORING.md</code>の<code>helpers.buildSelector</code>を参照）。意図的に崩したDOM構造では一意であることは保証されませんが、エンジンは使う前に、それが報告対象の要素に解決されることを実際に確認しています。例外は、要素が存在しないこと<em>そのもの</em>が検出結果であるルールです。<code>page-title-present</code>は<code>head &gt; title</code>と、<code>html</code>として<code>&lt;title&gt;(missing)&lt;/title&gt;</code>を報告しますが、どちらもページ上には存在しません。どちらも定数なので、これらから作られるフィンガープリントは安定しています。ただし、<strong>ルールが実在するものを報告したことを確かめずに、<code>selector</code>を解決可能なもの、<code>html</code>を実際のマークアップとして扱わないでください</strong>。
+				フラグが立った要素を指し戻せるように組み立てた、ベストエフォートのCSSセレクターです（<code>RULE_AUTHORING.md</code>の<code>helpers.buildSelector</code>を参照）。意図的に崩したDOM構造では一意であることは保証されませんが、エンジンは使う前に、それが報告対象の要素に解決されることを実際に確認しています。例外は、要素が存在しないこと<em>そのもの</em>が検出結果であるルールです。<code>page-title-present</code>は<code>head &gt; title</code>と、<code>html</code>として<code>&lt;title&gt;(missing)&lt;/title&gt;</code>を報告しますが、どちらもページ上には存在しません。どちらも定数なので、これらから作られるフィンガープリントは安定しています。ただし、<strong>ルールが実在するものを報告したことを確かめずに、<code>selector</code>を解決可能なもの、<code>html</code>を実際のマークアップとして扱わないでください</strong>。シャドウツリー内の要素では、<code>selector</code>はそのシャドウルートの中で解決され、そこまでのたどり方は<code>shadowHostSelectors</code>が示します。
+			</>
+		),
+	},
+	{
+		id: "shadowHostSelectors",
+		field: <code>shadowHostSelectors</code>,
+		meaning: (
+			<>
+				シャドウツリー内の要素にだけ含まれます。その要素に至るシャドウホストのセレクターを外側から順に並べたもので、それぞれ自分を含むツリーの中で解決されます。そのため、<code>document.querySelector(s[0]).shadowRoot.querySelector(s[1])…shadowRoot.querySelector(selector)</code>で要素が見つかります。同じ内容を持つ2つのコンポーネントは<code>selector</code>が同じになり、ここで区別されます。<code>selector</code>と同じく、検出結果の識別には含まれません。
 			</>
 		),
 	},
@@ -156,7 +192,7 @@ const occurrenceRows = [
 		field: <code>html</code>,
 		meaning: (
 			<>
-				フラグが立った要素のouter HTMLのスニペットです。<code>includeShadowDom: true</code>のときは、「どの要素か」を示す主な手がかりとしてこれを使ってください（セレクターはシャドウ境界を越えられません）。
+				フラグが立った要素のouter HTMLのスニペットで、2,000文字で切り詰められます。要素を表示するのに役立ち、シャドウツリー内の要素では<code>shadowHostSelectors</code>と合わせて読みます。ページ全体を含む<code>&lt;html&gt;</code>、<code>&lt;head&gt;</code>、<code>&lt;body&gt;</code>では開始タグだけ（<code>&lt;html class="x"&gt;</code>）になるため、ページ単位の検出結果は、ほかの内容が変わっても識別が保たれます。
 			</>
 		),
 	},
@@ -165,7 +201,7 @@ const occurrenceRows = [
 		field: <code>structuralPath</code>,
 		meaning: (
 			<>
-				<code>documentElement</code>からフラグが立った要素までを、兄弟要素の中でのインデックスでたどったパスです（例：<code>[1, 0, 2]</code>）。要素が<code>documentElement</code><em>そのもの</em>であれば<code>[]</code>、特定できなかった場合は<code>null</code>になります。<code>selector</code>だけに頼るより頑健に要素を特定でき、セレクター文字列なら壊れてしまうDOMの変更（IDやクラス名の変更など）にも耐えます。その代わり、<strong>実際のCSSセレクターとしては使えません</strong>。
+				<code>documentElement</code>からフラグが立った要素までを、兄弟要素の中でのインデックスでたどったパスです（例：<code>[1, 0, 2]</code>）。要素が<code>documentElement</code><em>そのもの</em>であれば<code>[]</code>、特定できなかった場合は<code>null</code>になります。シャドウツリー内の要素はすべて<code>null</code>です（その場合は<code>shadowHostSelectors</code>と<code>selector</code>を使ってください）。<code>selector</code>だけに頼るより頑健に要素を特定でき、セレクター文字列なら壊れてしまうDOMの変更（IDやクラス名の変更など）にも耐えます。その代わり、<strong>実際のCSSセレクターとしては使えません</strong>。
 			</>
 		),
 	},
@@ -257,9 +293,11 @@ export function OutputSchemaContent() {
 					"  timestamp: string | null,",
 					"  perfStats: object | null,",
 					"  contextSelector: string | string[] | null,",
+					"  contextMatch: { elementCount: number, unmatchedSelectors: string[] } | null,",
 					"  checksResults: CheckResult[],",
 					"  rulesResults: CompositeResult[],",
-					"  overriddenBuiltinIds: string[]",
+					"  overriddenBuiltinIds: string[],",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string }>",
 					"}",
 				]}
 			/>
@@ -298,6 +336,9 @@ export function OutputSchemaContent() {
 				<li>
 					これは<strong>フラットなリストではなくツリー</strong>です。<code>@surea11y/playwright</code>バインディングの<code>.frames(true)</code>とは意図的に異なります。そちらはPlaywrightの<code>page.frames()</code>が入れ子の深さに関係なくすべてのフレームを返すので、フラットに<em>できます</em>。<code>postMessage</code>による中継にはそのような全体の視点がないため、入れ子を構造で表しています。
 				</li>
+				<li>
+					<strong>レポーターが受け取るのは1つのトップレベルの結果で、このツリーではありません。</strong><code>renderHtmlReport</code>、<code>renderSarifReport</code>、<code>renderJunitReport</code>、<code>buildBaselineEntries</code>、<code>matchBaseline</code>は、<code>checksResults</code>配列を持つオブジェクト以外のもの（フレームをまたぐ結果、配列、失敗したスキャンの<code>null</code>や<code>undefined</code>）を渡されると、何も見つからなかったスキャンとして描画するのではなく<code>TypeError</code>を投げます。<code>topFrame</code>と、各フレームの<code>topFrame</code>を、それぞれ別の呼び出しで渡してください。<code>renderEarlReport</code>はツリーをそのまま受け取り、応答した各フレームがそのURLをキーとする独立したサブジェクトになります。
+				</li>
 			</ul>
 
 			<h2>チェック結果（<code>checksResults[i]</code>）</h2>
@@ -335,6 +376,19 @@ export function OutputSchemaContent() {
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
+					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
+					'    measure: string,       // "contrast-ratio" | "overflow-px" | "target-size-px" | ... (open set)',
+					'    unit: "px" | "ratio",  // open set',
+					'    limit: "min" | "max",',
+					"    threshold: number,",
+					"    value: number,",
+					"    headroom: number,      // >= 0",
+					"    measuredCount: number,",
+					"    selector?: string,",
+					"    shadowHostSelectors?: string[],  // as on an occurrence",
+					"    structuralPath?: number[],",
+					"    context?: object       // rule-specific; not a stable contract",
+					"  },",
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
@@ -364,17 +418,20 @@ export function OutputSchemaContent() {
 				<li>
 					<strong><code>data</code></strong>：判定結果にかかわらずページ全体について何かを報告するルールにだけ含まれます。現在、コアのルールでこれを使うものはありません。検出箇所の<code>data.details</code>と同じく、安定した契約ではありません。
 				</li>
+				<li id="margin">
+					<strong><code>margin</code></strong>：カタログでmarginを宣言しているルール（<code>getChecksCatalog()[i].margin</code>、<code>{"{ measure, unit, limit }"}</code>）で、少なくとも1つの要素がルールのしきい値を満たした場合にだけ含まれます。しきい値を満たしつつ最もしきい値に近づいた要素を示すので、4.5:1に対して4.52:1での<code>pass</code>や、テキストが切れるまであと0.4 pxでの<code>pass</code>を、余裕のある<code>pass</code>と区別できます。判定結果に添えられる情報で、検出結果ではありません。検出箇所を追加、削除、変更することはなく、ベースライン、SARIF、JUnit、EARLはこれを無視します。一部の要素が合格していれば、<code>fail</code>や<code>cantTell</code>の結果にも含まれます。<code>limit</code>は、値がしきい値に達する必要がある場合（コントラスト、サイズ）は<code>min</code>、しきい値を下回る必要がある場合（はみ出し）は<code>max</code>です。<code>headroom</code>はしきい値の内側にどれだけ余裕があるかを<code>unit</code>で表したもので、<code>min</code>なら<code>value - threshold</code>、<code>max</code>なら<code>threshold - value</code>となり、負になることはありません。<code>threshold</code>はその要素の判定に使われたしきい値で、要素ごとに異なることがあります（大きな文字なら3:1）。ピクセルは小数点以下1桁で示されます。CSSピクセルや、15pxのフォントの半分といったしきい値は小数になり、表示する側が人のために丸めるからです。比は丸めません。WCAGはコントラストを丸めないためです。同じ値の要素が複数あれば文書順で最初の要素が選ばれるので、同じページでは常に同じmarginになります。<code>measure</code>と<code>unit</code>はオープンな集合で、マイナーリリースで増えることがあります。<code>context</code>はルール固有で、<code>data.details</code>と同じく安定した契約ではありません。<code>getMargins(result)</code>は、結果に含まれるすべてのmarginを<code>ruleId</code>順に並べた<code>{"[{ ruleId, ...margin }]"}</code>として返します。
+				</li>
 				<li>
 					<strong><code>error</code></strong>：次の3つの場合にだけ含まれます。ルールの実装が捕捉されない例外を投げた場合、上記の手動ルールの強制変換が行われた場合、そして<code>fail</code>の結果のすべての検出箇所で祖先をたどる処理が内部の深さ制限に達し（フラグが立った内容が実際に公開されているかをエンジンが確認できず）、結果全体が同じように<code>cantTell</code>に強制変換された場合です。例外を投げたルールは、必ず<code>outcome: "cantTell"</code>、<code>occurrences: []</code>、例外メッセージを設定した<code>error</code>として現れます。エンジンは、壊れたルール1つでスキャン全体をクラッシュさせることはありません。
 				</li>
 				<li>
-					各結果の<strong><code>engineOptions</code></strong>は、渡したものそのままではなく、<em>解決済みの</em>オプションオブジェクト（ロケールやコントラストのデフォルトを適用した後のもの）です。あるルールが実際に何を受け取ったか、特に解決された<code>locale</code>と<code>contrast.mode</code>/<code>contrast.rootCanvasFallback</code>を確認するのに役立ちます。
+					各結果の<strong><code>engineOptions</code></strong>は、渡したものそのままではなく、<em>解決済みの</em>オプションオブジェクト（ロケールやコントラストのデフォルトを適用した後のもの）です。あるルールが実際に何を受け取ったか、特に解決された<code>locale</code>と<code>contrast.mode</code>/<code>contrast.rootCanvasFallback</code>を確認するのに役立ちます。スキャンが翻訳に使った辞書である<code>messages</code>（ブラウザー用バンドルのロケール用の別ファイル、または独自の文字列）は含まれません。これらは設定ではなくデータで、結果ごとにコピーを持たせるとスキャンが数十メガバイトになっていたためです。どの辞書が使われたかは<code>engine.locale</code>で分かります。さらに2つのオプションは、ルールが見たとおりの形で含まれます。結果を<code>JSON.stringify</code>や<code>structuredClone</code>（<code>postMessage</code>）で運べる単純なデータに保つためです。<code>probes</code>はルールが読む上限付きのコピーとして、<code>customRules</code>は関数を除いた<code>{"[{ id }]"}</code>（IDを持つカスタムルールごとに1件）として含まれます。
 				</li>
 			</ul>
 
 			<h2 id="occurrence">検出箇所（<code>occurrences[i]</code>）</h2>
 			<p>
-				通常は<code>outcome</code>が<code>fail</code>または<code>cantTell</code>のときにだけ含まれます。このエンジンは合格した要素を列挙せず、フラグを立てた要素だけを報告するため、<code>pass</code>の結果は<code>occurrences: []</code>になります。
+				通常は<code>outcome</code>が<code>fail</code>または<code>cantTell</code>のときにだけ含まれます。このエンジンは合格した要素を列挙せず、フラグを立てた要素だけを報告するため、<code>pass</code>の結果は<code>occurrences: []</code>になります。例外はコントラストのルールで、その<code>pass</code>には、スキャンについて述べる検出箇所（対象となり計算できたテキストの量）が<code>selector</code>を空にして1つ付きます。テキストがまったくない<code>pass</code>と、テキストの多いページでの<code>pass</code>を区別できるようにするためです。
 			</p>
 			<p>
 				唯一の例外が<code>notApplicable</code>です。判定対象が何もなかったルールは、その理由を示す検出箇所を1つ付けることがあり、コントラストのルールは、背景を計算できるテキストが1つもなかった場合に実際にそうします。「チェックしたが、フラグを立てるものはなかった」と「チェックできなかった」の違いを、このエンジンは隠さずに報告します。このような検出箇所は要素ではなくスキャンについて述べるものなので、<code>selector</code>は空です。<strong><code>outcome</code>を先に確認せずに、<code>occurrences.length</code>を違反の件数として読まないでください。</strong>
@@ -385,6 +442,7 @@ export function OutputSchemaContent() {
 					"  selector: string,",
 					"  html: string,",
 					"  structuralPath: number[] | null,",
+					"  shadowHostSelectors?: string[],",
 					"  summary: string,",
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
@@ -494,7 +552,7 @@ export function OutputSchemaContent() {
 
 			<h2>実例</h2>
 			<p>
-				<code>&lt;img src="logo.png"&gt;</code>（<code>alt</code>なし）と<code>&lt;button&gt;&lt;/button&gt;</code>（アクセシブルな名前なし）を、<code>runOnly: {"{ includeRuleIds: [...] }"}</code>でこの2つのルールだけに絞ってスキャンします（<a href="/configuration/engine-options/">エンジンオプション</a>を参照。配列そのものでは<strong>ありません</strong>）。
+				<code>&lt;img src="logo.png"&gt;</code>（<code>alt</code>なし）と<code>&lt;button&gt;&lt;/button&gt;</code>（アクセシブルな名前なし）を、<code>runOnly: {"{ includeRuleIds: [...] }"}</code>でこの2つのルールだけに絞ってスキャンします（<a href="/configuration/engine-options/">エンジンオプション</a>を参照。1.10.0以降は、ルールIDの配列をそのまま渡しても同じです）。
 			</p>
 			<CodeBlock
 				lang="js"
@@ -521,6 +579,7 @@ export function OutputSchemaContent() {
 					'  "timestamp": null,',
 					'  "perfStats": null,',
 					'  "contextSelector": null,',
+					'  "contextMatch": null,',
 					'  "checksResults": [',
 					"    {",
 					'      "ruleId": "button-name-present",',
@@ -560,7 +619,8 @@ export function OutputSchemaContent() {
 					"    }",
 					"  ],",
 					'  "rulesResults": [],',
-					'  "overriddenBuiltinIds": []',
+					'  "overriddenBuiltinIds": [],',
+					'  "skippedCustomRules": []',
 					"}",
 				]}
 			/>

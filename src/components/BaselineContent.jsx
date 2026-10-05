@@ -85,7 +85,16 @@ export function BaselineContent() {
 				when a rule doesn't set one), and <code>html</code> is the occurrence's outer-HTML
 				snippet. This is content-based rather than position-based: it survives the flagged
 				element moving around the page (a reorder, an unrelated sibling added/removed) as long as
-				the flagged element's own markup doesn't change. <code>selector</code> is still recorded
+				the flagged element's own markup doesn't change. For a finding about the page itself,
+				reported on <code>&lt;html&gt;</code> or <code>&lt;body&gt;</code> (
+				<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>,{" "}
+				<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
+				<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>), the snippet is the
+				start tag alone, so editing the page's content doesn't make it new. The snippet is
+				compared with each tag's attributes in name order and its class names sorted, so a build
+				that writes <code>class="b a" src</code> where the last one wrote{" "}
+				<code>src class="a b"</code> matches; baseline files written before this keep matching,
+				since the comparison is made at match time. <code>selector</code> is still recorded
 				in the baseline file, but purely for human context when reading a diff — it is never used
 				for matching.
 			</p>

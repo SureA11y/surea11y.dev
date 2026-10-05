@@ -37,8 +37,15 @@ export function RuleOrganizationContent() {
 				</li>
 				<li>
 					<strong>manual</strong>: indica que una persona tiene que decidir; la regla no puede
-					resolver la cuestión a partir del marcado en absoluto. Limitada a{" "}
-					<code>cantTell</code>/<code>notApplicable</code>, nunca <code>fail</code>.
+					decidir si lo que encontró es un problema. Informa <code>cantTell</code> o{" "}
+					<code>notApplicable</code>, y <code>pass</code> solo cuando lo que encuentra es la
+					respuesta que no requiere juicio; nunca <code>fail</code>.{" "}
+					<a href="/rules/landmark-unique/"><code>landmark-unique</code></a> no puede decidir si
+					dos regiones de referencia que comparten nombre son un problema (la APG lo permite cuando
+					su contenido es idéntico), así que eso es <code>cantTell</code>; pero «todos los nombres son
+					distintos» es un hecho, así que eso es <code>pass</code>. Una regla que pide a una persona
+					juzgar cada elemento que encuentra, como si el texto alternativo de una imagen es
+					preciso, nunca informa <code>pass</code>.
 				</li>
 			</ul>
 			<p>

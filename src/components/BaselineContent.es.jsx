@@ -92,7 +92,16 @@ export function BaselineContent() {
 				cuando una regla no establece uno), y <code>html</code> es el fragmento de outer-HTML de la
 				ocurrencia. Esto se basa en el contenido y no en la posición: sobrevive a que el elemento
 				marcado se mueva por la página (un reordenamiento, un elemento hermano no relacionado
-				añadido o eliminado) siempre que el propio marcado del elemento marcado no cambie. El{" "}
+				añadido o eliminado) siempre que el propio marcado del elemento marcado no cambie. Para
+				un hallazgo sobre la propia página, informado en <code>&lt;html&gt;</code> o{" "}
+				<code>&lt;body&gt;</code> (<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>,{" "}
+				<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>, <a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>), el fragmento es solo
+				la etiqueta de apertura, así que editar el contenido de la página no lo convierte en nuevo.
+				El fragmento se compara con los atributos de cada etiqueta ordenados por nombre y sus
+				nombres de clase ordenados, así que una compilación que escribe{" "}
+				<code>class="b a" src</code> donde la anterior escribió <code>src class="a b"</code>{" "}
+				coincide; los archivos de baseline escritos antes de esto siguen coincidiendo, porque la
+				comparación se hace en el momento de buscar coincidencias. El{" "}
 				<code>selector</code> sigue registrándose en el archivo de baseline, pero únicamente como
 				contexto para una persona que lea un diff; nunca se usa para la coincidencia.
 			</p>

@@ -7,6 +7,21 @@ const core = "https://github.com/SureA11y/core/blob/main";
 const topLevelRows = [
 	{ id: "engine.tag", field: <code>engine.tag</code>, meaning: <>Das Identitäts-Tag der Engine, derzeit <code>"a11ycore"</code>. Jede Regel (eingebaut oder eigene) trägt es in <code>meta.tags</code>; die <code>ruleId</code>s der Regeln selbst stehen ohne Präfix.</> },
 	{
+		id: "engine.version",
+		field: <code>engine.version</code>,
+		meaning: (
+			<>
+				Das Release von <code>@surea11y/core</code>, das das Ergebnis erzeugt hat, etwa{" "}
+				<code>"1.10.0"</code>: Das geben Sie in einem Fehlerbericht an, und daran unterscheiden Sie
+				Ergebnisse aus zwei Releases. Ein Ergebnis kann sich zwischen Releases ändern, ohne dass
+				sich seine Struktur ändert, deshalb ist das nicht <code>schemaVersion</code>. Die
+				Reporter für <a href="/results-reports/sarif-report/">SARIF</a> und{" "}
+				<a href="/results-reports/earl-report/">EARL</a> verwenden es als Tool-Version, wenn Sie
+				keine angeben.
+			</>
+		),
+	},
+	{
 		id: "engine.schemaVersion",
 		field: <code>engine.schemaVersion</code>,
 		meaning: (
@@ -144,8 +159,18 @@ const topLevelRows = [
 				lädt, sonst <code>"loaded"</code>. Ein Feld, das die Seite nicht liefern kann, fehlt. Das
 				Auslesen bringt keinen Nichtdeterminismus mit sich: Wie das DOM sind diese Werte Eingabe.
 				Für Ergebnisse, die sich zwischen Läufen vergleichen lassen, warten Sie vor dem Scan auf{" "}
-				<code>document.fonts.ready</code>. Jeder Frame in einem{" "}
-				<a href="#cross-frame-result">Frame-übergreifenden Ergebnis</a> trägt sein eigenes.
+				<code>document.fonts.ready</code>. <code>images</code> ist <code>"loading"</code>, solange
+				noch ein Bild lädt, sonst <code>"loaded"</code>: Ein Bild, das später ankommt, kann
+				verschieben, was Layout-Regeln gemessen haben, scannen Sie für vergleichbare Ergebnisse
+				also nach dem <code>load</code>-Event der Seite. Ein Bild mit <code>loading="lazy"</code>{" "}
+				wird nicht berücksichtigt, da es wartet, bis gescrollt wird. <code>animationsSettled</code>{" "}
+				gibt an, wie viele laufende Animationen und Transitions der Scan angehalten hat: Für den
+				Scan wird eine endliche (ein Einblenden) an ihrem Ende gelesen und eine, die sich endlos
+				wiederholt (ein Laufband, ein Ladekreisel), an ihrem Anfang, und jede wird danach genau
+				dorthin zurückgesetzt, wo sie war. So ergibt eine Seite, die während eines Einblendens
+				gescannt wird, dasselbe Ergebnis wie eine danach gescannte. Der Browser zeichnet den
+				angehaltenen Zustand nie, da der Scan eine einzige synchrone Aufgabe ist. Jeder Frame in
+				einem <a href="#cross-frame-result">Frame-übergreifenden Ergebnis</a> trägt sein eigenes.
 			</>
 		),
 	},
@@ -177,9 +202,30 @@ const topLevelRows = [
 				von Strings (Scan mehrerer Bereiche, siehe{" "}
 				<a href="/configuration/engine-options/">Engine-Optionen</a>) oder <code>null</code>,
 				wenn keins bzw. ein leeres übergeben wurde.
-			</>
-		),
-	},
+				</>
+				),
+				},
+				{
+				id: "contextMatch",
+				field: <code>contextMatch</code>,
+				meaning: (
+					<>
+						Wie der <code>contextSelector</code> aufgelöst wurde, oder <code>null</code>, wenn keiner
+						angegeben war. <code>elementCount</code> ist die Zahl der verschiedenen Elemente, auf die
+						er gepasst hat, also der Wurzeln des Scans. <code>unmatchedSelectors</code> listet jeden
+						Selektor so, wie Sie ihn angegeben haben, der auf kein Element gepasst hat; ein
+						kommagetrennter String ist hier ein einziger Selektor, so wie er ein einziger Aufruf von{" "}
+						<code>querySelectorAll</code> ist.{" "}
+						<strong>Ein <code>elementCount</code> von 0 bedeutet, dass nichts gescannt wurde</strong>:
+						Die Seite hat keinen solchen Bereich, jeder Eintrag in <code>checksResults</code> und{" "}
+						<code>rulesResults</code> ist <code>notApplicable</code>, und das Ergebnis sagt nichts über
+						die Seite aus. Melden Sie es als nicht gefundenen Bereich, nicht als Scan ohne Befunde. Ein
+						Selektor, den der Browser nicht parsen kann, erreicht nie ein Ergebnis: Der Scan wirft
+						einen Fehler mit <code>code: 'INVALID_CONTEXT_SELECTOR'</code> (siehe{" "}
+						<a href="/configuration/engine-options/">Engine-Optionen</a>).
+					</>
+				),
+				},
 	{
 		id: "checksResults",
 		field: <code>checksResults</code>,
@@ -219,10 +265,27 @@ const topLevelRows = [
 				wenn keine Kollision auftrat. Wird beim Scan zusätzlich über <code>console.warn</code>{" "}
 				protokolliert, da eine gleichnamige eigene Regel genauso gut eine versehentliche
 				Kollision wie ein gewolltes Überschreiben sein kann.
-			</>
-		),
-	},
-];
+				</>
+				),
+				},
+				{
+				id: "skippedCustomRules",
+				field: <code>skippedCustomRules</code>,
+				meaning: (
+					<>
+						Die Einträge in <code>engineOptions.customRules</code>, die nicht ausgeführt wurden, jeweils
+						als <code>{"{ id, reason }"}</code> (<code>id</code> ist <code>null</code>, wenn der Eintrag
+						keine hatte): keine ID, ein <code>runInPage</code>, das keine Funktion ist oder sich nicht
+						aus seinem Quelltext wiederherstellen lässt, ein <code>meta</code>, das die Validierung
+						nicht besteht, eine ID, die schon eine andere eigene Regel hat, oder die ID einer
+						zusammengesetzten Regel. Immer ein Array; leer, wenn jede eigene Regel ausgeführt wurde.
+						Jeder Eintrag wird zusätzlich mit <code>console.warn</code> protokolliert. Eine hier
+						aufgeführte Regel steht in keinem Ergebnis, so lässt sich ein Scan, der sie ausgelassen
+						hat, von einem unterscheiden, in dem sie <code>pass</code> ergab.
+					</>
+				),
+				},
+				];
 
 const occurrenceRows = [
 	{
@@ -241,18 +304,37 @@ const occurrenceRows = [
 				bleibt also stabil, aber{" "}
 				<strong>behandeln Sie <code>selector</code> nicht als auflösbar und <code>html</code>{" "}
 				nicht als echtes Markup, ohne zu prüfen, dass die Regel etwas Existierendes gemeldet
-				hat</strong>.
-			</>
-		),
-	},
+				hat</strong>. Bei einem Element in einem Shadow Tree löst <code>selector</code> innerhalb
+				seiner Shadow Root auf, und <code>shadowHostSelectors</code> gibt an, wie man dorthin
+				gelangt.
+				</>
+				),
+				},
+				{
+				id: "shadowHostSelectors",
+				field: <code>shadowHostSelectors</code>,
+				meaning: (
+					<>
+						Nur bei einem Element in einem Shadow Tree vorhanden: die Selektoren der Shadow Hosts, die
+						zu ihm führen, vom äußersten an, jeder in dem Baum aufgelöst, der ihn enthält, sodass{" "}
+						<code>document.querySelector(s[0]).shadowRoot.querySelector(s[1])…shadowRoot.querySelector(selector)</code>{" "}
+						das Element findet. Zwei Komponenten mit gleichem Inhalt ergeben denselben{" "}
+						<code>selector</code> und unterscheiden sich hier. Wie <code>selector</code> gehört es
+						nicht zur Identität eines Befunds.
+					</>
+				),
+				},
 	{
 		id: "html",
 		field: <code>html</code>,
 		meaning: (
 			<>
-				Ein Outer-HTML-Ausschnitt des markierten Elements. Verwenden Sie ihn als wichtigstes
-				Signal dafür, um welches Element es geht, wenn <code>includeShadowDom: true</code> gilt
-				(Selektoren durchdringen keine Shadow-Grenzen).
+				Ein Outer-HTML-Ausschnitt des markierten Elements, nach 2.000 Zeichen abgeschnitten.
+				Nützlich, um das Element zu zeigen, und bei einem Element in einem Shadow Tree zusammen mit{" "}
+				<code>shadowHostSelectors</code> zu lesen. Bei <code>&lt;html&gt;</code>,{" "}
+				<code>&lt;head&gt;</code> und <code>&lt;body&gt;</code>, die die ganze Seite enthalten, ist
+				es nur das Start-Tag (<code>&lt;html class="x"&gt;</code>), sodass ein Befund auf
+				Seitenebene seine Identität behält, wenn sich anderer Inhalt ändert.
 			</>
 		),
 	},
@@ -264,7 +346,8 @@ const occurrenceRows = [
 				Der Pfad aus Geschwister-Indizes von <code>documentElement</code> hinunter zum markierten
 				Element (z. B. <code>[1, 0, 2]</code>); <code>[]</code>, wenn das Element selbst{" "}
 				<code>documentElement</code> <em>ist</em>, <code>null</code>, wenn er sich nicht
-				bestimmen ließ. Ein robusterer Mechanismus zur Identifizierung von Elementen als{" "}
+				bestimmen ließ, was für jedes Element in einem Shadow Tree gilt (verwenden Sie dort{" "}
+				<code>shadowHostSelectors</code> und <code>selector</code>). Ein robusterer Mechanismus zur Identifizierung von Elementen als{" "}
 				<code>selector</code> allein: Er übersteht DOM-Änderungen, an denen ein Selektor-String
 				scheitern würde (etwa eine umbenannte ID oder Klasse), um{" "}
 				<strong>den Preis, dass er sich nicht als echter CSS-Selektor verwenden lässt</strong>.
@@ -392,9 +475,11 @@ export function OutputSchemaContent() {
 					"  timestamp: string | null,",
 					"  perfStats: object | null,",
 					"  contextSelector: string | string[] | null,",
+					"  contextMatch: { elementCount: number, unmatchedSelectors: string[] } | null,",
 					"  checksResults: CheckResult[],",
 					"  rulesResults: CompositeResult[],",
-					"  overriddenBuiltinIds: string[]",
+					"  overriddenBuiltinIds: string[],",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string }>",
 					"}",
 				]}
 			/>
@@ -453,8 +538,20 @@ export function OutputSchemaContent() {
 					Frame unabhängig von der Verschachtelungstiefe liefert. Ein <code>postMessage</code>-Relay
 					hat keine solche Gesamtsicht, deshalb wird die Verschachtelung stattdessen strukturell
 					abgebildet.
-				</li>
-			</ul>
+					</li>
+					<li>
+						<strong>Die Reporter nehmen ein einzelnes Ergebnis der obersten Ebene, nicht diesen
+						Baum.</strong> <code>renderHtmlReport</code>, <code>renderSarifReport</code>,{" "}
+						<code>renderJunitReport</code>, <code>buildBaselineEntries</code> und{" "}
+						<code>matchBaseline</code> werfen einen <code>TypeError</code>, wenn sie etwas anderes
+						erhalten als ein Objekt mit einem Array <code>checksResults</code> (ein Frame-übergreifendes
+						Ergebnis, ein Array, <code>null</code> oder <code>undefined</code> aus einem
+						fehlgeschlagenen Scan), statt es als Scan ohne Befunde darzustellen. Übergeben Sie{" "}
+						<code>topFrame</code> und den <code>topFrame</code> jedes Frames in eigenen Aufrufen.{" "}
+						<code>renderEarlReport</code> nimmt den Baum, wie er ist: Jeder Frame, der geantwortet hat,
+						wird ein eigenes Subjekt, über seine URL zugeordnet.
+					</li>
+					</ul>
 
 			<h2>Ein Prüfergebnis (<code>checksResults[i]</code>)</h2>
 			<CodeBlock
@@ -491,6 +588,19 @@ export function OutputSchemaContent() {
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
+					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
+					'    measure: string,       // "contrast-ratio" | "overflow-px" | "target-size-px" | ... (open set)',
+					'    unit: "px" | "ratio",  // open set',
+					'    limit: "min" | "max",',
+					"    threshold: number,",
+					"    value: number,",
+					"    headroom: number,      // >= 0",
+					"    measuredCount: number,",
+					"    selector?: string,",
+					"    shadowHostSelectors?: string[],  // as on an occurrence",
+					"    structuralPath?: number[],",
+					"    context?: object       // rule-specific; not a stable contract",
+					"  },",
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
@@ -561,7 +671,33 @@ export function OutputSchemaContent() {
 					<strong><code>data</code></strong>: nur bei einer Regel vorhanden, die unabhängig von
 					ihrem Ergebnis etwas über die ganze Seite meldet. Keine Core-Regel tut das derzeit. Wie{" "}
 					<code>data.details</code> bei einem Vorkommen ist es kein stabiler Vertrag.
-				</li>
+					</li>
+					<li id="margin">
+						<strong><code>margin</code></strong>: nur bei einer Regel vorhanden, die im Katalog eine
+						deklariert (<code>getChecksCatalog()[i].margin</code>,{" "}
+						<code>{"{ measure, unit, limit }"}</code>), und nur, wenn mindestens ein Element den
+						Schwellenwert der Regel erfüllt hat. Es nennt das Element, das dem Schwellenwert am
+						nächsten kam und ihn dabei erfüllte. So lässt sich ein <code>pass</code> mit 4,52:1 bei
+						geforderten 4,5:1 oder 0,4 px vor abgeschnittenem Text von einem mit reichlich Abstand
+						unterscheiden. Es steht neben dem Ergebnis und ist kein Befund: Es fügt nie ein Vorkommen
+						hinzu, entfernt oder ändert keines, und Baselines, SARIF, JUnit und EARL ignorieren es. Es
+						wird auch bei <code>fail</code>- und <code>cantTell</code>-Ergebnissen gemeldet, wenn
+						einige Elemente bestanden haben. <code>limit</code> ist <code>min</code>, wenn der Wert den
+						Schwellenwert erreichen muss (Kontrast, Größe), und <code>max</code>, wenn er darunter
+						bleiben muss (Überlauf); <code>headroom</code> ist der verbleibende Abstand in{" "}
+						<code>unit</code>, also <code>value - threshold</code> bei <code>min</code> und{" "}
+						<code>threshold - value</code> bei <code>max</code>, nie negativ. <code>threshold</code> ist
+						der Schwellenwert, an dem dieses Element gemessen wurde; er kann sich zwischen Elementen
+						unterscheiden (3:1 für großen Text). Pixel werden mit einer Nachkommastelle angegeben:
+						CSS-Pixel und Schwellenwerte wie die Hälfte einer 15px-Schrift sind Bruchzahlen, und eine
+						Anzeige rundet sie für Menschen. Ein Verhältnis wird nicht gerundet, da WCAG Kontrast nicht
+						rundet. Bei Gleichstand gewinnt das in der Dokumentreihenfolge erste Element, sodass eine
+						Seite jedes Mal denselben Wert ergibt. <code>measure</code> und <code>unit</code> sind
+						offene Mengen, die in einem Minor-Release wachsen können; <code>context</code> ist
+						regelspezifisch und, wie <code>data.details</code>, kein stabiler Vertrag.{" "}
+						<code>getMargins(result)</code> gibt alle Werte eines Ergebnisses als{" "}
+						<code>{"[{ ruleId, ...margin }]"}</code> zurück, sortiert nach <code>ruleId</code>.
+					</li>
 				<li>
 					<strong><code>error</code></strong>: nur in drei Fällen vorhanden: Die
 					Regelimplementierung hat eine nicht abgefangene Exception geworfen, die oben
@@ -580,8 +716,17 @@ export function OutputSchemaContent() {
 					Kontrast), nicht wörtlich das, was Sie übergeben haben. Nützlich, um zu prüfen, was eine
 					bestimmte Regel tatsächlich gesehen hat, insbesondere die aufgelöste{" "}
 					<code>locale</code> und <code>contrast.mode</code>/
-					<code>contrast.rootCanvasFallback</code>.
-				</li>
+					<code>contrast.rootCanvasFallback</code>. Es lässt <code>messages</code> weg, die
+					Wörterbücher, mit denen der Lauf übersetzt hat (eine separate Locale-Datei im Browser-Bundle
+					oder Ihre eigenen Strings): Sie sind Daten, keine Einstellung, und eine Kopie in jedem
+					Ergebnis machte einen Scan zig Megabyte groß. <code>engine.locale</code> gibt an, welches
+					Wörterbuch verwendet wurde. Zwei weitere Optionen werden so wiedergegeben, wie die Regeln
+					sie gesehen haben, damit das Ergebnis einfache Daten bleibt, die{" "}
+					<code>JSON.stringify</code> und <code>structuredClone</code> (<code>postMessage</code>)
+					transportieren können: <code>probes</code> als die gekappte Kopie, die die Regeln lesen, und{" "}
+					<code>customRules</code> als <code>{"[{ id }]"}</code>, ein Eintrag je eigener Regel mit ID,
+					ohne ihre Funktionen.
+					</li>
 			</ul>
 
 			<h2 id="occurrence">Ein Vorkommen (<code>occurrences[i]</code>)</h2>
@@ -589,8 +734,11 @@ export function OutputSchemaContent() {
 				Normalerweise nur vorhanden, wenn <code>outcome</code> <code>fail</code> oder{" "}
 				<code>cantTell</code> ist: Ein <code>pass</code>-Ergebnis hat{" "}
 				<code>occurrences: []</code>, da diese Engine nicht die Elemente aufzählt, die bestanden
-				haben, sondern nur die markierten.
-			</p>
+				haben, sondern nur die markierten. Die Kontrastregeln sind die Ausnahme: Ihr{" "}
+				<code>pass</code> trägt ein Vorkommen, das den Scan beschreibt (wie viel Text in Frage kam
+				und berechenbar war), mit leerem <code>selector</code>, damit sich ein <code>pass</code>{" "}
+				ohne jeden Text von einem über eine Seite voller Text unterscheiden lässt.
+				</p>
 			<p>
 				<code>notApplicable</code> ist die einzige Ausnahme. Eine Regel, die nichts zu beurteilen
 				hatte, kann ein einzelnes Vorkommen mit der Begründung anhängen, und die Kontrastregeln
@@ -607,6 +755,7 @@ export function OutputSchemaContent() {
 					"  selector: string,",
 					"  html: string,",
 					"  structuralPath: number[] | null,",
+					"  shadowHostSelectors?: string[],",
 					"  summary: string,",
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
@@ -776,8 +925,8 @@ export function OutputSchemaContent() {
 				Scan von <code>&lt;img src="logo.png"&gt;</code> (ohne <code>alt</code>) und{" "}
 				<code>&lt;button&gt;&lt;/button&gt;</code> (ohne zugänglichen Namen), eingegrenzt auf
 				genau diese beiden Regeln über <code>runOnly: {"{ includeRuleIds: [...] }"}</code>{" "}
-				(siehe <a href="/configuration/engine-options/">Engine-Optionen</a>; das ist{" "}
-				<strong>kein</strong> reines Array):
+				(siehe <a href="/configuration/engine-options/">Engine-Optionen</a>; seit 1.10.0 bewirkt ein
+				reines Array von Regel-IDs dasselbe):
 			</p>
 			<CodeBlock
 				lang="js"
@@ -804,6 +953,7 @@ export function OutputSchemaContent() {
 					'  "timestamp": null,',
 					'  "perfStats": null,',
 					'  "contextSelector": null,',
+					'  "contextMatch": null,',
 					'  "checksResults": [',
 					"    {",
 					'      "ruleId": "button-name-present",',
@@ -843,7 +993,8 @@ export function OutputSchemaContent() {
 					"    }",
 					"  ],",
 					'  "rulesResults": [],',
-					'  "overriddenBuiltinIds": []',
+					'  "overriddenBuiltinIds": [],',
+					'  "skippedCustomRules": []',
 					"}",
 				]}
 			/>

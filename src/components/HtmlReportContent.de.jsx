@@ -34,7 +34,16 @@ export function HtmlReportContent() {
 					mit Schweregrad, Chip(s) für das WCAG-Erfolgskriterium, einem repräsentativen Vorkommen
 					und der Gesamtzahl der Vorkommen. Begrenzt auf die 24 Regeln mit der höchsten Priorität,
 					darüber hinaus mit einem Hinweis auf weitere.
-				</li>
+					</li>
+					<li>
+						<strong>Am nächsten an der Grenze</strong>: erscheint, wenn der Scan Abstandswerte enthält
+						(<a href="/results-reports/output-schema/#margin"><code>margin</code> bei einem Prüfergebnis</a>).
+						Eine Zeile je Regel, die gegen einen Schwellenwert misst: ihr knappster bestandener Wert,
+						die Grenze, der verbleibende Abstand und das Element. Pixel werden auf ganze Zahlen
+						gerundet, unter einem Pixel steht „weniger als 1 px“; Verhältnisse zeigen zwei
+						Nachkommastellen. Eine Regel, die nur knapp bestanden hat, kann schon durch eine kleine
+						Änderung scheitern.
+					</li>
 				<li>
 					<strong>WCAG-Zusammenfassung</strong>: gruppiert nach Konformitätsstufe (A / AA / AAA),
 					direkt aus den zusammengesetzten Zusammenfassungen der Engine in{" "}
@@ -103,9 +112,12 @@ export function HtmlReportContent() {
 				]}
 			/>
 			<p>
-				<code>renderHtmlReport(result, options)</code> ist eine reine Funktion — sie gibt einen
-				String zurück und <strong>greift selbst nie auf das Dateisystem zu</strong> (das Schreiben
-				übernimmt das CLI-Flag <code>--html</code>). <code>options.title</code> ist optional
+				<code>renderHtmlReport(result, options)</code> gibt einen String zurück und{" "}
+				<strong>greift selbst nie auf das Dateisystem zu</strong> (das Schreiben übernimmt das
+				CLI-Flag <code>--html</code>). Die Seite trägt das Datum aus dem <code>timestamp</code> des
+				Ergebnisses (gesetzt mit <code>engineOptions.timestamp</code>), in UTC angezeigt, sodass
+				dasselbe Ergebnis immer dieselbe Seite ergibt; ein Ergebnis ohne Zeitstempel erhält das
+				Datum der Erzeugung. <code>options.title</code> ist optional
 				(Standardwert <code>"surea11y scan report"</code>).
 			</p>
 

@@ -14,6 +14,28 @@ const localeCoverageRows = localeData.locales.map((l) => ({
 	untranslated: l.canonical ? "— (el conjunto canónico/de reserva)" : String(l.stillEnglish),
 }));
 
+// Sample output for getLocaleCoverage(), built from the same generated data
+// as the table above so the numbers can't drift apart.
+const coverageSampleLines = [
+	"const { getLocaleCoverage } = require('@surea11y/core');",
+	"",
+	"getLocaleCoverage();",
+	"// {",
+	"//   sourceLocale: 'en',",
+	`//   totalKeys: ${localeData.totalKeys},`,
+	"//   locales: [",
+	...localeData.locales
+		.filter((l) => !l.canonical)
+		.slice(0, 2)
+		.map(
+			(l) =>
+				`//     { locale: '${l.id}', total: ${l.keys}, translated: ${l.keys - l.stillEnglish}, missing: ${l.missing}, orphaned: [], percent: ${Math.round(((l.keys - l.stillEnglish) / l.keys) * 1000) / 10} },`,
+		),
+	"//     ...",
+	"//   ]",
+	"// }",
+];
+
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "Obtuviste exactamente lo que pediste, y ese diccionario contiene todas las claves." },
 	{
@@ -90,7 +112,7 @@ export function LocalesContent() {
 					{ key: "locale", label: "Configuración regional", width: "18%" },
 					{ key: "file", label: "Archivo", width: "24%" },
 					{ key: "keys", label: "Claves", width: "12%" },
-					{ key: "untranslated", label: "Valores idénticos al inglés", wrap: true },
+					{ key: "untranslated", label: "No traducidos", wrap: true },
 				]}
 				rows={localeCoverageRows.map((r) => ({
 					...r,
@@ -102,11 +124,40 @@ export function LocalesContent() {
 				}))}
 			/>
 			<p>
-				La última columna cuenta los valores que coinciden carácter por carácter con el texto en
-				inglés. Eso detecta una clave que nadie ha traducido aún, pero también cuenta una palabra
-				que simplemente es igual en ambos idiomas, como <em lang="es">Selector</em> en español o{" "}
-				<em lang="fr">Orientation</em> e <em lang="fr">Interruptions</em> en francés: eso es lo
-				que reflejan los recuentos distintos de cero de arriba.
+				"No traducidos" cuenta los valores que coinciden carácter por carácter con el texto en
+				inglés, salvo las palabras que con razón son iguales en un idioma: en francés{" "}
+				<em lang="fr">Orientation</em>, <em lang="fr">Interruptions</em> y{" "}
+				<em lang="fr">Occurrences</em>, en alemán <em lang="de">Element</em>, en español{" "}
+				<em lang="es">Selector</em>. Esas palabras figuran en una lista, cada una con el texto en
+				inglés con el que se comprobó, y cuentan como traducidas. Si el inglés cambia, la entrada
+				deja de aplicarse y la cadena cuenta como no traducida hasta que alguien la vuelva a
+				comprobar. El recuento no puede ver una palabra en inglés que quede dentro de una frase por
+				lo demás traducida; eso se detecta leyendo el texto, y no queda ninguna en las
+				configuraciones regionales de arriba.
+			</p>
+
+			<h3 id="reading-coverage-from-the-package">Leer la cobertura desde el paquete</h3>
+			<p>
+				Las mismas cifras están disponibles en tiempo de ejecución, a partir de los diccionarios que
+				incluye el paquete instalado, así que una herramienta o un sitio de documentación puede
+				mostrarlas sin una copia del repositorio:
+			</p>
+			<CodeBlock lang="js" lines={coverageSampleLines} />
+			<p>
+				Para cada configuración regional, <code>total</code> es el número de claves en inglés con el
+				que se mide, <code>translated</code> cuántos de sus valores difieren del inglés o figuran
+				como iguales con razón, <code>missing</code> cuántas claves le faltan (se muestran en
+				inglés) y <code>orphaned</code> las claves que tiene y el inglés no.{" "}
+				<code>total - translated</code> es la columna "No traducidos" de arriba, incluidas las
+				claves que faltan. Las claves que un perfil deja fuera de una configuración regional a
+				propósito no se cuentan. El informe de cobertura del propio repositorio y esta función
+				comparten una única implementación, así que siempre coinciden; el informe cuenta por
+				separado los diccionarios de core y los de cada perfil, y esta función el diccionario
+				combinado que usa un análisis. Es una exportación con soporte (
+				<a href={`${core}/docs/API_STABILITY.md#extension-points`}>
+					<code>API_STABILITY.md</code>, puntos de extensión
+				</a>
+				).
 			</p>
 			<p>
 				Los archivos de configuración regional son JSON simples: un mapa plano de clave a cadena traducida, en el

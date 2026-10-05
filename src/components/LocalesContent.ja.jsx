@@ -14,6 +14,28 @@ const localeCoverageRows = localeData.locales.map((l) => ({
 	untranslated: l.canonical ? "—（基準・フォールバック用のセット）" : String(l.stillEnglish),
 }));
 
+// Sample output for getLocaleCoverage(), built from the same generated data
+// as the table above so the numbers can't drift apart.
+const coverageSampleLines = [
+	"const { getLocaleCoverage } = require('@surea11y/core');",
+	"",
+	"getLocaleCoverage();",
+	"// {",
+	"//   sourceLocale: 'en',",
+	`//   totalKeys: ${localeData.totalKeys},`,
+	"//   locales: [",
+	...localeData.locales
+		.filter((l) => !l.canonical)
+		.slice(0, 2)
+		.map(
+			(l) =>
+				`//     { locale: '${l.id}', total: ${l.keys}, translated: ${l.keys - l.stillEnglish}, missing: ${l.missing}, orphaned: [], percent: ${Math.round(((l.keys - l.stillEnglish) / l.keys) * 1000) / 10} },`,
+		),
+	"//     ...",
+	"//   ]",
+	"// }",
+];
+
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "指定したとおりの辞書が使われ、その辞書にすべてのキーがそろっています。" },
 	{
@@ -89,7 +111,7 @@ export function LocalesContent() {
 					{ key: "locale", label: "ロケール", width: "18%" },
 					{ key: "file", label: "ファイル", width: "24%" },
 					{ key: "keys", label: "キー数", width: "12%" },
-					{ key: "untranslated", label: "英語と同一の値", wrap: true },
+					{ key: "untranslated", label: "未翻訳", wrap: true },
 				]}
 				rows={localeCoverageRows.map((r) => ({
 					...r,
@@ -101,7 +123,28 @@ export function LocalesContent() {
 				}))}
 			/>
 			<p>
-				最後の列は、英語のテキストと1文字残らず一致する値の数です。まだ誰も翻訳していないキーを見つけられますが、フランス語の「<span lang="fr">Orientation</span>」「<span lang="fr">Interruptions</span>」やスペイン語の「<span lang="es">Selector</span>」のように、両方の言語で単に同じ語も数えます。上の表で0以外になっているのはそうした語です。
+				「未翻訳」は、英語のテキストと1文字残らず一致する値の数です。ただし、フランス語の「<span lang="fr">Orientation</span>」「<span lang="fr">Interruptions</span>」「<span lang="fr">Occurrences</span>」、ドイツ語の「<span lang="de">Element</span>」、スペイン語の「<span lang="es">Selector</span>」のように、その言語でも同じ語であるのが正しいものは除きます。こうした語は、照合した英語のテキストとともに一覧に登録され、翻訳済みとして数えられます。英語が変わるとその登録は当てはまらなくなり、誰かが改めて確認するまで、その文字列は未翻訳として数えられます。訳文の中に英単語が残っていても、この数には表れません。それはテキストを読んで見つけるもので、上のロケールには1つも残っていません。
+			</p>
+
+			<h3 id="reading-coverage-from-the-package">パッケージからカバー率を読み取る</h3>
+			<p>
+				同じ数値は、インストールしたパッケージに含まれる辞書から実行時に取得できます。ツールやドキュメントサイトは、リポジトリをチェックアウトしなくても表示できます。
+			</p>
+			<CodeBlock lang="js" lines={coverageSampleLines} />
+			<p>
+				ロケールごとに、
+				<code>total</code>
+				は比較の基準となる英語のキーの数、
+				<code>translated</code>
+				は英語と異なる値、または同じであるのが正しいと登録された値の数、
+				<code>missing</code>
+				は欠けているキーの数（英語で表示されます）、
+				<code>orphaned</code>
+				は英語にはないのにそのロケールにあるキーです。
+				<code>total - translated</code>
+				が上の「未翻訳」の列で、欠けているキーも含みます。プロファイルが意図してロケールから外したキーは数えません。リポジトリ自体のカバー率レポートとこの関数は1つの実装を共有しているため、結果は常に一致します。レポートはcoreの辞書と各プロファイルの辞書を別々に数え、この関数はスキャンで使われる統合済みの辞書を数えます。サポート対象のエクスポートです（
+				<a href={`${core}/docs/API_STABILITY.md#extension-points`}><code>API_STABILITY.md</code>の拡張ポイント</a>
+				）。
 			</p>
 			<p>
 				ロケールファイルはただのJSONで、キーから翻訳済み文字列へのフラットなマップを

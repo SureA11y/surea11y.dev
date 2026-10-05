@@ -33,7 +33,15 @@ export function HtmlReportContent() {
 					indiquant la sévérité, le ou les critères de succès WCAG, une occurrence représentative
 					et le nombre total d’occurrences. Limité aux 24 règles les plus prioritaires, avec une
 					note de dépassement au-delà.
-				</li>
+					</li>
+					<li>
+						<strong>Au plus près de la limite</strong> : affiché lorsque l’analyse comporte des marges
+						(<a href="/results-reports/output-schema/#margin"><code>margin</code> sur un résultat de vérification</a>).
+						Une ligne par règle qui mesure par rapport à un seuil : sa valeur conforme la plus proche,
+						la limite, la marge restante et l’élément. Les pixels sont arrondis à l’entier, avec
+						« moins de 1 px » en dessous de un ; les rapports affichent deux décimales. Une règle qui
+						est passée avec peu de marge est une règle qu’un petit changement peut faire échouer.
+					</li>
 				<li>
 					<strong>Agrégation WCAG</strong> : regroupée par niveau de conformité (A / AA / AAA),
 					issue directement des agrégations composites <code>rulesResults[]</code> du moteur
@@ -103,9 +111,12 @@ export function HtmlReportContent() {
 				]}
 			/>
 			<p>
-				<code>renderHtmlReport(result, options)</code> est une fonction pure : elle renvoie une
-				chaîne et <strong>ne touche jamais elle-même au système de fichiers</strong> (c’est le
-				flag <code>--html</code> de la CLI qui se charge de l’écriture).{" "}
+				<code>renderHtmlReport(result, options)</code> renvoie une chaîne et{" "}
+				<strong>ne touche jamais elle-même au système de fichiers</strong> (c’est le flag{" "}
+				<code>--html</code> de la CLI qui se charge de l’écriture). La page est datée par le{" "}
+				<code>timestamp</code> du résultat (à définir avec <code>engineOptions.timestamp</code>),
+				affiché en UTC, si bien que le même résultat produit toujours la même page ; un résultat qui
+				n’en a pas est daté du moment du rendu.{" "}
 				<code>options.title</code> est facultatif (par défaut <code>"surea11y scan report"</code>).
 			</p>
 

@@ -94,6 +94,13 @@ export function OverviewContent() {
 				<a href="/conformance/wcag-mapping/">Conformance</a> for how individual results roll up into a WCAG
 				verdict — including how a target WCAG version (2.0/2.1/2.2) is resolved and applied.
 			</p>
+			<p>
+				A <code>pass</code> also says how close it came. Rules that measure against a threshold —
+				contrast, target size, text spacing — report a <code>margin</code>: the element that came
+				closest to the limit while still meeting it. Text at 4.52:1 against a 4.5:1 minimum passes,
+				and the margin shows it, so you can fix it before a small change turns it into a{" "}
+				<code>fail</code>. See the <a href="/results-reports/output-schema/#margin">Output schema</a>.
+			</p>
 
 			<h3>Checked against the ACT corpus</h3>
 			<p>
@@ -118,7 +125,7 @@ export function OverviewContent() {
 
 			<h2>Key principles</h2>
 			<ul>
-				<li><strong>Deterministic execution.</strong> The same input always produces the same output.</li>
+				<li><strong>Deterministic execution.</strong> The same input always produces the same output. Running animations and transitions are held still for the scan, so a page caught mid-fade gives the same result as a settled one.</li>
 				<li><strong>Conservative by design.</strong> <code>fail</code> is reserved for objective, normative violations, minimizing false alarms.</li>
 				<li><strong>Standards traceability.</strong> Rules map to the applicable WCAG Success Criterion whenever appropriate.</li>
 				<li><strong>Stable machine-readable output.</strong> Rule identifiers remain stable regardless of language.</li>

@@ -69,6 +69,43 @@ export function StandaloneUsageContent() {
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom en Node sin
 				navegador real, o bien manejar tú mismo Puppeteer/Playwright en lugar de pasar por una integración.
 			</p>
+
+			<h2 id="waiting-for-the-page">Esperar a la página antes de un análisis</h2>
+			<p>
+				Un análisis lee la página tal como está en ese momento. En una página recién abierta, las
+				fuentes web pueden seguir cargándose y las imágenes pueden no haber llegado, así que la
+				misma página analizada un segundo después puede dar otro resultado. El análisis lo registra
+				en <code>engine.environment.fonts</code> y <code>.images</code> (consulta{" "}
+				<a href="/results-reports/output-schema/">el esquema de salida</a>), pero la mejor
+				solución es no analizar hasta que la página se haya asentado.
+			</p>
+			<p>
+				<code>waitForPageReady(options)</code> se encarga de esa espera, y el bundle la expone en
+				el mismo global. El análisis nunca la llama por sí mismo; llámala justo antes de analizar.
+				Espera al evento <code>load</code> de la ventana, a <code>document.fonts.ready</code> y a
+				cada imagen que siga cargándose (salvo las de <code>loading="lazy"</code>), como máximo{" "}
+				<code>timeoutMs</code> (por defecto <code>5000</code>). Nunca se rechaza: cuando se agota
+				el tiempo, se resuelve igualmente con <code>ready: false</code> e indica qué seguía
+				pendiente.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const ready = await a11ycore.waitForPageReady({ timeoutMs: 3000 });",
+					"const result = a11ycore.runa11yCoreInPage(location.href, null, {}, null);",
+				]}
+			/>
+			<p>
+				Un driver que manejes tú mismo puede enviarla a la página igual que{" "}
+				<code>runa11yCoreInPage</code>: <code>page.evaluate(waitForPageReady, {"{ timeoutMs: 5000 }"})</code>.
+				En jsdom no hay nada que esperar, así que se resuelve de inmediato con{" "}
+				<code>ready: true</code>. Las demás opciones (<code>quietMs</code>, <code>document</code>)
+				y el valor de retorno completo están en{" "}
+				<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				, la guía de integración en GitHub.
+			</p>
 		</>
 	);
 }

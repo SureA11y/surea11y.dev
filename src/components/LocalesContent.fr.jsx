@@ -14,6 +14,28 @@ const localeCoverageRows = localeData.locales.map((l) => ({
 	untranslated: l.canonical ? "— (le jeu canonique, utilisé en repli)" : String(l.stillEnglish),
 }));
 
+// Sample output for getLocaleCoverage(), built from the same generated data
+// as the table above so the numbers can't drift apart.
+const coverageSampleLines = [
+	"const { getLocaleCoverage } = require('@surea11y/core');",
+	"",
+	"getLocaleCoverage();",
+	"// {",
+	"//   sourceLocale: 'en',",
+	`//   totalKeys: ${localeData.totalKeys},`,
+	"//   locales: [",
+	...localeData.locales
+		.filter((l) => !l.canonical)
+		.slice(0, 2)
+		.map(
+			(l) =>
+				`//     { locale: '${l.id}', total: ${l.keys}, translated: ${l.keys - l.stillEnglish}, missing: ${l.missing}, orphaned: [], percent: ${Math.round(((l.keys - l.stillEnglish) / l.keys) * 1000) / 10} },`,
+		),
+	"//     ...",
+	"//   ]",
+	"// }",
+];
+
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "Vous avez obtenu exactement ce que vous avez demandé, et ce dictionnaire contient toutes les clés." },
 	{
@@ -81,7 +103,7 @@ export function LocalesContent() {
 					{ key: "locale", label: "Langue", width: "18%" },
 					{ key: "file", label: "Fichier", width: "24%" },
 					{ key: "keys", label: "Clés", width: "12%" },
-					{ key: "untranslated", label: "Valeurs identiques à l’anglais", wrap: true },
+					{ key: "untranslated", label: "Non traduites", wrap: true },
 				]}
 				rows={localeCoverageRows.map((r) => ({
 					...r,
@@ -93,11 +115,39 @@ export function LocalesContent() {
 				}))}
 			/>
 			<p>
-				La dernière colonne compte les valeurs identiques au texte anglais, caractère pour
-				caractère. Cela repère une clé que personne n’a encore traduite, mais compte aussi un mot qui
-				est simplement le même dans les deux langues, comme <em>Orientation</em>,{" "}
-				<em>Interruptions</em> ou <em>Occurrences</em> en français, ou <em lang="es">Selector</em> en
-				espagnol : c’est ce que reflètent les nombres non nuls ci-dessus.
+				« Non traduites » compte les valeurs identiques au texte anglais, caractère pour
+				caractère, à l’exception des mots qui sont à juste titre les mêmes dans une langue : en
+				français <em>Orientation</em>, <em>Interruptions</em> et <em>Occurrences</em>, en allemand{" "}
+				<em lang="de">Element</em>, en espagnol <em lang="es">Selector</em>. Ces mots sont listés
+				comme tels, chacun avec le texte anglais auquel il a été comparé, et comptent comme
+				traduits. Si l’anglais change, l’entrée ne s’applique plus et la chaîne compte comme non
+				traduite jusqu’à ce que quelqu’un la vérifie de nouveau. Le décompte ne voit pas un mot
+				anglais resté dans une phrase par ailleurs traduite ; cela se repère en lisant le texte, et
+				il n’en reste aucun dans les langues ci-dessus.
+			</p>
+
+			<h3 id="reading-coverage-from-the-package">Lire la couverture depuis le paquet</h3>
+			<p>
+				Les mêmes chiffres sont disponibles à l’exécution, à partir des dictionnaires que livre le
+				paquet installé : un outil ou un site de documentation peut donc les afficher sans copie
+				locale du dépôt.
+			</p>
+			<CodeBlock lang="js" lines={coverageSampleLines} />
+			<p>
+				Pour chaque langue, <code>total</code> est le nombre de clés anglaises auquel elle est
+				comparée, <code>translated</code> le nombre de ses valeurs qui diffèrent de l’anglais ou
+				sont listées comme identiques à juste titre, <code>missing</code> le nombre de clés qui lui
+				manquent (elles s’affichent en anglais) et <code>orphaned</code> les clés qu’elle a et que
+				l’anglais n’a pas. <code>total - translated</code> correspond à la colonne « Non
+				traduites » ci-dessus, clés manquantes comprises. Les clés qu’un profil exclut
+				volontairement d’une langue ne sont pas comptées. Le rapport de couverture du dépôt et
+				cette fonction partagent une seule implémentation et concordent donc toujours ; le
+				rapport compte séparément les dictionnaires de core et ceux de chaque profil, cette
+				fonction le dictionnaire fusionné qu’utilise une analyse. C’est un export pris en charge (
+				<a href={`${core}/docs/API_STABILITY.md#extension-points`}>
+					<code>API_STABILITY.md</code>, points d’extension
+				</a>
+				).
 			</p>
 			<p>
 				Les fichiers de langue sont du JSON simple : une table plate associant chaque clé à sa
