@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@surea11y/core": "1.10.0",
-    "@surea11y/playwright": "1.1.0",
+    "@surea11y/playwright": "1.2.0",
     "playwright": "1.63.0",
     "wrangler": "^4.133.0"
   }
