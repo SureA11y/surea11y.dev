@@ -13,9 +13,8 @@ export function ResultsReportsContent() {
 	return (
 		<>
 			<p>
-				Jeder Scan liefert ein einziges, einfaches JSON-Objekt — nichts verborgen, nichts, das Sie
-				selbst neu herleiten müssen. Die vier Berichtsformate unten bauen direkt auf genau diesem
-				Objekt auf, und jedes ist für ein anderes Publikum gemacht: einen Menschen, der einen Browser-Tab
+				Jeder Scan liefert ein einziges, einfaches JSON-Objekt. Die vier Berichtsformate unten
+				werden aus genau diesem Objekt erzeugt, und jedes ist für ein anderes Publikum gemacht: einen Menschen, der einen Browser-Tab
 				durchsieht, ein Codeanalyse-Dashboard, das nur SARIF versteht, eine CI-Testansicht, die JUnit
 				liest, oder das eigene Format des W3C für
 				Implementierungsberichte. Wählen Sie die Form, die zu denen passt, die das Ergebnis
@@ -46,8 +45,7 @@ export function ResultsReportsContent() {
 
 			<h2>HTML-Bericht</h2>
 			<p>
-				Öffnen, verstehen — ohne Server, ohne Build-Schritt, ohne JSON, das man mühsam
-				entziffern muss. Oben eine Zusammenfassung in einfacher Sprache, darunter eine
+				Eine HTML-Datei, die sich in jedem Browser öffnet, ohne Server oder Build-Schritt. Oben eine Zusammenfassung in einfacher Sprache, darunter eine
 				WCAG-Zusammenfassung nach Konformitätsstufe, die aus den zusammengesetzten Ergebnissen
 				der Engine selbst stammt, und ganz unten eine vollständige, durchsuchbare Tabelle für
 				alle, die tiefer einsteigen wollen. Das ist der Bericht für Prüfende, die keine rohe
@@ -80,10 +78,11 @@ export function ResultsReportsContent() {
 			<p>
 				Ein W3C-Implementierungsbericht in EARL/JSON-LD, der <strong>das Ergebnis jeder Regel
 				festhält, nicht nur die Verstöße</strong> — das Format, das die <span lang="en">ACT Rules</span> Community
-				Group für Implementierungsberichte akzeptiert: maschinenlesbare Ergebnisse pro Testfall,
-				an denen sich nachprüfen lässt, ob eine Engine die ACT-Regeln so umsetzt, wie sie angibt.
-				Nützlich, wenn eine Aussage zur ACT-Implementierung überprüfbar sein muss und nicht nur
-				behauptet werden soll. Siehe{" "}
+				Group für Implementierungsberichte akzeptiert. Auf den ACT-Testfällen ausgeführt, hält er
+				das Ergebnis für jeden einzelnen fest, sodass sich prüfen lässt, wie die Engine jede Regel
+				umsetzt, statt es ungeprüft zu glauben. Er ist weder eine Zertifizierung noch ein Nachweis
+				der WCAG-Konformität: Als ACT-Implementierung gelistet zu sein, ist keine Billigung durch
+				das W3C. Siehe{" "}
 				<a href="/results-reports/earl-report/">EARL-Bericht</a>.
 			</p>
 		</>

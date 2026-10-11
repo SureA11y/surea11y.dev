@@ -114,23 +114,36 @@ export function EarlReportContent() {
 				</li>
 				<li>
 					<strong><code>test.isPartOf</code></strong> listet die Erfolgskriterien, denen die Regel
-					zugeordnet ist, als <code>WCAG2:&lt;criterion-id&gt;</code>. Bei einer Regel, die kein
-					Kriterium beansprucht, fehlt das Feld ganz: <code>aria-allowed-role</code> ist die
-					einzige automatische Regel der Engine in dieser Lage, und eine leere Liste würde sich
+					zugeordnet ist, als <code>WCAG2:&lt;criterion-id&gt;</code>: jeden Eintrag in{" "}
+					<code>normativeMappings</code>, dessen <code>standard</code> <code>WCAG</code> ist oder
+					fehlt (wie in SARIF) und der keinen <code>type</code> hat. Bei einer Regel, die kein
+					Kriterium beansprucht, fehlt das Feld ganz: <code>aria-allowed-role</code> und{" "}
+					<code>landmark-role-name-present</code> sind die automatischen Regeln der Engine in dieser
+					Lage, und eine leere Liste würde sich
 					lesen wie „keine Zuordnung gefunden“ statt „bewusst keiner zugeordnet“.
 				</li>
 				<li>
-					<strong><code>assertedBy</code></strong> und <strong><code>mode</code></strong>{" "}
-					erscheinen nur, wenn Sie sie angeben.
+					<strong><code>assertedBy</code></strong> ist immer vorhanden, außer Sie übergeben{" "}
+					<code>assertor: null</code>: Standardmäßig enthält es <code>surea11y</code> und die
+					Engine-Version, die die Ergebnisse tragen. <strong><code>mode</code></strong> erscheint
+					nur, wenn Sie es angeben.
 				</li>
 			</ul>
 			<p>
 				Kriterien-IDs werden aus dem Titel des Kriteriums abgeleitet (<code>Non-text Content</code>{" "}
 				→ <code>non-text-content</code>). <code>normativeMappings</code> enthält außerdem Verweise
-				auf Understanding-Dokumente und Nicht-WCAG-Standards, die <code>standard: "WCAG"</code>{" "}
-				und ein <code>requirement</code> mit dem echten Kriterium teilen. Ein Erfolgskriterium ist
-				der Eintrag, der eine Konformitätsstufe angibt und keinen anderen Dokumenttyp beansprucht,
-				und nur diese Einträge werden gelesen.
+				auf Understanding-Dokumente, die einen <code>type</code> haben, und Einträge anderer Normen
+				(EN-301-549-Klauseln, die Anforderungen oder Checklistenpunkte eines Packs), die ihren
+				eigenen <code>standard</code> nennen; beide können eine <code>requirement</code>-Nummer mit
+				einem Kriterium teilen. Nur Einträge, deren <code>standard</code> <code>WCAG</code> ist oder
+				fehlt und die keinen <code>type</code> haben, werden als Erfolgskriterien gelesen. Eine
+				Konformitätsstufe ist nicht nötig. <code>isPartOf</code> listet nur WCAG-Kriterien;
+				Einträge anderer Normen werden weggelassen.
+			</p>
+			<p>
+				Ein kompaktes Ergebnis (<code>engineOptions.output.detail: 'findings'</code>, siehe{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Ausgabeschema</a>) wird als das
+				vollständige Ergebnis gelesen, für das es steht, und daher genauso gemeldet.
 			</p>
 
 			<h2>Ergebnisse</h2>
@@ -180,16 +193,21 @@ export function EarlReportContent() {
 				Ergebnisse mit derselben URL werden zu einem Subjekt zusammengeführt: Wer dieselbe Seite
 				mit unterschiedlichen <code>engineOptions</code> scannt, beschreibt immer noch eine
 				Ressource, und der Kontext kann keine zwei Subjekte mit derselben Quelle ausdrücken.{" "}
-				<strong>Treffen zwei Ergebnisse eine Aussage zur selben Regel für dieselbe URL, gewinnt
-				das letzte.</strong> Das gilt auch für dieselbe Seite, gescannt bei zwei Viewport-Breiten:
-				EARL hat keinen Begriff für die Bedingungen, unter denen eine Seite dargestellt wurde, daher
-				behält ein Bericht aus mehreren Breiten für jede Regel nur die Aussage der letzten Breite.
-				Erzeugen Sie einen Bericht pro Breite, wenn die Breiten eine Rolle spielen.
+				<strong>Treffen zwei Ergebnisse eine Aussage zur selben Regel für dieselbe URL, bleibt das
+				schlechtere Ergebnis erhalten</strong>: <code>earl:failed</code>, dann{" "}
+				<code>earl:cantTell</code>, dann <code>earl:passed</code>, dann{" "}
+				<code>earl:inapplicable</code>, sodass keine Reihenfolge der Eingaben einen Fehlschlag
+				verbergen kann. Das gilt auch für dieselbe Seite, gescannt bei zwei Viewport-Breiten: EARL
+				hat keinen Begriff für die Bedingungen, unter denen eine Seite dargestellt wurde, daher
+				behält ein Bericht aus mehreren Breiten für jede Regel einen Fehlschlag bei irgendeiner
+				Breite. Erzeugen Sie einen Bericht pro Breite, wenn die Breiten selbst eine Rolle spielen.
 			</p>
 			<p>
 				Die Ausgabe ist deterministisch: Subjekte werden nach Quelle sortiert, Aussagen nach
-				Regel-ID, und dieselben Eingaben erzeugen in jeder Reihenfolge byte-identische Ausgabe.
-				Erst dadurch ist ein Diff zwischen zwei Engine-Versionen aussagekräftig.
+				Regel-ID, und dieselben Eingaben erzeugen in jeder Reihenfolge byte-identische Ausgabe. Die
+				einzige Ausnahme sind Ergebnisse ohne URL, die nach ihrer Position in der Liste
+				unterschieden werden (<code>about:blank#result-2</code>); geben Sie jedem Ergebnis seine
+				URL, wenn die Reihenfolge keine Rolle spielen soll. Erst dadurch ist ein Diff zwischen zwei Engine-Versionen aussagekräftig.
 			</p>
 
 			<h2>Optionen</h2>

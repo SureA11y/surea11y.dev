@@ -6,15 +6,15 @@ const formatRows = [
 	{ format: "HTML", use: "Human review of one concrete scan", audience: "QA and audit" },
 	{ format: "SARIF", use: "Integration with code-analysis tooling", audience: "Development and security teams" },
 	{ format: "JUnit", use: "Test views in CI dashboards", audience: "Development and QA teams" },
-	{ format: "EARL", use: "Interoperability and ACT-conformance evidence", audience: "Standards, research, and conformance" },
+	{ format: "EARL", use: "Interoperability and ACT implementation reporting", audience: "Standards, research, and conformance" },
 ];
 
 export function ResultsReportsContent() {
 	return (
 		<>
 			<p>
-				Every scan comes back as one plain JSON object — nothing hidden, nothing you have to
-				re-derive. The four report formats below are built directly on top of that same object,
+				Every scan comes back as one plain JSON object. The four report formats below are
+				generated from that same object,
 				each one shaped for a different reader: a human scanning a browser tab, a code-scanning
 				dashboard that only speaks SARIF, a CI test view that reads JUnit, or the W3C's own
 				implementation-reporting format. Pick the shape that
@@ -44,7 +44,7 @@ export function ResultsReportsContent() {
 
 			<h2>HTML report</h2>
 			<p>
-				Open it, understand it — no server, no build step, no JSON to squint at. A plain-language
+				One HTML file that opens in any browser, with no server or build step. A plain-language
 				summary up top, a WCAG rollup grouped by conformance level sourced from the engine's own
 				composite results, and a full searchable table underneath for anyone who wants to dig in.
 				This is the report to hand a reviewer who doesn't want to read raw output. See{" "}
@@ -74,9 +74,11 @@ export function ResultsReportsContent() {
 			<h2>EARL report</h2>
 			<p>
 				A W3C EARL/JSON-LD implementation report <strong>asserting every rule's outcome, not
-				just the failures</strong> — the format the ACT Rules community group accepts as evidence an engine actually
-				implements what it claims to. Useful proof when a claim of ACT conformance needs to be
-				checkable, not just stated. See <a href="/results-reports/earl-report/">EARL report</a>.
+				just the failures</strong> — the format the ACT Rules community group accepts for implementation reports. Run
+				on the ACT test cases, it records the outcome for each one, so how the engine implements
+				each rule can be examined rather than taken on trust. It is neither a certification nor
+				evidence of WCAG conformance: being listed as an ACT implementation is not a W3C
+				endorsement. See <a href="/results-reports/earl-report/">EARL report</a>.
 			</p>
 		</>
 	);

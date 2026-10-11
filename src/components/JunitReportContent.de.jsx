@@ -9,7 +9,9 @@ const outcomeRows = [
 		junit: (
 			<>
 				<code>&lt;failure type="fail"&gt;</code>, eine Zeile pro fehlgeschlagenem Vorkommen (Meldung,
-				Hinweis, Selektor, Markup)
+				Hinweis, Selektor, Markup), danach <code>help: &lt;url&gt;</code>, wenn die Regel einen{" "}
+				<code>http(s)</code>-Hilfelink hat (<code>meta.helpUrl</code>), sonst das
+				Understanding-Dokument ihres ersten WCAG-Kriteriums
 			</>
 		),
 		why: "Der deterministische Fall, an dem das Gate scheitert.",
@@ -43,6 +45,12 @@ const outcomeRows = [
 			</>
 		),
 	},
+	{
+		id: "ruleError",
+		outcome: <>eine Regel, die nicht abgeschlossen wurde (<code>cantTell</code> ohne Vorkommen und mit einem <code>error</code>: Sie hat eine Ausnahme geworfen)</>,
+		junit: <><code>&lt;error type="ruleError"&gt;</code> mit dem Fehler, gezählt in <code>errors</code></>,
+		why: "Das JUnit-Element für einen Test, der nicht laufen konnte. Die Seite wurde nicht gegen die Regel geprüft, was weder ein Bestehen ist noch etwas, das zu prüfen wäre.",
+	},
 ];
 
 const optionRows = [
@@ -54,7 +62,9 @@ const optionRows = [
 			<>
 				<code>'failure'</code> meldet <code>cantTell</code>-Regeln als{" "}
 				<code>&lt;failure type="cantTell"&gt;</code>, für eine Pipeline, die nicht bestehen darf,
-				solange etwas unentschieden ist.
+				solange etwas unentschieden ist. Groß- und Kleinschreibung spielt keine Rolle; ein anderer
+				Wert wirft einen <code>TypeError</code>, da ein falsch geschriebener stillschweigend nicht
+				als Gate wirken würde.
 			</>
 		),
 	},
@@ -72,7 +82,9 @@ const optionRows = [
 			<>
 				Einträge aus <code>buildBaselineEntries()</code> der{" "}
 				<a href="/conformance/baseline/">Baseline</a>. Dort erfasste fehlgeschlagene Vorkommen
-				werden verworfen, genau wie in SARIF. Eine Regel, deren Fehlschläge alle bereits bekannt
+				werden verworfen, genau wie in SARIF. Die Option nimmt die Baseline-Datei so, wie sie
+				gespeichert ist (<code>JSON.parse</code> davon), oder ihre <code>entries</code>-Liste. Eine
+				Regel, deren Fehlschläge alle bereits bekannt
 				sind, wird zu{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, nicht zu
 				einem bestandenen Test: Sie hat nicht bestanden.
@@ -165,7 +177,11 @@ export function JunitReportContent() {
 					Suites entstehen aus den WCAG-Zuordnungen jeder Regel, nicht aus den zusammengesetzten
 					Regeln, daher wird jede gelaufene Regel gemeldet, auch wenn zusammengesetzte Regeln
 					ausgeschlossen wurden. Die zusammengesetzte Regel liefert, falls sie gelaufen ist, den Titel
-					der Suite und die Eigenschaft <code>criterionOutcome</code>. Eine Regel mit zwei Kriterien
+					der Suite und die Eigenschaft <code>criterionOutcome</code>, die die eigenen Regeln, die
+					dem Kriterium zugeordnet sind, genauso zählt wie die eingebauten. Ein Kriterium, das von
+					mehreren zusammengesetzten Regeln geprüft wird (4.1.2: sein zugänglicher Name und seine
+					ARIA-Gültigkeit), übernimmt das schlechteste ihrer Ergebnisse und den Namen, den ihre Titel
+					gemeinsam haben (<code>WCAG 4.1.2 Name, role, value</code>). Eine Regel mit zwei Kriterien
 					erscheint in beiden Suites. Eine Regel ohne Kriterium kommt in eine abschließende Suite{" "}
 					<code>Other checks</code> mit <code>classname="other"</code>.
 				</li>
@@ -195,9 +211,32 @@ export function JunitReportContent() {
 				<li>
 					<code>en301549</code>-Eigenschaften nennen die EN-301-549-Klausel, die das Kriterium
 					wiedergibt, sofern es eine gibt und der Scan EN-301-549-Klauseln angefordert hat (siehe{" "}
-					<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>).
+					<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>). Jede andere Norm in{" "}
+					<code>standards</code> des Ergebnisses fügt Eigenschaften hinzu, die nach ihrem Schlüssel
+					benannt sind, eine pro Anforderung dieser Norm, auf die die Regeln der Suite abgebildet
+					sind: Ein Checklistenpunkt eines <a href="/configuration/packs/">Packs</a>, der die Regel
+					gruppiert, wird mit seiner id aufgeführt,{" "}
+					<code>&lt;property name="acme" value="acme-images"/&gt;</code>. Eine Norm, die nur eine
+					eigene Regel nennt, fügt keine Eigenschaft hinzu.
 				</li>
 			</ul>
+			<p>
+				Ein kompaktes Ergebnis (<code>engineOptions.output.detail: 'findings'</code>) wird als das
+				vollständige Ergebnis gelesen, für das es steht, und daher genauso gemeldet.
+			</p>
+
+			<h2 id="cross-frame-results">Frame-übergreifende Ergebnisse</h2>
+			<p>
+				Ein Frame-übergreifendes Ergebnis (siehe{" "}
+				<a href="/results-reports/output-schema/#cross-frame-result">Ausgabeschema</a>) liefert
+				zuerst die Suites der Seite, dann die jedes Frames, benannt nach dem Pfad des Frames (
+				<code>Frame #checkout: WCAG 1.1.1 Non-text content: text alternatives</code>) und mit einer
+				Eigenschaft <code>frame</code>, die ihn enthält, sodass ein Fehlschlag in einem Frame nicht
+				mit denen der Seite zusammengeführt wird. Ein Frame, der nicht geantwortet hat, ist eine
+				Suite <code>Frame &lt;path&gt;</code> mit einem übersprungenen Testcase,{" "}
+				<code>Not scanned: &lt;error&gt;</code>: Der Frame wurde nicht geprüft, und das ist kein
+				Bestehen. Die Summen auf <code>&lt;testsuites&gt;</code> zählen jeden Frame.
+			</p>
 
 			<h2>Ergebnisse</h2>
 			<DataTable

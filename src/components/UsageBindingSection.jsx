@@ -28,13 +28,39 @@ function formatLinkList(items, locale) {
 	});
 }
 
-export function UsageBindingSection({ intro, install, installNote, usage, note, exampleHref, locale = "en" }) {
+export function UsageBindingSection({ intro, install, installNote, usage, note, packs, exampleHref, locale = "en" }) {
 	return (
 		<>
 			{intro}
 			<CodeBlock lines={install.map((text) => ({ text, command: true }))} />
 			{installNote}
 			<CodeBlock lang="js" lines={usage} />
+			<p>
+				<Trans
+					k="usageBinding.targets"
+					locale={locale}
+					values={{
+						withWcag: <code>.withWcag(version, level)</code>,
+						withBestPractices: <code>.withBestPractices()</code>,
+						region: <code>region</code>,
+					}}
+				/>
+			</p>
+			{packs ?? (
+				<p>
+					<Trans
+						k="usageBinding.packs"
+						locale={locale}
+						values={{
+							withPacks: <code>.withPacks()</code>,
+							packLink: <a href="/configuration/packs/">{t("usageBinding.packLink", locale)}</a>,
+							options: <code>{".options({ profile })"}</code>,
+							gap: <code>'pack-skipped'</code>,
+							getScanGaps: <code>getScanGaps(results)</code>,
+						}}
+					/>
+				</p>
+			)}
 			{note}
 			{exampleHref ? (
 				<p>

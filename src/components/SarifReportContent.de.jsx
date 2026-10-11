@@ -16,13 +16,16 @@ const sarifFieldRows = [
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, sofern vorhanden.</> },
 	{
 		id: "fingerprint",
-		field: <code>results[].partialFingerprints["surea11y/violation/v1"]</code>,
+		field: <code>results[].partialFingerprints["surea11y/violation/v2"]</code>,
 		source: (
 			<>
-				Derselbe Identitätsschlüssel <code>ruleId + reasonCode + html</code>, den{" "}
+				Der SHA-256-Digest, 64 Hexadezimalziffern, desselben Identitätsschlüssels{" "}
+				<code>ruleId + reasonCode + html</code>, den{" "}
 				<a href="/conformance/baseline/">Baseline / Allowlist</a> (<code>computeBaselineKey</code>)
 				verwendet: ein stabiler, inhaltsbasierter Fingerprint statt eines positionsbasierten, für
-				Konsumenten, die ihn auslesen.
+				Konsumenten, die ihn auslesen. Derselbe Befund erhält in jedem Bericht denselben Digest. Vor
+				1.11 enthielt <code>surea11y/violation/v1</code> den Schlüssel selbst, daher sieht ein Tool,
+				das <code>v1</code> gelesen hat, jeden Befund einmalig als neu.
 			</>
 		),
 	},
@@ -31,7 +34,9 @@ const sarifFieldRows = [
 		field: <code>results[].partialFingerprints.primaryLocationLineHash</code>,
 		source: (
 			<>
-				Ein Hash dieses Schlüssels, <code>&lt;16 hex digits&gt;:&lt;n&gt;</code>, wobei{" "}
+				Die ersten 16 Hexadezimalziffern des Digests und eine Zählung,{" "}
+				<code>&lt;16 hex digits&gt;:&lt;n&gt;</code> (unverändert gegenüber der Zeit vor{" "}
+				<code>v2</code>), wobei{" "}
 				<code>n</code> einen auf der Seite wiederholten Befund zählt (dieselbe fehlerhafte
 				Komponente zweimal). <span lang="en">GitHub Code Scanning</span> ordnet Alerts zwischen
 				Uploads allein über dieses Feld zu. Ein DOM-Befund hat keine Zeile, die die Upload-Action
@@ -43,7 +48,8 @@ const sarifFieldRows = [
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <><code>severity</code>/<code>confidence</code> des Ergebnisses selbst, dazu derselbe <code>reasonCode</code> und dasselbe <code>html</code>-Snippet, auf denen der Fingerprint oben beruht. Rein informativ, nicht Teil des SARIF-Schemas selbst.</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code> und ein <code>wcag-&lt;SC&gt;</code>-Tag pro WCAG-Erfolgskriterium in <code>meta.normativeMappings</code>. Einträge zu Understanding-Dokumenten erhalten kein Tag. Jede EN-301-549-Klausel, die das Ergebnis trägt (nur wenn der Scan sie angefordert hat, siehe <a href="/configuration/engine-options/#other-standards-mappings">Andere Normen</a>), erhält ein Tag <code>en301549-&lt;Klausel&gt;</code>, z. B. <code>en301549-9.1.1.1</code>: Klauselnummern sind in jeder Version, die sie enthält, gleich, daher trägt das Tag keine Version.</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code> und ein <code>wcag-&lt;SC&gt;</code>-Tag pro WCAG-Erfolgskriterium in <code>meta.normativeMappings</code>. Einträge zu Understanding-Dokumenten erhalten kein Tag. Jede EN-301-549-Klausel, die das Ergebnis trägt (nur wenn der Scan sie angefordert hat, siehe <a href="/configuration/engine-options/#other-standards-mappings">Andere Normen</a>), erhält ein Tag <code>en301549-&lt;Klausel&gt;</code>, z. B. <code>en301549-9.1.1.1</code>: Klauselnummern sind in jeder Version, die sie enthält, gleich, daher trägt das Tag keine Version, und die Norm oder Checkliste eines Packs wird auf dieselbe Weise unter ihrem eigenen Schlüssel getaggt (die id eines Checklistenpunkts, <code>acme-images</code>, ist sein eigenes Tag). Danach folgen die eigenen <code>meta.tags</code> der Regel (auch bei einer eigenen Regel), ohne die internen Verwaltungs-Tags der Engine und ohne die Kriterien-Tags, die die <code>wcag-&lt;SC&gt;</code>-Tags bereits liefern.</> },
+	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, der Hilfelink der Regel, wenn er eine absolute <code>http(s)</code>-URL ist; sonst das Understanding-Dokument des ersten WCAG-Kriteriums, dem sie zugeordnet ist; fehlt bei einer Regel ohne beides, was auf keine eingebaute Regel zutrifft: Eine Regel ohne Kriterium verlinkt ihren Abschnitt im Regelkatalog.</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>Die Option <code>toolVersion</code>, falls angegeben (ein Tool, das die Engine einbettet, übergibt seine eigene); sonst <code>engine.version</code>, das Engine-Release, das das Ergebnis erzeugt hat. <code>"0.0.0"</code> nur bei einem Ergebnis ohne diesen Wert, aus einem Release vor 1.10.0.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>Die Option <code>category</code>, mit angehängtem <code>/</code>, falls sie keinen hat (GitHub liest alles bis zum letzten Schrägstrich als Kategorie). Fehlt, wenn keine Kategorie angegeben ist. Siehe <a href="#scanning-at-several-viewport-widths">Scannen bei mehreren Viewport-Breiten</a>.</> },
 	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> und <code>environment</code> aus der <code>engine</code> des Ergebnisses: das Konformitätsziel des Laufs, damit ein Dashboard einen WCAG-2.1-Lauf von einem 2.2-Lauf unterscheiden kann, die Tags der Opt-in-Regeln, die er über dieses Ziel hinaus hinzugefügt hat, falls vorhanden, und die Bedingungen, unter denen die Seite dargestellt wurde (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code>; siehe <a href="/results-reports/output-schema/">Ausgabeschema</a>). Fehlt bei Ergebnissen von Engines, die diese Felder noch nicht kennen.</> },
@@ -89,7 +95,7 @@ export function SarifReportContent() {
 				zu Ergebnissen (ein Konsument behandelt jedes Ergebnis als Alarm, und „wurde nicht
 				ausgewertet“ ist keiner), aber sie werden auch nicht verworfen. Sie stehen als Einträge
 				der Stufe <code>note</code> in{" "}
-				<code>runs[0].invocations[0].toolExecutionNotices</code>, jeweils mit der Regel, aus der
+				<code>runs[0].invocations[0].toolExecutionNotifications</code>, jeweils mit der Regel, aus der
 				sie stammen, in <code>associatedRule.id</code>:
 			</p>
 			<CodeBlock
@@ -98,7 +104,7 @@ export function SarifReportContent() {
 					'"invocations": [',
 					"  {",
 					'    "executionSuccessful": true,',
-					'    "toolExecutionNotices": [',
+					'    "toolExecutionNotifications": [',
 					"      {",
 					'        "level": "note",',
 					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
@@ -115,6 +121,15 @@ export function SarifReportContent() {
 				Seite in Ordnung ist, oder dass der Kontrast nie berechenbar war, und nur der Hinweis
 				unterscheidet die beiden Fälle. Der Block wird nur ausgegeben, wenn es etwas zu sagen gibt;
 				ein Lauf ohne Meldungen hat also gar keinen <code>invocations</code>-Schlüssel.
+			</p>
+			<p>
+				Eine Regel, die nicht abgeschlossen wurde (sie hat eine Ausnahme geworfen:{" "}
+				<code>cantTell</code> ohne Vorkommen und mit einem <code>error</code>), hat nichts beurteilt
+				und ist daher ebenfalls kein Ergebnis. Sie ist ein Hinweis der Stufe <code>error</code> in
+				derselben Liste,{" "}
+				<code>"The rule &lt;id&gt; did not complete: &lt;error&gt;"</code>, mit der Regel in{" "}
+				<code>associatedRule.id</code>, sodass die Lücke in der Abdeckung nicht wie ein Bestehen
+				aussieht.
 			</p>
 			<DataTable
 				label="Engine-Ergebnisse als SARIF-Stufen"
@@ -144,6 +159,13 @@ export function SarifReportContent() {
 				]}
 				rows={sarifFieldRows}
 			/>
+			<p>
+				Ein kompaktes Ergebnis (<code>engineOptions.output.detail: 'findings'</code>, siehe{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Ausgabeschema</a>) wird als das
+				vollständige Ergebnis gelesen, für das es steht, und daher genauso gemeldet. Ein Ergebnis,
+				dessen <code>standards</code>-Liste fehlt oder beschädigt ist, taggt trotzdem jede Norm, die
+				seine Regeln nennen.
+			</p>
 
 			<h2 id="sarif-locations">Fundorte</h2>
 			<p>
@@ -175,6 +197,28 @@ export function SarifReportContent() {
 				<code>logicalLocations[].fullyQualifiedName</code> mitgeführt, sodass ein Konsument, der
 				logische Fundorte liest, auch ohne brauchbaren physischen Fundort erfährt, um welches
 				Element es geht.
+			</p>
+
+			<h2 id="cross-frame-results">Frame-übergreifende Ergebnisse</h2>
+			<p>
+				Ein Ergebnis von <code>runa11yCoreAcrossFrames</code> oder aus einem Scan mit{" "}
+				<code>.frames(true)</code> eines Bindings (siehe{" "}
+				<a href="/results-reports/output-schema/#cross-frame-result">Ausgabeschema</a>) ist ein
+				einziger Lauf: Die Befunde jedes Frames sind Ergebnisse darin. Ein Befund in einem Frame
+				wird im Dokument dieses Frames verortet (<code>artifactLocation.uri</code> ist die URL des
+				Frames) und trägt den Pfad des Frames in <code>properties.frame</code>:
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={['"properties": { "severity": "serious", "confidence": "high", "frame": ["#checkout"] }']}
+			/>
+			<p>
+				Der Pfad ist auch Teil der Identität des Befunds (<code>partialFingerprints</code>), sodass
+				derselbe Mangel in der Seite und in einem Frame, oder in zwei Frames, zwei Alerts sind. Ein
+				Frame, der nicht geantwortet hat (kein Responder, oder eine Zeitüberschreitung), ist ein
+				Hinweis der Stufe <code>warning</code>,{" "}
+				<code>"The frame #ads (https://ads.example/) was not scanned: &lt;error&gt;"</code>, da
+				darin nichts geprüft wurde.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Scannen bei mehreren Viewport-Breiten</h2>

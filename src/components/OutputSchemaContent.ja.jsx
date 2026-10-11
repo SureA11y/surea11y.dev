@@ -11,7 +11,7 @@ const topLevelRows = [
 		field: <code>engine.version</code>,
 		meaning: (
 			<>
-				結果を生成した<code>@surea11y/core</code>のリリースで、<code>"1.10.0"</code>のような値です。バグ報告で示すのはこの値で、2つのリリースの結果を見分けるのにも使えます。結果は形が変わらないままリリース間で変わることがあるため、これは<code>schemaVersion</code>とは別のものです。<a href="/results-reports/sarif-report/">SARIF</a>と<a href="/results-reports/earl-report/">EARL</a>のレポーターは、ツールのバージョンが指定されていなければこの値を使います。
+				結果を生成した<code>@surea11y/core</code>のリリースで、<code>"1.11.1"</code>のような値です。バグ報告で示すのはこの値で、2つのリリースの結果を見分けるのにも使えます。結果は形が変わらないままリリース間で変わることがあるため、これは<code>schemaVersion</code>とは別のものです。<a href="/results-reports/sarif-report/">SARIF</a>と<a href="/results-reports/earl-report/">EARL</a>のレポーターは、ツールのバージョンが指定されていなければこの値を使います。
 			</>
 		),
 	},
@@ -65,7 +65,7 @@ const topLevelRows = [
 		field: <code>engine.profileExcludes</code>,
 		meaning: (
 			<>
-				適用されたプロファイルがルールを除外する場合にだけ含まれます。<code>{"{ rules, criteria }"}</code>で、指定されたルールと、免除されるWCAGの達成基準です。それらのルールとWCAGの集約は実行されていません。組み込みのプロファイルで何かを除外するものはありません。
+				適用されたプロファイルがルールを除外する場合にだけ含まれます。<code>{"{ rules, criteria }"}</code>で、指定されたルールと、除外されるWCAGの達成基準です。それらのルールとWCAGの集約は実行されていません。これはスキャンの範囲を狭めるもので、WCAGが求めることは変わりません。組み込みのプロファイルで何かを除外するものはありません。
 			</>
 		),
 	},
@@ -88,6 +88,24 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "engine.packs",
+		field: <code>engine.packs</code>,
+		meaning: (
+			<>
+				スキャンを<code>engineOptions.packs</code>付きで実行した場合にだけ含まれます。実行された各パックを<code>name@version</code>の形で、名前順に並べたものです。<a href="/configuration/packs/">パック</a>を参照してください。
+			</>
+		),
+	},
+	{
+		id: "engine.outputDetail",
+		field: <code>engine.outputDetail</code>,
+		meaning: (
+			<>
+				<code>engineOptions.output.detail</code>が<code>'findings'</code>の場合にだけ、<code>"findings"</code>として含まれます。検出箇所を1つも持たない<code>pass</code>または<code>notApplicable</code>のチェック結果はそれぞれコンパクトになり、<code>{"{ ruleId, outcome, type }"}</code>と、ある場合はその<code>margin</code>または<code>error</code>だけになります。タイトル、説明、<code>meta</code>はカタログのものでどのページでも同じなので、含まれません。<code>fail</code>と<code>cantTell</code>の結果、集約、<code>engine</code>は完全なままなので、判定は何も変わりません。レポーター（SARIF、JUnit、HTMLレポート、EARL、ベースラインの関数）は、コンパクトな結果をコアのカタログで補って完全な結果として読みます。カタログで補えない結果は完全なまま残ります。<code>packs</code>付きのスキャンのすべてのチェック結果、カスタムルールの結果、スキャンの<code>messages</code>がタイトルや説明を変えた結果です。空のページの結果は、約236 KBから80 KBになります。
+			</>
+		),
+	},
+	{
 		id: "engine.environment",
 		field: <code>engine.environment</code>,
 		meaning: (
@@ -96,7 +114,7 @@ const topLevelRows = [
 			</>
 		),
 	},
-	{ id: "url", field: <code>url</code>, meaning: <>渡した<code>pageUrl</code>引数です。<code>null</code>を渡したか省略した場合は<code>document.location.href</code>、どちらも得られない場合は<code>null</code>になります。</> },
+	{ id: "url", field: <code>url</code>, meaning: <>渡した<code>pageUrl</code>引数です。<code>null</code>を渡したか省略した場合（または文字列以外を渡した場合。このときは<code>console.warn</code>も記録されます）は<code>document.location.href</code>、どちらも得られない場合は<code>null</code>になります。</> },
 	{ id: "title", field: <code>title</code>, meaning: <>スキャン時点の<code>document.title</code>、または<code>null</code>です。</> },
 	{
 		id: "timestamp",
@@ -149,6 +167,24 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "standards",
+		field: <code>standards</code>,
+		meaning: (
+			<>
+				結果が<code>meta.normativeMappings</code>のエントリーや集約の<code>meta.standard</code>でWCAG以外の規格を示す場合にだけ含まれます。示している登録済みの規格（パックのものを含む）ごとに1つの<code>{"{ key, standard, titleLang?, note? }"}</code>を、登録簿の順に並べたものです。<code>key</code>は規格のキー（<code>"en301549"</code>）、<code>standard</code>はそのエントリーが持つ名前（<code>"EN 301 549"</code>）、<code>titleLang</code>は、規格独自の集約のタイトルがスキャンの言語以外で書かれている場合のその言語、<code>note</code>はHTMLレポートで規格独自の集約の上に表示される、スキャンの言語のテキストです。レポーターは登録簿の代わりにこれを読むため、保存した結果は、その環境がその規格を知っているかどうかにかかわらず、どこでレンダリングしても同じになります。カスタムルールだけが示す規格は列挙されません。
+			</>
+		),
+	},
+	{
+		id: "skippedPacks",
+		field: <code>skippedPacks</code>,
+		meaning: (
+			<>
+				<code>engineOptions.packs</code>のパックが実行されなかった場合にだけ含まれます。それぞれ<code>{"{ name, reason }"}</code>の形で、パックに名前がなければ<code>name</code>は<code>null</code>です。ページ内（<code>runa11yCoreInPage</code>）では、<code>name</code>は指定された<code>name@version</code>で、理由はページがそのパックを実行しなかった訳を示します。指定されたセットとまったく同じものを登録した<code>packScript</code>の呼び出しがない、またはスクリプトが別のバージョンのコアで用意された、のどちらかです。それぞれ<code>console.warn</code>でも記録されます。
+			</>
+		),
+	},
+	{
 		id: "overriddenBuiltinIds",
 		field: <code>overriddenBuiltinIds</code>,
 		meaning: (
@@ -162,7 +198,7 @@ const topLevelRows = [
 		field: <code>skippedCustomRules</code>,
 		meaning: (
 			<>
-				実行されなかった<code>engineOptions.customRules</code>のエントリで、それぞれ<code>{"{ id, reason }"}</code>の形です（エントリにIDがなければ<code>id</code>は<code>null</code>）。理由は、IDがない、<code>runInPage</code>が関数でないかソースから再構築できない、<code>meta</code>が検証に通らない、別のカスタムルールがすでにそのIDを持っている、複合ルールのIDである、のいずれかです。常に配列で、すべてのカスタムルールが実行されれば空です。それぞれ<code>console.warn</code>でも記録されます。ここに挙がったルールはどの結果にも含まれないため、ルールを除外したスキャンと、そのルールが<code>pass</code>になったスキャンを区別できます。
+				実行されなかった<code>engineOptions.customRules</code>のエントリで、それぞれ<code>{"{ id, reason }"}</code>の形です（エントリにIDがなければ<code>id</code>は<code>null</code>）。理由は、IDがない、<code>runInPage</code>が関数でないかソースから再構築できない、<code>meta</code>が検証に通らない、別のカスタムルールがすでにそのIDを持っている、複合ルールのIDである、のいずれかです。あるいは、妥当なルールでも実行の選択に含まれない場合（プロファイルやWCAGの目標のもとで、<code>best-practice</code>のタグを持つか、WCAGのタグを持たないルール）で、その場合の<code>reason</code>はルールを選択する方法を示します。常に配列で、すべてのカスタムルールが実行されれば空です。それぞれ<code>console.warn</code>でも記録されます。ここに挙がったルールはどの結果にも含まれないため、ルールを除外したスキャンと、そのルールが<code>pass</code>になったスキャンを区別できます。
 			</>
 		),
 	},
@@ -174,7 +210,7 @@ const occurrenceRows = [
 		field: <code>selector</code>,
 		meaning: (
 			<>
-				フラグが立った要素を指し戻せるように組み立てた、ベストエフォートのCSSセレクターです（<code>RULE_AUTHORING.md</code>の<code>helpers.buildSelector</code>を参照）。意図的に崩したDOM構造では一意であることは保証されませんが、エンジンは使う前に、それが報告対象の要素に解決されることを実際に確認しています。例外は、要素が存在しないこと<em>そのもの</em>が検出結果であるルールです。<code>page-title-present</code>は<code>head &gt; title</code>と、<code>html</code>として<code>&lt;title&gt;(missing)&lt;/title&gt;</code>を報告しますが、どちらもページ上には存在しません。どちらも定数なので、これらから作られるフィンガープリントは安定しています。ただし、<strong>ルールが実在するものを報告したことを確かめずに、<code>selector</code>を解決可能なもの、<code>html</code>を実際のマークアップとして扱わないでください</strong>。シャドウツリー内の要素では、<code>selector</code>はそのシャドウルートの中で解決され、そこまでのたどり方は<code>shadowHostSelectors</code>が示します。
+				フラグが立った要素を指し戻せるように組み立てた、ベストエフォートのCSSセレクターです（<code>RULE_AUTHORING.md</code>の<code>helpers.buildSelector</code>を参照）。ID、テストID、<code>name</code>、<code>aria-label</code>を起点にするのは、非表示の要素、除外された要素、範囲外の要素も含めて、ドキュメント内のほかのどの要素もそれを持っていない場合だけです。<code>querySelector</code>はそれをドキュメント全体に対して解決するためです。それ以外の場合、セレクターはパスになります。どのDOM構造でも一意であるとは保証されません。シャドウルート内の要素はそれ自身のツリーの中で名前が付けられ（その位置は<code>structuralPath</code>が示します）、非常に深い要素のパスは上から短縮されます。テスト用と実際のページ255件で、39,857個のセレクターのうち15個が自身の要素をちょうど指していませんでしたが、すべてこうした種類のものでした。例外は、要素が存在しないこと<em>そのもの</em>が検出結果であるルールです。<code>page-title-present</code>は<code>head &gt; title</code>と、<code>html</code>として<code>&lt;title&gt;(missing)&lt;/title&gt;</code>を報告しますが、どちらもページ上には存在しません。どちらも定数なので、これらから作られるフィンガープリントは安定しています。ただし、<strong>ルールが実在するものを報告したことを確かめずに、<code>selector</code>を解決可能なもの、<code>html</code>を実際のマークアップとして扱わないでください</strong>。シャドウツリー内の要素では、<code>selector</code>はそのシャドウルートの中で解決され、そこまでのたどり方は<code>shadowHostSelectors</code>が示します。
 			</>
 		),
 	},
@@ -239,7 +275,7 @@ const occurrenceRows = [
 		field: <code>occurrenceOutcome</code>,
 		meaning: (
 			<>
-				検出結果を確実な<code>fail</code>の層と、レビューが必要な<code>cantTell</code>の層に分けて評価するルールで、この検出箇所がどちらの層に属するかを示します。1つの層しか報告しないルールでは省略され、その場合は結果自体の<code>outcome</code>が検出箇所の層になります。
+				検出結果を確実な<code>fail</code>の層と、レビューが必要な<code>cantTell</code>の層に分けて評価するルールで、この検出箇所がどちらの層に属するかを示します。1つの層しか報告しないルールでは省略され、その場合は結果自体の<code>outcome</code>が検出箇所の層になります。判定結果は常に層と一致します。<code>fail</code>の層の検出箇所が1つでもあれば<code>fail</code>になり、検出箇所がすべて<code>cantTell</code>の層である<code>fail</code>は<code>cantTell</code>になるため、SARIF、JUnit、EARL、ベースラインは同じ答えを返します。カスタムルールやパックのルールが食い違うものを返した場合はエンジンが整合させます。デフォルトのポリシーでは、手動ルールが<code>fail</code>になることはありません。
 			</>
 		),
 	},
@@ -256,7 +292,7 @@ const uncertaintyRows = [
 ];
 
 const outcomeRows = [
-	{ id: "fail", outcome: <code>fail</code>, meaning: "決定論的で規範的な違反です。判定の手順に推測は一切含まれません。", manual: "いいえ（cantTellに強制変換）" },
+	{ id: "fail", outcome: <code>fail</code>, meaning: "ルールが、チェックする要件を満たしていないと報告しています。検出結果を解釈するには、その対応、確度、検出箇所を読んでください。", manual: "デフォルトのポリシーでは、いいえ（cantTellに強制変換）" },
 	{ id: "pass", outcome: <code>pass</code>, meaning: "ルールの適用対象が存在し、どれにもフラグが立ちませんでした。", manual: "はい" },
 	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "人間の判断が必要です。本当にあいまいな場合か、手動ルールによる参考情報の検出結果のどちらかです。", manual: "はい" },
 	{ id: "notApplicable", outcome: <code>notApplicable</code>, meaning: "このページ／範囲には、ルールが適用される要素がありませんでした。", manual: "はい" },
@@ -275,17 +311,24 @@ export function OutputSchemaContent() {
 					"{",
 					"  engine: {",
 					"    tag: string,",
+					"    version: string,       // the @surea11y/core release that produced the result",
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
 					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					"    profileExcludes?: { rules: string[], criteria: string[] },",
+					"    optInRules?: string[],",
+					'    outputDetail?: "findings",',
+					"    packs?: string[],      // name@version",
 					"    environment: {",
 					"      layout: boolean,",
 					"      viewport?: { width: number, height: number },  // CSS px",
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
-					'      fonts?: "loaded" | "loading"',
+					'      fonts?: "loaded" | "loading",',
+					'      images?: "loaded" | "loading",',
+					"      animationsSettled?: number",
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -296,8 +339,10 @@ export function OutputSchemaContent() {
 					"  contextMatch: { elementCount: number, unmatchedSelectors: string[] } | null,",
 					"  checksResults: CheckResult[],",
 					"  rulesResults: CompositeResult[],",
+					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
-					"  skippedCustomRules: Array<{ id: string | null, reason: string }>",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string }>,",
+					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
 					"}",
 				]}
 			/>
@@ -320,8 +365,9 @@ export function OutputSchemaContent() {
 					"{",
 					"  topFrame: <the normal top-level result shape above>,",
 					"  frames: Array<",
-					"    | { url: string | null, topFrame: <top-level result>, frames: [...same shape, recursively] }",
-					"    | { url: string | null, error: string }",
+					"    | { url: string | null, selector: string | null, title: string | null,",
+					"        topFrame: <top-level result>, frames: [...same shape, recursively] }",
+					"    | { url: string | null, selector: string | null, title: string | null, error: string }",
 					"  >",
 					"}",
 				]}
@@ -331,13 +377,19 @@ export function OutputSchemaContent() {
 					<code>topFrame</code>は、関数が呼び出されたフレームについての、<a href="#top-level-result">トップレベルの結果</a>とまったく同じ形です。
 				</li>
 				<li>
-					<code>frames</code>には、スキャン範囲内の直接の子である<code>&lt;iframe&gt;</code>/<code>&lt;frame&gt;</code>ごとに1件のエントリが入ります。到達できる子（<code>a11yCoreEnableFrameResponder()</code>を呼び出したもの）は、<em>それ自身の</em>入れ子の<code>frames</code>まで再帰的に含む、完全な<code>{"{ url, topFrame, frames }"}</code>を返します。さらに深い孫フレームには、直接の親を経由してしか到達できないためです。到達できない子（ほとんどのサードパーティの埋め込みがこれに当たります。協力するレスポンダーがないか、タイムアウトした場合）は代わりに<code>{"{ url, error }"}</code>を返し、スキャンの残りは中断されません。
+					<code>frames</code>には、スキャン範囲内（開いたシャドウルートを含み、範囲自体がフレームであればそれも含む）の直接の子である<code>&lt;iframe&gt;</code>/<code>&lt;frame&gt;</code>ごとに1件のエントリが入ります。ただし、ページが表示していないフレームと、<code>excludeSelectors</code>が除外するフレームは、そのドキュメント全体とともに除かれます。各エントリはそのフレーム要素を示します。<code>selector</code>は親のドキュメントにおける<code>&lt;iframe&gt;</code>/<code>&lt;frame&gt;</code>のCSSセレクター、<code>title</code>はその要素の<code>title</code>属性または<code>null</code>で、同じドキュメントを読み込むフレームを見分けられます。<code>url</code>はフレームが表示しているドキュメントで、まだ遷移していないフレームではその<code>src</code>です。到達できる子（<code>a11yCoreEnableFrameResponder()</code>を呼び出したもの）は、<em>それ自身の</em>入れ子の<code>frames</code>まで再帰的に含む、完全な<code>{"{ url, topFrame, frames }"}</code>を返します。さらに深い孫フレームには、直接の親を経由してしか到達できないためです。到達できない子（ほとんどのサードパーティの埋め込みがこれに当たります。協力するレスポンダーがないか、タイムアウトした場合）は代わりに<code>{"{ url, error }"}</code>を返し、スキャンの残りは中断されません。
 				</li>
 				<li>
 					これは<strong>フラットなリストではなくツリー</strong>です。<code>@surea11y/playwright</code>バインディングの<code>.frames(true)</code>とは意図的に異なります。そちらはPlaywrightの<code>page.frames()</code>が入れ子の深さに関係なくすべてのフレームを返すので、フラットに<em>できます</em>。<code>postMessage</code>による中継にはそのような全体の視点がないため、入れ子を構造で表しています。
 				</li>
 				<li>
-					<strong>レポーターが受け取るのは1つのトップレベルの結果で、このツリーではありません。</strong><code>renderHtmlReport</code>、<code>renderSarifReport</code>、<code>renderJunitReport</code>、<code>buildBaselineEntries</code>、<code>matchBaseline</code>は、<code>checksResults</code>配列を持つオブジェクト以外のもの（フレームをまたぐ結果、配列、失敗したスキャンの<code>null</code>や<code>undefined</code>）を渡されると、何も見つからなかったスキャンとして描画するのではなく<code>TypeError</code>を投げます。<code>topFrame</code>と、各フレームの<code>topFrame</code>を、それぞれ別の呼び出しで渡してください。<code>renderEarlReport</code>はツリーをそのまま受け取り、応答した各フレームがそのURLをキーとする独立したサブジェクトになります。
+					<strong>レポーターはツリーをそのまま受け取ります。</strong><code>renderHtmlReport</code>、<code>renderSarifReport</code>、<code>renderJunitReport</code>、<code>buildBaselineEntries</code>、<code>matchBaseline</code>、<code>renderEarlReport</code>は、ツリーのすべてのフレームを報告します。応答した各フレームはそれ自身の検出結果を、それ自身のドキュメントに位置付けて報告し、応答しなかった各フレームは未スキャンとして報告するため、カバレッジの抜けが合格と読まれることはありません。フレームは<strong>パス</strong>で示されます。ページからそのフレームに至るフレーム要素の<code>selector</code>を、外側から順に並べたものです（<code>#checkout → iframe:nth-of-type(2)</code>）。スキャン結果でもフレームをまたぐ結果でもないもの（配列、失敗したスキャンの<code>null</code>や<code>undefined</code>）を渡されると、何も見つからなかったスキャンとして描画するのではなく<code>TypeError</code>を投げます。
+				</li>
+				<li>
+					<strong>バインディングのフレームのスキャンも受け取ります。</strong>ブラウザー用バインディングの<code>.frames(true)</code>は、各フレームが入れ子のエントリではなく単純な結果（または<code>{"{ url, error }"}</code>）である<code>{"{ topFrame, frames }"}</code>を返します。レポーター、<code>getMargins</code>、<code>flattenCrossFrameResult</code>は、そうしたフレームをスキャン済みとして読み、<code>selector</code>を持たないため<code>['iframe']</code>というパスで示します。
+				</li>
+				<li>
+					<code>@surea11y/core</code>の<code>flattenCrossFrameResult(result)</code>は、レポーターが読むとおりにフレームを列挙します。<code>{"[{ frame: { path, title, url }, result }]"}</code>の形で、応答しなかったフレームでは<code>result</code>の代わりに<code>error</code>が入り、ページが先頭で、各フレームはその中のフレームより前に並びます。ページの<code>path</code>は<code>[]</code>です。単純なスキャン結果は1件のエントリになります。
 				</li>
 			</ul>
 
@@ -349,6 +401,8 @@ export function OutputSchemaContent() {
 					'  outcome: "pass" | "fail" | "cantTell" | "notApplicable",',
 					'  outcomeNormalized: "pass" | "fail" | "cantTell" | "inapplicable",',
 					'  severity: "minor" | "moderate" | "serious" | "critical",',
+					'  ruleSeverity?: "minor" | "moderate" | "serious" | "critical", // the rule\'s own, when a profile gave it another',
+					'  policyOutcome?: "pass" | "fail" | "cantTell" | "notApplicable", // what the rule found, when the policy made it cantTell',
 					'  confidence: "high" | "medium" | "low",',
 					'  type: "automatic" | "manual",',
 					"  occurrences: Occurrence[],",
@@ -364,7 +418,10 @@ export function OutputSchemaContent() {
 					"    deprecated: boolean,",
 					"    deprecation: object | null,",
 					'    category: "perceivable" | "operable" | "understandable" | "robust" | null,',
-					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel?: string, wcagSc?: string[] }>,",
+					"    helpUrl: string,       // where to read how to fix it; \"\" when there is none",
+					"    tags: string[],        // the rule's tags, its own and the engine's",
+					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string,",
+					"      conformanceLevel?: string, wcagSc?: string[], url?: string, understandingUrl?: string }>,",
 					"    standard: string | null,",
 					"    applicability: string,",
 					"    expectation: string,",
@@ -394,7 +451,7 @@ export function OutputSchemaContent() {
 					"    removedSc: string[],",
 					'    coercedFrom: "fail"',
 					"  },",
-					"  error?: string           // present only if the rule threw — see below",
+					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
 				]}
 			/>
@@ -404,10 +461,10 @@ export function OutputSchemaContent() {
 					<strong><code>outcome</code>と<code>outcomeNormalized</code></strong>：<code>outcomeNormalized</code>では<code>notApplicable</code>が<code>"inapplicable"</code>になる点を除いて同一です。自分の用語とエンジン内部の用語のどちらにも合わせられるよう、両方を提供しています。
 				</li>
 				<li>
-					<strong><code>type: "manual"</code>のルールが<code>outcome: "fail"</code>を報告することはありません。</strong>手動ルール自身のロジックが<code>fail</code>と判断した場合、エンジンはそれを<code>cantTell</code>に強制変換し、<code>error</code>に説明を追記します。これは一元的に適用される仕組み（<code>policy.coerceManualFailToCantTell</code>。<code>a11y</code>ポリシー契約ではデフォルトで有効です。<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>を参照）で、各ルールが気にかける必要はありません。<code>fail</code>は、決定論的な<code>type: "automatic"</code>の検出結果だけのためにあります。
+					<strong>デフォルトの<code>a11y</code>ポリシーでは、<code>type: "manual"</code>のルールは<code>fail</code>ではなく<code>cantTell</code>を報告します。</strong>手動ルール自身のロジックが<code>fail</code>と判断した場合、エンジンはそれを<code>cantTell</code>に強制変換し、<code>error</code>に説明を追記します。これは一元的に適用される仕組み（<code>policy.coerceManualFailToCantTell</code>。<code>a11y</code>ポリシー契約ではデフォルトで有効です。<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>を参照）で、各ルールが気にかける必要はありません。このポリシーのもとでは、<code>fail</code>は決定論的な<code>type: "automatic"</code>の検出結果だけのためにあります。
 				</li>
 				<li>
-					<strong><code>meta.normativeMappings</code></strong>は、チェック結果をWCAGの達成基準に結び付けるものです。WCAGとの正式な対応がないルールでは<code>[]</code>になります（このエンジンでは、そのほとんどが参考情報の<code>type: "manual"</code>ルールです）。これらがどう集約されるかは<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。<strong>このリストはWCAGだけのものではありません。</strong>スキャンが別の規格を要求した場合（<code>engineOptions.mappings</code>、または規格のプロファイル）、WCAGの各達成基準の後に、その規格で対応する要件が続きます。例えば、その達成基準を再掲するEN 301 549の条項です（<code>{'{ standard: "EN 301 549", version: "V3.2.1" | "V4.1.1", requirement: "9.1.1.1", title, wcagSc: ["1.1.1"] }'}</code>。その達成基準を含むバージョンごとに1件）。また、ルールがWCAGのUnderstanding文書を引用することもあります（<code>type: "Understanding"</code>）。<code>requirement</code>を達成基準として読む前に、<code>standard</code>（と<code>type</code>がないこと）で絞り込んでください。複合ルールのWCAGのエントリーは常に先頭です。<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>を参照してください。
+					<strong><code>meta.normativeMappings</code></strong>は、チェック結果をWCAGの達成基準に結び付けるものです。空のリストは、この結果ではそのルールに正式な対応がないことを意味します。それはルールが自動か手動かを示すものではありません。それには<code>type</code>を読んでください（例えば<code>aria-allowed-role</code>は自動ルールで、WCAGとの対応がありません）。これらがどう集約されるかは<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。<strong>このリストはWCAGだけのものではありません。</strong>スキャンが別の規格を要求した場合（<code>engineOptions.mappings</code>、または規格のプロファイル）、WCAGの各達成基準の後に、その規格で対応する要件が続きます。例えば、その達成基準を再掲するEN 301 549の条項です（<code>{'{ standard: "EN 301 549", version: "V3.2.1" | "V4.1.1", requirement: "9.1.1.1", title, wcagSc: ["1.1.1"] }'}</code>。その達成基準を含むバージョンごとに1件）。また、ルールがWCAGのUnderstanding文書を引用することもあります（<code>type: "Understanding"</code>）。<code>requirement</code>を達成基準として読む前に、<code>standard</code>（と<code>type</code>がないこと）で絞り込んでください。複合ルールのWCAGのエントリーは常に先頭です。<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>を参照してください。
 				</li>
 				<li>
 					<strong><code>rollupIds</code></strong>は、この実行でこのルールをまとめている<code>rulesResults</code>内の複合ルールを列挙します。空のリストは、そのルールの検出結果がどの集約にも現れないことを意味するため、<code>rulesResults</code>だけを読む利用者には決して見えません。例えば<code>heading-order</code>はどのWCAGの集約にも属していません。
@@ -419,10 +476,13 @@ export function OutputSchemaContent() {
 					<strong><code>data</code></strong>：判定結果にかかわらずページ全体について何かを報告するルールにだけ含まれます。現在、コアのルールでこれを使うものはありません。検出箇所の<code>data.details</code>と同じく、安定した契約ではありません。
 				</li>
 				<li id="margin">
-					<strong><code>margin</code></strong>：カタログでmarginを宣言しているルール（<code>getChecksCatalog()[i].margin</code>、<code>{"{ measure, unit, limit }"}</code>）で、少なくとも1つの要素がルールのしきい値を満たした場合にだけ含まれます。しきい値を満たしつつ最もしきい値に近づいた要素を示すので、4.5:1に対して4.52:1での<code>pass</code>や、テキストが切れるまであと0.4 pxでの<code>pass</code>を、余裕のある<code>pass</code>と区別できます。判定結果に添えられる情報で、検出結果ではありません。検出箇所を追加、削除、変更することはなく、ベースライン、SARIF、JUnit、EARLはこれを無視します。一部の要素が合格していれば、<code>fail</code>や<code>cantTell</code>の結果にも含まれます。<code>limit</code>は、値がしきい値に達する必要がある場合（コントラスト、サイズ）は<code>min</code>、しきい値を下回る必要がある場合（はみ出し）は<code>max</code>です。<code>headroom</code>はしきい値の内側にどれだけ余裕があるかを<code>unit</code>で表したもので、<code>min</code>なら<code>value - threshold</code>、<code>max</code>なら<code>threshold - value</code>となり、負になることはありません。<code>threshold</code>はその要素の判定に使われたしきい値で、要素ごとに異なることがあります（大きな文字なら3:1）。ピクセルは小数点以下1桁で示されます。CSSピクセルや、15pxのフォントの半分といったしきい値は小数になり、表示する側が人のために丸めるからです。比は丸めません。WCAGはコントラストを丸めないためです。同じ値の要素が複数あれば文書順で最初の要素が選ばれるので、同じページでは常に同じmarginになります。<code>measure</code>と<code>unit</code>はオープンな集合で、マイナーリリースで増えることがあります。<code>context</code>はルール固有で、<code>data.details</code>と同じく安定した契約ではありません。<code>getMargins(result)</code>は、結果に含まれるすべてのmarginを<code>ruleId</code>順に並べた<code>{"[{ ruleId, ...margin }]"}</code>として返します。
+					<strong><code>margin</code></strong>：カタログでmarginを宣言しているルール（<code>getChecksCatalog()[i].margin</code>、<code>{"{ measure, unit, limit }"}</code>）で、少なくとも1つの要素がルールのしきい値を満たした場合にだけ含まれます。しきい値を満たしつつ最もしきい値に近づいた要素を示すので、4.5:1に対して4.52:1での<code>pass</code>や、テキストが切れるまであと0.4 pxでの<code>pass</code>を、余裕のある<code>pass</code>と区別できます。判定結果に添えられる情報で、検出結果ではありません。検出箇所を追加、削除、変更することはなく、ベースライン、SARIF、JUnit、EARLはこれを無視します。一部の要素が合格していれば、<code>fail</code>や<code>cantTell</code>の結果にも含まれます。<code>limit</code>は、値がしきい値に達する必要がある場合（コントラスト、サイズ）は<code>min</code>、しきい値を下回る必要がある場合（はみ出し）は<code>max</code>です。<code>headroom</code>はしきい値の内側にどれだけ余裕があるかを<code>unit</code>で表したもので、<code>min</code>なら<code>value - threshold</code>、<code>max</code>なら<code>threshold - value</code>となり、負になることはありません。<code>threshold</code>はその要素の判定に使われたしきい値で、要素ごとに異なることがあります（大きな文字なら3:1）。ピクセルは小数点以下1桁で示されます。CSSピクセルや、15pxのフォントの半分といったしきい値は小数になり、表示する側が人のために丸めるからです。比は丸めません。WCAGはコントラストを丸めないためです。同じ値の要素が複数あれば文書順で最初の要素が選ばれるので、同じページでは常に同じmarginになります。<code>measure</code>と<code>unit</code>はオープンな集合で、マイナーリリースで増えることがあります。<code>context</code>はルール固有で、<code>data.details</code>と同じく安定した契約ではありません。<code>getMargins(result)</code>は、結果に含まれるすべてのmarginを<code>ruleId</code>順に並べた<code>{"[{ ruleId, ...margin }]"}</code>として返します。フレームをまたぐ結果ではすべてのフレームのmarginを返し、子フレームのものには、そのフレームへのパスである<code>frame</code>が付きます。
 				</li>
 				<li>
-					<strong><code>error</code></strong>：次の3つの場合にだけ含まれます。ルールの実装が捕捉されない例外を投げた場合、上記の手動ルールの強制変換が行われた場合、そして<code>fail</code>の結果のすべての検出箇所で祖先をたどる処理が内部の深さ制限に達し（フラグが立った内容が実際に公開されているかをエンジンが確認できず）、結果全体が同じように<code>cantTell</code>に強制変換された場合です。例外を投げたルールは、必ず<code>outcome: "cantTell"</code>、<code>occurrences: []</code>、例外メッセージを設定した<code>error</code>として現れます。エンジンは、壊れたルール1つでスキャン全体をクラッシュさせることはありません。
+					<strong><code>error</code></strong>：ルールが完了しなかった場合、またはルールが返したものの一部をエンジンが変更したり無視したりした場合に含まれます。例外を投げた（または結果でないものを返した）ルールは、必ず<code>outcome: "cantTell"</code>、<code>occurrences: []</code>、例外メッセージを設定した<code>error</code>として現れます。そのため、検出箇所がなく<code>error</code>を持つ<code>cantTell</code>が、完了しなかったルールの見分け方です。エンジンは、壊れたルール1つでスキャン全体をクラッシュさせることはありません。それ以外の場合、<code>error</code>はエンジンの注記を保持し、ルール自身が返した<code>error</code>があればその後に<code>|</code>でつなげます。注記の対象は、上記の手動ルールの強制変換、集合の外にある<code>outcome</code>や<code>severity</code>、metaと異なる<code>type</code>、オブジェクトでない検出箇所（除外されます）、ルールが返した<code>policyOutcome</code>や<code>ruleSeverity</code>（どちらもエンジンが設定するため採用されません）、閉じた集合の外にある<code>uncertainty.code</code>、そして200段階の祖先をたどる処理が報告されたすべての要素に届かずに止まったために<code>cantTell</code>に格下げされた<code>fail</code>です。これらの結果は検出箇所を保持します。ルールは完了しているからです。
+				</li>
+				<li>
+					<strong><code>policyOutcome</code></strong>：ポリシーの<code>allowedOutcomes</code>が、ルールの見つけた判定結果を許可しない場合に含まれます。その場合、結果は<code>cantTell</code>になり、ルール自身の判定結果がここに入り、<code>error</code>は付きません。そのため、レポーターがこれを完了しなかったルールとして読むことはありません。
 				</li>
 				<li>
 					各結果の<strong><code>engineOptions</code></strong>は、渡したものそのままではなく、<em>解決済みの</em>オプションオブジェクト（ロケールやコントラストのデフォルトを適用した後のもの）です。あるルールが実際に何を受け取ったか、特に解決された<code>locale</code>と<code>contrast.mode</code>/<code>contrast.rootCanvasFallback</code>を確認するのに役立ちます。スキャンが翻訳に使った辞書である<code>messages</code>（ブラウザー用バンドルのロケール用の別ファイル、または独自の文字列）は含まれません。これらは設定ではなくデータで、結果ごとにコピーを持たせるとスキャンが数十メガバイトになっていたためです。どの辞書が使われたかは<code>engine.locale</code>で分かります。さらに2つのオプションは、ルールが見たとおりの形で含まれます。結果を<code>JSON.stringify</code>や<code>structuredClone</code>（<code>postMessage</code>）で運べる単純なデータに保つためです。<code>probes</code>はルールが読む上限付きのコピーとして、<code>customRules</code>は関数を除いた<code>{"[{ id }]"}</code>（IDを持つカスタムルールごとに1件）として含まれます。
@@ -431,7 +491,7 @@ export function OutputSchemaContent() {
 
 			<h2 id="occurrence">検出箇所（<code>occurrences[i]</code>）</h2>
 			<p>
-				通常は<code>outcome</code>が<code>fail</code>または<code>cantTell</code>のときにだけ含まれます。このエンジンは合格した要素を列挙せず、フラグを立てた要素だけを報告するため、<code>pass</code>の結果は<code>occurrences: []</code>になります。例外はコントラストのルールで、その<code>pass</code>には、スキャンについて述べる検出箇所（対象となり計算できたテキストの量）が<code>selector</code>を空にして1つ付きます。テキストがまったくない<code>pass</code>と、テキストの多いページでの<code>pass</code>を区別できるようにするためです。
+				<code>fail</code>には必ず1つ以上あります。要素を示さないカスタムルールの<code>fail</code>には、ドキュメント要素に1つ付きます（<code>selector: "html"</code>、理由コード<code>FAIL_WITHOUT_OCCURRENCE</code>）。通常は<code>outcome</code>が<code>fail</code>または<code>cantTell</code>のときにだけ含まれます。このエンジンは合格した要素を列挙せず、フラグを立てた要素だけを報告するため、<code>pass</code>の結果は<code>occurrences: []</code>になります。例外はコントラストのルールで、その<code>pass</code>には、スキャンについて述べる検出箇所（対象となり計算できたテキストの量）が<code>selector</code>を空にして1つ付きます。テキストがまったくない<code>pass</code>と、テキストの多いページでの<code>pass</code>を区別できるようにするためです。
 			</p>
 			<p>
 				唯一の例外が<code>notApplicable</code>です。判定対象が何もなかったルールは、その理由を示す検出箇所を1つ付けることがあり、コントラストのルールは、背景を計算できるテキストが1つもなかった場合に実際にそうします。「チェックしたが、フラグを立てるものはなかった」と「チェックできなかった」の違いを、このエンジンは隠さずに報告します。このような検出箇所は要素ではなくスキャンについて述べるものなので、<code>selector</code>は空です。<strong><code>outcome</code>を先に確認せずに、<code>occurrences.length</code>を違反の件数として読まないでください。</strong>
@@ -472,7 +532,7 @@ export function OutputSchemaContent() {
 
 			<h3 id="uncertainty-codes">不確実性コード</h3>
 			<p>
-				<code>cantTell</code>は、エンジンが判定しなかったことを示します。<code>uncertainty</code>は<strong>その理由</strong>を閉じた語彙で示すので、利用側は要約の文字列を解析しなくても、理由に応じて処理を分けられます。含まれるのは<code>cantTell</code>の層の検出箇所だけです。<code>fail</code>の層の検出箇所に付いていれば、ルールが判定したと同時に判定しなかったと主張することになるため、エンジンはそれを取り除きます。
+				<code>cantTell</code>は、エンジンが判定しなかったことを示します。<code>uncertainty</code>は<strong>その理由</strong>を閉じた語彙で示すので、利用側は要約の文字列を解析しなくても、理由に応じて処理を分けられます。含まれるのは<code>cantTell</code>の層の検出箇所だけです。<code>fail</code>の層の検出箇所に付いていれば、ルールが判定したと同時に判定しなかったと主張することになるため、エンジンはそれを取り除きます。<code>code</code>が下記のコードのいずれでもない不確実性も除かれ、ルールの<code>error</code>がそのコードを示します。
 			</p>
 			<DataTable
 				label="不確実性コード"
@@ -510,8 +570,9 @@ export function OutputSchemaContent() {
 					"      standard?: string,        // a standard's own rollup only, with version and criterion",
 					"      version?: string,",
 					"      criterion?: string,",
-					"      checksIds: string[],      // every atomic ruleId this composite rolls up",
-					"      contributors: Array<{ testId: string, outcome: string, severity: string | null }>,",
+					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
+					"      customChecksIds?: string[], // the custom rules among them; absent when none",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -520,6 +581,9 @@ export function OutputSchemaContent() {
 			/>
 			<p>
 				集約の優先順位（決定論的で、この順に適用されます）：<strong>構成ルールに<code>fail</code>が1つでもあれば、複合ルールは<code>fail</code></strong>。そうでなく<strong><code>cantTell</code>が1つでもある（または構成ルールのいずれかがまったく実行されなかった、つまり<code>missingCount &gt; 0</code>）なら、複合ルールは<code>cantTell</code></strong>。そうでなく<strong>構成ルールがすべて<code>notApplicable</code>なら、複合ルールは<code>notApplicable</code></strong>。それ以外は<strong><code>pass</code></strong>です。これが全体としての適合表明にとって何を意味するかは<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。
+			</p>
+			<p>
+				WCAGの集約のルールは、それ自身のリストに加えて、実行されて（<code>meta.wcagSc</code>または<code>meta.normativeMappings</code>のWCAGのエントリーを通じて）その達成基準のいずれかに対応する<code>engineOptions.customRules</code>のすべてのルールです。それらは貢献したルールの中で<code>custom: true</code>が付き、<code>customChecksIds</code>に列挙されるため、カスタムルールが判定結果を決めたことが読み手に分かります。規格独自の集約は、それ自身のリストを保ちます。
 			</p>
 
 			<h2>判定結果の値</h2>
@@ -534,20 +598,20 @@ export function OutputSchemaContent() {
 				rows={outcomeRows}
 			/>
 			<p>
-				<code>fail</code>は、このエンジンで意図的に最も範囲が狭く、最も基準の高い判定結果にしてあります。決定論的で規範的な違反のためだけにあり、<strong>ルールのカバー範囲を広げるためにこれを薄めてはなりません</strong>。
+				コアの組み込みルールでは、<code>fail</code>は意図的に最も範囲が狭く、最も基準の高い判定結果にしてあります。決定論的で規範的な違反のためだけにあり、<strong>ルールのカバー範囲を広げるためにこれを薄めてはなりません</strong>。
 			</p>
 
 			<h2>重大度と確度の値</h2>
 			<ul>
 				<li>
-					<code>severity</code>：<code>minor</code> &lt; <code>moderate</code> &lt; <code>serious</code> &lt; <code>critical</code>。ユーザーへの影響についてのルール作成者の評価で、<code>confidence</code>とは独立しています。
+					<code>severity</code>：<code>minor</code> &lt; <code>moderate</code> &lt; <code>serious</code> &lt; <code>critical</code>。ユーザーへの影響についてのルール作成者の評価で、<code>confidence</code>とは独立しています。プロファイルはルールに別の重大度を与えることができます（規格やパックのチェックリストにあるプロファイルの<code>severity</code>）。その場合、結果にはプロファイルの重大度が表示され、ルール自身の重大度は<code>ruleSeverity</code>として保持され（このときだけ含まれます）、集約はプロファイルの重大度を使います。
 				</li>
 				<li>
 					<code>confidence</code>：<code>low</code> &lt; <code>medium</code> &lt; <code>high</code>。<code>fail</code>/<code>cantTell</code>の判定が正しいことに、エンジンがどれだけ確信を持っているかを示します。どちらも優先順位付けのための情報としてのメタデータで、<code>outcome</code>の意味を変えることはありません。
 				</li>
 			</ul>
 			<p>
-				<strong><code>fail</code>が常に<code>confidence: "high"</code>とは限りませんが、それは矛盾ではありません。</strong>判定結果が表すのは判定の手順（推測せずに問いを解決したこと）であり、<code>confidence</code>が表すのは、その判定の拠り所となったモデルです。いくつかの自動ルールは、それ自体が近似であるもの（厳選したWAI-ARIAのロールの表、ネイティブ要素のロールの対応、静的なマークアップから推定したアクセシビリティツリー）に対して決定論的に判定し、<code>medium</code>を報告します。<code>aria-required-children</code>、<code>aria-prohibited-children</code>、<code>aria-required-parent</code>、<code>aria-allowed-attr</code>、<code>form-control-programmatic-label-present</code>、<code>identical-iframes-same-purpose</code>、<code>svg-image-text-alternative-present</code>、<code>video-poster-text-alternative-present</code>、<code>target-size-minimum</code>です。<code>confidence</code>はすべての結果に含まれるので、最も確実な不合格だけが欲しい利用側はこれで直接ゲートできます。<code>policy.allowedConfidence</code>ではこれはできません。許可されていない値は、判定結果を変えるのではなく、ルール自身の<code>defaultConfidence</code>に置き換えられるからです（<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>を参照）。
+				<strong><code>fail</code>が常に<code>confidence: "high"</code>とは限りませんが、それは矛盾ではありません。</strong>判定結果が表すのは判定の手順（推測せずに問いを解決したこと）であり、<code>confidence</code>が表すのは、その判定の拠り所となったモデルです。いくつかの自動ルールは、それ自体が近似であるもの（厳選したWAI-ARIAのロールの表、ネイティブ要素のロールの対応、静的なマークアップから推定したアクセシビリティツリー）に対して決定論的に判定し、<code>medium</code>を報告します。<code>aria-required-children</code>、<code>aria-prohibited-children</code>、<code>aria-required-parent</code>、<code>aria-allowed-attr</code>、<code>form-control-programmatic-label-present</code>、<code>identical-iframes-same-purpose</code>、<code>svg-image-text-alternative-present</code>、<code>video-poster-text-alternative-present</code>、<code>target-size-minimum</code>、<code>text-spacing-content-loss</code>です。<code>confidence</code>はすべての結果に含まれるので、最も確実な不合格だけが欲しい利用側はこれで直接ゲートできます。<code>policy.allowedConfidence</code>ではこれはできません。許可されていない値は、判定結果を変えるのではなく、ルール自身の<code>defaultConfidence</code>に置き換えられるからです（<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>を参照）。
 			</p>
 
 			<h2>実例</h2>
@@ -593,7 +657,7 @@ export function OutputSchemaContent() {
 					'          "html": "<button></button>",',
 					'          "structuralPath": [1, 1],',
 					'          "summary": "This button has no accessible name.",',
-					'          "hint": "Provide visible button text or a programmatic accessible-name mechanism (for example aria-label) so assistive technologies can identify the button.",',
+					'          "hint": "Give the button visible text, or name it with aria-label, so screen reader users know what it does.",',
 					'          "data": {',
 					'            "visibilityFilter": { "eligible": true, "reasons": [], "targetSet": "acc", "accEligible": true },',
 					'            "details": { "reasonCode": "name_missing" }',
@@ -612,7 +676,7 @@ export function OutputSchemaContent() {
 					'          "selector": "html > body > img",',
 					'          "html": "<img src=\\"logo.png\\">",',
 					'          "structuralPath": [1, 0],',
-					'          "summary": "Missing alt attribute on <img>.",',
+					'          "summary": "This <img> has no alt attribute.",',
 					'          "hint": "Add an alt attribute (use alt=\\"\\" only for decorative images)."',
 					"        }",
 					"      ]",

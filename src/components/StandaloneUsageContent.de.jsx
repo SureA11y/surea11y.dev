@@ -53,6 +53,12 @@ export function StandaloneUsageContent() {
 				Englisch, keinen Fehler — siehe <a href="/configuration/locales/">Locales</a>.
 			</p>
 			<p>
+				Das Bundle lässt sich auch als Modul laden:{" "}
+				<code>import a11ycore from '@surea11y/core/browser'</code>, ein benannter Import von{" "}
+				<code>runa11yCoreInPage</code> und <code>require()</code> erhalten alle seine API, und das
+				Global ist weiterhin definiert.
+			</p>
+			<p>
 				<strong>Bewusst nicht im Bundle enthalten</strong>: <code>runa11yCoreAcrossFrames</code>/
 				<code>a11yCoreEnableFrameResponder</code> (frameübergreifendes Scannen setzt voraus, dass
 				auch der eingebettete Frame die Engine lädt und dies ausdrücklich aktiviert — das passt nicht zu einem
@@ -69,6 +75,48 @@ export function StandaloneUsageContent() {
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom in Node
 				ohne echten Browser, oder Puppeteer/Playwright selbst steuern, statt über ein Binding zu
 				gehen.
+			</p>
+
+			<h2 id="packs-in-a-page">Packs in einer Seite</h2>
+			<p>
+				Ein <a href="/configuration/packs/">Pack</a> wird in Node vorbereitet und gelangt daher als
+				Script in eine Seite. <code>packScript(packs)</code> aus <code>@surea11y/core/pack</code>{" "}
+				gibt ein Script zurück, das die Packs registriert; laden Sie es nach dem Bundle (und in jeden
+				Frame, den Sie scannen), und nennen Sie die Packs dann in <code>engineOptions.packs</code>{" "}
+				als <code>name@version</code>. Oder liefern Sie eine einzige Datei mit{" "}
+				<code>buildBrowserBundle({"{ packs }"})</code> aus: das Bundle, nach dem die Packs
+				registriert werden. Der Code der Regeln wird als Funktionen in das Script geschrieben, daher
+				läuft er auch dort, wo eine Content Security Policy <code>eval</code> verbietet.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// In Node: write the script once, beside the bundle.",
+					"const fs = require('node:fs');",
+					"const { packScript } = require('@surea11y/core/pack');",
+					"const acmePolicy = require('./acme-policy-pack');",
+					"fs.writeFileSync('acme-pack.js', packScript([acmePolicy]));",
+				]}
+			/>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
+					'<script src="acme-pack.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(location.href, null, {",
+					"    packs: ['@acme/a11y-policy@1.0.0'],",
+					"    profile: 'acme-web-2026'",
+					"  }, null);",
+					"</script>",
+				]}
+			/>
+			<p>
+				Die Seite führt genau die Packs aus, die ein Aufruf von <code>packScript</code> registriert
+				hat, mit dem core, mit dem er vorbereitet wurde: Übergeben Sie jedes Pack, das ein Scan
+				braucht, an einen einzigen Aufruf. Genannte Packs, die die Seite nicht ausführt, stehen mit
+				dem Grund in <code>skippedPacks</code>. Die Bindings erledigen all das mit{" "}
+				<code>.withPacks()</code> für Sie.
 			</p>
 
 			<h2 id="waiting-for-the-page">Vor dem Scan auf die Seite warten</h2>
@@ -107,6 +155,48 @@ export function StandaloneUsageContent() {
 					<code>INTEGRATION.md</code>
 				</a>
 				, der Integrationsanleitung auf GitHub.
+			</p>
+
+			<h2 id="a-time-limit-on-a-scan">Ein Zeitlimit für einen Scan</h2>
+			<p>
+				Ein Scan läuft in einem Zug innerhalb der Seite, und nichts in der Seite kann ihn anhalten,
+				sobald er begonnen hat: Ein Getter der Seite oder eine Regel, die nie zurückkehrt, blockiert
+				diesen Tab endgültig. Begrenzen Sie die Zeit dort, wo Sie den Scan starten, und geben Sie
+				den Tab auf, wenn das Limit überschritten ist. 60 Sekunden liegen weit über dem, was eine
+				normale Seite braucht, und erfassen daher nur die defekten:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Playwright or Puppeteer: page.evaluate has no time limit of its own.",
+					"async function scanWithin(page, ms, scan) {",
+					"  let timer;",
+					"  const late = new Promise((_, reject) => {",
+					"    timer = setTimeout(() => reject(new Error(`the scan took longer than ${ms} ms`)), ms);",
+					"  });",
+					"  try {",
+					"    return await Promise.race([scan(), late]);",
+					"  } catch (err) {",
+					"    // The tab may still be busy with the scan: close it, and use a new one.",
+					"    await page.close().catch(() => {});",
+					"    throw err;",
+					"  } finally {",
+					"    clearTimeout(timer);",
+					"  }",
+					"}",
+					"",
+					"const fs = require('node:fs');",
+					"await page.evaluate(fs.readFileSync(require.resolve('@surea11y/core/browser'), 'utf8'));",
+					"const result = await scanWithin(page, 60_000, () =>",
+					"  page.evaluate(() => window.a11ycore.runa11yCoreInPage(location.href, null, {}, null))",
+					");",
+				]}
+			/>
+			<p>
+				In jsdom läuft der Scan auf dem eigenen Thread von Node, daher kann ein Timer dort erst
+				auslösen, wenn er endet: Führen Sie den Scan in einem Worker-Thread oder einem
+				Kindprozess aus, und beenden Sie diesen, wenn das Limit überschritten ist. Das Zeitlimit des
+				CI-Jobs selbst ist in beiden Fällen der letzte Ausweg.
 			</p>
 		</>
 	);

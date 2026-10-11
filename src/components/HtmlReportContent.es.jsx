@@ -31,7 +31,20 @@ export function HtmlReportContent() {
 					ocurrencias idénticas es una sola cosa que merece atención, no muchas), cada una mostrando
 					gravedad, chip(s) de SC de WCAG, una ocurrencia representativa y el recuento total de
 					ocurrencias. Limitado a las 24 reglas de mayor prioridad, con una nota de desbordamiento a
-					partir de ahí.
+					partir de ahí. Una regla que no terminó (lanzó una excepción) también recibe una tarjeta,
+					que lo indica junto con su error, ya que la página no se comprobó con ella. Una regla con
+					un enlace de ayuda <code>http(s)</code> (<code>meta.helpUrl</code>, incluido el de una regla
+					personalizada) recibe en su tarjeta un enlace "<span lang="en">How to fix &lt;rule&gt;</span>"; una regla sin él
+					enlaza el documento <span lang="en">Understanding</span> del criterio de WCAG que comprueba
+					("<span lang="en">Understanding 1.1.1 Non-text Content</span>").
+					</li>
+					<li>
+						<strong>Frames</strong>: solo para un resultado entre frames (
+						<code>runa11yCoreAcrossFrames</code>, o el <code>.frames(true)</code> de una
+						integración). Las tarjetas anteriores son las de la propia página; esta sección tiene un
+						encabezado por frame, nombrado por su ruta (los selectores de los elementos frame que
+						llevan hasta él), con el título y la URL del frame y sus tarjetas, o "Not scanned" y el
+						motivo para un frame que no respondió. El resto del informe describe la propia página.
 					</li>
 					<li>
 						<strong>Lo más cerca del límite</strong>: se muestra cuando el análisis tiene márgenes (
@@ -45,16 +58,24 @@ export function HtmlReportContent() {
 					<strong>Resumen por WCAG</strong>: agrupado por nivel de conformidad (A / AA / AAA),
 					obtenido directamente de los resultados agregados compuestos <code>rulesResults[]</code> propios del
 					motor (ver <a href="/conformance/wcag-mapping/">Conformidad</a>): una fila por Criterio
-					de Éxito (con la cláusula de EN 301 549 que lo reformula, cuando la hay y el análisis pidió
-					cláusulas de EN 301 549), su resultado, un desglose de aprobado/fallido/necesita revisión/n.a. y qué
-					reglas atómicas contribuyeron. Son datos reales del motor, no una agrupación inventada:
+					de Éxito (con los requisitos de cada otro estándar del <code>standards</code> del resultado
+					a los que se asocian sus reglas, como la cláusula de EN 301 549 que lo reformula, cuando la
+					hay y el análisis pidió cláusulas de EN 301 549), su resultado, un desglose de
+					aprobado/fallido/necesita revisión/n.a. y qué reglas atómicas contribuyeron, incluida una
+					regla personalizada asociada al criterio. Son datos reales del motor, no una agrupación inventada:
 					el mismo resultado agregado que obtendrías del <code>rulesResults</code> del JSON sin procesar.
 				</li>
 				<li>
 					<strong>Resultado agregado propio de un estándar</strong>: solo cuando el análisis ejecutó
 					las reglas de un estándar que tiene sus propios resultados agregados (su perfil, o{" "}
 					<code>engineOptions.optInRules</code>), una fila por resultado agregado, con la redacción
-					del estándar, el desglose y las reglas que contribuyeron.
+					del estándar, los requisitos de las reglas que decidieron el resultado, el desglose y las
+					reglas que contribuyeron. Esto cubre el estándar de un{" "}
+					<a href="/configuration/packs/">pack</a> y la lista de comprobación de un pack, cuyos
+					elementos son sus resultados agregados. Cada uno de esos estándares figura en el{" "}
+					<code>standards</code> del resultado, así que un resultado guardado se muestra igual
+					dondequiera que se genere; cuando esa lista falta o está dañada, el informe lo indica
+					encima del resumen por WCAG.
 				</li>
 				<li>
 					<strong>Datos técnicos completos</strong> (contraído por defecto): una tarjeta resumen
@@ -62,6 +83,11 @@ export function HtmlReportContent() {
 					cada ocurrencia individual de todo el análisis.
 				</li>
 			</ul>
+			<p>
+				El informe sigue el esquema de color del lector, y su propio texto cumple WCAG 1.4.3 en
+				ambos: cada color de estado tiene al menos 4,5:1 sobre su chip y su mosaico, y las propias
+				reglas de contraste del motor pasan en el informe renderizado en modo claro y oscuro.
+			</p>
 			<p>
 				La barra de metadatos bajo la cabecera lleva el recuento de reglas, el recuento de
 				ocurrencias, la etiqueta del motor, la versión del esquema, la versión de WCAG a la que
@@ -90,6 +116,11 @@ export function HtmlReportContent() {
 				forma parte del resultado, así que el informe no puede leer etiquetas de él; sus hallazgos
 				se marcan entonces con su propio idioma (<code>lang="nl"</code>, por ejemplo), para que un
 				lector de pantalla los lea con la voz adecuada.
+			</p>
+			<p>
+				Un resultado compacto (<code>engineOptions.output.detail: 'findings'</code>, ver{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Esquema de salida</a>) se lee
+				como el resultado completo que representa, así que se informa igual.
 			</p>
 
 			<h2>Uso como biblioteca</h2>

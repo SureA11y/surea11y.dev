@@ -9,7 +9,9 @@ const outcomeRows = [
 		junit: (
 			<>
 				<code>&lt;failure type="fail"&gt;</code>, una línea por ocurrencia fallida (mensaje, pista,
-				selector, marcado)
+				selector, marcado), y después <code>help: &lt;url&gt;</code> cuando la regla tiene un enlace
+				de ayuda <code>http(s)</code> (<code>meta.helpUrl</code>), o si no, el documento{" "}
+				<span lang="en">Understanding</span> de su primer criterio de WCAG
 			</>
 		),
 		why: "El caso determinista que condiciona la compilación.",
@@ -42,6 +44,12 @@ const outcomeRows = [
 			</>
 		),
 	},
+	{
+		id: "ruleError",
+		outcome: <>una regla que no terminó (<code>cantTell</code> sin ocurrencias y con un <code>error</code>: lanzó una excepción)</>,
+		junit: <><code>&lt;error type="ruleError"&gt;</code> con el error, contado en <code>errors</code></>,
+		why: "El elemento de JUnit para una prueba que no se pudo ejecutar. La página no se comprobó con la regla, lo que no es ni un aprobado ni algo que revisar.",
+	},
 ];
 
 const optionRows = [
@@ -53,7 +61,9 @@ const optionRows = [
 			<>
 				<code>'failure'</code> informa las reglas <code>cantTell</code> como{" "}
 				<code>&lt;failure type="cantTell"&gt;</code>, para un pipeline que no debe pasar mientras
-				quede algo sin decidir.
+				quede algo sin decidir. Se lee sin distinguir mayúsculas y minúsculas; cualquier otro valor
+				lanza un <code>TypeError</code>, ya que uno mal escrito dejaría de condicionar la
+				compilación sin avisar.
 			</>
 		),
 	},
@@ -71,7 +81,8 @@ const optionRows = [
 			<>
 				Entradas de <code>buildBaselineEntries()</code> de{" "}
 				<a href="/conformance/baseline/">la línea base</a>. Las ocurrencias fallidas registradas ahí
-				se descartan, exactamente como en SARIF. Una regla cuyos fallos ya son todos conocidos es{" "}
+				se descartan, exactamente como en SARIF. Acepta el archivo de línea base tal como se guardó
+				(<code>JSON.parse</code> del mismo) o su lista <code>entries</code>. Una regla cuyos fallos ya son todos conocidos es{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, no una
 				prueba superada: no pasó.
 			</>
@@ -162,7 +173,10 @@ export function JunitReportContent() {
 					Las suites salen de las asociaciones de WCAG de cada regla, no de los compuestos, así que
 					cada regla que se ejecutó se informa aunque se hayan excluido los compuestos. El compuesto,
 					cuando se ejecutó, aporta el título de la suite y la propiedad{" "}
-					<code>criterionOutcome</code>. Una regla asociada a dos criterios aparece en ambas suites.
+					<code>criterionOutcome</code>, que cuenta las reglas personalizadas asociadas al criterio
+					igual que las incorporadas. Un criterio comprobado por varios compuestos (4.1.2: su nombre
+					accesible y su validez ARIA) toma el peor de sus resultados, y el nombre que comparten sus
+					títulos (<code>WCAG 4.1.2 Name, role, value</code>). Una regla asociada a dos criterios aparece en ambas suites.
 					Una regla sin criterio asociado va a una suite final <code>Other checks</code> con{" "}
 					<code>classname="other"</code>.
 				</li>
@@ -192,9 +206,30 @@ export function JunitReportContent() {
 				<li>
 					Las propiedades <code>en301549</code> nombran la cláusula de EN 301 549 que reformula el
 					criterio, cuando la hay y el análisis pidió cláusulas de EN 301 549 (ver{" "}
-					<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>).
+					<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>). Cada otro estándar que
+					figura en el <code>standards</code> del resultado añade propiedades con el nombre de su
+					clave, una por cada requisito suyo al que se asocian las reglas de la suite: el elemento de
+					lista de comprobación de un <a href="/configuration/packs/">pack</a> que agrupa la regla se
+					indica por su id, <code>&lt;property name="acme" value="acme-images"/&gt;</code>. Un
+					estándar que solo nombra una regla personalizada no añade ninguna propiedad.
 				</li>
 			</ul>
+			<p>
+				Un resultado compacto (<code>engineOptions.output.detail: 'findings'</code>) se lee como el
+				resultado completo que representa, así que se informa igual.
+			</p>
+
+			<h2 id="cross-frame-results">Resultados entre frames</h2>
+			<p>
+				Un resultado entre frames (ver{" "}
+				<a href="/results-reports/output-schema/#cross-frame-result">Esquema de salida</a>) da
+				primero las suites de la página y después las de cada frame, nombradas por la ruta del frame
+				(<code>Frame #checkout: WCAG 1.1.1 Non-text content: text alternatives</code>) y con una
+				propiedad <code>frame</code> que la contiene, para que un fallo en un frame no se fusione con
+				los de la página. Un frame que no respondió es una suite <code>Frame &lt;path&gt;</code> con
+				un testcase omitido, <code>Not scanned: &lt;error&gt;</code>: el frame no se comprobó, lo que
+				no es un aprobado. Los totales de <code>&lt;testsuites&gt;</code> cuentan todos los frames.
+			</p>
 
 			<h2>Resultados</h2>
 			<DataTable

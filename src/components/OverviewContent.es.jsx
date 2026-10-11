@@ -104,6 +104,17 @@ export function OverviewContent() {
 				pequeño lo convierta en un <code>fail</code>. Consulta el{" "}
 				<a href="/results-reports/output-schema/#margin">Esquema de salida</a>.
 			</p>
+			<p>
+				Nombra el estándar y el motor elige las reglas.{" "}
+				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code> ejecuta las reglas de los criterios
+				A y AA de WCAG 2.2, según el nivel que tiene cada criterio en esa versión, y{" "}
+				<code>bestPractices: true</code> añade las comprobaciones que WCAG no exige. Un estándar más
+				allá de WCAG, como uno nacional o la política propia de tu organización, llega como un pack:
+				sus reglas, perfiles y elementos de lista de comprobación se ejecutan junto a los de core
+				y aparecen en todos los informes. Consulta{" "}
+				<a href="/configuration/engine-options/#selecting-which-rules-run">Opciones del motor</a> y{" "}
+				<a href="/configuration/packs/">Packs</a>.
+			</p>
 
 			<h3 id="checked-against-the-act-corpus">Verificado contra el corpus de ACT</h3>
 			<p>
@@ -129,8 +140,8 @@ export function OverviewContent() {
 
 			<h2>Principios clave</h2>
 			<ul>
-				<li><strong>Ejecución determinista.</strong> La misma entrada siempre produce la misma salida. Las animaciones y transiciones en curso se detienen durante el análisis, así que una página captada a mitad de un fundido da el mismo resultado que una ya estable.</li>
-				<li><strong>Conservador por diseño.</strong> <code>fail</code> se reserva para violaciones objetivas y normativas, minimizando las falsas alarmas.</li>
+				<li><strong>Ejecución determinista.</strong> La misma página, renderizada en las mismas condiciones y analizada con las mismas opciones, recibe las mismas decisiones. Los tiempos, las marcas de tiempo y los detalles del entorno en el resultado pueden variar entre ejecuciones. Las animaciones y transiciones en curso se detienen durante el análisis, así que un fundido a medias no cambia lo que miden las reglas.</li>
+				<li><strong>Conservador por diseño.</strong> Las reglas de core reservan <code>fail</code> para violaciones objetivas y normativas, para que las falsas alarmas sean poco frecuentes.</li>
 				<li><strong>Trazabilidad frente a los estándares.</strong> Las reglas se asignan al Criterio de Éxito de WCAG aplicable siempre que corresponde.</li>
 				<li><strong>Salida estable y legible por máquina.</strong> Los identificadores de regla permanecen estables sin importar el idioma.</li>
 				<li><strong>Independiente del framework.</strong> Se ejecuta dentro de jsdom o de cualquier framework de automatización de navegador.</li>
@@ -158,8 +169,11 @@ export function OverviewContent() {
 				<li>detecta una trampa de foco de teclado o contenido recortado al 400% de zoom, ya que ambos requieren simular una interacción real del usuario a lo largo del tiempo, no solo leer el DOM en un instante.</li>
 			</ul>
 			<p>
-				Estos son los casos en los que el motor informa <code>cantTell</code>, y donde el juicio de una
-				persona revisora sigue siendo necesario. Consulta{" "}
+				Algunas comprobaciones implementadas informan <code>cantTell</code> cuando una persona
+				tiene que decidir. Otros aspectos, como las trampas de teclado y el reflujo al aplicar
+				zoom, el motor no los comprueba en absoluto y necesitan pruebas aparte: ningún{" "}
+				<code>cantTell</code> los sustituye, así que un resultado sin ninguno no significa que se
+				hayan cubierto. Consulta{" "}
 				<a href="/help/known-limitations/">Limitaciones conocidas</a> para ver la lista completa.
 			</p>
 		</>

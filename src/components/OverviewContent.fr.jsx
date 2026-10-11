@@ -107,6 +107,17 @@ export function OverviewContent() {
 				vous pouvez le corriger avant qu’un petit changement n’en fasse un <code>fail</code>. Voir
 				le <a href="/results-reports/output-schema/#margin">Schéma de sortie</a>.
 			</p>
+			<p>
+				Nommez la norme, et le moteur choisit les règles.{" "}
+				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code> exécute les règles des critères A
+				et AA de WCAG 2.2, selon le niveau de chaque critère dans cette version, et{" "}
+				<code>bestPractices: true</code> ajoute les vérifications que WCAG n’exige pas. Une norme
+				au-delà de WCAG, comme une norme nationale ou la politique propre à votre organisation, prend
+				la forme d’un pack : ses règles, ses profils et les points de sa liste de contrôle s’exécutent à côté de
+				celles de core et apparaissent dans chaque rapport. Voir{" "}
+				<a href="/configuration/engine-options/#selecting-which-rules-run">Options du moteur</a> et{" "}
+				<a href="/configuration/packs/">Packs</a>.
+			</p>
 
 			<h3 id="checked-against-the-act-corpus">Vérifié sur le corpus ACT</h3>
 			<p>
@@ -132,8 +143,8 @@ export function OverviewContent() {
 
 			<h2>Principes clés</h2>
 			<ul>
-				<li><strong>Exécution déterministe.</strong> Une même entrée produit toujours la même sortie. Les animations et transitions en cours sont figées pendant l’analyse : une page saisie en plein fondu donne le même résultat qu’une page stabilisée.</li>
-				<li><strong>Prudent par conception.</strong> <code>fail</code> est réservé aux violations objectives et normatives, ce qui limite les fausses alertes.</li>
+				<li><strong>Exécution déterministe.</strong> Une même page, rendue dans les mêmes conditions et analysée avec les mêmes options, reçoit les mêmes décisions. Les temps, horodatages et détails d’environnement du résultat peuvent tout de même varier d’une exécution à l’autre. Les animations et transitions en cours sont figées pendant l’analyse, si bien qu’un fondu en cours ne change pas ce que mesurent les règles.</li>
+				<li><strong>Prudent par conception.</strong> Les règles de core réservent <code>fail</code> aux violations objectives et normatives, pour que les fausses alertes restent rares.</li>
 				<li><strong>Traçabilité vers les normes.</strong> Les règles sont associées au critère de succès WCAG applicable chaque fois que c’est pertinent.</li>
 				<li><strong>Sortie stable et lisible par machine.</strong> Les identifiants de règle restent les mêmes quelle que soit la langue.</li>
 				<li><strong>Indépendant du framework.</strong> S’exécute dans jsdom ou dans n’importe quel framework d’automatisation de navigateur.</li>
@@ -163,8 +174,11 @@ export function OverviewContent() {
 				<li>détecter un piège au clavier ou un contenu rogné à un zoom de 400 %, car les deux exigent de simuler une véritable interaction utilisateur dans le temps, et pas seulement de lire le DOM à un instant donné.</li>
 			</ul>
 			<p>
-				Ce sont les cas où le moteur renvoie <code>cantTell</code>, et où le jugement d’une
-				personne chargée de la revue reste nécessaire. Voir{" "}
+				Certaines vérifications implémentées renvoient <code>cantTell</code> quand une personne
+				doit trancher. D’autres aspects, dont les pièges au clavier et la redistribution au zoom,
+				ne sont pas du tout vérifiés par le moteur et demandent des tests à part : aucun{" "}
+				<code>cantTell</code> ne les remplace, donc un résultat qui n’en contient pas ne signifie
+				pas qu’ils ont été couverts. Voir{" "}
 				<a href="/help/known-limitations/">Limites connues</a> pour la liste complète.
 			</p>
 		</>

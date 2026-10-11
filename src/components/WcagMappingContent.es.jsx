@@ -111,16 +111,60 @@ export function WcagMappingContent() {
 				provocaron un <code>fail</code>/<code>cantTell</code>, en lugar de tratar el compuesto como
 				una caja negra.
 			</p>
+			<p>
+				Una regla personalizada (<code>engineOptions.customRules</code>) o una regla de un{" "}
+				<a href="/configuration/packs/">pack</a> que se ejecutó cuenta para el compuesto de cada
+				criterio al que se asocia, mediante <code>meta.wcagSc</code> o una entrada de WCAG en{" "}
+				<code>meta.normativeMappings</code>, igual que una regla incorporada: si falla, el compuesto
+				falla. El compuesto marca una regla personalizada con <code>custom: true</code> entre sus
+				contribuyentes y la enumera en <code>data.details.customChecksIds</code>, ya que las reglas
+				personalizadas no se comprueban contra las especificaciones como las incorporadas. Una
+				sustitución de una regla incorporada cuenta donde dice su propia asociación: en el lugar de
+				la incorporada cuando se asocia a ese criterio, y en ninguna parte cuando no se asocia a
+				ninguno (con un aviso).
+			</p>
 
 			<h2>Apuntar a un nivel de conformidad (A / AA / AAA)</h2>
+			<p>Nombra la versión y el nivel de WCAG en <code>runOnly.wcag</code>:</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.2 Level A and AA:",
+					"runDomRulesInPage(url, null, {}, { wcag: { version: '2.2', level: 'AA' } });",
+					"",
+					"// The same, and the best-practice rules, which test no WCAG criterion:",
+					"runDomRulesInPage(url, null, {}, { wcag: { version: '2.2', level: 'AA' }, bestPractices: true });",
+				]}
+			/>
 			<p>
-				Pasa <code>runOnly.tags</code> (o <code>engineOptions.tags.include</code>) con las etiquetas
-				de nivel que quieras:
+				Un objetivo ejecuta las reglas de cada criterio vigente en esa versión en ese nivel y en los
+				inferiores, según el nivel que tiene cada criterio en esa versión (<code>WCAG_CRITERIA</code>{" "}
+				en <code>@surea11y/core/wcag</code>), así que el 4.1.1 <span lang="en">Parsing</span> forma
+				parte de los objetivos 2.0 y 2.1 y no de los 2.2. También establece la versión de WCAG de la
+				ejecución y el nivel de los resultados agregados que se informan. Ver{" "}
+				<a href="/configuration/engine-options/#selecting-by-wcag-target-runonlywcag">
+					Seleccionar por objetivo de WCAG
+				</a>
+				.
+			</p>
+			<p>
+				Cada entrada de <code>WCAG_CRITERIA</code> tiene también el <code>id</code> que el W3C da al
+				criterio en WCAG 2.2 (<code>non-text-content</code>). Cada asociación de WCAG que lleva una
+				regla enlaza la sección de su criterio en la Recomendación de esa versión (<code>url</code>)
+				y su documento <span lang="en">Understanding</span> (<code>understandingUrl</code>), para 2.1
+				y 2.2: los generadores de informes usan el documento <span lang="en">Understanding</span>{" "}
+				como enlace de ayuda de una regla cuando la regla no tiene uno propio.
+			</p>
+
+			<h3 id="with-tags">Con etiquetas</h3>
+			<p>
+				Los mismos objetivos se pueden expresar con etiquetas de nivel, en <code>runOnly.tags</code>{" "}
+				(o <code>engineOptions.tags.include</code>):
 			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
-					"// WCAG 2.0 A y AA. Ambas etiquetas son necesarias: no son acumulativas.",
+					"// WCAG 2.0 A and AA. Both tags are required: they are not cumulative.",
 					"runDomRulesInPage(url, null, {}, { tags: ['wcag2a', 'wcag2aa'] });",
 				]}
 			/>
@@ -131,10 +175,11 @@ export function WcagMappingContent() {
 				Una regla lleva una etiqueta de nivel por cada Criterio de Éxito al que se asocia, y nada
 				más: una regla asociada solo a un criterio AA lleva la etiqueta <code>wcag2aa</code> y{" "}
 				<em>no</em> <code>wcag2a</code>. Pedir <code>{"{ tags: ['wcag2aa'] }"}</code> por sí solo,
-				por tanto, ejecuta las 10 reglas asociadas a un criterio AA de la versión 2.0, no las
-				aproximadamente 100 que forman un objetivo A + AA. Enumera cada nivel que quieras, o deja que{" "}
-				<code>engineOptions.profile</code> (<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>,{" "}
-				<code>en301549-v3.2.1</code>, <code>section508</code>) lo haga por ti; ver{" "}
+				por tanto, ejecuta las 9 reglas asociadas a un criterio AA de la versión 2.0, no las
+				aproximadamente 100 que forman un objetivo A + AA. Enumera cada nivel que quieras, o usa{" "}
+				<code>runOnly.wcag</code>, que no tiene ese problema. <code>engineOptions.profile</code> (
+				<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>, <code>en301549-v3.2.1</code>,{" "}
+				<code>section508</code>) también lo hace por ti; ver{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Perfiles de conformidad</a>.
 			</p>
 			<p>
@@ -149,8 +194,8 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				<strong>El criterio eliminado se maneja automáticamente.</strong> Cada ejecución resuelve
-				una versión de WCAG objetivo (<code>engineOptions.wcagVersion</code>, si no, lo que
-				impliquen tus etiquetas de versión, si no, <code>2.2</code>) y la devuelve como{" "}
+				una versión de WCAG objetivo (<code>engineOptions.wcagVersion</code>, si no, la versión
+				de <code>runOnly.wcag</code>, si no, lo que impliquen tus etiquetas de versión, si no, <code>2.2</code>) y la devuelve como{" "}
 				<code>engine.wcagVersion</code>. Bajo un objetivo 2.2, una regla asociada solo al SC 4.1.1
 				<span lang="en">Parsing</span> no puede devolver <code>fail</code>: se ejecuta, informa de sus ocurrencias, y vuelve
 				como <code>cantTell</code> con un campo <code>wcagVersionScope</code> que explica la
@@ -159,7 +204,8 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				Los compuestos, a diferencia de las reglas atómicas, <em>sí</em> se filtran de forma
-				acumulativa. El ejecutor lee el nivel más alto nombrado en <code>tags</code> y descarta
+				acumulativa. El ejecutor lee el nivel de <code>runOnly.wcag</code>, o el nivel más alto
+				nombrado en <code>tags</code>, y descarta
 				todo compuesto por encima de él, así que pedir{" "}
 				<code>{"['wcag2a', 'wcag2aa']"}</code> no devuelve ninguna entrada en{" "}
 				<code>rulesResults</code> para un SC exclusivo de AAA. Eso es{" "}
@@ -229,8 +275,16 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				EN 301 549 es una entrada de un registro de estándares que leen el ejecutor, el catálogo de
-				reglas y los generadores de informes, así que otro estándar se puede añadir de la misma
-				forma, con sus propios perfiles, reglas y resultados agregados. Cómo registrar uno está en{" "}
+				reglas y los generadores de informes. Un estándar con veredictos propios (requisitos que
+				comprueban sus propias reglas, un estándar nacional como RGAA, por ejemplo), o la lista de
+				comprobación de una organización, llega como un <a href="/configuration/packs/">pack</a>: un
+				paquete independiente fuera de core, que un análisis recibe en{" "}
+				<code>engineOptions.packs</code> y cuya entrada se une al registro para ese análisis, con sus
+				propios perfiles, reglas y resultados agregados. Una regla personalizada puede nombrar
+				cualquier estándar en su propio <code>normativeMappings</code>, pero solo los estándares
+				registrados (los de core y los de los packs del análisis) reciben un perfil, un
+				interruptor de <code>mappings</code>, reglas opcionales, resultados agregados o un lugar en
+				SARIF, JUnit y el informe HTML. Cómo se integra un estándar en el propio core está en{" "}
 				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
 					<code>WCAG_CONFORMANCE.md</code>
 				</a>
@@ -255,13 +309,30 @@ export function WcagMappingContent() {
 			<p>Lo que surea11y <em>sí</em> puede darte, con honestidad:</p>
 			<ul>
 				<li>
-					Cada <code>fail</code> es una violación normativa real, determinista, del estándar y la
-					versión que elegiste como objetivo, nunca una suposición. Por defecto ese estándar es WCAG:
-					una regla para un requisito que solo impone otro estándar es opcional y solo se ejecuta
-					cuando apuntas a ese estándar (ver <a href="/configuration/engine-options/#opt-in-rules">Reglas opcionales</a>),
-					así que un análisis de WCAG nunca hace fallar una página por algo que WCAG no exige. La única
-					excepción es una ejecución que pide todas las reglas (<code>engineOptions.optInRules</code>):
-					no apunta a ningún estándar concreto, y lo indica en <code>engine.optInRules</code>.
+					Las reglas integradas de core están escritas para devolver <code>fail</code> solo ante una
+					violación normativa y determinista del estándar y la versión que elegiste como objetivo, y
+					para informar <code>cantTell</code> cuando no pueden estar seguras. Es un objetivo de
+					diseño, no una garantía: las{" "}
+					<a href="/help/known-limitations/">limitaciones conocidas</a> enumeran casos límite en
+					los que una regla aún puede equivocarse, las ocurrencias de cada hallazgo muestran sobre
+					qué se decidió, y el <a href="/rules/">catálogo de reglas</a> indica la confianza de cada
+					regla. La precisión de una regla personalizada, una regla de un pack o una sustitución
+					depende de cómo se haya escrito. Por defecto ese estándar es WCAG. Una regla para un
+					requisito que solo impone otro estándar es opcional: por defecto solo se ejecuta cuando
+					apuntas a ese estándar (ver{" "}
+					<a href="/configuration/engine-options/#opt-in-rules">Reglas opcionales</a>).{" "}
+					<code>engineOptions.optInRules</code> desbloquea las reglas opcionales sin quitar el
+					perfil ni los filtros del análisis. Con <code>optInRules: 'all'</code> y sin perfil
+					ni filtro, la ejecución abarca todas las reglas y no apunta a ningún estándar concreto;
+					una lista de etiquetas desbloquea solo esos grupos de reglas opcionales.{" "}
+					<code>engine.optInRules</code> enumera las etiquetas cuyas reglas se ejecutaron. Con un perfil de WCAG, una regla desbloqueada solo
+					se ejecuta cuando sus etiquetas coinciden con ese perfil, y la ejecución sigue apuntando a
+					WCAG. Así,
+					entre las reglas de core, un análisis con un objetivo de WCAG solo ejecuta las de los
+					criterios del objetivo, más las reglas de buenas prácticas si las añades. Una regla
+					personalizada, una sustitución o una regla de un pack sin etiqueta opcional se ejecuta
+					cuando la selección la incluye, y entonces puede informar un <code>fail</code> por una
+					comprobación propia que WCAG no exige.
 				</li>
 				<li>
 					Cada <code>cantTell</code> es una señal explícita para revisión humana, no una

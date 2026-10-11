@@ -13,7 +13,7 @@ export function FaqContent() {
 				</h2>
 				<p>
 					Desde la 1.10.0, un <code>runOnly</code> dado como array simple o como cadena se lee como
-					ids de regla o como etiquetas, igual que lo lee axe-core (consulta{" "}
+					ids de regla o como etiquetas (consulta{" "}
 					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>). Lanza un
 					error en dos casos:
 				</p>
@@ -53,6 +53,82 @@ export function FaqContent() {
 			</article>
 
 			<article>
+				<h2 id="untested-wcag-tag">
+					"<code>runOnly.tags: no rules for WCAG 2.2 Level A ("wcag22a")</code>"
+				</h2>
+				<p>
+					Las nueve etiquetas de versión/nivel de WCAG, de <code>wcag2a</code> a{" "}
+					<code>wcag22aaa</code>, siempre se conocen, pero tres no llevan ninguna regla:{" "}
+					<code>wcag21aaa</code>, <code>wcag22a</code> y <code>wcag22aaa</code>, cuyos criterios no
+					tienen ninguna comprobación automatizada. Nombrar una junto a otras etiquetas registra esa
+					línea con <code>console.info</code>: el resto de la lista se ejecuta, y esos criterios
+					necesitan revisión manual. Pasa <code>engineOptions.logUntestedWcag: false</code> para
+					omitirla, o selecciona por objetivo, que no nombra ninguna etiqueta:{" "}
+					<code>{"runOnly: { wcag: { version: '2.2', level: 'AA' } }"}</code> (consulta{" "}
+					<a href="/configuration/engine-options/#selecting-by-wcag-target-runonlywcag">
+						Seleccionar por objetivo de WCAG
+					</a>
+					). Una lista con solo esas etiquetas no ejecutaría nada, así que lanza{" "}
+					<code>INVALID_RUN_ONLY</code> con la misma explicación.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="invalid-wcag-target">
+					"<code>runOnly.wcag.version must be …</code>" o "
+					<code>runOnly.bestPractices must be true or false …</code>"
+				</h2>
+				<p>
+					<code>runOnly.wcag</code> acepta <code>{"{ version, level }"}</code>, con{" "}
+					<code>version</code> igual a <code>'2.0'</code>, <code>'2.1'</code> o <code>'2.2'</code> (una
+					cadena: <code>2.2</code> como número se rechaza) y <code>level</code> igual a{" "}
+					<code>'A'</code>, <code>'AA'</code> o <code>'AAA'</code>; <code>runOnly.bestPractices</code>{" "}
+					acepta <code>true</code> o <code>false</code>. Cualquier otra cosa lanza{" "}
+					<code>INVALID_RUN_ONLY</code> nombrando el campo y el valor, en lugar de ejecutar una
+					selección que no pretendías.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="invalid-engine-options">
+					"<code>engineOptions: unknown option "lcoale" (did you mean "locale"?)</code>", o un
+					análisis lanzó <code>INVALID_ENGINE_OPTIONS</code>
+				</h2>
+				<p>
+					Una clave de opción a una o dos letras de una conocida, sin distinguir mayúsculas y
+					minúsculas, genera un aviso y se ignora: el análisis se ejecuta como si no estuviera, así
+					que corrige la ortografía. Las demás claves desconocidas no generan ningún aviso, ya que una
+					regla personalizada puede leer ajustes propios de <code>ctx.engineOptions</code>. Con{" "}
+					<code>engineOptions.strictOptions: true</code>, el análisis lanza en cambio un error, con{" "}
+					<code>code: 'INVALID_ENGINE_OPTIONS'</code>, ante cualquier clave que el motor no lee
+					(incluidas las anidadas) y ante un valor de tipo incorrecto o fuera de su conjunto, nombrando
+					cada una con la clave conocida más parecida; el <code>problems</code> del error las enumera.
+					Consulta{" "}
+					<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">
+						Detectar errores en las opciones
+					</a>
+					.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="custom-rule-rollup">
+					"Mi regla personalizada falla, pero el resultado agregado de WCAG no"
+				</h2>
+				<p>
+					Una regla personalizada cuenta para el resultado agregado de WCAG (<code>rulesResults</code>)
+					de cada criterio al que se asocia: dale <code>meta.wcagSc: ['1.1.1']</code>, o una entrada
+					de WCAG en <code>meta.normativeMappings</code>. Sin ninguna de las dos, no está en ningún
+					resultado agregado. Una regla personalizada que no se ejecutó (listada en{" "}
+					<code>skippedCustomRules</code>) tampoco cuenta. Una sustitución de una regla incorporada
+					cuenta solo donde dice su propia asociación, así que una que no declara ninguna deja los
+					resultados agregados para los que contaba su regla incorporada, y un aviso (
+					<code>customRules: "…" overrides a built-in rule but maps to none of the criteria of …</code>
+					) los nombra; dale los criterios de la regla incorporada para que siga ahí.
+				</p>
+			</article>
+
+			<article>
 				<h2 id="contextselector-matched-nothing">
 					"Mi análisis acotado informa todo como <code>notApplicable</code>", o "
 					<code>contextSelector</code> lanzó un error:{" "}
@@ -76,10 +152,63 @@ export function FaqContent() {
 							El análisis lanzó un error con <code>code: 'INVALID_CONTEXT_SELECTOR'</code>
 						</strong>
 						: el selector del mensaje, y del campo <code>selector</code> del error, no es CSS
-						válido, por ejemplo <code>'#main['</code> o un combinador <code>&gt;&gt;&gt;</code>.
+						válido, por ejemplo <code>'#main['</code> o un combinador <code>&gt;&gt;&gt;</code>. O
+						el ámbito no es un selector en absoluto, como un elemento o un objeto{" "}
+						<code>{"{ include, exclude }"}</code>, y el mensaje dice qué se pasó: pasa un selector
+						que coincida con el elemento, y las exclusiones en{" "}
+						<code>engineOptions.excludeSelectors</code>.
 					</li>
 				</ul>
-				<p>Antes de la 1.10.0, en ambos casos se analizaba la página entera.</p>
+				<p>
+					Antes, cada uno de estos casos analizaba la página entera: un selector que no coincidía
+					con nada o que no se podía interpretar hasta la 1.10.0, y un ámbito que no es un selector
+					también en la 1.10.0.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="page-builtins-broken">"Un análisis lanzó <code>PAGE_BUILTINS_BROKEN</code>"</h2>
+				<p>
+					Los propios scripts de la página cambiaron un objeto integrado de JavaScript del que
+					depende el motor (<code>Array.prototype.filter</code>, <code>Map</code>,{" "}
+					<code>JSON.stringify</code> y otros), así que un análisis de ella podría dar un resultado
+					que parece correcto y es erróneo. El mensaje del error y su lista <code>broken</code>{" "}
+					nombran cada uno. Analiza la página antes de que sus scripts los cambien (inyecta el bundle
+					antes, o analiza una compilación sin el script que lo hace). Consulta{" "}
+					<a href="/help/known-limitations/">Limitaciones conocidas</a>.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="scan-never-returns">"Mi análisis nunca termina"</h2>
+				<p>
+					Algo en la página bloquea el análisis: un getter o un script que nunca termina, o un bucle
+					de un pack o de una regla personalizada. Nada dentro de la página puede detener un análisis
+					una vez iniciado, así que pon el límite de tiempo donde lo inicias, y abandona la pestaña
+					cuando pase.{" "}
+					<a href="/getting-started/standalone/#a-time-limit-on-a-scan">Uso independiente</a>{" "}
+					muestra cómo hacerlo para Playwright y Puppeteer; en jsdom, ejecuta el análisis en un
+					worker thread o en un proceso hijo.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="pack-did-not-run">
+					"Un pack no se ejecutó", o <code>skippedPacks</code> no está vacío
+				</h2>
+				<p>
+					Un pack cuyo rango <code>core</code> deja fuera el core instalado, que no es válido, o que
+					no encaja con core (un id de regla fuera de su espacio de nombres, una clave de diccionario
+					que core ya tiene) se omite: el análisis se ejecuta sin él, avisa, y lo enumera en{" "}
+					<code>result.skippedPacks</code> con el motivo; con <code>strictOptions</code> lanza un
+					error. En una página, un pack nombrado en <code>engineOptions.packs</code> que ninguna
+					llamada a <code>packScript</code> registró, o que se registró con otra versión de core, se
+					enumera de la misma forma. Las integraciones lo informan como una carencia{" "}
+					<code>'pack-skipped'</code>, los test matchers hacen fallar la aserción, y la CLI sale con{" "}
+					<code>2</code>. Instala el pack junto al paquete que lo ejecuta, para que npm resuelva un
+					solo <code>@surea11y/core</code> para ambos. Consulta{" "}
+					<a href="/configuration/packs/#when-a-pack-doesnt-run">Packs</a>.
+				</p>
 			</article>
 
 			<article>
@@ -213,8 +342,8 @@ export function FaqContent() {
 					"<code>runDomRulesInPage</code> frente a <code>runa11yCoreInPage</code>: ¿cuál necesito?"
 				</h2>
 				<p>
-					<code>runDomRulesInPage</code> si la llamas directamente en el mismo proceso de Node (jsdom,
-					un content script de extensión de navegador). <code>runa11yCoreInPage</code> si le entregas
+					<code>runDomRulesInPage</code> si la llamas directamente en el mismo proceso de Node
+					(jsdom). <code>runa11yCoreInPage</code> si le entregas
 					la <em>función en sí</em> a un realm de JS diferente: casi siempre{" "}
 					<code>page.evaluate</code> en Puppeteer/Playwright, que serializa la función a texto fuente
 					y la vuelve a ejecutar dentro de la pestaña del navegador (que no tiene acceso al ámbito de

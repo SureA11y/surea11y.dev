@@ -54,6 +54,12 @@ export function StandaloneUsageContent() {
 				<a href="/configuration/locales/">Locales</a>).
 			</p>
 			<p>
+				El bundle también se carga como módulo:{" "}
+				<code>import a11ycore from '@surea11y/core/browser'</code>, una importación con nombre de{" "}
+				<code>runa11yCoreInPage</code> y <code>require()</code> obtienen todos su API, y el global
+				sigue definido.
+			</p>
+			<p>
 				<strong>Excluido deliberadamente del bundle</strong>: <code>runa11yCoreAcrossFrames</code>/
 				<code>a11yCoreEnableFrameResponder</code> (el análisis entre frames necesita que el frame
 				incrustado también cargue el motor y se adhiera. No puede resolverse con una única etiqueta{" "}
@@ -68,6 +74,47 @@ export function StandaloneUsageContent() {
 				es la otra vía independiente. Esto es el Patrón 1/Patrón 2 en{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom en Node sin
 				navegador real, o bien manejar tú mismo Puppeteer/Playwright en lugar de pasar por una integración.
+			</p>
+
+			<h2 id="packs-in-a-page">Packs en una página</h2>
+			<p>
+				Un <a href="/configuration/packs/">pack</a> se prepara en Node, así que llega a una página
+				como script. <code>packScript(packs)</code>, de <code>@surea11y/core/pack</code>, devuelve uno
+				que registra los packs; cárgalo después del bundle (y en cada frame que analices), y luego
+				nombra los packs en <code>engineOptions.packs</code> como <code>name@version</code>. O bien
+				distribuye un solo archivo con <code>buildBrowserBundle({"{ packs }"})</code>: el bundle con
+				los packs registrados a continuación. El código de las reglas se escribe en el script como
+				funciones, así que se ejecuta donde una Content Security Policy prohíbe <code>eval</code>.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// In Node: write the script once, beside the bundle.",
+					"const fs = require('node:fs');",
+					"const { packScript } = require('@surea11y/core/pack');",
+					"const acmePolicy = require('./acme-policy-pack');",
+					"fs.writeFileSync('acme-pack.js', packScript([acmePolicy]));",
+				]}
+			/>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
+					'<script src="acme-pack.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(location.href, null, {",
+					"    packs: ['@acme/a11y-policy@1.0.0'],",
+					"    profile: 'acme-web-2026'",
+					"  }, null);",
+					"</script>",
+				]}
+			/>
+			<p>
+				La página ejecuta exactamente el conjunto de packs que registró una llamada a{" "}
+				<code>packScript</code>, con el core con el que se preparó: pasa a una sola llamada todos
+				los packs que necesita un análisis. Los packs nombrados que la página no ejecuta se
+				enumeran en <code>skippedPacks</code> con el motivo. Las integraciones hacen todo esto por ti
+				con <code>.withPacks()</code>.
 			</p>
 
 			<h2 id="waiting-for-the-page">Esperar a la página antes de un análisis</h2>
@@ -105,6 +152,48 @@ export function StandaloneUsageContent() {
 					<code>INTEGRATION.md</code>
 				</a>
 				, la guía de integración en GitHub.
+			</p>
+
+			<h2 id="a-time-limit-on-a-scan">Un límite de tiempo para un análisis</h2>
+			<p>
+				Un análisis se ejecuta de una sola vez dentro de la página, y nada en la página puede
+				detenerlo una vez iniciado: un getter de la página o una regla que nunca termina bloquea esa
+				pestaña para siempre. Limita el tiempo desde donde inicias el análisis, y abandona la pestaña
+				cuando pase el límite. 60 segundos está muy por encima de lo que tarda una página normal, así
+				que solo atrapa las que están rotas:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Playwright or Puppeteer: page.evaluate has no time limit of its own.",
+					"async function scanWithin(page, ms, scan) {",
+					"  let timer;",
+					"  const late = new Promise((_, reject) => {",
+					"    timer = setTimeout(() => reject(new Error(`the scan took longer than ${ms} ms`)), ms);",
+					"  });",
+					"  try {",
+					"    return await Promise.race([scan(), late]);",
+					"  } catch (err) {",
+					"    // The tab may still be busy with the scan: close it, and use a new one.",
+					"    await page.close().catch(() => {});",
+					"    throw err;",
+					"  } finally {",
+					"    clearTimeout(timer);",
+					"  }",
+					"}",
+					"",
+					"const fs = require('node:fs');",
+					"await page.evaluate(fs.readFileSync(require.resolve('@surea11y/core/browser'), 'utf8'));",
+					"const result = await scanWithin(page, 60_000, () =>",
+					"  page.evaluate(() => window.a11ycore.runa11yCoreInPage(location.href, null, {}, null))",
+					");",
+				]}
+			/>
+			<p>
+				En jsdom el análisis se ejecuta en el propio hilo de Node, así que un temporizador ahí no
+				puede dispararse hasta que termine: ejecuta el análisis en un worker thread o en un proceso
+				hijo, y termínalo cuando pase el límite. El propio límite de tiempo de un trabajo de CI es el
+				último recurso en ambos casos.
 			</p>
 		</>
 	);

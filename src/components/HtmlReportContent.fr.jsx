@@ -32,7 +32,21 @@ export function HtmlReportContent() {
 					nombreuses occurrences identiques est un seul point d’attention, pas plusieurs), chacune
 					indiquant la sévérité, le ou les critères de succès WCAG, une occurrence représentative
 					et le nombre total d’occurrences. Limité aux 24 règles les plus prioritaires, avec une
-					note de dépassement au-delà.
+					note de dépassement au-delà. Une règle qui ne s’est pas terminée (elle a levé une
+					exception) a aussi sa carte, qui l’indique avec son erreur, puisque la page n’a pas été
+					vérifiée au regard de cette règle. Une règle dotée d’un lien d’aide <code>http(s)</code>{" "}
+					(<code>meta.helpUrl</code>, y compris celui d’une règle personnalisée) reçoit sur sa carte
+					un lien « <span lang="en">How to fix &lt;rule&gt;</span> » ; une règle qui n’en a pas
+					renvoie au document Understanding du critère WCAG qu’elle vérifie (« <span lang="en">Understanding 1.1.1
+					Non-text Content</span> »).
+					</li>
+					<li>
+						<strong>Frames</strong> : seulement pour un résultat multi-frames (
+						<code>runa11yCoreAcrossFrames</code>, ou le <code>.frames(true)</code> d’un binding).
+						Les cartes ci-dessus sont celles de la page elle-même ; cette section a un titre par
+						frame, nommé d’après son chemin (les sélecteurs des éléments frame qui y mènent), avec
+						le titre et l’URL du frame et ses cartes, ou « <span lang="en">Not scanned</span> » et la
+						raison pour un frame qui n’a pas répondu. Le reste du rapport décrit la page elle-même.
 					</li>
 					<li>
 						<strong>Au plus près de la limite</strong> : affiché lorsque l’analyse comporte des marges
@@ -46,9 +60,12 @@ export function HtmlReportContent() {
 					<strong>Agrégation WCAG</strong> : regroupée par niveau de conformité (A / AA / AAA),
 					issue directement des agrégations composites <code>rulesResults[]</code> du moteur
 					lui-même (voir <a href="/conformance/wcag-mapping/">Conformité</a>) : une ligne par
-					critère de succès (avec la clause d’EN 301 549 qui le reprend, quand il y en a une et que
-					l’analyse a demandé les clauses d’EN 301 549), avec son résultat, une ventilation réussite/échec/à
-					examiner/non applicable, et les règles atomiques qui y ont contribué. Ce sont de vraies
+					critère de succès (avec les exigences de chaque autre norme du champ{" "}
+					<code>standards</code> du résultat auxquelles ses règles sont associées, comme la clause
+					d’EN 301 549 qui le reprend, quand il y en a une et que l’analyse a demandé les clauses
+					d’EN 301 549), avec son résultat, une ventilation réussite/échec/à examiner/non
+					applicable, et les règles atomiques qui y ont contribué, y compris une règle
+					personnalisée associée au critère. Ce sont de vraies
 					données du moteur, pas un regroupement inventé : la même agrégation que celle du champ{" "}
 					<code>rulesResults</code> du JSON brut.
 				</li>
@@ -56,7 +73,13 @@ export function HtmlReportContent() {
 					<strong>Agrégation propre à une norme</strong> : seulement quand l’analyse a exécuté les
 					règles d’une norme qui a ses propres agrégations (son profil, ou{" "}
 					<code>engineOptions.optInRules</code>), une ligne par agrégation, avec la formulation de la
-					norme, la ventilation et les règles qui y ont contribué.
+					norme, les exigences des règles qui ont déterminé le résultat, la ventilation et les
+					règles qui y ont contribué. Cela couvre la norme d’un{" "}
+					<a href="/configuration/packs/">pack</a> et la liste de contrôle d’un pack, dont les points sont
+					ses agrégations. Chacune de ces normes figure dans le champ <code>standards</code> du
+					résultat, si bien qu’un résultat enregistré s’affiche de la même façon où qu’il soit
+					rendu ; quand cette liste est absente ou endommagée, le rapport le signale au-dessus de
+					l’agrégation WCAG.
 				</li>
 				<li>
 					<strong>Données techniques complètes</strong> (repliées par défaut) : un tableau de
@@ -64,6 +87,12 @@ export function HtmlReportContent() {
 					résultat), de chaque occurrence de toute l’analyse.
 				</li>
 			</ul>
+			<p>
+				Le rapport suit le schéma de couleurs du lecteur, et son propre texte respecte WCAG 1.4.3
+				dans les deux : chaque couleur d’état atteint au moins 4,5:1 sur sa pastille et sa tuile,
+				et les règles de contraste du moteur lui-même réussissent sur le rapport rendu, en mode
+				clair comme en mode sombre.
+			</p>
 			<p>
 				La barre de métadonnées sous l’en-tête indique le nombre de règles, le nombre
 				d’occurrences, le tag du moteur, la version du schéma, la version de WCAG visée par
@@ -95,6 +124,11 @@ export function HtmlReportContent() {
 				lire de libellés ; ses résultats sont alors marqués avec leur propre langue
 				(<code>lang="nl"</code>, par exemple), pour qu’un lecteur d’écran les lise avec la bonne
 				voix.
+			</p>
+			<p>
+				Un résultat compact (<code>engineOptions.output.detail: 'findings'</code>, voir{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Schéma de sortie</a>) est lu
+				comme le résultat complet qu’il représente ; il est donc rapporté de la même façon.
 			</p>
 
 			<h2>Utilisation comme bibliothèque</h2>

@@ -12,7 +12,7 @@ const topLevelRows = [
 		meaning: (
 			<>
 				The <code>@surea11y/core</code> release that produced the result, such as{" "}
-				<code>"1.10.0"</code>: what to quote in a bug report, and how to tell results from two
+				<code>"1.11.1"</code>: what to quote in a bug report, and how to tell results from two
 				releases apart. A result can change between releases without its shape changing, so this
 				is not <code>schemaVersion</code>. The <a href="/results-reports/sarif-report/">SARIF</a>{" "}
 				and <a href="/results-reports/earl-report/">EARL</a> reporters use it as the tool version
@@ -99,8 +99,8 @@ const topLevelRows = [
 					meaning: (
 						<>
 							Present only when the applied profile leaves rules out: <code>{"{ rules, criteria }"}</code>,
-							the rules it names and the WCAG criteria it waives. Their rules and WCAG rollups did not
-							run. No built-in profile leaves anything out.
+							the rules it names and the WCAG criteria it leaves out. Their rules and WCAG rollups did not
+							run, which narrows the scan without changing what WCAG requires. No built-in profile leaves anything out.
 						</>
 					),
 				},
@@ -127,6 +127,38 @@ const topLevelRows = [
 							standard's profile. Lists them canonically: <code>"en301549"</code> for every version,{" "}
 							<code>"en301549:V3.2.1"</code> for one. Absent means every result names WCAG only. See{" "}
 							<a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>.
+						</>
+					),
+				},
+				{
+					id: "engine.packs",
+					field: <code>engine.packs</code>,
+					meaning: (
+						<>
+							Present only when the scan ran with <code>engineOptions.packs</code>: each pack that
+							ran, as <code>name@version</code>, sorted by name. See{" "}
+							<a href="/configuration/packs/">Packs</a>.
+						</>
+					),
+				},
+				{
+					id: "engine.outputDetail",
+					field: <code>engine.outputDetail</code>,
+					meaning: (
+						<>
+							Present only when <code>engineOptions.output.detail</code> is{" "}
+							<code>'findings'</code>, as <code>"findings"</code>: each <code>pass</code> or{" "}
+							<code>notApplicable</code> check result that lists no occurrences is compact,{" "}
+							<code>{"{ ruleId, outcome, type }"}</code> and its <code>margin</code> or{" "}
+							<code>error</code> when it has one, without the title, description and{" "}
+							<code>meta</code>, which are the catalog's and the same on every page.{" "}
+							<code>fail</code> and <code>cantTell</code> results, the rollups and{" "}
+							<code>engine</code> are whole, so no verdict changes. The reporters (SARIF, JUnit, the
+							HTML report, EARL, the baseline functions) read a compact result as the full one,
+							filling in from core's catalog. A result that catalog couldn't fill in stays whole:
+							every check result of a scan with <code>packs</code>, a custom rule's, and one whose
+							title or description the scan's <code>messages</code> changed. An empty page's result
+							goes from about 236 KB to 80 KB.
 						</>
 					),
 				},
@@ -165,7 +197,7 @@ const topLevelRows = [
 						</>
 					),
 				},
-	{ id: "url", field: <code>url</code>, meaning: <>The <code>pageUrl</code> argument you passed in, or <code>document.location.href</code> if you passed <code>null</code>/omitted it, or <code>null</code> if neither is available.</> },
+	{ id: "url", field: <code>url</code>, meaning: <>The <code>pageUrl</code> argument you passed in, or <code>document.location.href</code> if you passed <code>null</code>/omitted it (or passed something other than a string, which also logs a <code>console.warn</code>), or <code>null</code> if neither is available.</> },
 	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> at scan time, or <code>null</code>.</> },
 	{
 		id: "timestamp",
@@ -241,6 +273,38 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "standards",
+		field: <code>standards</code>,
+		meaning: (
+			<>
+				Present only when the result names a standard besides WCAG in a{" "}
+				<code>meta.normativeMappings</code> entry or a rollup's <code>meta.standard</code>: one{" "}
+				<code>{"{ key, standard, titleLang?, note? }"}</code> per registered standard it names, a
+				pack's included, in registry order. <code>key</code> is the standard's key (
+				<code>"en301549"</code>), <code>standard</code> the name its entries carry (
+				<code>"EN 301 549"</code>), <code>titleLang</code> the language its own rollups' titles are
+				written in when not the scan's, and <code>note</code> the text above its own rollups in the
+				HTML report, in the scan's language. The reporters read it instead of the registry, so a
+				stored result renders the same wherever it is rendered, whether or not that installation
+				knows the standard. A standard that only a custom rule names is not listed.
+			</>
+		),
+	},
+	{
+		id: "skippedPacks",
+		field: <code>skippedPacks</code>,
+		meaning: (
+			<>
+				Present only when a pack in <code>engineOptions.packs</code> was not run: each{" "}
+				<code>{"{ name, reason }"}</code>, <code>name</code> being <code>null</code> when the pack
+				had none. In a page (<code>runa11yCoreInPage</code>), <code>name</code> is the{" "}
+				<code>name@version</code> given, and the reason says why the page didn't run it: no{" "}
+				<code>packScript</code> call registered exactly the named set, or the script was prepared
+				with another core version. Each is also logged with <code>console.warn</code>.
+			</>
+		),
+	},
+	{
 		id: "overriddenBuiltinIds",
 		field: <code>overriddenBuiltinIds</code>,
 		meaning: (
@@ -263,7 +327,10 @@ const topLevelRows = [
 						<code>{"{ id, reason }"}</code> (<code>id</code> is <code>null</code> when the entry had
 						none): no id, a <code>runInPage</code> that is not a function or can't be rebuilt from its
 						source, a <code>meta</code> that fails validation, an id another custom rule already has,
-						or a composite rule's id. Always an array; empty when every custom rule ran. Each is also
+						or a composite rule's id; or a valid rule the run's selection does not select (under a
+						profile or a WCAG target, a rule tagged <code>best-practice</code> or with no WCAG tag),
+						whose <code>reason</code> says how to select it. Always an array; empty when every
+						custom rule ran. Each is also
 						logged with <code>console.warn</code>. A rule listed here is in no result, so a scan that
 						leaves one out can be told apart from one where it passed.
 					</>
@@ -278,9 +345,14 @@ const occurrenceRows = [
 		meaning: (
 			<>
 				A best-effort CSS selector built to resolve back to the flagged element (see{" "}
-				<code>helpers.buildSelector</code> in <code>RULE_AUTHORING.md</code>). Not guaranteed
-				unique in adversarial DOM shapes, but the engine actively verifies it resolves to the
-				reported element before using it. The exception is a rule whose finding <em>is</em> an
+				<code>helpers.buildSelector</code> in <code>RULE_AUTHORING.md</code>). An id, test id,{" "}
+				<code>name</code> or <code>aria-label</code> is used as the anchor only when no other
+				element in the document has it, hidden, excluded and out-of-scope elements included, since{" "}
+				<code>querySelector</code> resolves it against the whole document; otherwise the selector
+				is a path. Not guaranteed unique in every DOM shape: an element in a shadow root is named
+				within its own tree (<code>structuralPath</code> places it), and a very deep element's
+				path is shortened from the top. On 255 test and real pages, 15 of 39,857 selectors did not
+				name exactly their element, all of those kinds. The exception is a rule whose finding <em>is</em> an
 				absent element: <code>page-title-present</code> reports <code>head &gt; title</code> with
 				an <code>html</code> of <code>&lt;title&gt;(missing)&lt;/title&gt;</code>, neither of which
 				is on the page. Both are constants, so the fingerprint they feed stays stable, but{" "}
@@ -392,7 +464,11 @@ const occurrenceRows = [
 				Which tier this occurrence belongs to, on a rule that graded its findings into a
 				confident <code>fail</code> tier and a needs-review <code>cantTell</code> tier. A rule
 				reporting one tier only omits it, in which case the result's own <code>outcome</code> is
-				the occurrence's tier.
+				the occurrence's tier. The outcome always agrees with the tiers: any{" "}
+				<code>fail</code>-tier occurrence makes it <code>fail</code>, and a <code>fail</code> whose
+				occurrences are all <code>cantTell</code>-tier is <code>cantTell</code>, so SARIF, JUnit,
+				EARL and baselines give one answer. The engine settles a custom or pack rule that returns
+				them at odds; under the default policy, a manual rule is never <code>fail</code>.
 			</>
 		),
 	},
@@ -409,7 +485,7 @@ const uncertaintyRows = [
 ];
 
 const outcomeRows = [
-	{ id: "fail", outcome: <code>fail</code>, meaning: "Deterministic, normative violation — the decision procedure guesses at nothing.", manual: "No (coerced to cantTell)" },
+	{ id: "fail", outcome: <code>fail</code>, meaning: "The rule reports that the requirement it checks is not met. Read its mapping, confidence and occurrences to interpret the finding.", manual: "No, under the default policy (coerced to cantTell)" },
 	{ id: "pass", outcome: <code>pass</code>, meaning: "The rule's applicable target(s) exist and none were flagged.", manual: "Yes" },
 	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "Requires human judgment — either genuinely ambiguous, or a manual rule's advisory finding.", manual: "Yes" },
 	{ id: "notApplicable", outcome: <code>notApplicable</code>, meaning: "The rule found no elements it applies to on this page/scope.", manual: "Yes" },
@@ -434,17 +510,24 @@ export function OutputSchemaContent() {
 					"{",
 					"  engine: {",
 					"    tag: string,",
+					"    version: string,       // the @surea11y/core release that produced the result",
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
 					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					"    profileExcludes?: { rules: string[], criteria: string[] },",
+					"    optInRules?: string[],",
+					'    outputDetail?: "findings",',
+					"    packs?: string[],      // name@version",
 					"    environment: {",
 					"      layout: boolean,",
 					"      viewport?: { width: number, height: number },  // CSS px",
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
-					'      fonts?: "loaded" | "loading"',
+					'      fonts?: "loaded" | "loading",',
+					'      images?: "loaded" | "loading",',
+					"      animationsSettled?: number",
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -455,8 +538,10 @@ export function OutputSchemaContent() {
 					"  contextMatch: { elementCount: number, unmatchedSelectors: string[] } | null,",
 					"  checksResults: CheckResult[],",
 					"  rulesResults: CompositeResult[],",
+					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
-					"  skippedCustomRules: Array<{ id: string | null, reason: string }>",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string }>,",
+					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
 					"}",
 				]}
 			/>
@@ -483,8 +568,9 @@ export function OutputSchemaContent() {
 					"{",
 					"  topFrame: <the normal top-level result shape above>,",
 					"  frames: Array<",
-					"    | { url: string | null, topFrame: <top-level result>, frames: [...same shape, recursively] }",
-					"    | { url: string | null, error: string }",
+					"    | { url: string | null, selector: string | null, title: string | null,",
+					"        topFrame: <top-level result>, frames: [...same shape, recursively] }",
+					"    | { url: string | null, selector: string | null, title: string | null, error: string }",
 					"  >",
 					"}",
 				]}
@@ -496,7 +582,15 @@ export function OutputSchemaContent() {
 				</li>
 				<li>
 					<code>frames</code> has one entry per direct child <code>&lt;iframe&gt;</code>/
-					<code>&lt;frame&gt;</code> in the scanned scope. A reachable child (one that called{" "}
+					<code>&lt;frame&gt;</code> in the scanned scope (open shadow roots included, and the scope
+					itself when it is a frame), except a frame the page doesn't show and a frame{" "}
+					<code>excludeSelectors</code> excludes, which are left out with their whole document. Each
+					entry names its frame element: <code>selector</code> is a CSS selector for the{" "}
+					<code>&lt;iframe&gt;</code>/<code>&lt;frame&gt;</code> in the parent's document, and{" "}
+					<code>title</code> is the element's <code>title</code> attribute, or <code>null</code>, so
+					frames loading the same document can be told apart. <code>url</code> is the document the
+					frame shows, or, for a frame that hasn't navigated yet, its <code>src</code>. A reachable
+					child (one that called{" "}
 					<code>a11yCoreEnableFrameResponder()</code>) contributes its own complete{" "}
 					<code>{"{ url, topFrame, frames }"}</code> — including <em>its own</em> nested{" "}
 					<code>frames</code>, recursively, since a further-nested grandchild is only reachable
@@ -512,15 +606,32 @@ export function OutputSchemaContent() {
 					global view, so nesting is expressed structurally instead.
 					</li>
 					<li>
-						<strong>The reporters take one top-level result, not this tree.</strong>{" "}
-						<code>renderHtmlReport</code>, <code>renderSarifReport</code>,{" "}
-						<code>renderJunitReport</code>, <code>buildBaselineEntries</code> and{" "}
-						<code>matchBaseline</code> throw a <code>TypeError</code> when handed anything but an
-						object with a <code>checksResults</code> array (a cross-frame result, an array,{" "}
-						<code>null</code> or <code>undefined</code> from a scan that broke), rather than render
-						it as a scan that found nothing. Pass <code>topFrame</code>, and each frame's{" "}
-						<code>topFrame</code>, in calls of their own. <code>renderEarlReport</code> takes the
-						tree as it is: every frame that answered becomes a subject of its own, keyed by its URL.
+						<strong>The reporters take the tree as it is.</strong> <code>renderHtmlReport</code>,{" "}
+						<code>renderSarifReport</code>, <code>renderJunitReport</code>,{" "}
+						<code>buildBaselineEntries</code>, <code>matchBaseline</code> and{" "}
+						<code>renderEarlReport</code> report every frame of it: each frame that answered with
+						its own findings, located in its own document, and each frame that did not as not
+						scanned, so a gap in coverage doesn't read as a pass. A frame is named by its{" "}
+						<strong>path</strong>, the <code>selector</code>s of the frame elements leading to it
+						from the page, outermost first (<code>#checkout → iframe:nth-of-type(2)</code>). They
+						throw a <code>TypeError</code> for anything that is neither a scan result nor a
+						cross-frame result (an array, <code>null</code> or <code>undefined</code> from a scan
+						that broke), rather than render it as a scan that found nothing.
+					</li>
+					<li>
+						<strong>They take a binding's frame scan too.</strong> The browser bindings'{" "}
+						<code>.frames(true)</code> returns <code>{"{ topFrame, frames }"}</code> with each frame
+						a plain result (or <code>{"{ url, error }"}</code>) rather than a nested entry; the
+						reporters, <code>getMargins</code> and <code>flattenCrossFrameResult</code> read each
+						such frame as scanned, named by the path <code>['iframe']</code>, since it carries no{" "}
+						<code>selector</code>.
+					</li>
+					<li>
+						<code>flattenCrossFrameResult(result)</code>, from <code>@surea11y/core</code>, lists the
+						frames as the reporters read them: <code>{"[{ frame: { path, title, url }, result }]"}</code>,
+						or <code>error</code> in place of <code>result</code> for a frame that did not answer, the
+						page first and each frame before the frames inside it. The page's <code>path</code> is{" "}
+						<code>[]</code>. A plain scan result is one entry.
 					</li>
 					</ul>
 
@@ -532,6 +643,8 @@ export function OutputSchemaContent() {
 					'  outcome: "pass" | "fail" | "cantTell" | "notApplicable",',
 					'  outcomeNormalized: "pass" | "fail" | "cantTell" | "inapplicable",',
 					'  severity: "minor" | "moderate" | "serious" | "critical",',
+					'  ruleSeverity?: "minor" | "moderate" | "serious" | "critical", // the rule\'s own, when a profile gave it another',
+					'  policyOutcome?: "pass" | "fail" | "cantTell" | "notApplicable", // what the rule found, when the policy made it cantTell',
 					'  confidence: "high" | "medium" | "low",',
 					'  type: "automatic" | "manual",',
 					"  occurrences: Occurrence[],",
@@ -547,7 +660,10 @@ export function OutputSchemaContent() {
 					"    deprecated: boolean,",
 					"    deprecation: object | null,",
 					'    category: "perceivable" | "operable" | "understandable" | "robust" | null,',
-					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel?: string, wcagSc?: string[] }>,",
+					"    helpUrl: string,       // where to read how to fix it; \"\" when there is none",
+					"    tags: string[],        // the rule's tags, its own and the engine's",
+					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string,",
+					"      conformanceLevel?: string, wcagSc?: string[], url?: string, understandingUrl?: string }>,",
 					"    standard: string | null,",
 					"    applicability: string,",
 					"    expectation: string,",
@@ -577,7 +693,7 @@ export function OutputSchemaContent() {
 					"    removedSc: string[],",
 					'    coercedFrom: "fail"',
 					"  },",
-					"  error?: string           // present only if the rule threw — see below",
+					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
 				]}
 			/>
@@ -590,19 +706,22 @@ export function OutputSchemaContent() {
 					vocabulary or the engine's internal one.
 				</li>
 				<li>
-					<strong><code>type: "manual"</code> rules can never report <code>outcome: "fail"</code>.</strong>{" "}
+					<strong>Under the default <code>a11y</code> policy, <code>type: "manual"</code> rules report{" "}
+					<code>cantTell</code> rather than <code>fail</code>.</strong>{" "}
 					If a manual rule's own logic would have said <code>fail</code>, the engine coerces it
 					to <code>cantTell</code> and appends an explanatory note to <code>error</code> — this is
 					enforced centrally (<code>policy.coerceManualFailToCantTell</code>, on by default under
 					the <code>a11y</code> policy contract; see{" "}
 					<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>), not something each rule
-					has to remember. <code>fail</code> is reserved for deterministic,{" "}
+					has to remember. Under this policy, <code>fail</code> is reserved for deterministic,{" "}
 					<code>type: "automatic"</code> findings only.
 				</li>
 				<li>
 					<strong><code>meta.normativeMappings</code></strong> is how a check result ties back to
-					a WCAG Success Criterion — <code>[]</code> for rules with no formal WCAG mapping (this
-					engine calls them advisory <code>type: "manual"</code> rules). See{" "}
+					a WCAG Success Criterion. An empty list means the rule has no formal mapping in this
+					result. That doesn't say whether the rule is automatic or manual: read <code>type</code>{" "}
+					for that (<code>aria-allowed-role</code>, for one, is automatic and has no WCAG mapping).
+					See{" "}
 					<a href="/conformance/wcag-mapping/">Conformance</a> for how these roll up.{" "}
 					<strong>The list is not WCAG-only.</strong> When the scan asks for another standard (
 					<code>engineOptions.mappings</code>, or a standard's profile), each WCAG criterion is
@@ -660,17 +779,31 @@ export function OutputSchemaContent() {
 							time. <code>measure</code> and <code>unit</code> are open sets that may grow in a minor
 							release; <code>context</code> is rule-specific and, like <code>data.details</code>, not a
 							stable contract. <code>getMargins(result)</code> returns every margin in a result as{" "}
-							<code>{"[{ ruleId, ...margin }]"}</code>, sorted by <code>ruleId</code>.
+							<code>{"[{ ruleId, ...margin }]"}</code>, sorted by <code>ruleId</code>; of a cross-frame
+							result, every frame's, a child frame's with <code>frame</code>, the path to it.
 						</li>
 				<li>
-					<strong><code>error</code></strong>: only present in three cases — the rule implementation
-					threw an uncaught exception, the manual-fail coercion above fired, or every occurrence
-					of a <code>fail</code> result had its ancestor walk hit an internal depth limit (so the
-					engine couldn't confirm the flagged content is actually exposed) and the whole result
-					was coerced to <code>cantTell</code> the same way. A thrown rule always surfaces as{" "}
-					<code>outcome: "cantTell"</code> with <code>occurrences: []</code> and <code>error</code>{" "}
-					set to the exception message — the engine never lets one broken rule crash the whole
-					scan.
+					<strong><code>error</code></strong>: present when the rule did not complete, or when the
+					engine changed or ignored part of what the rule returned. A rule that threw (or returned
+					something that is not a result) always surfaces as <code>outcome: "cantTell"</code> with{" "}
+					<code>occurrences: []</code> and <code>error</code> set to the exception message, so{" "}
+					<code>cantTell</code> with no occurrences and an <code>error</code> is how to tell a rule
+					that did not complete; the engine never lets one broken rule crash the whole scan.
+					Otherwise <code>error</code> holds the engine's notes, joined by <code>|</code> after any{" "}
+					<code>error</code> the rule returned itself: the manual-fail coercion above, an{" "}
+					<code>outcome</code> or <code>severity</code> outside its set, a <code>type</code> that
+					differs from its meta's, occurrences that are not objects (left out), a{" "}
+					<code>policyOutcome</code> or <code>ruleSeverity</code> the rule returned (not taken: the
+					engine sets both), an <code>uncertainty.code</code> outside the closed set, and a{" "}
+					<code>fail</code> downgraded to <code>cantTell</code> because the 200-step ancestor walk
+					stopped short of every reported element. Those results keep their occurrences: the rule
+					completed.
+				</li>
+				<li>
+					<strong><code>policyOutcome</code></strong>: present when the policy's{" "}
+					<code>allowedOutcomes</code> doesn't allow the outcome the rule found. The result is then{" "}
+					<code>cantTell</code>, with the rule's own outcome here and no <code>error</code>, so the
+					reporters don't read it as a rule that did not complete.
 				</li>
 				<li>
 					<strong><code>engineOptions</code></strong> on each result is the <em>resolved</em>{" "}
@@ -691,7 +824,10 @@ export function OutputSchemaContent() {
 
 			<h2 id="occurrence">An occurrence (<code>occurrences[i]</code>)</h2>
 			<p>
-				Normally present only when <code>outcome</code> is <code>fail</code> or{" "}
+				A <code>fail</code> always has at least one: a custom rule's <code>fail</code> that names
+				no element gets one on the document element (<code>selector: "html"</code>, reason code{" "}
+				<code>FAIL_WITHOUT_OCCURRENCE</code>). Normally present only when <code>outcome</code> is{" "}
+				<code>fail</code> or{" "}
 				<code>cantTell</code>: a <code>pass</code> result has <code>occurrences: []</code>, since
 				this engine does not enumerate the elements it passed, only the ones it flagged. The
 				contrast rules are the exception: their <code>pass</code> carries one occurrence
@@ -748,7 +884,8 @@ export function OutputSchemaContent() {
 				<strong>why</strong>, from a closed vocabulary, so a consumer can branch on the reason
 				rather than parse a summary string. It is present only on a <code>cantTell</code>-tier
 				occurrence: a <code>fail</code>-tier one would be claiming the rule both decided and did
-				not, so the engine drops it.
+				not, so the engine drops it. An uncertainty whose <code>code</code> is not one of the codes
+				below is left out too, and the rule's <code>error</code> names the code.
 			</p>
 			<DataTable
 				label="Uncertainty codes"
@@ -801,8 +938,9 @@ export function OutputSchemaContent() {
 					"      standard?: string,        // a standard's own rollup only, with version and criterion",
 					"      version?: string,",
 					"      criterion?: string,",
-					"      checksIds: string[],      // every atomic ruleId this composite rolls up",
-					"      contributors: Array<{ testId: string, outcome: string, severity: string | null }>,",
+					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
+					"      customChecksIds?: string[], // the custom rules among them; absent when none",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -819,6 +957,13 @@ export function OutputSchemaContent() {
 				<a href="/conformance/wcag-mapping/">Conformance</a> for what this means for an overall conformance
 				claim.
 			</p>
+			<p>
+				A WCAG rollup's rules are its own list and every rule of <code>engineOptions.customRules</code>{" "}
+				that ran and maps to one of its criteria (through <code>meta.wcagSc</code> or a WCAG entry
+				in <code>meta.normativeMappings</code>), marked <code>custom: true</code> among the
+				contributors and listed in <code>customChecksIds</code>, so a reader sees when a custom
+				rule decided the outcome. A standard's own rollups keep their lists.
+			</p>
 
 			<h2>Outcome values</h2>
 			<DataTable
@@ -832,8 +977,8 @@ export function OutputSchemaContent() {
 				rows={outcomeRows}
 			/>
 			<p>
-				<code>fail</code> is intentionally the narrowest, highest-bar outcome in this engine:
-				reserved for deterministic, normative violations;{" "}
+				In core's built-in rules, <code>fail</code> is intentionally the narrowest, highest-bar
+				outcome: reserved for deterministic, normative violations;{" "}
 				<strong>chasing rule coverage must never dilute this</strong>.
 			</p>
 
@@ -842,7 +987,10 @@ export function OutputSchemaContent() {
 				<li>
 					<code>severity</code>: <code>minor</code> &lt; <code>moderate</code> &lt;{" "}
 					<code>serious</code> &lt; <code>critical</code> — the rule author's assessment of user
-					impact, independent of <code>confidence</code>.
+					impact, independent of <code>confidence</code>. A profile can give a rule another severity
+					(a profile's <code>severity</code> in a standard or a pack's checklist): under it the
+					result shows the profile's, keeps the rule's own as <code>ruleSeverity</code> (present
+					only then), and the rollups take the profile's.
 				</li>
 				<li>
 					<code>confidence</code>: <code>low</code> &lt; <code>medium</code> &lt;{" "}
@@ -863,7 +1011,8 @@ export function OutputSchemaContent() {
 				<code>form-control-programmatic-label-present</code>,{" "}
 				<code>identical-iframes-same-purpose</code>,{" "}
 				<code>svg-image-text-alternative-present</code>,{" "}
-				<code>video-poster-text-alternative-present</code> and <code>target-size-minimum</code>.{" "}
+				<code>video-poster-text-alternative-present</code>, <code>target-size-minimum</code> and{" "}
+				<code>text-spacing-content-loss</code>.{" "}
 				<code>confidence</code> is on every result, so a consumer that wants only the most certain
 				failures can gate on it directly; <code>policy.allowedConfidence</code> will not do it for
 				you, since a disallowed value is replaced with the rule's own <code>defaultConfidence</code>{" "}
@@ -918,7 +1067,7 @@ export function OutputSchemaContent() {
 					'          "html": "<button></button>",',
 					'          "structuralPath": [1, 1],',
 					'          "summary": "This button has no accessible name.",',
-					'          "hint": "Provide visible button text or a programmatic accessible-name mechanism (for example aria-label) so assistive technologies can identify the button.",',
+					'          "hint": "Give the button visible text, or name it with aria-label, so screen reader users know what it does.",',
 					'          "data": {',
 					'            "visibilityFilter": { "eligible": true, "reasons": [], "targetSet": "acc", "accEligible": true },',
 					'            "details": { "reasonCode": "name_missing" }',
@@ -937,7 +1086,7 @@ export function OutputSchemaContent() {
 					'          "selector": "html > body > img",',
 					'          "html": "<img src=\\"logo.png\\">",',
 					'          "structuralPath": [1, 0],',
-					'          "summary": "Missing alt attribute on <img>.",',
+					'          "summary": "This <img> has no alt attribute.",',
 					'          "hint": "Add an alt attribute (use alt=\\"\\" only for decorative images)."',
 					"        }",
 					"      ]",

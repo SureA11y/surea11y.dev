@@ -108,6 +108,17 @@ export function OverviewContent() {
 				kleine Änderung ein <code>fail</code> daraus macht. Siehe{" "}
 				<a href="/results-reports/output-schema/#margin">Ausgabeschema</a>.
 			</p>
+			<p>
+				Nennen Sie den Standard, und die Engine wählt die Regeln.{" "}
+				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code> führt die Regeln für die A- und
+				AA-Kriterien von WCAG 2.2 aus, nach der Stufe, die jedes Kriterium in dieser Version hat, und{" "}
+				<code>bestPractices: true</code> ergänzt die Prüfungen, die WCAG nicht verlangt. Ein Standard
+				über WCAG hinaus, etwa ein nationaler oder die eigene Richtlinie Ihrer Organisation, kommt als
+				Pack: Seine Regeln, Profile und Checklistenpunkte laufen neben denen von core und erscheinen
+				in jedem Bericht. Siehe{" "}
+				<a href="/configuration/engine-options/#selecting-which-rules-run">Engine-Optionen</a> und{" "}
+				<a href="/configuration/packs/">Packs</a>.
+			</p>
 
 			<h3 id="checked-against-the-act-corpus">Geprüft am ACT-Korpus</h3>
 			<p>
@@ -133,8 +144,8 @@ export function OverviewContent() {
 
 			<h2>Grundprinzipien</h2>
 			<ul>
-				<li><strong>Deterministische Ausführung.</strong> Dieselbe Eingabe erzeugt immer dieselbe Ausgabe. Laufende Animationen und Übergänge werden für den Scan angehalten, sodass eine Seite mitten in einer Einblendung dasselbe Ergebnis liefert wie eine, die zur Ruhe gekommen ist.</li>
-				<li><strong>Bewusst konservativ.</strong> <code>fail</code> ist objektiven, normativen Verstößen vorbehalten, damit es möglichst wenige Fehlalarme gibt.</li>
+				<li><strong>Deterministische Ausführung.</strong> Dieselbe Seite, unter denselben Bedingungen gerendert und mit denselben Optionen gescannt, erhält dieselben Entscheidungen. Laufzeiten, Zeitstempel und Angaben zur Umgebung im Ergebnis können sich zwischen Läufen trotzdem unterscheiden. Laufende Animationen und Übergänge werden für den Scan angehalten, sodass eine laufende Einblendung nicht verändert, was die Regeln messen.</li>
+				<li><strong>Bewusst konservativ.</strong> Die Regeln von core behalten <code>fail</code> objektiven, normativen Verstößen vor, damit Fehlalarme selten bleiben.</li>
 				<li><strong>Rückverfolgbarkeit zu Standards.</strong> Regeln sind, wo sinnvoll, dem zutreffenden WCAG-Erfolgskriterium zugeordnet.</li>
 				<li><strong>Stabile maschinenlesbare Ausgabe.</strong> Regel-IDs bleiben unabhängig von der Sprache stabil.</li>
 				<li><strong>Framework-unabhängig.</strong> Läuft in jsdom oder in jedem Framework zur Browser-Automatisierung.</li>
@@ -164,8 +175,10 @@ export function OverviewContent() {
 				<li>eine Tastaturfalle oder bei 400 % Zoom abgeschnittenen Inhalt erkennen, denn beides erfordert, echte Benutzerinteraktion über die Zeit zu simulieren, statt das DOM zu einem einzigen Zeitpunkt zu lesen.</li>
 			</ul>
 			<p>
-				In diesen Fällen meldet die Engine <code>cantTell</code>, und hier bleibt das Urteil eines
-				Menschen nötig. Die vollständige Liste finden Sie unter{" "}
+				Einige implementierte Prüfungen melden <code>cantTell</code>, wenn eine Person entscheiden
+				muss. Andere Aspekte, darunter Tastaturfallen und Reflow beim Zoomen, prüft die Engine gar
+				nicht; sie brauchen eigene Tests. Kein <code>cantTell</code> steht für sie, ein Ergebnis
+				ohne <code>cantTell</code> heißt also nicht, dass sie abgedeckt wurden. Die vollständige Liste finden Sie unter{" "}
 				<a href="/help/known-limitations/">Bekannte Einschränkungen</a>.
 			</p>
 		</>

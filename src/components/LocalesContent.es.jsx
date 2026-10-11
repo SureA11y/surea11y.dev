@@ -127,7 +127,8 @@ export function LocalesContent() {
 				"No traducidos" cuenta los valores que coinciden carácter por carácter con el texto en
 				inglés, salvo las palabras que con razón son iguales en un idioma: en francés{" "}
 				<em lang="fr">Orientation</em>, <em lang="fr">Interruptions</em> y{" "}
-				<em lang="fr">Occurrences</em>, en alemán <em lang="de">Element</em>, en español{" "}
+				<em lang="fr">Occurrences</em>, en alemán <em lang="de">Frame</em>,{" "}
+				<em lang="de">Frames</em> y <em lang="de">Element</em>, en español{" "}
 				<em lang="es">Selector</em>. Esas palabras figuran en una lista, cada una con el texto en
 				inglés con el que se comprobó, y cuentan como traducidas. Si el inglés cambia, la entrada
 				deja de aplicarse y la cadena cuenta como no traducida hasta que alguien la vuelva a
@@ -295,6 +296,17 @@ export function LocalesContent() {
 				distinto de <code>unknown-locale</code>, que significa que el proyecto no tiene esa
 				traducción en absoluto.
 			</p>
+			<p>
+				En Node, el mismo archivo lateral es un módulo:{" "}
+				<code>require('@surea11y/core/i18n/de')</code> devuelve{" "}
+				<code>{"{ locale, messages }"}</code> (<code>locale</code> es <code>'de'</code>, y{" "}
+				<code>messages</code> el mapa plano de clave a texto), sin necesidad del paquete para navegador.
+			</p>
+			<p>
+				Los mensajes de un <a href="/configuration/packs/">pack</a> están en sus propios
+				diccionarios, que el pack enumera por configuración regional; en una configuración regional
+				para la que el pack no tiene diccionario, sus mensajes aparecen en inglés.
+			</p>
 
 			<h3>Proporcionar tu propio diccionario</h3>
 			<p>
@@ -370,8 +382,8 @@ export function LocalesContent() {
 				</li>
 			</ul>
 			<p>
-				Ambas se incluyen en el resultado junto con el texto ya resuelto, así que puedes volver a
-				renderizar en una configuración regional distinta a partir de un resultado guardado sin volver a analizar.
+				Las claves de regla, de compuesto y de ocurrencia se incluyen en el resultado junto con el
+				texto ya resuelto, así que puedes volver a renderizar en una configuración regional distinta a partir de un resultado guardado sin volver a analizar.
 			</p>
 		</>
 	);

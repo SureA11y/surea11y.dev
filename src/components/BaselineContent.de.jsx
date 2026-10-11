@@ -90,7 +90,8 @@ export function BaselineContent() {
 			<p>
 				Dabei ist <code>reasonCode</code> der regelspezifische Code aus{" "}
 				<code>occurrence.data.details.reasonCode</code> (standardmäßig <code>"DEFAULT"</code>,{" "}
-				wenn eine Regel keinen setzt), und <code>html</code> ist das Outer-HTML-Snippet des
+				wenn eine Regel keinen setzt oder etwas anderes als einen nicht leeren String setzt), und{" "}
+				<code>html</code> ist das Outer-HTML-Snippet des
 				Vorkommens. Das ist inhaltsbasiert statt positionsbasiert: Es bleibt stabil, wenn sich
 				das gemeldete Element auf der Seite verschiebt (eine Umsortierung, ein unabhängiges
 				Geschwisterelement kommt hinzu oder fällt weg), solange sich das Markup des gemeldeten
@@ -120,6 +121,20 @@ export function BaselineContent() {
 				erzeugen (z. B. dieselbe fehlerhafte Komponente dreimal wiederholt), und die Baseline nur
 				1 davon erfasst hat, meldet ein neuer Scan 1 bekanntes und 2 neue Vorkommen — nicht alle
 				3 als bekannt.
+			</p>
+			<p>
+				Ein Befund in einem Frame eines Frame-übergreifenden Ergebnisses
+				(<code>runa11yCoreAcrossFrames</code>) wird zusätzlich an seinem Frame unterschieden: Sein
+				Eintrag speichert den <strong>Pfad</strong> des Frames, die Selektoren der Frame-Elemente,
+				die zu ihm führen (<code>"frame": ["#checkout"]</code>), und passt nur auf einen Befund im
+				Frame unter diesem Pfad. Dieselbe fehlerhafte Komponente in der Seite und in einem Frame
+				ergibt zwei Befunde. Einträge ohne <code>frame</code> gehören zur Seite selbst, sodass eine
+				Baseline aus einem Scan eines einzelnen Dokuments weiterhin auf die Seite passt.
+			</p>
+			<p>
+				Ein kompaktes Ergebnis (<code>engineOptions.output.detail: 'findings'</code>, siehe{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Ausgabeschema</a>) wird als das
+				vollständige Ergebnis gelesen, für das es steht, und daher genauso gemeldet.
 			</p>
 			<p>
 				Baseline-Einträge, die in einem neuen Scan auf nichts mehr passen, werden als{" "}
@@ -167,7 +182,9 @@ export function BaselineContent() {
 			<p>
 				<code>--baseline &lt;path&gt;</code> lehnt eine Datei, die nicht{" "}
 				<code>{"{ version: 1, entries: [...] }"}</code> ist, mit einem klaren Fehler (Exit-Code 2)
-				ab, statt ein älteres oder anderes Format zu erraten.
+				ab, statt ein älteres oder anderes Format zu erraten. <code>matchBaseline</code> und die
+				Option <code>baselineEntries</code> der SARIF- und JUnit-Reporter nehmen die Datei so, wie
+				sie gespeichert ist (<code>JSON.parse</code> davon), oder ihre <code>entries</code>-Liste.
 			</p>
 
 			<h2>Kombination mit <code>--json</code></h2>
