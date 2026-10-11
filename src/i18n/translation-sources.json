@@ -1,6 +1,6 @@
 {
 	"de": {
-		"content:components/AccessibilityStatementContent": "3075ff23df94",
+		"content:components/AccessibilityStatementContent": "f70b8007b970",
 		"content:components/BaselineContent": "f7d858ac1232",
 		"content:components/CiIntegrationContent": "19605a67302b",
 		"content:components/CliUsageContent": "b50896ed5574",
@@ -295,7 +295,7 @@
 		"string:usageBinding.targets": "d1ec2a8cf40d"
 	},
 	"es": {
-		"content:components/AccessibilityStatementContent": "3075ff23df94",
+		"content:components/AccessibilityStatementContent": "f70b8007b970",
 		"content:components/BaselineContent": "f7d858ac1232",
 		"content:components/CiIntegrationContent": "19605a67302b",
 		"content:components/CliUsageContent": "b50896ed5574",
@@ -590,7 +590,7 @@
 		"string:usageBinding.targets": "d1ec2a8cf40d"
 	},
 	"fr": {
-		"content:components/AccessibilityStatementContent": "3075ff23df94",
+		"content:components/AccessibilityStatementContent": "f70b8007b970",
 		"content:components/BaselineContent": "f7d858ac1232",
 		"content:components/CiIntegrationContent": "19605a67302b",
 		"content:components/CliUsageContent": "b50896ed5574",
@@ -885,7 +885,7 @@
 		"string:usageBinding.targets": "d1ec2a8cf40d"
 	},
 	"ja": {
-		"content:components/AccessibilityStatementContent": "3075ff23df94",
+		"content:components/AccessibilityStatementContent": "f70b8007b970",
 		"content:components/BaselineContent": "f7d858ac1232",
 		"content:components/CiIntegrationContent": "19605a67302b",
 		"content:components/CliUsageContent": "b50896ed5574",
