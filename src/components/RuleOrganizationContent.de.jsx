@@ -27,14 +27,23 @@ export function RuleOrganizationContent() {
 				<li>
 					<strong>automatisch</strong> — entscheidet deterministisch, ohne Heuristiken und ohne
 					Raten. Kann <code>fail</code> melden. <code>cantTell</code> kommt hier trotzdem vor, in
-					drei Situationen: Es gibt einen echten Verstoß, der aber für sich allein nicht belegt,
+					diesen Situationen: Es gibt einen echten Verstoß, der aber für sich allein nicht belegt,
 					dass das zugeordnete WCAG-Kriterium verletzt ist (eine ARIA-Anforderung an Autoren,
 					bei der der bereitgestellte Name, die Rolle bzw. der Wert trotzdem erhalten bleibt); die Regel entscheidet
 					deterministisch, beansprucht aber gar kein Erfolgskriterium (<code>aria-allowed-role</code>,
 					als Best Practice getaggt); oder die Regel kann nur bestätigen, dass ein Mechanismus{" "}
 					<em>vorhanden</em> ist, während die Frage, ob das Vorhandene tatsächlich gültig ist,
 					einer Schwesterregel gehört (<code>aria-required-children</code>, gepaart mit{" "}
-					<code>aria-prohibited-children</code>).
+					<code>aria-prohibited-children</code>); oder die Regel kann nicht ohne Raten entscheiden und
+					fragt deshalb, statt fehlzuschlagen: ein Name, der aus einem geschlossenen Shadow Root oder
+					aus zu tief verschachteltem Inhalt stammen kann (die <code>*-name-present</code>-Regeln),
+					Text, der nach dem Erhöhen der Abstände abgeschnitten werden oder sich überlappen kann (
+					<code>text-spacing-content-loss</code>), ein Orientierungs-Media-Block, der ein anderes
+					Element als den Inhalt der Seite dreht (
+					<code>css-orientation-lock</code>), ein Platzhalter unter seinem Verhältnis (
+					<code>contrast-minimum</code>) oder eine Farbe oder Größe, die sich nicht berechnen lässt
+					(die Kontrastregeln, <code>target-size-minimum</code>). Eine Regel, die eine Ausnahme wirft,
+					wird zur Absicherung ebenfalls als <code>cantTell</code> gemeldet.
 				</li>
 				<li>
 					<strong>manuell</strong> — zeigt an, dass ein Mensch entscheiden muss; die Regel kann

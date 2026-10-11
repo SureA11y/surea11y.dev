@@ -34,6 +34,19 @@ const apiRows = [
 			</>
 		),
 	},
+	{
+		id: "runOnly",
+		param: <code>runOnly</code>,
+		type: "Objekt, String oder String[] (optional)",
+		meaning: (
+			<>
+				Wird unverändert als <code>runOnly</code> des Scans durchgereicht: ein WCAG-Ziel (
+				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code>), <code>bestPractices</code>,
+				Regel-IDs oder Tags. Siehe <a href="#choosing-a-wcag-target">Ein WCAG-Ziel wählen</a>. Wird
+				ignoriert, wenn <code>received</code> bereits ein Scan-Ergebnis ist.
+			</>
+		),
+	},
 ];
 
 export function TestMatchersUsageContent() {
@@ -189,6 +202,70 @@ export function TestMatchersUsageContent() {
 				]}
 			/>
 
+			<h3 id="choosing-a-wcag-target">Ein WCAG-Ziel wählen (<code>runOnly</code>)</h3>
+			<p>
+				Das dritte Argument ist das <code>runOnly</code> des Scans und wird unverändert an die
+				Engine übergeben. <code>runOnly.wcag</code> wählt nach Konformitätsziel aus:{" "}
+				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code> führt die Regeln für die
+				Kriterien der Stufen A und AA von WCAG 2.2 aus, nach der Stufe, die jedes Kriterium in
+				dieser Version hat. <code>bestPractices: true</code> ergänzt die Regeln, die kein
+				WCAG-Kriterium nennen, etwa <code>region</code> und <code>heading-order</code>; allein
+				angegeben führt es nur diese aus, und neben <code>engineOptions.profile</code> fügt es sie
+				den Regeln des Profils hinzu.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.2 A and AA",
+					"expect(container).toHaveNoA11yViolations({}, { wcag: { version: '2.2', level: 'AA' } });",
+					"",
+					"// The same, and the best practices",
+					"expect(container).toHaveNoA11yViolations({}, { wcag: { version: '2.2', level: 'AA' }, bestPractices: true });",
+				]}
+			/>
+			<p>
+				<code>runOnly</code> nimmt auch Regel-IDs und Tags an (<code>includeRuleIds</code>,{" "}
+				<code>tags</code>, <code>excludeRuleIds</code>, ...), die die Regeln eines Ziels ergänzen;
+				die Ausschlüsse wirken danach. Ein <code>runOnly</code>, das irgendetwas auswählt, ersetzt
+				die Auswahl in <code>engineOptions.rules</code>/<code>.tags</code> vollständig: Geben Sie
+				eine Auswahl auf die eine oder die andere Weise an, nicht auf beide. Übergeben Sie{" "}
+				<code>{"{}"}</code> oder <code>null</code> als <code>engineOptions</code>, wenn Sie nur{" "}
+				<code>runOnly</code> brauchen.
+			</p>
+
+			<h2 id="packs">Mit Packs scannen</h2>
+			<p>
+				Ein <a href="/configuration/packs/">Pack</a> bringt Regeln, eine Norm oder eine Checkliste
+				sowie deren Profile und Meldungen aus einem eigenen Paket mit. Der Matcher scannt in Node,
+				daher wird ein Pack als das Objekt selbst in <code>engineOptions.packs</code> übergeben, und
+				sein Profil wird mit <code>engineOptions.profile</code> gewählt:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const acmePolicy = require('./acme-policy-pack');",
+					"const policy = { packs: [acmePolicy], profile: 'acme-web-2026' };",
+					"",
+					"test(\"a page that breaks the pack's house rule fails the assertion\", () => {",
+					"  document.body.innerHTML = '<main><h1>Welcome</h1><video autoplay src=\"intro.mp4\"></video></main>';",
+					"  expect(document).not.toHaveNoA11yViolations(policy);",
+					"});",
+					"",
+					"// A pack's checklist profile, and the best practices",
+					"expect(container).toHaveNoA11yViolations(policy, { bestPractices: true });",
+				]}
+			/>
+			<p>
+				Die eigenen Regeln eines Packs erscheinen im Ergebnis wie die von core, mit IDs, die mit
+				seinem Namensraum beginnen (<code>acme-no-autoplay</code>). Halten Sie die Pack-Objekte an
+				einer Stelle (einer Setup-Datei oder einem Modul): core bereitet für jede Menge von
+				Pack-Objekten eine Engine vor und behält sie für den nächsten Scan mit denselben. Ein Pack,
+				das core nicht ausführen kann (sein <code>core</code>-Bereich schließt das installierte core
+				aus, es ist nicht gültig, oder sein Namensraum kollidiert mit dem eines anderen Packs), steht
+				in <code>skippedPacks</code> des Ergebnisses, und die Assertion scheitert daran, statt zu
+				bestehen, während die Regeln des Packs nie gelaufen sind.
+			</p>
+
 			<h2>API</h2>
 			<DataTable
 				label="Parameter der Matcher"
@@ -219,6 +296,22 @@ export function TestMatchersUsageContent() {
 				überhaupt nicht automatisiert.
 			</p>
 			<p>
+				<strong>Ein Scan, der nicht prüfen konnte, was er prüfen sollte, scheitert ebenfalls</strong>,
+				statt über nichts zu bestehen: ein Element, das nicht im Dokument liegt, in dem der Scan
+				läuft (abgetrennt oder aus einem anderen Dokument), eine eigene Regel, die nicht gelaufen
+				ist (aufgeführt in <code>skippedCustomRules</code>), oder ein Pack, das nicht gelaufen ist
+				(aufgeführt in <code>skippedPacks</code>). Die Meldung nennt jedes davon mit dem Grund.
+			</p>
+			<p>
+				Der Scan selbst kann eine Ausnahme werfen, und der Test scheitert dann mit dem Fehler der
+				Engine, der einen <code>code</code> trägt: <code>INVALID_RUN_ONLY</code> (eine Liste von
+				Regeln oder Tags, in der kein Wert eine Regel oder ein Tag nennt, oder ein{" "}
+				<code>runOnly.wcag</code>-Ziel, das keines ist), <code>INVALID_ENGINE_OPTIONS</code> (mit{" "}
+				<code>strictOptions: true</code> eine Option, die die Engine nicht liest, oder ein Wert, den
+				sie nicht verwenden kann) oder <code>PAGE_BUILTINS_BROKEN</code> (der eigene Code des Tests
+				oder der Seite hat ein JavaScript-Built-in beschädigt, auf das sich die Engine verlässt).
+			</p>
+			<p>
 				<strong>Ein auf ein Element beschränkter Scan meldet nur, was darin liegt</strong>: Ein
 				Verstoß an anderer Stelle der Seite lässt eine auf einen <code>container</code> beschränkte
 				Assertion nie scheitern. Intern wird das gescannte Element vorübergehend mit einem
@@ -245,15 +338,19 @@ export function TestMatchersUsageContent() {
 			<p>
 				Listet jedes Vorkommen auf, nicht nur jede Regel (eine Regel kann mehrere Elemente
 				markieren), mit Regel-ID, Schweregrad, einer lesbaren Zusammenfassung, dem Selektor des
-				fehlerhaften Elements und, wo verfügbar, einem Hinweis zur Behebung:
+				fehlerhaften Elements und, wo verfügbar, einem Hinweis zur Behebung. Sie nennt das Release
+				von <code>@surea11y/core</code>, das das Ergebnis erzeugt hat, zum Zitieren in einem
+				Fehlerbericht:
 			</p>
 			<CodeBlock
 				lines={[
 					"expected no accessibility violations, but found 1:",
 					"",
-					"1) img-alt-present (serious): Missing alt attribute on <img>.",
-					"   at html > body > img",
-					"   Add an alt attribute or use alt=\"\" for decorative images.",
+					"1) img-alt-present (serious): This <img> has no alt attribute.",
+					"   at body > img",
+					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
+					"",
+					"Scanned with @surea11y/core 1.11.1.",
 				]}
 			/>
 			<p>
@@ -261,13 +358,31 @@ export function TestMatchersUsageContent() {
 				angehängt, damit sie sichtbar bleiben, ohne <code>pass</code>/<code>fail</code> zu
 				beeinflussen:
 			</p>
-			<CodeBlock lines={["2 rule(s) need manual review (cantTell, not counted as failures): link-name-quality-manual, color-contrast-computable"]} />
+			<CodeBlock lines={["3 rule(s) need manual review (cantTell, not counted as failures): contrast-computable, link-name-quality, manual-review"]} />
+			<p>Ein Pack, das nicht gelaufen ist, wird mit dem Grund genannt:</p>
+			<CodeBlock
+				lines={[
+					"expected no accessibility violations, but the scan left out what it was asked to check:",
+					"",
+					"No accessibility violations found in what was scanned.",
+					"",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.11.1.",
+					"",
+					"Scanned with @surea11y/core 1.11.1.",
+				]}
+			/>
 
 			<p>
 				Ausführbare Beispiele für beide Frameworks nebeneinander:{" "}
 				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/basic.test.js">Jest</a>{" "}
 				und{" "}
 				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/basic.vitest.test.js">
+					Vitest
+				</a>
+				, und dasselbe mit einem Pack:{" "}
+				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/pack.test.js">Jest</a>{" "}
+				und{" "}
+				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/pack.vitest.test.js">
 					Vitest
 				</a>
 				. Den vollständigen Umfang von <code>engineOptions</code> (Locale, Kontrastmodi, Shadow

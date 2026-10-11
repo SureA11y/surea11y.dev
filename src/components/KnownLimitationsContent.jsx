@@ -6,18 +6,17 @@ export function KnownLimitationsContent() {
 	return (
 		<>
 			<p>
-				Stated plainly and upfront, not left for you to discover. Every item here is a
-				deliberate, reasoned decision, not an oversight — but "deliberate" doesn't mean
-				"unimportant to know before you rely on this tool."
+				What the engine doesn't evaluate, what depends on the environment it runs in, and what
+				needs a person to review. Read this before you rely on a clean result.
 			</p>
 
-			<h2>Structural — this architecture cannot do these at all</h2>
+			<h2>Aspects the scan does not evaluate</h2>
 			<p>
-				surea11y is a <strong>static DOM scan</strong>: it reads the DOM tree and computed styles
-				at one instant, with no ability to simulate user interaction, wait for async state
-				changes, or measure real layout at arbitrary viewport sizes. These aren't missing rules —
-				no rule implementation, however clever, can close them without a fundamentally different
-				architecture (real browser automation driving actual keyboard/pointer events over time):
+				surea11y checks the page in its current state. Some rules briefly change focus or styles to
+				measure a specific condition, and in a real browser rules can measure layout (in jsdom there
+				is none), but the scan does not systematically explore user interactions, asynchronous
+				states or different viewport sizes. The following therefore need separate testing, with
+				browser automation and human review as appropriate:
 			</p>
 			<ul>
 				<li>
@@ -27,8 +26,10 @@ export function KnownLimitationsContent() {
 					<a href={`${core}/docs/ACT_RULE_MAPPING.md#keyboard-trap-detection-scoping-notes`}>
 						<code>ACT_RULE_MAPPING.md</code>
 					</a>
-					), but it would be this engine's first check to mutate the page it is inspecting, so it
-					is not built and would not be part of a normal scan if it were. Nothing in static markup
+					), but it isn't built: a scan doesn't explore user interactions or the states they lead
+					to. A few checks change the page briefly to measure it (<code>aria-hidden-focus</code>{" "}
+					tries to focus elements, <code>text-spacing-content-loss</code> applies test spacing),
+					but none drives focus through the page the way trap detection would. Nothing in static markup
 					stands in for it in the meantime.
 				</li>
 				<li>
@@ -72,6 +73,36 @@ export function KnownLimitationsContent() {
 					reported as a failure.
 				</li>
 				<li>
+					<strong>The engine runs on the page's own JavaScript built-ins.</strong> A page whose
+					scripts break one it relies on (<code>Array.prototype.filter</code>, <code>Map</code>,{" "}
+					<code>JSON.stringify</code>, <code>String.prototype.toLowerCase</code> and others) stops
+					the scan with an error coded <code>PAGE_BUILTINS_BROKEN</code> that names each, rather
+					than giving a result that reads well and is wrong; one broken before the bundle is
+					injected (<code>Object.keys</code>) stops the bundle loading. A page that adds{" "}
+					<code>then</code> to <code>Object.prototype</code> is scanned as any other. DOM methods a
+					page replaces (<code>getComputedStyle</code>, <code>querySelectorAll</code>,{" "}
+					<code>getBoundingClientRect</code>) are not checked: rules read what they return.
+				</li>
+				<li>
+					<strong>A name is not worked out from content nested more than 256 levels deep.</strong>{" "}
+					The walk stops there (Chrome gives no name from content 100 levels down), so a button or
+					link whose only name is deeper is asked about (<code>name_contentTooDeep</code>) by{" "}
+					<a href="/rules/button-name-present/"><code>button-name-present</code></a> and{" "}
+					<a href="/rules/link-name-present/"><code>link-name-present</code></a>; other rules that
+					name from content read such content as empty.
+				</li>
+				<li>
+					<strong>Content in a closed shadow root can't be read.</strong> No script reaches inside{" "}
+					<code>{"attachShadow({ mode: 'closed' })"}</code> or a declarative{" "}
+					<code>shadowrootmode="closed"</code>, so the engine can't see what a browser names from
+					there. <code>button-name-present</code> and <code>link-name-present</code>, and the menu
+					item, option, tab, tree item, summary and tooltip name rules, ask about an element whose
+					name could come from a custom element that renders but shows no readable content,
+					instead of failing it. A closed root on a built-in element (a <code>&lt;span&gt;</code>)
+					looks like an empty one, such as an icon drawn by CSS, so a button over one is still
+					failed.
+				</li>
+				<li>
 					<strong>A scan taken while a modal dialog is open sees the dialog, not the page.</strong>{" "}
 					A <code>&lt;dialog&gt;</code> opened with <code>showModal()</code> (or an open{" "}
 					<code>&lt;dialog aria-modal="true"&gt;</code>) makes the rest of the document inert, and
@@ -86,8 +117,8 @@ export function KnownLimitationsContent() {
 					is not detected, and a custom modal built from a <code>role="dialog"</code> element with{" "}
 					<code>inert</code> or <code>aria-hidden</code> on the rest of the page is handled only
 					through those attributes, which hide the page but do not tell the structure rules a
-					dialog is open. Behaves like axe-core; IBM Equal Access and Siteimprove Alfa judge the
-					page behind the dialog as if nothing were open.
+					dialog is open. Other engines differ here: some do the same, others judge the page behind
+					the dialog as if nothing were open.
 				</li>
 				<li>
 					<strong>
@@ -105,6 +136,15 @@ export function KnownLimitationsContent() {
 					subtrees anyway — e.g. to catch a markup defect (like a broken ARIA ID reference) before
 					a dialog ever opens. See <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>{" "}
 					for the option and exactly which hiding mechanisms it covers.
+				</li>
+				<li>
+					<strong>jsdom keeps a font size as written.</strong> A browser reports a computed font
+					size in px; jsdom keeps a keyword or a <code>calc()</code> as written. The engine reads
+					the keywords at a browser's sizes for a 16px default (<code>xx-large</code> is 32px) and{" "}
+					<code>calc()</code> of lengths and numbers, so large text is told apart as in a browser.{" "}
+					<code>larger</code> and <code>smaller</code>, which depend on the parent's size, are not
+					resolved under jsdom: such text is held to the normal-text ratio, and its message gives
+					its size as 0px. A browser resolves both.
 				</li>
 				<li>
 					<strong>
@@ -137,18 +177,35 @@ export function KnownLimitationsContent() {
 					nest 100-300 deep, which is comfortably fast — it becomes noticeable past roughly 1000.
 				</li>
 				<li>
+					<strong>Under jsdom, scan time also grows with the size of the stylesheet.</strong> jsdom
+					computes a style by matching every CSS rule against the element. The engine doesn't
+					change the DOM during a scan, so each element is computed once, but that once costs
+					O(rules): on a saved news page (7,916 elements, 2,683 CSS rules, jsdom 29.1.1), the first
+					computation of 5,735 elements takes about 224 s of a 243 s scan. That is jsdom's cost; a
+					real browser computes the same page in a fraction of a second. jsdom also leaves custom
+					properties unsubstituted, so a color set with <code>var()</code> is unreadable there: the
+					text or background is asked about (<code>contrast-computable</code>) rather than
+					measured. Run a real browser for large production pages.
+				</li>
+				<li>
 					<strong>
 						In a real browser, some rules change the page for the time of their check, and the
 						page's own scripts can react.
 					</strong>{" "}
 					To measure what the browser draws, <code>css-hidden-focus</code> focuses elements as the
 					keyboard would, and switches transitions off on the element it measures;{" "}
+					<code>aria-hidden-focus</code> focuses an element inside an <code>aria-hidden</code>{" "}
+					subtree to see whether the page moves focus away at once (a focus-trap sentinel);{" "}
 					<code>text-spacing-content-loss</code> adds a style sheet with the WCAG 1.4.12 spacing.
 					All of this is put back before the rule returns: focus, scroll position, style attributes
 					and the added style sheet. What cannot be put back is what the page's scripts do in
-					response, since focusing an element fires its <code>focus</code> handlers: a carousel may
-					move to the focused slide or enable a button. The findings are not affected, but if you
-					scan a page you go on using, reload it afterwards.
+					response, since focusing an element fires its <code>focus</code> and <code>focusin</code>{" "}
+					handlers: a carousel may move to the focused slide, moving <code>aria-hidden</code> with
+					it, or enable a button. The findings of that scan are those of the page as it was found:{" "}
+					<code>aria-hidden-focus</code> reads which subtrees are hidden, and the markup it reports,
+					before it focuses anything. But the page is left as its scripts made it, so a second scan
+					of the same page can find something else: if you scan a page you go on using, or scan one
+					page twice, reload it in between.
 				</li>
 				<li>
 					<strong>Static markup vs. live/post-hydration DOM state.</strong> The rule logic itself
@@ -202,27 +259,70 @@ export function KnownLimitationsContent() {
 					<code>engine.environment</code> whether fonts or images were still loading.
 				</li>
 				<li>
-					<strong>
-						The contrast rules measure text against its ancestors' backgrounds, and in a browser
-						check whether anything else paints there.
-					</strong>{" "}
+					<strong>In a browser, the contrast rules measure text against what is painted under it,
+					in CSS's painting order.</strong>{" "}
 					Text positioned over a sibling, over an <code>&lt;img&gt;</code> hero, over a{" "}
 					<code>::before</code> overlay, or pulled over another block by a negative margin sits on
-					paint none of its ancestors own. In a browser the engine measures the text's line boxes
-					and looks for elements that paint a background color, a background image or replaced
-					content (<code>img</code>, <code>video</code>, <code>canvas</code>, <code>svg</code>,{" "}
-					<code>iframe</code>) and cover at least about a glyph of a line, and for a positioned{" "}
-					<code>::before</code> or <code>::after</code> with a color or gradient; when it finds
-					one, <a href="/rules/contrast-computable/"><code>contrast-computable</code></a> asks about
-					the text with reason code <code>BACKGROUND_OVERLAP</code> and the ratio rules leave it
-					out. It does not work out which of two overlapping boxes is painted on top, so it does
-					not compute a ratio against the paint it found. Three limits keep the noise down, and
-					each can miss a case: only paint inside the text's nearest ancestor with an opaque
-					background counts (a white card over a hero image hides the image), fixed and sticky
-					boxes are left out (a cookie banner or header covers text rather than sitting behind
-					it), and solid paint the same color as the background already measured is ignored.
-					Under jsdom there is no layout, so nothing is found and text is measured against its
-					ancestors alone.
+					paint none of its ancestors own, and text that overflows an ancestor's box, or has a
+					negative <code>z-index</code>, isn't over that ancestor's background. In a browser the
+					engine measures the text's line boxes, finds the elements that paint there (a background
+					color or image, replaced content such as <code>img</code>, <code>video</code>,{" "}
+					<code>canvas</code>, <code>iframe</code>, SVG shapes), and orders them with the text and
+					its ancestors' backgrounds by the CSS painting order: stacking contexts,{" "}
+					<code>z-index</code>, positioned boxes and floats, then document order. When everything
+					between the text and the first opaque layer is a solid color covering all of the text,
+					the ratio is measured against that; when an image, a gradient, paint covering only part of
+					the text, or paint drawn over the text is involved,{" "}
+					<a href="/rules/contrast-computable/"><code>contrast-computable</code></a> asks about the
+					text with reason code <code>BACKGROUND_OVERLAP</code> and the ratio rules leave it out.
+					Text that a box clipping its overflow keeps out of view, such as the options further down
+					a scrolled list, is measured as it is once scrolled into that box. Text a box with{" "}
+					<code>overflow: hidden</code> keeps wholly out of view, such as a carousel slide off its
+					track, is not measured at all: from its styles alone, such a box can't be told from one
+					that hides that text for good, so the text is left out rather than guessed at. Scan the
+					page in that state (the slide shown) to check it. Limits: a fixed or sticky box over the
+					text is left out, since it covers it only at the scroll position the scan was taken at; a
+					gradient under the text is not sampled, so faint text on a faint gradient is asked about
+					rather than failed; and a group effect (<code>opacity</code>, a filter, a blend mode) on
+					an ancestor leaves the overlap to a coarser check. Under jsdom there is no layout, so text
+					is measured against its ancestors alone.
+				</li>
+				<li>
+					<strong>A form field's text is measured as the field draws it.</strong> The value of an{" "}
+					<code>&lt;input&gt;</code> that shows text (text, search, email, url, tel, password,
+					number, the date and time types) and the current value of a{" "}
+					<code>&lt;textarea&gt;</code> are measured in the field's color against its background;
+					while the value is empty, the placeholder is measured in the <code>::placeholder</code>{" "}
+					color and font, faded by its <code>opacity</code>. Not measured: the text the browser draws
+					when a date or time field is empty (<code>mm/dd/yyyy</code>), a file input's button and
+					file name, and a <code>&lt;select&gt;</code>'s shown option. Under jsdom there is no{" "}
+					<code>::placeholder</code> style, so placeholders are not measured there; values are. A
+					placeholder below its ratio is <code>cantTell</code> rather than a fail (
+					<code>PLACEHOLDER_BELOW_THRESHOLD</code>): WCAG holds placeholder text to the ratio, but
+					counts colours the page left entirely to the browser as meeting it (technique G148), and
+					telling the browser's colours from the page's on real pages is not settled yet, so a
+					person decides for now.
+				</li>
+				<li>
+					<strong>
+						<code>target-size-minimum</code> measures the region a pointer can hit, worked out from
+						the layout.
+					</strong>{" "}
+					A target is its border box with its rounded corners and 2D transforms, clipped by{" "}
+					<code>clip</code> and <code>clip-path: inset()</code> on its containing-block chain and
+					no larger than a box there that clips its <code>overflow</code>, with content sticking out
+					of it, less the boxes painted over it that take pointer events; it is large enough when a
+					24 by 24 square aligned to the page fits inside (Understanding 2.5.8). Because the region
+					comes from the layout rather than from hit-testing, targets below the fold are measured
+					as those in view, and so are targets in a box that clips its overflow, as scrolled into
+					it. Rounded corners are measured as drawn. Fixed and sticky boxes over a target are left
+					out; a target before the start of the page, where scrolling can't reach (a skip link at{" "}
+					<code>left: -9999px</code>), is no target. Left as their bounding box: 3D transforms,
+					other <code>clip-path</code> shapes, and an ancestor's rounded clipping. Its inline
+					exception covers a link in a sentence, which it reads as text with a letter or a digit
+					outside any target in the stretch of the link's block between line breaks; links between
+					separators alone ("Edit | Delete") that crowd each other are asked about rather than
+					exempted. Under jsdom, which has no layout, the rule is <code>notApplicable</code>.
 				</li>
 				<li>
 					<strong>Contrast is computed in sRGB.</strong> Colors given in <code>oklch()</code>,{" "}

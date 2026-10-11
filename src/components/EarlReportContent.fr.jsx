@@ -114,24 +114,38 @@ export function EarlReportContent() {
 				</li>
 				<li>
 					<strong><code>test.isPartOf</code></strong> liste les critères de succès auxquels cette
-					règle correspond, sous la forme <code>WCAG2:&lt;criterion-id&gt;</code>. Entièrement
-					omis pour une règle qui ne revendique aucun critère : <code>aria-allowed-role</code> est
-					la seule règle automatique du moteur dans ce cas, et une liste vide se lirait comme
+					règle correspond, sous la forme <code>WCAG2:&lt;criterion-id&gt;</code> : chaque entrée
+					de <code>normativeMappings</code> dont le <code>standard</code> est <code>WCAG</code> ou
+					absent (comme dans SARIF) et qui n’a pas de <code>type</code>. Entièrement omis pour une
+					règle qui ne revendique aucun critère : <code>aria-allowed-role</code> et{" "}
+					<code>landmark-role-name-present</code> sont les règles automatiques du moteur dans ce
+					cas, et une liste vide se lirait comme
 					« ne correspond à rien que nous ayons trouvé » plutôt que « ne correspond volontairement
 					à aucun ».
 				</li>
 				<li>
-					<strong><code>assertedBy</code></strong> et <strong><code>mode</code></strong>{" "}
-					n’apparaissent que si vous les fournissez.
+					<strong><code>assertedBy</code></strong> est toujours présent, sauf si vous passez{" "}
+					<code>assertor: null</code> : il vaut par défaut <code>surea11y</code> et la version du
+					moteur que portent les résultats. <strong><code>mode</code></strong> n’apparaît que si
+					vous le fournissez.
 				</li>
 			</ul>
 			<p>
 				Les id de critères sont dérivés du titre du critère lui-même (<code>Non-text Content</code> →{" "}
 				<code>non-text-content</code>). <code>normativeMappings</code> contient aussi des références
-				aux documents <span lang="en">Understanding</span> et à des normes autres que les WCAG, qui partagent{" "}
-				<code>standard: "WCAG"</code> et un <code>requirement</code> avec les vrais critères ; un
-				critère de succès est l’entrée qui indique un niveau de conformité et ne revendique aucun
-				autre type de document, et seules ces entrées sont lues.
+				aux documents <span lang="en">Understanding</span>, qui ont un <code>type</code>, et des
+				entrées d’autres normes (clauses d’EN 301 549, exigences ou points de la liste de contrôle
+				d’un pack), qui nomment leur propre <code>standard</code> ; les unes comme les autres
+				peuvent partager un numéro de <code>requirement</code> avec un critère. Seules les entrées
+				dont le <code>standard</code> est <code>WCAG</code> ou absent et qui n’ont pas de{" "}
+				<code>type</code> sont lues comme des critères de succès. Aucun niveau de conformité
+				n’est nécessaire. <code>isPartOf</code> ne liste que des critères WCAG ; les entrées des
+				autres normes en sont écartées.
+			</p>
+			<p>
+				Un résultat compact (<code>engineOptions.output.detail: 'findings'</code>, voir{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Schéma de sortie</a>) est lu
+				comme le résultat complet qu’il représente ; il est donc rapporté de la même façon.
 			</p>
 
 			<h2>Résultats</h2>
@@ -181,17 +195,21 @@ export function EarlReportContent() {
 				analyse la même page avec des <code>engineOptions</code> différents décrit toujours une
 				seule ressource, et le contexte n’a aucun moyen d’exprimer deux sujets ayant la même
 				source.{" "}
-				<strong>Lorsque deux résultats portent sur la même règle pour la même URL, le dernier
-				l’emporte.</strong> Cela vaut aussi pour la même page analysée à deux largeurs de
-				viewport : EARL n’a aucun terme pour les conditions dans lesquelles une page a été rendue,
-				si bien qu’un rapport construit à partir de plusieurs largeurs ne garde, pour chaque règle,
-				que l’assertion de la dernière largeur. Produisez un rapport par largeur si les largeurs
-				comptent.
+				<strong>Lorsque deux résultats portent sur la même règle pour la même URL, le pire
+				résultat est conservé</strong> : <code>earl:failed</code>, puis <code>earl:cantTell</code>,
+				puis <code>earl:passed</code>, puis <code>earl:inapplicable</code>, si bien qu’aucun ordre
+				des entrées ne peut masquer un échec. Cela vaut aussi pour la même page analysée à deux
+				largeurs de viewport : EARL n’a aucun terme pour les conditions dans lesquelles une page a
+				été rendue, si bien qu’un rapport construit à partir de plusieurs largeurs garde, pour
+				chaque règle, un échec survenu à n’importe quelle largeur. Produisez un rapport par
+				largeur si les largeurs elles-mêmes comptent.
 			</p>
 			<p>
 				La sortie est déterministe : les sujets sont triés par source, les assertions par id de
 				règle, et les mêmes entrées produisent une sortie identique à l’octet près, quel que soit
-				leur ordre. C’est ce qui rend significatif un diff entre deux versions du moteur.
+				leur ordre. La seule exception concerne les résultats sans URL, qui se distinguent par
+				leur position dans la liste (<code>about:blank#result-2</code>) ; donnez à chaque résultat
+				son URL quand l’ordre ne doit pas compter. C’est ce qui rend significatif un diff entre deux versions du moteur.
 			</p>
 
 			<h2>Options</h2>

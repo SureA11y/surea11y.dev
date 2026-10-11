@@ -33,7 +33,22 @@ export function HtmlReportContent() {
 					identischen Vorkommen ist eine Sache, die Aufmerksamkeit verdient, nicht viele), jeweils
 					mit Schweregrad, Chip(s) für das WCAG-Erfolgskriterium, einem repräsentativen Vorkommen
 					und der Gesamtzahl der Vorkommen. Begrenzt auf die 24 Regeln mit der höchsten Priorität,
-					darüber hinaus mit einem Hinweis auf weitere.
+					darüber hinaus mit einem Hinweis auf weitere. Eine Regel, die nicht abgeschlossen wurde
+					(sie hat eine Ausnahme geworfen), erhält ebenfalls eine Karte, die das mit ihrem Fehler
+					sagt, da die Seite nicht gegen sie geprüft wurde. Eine Regel mit einem{" "}
+					<code>http(s)</code>-Hilfelink (<code>meta.helpUrl</code>, auch bei einer eigenen Regel)
+					erhält auf ihrer Karte einen Link „<span lang="en">How to fix &lt;rule&gt;</span>“; eine Regel ohne einen solchen
+					verlinkt das Understanding-Dokument des WCAG-Kriteriums, das sie prüft
+					(„<span lang="en">Understanding 1.1.1 Non-text Content</span>“).
+					</li>
+					<li>
+						<strong>Frames</strong>: nur bei einem Frame-übergreifenden Ergebnis
+						(<code>runa11yCoreAcrossFrames</code> oder <code>.frames(true)</code> eines Bindings).
+						Die Karten oben gehören zur Seite selbst; dieser Abschnitt hat eine Überschrift pro
+						Frame, benannt nach seinem Pfad (den Selektoren der Frame-Elemente, die zu ihm führen),
+						mit Titel und URL des Frames und seinen Karten, oder „Nicht gescannt“ samt Grund bei
+						einem Frame, der nicht geantwortet hat. Der Rest des Berichts beschreibt die Seite
+						selbst.
 					</li>
 					<li>
 						<strong>Am nächsten an der Grenze</strong>: erscheint, wenn der Scan Abstandswerte enthält
@@ -48,17 +63,26 @@ export function HtmlReportContent() {
 					<strong>WCAG-Zusammenfassung</strong>: gruppiert nach Konformitätsstufe (A / AA / AAA),
 					direkt aus den zusammengesetzten Zusammenfassungen der Engine in{" "}
 					<code>rulesResults[]</code> (siehe <a href="/conformance/wcag-mapping/">Konformität</a>)
-					— eine Zeile pro Erfolgskriterium (mit der EN-301-549-Klausel, die es wiedergibt, sofern es
-					eine gibt und der Scan EN-301-549-Klauseln angefordert hat) mit seinem Ergebnis, einer Aufschlüsselung nach
+					— eine Zeile pro Erfolgskriterium (mit den Anforderungen jeder anderen Norm in{" "}
+					<code>standards</code> des Ergebnisses, auf die seine Regeln abgebildet sind, etwa der
+					EN-301-549-Klausel, die es wiedergibt, sofern es eine gibt und der Scan
+					EN-301-549-Klauseln angefordert hat) mit seinem Ergebnis, einer Aufschlüsselung nach
 					bestanden/nicht bestanden/zu prüfen/nicht anwendbar und den atomaren Regeln, die dazu
-					beigetragen haben. Das sind echte Engine-Daten, keine erfundene Gruppierung — dieselbe
+					beigetragen haben, einschließlich einer eigenen Regel, die dem Kriterium zugeordnet ist.
+					Das sind echte Engine-Daten, keine erfundene Gruppierung — dieselbe
 					Zusammenfassung, die Sie auch aus <code>rulesResults</code> im rohen JSON erhalten.
 				</li>
 				<li>
 					<strong>Eigene Zusammenfassung einer Norm</strong>: nur wenn der Scan die Regeln einer
 					Norm mit eigenen Zusammenfassungen ausgeführt hat (über ihr Profil oder{" "}
 					<code>engineOptions.optInRules</code>), eine Zeile pro Zusammenfassung, mit dem Wortlaut der
-					Norm, der Aufschlüsselung und den beitragenden Regeln.
+					Norm, den Anforderungen der Regeln, die das Ergebnis entschieden haben, der
+					Aufschlüsselung und den beitragenden Regeln. Das umfasst die Norm eines{" "}
+					<a href="/configuration/packs/">Packs</a> und die Checkliste eines Packs, deren Punkte
+					ihre Zusammenfassungen sind. Jede solche Norm ist in <code>standards</code> des
+					Ergebnisses aufgeführt, sodass ein gespeichertes Ergebnis überall gleich dargestellt wird;
+					fehlt diese Liste oder ist sie beschädigt, sagt der Bericht das über der
+					WCAG-Zusammenfassung.
 				</li>
 				<li>
 					<strong>Vollständige technische Daten</strong> (standardmäßig eingeklappt): eine
@@ -66,6 +90,12 @@ export function HtmlReportContent() {
 					paginierte Tabelle aller einzelnen Vorkommen des gesamten Scans.
 				</li>
 			</ul>
+			<p>
+				Der Bericht folgt dem Farbschema der lesenden Person, und sein eigener Text erfüllt WCAG
+				1.4.3 in beiden: Jede Statusfarbe hat mindestens 4,5:1 auf ihrem Chip und ihrer Kachel, und
+				die eigenen Kontrastregeln der Engine bestehen auf dem dargestellten Bericht im hellen und
+				im dunklen Modus.
+			</p>
 			<p>
 				Die Meta-Leiste unter dem Kopf enthält die Anzahl der Regeln, die Anzahl der Vorkommen,
 				das Engine-Tag, die Schema-Version, die WCAG-Version, auf die der Scan zielte, das
@@ -96,6 +126,11 @@ export function HtmlReportContent() {
 				Beschriftungen daraus lesen; seine Befunde werden dann mit ihrer eigenen Sprache
 				ausgezeichnet (zum Beispiel <code>lang="nl"</code>), damit ein Screenreader sie mit der
 				richtigen Stimme vorliest.
+			</p>
+			<p>
+				Ein kompaktes Ergebnis (<code>engineOptions.output.detail: 'findings'</code>, siehe{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Ausgabeschema</a>) wird als das
+				vollständige Ergebnis gelesen, für das es steht, und daher genauso gemeldet.
 			</p>
 
 			<h2>Verwendung als Bibliothek</h2>

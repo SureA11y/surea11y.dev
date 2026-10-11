@@ -82,7 +82,7 @@ export function BaselineContent() {
 			<p>
 				where <code>reasonCode</code> is the rule-specific code from{" "}
 				<code>occurrence.data.details.reasonCode</code> (defaulting to <code>"DEFAULT"</code>{" "}
-				when a rule doesn't set one), and <code>html</code> is the occurrence's outer-HTML
+				when a rule doesn't set one, or sets anything but a non-empty string), and <code>html</code> is the occurrence's outer-HTML
 				snippet. This is content-based rather than position-based: it survives the flagged
 				element moving around the page (a reorder, an unrelated sibling added/removed) as long as
 				the flagged element's own markup doesn't change. For a finding about the page itself,
@@ -110,6 +110,19 @@ export function BaselineContent() {
 				byte-identical <code>ruleId</code>+<code>reasonCode</code>+<code>html</code> (e.g. the
 				same broken component repeated 3 times) and the baseline recorded only 1 of them, a fresh
 				scan reports 1 known and 2 new — not all 3 as known.
+			</p>
+			<p>
+				A finding inside a frame of a cross-frame result (<code>runa11yCoreAcrossFrames</code>) is
+				told apart by its frame too: its entry records the frame's <strong>path</strong>, the
+				selectors of the frame elements leading to it (<code>"frame": ["#checkout"]</code>), and
+				matches only a finding in the frame at that path. The same broken component in the page
+				and in a frame is two findings. Entries without <code>frame</code> are the page's own, so
+				a baseline written from a single-document scan keeps matching the page.
+			</p>
+			<p>
+				A compact result (<code>engineOptions.output.detail: 'findings'</code>, see{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Output schema</a>) is read as
+				the full result it stands for, so it is reported the same.
 			</p>
 			<p>
 				Baseline entries that don't match anything in a fresh scan are reported as{" "}
@@ -156,7 +169,9 @@ export function BaselineContent() {
 			<p>
 				<code>--baseline &lt;path&gt;</code> rejects a file that isn't{" "}
 				<code>{"{ version: 1, entries: [...] }"}</code> with a clear exit-2 error rather than
-				guessing at an older/different format.
+				guessing at an older/different format. <code>matchBaseline</code>, and the{" "}
+				<code>baselineEntries</code> option of the SARIF and JUnit reporters, take the file as
+				saved (<code>JSON.parse</code> of it) or its <code>entries</code> list.
 			</p>
 
 			<h2>Combining with <code>--json</code></h2>

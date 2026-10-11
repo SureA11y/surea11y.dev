@@ -8,13 +8,14 @@ export function ConfigurationContent() {
 				Konfigurationsdatei, die gepflegt werden muss, keine separaten CLI-Flags, die synchron
 				gehalten werden müssen. Die CLI und alle Bindings bauen dieses Objekt aus ihren eigenen
 				Flags oder Builder-Methoden für Sie auf, sodass alles, was Sie hier lernen, überall gilt,
-				wo Sie einen Scan ausführen. Drei Dinge sollten Sie früh richtig einstellen:
+				wo Sie einen Scan ausführen. Vier Dinge sollten Sie früh richtig einstellen:
 			</p>
 
 			<h2>Engine-Optionen</h2>
 			<p>
-				Beschränken Sie einen Scan auf genau die Regeln, die Sie wollen — nach ID, nach Tag oder
-				nach WCAG-Version (2.0, 2.1 oder 2.2) oder über ein benanntes Konformitätsprofil wie
+				Beschränken Sie einen Scan auf genau die Regeln, die Sie wollen — durch Angabe einer
+				WCAG-Version und -Stufe (WCAG 2.2 AA in einer Option, auf Wunsch Best Practices dazu), nach
+				ID, nach Tag oder über ein benanntes Konformitätsprofil wie
 				WCAG 2.2 AA, EN 301 549 oder Section 508 —, damit ein Lauf das meldet, wofür Sie tatsächlich
 				verantwortlich sind, nicht mehr und nicht weniger. Nehmen Sie Widgets, die
 				bekanntermaßen störende Befunde liefern, global oder für eine einzelne Regel vom Scan
@@ -23,6 +24,19 @@ export function ConfigurationContent() {
 				ergänzen Sie eine organisationsspezifische Regel neben den eingebauten, wenn der Katalog
 				etwas nicht abdeckt, das Ihnen wichtig ist. Die vollständige Referenz finden Sie unter{" "}
 				<a href="/configuration/engine-options/">Engine-Optionen</a>.
+			</p>
+
+			<h2>Packs</h2>
+			<p>
+				Prüfen Sie gegen mehr als WCAG, ohne die Engine zu forken. Ein Pack bringt einen nationalen
+				Standard, die Barrierefreiheitsrichtlinie Ihrer Organisation oder ein paar hauseigene Regeln
+				aus einem eigenen Paket mit, und die Engine führt es aus wie ihre eigenen Regeln: Seine
+				Profile wählen aus, was läuft, seine Checklistenpunkte kommen jeweils als ein Ergebnis
+				zurück, und jeder Bericht zeigt sie neben den WCAG-Kriterien. Dasselbe Pack funktioniert aus
+				Node, in jedem Binding, mit den Test-Matchern und in der CLI, und{" "}
+				<code>npx surea11y-pack new</code> erzeugt eines, das seine eigenen Tests direkt nach dem
+				Erzeugen besteht. Unter <a href="/configuration/packs/">Packs</a> erfahren Sie, wie Sie
+				eines verwenden oder schreiben.
 			</p>
 
 			<h2>CI-Integration</h2>

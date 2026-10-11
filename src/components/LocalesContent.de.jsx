@@ -118,7 +118,8 @@ export function LocalesContent() {
 				„Unübersetzt“ zählt Werte, die Zeichen für Zeichen dem englischen Text entsprechen,
 				außer Wörtern, die in einer Sprache zu Recht gleich sind: französisch{" "}
 				<em lang="fr">Orientation</em>, <em lang="fr">Interruptions</em> und{" "}
-				<em lang="fr">Occurrences</em>, deutsch <em>Element</em>, spanisch{" "}
+				<em lang="fr">Occurrences</em>, deutsch <em>Frame</em>, <em>Frames</em> und{" "}
+				<em>Element</em>, spanisch{" "}
 				<em lang="es">Selector</em>. Diese sind als solche aufgeführt, jeweils mit dem englischen
 				Text, gegen den sie geprüft wurden, und zählen als übersetzt. Ändert sich das Englische,
 				gilt der Eintrag nicht mehr, und der String zählt als unübersetzt, bis ihn jemand erneut
@@ -289,6 +290,17 @@ export function LocalesContent() {
 				unterscheidet sich von <code>unknown-locale</code>, was bedeutet, dass das Projekt
 				überhaupt keine solche Übersetzung hat.
 			</p>
+			<p>
+				In Node ist dieselbe Zusatzdatei ein Modul: <code>require('@surea11y/core/i18n/de')</code>{" "}
+				gibt <code>{"{ locale, messages }"}</code> zurück (<code>locale</code> ist <code>'de'</code>,{" "}
+				<code>messages</code> die flache Zuordnung von Schlüssel zu Text), ohne dass das Bundle
+				nötig ist.
+			</p>
+			<p>
+				Die Meldungen eines <a href="/configuration/packs/">Packs</a> stehen in dessen eigenen
+				Wörterbüchern, die das Pack pro Locale auflistet; in einer Locale, für die das Pack kein
+				Wörterbuch hat, erscheinen seine Meldungen auf Englisch.
+			</p>
 
 			<h3>Ein eigenes Wörterbuch übergeben</h3>
 			<p>
@@ -366,7 +378,7 @@ export function LocalesContent() {
 				</li>
 			</ul>
 			<p>
-				Beide stehen im Ergebnis neben dem bereits aufgelösten Text, sodass Sie ein gespeichertes
+				Die Schlüssel von Regel, Composite und Vorkommen stehen im Ergebnis neben dem bereits aufgelösten Text, sodass Sie ein gespeichertes
 				Ergebnis in einer anderen Locale neu darstellen können, ohne erneut zu scannen.
 			</p>
 		</>

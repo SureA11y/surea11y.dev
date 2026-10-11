@@ -26,14 +26,23 @@ export function RuleOrganizationContent() {
 			<ul>
 				<li>
 					<strong>automática</strong>: decide de forma determinista, sin heurísticas y sin adivinar.
-					Puede informar <code>fail</code>. <code>cantTell</code> igual aparece aquí, en tres
+					Puede informar <code>fail</code>. <code>cantTell</code> igual aparece aquí, en estas
 					situaciones: existe una violación real pero por sí sola no establece que el criterio de
 					WCAG asignado falle (un requisito de autoría de ARIA cuyo nombre/rol/valor expuesto sigue
 					siendo válido); la regla decide de forma determinista pero no reclama ningún Criterio de
 					Éxito en absoluto (<code>aria-allowed-role</code>, etiquetada como buena práctica); o la
 					regla solo puede confirmar que un mecanismo está <em>presente</em>, mientras que si lo que
 					está presente es realmente válido le corresponde a una regla hermana (
-					<code>aria-required-children</code>, emparejada con <code>aria-prohibited-children</code>).
+					<code>aria-required-children</code>, emparejada con <code>aria-prohibited-children</code>);
+					o la regla no puede decidir sin adivinar, así que pregunta en lugar de fallar: un nombre que
+					puede venir de una raíz shadow cerrada o de contenido anidado a demasiada profundidad para
+					leerlo (las reglas <code>*-name-present</code>), texto que puede recortarse o solaparse al
+					aumentar el espaciado (<code>text-spacing-content-loss</code>), un bloque de consulta de
+					medios de orientación que gira un elemento distinto del contenido de la página (
+					<code>css-orientation-lock</code>), un texto provisional por debajo de su relación de
+					contraste (<code>contrast-minimum</code>), o un color o tamaño que no se puede calcular (las
+					reglas de contraste, <code>target-size-minimum</code>). Una regla que lanza una excepción
+					también se informa como <code>cantTell</code>, como red de seguridad.
 				</li>
 				<li>
 					<strong>manual</strong>: indica que una persona tiene que decidir; la regla no puede

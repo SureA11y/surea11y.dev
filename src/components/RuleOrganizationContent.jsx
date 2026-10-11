@@ -27,13 +27,21 @@ export function RuleOrganizationContent() {
 				<li>
 					<strong>automatic</strong> — decides deterministically, with no heuristics and no
 					guessing. Can report <code>fail</code>. <code>cantTell</code> still shows up here, in
-					three situations: a real violation exists but doesn't on its own establish that the
+					these situations: a real violation exists but doesn't on its own establish that the
 					mapped WCAG criterion fails (an ARIA author requirement whose exposed name/role/value
 					still survives); the rule decides deterministically but claims no Success Criterion at
 					all (<code>aria-allowed-role</code>, tagged best-practice); or the rule can only confirm
 					a mechanism is <em>present</em>, while whether what's present is actually valid belongs
 					to a sibling rule (<code>aria-required-children</code>, paired with{" "}
-					<code>aria-prohibited-children</code>).
+					<code>aria-prohibited-children</code>); or the rule cannot decide without a guess, so it
+					asks instead of failing: a name that may come from a closed shadow root or from content
+					nested too deep to read (the <code>*-name-present</code> rules), text that may be clipped
+					or overlap once spaced (<code>text-spacing-content-loss</code>), an orientation media
+					block that turns an element other than the page's content (
+					<code>css-orientation-lock</code>), a placeholder below its ratio (
+					<code>contrast-minimum</code>), or a colour or size that cannot be computed (the contrast
+					rules, <code>target-size-minimum</code>). A rule that throws is reported as{" "}
+					<code>cantTell</code> too, as a safety net.
 				</li>
 				<li>
 					<strong>manual</strong> — signals that a human has to decide; the rule cannot decide

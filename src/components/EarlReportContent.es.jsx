@@ -124,29 +124,41 @@ export function EarlReportContent() {
 						<code>test.isPartOf</code>
 					</strong>{" "}
 					enumera los Criterios de Éxito a los que se asocia esa regla, como{" "}
-					<code>WCAG2:&lt;criterion-id&gt;</code>. Se omite por completo para una regla que no
-					reclama ningún criterio: <code>aria-allowed-role</code> es la única regla automática del
-					motor en esa situación, y afirmar una lista vacía se leería como "no encontramos a qué se
+					<code>WCAG2:&lt;criterion-id&gt;</code>: cada entrada de <code>normativeMappings</code>{" "}
+					cuyo <code>standard</code> es <code>WCAG</code> o está ausente (como en SARIF) y que no
+					tiene <code>type</code>. Se omite por completo para una regla que no reclama ningún
+					criterio: <code>aria-allowed-role</code> y <code>landmark-role-name-present</code> son las
+					reglas automáticas del motor en esa situación, y afirmar una lista vacía se leería como "no encontramos a qué se
 					asocia" en lugar de "deliberadamente no se asocia a ninguno".
 				</li>
 				<li>
 					<strong>
 						<code>assertedBy</code>
 					</strong>{" "}
-					y{" "}
+					siempre está presente salvo que pases <code>assertor: null</code>: por defecto es{" "}
+					<code>surea11y</code> y la versión del motor que llevan los resultados.{" "}
 					<strong>
 						<code>mode</code>
 					</strong>{" "}
-					aparecen solo cuando se proporcionan.
+					aparece solo cuando lo proporcionas.
 				</li>
 			</ul>
 			<p>
 				Los ids de criterio se derivan del propio título del criterio (<code>Non-text Content</code> →{" "}
 				<code>non-text-content</code>). <code>normativeMappings</code> también lleva referencias a
-				documentos <span lang="en">Understanding</span> y estándares que no son WCAG, que comparten{" "}
-				<code>standard: "WCAG"</code> y un <code>requirement</code> con el criterio real; un Criterio
-				de Éxito es la entrada que declara un nivel de conformidad y no reclama ningún otro tipo de
-				documento, y solo esas entradas se leen.
+				documentos <span lang="en">Understanding</span>, que tienen un <code>type</code>, y entradas
+				de otros estándares (cláusulas de EN 301 549, los requisitos o elementos de lista de
+				comprobación de un pack), que nombran su propio <code>standard</code>; ambas pueden compartir
+				un número de <code>requirement</code> con un criterio. Solo las entradas cuyo{" "}
+				<code>standard</code> es <code>WCAG</code> o está ausente y que no tienen <code>type</code>{" "}
+				se leen como Criterios de Éxito. No hace falta ningún nivel de conformidad.{" "}
+				<code>isPartOf</code> enumera solo criterios de WCAG; las entradas de otros estándares se
+				dejan fuera.
+			</p>
+			<p>
+				Un resultado compacto (<code>engineOptions.output.detail: 'findings'</code>, ver{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Esquema de salida</a>) se lee
+				como el resultado completo que representa, así que se informa igual.
 			</p>
 
 			<h2>Resultados</h2>
@@ -200,18 +212,22 @@ export function EarlReportContent() {
 				la misma página con distintas <code>engineOptions</code> sigue describiendo un único recurso,
 				y el contexto no tiene forma de expresar dos sujetos con la misma fuente.{" "}
 				<strong>
-					Cuando dos resultados hacen una aserción sobre la misma regla para la misma URL, gana el
-					último.
-				</strong>{" "}
-				Eso incluye la misma página analizada con dos anchos de viewport: EARL no tiene ningún
-				término para las condiciones en que se renderizó una página, así que un informe construido a
-				partir de varios anchos conserva solo la aserción del último ancho para cada regla. Genera
-				un informe por ancho si los anchos importan.
+					Cuando dos resultados hacen una aserción sobre la misma regla para la misma URL, se
+					conserva el peor resultado
+				</strong>
+				: <code>earl:failed</code>, luego <code>earl:cantTell</code>, luego{" "}
+				<code>earl:passed</code>, luego <code>earl:inapplicable</code>, así que ningún orden de las
+				entradas puede ocultar un fallo. Eso incluye la misma página analizada con dos anchos de
+				viewport: EARL no tiene ningún término para las condiciones en que se renderizó una página,
+				así que un informe construido a partir de varios anchos conserva, para cada regla, un fallo
+				en cualquier ancho. Genera un informe por ancho si los propios anchos importan.
 			</p>
 			<p>
 				La salida es determinista: los sujetos se ordenan por fuente, las aserciones por ID de regla,
-				y las mismas entradas producen una salida idéntica byte a byte sin importar el orden. Eso es
-				lo que hace útil una comparación entre dos versiones del motor.
+				y las mismas entradas producen una salida idéntica byte a byte sin importar el orden. La única
+				excepción son los resultados sin URL, que se distinguen por su posición en la lista (
+				<code>about:blank#result-2</code>); da a cada resultado su URL cuando el orden no deba
+				importar. Eso es lo que hace útil una comparación entre dos versiones del motor.
 			</p>
 
 			<h2>Opciones</h2>

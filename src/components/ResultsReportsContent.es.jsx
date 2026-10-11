@@ -6,16 +6,15 @@ const formatRows = [
 	{ format: "HTML", use: "Revisión humana de un análisis concreto", audience: "QA y auditoría" },
 	{ format: "SARIF", use: "Integración con herramientas de análisis de código", audience: "Equipos de desarrollo y seguridad" },
 	{ format: "JUnit", use: "Vistas de pruebas de los paneles de CI", audience: "Equipos de desarrollo y QA" },
-	{ format: "EARL", use: "Interoperabilidad y evidencia de conformidad con ACT", audience: "Estándares, investigación y conformidad" },
+	{ format: "EARL", use: "Interoperabilidad e informes de implementación de reglas ACT", audience: "Estándares, investigación y conformidad" },
 ];
 
 export function ResultsReportsContent() {
 	return (
 		<>
 			<p>
-				Cada análisis se devuelve como un único objeto JSON plano: nada oculto, nada que tengas que
-				volver a derivar. Los cuatro formatos de informe siguientes se construyen directamente sobre
-				ese mismo objeto, cada uno pensado para un lector distinto: una persona revisando una
+				Cada análisis se devuelve como un único objeto JSON plano. Los cuatro formatos de informe
+				siguientes se generan a partir de ese mismo objeto, cada uno pensado para un lector distinto: una persona revisando una
 				pestaña del navegador, un panel de análisis de código que solo entiende SARIF, una vista
 				de pruebas de CI que lee JUnit, o el propio formato de
 				informe de implementación del W3C. Elige la forma que se ajuste a quién va a mirarlo
@@ -45,8 +44,8 @@ export function ResultsReportsContent() {
 
 			<h2>Informe HTML</h2>
 			<p>
-				Ábrelo, entiéndelo: sin servidor, sin paso de compilación, sin tener que descifrar una salida
-				JSON. Un resumen en lenguaje llano arriba, un resumen por WCAG agrupado por nivel
+				Un único archivo HTML que se abre en cualquier navegador, sin servidor ni paso de
+				compilación. Un resumen en lenguaje llano arriba, un resumen por WCAG agrupado por nivel
 				de conformidad obtenido de los resultados compuestos propios del motor, y una tabla completa
 				con función de búsqueda debajo para quien quiera profundizar. Este es el informe para entregar a un
 				revisor que no quiere leer la salida sin procesar. Ver{" "}
@@ -78,8 +77,10 @@ export function ResultsReportsContent() {
 			<p>
 				Un informe de implementación EARL/JSON-LD del W3C <strong>que declara el resultado de cada
 				regla, no solo los fallos</strong>: el formato que el grupo comunitario de <span lang="en">ACT Rules</span> acepta
-				como evidencia de que un motor realmente implementa lo que dice. Una prueba útil cuando una
-				afirmación de conformidad con ACT necesita ser verificable, no solo declarada. Ver{" "}
+				para los informes de implementación de reglas ACT. Ejecutado sobre los casos de prueba de
+				ACT, registra el resultado de cada uno, así que cómo implementa el motor cada regla se puede
+				examinar en lugar de darse por bueno. No es una certificación ni una evidencia de
+				conformidad con WCAG: figurar como implementación de ACT no supone un aval del W3C. Ver{" "}
 				<a href="/results-reports/earl-report/">Informe EARL</a>.
 			</p>
 		</>

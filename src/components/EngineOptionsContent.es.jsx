@@ -6,6 +6,19 @@ const core = "https://github.com/SureA11y/core/blob/main";
 
 const optionRows = [
 	{
+		id: "strictOptions",
+		option: <code>strictOptions</code>,
+		meaning: (
+			<>
+				Predeterminado <code>false</code>. <code>true</code> comprueba todas las opciones antes del
+				análisis, y lanza <code>INVALID_ENGINE_OPTIONS</code> ante una clave que el motor no lee o
+				un valor de tipo incorrecto o fuera de su conjunto; consulta{" "}
+				<a href="#catching-mistakes-in-the-options-strictoptions">"Detectar errores en las opciones"</a>{" "}
+				más abajo.
+			</>
+		),
+	},
+	{
 		id: "locale",
 		option: <code>locale</code>,
 		meaning: (
@@ -34,7 +47,9 @@ const optionRows = [
 				<code>wcag22-removed</code> sigue ejecutándose y sigue informando sus ocurrencias, pero
 				no puede <code>fail</code>. Consulta{" "}
 				<a href="#filtering-by-wcag-version">"Filtrado por versión de WCAG"</a> más arriba.
-				Cualquier otro valor se ignora y se aplica el valor predeterminado.
+				Cualquier otro valor, de cualquier tipo (el número <code>2.1</code>, <code>'3.0'</code>), se
+				ignora con un <code>console.warn</code> que nombra la versión a la que apunta la ejecución
+				en su lugar.
 			</>
 		),
 	},
@@ -44,8 +59,8 @@ const optionRows = [
 		meaning: (
 			<>
 				Objetivo de conformidad con nombre, opcional: <code>'wcag22-aa'</code>,{" "}
-				<code>'en301549-v4.1.1'</code>, <code>'en301549-v3.2.1'</code> o <code>'section508'</code>.
-				Selecciona reglas por el conjunto de etiquetas correspondiente cuando nada más incluye
+				<code>'en301549-v4.1.1'</code>, <code>'en301549-v3.2.1'</code>, <code>'section508'</code>{" "}
+				o uno propio de un pack. Selecciona reglas por el conjunto de etiquetas correspondiente cuando nada más incluye
 				ninguna, y el objetivo de WCAG se deduce de esas etiquetas. Se devuelve como{" "}
 				<code>engine.profile</code> cuando surtió efecto; si no, se ignora con un aviso en consola.
 				Ver <a href="#conformance-profiles">"Perfiles de conformidad"</a> más arriba.
@@ -59,10 +74,23 @@ const optionRows = [
 			<>
 				Estándares opcionales además de WCAG cuyos requisitos nombra{" "}
 				<code>meta.normativeMappings</code>: <code>'en301549'</code>, <code>'en301549:V3.2.1'</code>{" "}
-				o <code>'en301549:V4.1.1'</code>, como array o cadena separada por comas. Por defecto
+				o <code>'en301549:V4.1.1'</code>, o la clave del estándar de un pack, como array o cadena
+				separada por comas. Por defecto
 				ninguno, así que los resultados solo nombran WCAG; un perfil de EN 301 549 añade su propia
 				versión. Se devuelve como <code>engine.mappings</code> cuando se aplica alguno. Ver{" "}
 				<a href="#other-standards-mappings">"Otros estándares"</a> más arriba.
+			</>
+		),
+	},
+	{
+		id: "logUntestedWcag",
+		option: <code>logUntestedWcag</code>,
+		meaning: (
+			<>
+				Predeterminado <code>true</code>. <code>false</code> omite la nota de{" "}
+				<code>console.info</code> para una etiqueta de versión/nivel de WCAG que no lleva ninguna
+				regla (<code>wcag22a</code>), en una lista de inclusión junto a otras; consulta{" "}
+				<a href="#via-runonly-4th-argument">"Mediante runOnly"</a> más arriba.
 			</>
 		),
 	},
@@ -105,8 +133,11 @@ const optionRows = [
 			<>
 				Predeterminado <code>false</code>: las consultas auxiliares excluyen elementos ocultos
 				por mecanismos estructurales/CSS como <code>display:none</code>, <code>[hidden]</code>,{" "}
-				<code>&lt;details&gt;</code> cerrados, y elementos host ocultos de solo renderizado (con
-				sus descendientes también excluidos). Configura <code>true</code> para incluir esos
+				<code>&lt;details&gt;</code> cerrados (todo salvo su primer <code>&lt;summary&gt;</code>, a
+				cualquier profundidad), contenido <code>content-visibility:hidden</code> y{" "}
+				<code>hidden="until-found"</code>, y elementos host ocultos de solo renderizado (con sus
+				descendientes también excluidos). <code>runa11yCoreAcrossFrames</code> no analiza un frame
+				oculto de esta forma. Configura <code>true</code> para incluir esos
 				subárboles ocultos/colapsados en la evaluación (comportamiento heredado/de marcado
 				estático). Amplía lo que devuelven las consultas compartidas; aun así, la mayoría de las
 				reglas juzgan solo lo que está en el árbol de accesibilidad, ya que un elemento oculto no
@@ -124,7 +155,10 @@ const optionRows = [
 				atraviesan las raíces shadow abiertas. Configura <code>false</code> para analizar solo
 				el DOM ligero (light DOM).{" "}
 				<strong>Las raíces shadow cerradas nunca son alcanzables de todos modos</strong>:
-				ninguna API del DOM las expone.
+				ninguna API del DOM las expone: se pregunta (<code>cantTell</code>,{" "}
+				<code>name_closedContent</code>) por un elemento cuyo nombre podría venir de un elemento
+				personalizado sin contenido que el motor pueda leer (un botón, enlace, elemento de menú,
+				opción, pestaña, elemento de árbol, summary o tooltip), en lugar de hacerlo fallar.
 			</>
 		),
 	},
@@ -160,11 +194,16 @@ const optionRows = [
 		option: <code>excludeSelectors</code>,
 		meaning: (
 			<>
-				Los elementos que coinciden con cualquiera de estos selectores (y sus descendientes) se
+				Los elementos que coinciden con cualquiera de estos selectores (y sus descendientes,
+				incluido lo que hay en sus shadow roots, y los documentos de los frames entre ellos) se
 				omiten por completo, para <strong>todas</strong> las reglas: útil para banners de
 				cookies, contenidos incrustados de terceros o widgets conocidos por generar ruido que
 				no controlas. Para excluir algo de una sola regla específica en su lugar, usa{" "}
-				<code>rules[ruleId].excludeSelectors</code> más abajo.
+				<code>rules[ruleId].excludeSelectors</code> más abajo. Un array de selectores, o una cadena
+				con una lista de selectores: <code>'#cookie-banner, img:not(.a, .b)'</code> equivale a{" "}
+				<code>['#cookie-banner', 'img:not(.a, .b)']</code>, ya que la cadena solo se corta en las
+				comas entre selectores. Cada selector se aplica por separado: uno que no es CSS válido no
+				excluye nada, con un <code>console.warn</code>, y los demás se siguen aplicando.
 			</>
 		),
 	},
@@ -174,7 +213,9 @@ const optionRows = [
 		meaning: (
 			<>
 				Se pasa directamente al campo <code>timestamp</code> de nivel superior del resultado; el
-				motor no genera uno por sí mismo (determinista por diseño).
+				motor no genera uno por sí mismo (determinista por diseño). Un valor que no es una cadena
+				(un <code>Date</code>, un número) se ignora con un <code>console.warn</code>; pasa{" "}
+				<code>new Date().toISOString()</code>.
 			</>
 		),
 	},
@@ -199,7 +240,11 @@ const optionRows = [
 		meaning: (
 			<>
 				El color de fondo de página que se asume cuando no se puede calcular en absoluto: solo
-				importa en el modo <code>auditorAssist</code>.
+				importa en el modo <code>auditorAssist</code>. Una página que pide un esquema de color
+				oscuro (<code>color-scheme: dark</code> en la raíz, o la forma <code>&lt;meta&gt;</code>) se
+				mide en cambio sobre el lienzo oscuro que el navegador pinta detrás de ella; el valor de
+				reserva se aplica donde eso no se puede leer, como en jsdom. Debe ser un color opaco:
+				cualquier otro valor se mide como blanco, con un aviso.
 			</>
 		),
 	},
@@ -212,7 +257,10 @@ const optionRows = [
 				<code>contrast-enhanced</code>, <code>contrast-computable</code>) al decidir si un nodo
 				de texto es realmente elegible para comprobar. <strong>No lo lee ninguna otra
 				regla.</strong>{" "}
-				<code>'styleOnly'</code> (predeterminado): la elegibilidad es solo CSS:{" "}
+				Sin definir (el valor predeterminado), es <code>'styleAndGeometry'</code> donde la página
+				tiene diseño, es decir, en cualquier análisis en navegador, y <code>'styleOnly'</code> donde
+				no lo tiene (jsdom): quien lee solo ve el texto que se dibuja en algún lugar visible, y eso
+				solo lo puede saber el diseño. <code>'styleOnly'</code>: la elegibilidad es solo CSS:{" "}
 				<code>display</code>, <code>visibility</code>, <code>opacity</code>, ocultamiento por
 				ancestro, etc. <code>'styleAndGeometry'</code>: añade comprobaciones reales de diseño (
 				<code>getClientRects()</code>/<code>getBoundingClientRect()</code>) encima de eso: el
@@ -222,13 +270,14 @@ const optionRows = [
 				<code>overflow: hidden</code> o <code>clip</code> recorta por completo (
 				<code>height: 0; overflow: hidden</code>, una diapositiva de carrusel fuera de la
 				vista). Una caja con desplazamiento (<code>auto</code>, <code>scroll</code>) no excluye
-				su texto, porque quien lee puede llegar a él. En ambos modos se excluye el texto con un
+				su texto, porque quien lee puede llegar a él. Las opciones de un{" "}
+				<code>&lt;select&gt;</code> se juzgan por la posición de su <code>&lt;select&gt;</code> en
+				la página. En ambos modos se excluye el texto con un
 				tamaño de fuente de 0 o un color totalmente transparente, ya que no se dibuja nada; el
 				texto transparente que deja ver un fondo a través de sus glifos (
-				<code>background-clip: text</code>) no se excluye, y se pregunta por él. Recurre a{" "}
-				<code>'styleAndGeometry'</code> cuando se ejecuta bajo un navegador real/Playwright-Puppeteer (
-				<code>runa11yCoreInPage</code>) y quieres que los hallazgos de contraste reflejen el
-				diseño realmente renderizado en lugar de solo el estilo calculado; bajo jsdom puro (
+				<code>background-clip: text</code>) no se excluye, y se pregunta por él. Configura{" "}
+				<code>'styleOnly'</code> en un navegador para comprobar el texto solo a partir de los
+				estilos calculados, como hacían las versiones anteriores; bajo jsdom puro (
 				<code>runDomRulesInPage</code>
 				) no hay un motor de diseño real, así que <code>'styleAndGeometry'</code> básicamente
 				solo añade comprobaciones de tamaño cero de{" "}
@@ -274,6 +323,26 @@ const optionRows = [
 		),
 	},
 	{
+		id: "output-detail",
+		option: <code>output.detail</code>,
+		meaning: (
+			<>
+				<code>'full'</code> (predeterminado) o <code>'findings'</code>: un resultado más pequeño,
+				que conserva completos solo los resultados de comprobación que informan algo (
+				<code>fail</code>, <code>cantTell</code> y cualquiera que enumere ocurrencias); cada{" "}
+				<code>pass</code> y <code>notApplicable</code> restante conserva su <code>ruleId</code>, su{" "}
+				<code>outcome</code> y su <code>type</code>, y su <code>margin</code> o su{" "}
+				<code>error</code> si lo tiene. Los resultados agregados y los veredictos no cambian, y los
+				generadores de informes lo leen como un resultado completo. Una regla que el catálogo de
+				core no podría volver a rellenar se queda completa: todas las reglas de un análisis con{" "}
+				<code>packs</code>, una regla personalizada, y una que los <code>messages</code> del
+				análisis reformulan. Consulta{" "}
+				<a href="/results-reports/output-schema/#top-level-result"><code>engine.outputDetail</code></a>;
+				en TypeScript, ese resultado es un <code>CompactScanResult</code>.
+			</>
+		),
+	},
+	{
 		id: "rules-ruleId",
 		option: <code>rules[ruleId]</code>,
 		meaning: (
@@ -285,7 +354,28 @@ const optionRows = [
 				Cualquier otra clave es solo de paso: <strong>ninguna regla distribuida toma nada más de
 				ella.</strong> Los ajustes que declara una regla, como los umbrales de{" "}
 				<code>contrast-minimum</code>, son los de su estándar, así que el valor que indique quien
-				llama se descarta: un resultado que nombra WCAG 1.4.3 siempre se decide a 4.5:1.
+				llama se descarta: un resultado que nombra WCAG 1.4.3 siempre se decide a 4.5:1. Un
+				estándar con otros umbrales tiene su propia regla, una variante, que un{" "}
+				<a href="/configuration/packs/">pack</a> puede aportar. Una clave se compara igual que un id
+				de regla, sin distinguir mayúsculas y minúsculas o con el prefijo heredado{" "}
+				<code>a11ycore-</code>; una que no nombra ninguna regla del análisis genera un aviso con el
+				id más parecido.
+			</>
+		),
+	},
+	{
+		id: "packs",
+		option: <code>packs</code>,
+		meaning: (
+			<>
+				Packs opcionales de <code>@surea11y/core/pack</code>: reglas, variantes de las reglas de
+				core, un estándar o una lista de comprobación y mensajes de fuera de core, que se suman al
+				análisis. Una lista: los objetos de pack para <code>runDomRulesInPage</code> y las
+				funciones de catálogo en Node, y para <code>runa11yCoreInPage</code> el{" "}
+				<code>name@version</code> de los packs que un <code>packScript</code> registró en la
+				página. Cualquier otra cosa no ejecuta ningún pack, con un aviso, y lanza un error con{" "}
+				<code>strictOptions</code>. Se devuelve como <code>engine.packs</code>. Consulta{" "}
+				<a href="/configuration/packs/">Packs</a>.
 			</>
 		),
 	},
@@ -300,7 +390,8 @@ const optionRows = [
 				<code>ctx.inputs.probes</code>): seis niveles de profundidad, 200 elementos por array, 50
 				claves por objeto, 2.000 caracteres por cadena. <code>page-title-patterns</code> lee{" "}
 				<code>crawl.pageTitles</code> (<code>{"{ pages: [{ url, title }] }"}</code>) para buscar
-				títulos genéricos y de plantilla en todo un sitio.
+				títulos genéricos y de plantilla en todo un sitio. Las reglas de un pack pueden leer
+				sondas propias, que el pack documenta.
 			</>
 		),
 	},
@@ -322,7 +413,11 @@ const optionRows = [
 				ella.</strong> Ten en cuenta también que{" "}
 				<code>profileRules</code> es la única opción que hace que la salida sea no determinista:
 				los contadores son estables entre ejecuciones idénticas, los tiempos de reloj no lo son.
-				Déjala desactivada si comparas resultados entre ejecuciones.
+				Déjala desactivada si comparas resultados entre ejecuciones. Con{" "}
+				<code>profileRules</code>, las cachés compartidas (estilos calculados y elegibilidad en el
+				árbol de accesibilidad) se llenan antes de la primera regla y se miden aparte como{" "}
+				<code>perfStats.warmUpMs</code>, para que su coste no se cargue a la primera regla que
+				recorra la página.
 			</>
 		),
 	},
@@ -355,21 +450,455 @@ export function EngineOptionsContent() {
 				Todos los ejecutores (<code>runDomRulesInPage</code>, <code>runa11yCoreInPage</code>)
 				reciben los mismos cuatro argumentos:{" "}
 				<code>(pageUrl, contextSelector, engineOptions, runOnly)</code>. Esta página documenta{" "}
-				<code>engineOptions</code> y <code>runOnly</code> en su totalidad.
+				<code>engineOptions</code> y <code>runOnly</code> en su totalidad. Para comprobar una
+				página frente a una versión y un nivel de WCAG, empieza por{" "}
+				<a href="#selecting-by-wcag-target-runonlywcag"><code>runOnly.wcag</code></a>.
 			</p>
 
-			<h2>Seleccionar qué reglas se ejecutan</h2>
+			<h2 id="selecting-which-rules-run">Seleccionar qué reglas se ejecutan</h2>
 			<p>
-				Hay <strong>dos formas independientes</strong> de seleccionar reglas: el cuarto
-				argumento (
+				Nombra aquello contra lo que pruebas y el motor elige las reglas. Sin ninguna selección, se
+				ejecutan las reglas predeterminadas: todas salvo las reglas opcionales de un estándar o de
+				un pack, que solo se ejecutan una vez desbloqueadas (consulta{" "}
+				<a href="#opt-in-rules">Reglas opcionales</a>).
+			</p>
+			<DataTable
+				label="Elegir qué se ejecuta"
+				rowKey="id"
+				columns={[
+					{ key: "run", label: "Para ejecutar", wrap: true },
+					{ key: "pass", label: "Pasa", wrap: true },
+				]}
+				rows={[
+					{ id: "all", run: "Las reglas predeterminadas: todas salvo las opcionales no desbloqueadas", pass: <>nada: <code>runOnly</code> <code>null</code></> },
+					{
+						id: "wcag",
+						run: "Un objetivo de conformidad de WCAG: las reglas de los criterios de una versión en un nivel y en los inferiores",
+						pass: <code>{"runOnly: { wcag: { version: '2.2', level: 'AA' } }"}</code>,
+					},
+					{
+						id: "wcag-bp",
+						run: "Lo mismo, y las reglas de buenas prácticas, que no comprueban ningún criterio de WCAG",
+						pass: <code>{"runOnly: { wcag: { version: '2.2', level: 'AA' }, bestPractices: true }"}</code>,
+					},
+					{ id: "bp", run: "Solo las reglas de buenas prácticas", pass: <code>{"runOnly: { bestPractices: true }"}</code> },
+					{
+						id: "profile",
+						run: "Un estándar basado en WCAG (EN 301 549, Section 508)",
+						pass: <code>{"engineOptions: { profile: 'en301549-v4.1.1' }"}</code>,
+					},
+					{
+						id: "profile-bp",
+						run: "Lo mismo, y las reglas de buenas prácticas",
+						pass: (
+							<>
+								<code>{"engineOptions: { profile: 'en301549-v4.1.1' }"}</code>,{" "}
+								<code>{"runOnly: { bestPractices: true }"}</code>
+							</>
+						),
+					},
+				]}
+			/>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.2 AA, with the best practices:",
+					"runDomRulesInPage(url, null, {}, {",
+					"  wcag: { version: '2.2', level: 'AA' },",
+					"  bestPractices: true",
+					"});",
+				]}
+			/>
+			<p>
+				Toda regla o bien comprueba criterios de WCAG o bien es una buena práctica, así que{" "}
+				<code>{"{ wcag: { version: '2.2', level: 'AAA' }, bestPractices: true }"}</code> ejecuta
+				todas las reglas salvo las del 4.1.1 <span lang="en">Parsing</span>, que WCAG 2.2 eliminó.
+				Para algo más fino, como un solo criterio, una lista de reglas o una exclusión, consulta{" "}
+				<a href="#advanced-selection-tags-and-rule-ids">"Selección avanzada: etiquetas e ids de regla"</a>;
+				esos campos se combinan con los de arriba.
+			</p>
+
+			<h3 id="selecting-by-wcag-target-runonlywcag">Seleccionar por objetivo de WCAG (<code>runOnly.wcag</code>)</h3>
+			<p>
+				<code>runOnly.wcag</code> nombra una versión y un nivel de conformidad de WCAG, y selecciona
+				las reglas de los criterios de ese objetivo:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.2 Level A and AA:",
+					"runDomRulesInPage(url, null, {}, { wcag: { version: '2.2', level: 'AA' } });",
+				]}
+			/>
+			<ul>
+				<li>
+					<code>version</code> es <code>'2.0'</code>, <code>'2.1'</code> o <code>'2.2'</code>;{" "}
+					<code>level</code> es <code>'A'</code>, <code>'AA'</code> o <code>'AAA'</code> (sin
+					distinguir mayúsculas y minúsculas).
+				</li>
+				<li>
+					Una regla se selecciona cuando uno de los criterios que nombra forma parte del objetivo:
+					vigente en esa versión (introducido en ella o antes, y no eliminado en ella ni antes), en
+					el nivel del objetivo o en uno inferior, según el nivel que tiene el criterio{" "}
+					<strong>en esa versión</strong>. Los niveles vienen de <code>WCAG_CRITERIA</code> en{" "}
+					<code>@surea11y/core/wcag</code>, que tiene un nivel por versión.
+				</li>
+				<li>
+					Así, el 4.1.1 <span lang="en">Parsing</span>, que 2.2 eliminó, forma parte de los
+					objetivos <code>{"{ version: '2.1' }"}</code> y no de los{" "}
+					<code>{"{ version: '2.2' }"}</code>: <code>duplicate-id</code> se ejecuta para los primeros
+					y no para los segundos, donde las etiquetas de versión sí lo ejecutarían.
+				</li>
+				<li>
+					Una regla que no nombra ningún criterio (una regla de buenas prácticas) no forma parte de
+					ningún objetivo. Añádelas con <code>bestPractices: true</code> (siguiente sección), o reglas
+					sueltas con <code>tags</code> o <code>includeRuleIds</code>: junto a <code>wcag</code>,
+					todos ellos seleccionan reglas <strong>además</strong>, la unión de las reglas del
+					objetivo y lo que seleccionan los demás. <code>excludeTags</code>,{" "}
+					<code>excludeRuleIds</code> y <code>excludeTestIds</code> se aplican después, como
+					siempre.
+				</li>
+				<li>
+					La versión del objetivo es el objetivo de WCAG de la ejecución (
+					<code>engine.wcagVersion</code>), salvo que se defina <code>engineOptions.wcagVersion</code>;
+					su nivel decide qué resultados agregados de WCAG se informan, como hace una etiqueta de
+					nivel.
+				</li>
+				<li>
+					Un objetivo incluye reglas, así que las selecciona en lugar de{" "}
+					<code>engineOptions.profile</code>, igual que <code>tags</code>.{" "}
+					<code>getProfileWcagTarget(profile)</code> da el objetivo al que equivale un perfil
+					(consulta <a href="#conformance-profiles">"Perfiles de conformidad"</a>), y{" "}
+					<code>getChecksForRunOnly(runOnly, engineOptions)</code> enumera las reglas que ejecuta un{" "}
+					<code>runOnly</code> con <code>wcag</code>.
+				</li>
+				<li>
+					Cualquier otra cosa lanza <code>INVALID_RUN_ONLY</code>, nombrando lo que está mal:{" "}
+					<code>runOnly.wcag.version must be "2.0", "2.1" or "2.2", not "3.0".</code>
+				</li>
+			</ul>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.1 AA, plus the best-practice rules, without one of them:",
+					"{ wcag: { version: '2.1', level: 'AA' }, tags: ['best-practice'], excludeRuleIds: ['region'] }",
+				]}
+			/>
+
+			<h3 id="adding-the-best-practices-runonlybestpractices">Añadir las buenas prácticas (<code>runOnly.bestPractices</code>)</h3>
+			<p>
+				<code>bestPractices: true</code> selecciona las reglas de buenas prácticas: las reglas que no
+				nombran ningún criterio de WCAG, como <code>region</code>, <code>landmark-one-main</code>,{" "}
+				<code>heading-order</code>, <code>page-has-heading-one</code>, <code>skip-link</code>,{" "}
+				<code>tabindex</code> e <code>image-redundant-alt</code>. Son las reglas etiquetadas como{" "}
+				<code>best-practice</code>, así que equivale a añadir esa etiqueta. Un hallazgo de una de
+				ellas es una buena práctica, no un fallo de WCAG: ningún resultado agregado de WCAG lo
+				cuenta.
+			</p>
+			<ul>
+				<li>
+					Junto a <code>wcag</code>, <code>tags</code> o ids de regla, añade esas reglas a lo que
+					ellos seleccionan; las exclusiones se aplican después, así que{" "}
+					<code>excludeRuleIds: ['region']</code> sigue dejando fuera <code>region</code>.
+				</li>
+				<li>Por sí solo, selecciona solo las reglas de buenas prácticas.</li>
+				<li>
+					<code>false</code>, u omitirlo, no añade nada. Por sí solo,{" "}
+					<code>{"{ bestPractices: false }"}</code> es una selección vacía, así que se ejecutan las
+					reglas predeterminadas, como con <code>{"{}"}</code>.
+				</li>
+				<li>
+					Cualquier otro valor lanza <code>INVALID_RUN_ONLY</code>:{" "}
+					<code>runOnly.bestPractices must be true or false, not "yes".</code>
+				</li>
+				<li>
+					Junto a <code>engineOptions.profile</code>, añade las reglas de buenas prácticas a las del
+					perfil, y el perfil se sigue aplicando: sus reglas, sus resultados agregados, sus
+					asociaciones y <code>engine.profile</code>, igual que sin él.{" "}
+					<code>{"{ bestPractices: true }"}</code> con <code>profile: 'en301549-v4.1.1'</code>{" "}
+					ejecuta ese estándar y las buenas prácticas. Las reglas de buenas prácticas no cuentan en
+					ninguno de los resultados agregados del perfil, ya que no comprueban ningún criterio de
+					WCAG.
+				</li>
+			</ul>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.1 AA and the best practices, without one of them:",
+					"{ wcag: { version: '2.1', level: 'AA' }, bestPractices: true, excludeRuleIds: ['region'] }",
+				]}
+			/>
+
+			<h3 id="conformance-profiles">Perfiles de conformidad</h3>
+			<p>
+				<code>engineOptions.profile</code> nombra un objetivo de conformidad en lugar de enumerar su
+				conjunto de etiquetas:
+			</p>
+			<DataTable
+				label="Perfiles de conformidad"
+				rowKey="profile"
+				columns={[
+					{ key: "profile", label: "Perfil", width: "20%" },
+					{ key: "tags", label: "Ejecuta las reglas con las etiquetas", wrap: true },
+					{ key: "target", label: "Objetivo WCAG", width: "12%" },
+					{ key: "wcagTarget", label: "getProfileWcagTarget", wrap: true },
+					{ key: "why", label: "Por qué", wrap: true },
+				]}
+				rows={[
+					{
+						profile: <code>wcag22-aa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>,{" "}
+								<code>wcag22a</code>, <code>wcag22aa</code>
+							</>
+						),
+						target: "2.2",
+						wcagTarget: <code>{"{ version: '2.2', level: 'AA' }"}</code>,
+						why: "WCAG 2.2 nivel A y AA",
+					},
+					{
+						profile: <code>en301549-v4.1.1</code>,
+						tags: (
+							<>
+								igual que <code>wcag22-aa</code>
+							</>
+						),
+						target: "2.2",
+						wcagTarget: <code>{"{ version: '2.2', level: 'AA' }"}</code>,
+						why: "El capítulo 9 de EN 301 549 V4.1.1 reformula WCAG 2.2 A y AA",
+					},
+					{
+						profile: <code>en301549-v3.2.1</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>
+							</>
+						),
+						target: "2.1",
+						wcagTarget: <code>{"{ version: '2.1', level: 'AA' }"}</code>,
+						why: "El capítulo 9 de EN 301 549 V3.2.1 reformula WCAG 2.1 A y AA, incluido 4.1.1 Procesamiento",
+					},
+					{
+						profile: <code>section508</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>
+							</>
+						),
+						target: "2.0",
+						wcagTarget: <code>{"{ version: '2.0', level: 'AA' }"}</code>,
+						why: "Las normas revisadas de la Sección 508 incorporan WCAG 2.0 A y AA",
+					},
+				]}
+			/>
+			<p>
+				<code>getProfileWcagTarget(profile)</code> da el objetivo <code>runOnly.wcag</code> al que
+				equivale el conjunto de etiquetas de un perfil, o <code>null</code> para un nombre que no es
+				un perfil. Un perfil sigue seleccionando por sus etiquetas, como en la tabla: con{" "}
+				<code>wcag22-aa</code>, <code>duplicate-id</code> (4.1.1) se ejecuta y no puede dar{" "}
+				<code>fail</code>, mientras que <code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code>{" "}
+				lo deja fuera.
+			</p>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<p>
+				El estándar o la lista de comprobación de un <a href="/configuration/packs/">pack</a> añade
+				sus propios perfiles a esta lista.
+			</p>
+			<p>
+				El objetivo de WCAG se deduce de las etiquetas igual que con un conjunto escrito a mano (ver{" "}
+				<a href="#filtering-by-wcag-version">"Filtrado por versión de WCAG"</a> más abajo), así que
+				con <code>en301549-v3.2.1</code> un id duplicado todavía puede dar <code>fail</code>, y con{" "}
+				<code>en301549-v4.1.1</code> no. Los nombres no distinguen mayúsculas y minúsculas. Una
+				ejecución que usó un perfil lo devuelve como <code>engine.profile</code>.
+			</p>
+			<p>
+				Precedencia: cualquier cosa que <em>incluya</em> reglas las selecciona en lugar del perfil:
+				un <code>runOnly</code> con <code>wcag</code>, <code>tags</code>, <code>includeRuleIds</code>{" "}
+				o <code>includeTestIds</code>, o un <code>include</code> en{" "}
+				<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>. Las exclusiones se
+				siguen aplicando sobre el perfil, tanto si vienen de <code>runOnly</code> (
+				<code>excludeTags</code>, <code>excludeRuleIds</code>, <code>excludeTestIds</code>, de modo
+				que el <code>disableTags()</code> de una integración acota el perfil en lugar de
+				sustituirlo) como, si no hay filtro <code>runOnly</code>, de <code>engineOptions</code> (
+				<code>tags.exclude</code>, <code>rules.exclude</code>, <code>tests.exclude</code>), y un{" "}
+				<code>engineOptions.wcagVersion</code> explícito sigue ganando a la versión que implica el
+				perfil. Un perfil que no surte efecto (un nombre desconocido, o uno anulado como se acaba de
+				describir) no es un error: la ejecución continúa como si no se hubiera indicado ninguno,
+				registra un <code>console.warn</code> que explica por qué y no lleva{" "}
+				<code>engine.profile</code>. <code>runOnly.bestPractices: true</code> no es una inclusión de
+				ese tipo: añade las reglas de buenas prácticas a las del perfil, y el perfil se aplica (
+				<a href="#adding-the-best-practices-runonlybestpractices">"Añadir las buenas prácticas"</a>).
+			</p>
+			<p>
+				El perfil de un estándar también puede dejar reglas fuera, cuando su estándar exime de un
+				criterio de WCAG o sustituye una comprobación de WCAG por una propia: esas reglas y sus
+				resultados agregados de WCAG no se ejecutan, el catálogo de reglas también las deja fuera, y{" "}
+				<code>engine.profileExcludes</code> nombra lo que se dejó fuera. Hoy ningún perfil incluido
+				excluye nada.
+			</p>
+			<p>
+				<strong>Un perfil solo elige qué reglas se ejecutan.</strong> No dice nada sobre si
+				superarlas cumple el estándar del que toma el nombre: la mayoría de los criterios de éxito
+				necesitan un juicio humano que ninguna regla automatizada cubre (ver{" "}
+				<a href="/conformance/wcag-mapping/#what-this-engine-cannot-tell-you">
+					lo que este motor no puede decirte
+				</a>
+				).
+			</p>
+			<p>
+				Un perfil de EN 301 549 también activa las cláusulas de EN 301 549 de la versión a la que
+				apunta, como si se hubiera pasado <code>mappings: ['en301549:V4.1.1']</code> (o{" "}
+				<code>V3.2.1</code>); ver <a href="#other-standards-mappings">"Otros estándares"</a> más
+				abajo. El perfil de cualquier estándar activa su propia versión de la misma forma. Un perfil
+				con <code>mappedRules</code> también ejecuta, sean cuales sean sus etiquetas, las reglas a
+				las que se asocia su estándar: las que no tienen asociación con WCAG, como{" "}
+				<code>heading-order</code> y <code>skip-link</code>, no tienen ninguna etiqueta de WCAG por
+				la que seleccionarse. Un estándar con requisitos propios, o la lista de comprobación de una
+				organización, llega al motor como un <a href="/configuration/packs/">pack</a>, con sus
+				propios nombres de perfil, reglas y resultados agregados. El propio motor no incluye ningún
+				estándar así.
+			</p>
+
+			<h3 id="opt-in-rules">Reglas opcionales</h3>
+			<p>
+				Algunas reglas comprueban requisitos propios de un estándar que WCAG no impone: un estándar
+				nacional puede exigir un doctype, o prohibir atributos de presentación como{" "}
+				<code>bgcolor</code>. Un <code>fail</code> de una regla así es un fallo de ese estándar, no
+				de WCAG, así que estas reglas están <strong>desactivadas por defecto</strong>. Cada una lleva
+				la etiqueta de regla de su estándar y solo se ejecuta cuando la selección la pide:
+			</p>
+			<ul>
+				<li>mediante el perfil del estándar, que enumera la etiqueta,</li>
+				<li>
+					por esa etiqueta (<code>{"tags: { include: '<tag>' }"}</code>, sola o con otras),
+				</li>
+				<li>
+					por su id (<code>{"rules: { include: '<rule id>' }"}</code>, o{" "}
+					<code>runOnly.includeRuleIds</code>),
+				</li>
+				<li>
+					por el id de uno de los resultados agregados propios de su estándar que la agrupe (
+					<code>{"rules: { include: '<rollup id>' }"}</code> ejecuta las reglas de ese resultado
+					agregado, opcionales o no), o
+				</li>
+				<li>
+					desbloqueándola con <code>engineOptions.optInRules</code>, más abajo.
+				</li>
+			</ul>
+			<p>
+				Nada más selecciona una: ni una ejecución por defecto, ni un conjunto de etiquetas de WCAG,
+				ni un perfil de WCAG o de EN 301 549, ni un id de resultado agregado de WCAG. Las exclusiones
+				se les aplican como a cualquier regla. Seleccionar solo la etiqueta ejecuta las reglas
+				propias de ese estándar, no las reglas de WCAG con las que también está asociado, así que
+				responde a "qué exige el estándar además de WCAG" y no es una auditoría frente a él. Para
+				una auditoría, usa el perfil del estándar: con la etiqueta sola, sus propios resultados
+				agregados informan <code>cantTell</code> para cualquier requisito cuyas reglas no se
+				ejecutaron. Una regla añadida mediante <code>customRules</code> que lleva la etiqueta sigue
+				la misma barrera. Hoy ninguno de los estándares incluidos en el motor tiene reglas
+				opcionales; la etiqueta de espacio de nombres de un pack funciona así.
+			</p>
+
+			<h3 id="running-every-rule-optinrules">Ejecutar todas las reglas (<code>optInRules</code>)</h3>
+			<p>
+				Para ejecutar todas las reglas del motor, sea cual sea el estándar al que pertenecen, omite
+				el perfil y desbloquea las reglas opcionales:
+			</p>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { optInRules: 'all' }, null);"]} />
+			<p>
+				<code>'all'</code> desbloquea las reglas opcionales de todos los estándares; una lista de
+				etiquetas desbloquea solo esas. Levanta la barrera y nada más: el resto de la selección
+				sigue decidiendo qué reglas se ejecutan. Así, sin filtro y sin perfil, como arriba, la
+				ejecución cubre todas las reglas y los resultados agregados de todos los estándares; con{" "}
+				<code>profile: 'wcag22-aa'</code> sigue ejecutando solo las reglas de WCAG, ya que las
+				reglas opcionales no llevan etiquetas de WCAG. Las exclusiones se aplican como siempre. Una
+				etiqueta que no es de reglas opcionales se ignora con un <code>console.warn</code>.
+			</p>
+			<p>
+				Sirve para ver todo lo que el motor puede informar, durante el desarrollo o al explorar un
+				sitio. <strong>No es un objetivo de conformidad</strong>: una ejecución así hace fallar una
+				página por cosas que WCAG permite y que solo otro estándar prohíbe. El resultado lo indica:{" "}
+				<code>engine.optInRules</code> enumera las etiquetas cuyas reglas se ejecutaron, y el informe
+				HTML, SARIF y JUnit lo muestran junto al perfil. No añade a los resultados los números de
+				ningún otro estándar; para eso, pasa <code>mappings</code>, por ejemplo{" "}
+				<code>{"{ optInRules: 'all', mappings: ['<key>'] }"}</code>.
+			</p>
+
+			<h3 id="other-standards-mappings">Otros estándares (<code>mappings</code>)</h3>
+			<p>
+				El <code>meta.normativeMappings</code> de cada resultado nombra los criterios de éxito de
+				WCAG que comprueba. <code>engineOptions.mappings</code> añade el requisito de otro estándar
+				que corresponde a cada uno. Por defecto no añade ninguno: una cláusula de un estándar con el
+				que no auditas es ruido en cada etiqueta SARIF, propiedad JUnit e informe.
+			</p>
+			<DataTable
+				label="Valores de mappings"
+				rowKey="value"
+				columns={[
+					{ key: "value", label: "Valor", width: "34%" },
+					{ key: "adds", label: "Añade", wrap: true },
+				]}
+				rows={[
+					{
+						value: <code>'en301549'</code>,
+						adds: "La cláusula del capítulo 9 de EN 301 549 de cada criterio, en todas las versiones que la tienen (V3.2.1 y V4.1.1)",
+					},
+					{
+						value: (
+							<>
+								<code>'en301549:V3.2.1'</code>, <code>'en301549:V4.1.1'</code>
+							</>
+						),
+						adds: "Lo mismo, solo para esa versión",
+					},
+				]}
+			/>
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
+			<p>
+				Acepta un array o una cadena separada por comas, con nombres y versiones sin distinguir
+				mayúsculas y minúsculas. Con <code>profile: 'en301549-v4.1.1'</code> las cláusulas de V4.1.1
+				están ahí sin pedirlas, y <code>mappings</code> puede añadir más. Un nombre o versión para el
+				que el motor no tiene tabla se ignora con un <code>console.warn</code>. Una ejecución que
+				lleva cualquier otro estándar informa cuáles en <code>engine.mappings</code>, con la grafía
+				canónica (<code>["en301549:V3.2.1"]</code>, o <code>["en301549"]</code> para todas las
+				versiones).
+			</p>
+			<p>
+				Solo cambia lo que nombra un resultado, nunca qué reglas se ejecutan ni sus resultados. El
+				catálogo de reglas sigue la misma opción: <code>getChecksCatalog(engineOptions)</code>,{" "}
+				<code>getCheckDefById(ruleId, engineOptions)</code>,{" "}
+				<code>getChecksForRunOnly(runOnly, engineOptions)</code>,{" "}
+				<code>getRulesCatalog(engineOptions)</code> y{" "}
+				<code>getCompositeRuleById(id, engineOptions)</code> nombran los estándares que nombraría un
+				análisis con esas opciones, incluido un perfil cuando se aplicaría, así que una entrada del
+				catálogo y un resultado siempre coinciden. Sin opciones, solo nombran WCAG. Una regla
+				añadida mediante <code>customRules</code> conserva exactamente las asociaciones que declara.
+				Qué son las cláusulas y en qué se diferencian las dos versiones está en{" "}
+				<a href="/conformance/wcag-mapping/#en-301-549">Mapeo de conformidad con WCAG</a>.
+			</p>
+
+			<h2 id="advanced-selection-tags-and-rule-ids">Selección avanzada: etiquetas e ids de regla</h2>
+			<p>
+				Los campos siguientes seleccionan por las etiquetas que llevan las reglas y por ids de regla.
+				Recurre a ellos para lo que no dicen un objetivo de WCAG y <code>bestPractices</code>: un
+				criterio (<code>tags: ['wcag1412']</code>), una lista de reglas, una exclusión o un conjunto
+				de etiquetas heredado de otra herramienta. Se combinan con <code>wcag</code> y{" "}
+				<code>bestPractices</code>: lo que incluyen se añade a lo que estos seleccionan, y lo que
+				excluyen se quita después.
+			</p>
+			<p>
+				Hay <strong>dos formas independientes</strong> de indicarlos: el cuarto argumento (
 				<code>runOnly</code>), o bien <code>engineOptions.rules</code>/<code>.tags</code>/
 				<code>.tests</code>/<code>.includeMode</code>. Si <code>runOnly</code> contiene algún
 				filtro, tiene prioridad; de lo contrario, el motor recurre a{" "}
 				<code>engineOptions</code>.{" "}
-				<strong>No combines ambos mecanismos: no se aplican simultáneamente. Elige uno.</strong>
+				<strong>No combines ambos mecanismos: no se aplican simultáneamente. Elige uno.</strong>{" "}
+				<code>engineOptions.rules</code>, <code>.tags</code> y <code>.tests</code> aceptan{" "}
+				<code>{"{ include, exclude }"}</code>; una lista o una cadena simples son la lista de
+				inclusión.
 			</p>
 
-			<h3>Mediante <code>runOnly</code> (4.º argumento)</h3>
+			<h3 id="via-runonly-4th-argument">Mediante <code>runOnly</code> (4.º argumento)</h3>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -383,7 +912,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				Un array o una cadena simples funcionan como forma abreviada, igual que en axe-core:{" "}
+				Un array o una cadena simples funcionan como forma abreviada:{" "}
 				<code>runOnly: ['img-alt-present', 'button-name-present']</code> ejecuta esas reglas
 				(un id compuesto incluye sus reglas), y <code>runOnly: ['wcag2a', 'wcag2aa']</code>{" "}
 				equivale a <code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>. Un array no puede mezclar
@@ -402,6 +931,16 @@ export function EngineOptionsContent() {
 					{ key: "meaning", label: "Significado", wrap: true },
 				]}
 				rows={[
+					{
+						field: <code>wcag</code>,
+						type: <code>{"{ version, level }"}</code>,
+						meaning: "Un objetivo de conformidad de WCAG: las reglas de los criterios de esa versión en ese nivel y en los inferiores. Consulta Seleccionar por objetivo de WCAG, más arriba.",
+					},
+					{
+						field: <code>bestPractices</code>,
+						type: <code>boolean</code>,
+						meaning: "true añade las reglas de buenas prácticas. Consulta Añadir las buenas prácticas, más arriba.",
+					},
 					{ field: <code>includeRuleIds</code>, type: <code>string[]</code>, meaning: "Ejecuta solo estos IDs de regla (además, para un ID compuesto, sus reglas atómicas hijas)." },
 					{ field: <code>excludeRuleIds</code>, type: <code>string[]</code>, meaning: "Nunca ejecuta estos, se aplica después de la inclusión." },
 					{
@@ -438,10 +977,34 @@ export function EngineOptionsContent() {
 				<code>values</code> heredado, <code>rules.include</code>, <code>tags.include</code>) en
 				la que ningún valor nombra una regla o una etiqueta lanza un error con{" "}
 				<code>code: 'INVALID_RUN_ONLY'</code> y un mensaje que nombra el campo y los valores, ya
-				que no seleccionaría nada y una ejecución sin reglas se lee como un resultado limpio. Un
-				valor que no nombra nada junto a otros que sí, o en una lista de exclusión, se ignora con
+				que no seleccionaría nada y una ejecución sin reglas se lee como un resultado limpio. Una
+				selección cuyos nombres existen todos pero cuyas partes se anulan entre sí (una regla
+				incluida y excluida a la vez, reglas y etiquetas sin ninguna regla en común con{" "}
+				<code>includeMode: 'and'</code>) tampoco ejecuta ninguna regla: el análisis avisa, nombrando
+				las partes, y lanza <code>INVALID_RUN_ONLY</code> con <code>strictOptions</code>.{" "}
+				<code>includeMode</code> es <code>'and'</code> u <code>'or'</code>; cualquier otro valor se
+				lee como <code>'and'</code>, con un aviso, y lanza un error con <code>strictOptions</code>.
+				Un valor que no nombra nada junto a otros que sí, o en una lista de exclusión, se ignora con
 				un <code>console.warn</code>. Antes de la 1.10.0, todos esos valores se ignoraban en
-				silencio. <code>includeTestIds</code>/<code>excludeTestIds</code> no se comprueban.
+				silencio.
+			</p>
+			<p>
+				Las nueve etiquetas de versión/nivel de WCAG, de <code>wcag2a</code> a{" "}
+				<code>wcag22aaa</code>, siempre se conocen, la lleve o no alguna regla. Algunas no las lleva
+				hoy ninguna (<code>wcag21aaa</code>, <code>wcag22a</code>, <code>wcag22aaa</code>): sus
+				criterios no tienen ninguna regla automatizada, y eso no es una errata. En una lista de
+				inclusión junto a otros valores, una etiqueta así se señala con un{" "}
+				<code>console.info</code>, no con un aviso:
+			</p>
+			<CodeBlock
+				lines={['[surea11y] runOnly.tags: no rules for WCAG 2.2 Level A ("wcag22a"); its criteria need manual review.']}
+			/>
+			<p>
+				<code>engineOptions.logUntestedWcag: false</code> omite esa línea. Cuando todos los valores
+				de una lista de inclusión son etiquetas así, no se ejecutaría nada, así que sigue lanzando{" "}
+				<code>INVALID_RUN_ONLY</code>, explicando por qué. Junto a un objetivo{" "}
+				<code>runOnly.wcag</code> o <code>bestPractices: true</code>, que seleccionan reglas
+				propias, solo se señala. En una lista de exclusión no se toca.
 			</p>
 			<p>
 				Los IDs de regla van sin prefijo (sin prefijo del motor), por ejemplo{" "}
@@ -450,18 +1013,22 @@ export function EngineOptionsContent() {
 				mismo id (<code>'a11ycore-img-alt-present'</code>).
 			</p>
 			<p>
-				También se acepta la <strong>forma <code>{"{ type, values }"}</code> de axe-core</strong>{" "}
-				como valor completo de <code>runOnly</code>:{" "}
+				También se acepta la <strong>forma <code>{"{ type, values }"}</code></strong> como valor
+				completo de <code>runOnly</code>:{" "}
 				<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code> equivale a{" "}
 				<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>, y{" "}
 				<code>{"{ type: 'rule', values: ['img-alt-present'] }"}</code> equivale a{" "}
 				<code>{"{ includeRuleIds: ['img-alt-present'] }"}</code> (<code>'tags'</code> y{" "}
-				<code>'rules'</code> también funcionan). Cualquier otro <code>type</code> lanza{" "}
-				<code>INVALID_RUN_ONLY</code>, igual que un <code>runOnly</code> que sea un número o un
-				booleano, o un objeto sin ninguna clave que el motor lea (
+				<code>'rules'</code> también funcionan). <code>values</code> puede ser una cadena separada
+				por comas, sus nombres se comprueban como cualquier id de regla o etiqueta, y las demás
+				claves que lo acompañan (<code>excludeTags</code>, <code>excludeRuleIds</code>...) se siguen
+				aplicando. Un <code>Set</code> de nombres se lee como la lista que contiene. Una clave que
+				la forma de objeto no lee, junto a otras que sí, se ignora con un aviso. Cualquier otro{" "}
+				<code>type</code> lanza <code>INVALID_RUN_ONLY</code>, igual que un <code>runOnly</code>{" "}
+				que sea un número o un booleano, o un objeto sin ninguna clave que el motor lea (
 				<code>{"{ includeRuleId: [...] }"}</code>): antes, cada uno de estos casos ejecutaba
-				todas las reglas. Un array, una cadena o un objeto vacíos siguen significando todas las
-				reglas.
+				todas las reglas. Un array, una cadena o un objeto vacíos siguen significando la selección
+				predeterminada.
 			</p>
 
 			<h3 id="filtering-by-wcag-version">Filtrado por versión de WCAG (2.0, 2.1, 2.2)</h3>
@@ -480,10 +1047,12 @@ export function EngineOptionsContent() {
 				existe bajo un objetivo de conformidad de WCAG 2.0.
 			</p>
 			<p>
-				Dado que las versiones son acumulativas (2.1 = 2.0 + nuevo; 2.2 = 2.0 + 2.1 + nuevo),
-				selecciona un objetivo de conformidad de versión de WCAG combinando conjuntos de
-				etiquetas: la coincidencia OR del motor sobre{" "}
-				<code>tags</code> (cualquier coincidencia incluye la regla) hace el resto:
+				<code>runOnly.wcag</code> selecciona un objetivo de conformidad en un solo campo (
+				<a href="#selecting-by-wcag-target-runonlywcag">más arriba</a>), y deja fuera el 4.1.1 bajo
+				2.2. Con etiquetas, dado que las versiones son acumulativas (2.1 = 2.0 + nuevo; 2.2 = 2.0 +
+				2.1 + nuevo), selecciona un objetivo de conformidad de versión de WCAG combinando conjuntos
+				de etiquetas: la coincidencia OR del motor sobre <code>tags</code> (cualquier coincidencia
+				incluye la regla) hace el resto:
 			</p>
 			<CodeBlock
 				lang="js"
@@ -527,6 +1096,7 @@ export function EngineOptionsContent() {
 					<code>engineOptions.wcagVersion</code>: <code>'2.0'</code>, <code>'2.1'</code> o{" "}
 					<code>'2.2'</code>, si lo configuras.
 				</li>
+				<li>La versión de un objetivo <code>runOnly.wcag</code>.</li>
 				<li>
 					Las etiquetas de origen de versión en tu propio filtro: un conjunto que llega como
 					máximo hasta{" "}
@@ -580,217 +1150,6 @@ export function EngineOptionsContent() {
 				simplemente no es un fallo de conformidad 2.2.
 			</p>
 
-			<h3 id="conformance-profiles">Perfiles de conformidad</h3>
-			<p>
-				<code>engineOptions.profile</code> nombra un objetivo de conformidad en lugar de enumerar su
-				conjunto de etiquetas:
-			</p>
-			<DataTable
-				label="Perfiles de conformidad"
-				rowKey="profile"
-				columns={[
-					{ key: "profile", label: "Perfil", width: "20%" },
-					{ key: "tags", label: "Ejecuta las reglas con las etiquetas", wrap: true },
-					{ key: "target", label: "Objetivo WCAG", width: "12%" },
-					{ key: "why", label: "Por qué", wrap: true },
-				]}
-				rows={[
-					{
-						profile: <code>wcag22-aa</code>,
-						tags: (
-							<>
-								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>,{" "}
-								<code>wcag22a</code>, <code>wcag22aa</code>
-							</>
-						),
-						target: "2.2",
-						why: "WCAG 2.2 nivel A y AA",
-					},
-					{
-						profile: <code>en301549-v4.1.1</code>,
-						tags: (
-							<>
-								igual que <code>wcag22-aa</code>
-							</>
-						),
-						target: "2.2",
-						why: "El capítulo 9 de EN 301 549 V4.1.1 reformula WCAG 2.2 A y AA",
-					},
-					{
-						profile: <code>en301549-v3.2.1</code>,
-						tags: (
-							<>
-								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>
-							</>
-						),
-						target: "2.1",
-						why: "El capítulo 9 de EN 301 549 V3.2.1 reformula WCAG 2.1 A y AA, incluido 4.1.1 Procesamiento",
-					},
-					{
-						profile: <code>section508</code>,
-						tags: (
-							<>
-								<code>wcag2a</code>, <code>wcag2aa</code>
-							</>
-						),
-						target: "2.0",
-						why: "Las normas revisadas de la Sección 508 incorporan WCAG 2.0 A y AA",
-					},
-				]}
-			/>
-			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
-			<p>
-				El objetivo de WCAG se deduce de las etiquetas igual que con un conjunto escrito a mano (ver{" "}
-				<a href="#filtering-by-wcag-version">"Filtrado por versión de WCAG"</a> más arriba), así que
-				con <code>en301549-v3.2.1</code> un id duplicado todavía puede dar <code>fail</code>, y con{" "}
-				<code>en301549-v4.1.1</code> no. Los nombres no distinguen mayúsculas y minúsculas. Una
-				ejecución que usó un perfil lo devuelve como <code>engine.profile</code>.
-			</p>
-			<p>
-				Precedencia: cualquier cosa que <em>incluya</em> reglas las selecciona en lugar del perfil:
-				un <code>runOnly</code> con <code>tags</code>, <code>includeRuleIds</code> o{" "}
-				<code>includeTestIds</code>, o un <code>include</code> en{" "}
-				<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>. Las exclusiones se
-				siguen aplicando sobre el perfil, tanto si vienen de <code>runOnly</code> (
-				<code>excludeTags</code>, <code>excludeRuleIds</code>, <code>excludeTestIds</code>, de modo
-				que el <code>disableTags()</code> de una integración acota el perfil en lugar de
-				sustituirlo) como, si no hay filtro <code>runOnly</code>, de <code>engineOptions</code> (
-				<code>tags.exclude</code>, <code>rules.exclude</code>, <code>tests.exclude</code>), y un{" "}
-				<code>engineOptions.wcagVersion</code> explícito sigue ganando a la versión que implica el
-				perfil. Un perfil que no surte efecto (un nombre desconocido, o uno anulado como se acaba de
-				describir) no es un error: la ejecución continúa como si no se hubiera indicado ninguno,
-				registra un <code>console.warn</code> que explica por qué y no lleva{" "}
-				<code>engine.profile</code>.
-			</p>
-			<p>
-				<strong>Un perfil solo elige qué reglas se ejecutan.</strong> No dice nada sobre si
-				superarlas cumple el estándar del que toma el nombre: la mayoría de los criterios de éxito
-				necesitan un juicio humano que ninguna regla automatizada cubre (ver{" "}
-				<a href="/conformance/wcag-mapping/#what-this-engine-cannot-tell-you">
-					lo que este motor no puede decirte
-				</a>
-				).
-			</p>
-			<p>
-				Un perfil de EN 301 549 también activa las cláusulas de EN 301 549 de la versión a la que
-				apunta, como si se hubiera pasado <code>mappings: ['en301549:V4.1.1']</code> (o{" "}
-				<code>V3.2.1</code>); ver <a href="#other-standards-mappings">"Otros estándares"</a> más
-				abajo. Un estándar con requisitos propios también se puede añadir al motor como perfil, con
-				sus propios nombres de perfil, reglas y resultados agregados; cómo funciona está en{" "}
-				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
-					<code>WCAG_CONFORMANCE.md</code>
-				</a>
-				, la guía para contribuidores sobre cómo registrar un estándar. Hoy el motor no incluye
-				ningún estándar así.
-			</p>
-
-			<h3 id="opt-in-rules">Reglas opcionales</h3>
-			<p>
-				Algunas reglas comprueban requisitos propios de un estándar que WCAG no impone: un estándar
-				nacional puede exigir un doctype, o prohibir atributos de presentación como{" "}
-				<code>bgcolor</code>. Un <code>fail</code> de una regla así es un fallo de ese estándar, no
-				de WCAG, así que estas reglas están <strong>desactivadas por defecto</strong>. Cada una lleva
-				la etiqueta de regla de su estándar y solo se ejecuta cuando la selección la pide:
-			</p>
-			<ul>
-				<li>mediante el perfil del estándar, que enumera la etiqueta,</li>
-				<li>
-					por esa etiqueta (<code>{"tags: { include: '<tag>' }"}</code>, sola o con otras),
-				</li>
-				<li>
-					por su id (<code>{"rules: { include: '<rule id>' }"}</code>, o{" "}
-					<code>runOnly.includeRuleIds</code>),
-				</li>
-				<li>por el id de uno de los resultados agregados propios de su estándar que la agrupe, o</li>
-				<li>
-					desbloqueándola con <code>engineOptions.optInRules</code>, más abajo.
-				</li>
-			</ul>
-			<p>
-				Nada más selecciona una: ni una ejecución por defecto, ni un conjunto de etiquetas de WCAG,
-				ni un perfil de WCAG o de EN 301 549, ni un id de resultado agregado de WCAG. Las exclusiones
-				se les aplican como a cualquier regla. Seleccionar solo la etiqueta ejecuta las reglas
-				propias de ese estándar, no las reglas de WCAG con las que también está asociado, así que
-				responde a "qué exige el estándar además de WCAG" y no es una auditoría frente a él. Para
-				una auditoría, usa el perfil del estándar. Hoy ninguno de los estándares incluidos en el
-				motor tiene reglas opcionales.
-			</p>
-
-			<h3 id="running-every-rule-optinrules">Ejecutar todas las reglas (<code>optInRules</code>)</h3>
-			<p>
-				Para ejecutar todas las reglas del motor, sea cual sea el estándar al que pertenecen, omite
-				el perfil y desbloquea las reglas opcionales:
-			</p>
-			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { optInRules: 'all' }, null);"]} />
-			<p>
-				<code>'all'</code> desbloquea las reglas opcionales de todos los estándares; una lista de
-				etiquetas desbloquea solo esas. Levanta la barrera y nada más: el resto de la selección
-				sigue decidiendo qué reglas se ejecutan. Así, sin filtro y sin perfil, como arriba, la
-				ejecución cubre todas las reglas y los resultados agregados de todos los estándares; con{" "}
-				<code>profile: 'wcag22-aa'</code> sigue ejecutando solo las reglas de WCAG, ya que las
-				reglas opcionales no llevan etiquetas de WCAG. Las exclusiones se aplican como siempre. Una
-				etiqueta que no es de reglas opcionales se ignora con un <code>console.warn</code>.
-			</p>
-			<p>
-				Sirve para ver todo lo que el motor puede informar, durante el desarrollo o al explorar un
-				sitio. <strong>No es un objetivo de conformidad</strong>: una ejecución así hace fallar una
-				página por cosas que WCAG permite y que solo otro estándar prohíbe. El resultado lo indica:{" "}
-				<code>engine.optInRules</code> enumera las etiquetas cuyas reglas se ejecutaron, y el informe
-				HTML, SARIF y JUnit lo muestran junto al perfil.
-			</p>
-
-			<h3 id="other-standards-mappings">Otros estándares (<code>mappings</code>)</h3>
-			<p>
-				El <code>meta.normativeMappings</code> de cada resultado nombra los criterios de éxito de
-				WCAG que comprueba. <code>engineOptions.mappings</code> añade el requisito de otro estándar
-				que corresponde a cada uno. Por defecto no añade ninguno: una cláusula de un estándar con el
-				que no auditas es ruido en cada etiqueta SARIF, propiedad JUnit e informe.
-			</p>
-			<DataTable
-				label="Valores de mappings"
-				rowKey="value"
-				columns={[
-					{ key: "value", label: "Valor", width: "34%" },
-					{ key: "adds", label: "Añade", wrap: true },
-				]}
-				rows={[
-					{
-						value: <code>'en301549'</code>,
-						adds: "La cláusula del capítulo 9 de EN 301 549 de cada criterio, en todas las versiones que la tienen (V3.2.1 y V4.1.1)",
-					},
-					{
-						value: (
-							<>
-								<code>'en301549:V3.2.1'</code>, <code>'en301549:V4.1.1'</code>
-							</>
-						),
-						adds: "Lo mismo, solo para esa versión",
-					},
-				]}
-			/>
-			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
-			<p>
-				Acepta un array o una cadena separada por comas, con nombres y versiones sin distinguir
-				mayúsculas y minúsculas. Con <code>profile: 'en301549-v4.1.1'</code> las cláusulas de V4.1.1
-				están ahí sin pedirlas, y <code>mappings</code> puede añadir más. Un nombre o versión para el
-				que el motor no tiene tabla se ignora con un <code>console.warn</code>. Una ejecución que
-				lleva cualquier otro estándar informa cuáles en <code>engine.mappings</code>, con la grafía
-				canónica (<code>["en301549:V3.2.1"]</code>, o <code>["en301549"]</code> para todas las
-				versiones).
-			</p>
-			<p>
-				Solo cambia lo que nombra un resultado, nunca qué reglas se ejecutan ni sus resultados. El
-				catálogo de reglas sigue la misma opción: <code>getChecksCatalog(engineOptions)</code>,{" "}
-				<code>getCheckDefById(ruleId, engineOptions)</code>,{" "}
-				<code>getChecksForRunOnly(runOnly, engineOptions)</code>,{" "}
-				<code>getRulesCatalog(engineOptions)</code> y{" "}
-				<code>getCompositeRuleById(id, engineOptions)</code> nombran los estándares que nombraría un
-				análisis con esas opciones, así que una entrada del catálogo y un resultado siempre
-				coinciden. Una regla añadida mediante <code>customRules</code> conserva exactamente las
-				asociaciones que declara. Qué son las cláusulas y en qué se diferencian las dos versiones
-				está en <a href="/conformance/wcag-mapping/#en-301-549">el mapeo de WCAG</a>.
-			</p>
-
 			<h3>Mediante <code>engineOptions</code> (sin <code>runOnly</code>)</h3>
 			<p>El mismo filtrado, expresado como cadenas separadas por comas (o arrays) anidadas en <code>engineOptions</code>:</p>
 			<CodeBlock
@@ -809,7 +1168,8 @@ export function EngineOptionsContent() {
 				<code>rules</code>), y el <code>includeMode</code> de nivel superior reflejan
 				exactamente los campos de <code>runOnly</code>{" "}
 				de arriba. Las cadenas separadas por comas se recortan, se eliminan duplicados y los
-				tokens vacíos se descartan automáticamente.
+				tokens vacíos se descartan automáticamente. Una lista o una cadena simples, como{" "}
+				<code>rules: ['img-alt-present']</code>, se leen como la lista de inclusión.
 			</p>
 
 			<h2><code>engineOptions</code>: el resto</h2>
@@ -817,6 +1177,7 @@ export function EngineOptionsContent() {
 				lang="js"
 				lines={[
 					"const engineOptions = {",
+					"  strictOptions: false,            // default false — true throws on an unknown option or a value of the wrong type",
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
 					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
@@ -835,7 +1196,7 @@ export function EngineOptionsContent() {
 					"    mode: 'strictConformance',     // 'strictConformance' (default) | 'auditorAssist'",
 					"    rootCanvasFallback: '#ffffff'  // background assumed when the true root background isn't computable",
 					"  },",
-					"  visibilityMode: 'styleOnly',     // 'styleOnly' (default) | 'styleAndGeometry' — scoped to the contrast rules only",
+					"  visibilityMode: undefined,       // 'styleOnly' | 'styleAndGeometry'; unset: geometry with a layout, else styles",
 					"",
 					"  policyContract: 'a11y',          // 'a11y' (default) | 'generic' | inline contract object",
 					"  policy: {                        // optional overrides on top of policyContract",
@@ -844,7 +1205,8 @@ export function EngineOptionsContent() {
 					"",
 					"  output: {",
 					"    includeSelector: true,         // set false to suppress auto-filled selectors",
-					"    includeHtml: true",
+					"    includeHtml: true,",
+					"    detail: 'full'                 // 'findings': pass/notApplicable results keep only rule, outcome, type",
 					"  },",
 					"",
 					"  rules: {",
@@ -856,6 +1218,7 @@ export function EngineOptionsContent() {
 					"  probes: { /* optional host-supplied evidence */ },",
 					"",
 					"  customRules: [ /* runtime-registered rules, see below */ ],",
+					"  packs: [ /* rules and standards from outside core, see Packs */ ],",
 					"",
 					"  // Only read by runa11yCoreAcrossFrames. Ignored by runDomRulesInPage/runa11yCoreInPage.",
 					"  pingWaitTime: 500,               // ms to wait for a child frame to answer a ping",
@@ -872,6 +1235,57 @@ export function EngineOptionsContent() {
 				]}
 				rows={optionRows}
 			/>
+
+			<h3 id="catching-mistakes-in-the-options-strictoptions">Detectar errores en las opciones (<code>strictOptions</code>)</h3>
+			<p>
+				Una opción que el motor no lee se deja pasar: una regla personalizada puede leer ajustes
+				propios de <code>ctx.engineOptions</code>, y una opción eliminada en una versión posterior
+				no rompe un análisis. Así que, por defecto, una opción mal escrita se ignora, y el análisis
+				se ejecuta como si no estuviera. Dos cosas lo indican:
+			</p>
+			<ul>
+				<li>
+					<strong>Siempre</strong>, una clave a una o dos letras de una conocida (sin distinguir
+					mayúsculas y minúsculas) genera un aviso, incluidas las claves anidadas:{" "}
+					<code>lcoale</code> produce{" "}
+					<code>[surea11y] engineOptions: unknown option "lcoale" (did you mean "locale"?); ignored.</code>
+				</li>
+				<li>
+					<strong>Siempre</strong>, un valor de tipo incorrecto genera un aviso y se lee como no
+					indicado, igual que un <code>engineOptions</code> que no es un objeto. Las opciones de
+					activar/desactivar (<code>includeShadowDom</code>, <code>includeHiddenElements</code>,{" "}
+					<code>fragment</code>, <code>perfStats</code>, <code>profileRules</code>,{" "}
+					<code>output.includeHtml</code>, <code>output.includeSelector</code>) aceptan{" "}
+					<code>true</code> o <code>false</code>, o <code>'true'</code>, <code>'false'</code>,{" "}
+					<code>'1'</code>, <code>'0'</code>, <code>1</code> y <code>0</code> tal como los escribe
+					una línea de comandos: <code>perfStats: 'false'</code> está desactivada.
+				</li>
+				<li>
+					<strong>Con <code>strictOptions: true</code></strong> (o <code>'true'</code>,{" "}
+					<code>'1'</code> o <code>1</code>), todas las opciones se comprueban antes del análisis, y
+					cualquier error lanza una excepción con <code>code: 'INVALID_ENGINE_OPTIONS'</code> que
+					nombra cada uno, con <code>problems</code> enumerándolos como{" "}
+					<code>{"{ path, kind, message, suggestion }"}</code>: una clave desconocida (
+					<code>kind: 'unknown'</code>), en <code>engineOptions</code> o en uno de sus objetos, y un
+					valor de tipo incorrecto o fuera de su conjunto (<code>kind: 'invalid'</code>), como{" "}
+					<code>includeHiddenElements: 'yes'</code> o <code>contrast.mode: 'strict'</code>.
+				</li>
+			</ul>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"runDomRulesInPage(url, null, { strictOptions: true, lcoale: 'de' }, null);",
+					"// Error: engineOptions: unknown option \"lcoale\" (did you mean \"locale\"?). (strictOptions)",
+				]}
+			/>
+			<p>
+				No se comprueban: los ajustes propios de una regla (<code>rules[ruleId]</code>), las claves
+				de <code>messages</code> y <code>probes</code>, que el motor transmite sin leer; ni las
+				reglas personalizadas, que tienen sus propias comprobaciones (
+				<code>skippedCustomRules</code>). En TypeScript, <code>StrictEngineOptions</code> es el mismo
+				conjunto de opciones sin la firma de índice que permite compilar cualquier clave, así que una
+				opción mal escrita también es un error ahí.
+			</p>
 
 			<h3 id="rule-scoped-excludeselectors"><code>excludeSelectors</code> por regla</h3>
 			<p>
@@ -946,16 +1360,19 @@ export function EngineOptionsContent() {
 				lang="js"
 				lines={[
 					"runDomRulesInPage(url, null, {",
-					"  excludeSelectors: ['#cookie-banner', '.intercom-launcher'],",
-					"  tags: { include: 'wcag2a,wcag2aa,wcag21a,wcag21aa,wcag22a,wcag22aa' }",
-					"}, null);",
-				]}
-			/>
+						"  excludeSelectors: ['#cookie-banner', '.intercom-launcher']",
+						"}, { wcag: { version: '2.2', level: 'AA' } });",
+					]}
+				/>
+			<p>
+				Añade <code>bestPractices: true</code> junto a <code>wcag</code> para ejecutar también las
+				reglas de buenas prácticas, que una puerta de WCAG suele informar sin fallar por ellas.
+			</p>
 			<p>
 				<strong>Auditor humano haciendo una pasada de contraste en profundidad en un navegador
 				real</strong>: sacrifica algo de protección contra falsos positivos a cambio de más
-				hallazgos, y comprueba el diseño real (no solo el estilo calculado) ya que se está
-				controlando una página real. Se muestra con el <code>page.evaluate</code> de Puppeteer
+				hallazgos. En un navegador real, las reglas de contraste ya comprueban el diseño, no solo
+				los estilos calculados, así que solo hace falta configurar el modo de contraste. Se muestra con el <code>page.evaluate</code> de Puppeteer
 				(acepta múltiples argumentos); si estás en Playwright, primero envuelve los cuatro
 				argumentos posicionales en un solo objeto; consulta{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>:
@@ -964,8 +1381,7 @@ export function EngineOptionsContent() {
 				lang="js"
 				lines={[
 					"const result = await page.evaluate(runa11yCoreInPage, url, null, {",
-					"  contrast: { mode: 'auditorAssist' },",
-					"  visibilityMode: 'styleAndGeometry'",
+					"  contrast: { mode: 'auditorAssist' }",
 					"}, null);",
 				]}
 			/>
@@ -983,18 +1399,18 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<strong>Salida reproducible para pruebas de snapshot</strong>: fija un{" "}
-				<code>timestamp</code>{" "}
-				para que dos ejecuciones del mismo HTML produzcan un JSON idéntico byte a byte, y
-				solicita el desglose de tiempos de depuración:
+				<strong>Salida para pruebas de snapshot</strong>: fija un <code>timestamp</code> para que
+				la marca de tiempo del propio resultado no cambie entre ejecuciones, y deja desactivados{" "}
+				<code>perfStats</code> y <code>profileRules</code>: sus tiempos varían, y su estructura no forma
+				parte de la salida estable. Un snapshot también necesita el mismo DOM, las mismas opciones y
+				las mismas condiciones de renderizado (navegador, viewport, fuentes) en cada ejecución; la
+				marca de tiempo por sí sola no hace idénticos dos resultados.
 			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
 					"runDomRulesInPage(url, null, {",
-					"  timestamp: '2026-01-01T00:00:00Z',",
-					"  perfStats: true,",
-					"  profileRules: true",
+					"  timestamp: '2026-01-01T00:00:00Z'",
 					"}, null);",
 				]}
 			/>
@@ -1012,10 +1428,12 @@ export function EngineOptionsContent() {
 					"    runInPage(ctx) {",
 					"      // queryAllSmart applies excludeSelectors, the scope's shadow roots and",
 					"      // the hidden-content filter; queryAll is the plain light-DOM query.",
-					"      const els = ctx.helpers.queryAllSmart('[onclick]');",
+						"      // ctx.helpers.dom reads the DOM so the page's markup can't redirect it.",
+						"      const dom = ctx.helpers.dom;",
+						"      const els = ctx.helpers.queryAllSmart('[onclick]');",
 					"      const occurrences = els.map((el) => ({",
 					"        selector: ctx.helpers.buildSelector(el),",
-					"        html: el.outerHTML,",
+					"        html: dom.outerHTML(el),",
 					"        summary: 'Inline onclick handler found.',",
 					"        hint: 'Move event handling into an external script.'",
 					"      }));",
@@ -1032,7 +1450,13 @@ export function EngineOptionsContent() {
 				Todas las reglas distribuidas están incorporadas en <code>src/core.js</code> en tiempo
 				de compilación. <code>engineOptions.customRules</code> es la vía de escape en tiempo de
 				ejecución: un array de descriptores de regla registrados solo para esa llamada; no se
-				añade nada al catálogo estático, y nada persiste entre llamadas. Esto es deliberado, no
+				añade nada al catálogo estático, y nada persiste entre llamadas. Las funciones de catálogo
+				aceptan las mismas <code>engineOptions</code> y enumeran lo que tiene un análisis con ellas:{" "}
+				<code>getChecksCatalog(engineOptions)</code> enumera las reglas personalizadas válidas, con
+				cada sustitución en el lugar de su regla integrada,{" "}
+				<code>getCheckDefById(id, engineOptions)</code> las encuentra, y{" "}
+				<code>getChecksForRunOnly(runOnly, engineOptions)</code> las selecciona igual que el
+				análisis. Esto es deliberado, no
 				una limitación que sortear: surea11y ya toma <code>engineOptions</code> nuevas en cada
 				llamada sin configuración global mutable (a diferencia de otros motores, que necesitan
 				un paso de <code>configure()</code>/<code>reset()</code> sobre un runtime compartido), y
@@ -1048,6 +1472,17 @@ export function EngineOptionsContent() {
 				.
 			</p>
 			<p>
+				Una regla personalizada, como la de un pack, se ejecuta después de las reglas integradas, y
+				los <code>ctx.helpers</code>, <code>ctx.engineOptions</code> y{" "}
+				<code>ctx.inputs.probes</code> que recibe son de solo lectura: definir o eliminar cualquier
+				cosa en ellos lanza un error (la regla se informa como <code>cantTell</code> con ese error),
+				así que no puede cambiar lo que ven las demás reglas. No debe modificar la página: una que lo
+				hace se nombra en un <code>console.warn</code>. Los resultados conservan el orden del
+				catálogo. Lance o devuelva lo que sea, el análisis devuelve un resultado, y el resultado de
+				la regla se convierte en datos simples, para que el resultado del análisis se pueda escribir
+				como JSON y clonar.
+			</p>
+<p>
 				Un descriptor tiene la <em>misma forma que la propia exportación de un módulo de regla
 				interno</em>: si ya sabes cómo escribir un archivo de regla para este motor, ya conoces
 				esta API:
@@ -1083,7 +1518,8 @@ export function EngineOptionsContent() {
 					también <code>async</code>), cuyo <code>toString()</code> no es una expresión por sí
 					solo. La reconstrucción necesita que <code>eval</code> esté permitido, así que una página
 					cuya Content Security Policy prohíbe <code>'unsafe-eval'</code> omite una regla dada como
-					cadena; ahí, pasa una función real.
+					cadena, y su motivo en <code>skippedCustomRules</code> indica que la causa es la política;
+					ahí, pasa una función real.
 				</li>
 				<li>
 					<code>meta</code> recibe los mismos valores predeterminados/validación que una regla
@@ -1105,7 +1541,32 @@ export function EngineOptionsContent() {
 					un <code>console.warn</code> que nombra el/los id(s), y un array{" "}
 					<code>overriddenBuiltinIds</code> de nivel superior en el resultado (vacío cuando no
 					hay colisión). Consulta <a href="/results-reports/output-schema/">el esquema de
-					salida</a>.
+					salida</a>. Los ids se comparan sin distinguir mayúsculas y minúsculas: una regla
+					personalizada <code>IMG-ALT-PRESENT</code> sustituye a <code>img-alt-present</code> y toma
+					su id, y un segundo aviso nombra ambas grafías.
+				</li>
+				<li>
+					Una regla personalizada que se ejecutó cuenta para el resultado agregado de WCAG (
+					<code>rulesResults</code>) de cada criterio al que se asocia, mediante{" "}
+					<code>meta.wcagSc</code> o una entrada de WCAG en <code>meta.normativeMappings</code>,
+					igual que una regla integrada: si falla, el resultado agregado falla. El resultado agregado
+					la marca con <code>custom: true</code> entre sus contribuyentes y la enumera en{" "}
+					<code>data.details.customChecksIds</code>. Una sustitución cuenta donde dice su propia
+					asociación: en el lugar de su regla integrada cuando se asocia a ese criterio, y en ningún
+					resultado agregado cuando no se asocia a ninguno, con un aviso que nombra los resultados
+					agregados que abandonó.
+				</li>
+				<li>
+					Una regla personalizada se selecciona igual que una integrada, por su id y sus{" "}
+					<code>meta.tags</code>. Un <code>runOnly</code> que nombra una regla personalizada que el
+					análisis omitió lanza <code>INVALID_RUN_ONLY</code>, con el motivo por el que se omitió.{" "}
+					<code>customRules</code> es una lista: una sola regla pasada por sí sola no se ejecuta, y
+					figura en <code>skippedCustomRules</code>. Bajo un perfil o un objetivo de WCAG, una regla
+					etiquetada como <code>best-practice</code>, o sin etiqueta de WCAG, no forma parte de la
+					ejecución: figura en <code>skippedCustomRules</code>, con un <code>console.warn</code>, y
+					se ejecuta cuando le das las etiquetas de los criterios que comprueba (
+					<code>'wcag111'</code>) o añades <code>runOnly.bestPractices: true</code>. Una sustitución
+					se ejecuta allí donde se habría ejecutado su regla integrada.
 				</li>
 				<li>
 					Una regla personalizada puede informar un margen igual que una regla integrada: declara{" "}
@@ -1120,6 +1581,7 @@ export function EngineOptionsContent() {
 				<li>
 					Un descriptor inválido (<code>id</code> ausente/no-string, un <code>runInPage</code>{" "}
 					que no es una función ni una cadena de código fuente reconstruible, un{" "}
+					<code>applicability</code> que no se puede convertir en una función, un{" "}
 					<code>meta</code> que no supera la validación, como <code>deprecated: true</code> sin{" "}
 					<code>deprecation</code>, un id que ya tiene otra regla personalizada de la lista, o el
 					id de una regla compuesta) se omite con un <code>console.warn</code> que nombra la regla
@@ -1138,7 +1600,9 @@ export function EngineOptionsContent() {
 					<code>runInPage</code> que devuelve algo que no es un objeto de resultado. Un{" "}
 					<code>outcome</code> fuera de <code>pass</code>, <code>fail</code>,{" "}
 					<code>cantTell</code> y <code>notApplicable</code> (como <code>'failed'</code>) pasa a
-					ser <code>cantTell</code>, y <code>error</code> nombra el valor devuelto.
+					ser <code>cantTell</code>, y <code>error</code> nombra el valor devuelto. El{" "}
+					<code>type</code> de una regla viene de su <code>meta</code>: un <code>type</code> en lo
+					que devuelve se ignora, con una nota en <code>error</code>.
 				</li>
 				<li>
 					Los resultados aparecen en <code>checksResults</code> exactamente igual que los de
@@ -1148,7 +1612,48 @@ export function EngineOptionsContent() {
 					<code>{"{ __node }"}</code> (consulta <a href="/results-reports/output-schema/">el
 					esquema de salida</a>).
 				</li>
+				<li>
+					Un <code>fail</code> nombra lo que ha fallado. Un <code>fail</code> de una regla
+					personalizada sin ocurrencias (un fallo de toda la página) se informa con una ocurrencia en
+					el elemento del documento (<code>selector: 'html'</code>, código de motivo{" "}
+					<code>FAIL_WITHOUT_OCCURRENCE</code>), para que JUnit, SARIF, las líneas base y el informe
+					HTML lo muestren como el fallo que es.
+				</li>
 			</ul>
+
+			<h2 id="packs">Packs: reglas y estándares de fuera de core</h2>
+			<p>
+				Un pack trae reglas, variantes de las reglas de core, un estándar o una lista de
+				comprobación, y los mensajes que usan, desde un paquete independiente, sin una compilación de
+				core. Pasa los packs a un análisis en <code>engineOptions.packs</code>; el análisis se
+				ejecuta en un motor preparado con ellos, mediante los pasos que usa la compilación para las
+				propias reglas de core, así que el estándar, los perfiles, los resultados agregados y las
+				reglas opcionales de un pack se comportan como lo harían los de uno integrado. El motor se
+				conserva para el siguiente análisis con los mismos objetos de pack, así que un rastreo que
+				pasa los mismos packs a cada página los prepara una sola vez.
+			</p>
+			<CodeBlock
+					lang="js"
+					lines={[
+						"const { runDomRulesInPage, getChecksCatalog } = require('@surea11y/core');",
+						"const acmePolicy = require('./acme-policy-pack');",
+						"",
+						"const result = runDomRulesInPage(url, null, { packs: [acmePolicy], profile: 'acme-web-2026' });",
+						"result.engine.packs; // ['@acme/a11y-policy@1.0.0']",
+						"getChecksCatalog({ packs: [acmePolicy] }); // core's rules and the pack's",
+					]}
+				/>
+			<p>
+				Un pack que no encaja con core (su rango <code>core</code> excluye esta versión, un id de
+				regla sin el espacio de nombres, una clave de diccionario que core ya tiene) se omite con un{" "}
+				<code>console.warn</code>, figura en el <code>skippedPacks</code> del resultado como{" "}
+				<code>{"{ name, reason }"}</code>, y el análisis se ejecuta sin él; con{" "}
+				<code>strictOptions</code> lanza un error. Los packs que chocan entre sí lanzan un error. En
+				una página, un pack se registra primero con <code>packScript(packs)</code> y se nombra en{" "}
+				<code>engineOptions.packs</code> como <code>name@version</code>. Qué contiene un pack, cómo
+				usar uno desde cada integración, los test matchers y la CLI, y cómo escribir uno, está en{" "}
+				<a href="/configuration/packs/">Packs</a>.
+			</p>
 
 			<h2><code>contextSelector</code> (2.º argumento del ejecutor, no un campo de <code>engineOptions</code>)</h2>
 			<p>
@@ -1182,6 +1687,15 @@ export function EngineOptionsContent() {
 					que cruza <code>page.evaluate</code> (Playwright, Puppeteer) conserva solo su mensaje,
 					por eso el mensaje nombra la opción y el selector. Antes de la 1.10.0, un selector
 					inválido se omitía, así que por sí solo analizaba todo el documento.
+				</li>
+				<li>
+					<strong>Cualquier cosa que no sea un selector, un array de selectores o{" "}
+					<code>null</code> lanza el mismo error</strong>, nombrando lo que se pasó: un elemento,
+					una NodeList, un objeto <code>{"{ include, exclude }"}</code>, un número o un elemento del
+					array que no es una cadena (
+					<code>contextSelector[1] must be a CSS selector, not the number 5.</code>). Pasa en su
+					lugar un selector que coincida con el elemento, y pon lo que dejaría fuera un{" "}
+					<code>exclude</code> en <code>engineOptions.excludeSelectors</code>.
 				</li>
 				<li>
 					<strong>Una sola cadena</strong> puede ser en sí misma una lista de selectores

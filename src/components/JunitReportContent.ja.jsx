@@ -8,7 +8,7 @@ const outcomeRows = [
 		outcome: <code>fail</code>,
 		junit: (
 			<>
-				<code>&lt;failure type="fail"&gt;</code>。不合格の検出箇所ごとに1行（メッセージ、ヒント、セレクター、マークアップ）
+				<code>&lt;failure type="fail"&gt;</code>。不合格の検出箇所ごとに1行（メッセージ、ヒント、セレクター、マークアップ）。続いて、ルールが<code>http(s)</code>のヘルプリンク（<code>meta.helpUrl</code>）を持つ場合は<code>help: &lt;url&gt;</code>、持たない場合は最初のWCAG達成基準のUnderstanding文書
 			</>
 		),
 		why: "決定論的で、ゲートを止めるケースです。",
@@ -40,6 +40,12 @@ const outcomeRows = [
 			</>
 		),
 	},
+	{
+		id: "ruleError",
+		outcome: <>完了しなかったルール（検出箇所がなく<code>error</code>を持つ<code>cantTell</code>。例外を投げたもの）</>,
+		junit: <>エラーを含む<code>&lt;error type="ruleError"&gt;</code>。<code>errors</code>に数えられます</>,
+		why: "実行できなかったテストを表すJUnitの要素です。ページはそのルールで検査されておらず、それは合格でもレビューすべきものでもありません。",
+	},
 ];
 
 const optionRows = [
@@ -49,7 +55,7 @@ const optionRows = [
 		default: <code>'skipped'</code>,
 		effect: (
 			<>
-				<code>'failure'</code>を指定すると、<code>cantTell</code>のルールを<code>&lt;failure type="cantTell"&gt;</code>として報告します。未判断のものが残っている間は合格させてはいけないパイプライン向けです。
+				<code>'failure'</code>を指定すると、<code>cantTell</code>のルールを<code>&lt;failure type="cantTell"&gt;</code>として報告します。未判断のものが残っている間は合格させてはいけないパイプライン向けです。値は大文字小文字を区別せずに読みます。それ以外の値は<code>TypeError</code>を投げます。綴りを誤った値は、黙ってゲートしなくなるためです。
 			</>
 		),
 	},
@@ -66,7 +72,7 @@ const optionRows = [
 		effect: (
 			<>
 				<a href="/conformance/baseline/">ベースライン</a>
-				の<code>buildBaselineEntries()</code>で作るエントリーです。そこに記録された不合格の検出箇所は、SARIFとまったく同じように除外されます。不合格がすべて既知のルールは、合格ではなく<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>になります。合格したわけではないからです。
+				の<code>buildBaselineEntries()</code>で作るエントリーです。そこに記録された不合格の検出箇所は、SARIFとまったく同じように除外されます。保存したままのベースラインファイル（それを<code>JSON.parse</code>したもの）か、その<code>entries</code>リストを受け取ります。不合格がすべて既知のルールは、合格ではなく<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>になります。合格したわけではないからです。
 			</>
 		),
 	},
@@ -144,7 +150,7 @@ export function JunitReportContent() {
 					<strong>スイートは達成基準に従います。</strong>人が追跡するのは達成基準だからです。<strong>テストケースは検出箇所ではなくルールに従います。</strong>そのため、ページ内で40回繰り返される不具合も、本文に40件すべてを列挙した1つの失敗したテストになり、テスト数は実行ごとに安定します。
 				</li>
 				<li>
-					スイートは複合ルールではなく各ルール自身のWCAGとの対応から作られるため、複合ルールを除外していても、実行されたすべてのルールが報告されます。複合ルールが実行された場合は、スイートのタイトルと<code>criterionOutcome</code>プロパティを提供します。2つの達成基準に対応するルールは両方のスイートに現れます。どの達成基準にも対応しないルールは、<code>classname="other"</code>を持つ最後の<code>Other checks</code>スイートに入ります。
+					スイートは複合ルールではなく各ルール自身のWCAGとの対応から作られるため、複合ルールを除外していても、実行されたすべてのルールが報告されます。複合ルールが実行された場合は、スイートのタイトルと<code>criterionOutcome</code>プロパティを提供します。このプロパティは、その達成基準に対応するカスタムルールを組み込みルールと同じように数えます。複数の複合ルールが検査する達成基準（4.1.2：アクセシブルな名前とARIAの妥当性）は、それらの判定結果のうち最も悪いものと、それらのタイトルに共通する名前（<code>WCAG 4.1.2 Name, role, value</code>）を取ります。2つの達成基準に対応するルールは両方のスイートに現れます。どの達成基準にも対応しないルールは、<code>classname="other"</code>を持つ最後の<code>Other checks</code>スイートに入ります。
 				</li>
 				<li>
 					実行の<code>engine</code>、<code>schemaVersion</code>、<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>、<a href="/results-reports/output-schema/"><code>engine.environment</code></a>にあるレンダリングの条件（<code>layout</code>と、ブラウザーでは<code>1280x720</code>の形の<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>fonts</code>）、<code>locale</code>、<code>url</code>は、結果にある場合だけ、各スイートのプロパティとして繰り返されます。ビューポートの幅によって出たり消えたりする失敗は、実行が使った幅までたどれます。上の例はjsdomでのスキャンなので、レイアウトがありません。
@@ -156,9 +162,17 @@ export function JunitReportContent() {
 					スイートは達成基準の番号順（1.4.10より1.4.3が先）、テストケースはルールのid順に並びます。
 				</li>
 				<li>
-					<code>en301549</code>プロパティは、その達成基準を再掲するEN 301 549の条項を示します。条項があり、スキャンがEN 301 549の条項を要求した場合だけです（<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>を参照）。
+					<code>en301549</code>プロパティは、その達成基準を再掲するEN 301 549の条項を示します。条項があり、スキャンがEN 301 549の条項を要求した場合だけです（<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>を参照）。結果の<code>standards</code>に列挙されたほかの各規格は、そのキーを名前とするプロパティを、スイートのルールが対応するその規格の要件ごとに1つ追加します。ルールをまとめる<a href="/configuration/packs/">パック</a>のチェックリスト項目は、そのidで列挙されます（<code>&lt;property name="acme" value="acme-images"/&gt;</code>）。カスタムルールだけが指定する規格は、プロパティを追加しません。
 				</li>
 			</ul>
+			<p>
+				コンパクトな結果（<code>engineOptions.output.detail: 'findings'</code>）は、それが表す完全な結果として読まれるので、同じように報告されます。
+			</p>
+
+			<h2 id="cross-frame-results">フレーム横断の結果</h2>
+			<p>
+				フレーム横断の結果（<a href="/results-reports/output-schema/#cross-frame-result">出力スキーマ</a>を参照）では、まずページのスイートが、続いて各フレームのスイートが出力されます。フレームのスイートはフレームのパスで名前が付けられ（<code>Frame #checkout: WCAG 1.1.1 Non-text content: text alternatives</code>）、パスを保持する<code>frame</code>プロパティを持つため、フレーム内の失敗がページの失敗と混ざることはありません。応答しなかったフレームは、スキップされたテストケース<code>Not scanned: &lt;error&gt;</code>を1つ持つスイート<code>Frame &lt;path&gt;</code>になります。そのフレームは検査されておらず、それは合格ではないからです。<code>&lt;testsuites&gt;</code>の合計はすべてのフレームを数えます。
+			</p>
 
 			<h2>判定結果</h2>
 			<DataTable

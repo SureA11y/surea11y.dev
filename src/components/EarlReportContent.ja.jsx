@@ -130,13 +130,27 @@ export function EarlReportContent() {
 					<strong><code>test.isPartOf</code></strong>
 					は、そのルールが対応する達成基準を
 					<code>WCAG2:&lt;criterion-id&gt;</code>
-					の形で列挙します。どの達成基準にも対応しないルールでは、このフィールド自体を省略します。空のリストを出すと、「意図的にどれにも対応させていない」ではなく「対応するものが見つからなかった」と読めてしまうためです。エンジンの自動ルールでこれに当たるのは
+					の形で列挙します。対象は、
+					<code>standard</code>
+					が
+					<code>WCAG</code>
+					であるか存在せず（SARIFと同じ）、
+					<code>type</code>
+					を持たない
+					<code>normativeMappings</code>
+					の各エントリーです。どの達成基準にも対応しないルールでは、このフィールド自体を省略します。空のリストを出すと、「意図的にどれにも対応させていない」ではなく「対応するものが見つからなかった」と読めてしまうためです。エンジンの自動ルールでこれに当たるのは
 					<code>aria-allowed-role</code>
-					だけです。
+					と
+					<code>landmark-role-name-present</code>
+					です。
 				</li>
 				<li>
 					<strong><code>assertedBy</code></strong>
-					と
+					は、
+					<code>assertor: null</code>
+					を渡さない限り常に出力されます。デフォルトは
+					<code>surea11y</code>
+					と、結果が持つエンジンのバージョンです。
 					<strong><code>mode</code></strong>
 					は、指定した場合にだけ出力されます。
 				</li>
@@ -148,11 +162,28 @@ export function EarlReportContent() {
 				<code>non-text-content</code>
 				）。
 				<code>normativeMappings</code>
-				には<span lang="en">Understanding</span>文書への参照やWCAG以外の規格も含まれており、これらは本物の達成基準と同じく
-				<code>standard: "WCAG"</code>
-				と
+				には、
+				<code>type</code>
+				を持つ<span lang="en">Understanding</span>文書への参照と、自身の
+				<code>standard</code>
+				を名乗るほかの規格のエントリー（EN 301 549の条項、パックの要件やチェックリスト項目）も含まれます。どちらも達成基準と同じ
 				<code>requirement</code>
-				を持っています。達成基準とは適合レベルを示し、ほかの文書種別を名乗らないエントリーのことで、読み取るのはそれだけです。
+				の番号を持つことがあります。達成基準として読み取るのは、
+				<code>standard</code>
+				が
+				<code>WCAG</code>
+				であるか存在せず、
+				<code>type</code>
+				を持たないエントリーだけです。適合レベルは必要ありません。
+				<code>isPartOf</code>
+				はWCAGの達成基準だけを列挙し、ほかの規格のエントリーは含めません。
+			</p>
+			<p>
+				コンパクトな結果（
+				<code>engineOptions.output.detail: 'findings'</code>
+				。
+				<a href="/results-reports/output-schema/#top-level-result">出力スキーマ</a>
+				を参照）は、それが表す完全な結果として読まれるので、同じように報告されます。
 			</p>
 
 			<h2>判定結果</h2>
@@ -204,11 +235,21 @@ export function EarlReportContent() {
 				URLが同じ結果は1つの対象にまとめられます。同じページを異なる
 				<code>engineOptions</code>
 				でスキャンしても、表しているのは1つのリソースであり、コンテキスト上も同じsourceを持つ2つの対象を表現する手段がないからです。
-				<strong>同じURLの同じルールについて2つの結果がアサーションを持つ場合は、後のものが優先されます。</strong>
-				同じページを2つのビューポート幅でスキャンした場合も同じです。EARLにはページがレンダリングされた条件を表す語彙がないため、複数の幅から作ったレポートには、各ルールについて最後の幅のアサーションだけが残ります。幅の違いが重要なら、幅ごとに1つのレポートを生成してください。
+				<strong>同じURLの同じルールについて2つの結果がアサーションを持つ場合は、悪いほうの判定結果が残ります。</strong>
+				順に
+				<code>earl:failed</code>
+				、
+				<code>earl:cantTell</code>
+				、
+				<code>earl:passed</code>
+				、
+				<code>earl:inapplicable</code>
+				で、入力をどの順序にしても不合格が隠れることはありません。同じページを2つのビューポート幅でスキャンした場合も同じです。EARLにはページがレンダリングされた条件を表す語彙がないため、複数の幅から作ったレポートには、各ルールについて、いずれかの幅での不合格が残ります。幅そのものが重要なら、幅ごとに1つのレポートを生成してください。
 			</p>
 			<p>
-				出力は決定論的です。対象はsource順、アサーションはルールID順に並び、同じ入力であれば順序を問わずバイト単位で同一の出力になります。だからこそ、2つのエンジンバージョン間の差分に意味が生まれます。
+				出力は決定論的です。対象はsource順、アサーションはルールID順に並び、同じ入力であれば順序を問わずバイト単位で同一の出力になります。唯一の例外はURLのない結果で、リスト内の位置（
+				<code>about:blank#result-2</code>
+				）で区別されます。順序に左右されたくない場合は、各結果にURLを持たせてください。だからこそ、2つのエンジンバージョン間の差分に意味が生まれます。
 			</p>
 
 			<h2>オプション</h2>

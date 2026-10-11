@@ -63,5 +63,8 @@
 	"usageBinding.nextSteps": "Next: {list}.",
 	"usageBinding.engineOptions": "choose which rules run",
 	"usageBinding.ciIntegration": "integrate the scan into CI",
-	"usageBinding.resultsSchema": "review the full result schema"
+	"usageBinding.resultsSchema": "review the full result schema",
+	"usageBinding.targets": "{withWcag} selects by conformance target: the rules for WCAG 2.2's Level A and AA criteria, by the level each criterion has in that version. {withBestPractices} adds the rules that test no WCAG criterion, such as {region}; on its own it runs only those.",
+	"usageBinding.packs": "{withPacks} registers a {packLink} in the page before the scan, and {options} chooses its profile. A pack that doesn't run is reported as a {gap} scan gap, so a test that asserts on {getScanGaps} fails rather than passing without it.",
+	"usageBinding.packLink": "pack"
 }

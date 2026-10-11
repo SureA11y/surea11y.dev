@@ -16,13 +16,17 @@ const sarifFieldRows = [
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, lorsqu’il est présent.</> },
 	{
 		id: "fingerprint",
-		field: <code>results[].partialFingerprints["surea11y/violation/v1"]</code>,
+		field: <code>results[].partialFingerprints["surea11y/violation/v2"]</code>,
 		source: (
 			<>
-				La même clé d’identité <code>ruleId + reasonCode + html</code> que celle utilisée par{" "}
+				Le condensé SHA-256, en 64 chiffres hexadécimaux, de la même clé d’identité{" "}
+				<code>ruleId + reasonCode + html</code> que celle utilisée par{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code>) :
 				une empreinte stable fondée sur le contenu plutôt que sur la position, pour les
-				consommateurs qui la lisent.
+				consommateurs qui la lisent ; le même constat reçoit le même condensé dans chaque
+				rapport. Avant la version 1.11, <code>surea11y/violation/v1</code> contenait la clé
+				elle-même : un outil qui lisait <code>v1</code> voit donc chaque constat comme nouveau,
+				une seule fois.
 			</>
 		),
 	},
@@ -31,7 +35,8 @@ const sarifFieldRows = [
 		field: <code>results[].partialFingerprints.primaryLocationLineHash</code>,
 		source: (
 			<>
-				Un hachage de cette clé, <code>&lt;16 hex digits&gt;:&lt;n&gt;</code>, où <code>n</code> compte
+				Les 16 premiers chiffres hexadécimaux du condensé et un compteur,{" "}
+				<code>&lt;16 hex digits&gt;:&lt;n&gt;</code> (inchangé par rapport à avant <code>v2</code>), où <code>n</code> compte
 				un constat répété sur la page (le même composant défectueux deux fois). <span lang="en">GitHub Code Scanning</span>{" "}
 				fait correspondre les alertes d’un envoi à l’autre sur ce seul champ. Un constat issu du DOM
 				n’a pas de ligne que l’action d’envoi de GitHub pourrait hacher ; sans ce champ, les alertes
@@ -43,7 +48,8 @@ const sarifFieldRows = [
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>Les <code>severity</code>/<code>confidence</code> du résultat lui-même, plus le même <code>reasonCode</code> et le même extrait <code>html</code> sur lesquels repose l’empreinte ci-dessus ; à titre informatif, hors du schéma propre à SARIF.</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, et un tag <code>wcag-&lt;SC&gt;</code> par critère de succès WCAG présent dans <code>meta.normativeMappings</code>. Les entrées de documents Understanding n’ont pas de tag. Chaque clause d’EN 301 549 que porte le résultat (seulement quand l’analyse les a demandées, voir <a href="/configuration/engine-options/#other-standards-mappings">Autres normes</a>) reçoit un tag <code>en301549-&lt;clause&gt;</code>, p. ex. <code>en301549-9.1.1.1</code> : les numéros de clause sont les mêmes dans toutes les versions qui les contiennent, le tag ne porte donc pas de version.</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, et un tag <code>wcag-&lt;SC&gt;</code> par critère de succès WCAG présent dans <code>meta.normativeMappings</code>. Les entrées de documents Understanding n’ont pas de tag. Chaque clause d’EN 301 549 que porte le résultat (seulement quand l’analyse les a demandées, voir <a href="/configuration/engine-options/#other-standards-mappings">Autres normes</a>) reçoit un tag <code>en301549-&lt;clause&gt;</code>, p. ex. <code>en301549-9.1.1.1</code> : les numéros de clause sont les mêmes dans toutes les versions qui les contiennent, le tag ne porte donc pas de version, et la norme ou la liste de contrôle d’un pack reçoit des tags de la même façon, sous sa propre clé (l’id d’un point de la liste de contrôle, <code>acme-images</code>, est son propre tag). Viennent ensuite les <code>meta.tags</code> de la règle elle-même (y compris ceux d’une règle personnalisée), sans les tags internes du moteur ni les tags de critère que les tags <code>wcag-&lt;SC&gt;</code> donnent déjà.</> },
+	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, le lien d’aide de la règle, quand c’est une URL <code>http(s)</code> absolue ; sinon le document Understanding du premier critère WCAG auquel elle est associée ; absent pour une règle qui n’a ni l’un ni l’autre, ce qui n’est le cas d’aucune règle intégrée : une règle associée à aucun critère renvoie à sa section du catalogue des règles.</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>L’option <code>toolVersion</code>, si elle est fournie (un outil qui enveloppe le moteur passe la sienne) ; sinon <code>engine.version</code>, la version du moteur qui a produit le résultat. <code>"0.0.0"</code> seulement pour un résultat qui n’en a pas, issu d’une version antérieure à 1.10.0.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>L’option <code>category</code>, avec un <code>/</code> final ajouté s’il n’y en a pas (GitHub lit tout ce qui précède la dernière barre oblique comme la catégorie). Absent lorsqu’aucune catégorie n’est fournie. Voir <a href="#scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</a>.</> },
 	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> et <code>environment</code> issus de l’<code>engine</code> du résultat : la cible de conformité utilisée par l’exécution, pour qu’un tableau de bord distingue une exécution WCAG 2.1 d’une exécution 2.2, les tags de règles optionnelles qu’elle a ajoutés au-delà de cette cible, s’il y en a, et les conditions dans lesquelles la page a été rendue (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code> ; voir <a href="/results-reports/output-schema/">Schéma de sortie</a>). Omis pour les résultats de moteurs antérieurs à ces champs.</> },
@@ -90,7 +96,7 @@ export function SarifReportContent() {
 				ne deviennent jamais des résultats (un consommateur traite chaque résultat comme une
 				alerte, et « ceci n’a pas été évalué » n’en est pas une), mais elles ne sont pas non plus
 				abandonnées. Elles sont transmises comme entrées de niveau <code>note</code> dans{" "}
-				<code>runs[0].invocations[0].toolExecutionNotices</code>, chacune indiquant la règle dont
+				<code>runs[0].invocations[0].toolExecutionNotifications</code>, chacune indiquant la règle dont
 				elle provient via <code>associatedRule.id</code> :
 			</p>
 			<CodeBlock
@@ -99,7 +105,7 @@ export function SarifReportContent() {
 					'"invocations": [',
 					"  {",
 					'    "executionSuccessful": true,',
-					'    "toolExecutionNotices": [',
+					'    "toolExecutionNotifications": [',
 					"      {",
 					'        "level": "note",',
 					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
@@ -116,6 +122,14 @@ export function SarifReportContent() {
 				page est correcte, ou que le contraste n’a jamais pu être calculé, et seule la notice
 				permet de distinguer les deux. Le bloc n’est émis que s’il y a quelque chose à signaler :
 				une exécution sans rien à rapporter n’a donc aucune clé <code>invocations</code>.
+			</p>
+			<p>
+				Une règle qui ne s’est pas terminée (elle a levé une exception : <code>cantTell</code>{" "}
+				sans occurrence et avec une <code>error</code>) n’a rien jugé : ce n’est donc pas non plus
+				un résultat. C’est une notification de niveau <code>error</code> dans la même liste,{" "}
+				<code>"The rule &lt;id&gt; did not complete: &lt;error&gt;"</code>, qui nomme la règle
+				dans <code>associatedRule.id</code>, pour que le trou dans la couverture ne se lise pas
+				comme une réussite.
 			</p>
 			<DataTable
 				label="Résultats du moteur en niveaux SARIF"
@@ -145,6 +159,13 @@ export function SarifReportContent() {
 				]}
 				rows={sarifFieldRows}
 			/>
+			<p>
+				Un résultat compact (<code>engineOptions.output.detail: 'findings'</code>, voir{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Schéma de sortie</a>) est lu
+				comme le résultat complet qu’il représente ; il est donc rapporté de la même façon. Un
+				résultat dont la liste <code>standards</code> est absente ou endommagée reçoit quand même
+				un tag pour chaque norme que nomment ses règles.
+			</p>
 
 			<h2 id="sarif-locations">Emplacements</h2>
 			<p>
@@ -176,6 +197,29 @@ export function SarifReportContent() {
 				<code>logicalLocations[].fullyQualifiedName</code>, de sorte qu’un consommateur qui lit les
 				emplacements logiques sait tout de même « quel élément » est concerné, même sans
 				emplacement physique exploitable.
+			</p>
+
+			<h2 id="cross-frame-results">Résultats multi-frames</h2>
+			<p>
+				Un résultat de <code>runa11yCoreAcrossFrames</code>, ou d’une analyse{" "}
+				<code>.frames(true)</code> d’un binding (voir{" "}
+				<a href="/results-reports/output-schema/#cross-frame-result">Schéma de sortie</a>), forme
+				une seule exécution : les constats de chaque frame en sont des résultats. Un constat
+				situé dans un frame est localisé dans le document de ce frame (
+				<code>artifactLocation.uri</code> est l’URL du frame), et porte le chemin du frame dans{" "}
+				<code>properties.frame</code> :
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={['"properties": { "severity": "serious", "confidence": "high", "frame": ["#checkout"] }']}
+			/>
+			<p>
+				Le chemin fait aussi partie de l’identité du constat (<code>partialFingerprints</code>) :
+				le même défaut dans la page et dans un frame, ou dans deux frames, donne donc deux
+				alertes. Un frame qui n’a pas répondu (pas de responder, ou délai dépassé) est une
+				notification de niveau <code>warning</code>,{" "}
+				<code>"The frame #ads (https://ads.example/) was not scanned: &lt;error&gt;"</code>,
+				puisque rien n’y a été vérifié.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</h2>

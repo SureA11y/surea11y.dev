@@ -9,7 +9,9 @@ const outcomeRows = [
 		junit: (
 			<>
 				<code>&lt;failure type="fail"&gt;</code>, une ligne par occurrence en échec (message,
-				indication, sélecteur, balisage)
+				indication, sélecteur, balisage), puis <code>help: &lt;url&gt;</code> quand la règle a un
+				lien d’aide <code>http(s)</code> (<code>meta.helpUrl</code>), sinon le document
+				Understanding de son premier critère WCAG
 			</>
 		),
 		why: "Le cas déterministe, celui qui bloque.",
@@ -42,6 +44,12 @@ const outcomeRows = [
 			</>
 		),
 	},
+	{
+		id: "ruleError",
+		outcome: <>une règle qui ne s’est pas terminée (<code>cantTell</code> sans occurrence et avec une <code>error</code> : elle a levé une exception)</>,
+		junit: <><code>&lt;error type="ruleError"&gt;</code> avec l’erreur, comptée dans <code>errors</code></>,
+		why: "L’élément JUnit pour un test qui n’a pas pu s’exécuter. La page n’a pas été vérifiée au regard de la règle, ce qui n’est ni une réussite ni un point à examiner.",
+	},
 ];
 
 const optionRows = [
@@ -51,9 +59,10 @@ const optionRows = [
 		default: <code>'skipped'</code>,
 		effect: (
 			<>
-				<code>'failure’</code> signale les règles <code>cantTell</code> sous forme de{" "}
+				<code>'failure'</code> signale les règles <code>cantTell</code> sous forme de{" "}
 				<code>&lt;failure type="cantTell"&gt;</code>, pour un pipeline qui ne doit pas réussir tant
-				que quelque chose reste indécis.
+				que quelque chose reste indécis. Lue quelle que soit la casse ; toute autre valeur lève une{" "}
+				<code>TypeError</code>, car une valeur mal orthographiée ne bloquerait rien, sans le dire.
 			</>
 		),
 	},
@@ -71,7 +80,9 @@ const optionRows = [
 			<>
 				Entrées issues de <code>buildBaselineEntries()</code> de{" "}
 				<a href="/conformance/baseline/">la baseline</a>. Les occurrences en échec qui y sont
-				enregistrées sont retirées, exactement comme dans SARIF. Une règle dont tous les échecs sont
+				enregistrées sont retirées, exactement comme dans SARIF. L’option accepte le fichier de
+				baseline tel qu’il est enregistré (son <code>JSON.parse</code>) ou sa liste{" "}
+				<code>entries</code>. Une règle dont tous les échecs sont
 				déjà connus devient{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, et non un
 				test réussi : elle n’a pas réussi.
@@ -164,7 +175,10 @@ export function JunitReportContent() {
 					Les suites proviennent des correspondances WCAG de chaque règle, pas des composites :
 					chaque règle exécutée est donc signalée même si les composites ont été exclus. Le composite,
 					s’il s’est exécuté, fournit le titre de la suite et la propriété{" "}
-					<code>criterionOutcome</code>. Une règle associée à deux critères apparaît dans les deux
+					<code>criterionOutcome</code>, qui compte les règles personnalisées associées au critère
+					comme il compte les règles intégrées. Un critère vérifié par plusieurs composites (4.1.2 :
+					son nom accessible et sa validité ARIA) prend le pire de leurs résultats, et le nom que
+					partagent leurs titres (<code>WCAG 4.1.2 Name, role, value</code>). Une règle associée à deux critères apparaît dans les deux
 					suites. Une règle sans critère va dans une suite finale <code>Other checks</code> avec{" "}
 					<code>classname="other"</code>.
 				</li>
@@ -196,9 +210,32 @@ export function JunitReportContent() {
 				<li>
 					Les propriétés <code>en301549</code> nomment la clause d’EN 301 549 qui reprend le critère,
 					quand il y en a une et que l’analyse a demandé les clauses d’EN 301 549 (voir{" "}
-					<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>).
+					<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>). Chaque autre norme
+					listée dans le champ <code>standards</code> du résultat ajoute des propriétés nommées
+					d’après sa clé, une par exigence de cette norme à laquelle les règles de la suite sont
+					associées : un point de la liste de contrôle d’un{" "}
+					<a href="/configuration/packs/">pack</a> qui regroupe la règle est listé par son id,{" "}
+					<code>&lt;property name="acme" value="acme-images"/&gt;</code>. Une norme que seule une
+					règle personnalisée nomme n’ajoute aucune propriété.
 				</li>
 			</ul>
+			<p>
+				Un résultat compact (<code>engineOptions.output.detail: 'findings'</code>) est lu comme le
+				résultat complet qu’il représente ; il est donc rapporté de la même façon.
+			</p>
+
+			<h2 id="cross-frame-results">Résultats multi-frames</h2>
+			<p>
+				Un résultat multi-frames (voir{" "}
+				<a href="/results-reports/output-schema/#cross-frame-result">Schéma de sortie</a>) donne
+				d’abord les suites de la page, puis celles de chaque frame, nommées d’après le chemin du
+				frame (<code>Frame #checkout: WCAG 1.1.1 Non-text content: text alternatives</code>) et
+				avec une propriété <code>frame</code> qui le contient, si bien qu’un échec dans un frame
+				n’est pas fusionné avec ceux de la page. Un frame qui n’a pas répondu est une suite{" "}
+				<code>Frame &lt;path&gt;</code> avec un seul testcase ignoré,{" "}
+				<code>Not scanned: &lt;error&gt;</code> : le frame n’a pas été vérifié, ce qui n’est pas
+				une réussite. Les totaux de <code>&lt;testsuites&gt;</code> comptent chaque frame.
+			</p>
 
 			<h2>Résultats</h2>
 			<DataTable

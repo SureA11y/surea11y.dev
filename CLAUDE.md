@@ -4,7 +4,7 @@ The docs and rules site for `@surea11y/core`. Scaffold only as of 2026-09-16 —
 Astro + `@astrojs/react`, design tokens wired in. As of the same day it also
 has: a nav/page shell (`BaseLayout`/`SiteNav`, one stub page per IA section),
 Overview turned into a section-index landing (badges + a card grid linking
-the other six sections), a real Rules catalog + generated rule pages (134 as of core 1.10.0)
+the other six sections), a real Rules catalog + generated rule pages (134 as of core 1.11.1)
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
 `src/components/design-system/` — see below). All seven IA sections have
@@ -103,10 +103,25 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   drop-in from source docs, described below); split later once the pages
   were confirmed too long to navigate, same alfa.siteimprove.com-inspired
   pattern as Getting Started's own split.
-  - `/configuration/` ← `ENGINE_OPTIONS.md` + `CI_INTEGRATIONS.md` +
+  - `/configuration/` ← `ENGINE_OPTIONS.md` + `PACKS.md` + `CI_INTEGRATIONS.md` +
     `I18N.md` → `EngineOptionsContent.jsx` (`/configuration/engine-options/`),
+    `PacksContent.jsx` (`/configuration/packs/`),
     `CiIntegrationContent.jsx` (`/configuration/ci-integration/`),
-    `LocalesContent.jsx` (`/configuration/locales/`). One deliberate
+    `LocalesContent.jsx` (`/configuration/locales/`). `PACKS.md` (core 1.11)
+    postdates the IA doc, which has no place for it; it went under
+    Configuration as its own subpage, second in the menu, because a pack is
+    passed in `engineOptions.packs` and chosen with `engineOptions.profile`.
+    The page covers using a pack (Node, the browser bindings, Cypress's
+    plugin, test-matchers, the CLI, a page of your own), what a scan reports,
+    a skipped pack, and writing one with `surea11y-pack new` (names,
+    profiles, checklist items, messages, tests, publishing), with the
+    bindings' `examples/acme-policy-pack.js` as the running example. How to
+    write a rule's `runInPage` stays on GitHub (`RULE_AUTHORING.md`,
+    `PACKS.md`): rule authorship is GitHub-only by the canonical-source rule
+    below. Engine options keeps a short "Packs" section linking to it.
+    `I18N.md`'s "Notes on individual locales" (per-language translation
+    terms for the engine's dictionaries) is contributor-facing too and stays
+    off the Locales page. One deliberate
     deviation from the IA doc's literal text: it names only `I18N.md`'s
     "Adding your language" section as excluded (contributor-facing), but
     the very next H2, "Maintaining the locales" (`npm run
@@ -546,8 +561,9 @@ Open English-source issues found in that review, not yet decided:
 - `sections.ts` Rules description says "a pass/fail example"; examples also
   cover `cantTell`/`notApplicable`. The translations say "examples of
   results" without promising all four per rule (`manual-review` has one).
-- `GettingStartedContent.jsx` says "One `fail`", but its own sample shows
-  `fail: 2` (fr/ja match the sample, de follows the English).
+- ~~`GettingStartedContent.jsx` says "One `fail`", but its own sample shows
+  `fail: 2`.~~ The sample was re-captured with `@surea11y/cli` 1.2.0 for
+  core 1.11.1 and the prose now matches it in every language.
 - `OutputSchemaContent.jsx` equates "no WCAG mapping" with "manual rules";
   `aria-allowed-role` is automatic with no mapping.
 - Overview's "These are the cases where the engine reports `cantTell`"
@@ -562,22 +578,16 @@ Open English-source issues found in that review, not yet decided:
   every shipped language (CHANGELOG, `bypass-blocks-present`); the rule
   pages don't list the words either way.
 - The FAQ mentions `npm run i18n:sync`, a `core` maintainer command.
-- Found updating to core 1.10.0 (2026-10-06), both in core's released
-  1.10.0, to fix there: `region`'s applicability is cut off at "(or other
-  own content, see" on the English rule page (and in core's own
-  `RULE_CATALOG.md`), because a line in `region-manual.js`'s header starts
-  with `@implementation-notes)` and both generators read it as a new tag.
-  The es/fr/de/ja overlays translate the full intended text, so they say
-  more than the English until core rewraps that line. And 1.10.0's new
-  `BACKGROUND_OVERLAP` check counts the language switcher's menu `<ul>`
-  inside a closed `<details>` (laid out, never painted: `checkVisibility()`
-  is false), so the scan reports `contrast-computable` `cantTell` on every
-  page. Harmless to CI (`cantTell` never fails it), but noise in the
-  summary until core skips content a closed `<details>` hides.
+- Found updating to core 1.10.0 and fixed in core 1.11.0: `region`'s cut-off
+  "Applies to" (SureA11y/core#87) and the `contrast-computable`
+  `BACKGROUND_OVERLAP` noise from the language menu inside a closed
+  `<details>` (SureA11y/core#86). Still in core 1.11.1:
+  `definition-list-children-valid`'s applicability ends "(see
+  implementation-notes)", a note readers can't see.
 - Bugs outside translation: `AccessibilityStatementContent`'s issue link
   resolves to `…/core/blob/main/issues` (should be `…/core/issues`);
-  `TestMatchersUsageContent`'s sample names nonexistent ids
-  (`link-name-quality-manual`, `color-contrast-computable`); `es` has
+  `TestMatchersUsageContent`'s failure-message samples now follow the
+  test-matchers 1.2.0 README; `es` has
   glued-word JSX bugs (`OutputSchemaContent.es.jsx`,
   `SarifReportContent.es.jsx`, `WcagMappingContent.es.jsx`,
   `TestMatchersUsageContent.es.jsx`).
@@ -752,6 +762,29 @@ paragraph under "How its results differ" and the held-still animations in
 "Deterministic execution". Long one-line code samples can overflow into the
 TOC rail under the text-spacing check; split them over lines (the FAQ's
 `runOnly` sample was).
+
+## Core 1.11.1 update (2026-10-11)
+
+Pinned `@surea11y/core` 1.11.1 (1.11.0's package left out
+`src/core/engine-options.js`, so a Node scan with packs failed) and
+`@surea11y/playwright` 1.3.0 for the scan. 67 rules' applicability,
+expectation or reports changed; every overlay follows the new English.
+Content pages follow the 1.11 docs in every language: Engine options
+(reordered as core's doc is: WCAG targets and `bestPractices` first, tags
+and ids under "Advanced selection", `strictOptions`, `output.detail`,
+`packs`), Output schema (`standards`, `skippedPacks`, `engine.packs`,
+`engine.outputDetail`, `policyOutcome`, `ruleSeverity`, frame `selector`/
+`title`, the reporters reading cross-frame and binding frame results),
+the HTML/SARIF/JUnit/EARL reports, Baseline, WCAG mapping, Locales, How
+rules are organized, Known limitations, FAQ, Standalone (packs in a page,
+a time limit on a scan), and the binding, CLI and test-matchers pages
+(`.withWcag()`, `.withPacks()`, `--wcag`, `--pack`, `--compact`). New page:
+Packs (see "Where things come from"). The quickstart sample on Getting
+Started was re-run with `@surea11y/cli` 1.2.0 (three `fail`s now: the two
+contrast rules and `page-title-present`). Every mention of other engines
+by name was removed from Engine options, FAQ and Known limitations, in
+every language, as the 1.11 docs did. The homepage got one paragraph on WCAG
+targets and packs under "How its results differ".
 
 ## Content/structure review implementation
 

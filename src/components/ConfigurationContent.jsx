@@ -7,19 +7,31 @@ export function ConfigurationContent() {
 				Every runner takes the same plain <code>engineOptions</code> object — no config file to
 				maintain, no separate CLI-only flag surface to keep in sync. The CLI and every binding just
 				build that object for you from their own flags or builder methods, so what you learn here
-				applies everywhere you run a scan. Three things are worth getting right early:
+				applies everywhere you run a scan. Four things are worth getting right early:
 			</p>
 
 			<h2>Engine options</h2>
 			<p>
-				Scope a scan to exactly the rules you want — by id, by tag, by WCAG conformance version
-				(2.0, 2.1, or 2.2), or by naming a conformance profile such as WCAG 2.2 AA, EN 301 549 or
+				Scope a scan to exactly the rules you want — by naming a WCAG version and level (WCAG 2.2
+				AA in one option, best practices on top if you want them), by id, by tag, or by naming a
+				conformance profile such as WCAG 2.2 AA, EN 301 549 or
 				Section 508 — so a run reports what you're actually accountable for, nothing more
 				and nothing less. Silence known-noisy widgets globally or for a single rule without losing
 				coverage everywhere else, tune how aggressive the contrast checks are for a human auditor
 				versus an unattended CI gate, and drop in an org-specific rule alongside the built-ins when
 				the catalog doesn't cover something you care about. See{" "}
 				<a href="/configuration/engine-options/">Engine options</a> for the full reference.
+			</p>
+
+			<h2>Packs</h2>
+			<p>
+				Test against more than WCAG without forking the engine. A pack brings a national standard,
+				your organisation's accessibility policy, or a few house rules from a package of its own,
+				and the engine runs it as it runs its own rules: its profiles select what runs, its
+				checklist items come back as one result each, and every report shows them beside the WCAG
+				criteria. The same pack works from Node, every binding, the test matchers and the CLI, and{" "}
+				<code>npx surea11y-pack new</code> writes one that passes its own tests as generated. See{" "}
+				<a href="/configuration/packs/">Packs</a> to use one or write one.
 			</p>
 
 			<h2>CI integration</h2>

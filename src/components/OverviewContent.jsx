@@ -101,6 +101,16 @@ export function OverviewContent() {
 				and the margin shows it, so you can fix it before a small change turns it into a{" "}
 				<code>fail</code>. See the <a href="/results-reports/output-schema/#margin">Output schema</a>.
 			</p>
+			<p>
+				Name the standard, and the engine picks the rules.{" "}
+				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code> runs the rules for WCAG 2.2's A
+				and AA criteria, by the level each criterion has in that version, and{" "}
+				<code>bestPractices: true</code> adds the checks WCAG doesn't require. A standard beyond
+				WCAG, such as a national one or your organisation's own policy, comes as a pack: its rules,
+				profiles and checklist items run beside core's and show in every report. See{" "}
+				<a href="/configuration/engine-options/#selecting-which-rules-run">Engine options</a> and{" "}
+				<a href="/configuration/packs/">Packs</a>.
+			</p>
 
 			<h3>Checked against the ACT corpus</h3>
 			<p>
@@ -125,8 +135,8 @@ export function OverviewContent() {
 
 			<h2>Key principles</h2>
 			<ul>
-				<li><strong>Deterministic execution.</strong> The same input always produces the same output. Running animations and transitions are held still for the scan, so a page caught mid-fade gives the same result as a settled one.</li>
-				<li><strong>Conservative by design.</strong> <code>fail</code> is reserved for objective, normative violations, minimizing false alarms.</li>
+				<li><strong>Deterministic execution.</strong> The same page, rendered under the same conditions and scanned with the same options, gets the same decisions. Timings, timestamps and environment details in the result can still differ between runs. Running animations and transitions are held still for the scan, so a fade in progress doesn't change what the rules measure.</li>
+				<li><strong>Conservative by design.</strong> Core's rules reserve <code>fail</code> for objective, normative violations, to keep false alarms rare.</li>
 				<li><strong>Standards traceability.</strong> Rules map to the applicable WCAG Success Criterion whenever appropriate.</li>
 				<li><strong>Stable machine-readable output.</strong> Rule identifiers remain stable regardless of language.</li>
 				<li><strong>Framework independent.</strong> Run inside jsdom or any browser automation framework.</li>
@@ -154,8 +164,10 @@ export function OverviewContent() {
 				<li>detect a keyboard focus trap or content clipped at 400% zoom, since both require simulating real user interaction over time, not just reading the DOM at one instant.</li>
 			</ul>
 			<p>
-				These are the cases where the engine reports <code>cantTell</code>, and where a human
-				reviewer's judgement remains necessary. See{" "}
+				Some implemented checks report <code>cantTell</code> when a person has to decide. Other
+				aspects, including keyboard traps and reflow at zoom, are not checked by the engine at all
+				and need separate testing: no <code>cantTell</code> stands in for them, so a result without
+				one doesn't mean they were covered. See{" "}
 				<a href="/help/known-limitations/">Known limitations</a> for the complete list.
 			</p>
 		</>

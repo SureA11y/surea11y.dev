@@ -89,7 +89,8 @@ export function BaselineContent() {
 			<p>
 				donde <code>reasonCode</code> es el código específico de la regla proveniente de{" "}
 				<code>occurrence.data.details.reasonCode</code> (con <code>"DEFAULT"</code> por defecto
-				cuando una regla no establece uno), y <code>html</code> es el fragmento de outer-HTML de la
+				cuando una regla no establece uno, o establece algo que no sea una cadena no vacía), y{" "}
+				<code>html</code> es el fragmento de outer-HTML de la
 				ocurrencia. Esto se basa en el contenido y no en la posición: sobrevive a que el elemento
 				marcado se mueva por la página (un reordenamiento, un elemento hermano no relacionado
 				añadido o eliminado) siempre que el propio marcado del elemento marcado no cambie. Para
@@ -118,6 +119,20 @@ export function BaselineContent() {
 				<code>ruleId</code>+<code>reasonCode</code>+<code>html</code> (por ejemplo, el mismo
 				componente defectuoso repetido 3 veces) y el baseline solo registró 1 de ellos, un análisis
 				nuevo devuelve 1 conocido y 2 nuevos, no los 3 como conocidos.
+			</p>
+			<p>
+				Un hallazgo dentro de un frame de un resultado entre frames (
+				<code>runa11yCoreAcrossFrames</code>) se distingue también por su frame: su entrada registra
+				la <strong>ruta</strong> del frame, los selectores de los elementos frame que llevan hasta él
+				(<code>"frame": ["#checkout"]</code>), y solo coincide con un hallazgo en el frame de esa
+				ruta. El mismo componente defectuoso en la página y en un frame son dos hallazgos. Las
+				entradas sin <code>frame</code> son las de la propia página, así que un baseline escrito a
+				partir de un análisis de un solo documento sigue coincidiendo con la página.
+			</p>
+			<p>
+				Un resultado compacto (<code>engineOptions.output.detail: 'findings'</code>, ver{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Esquema de salida</a>) se lee
+				como el resultado completo que representa, así que se informa igual.
 			</p>
 			<p>
 				Las entradas de baseline que no coinciden con nada en un análisis nuevo se indican como{" "}
@@ -165,7 +180,9 @@ export function BaselineContent() {
 			<p>
 				<code>--baseline &lt;path&gt;</code> rechaza un archivo que no sea{" "}
 				<code>{"{ version: 1, entries: [...] }"}</code> con un error claro de salida 2 en lugar de
-				adivinar un formato más antiguo o distinto.
+				adivinar un formato más antiguo o distinto. <code>matchBaseline</code>, y la opción{" "}
+				<code>baselineEntries</code> de los generadores de informes SARIF y JUnit, aceptan el archivo tal como se
+				guardó (<code>JSON.parse</code> del mismo) o su lista <code>entries</code>.
 			</p>
 
 			<h2>

@@ -83,33 +83,45 @@ export function GettingStartedContent() {
 			<CodeBlock
 				lines={[
 					"surea11y scan: file:///path/to/index.html",
-					"  pass: 6   fail: 2   cantTell: 3   notApplicable: 114",
+					"  engine: @surea11y/core 1.11.1",
+					"  pass: 13   fail: 3   cantTell: 3   notApplicable: 115",
 					"",
-					"  occurrences by tier: fail: 2   cantTell: 4",
+					"  occurrences by tier: fail: 3   cantTell: 4",
 					"",
-					"FAIL (2 rule(s)):",
+					"FAIL (3 rule(s)):",
 					"",
 					"  contrast-enhanced  (serious, 1 fail occurrence(s))",
 					"    - html > body > main > p",
-					"      Element has insufficient color contrast (AAA) of 2.85:1 (foreground: #999999,",
-					"      background: #ffffff, font size: 0px, font weight: normal). Expected contrast",
-					"      ratio of 7:1 (normal text).",
+					"      Element has insufficient color contrast (AAA) of 2.85:1 (foreground:",
+					"      #999999, background: #ffffff, font size: 16px, font weight: normal).",
+					"      Expected contrast ratio of 7:1 (normal text).",
+					"      hint: Change the text color, the background color, or both, so the",
+					"      contrast ratio reaches at least 7:1.",
 					"",
 					"  contrast-minimum  (serious, 1 fail occurrence(s))",
 					"    - html > body > main > p",
 					"      Element has insufficient color contrast of 2.85:1 (foreground: #999999,",
-					"      background: #ffffff, font size: 0px, font weight: normal). Expected contrast",
-					"      ratio of 4.5:1 (normal text).",
+					"      background: #ffffff, font size: 16px, font weight: normal). Expected",
+					"      contrast ratio of 4.5:1 (normal text).",
+					"      hint: Change the text color, the background color, or both, so the",
+					"      contrast ratio reaches at least 4.5:1.",
+					"",
+					"  page-title-present  (serious, 1 fail occurrence(s))",
+					"    - head > title",
+					"      This page has no <title> element.",
+					"      hint: Add a <title> that says what the page is about or what it is for.",
 					"",
 					"cantTell — needs human review (3 rule(s)): contrast-computable, link-name-quality,",
 					"manual-review",
 				]}
 			/>
 			<p>
-				Ein <code>fail</code>, bei dem sich die Engine sicher ist (Kontrast), eine{" "}
-				<code>cantTell</code>-Liste zur manuellen Prüfung (ist „<span lang="en">Click here</span>“ ein guter
-				Linkname, besteht derselbe kontrastarme Text eine andere Prüfung, gibt es hier etwas, das
-				manuell angesehen werden muss) und unter den 114 <code>notApplicable</code>-Ergebnissen{" "}
+				Zwei Probleme, bei denen sich die Engine sicher ist, sodass sie <code>fail</code> ergeben:
+				der kontrastarme Text, der sowohl am AA- als auch am AAA-Verhältnis scheitert, und das
+				fehlende <code>&lt;title&gt;</code>. Dann eine <code>cantTell</code>-Liste zur manuellen
+				Prüfung (ist „<span lang="en">Click here</span>“ ein guter Linkname, besteht derselbe
+				kontrastarme Text eine andere Prüfung, gibt es hier etwas, das manuell angesehen werden
+				muss) und unter den 115 <code>notApplicable</code>-Ergebnissen{" "}
 				<code>target-size-minimum</code> — diese Regel kann ohne echtes CSS-Layout nicht laufen,
 				und das hat ein Scan von statischem HTML nicht. Unter{" "}
 				<a href="/results-reports/output-schema/">Ergebnisse und Berichte</a> erfahren Sie, was
