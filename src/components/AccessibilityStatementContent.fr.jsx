@@ -1,6 +1,6 @@
 import React from "react";
 
-const core = "https://github.com/SureA11y/core/blob/main";
+const core = "https://github.com/SureA11y/core";
 
 export function AccessibilityStatementContent() {
 	return (
