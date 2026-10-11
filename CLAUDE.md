@@ -584,8 +584,9 @@ Open English-source issues found in that review, not yet decided:
   `<details>` (SureA11y/core#86). Still in core 1.11.1:
   `definition-list-children-valid`'s applicability ends "(see
   implementation-notes)", a note readers can't see.
-- Bugs outside translation: `AccessibilityStatementContent`'s issue link
-  resolves to `…/core/blob/main/issues` (should be `…/core/issues`);
+- Bugs outside translation: ~~`AccessibilityStatementContent`'s issue link
+  resolves to `…/core/blob/main/issues`~~ (fixed 2026-10-11, every
+  language: `core` is now the repo root);
   `TestMatchersUsageContent`'s failure-message samples now follow the
   test-matchers 1.2.0 README; `es` has
   glued-word JSX bugs (`OutputSchemaContent.es.jsx`,
