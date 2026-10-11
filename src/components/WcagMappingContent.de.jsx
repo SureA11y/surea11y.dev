@@ -109,11 +109,53 @@ export function WcagMappingContent() {
 				<code>fail</code>/<code>cantTell</code> verursacht haben, statt die zusammengesetzte Regel
 				als Blackbox zu behandeln.
 			</p>
+			<p>
+				Eine eigene Regel (<code>engineOptions.customRules</code>) oder eine Regel eines{" "}
+				<a href="/configuration/packs/">Packs</a>, die gelaufen ist, zählt für die
+				zusammengesetzte Regel jedes Kriteriums, dem sie über <code>meta.wcagSc</code> oder einen
+				WCAG-Eintrag in <code>meta.normativeMappings</code> zugeordnet ist, genau wie eine
+				eingebaute Regel: Schlägt sie fehl, schlägt die zusammengesetzte Regel fehl. Die
+				zusammengesetzte Regel kennzeichnet eine eigene Regel unter ihren beitragenden Regeln mit{" "}
+				<code>custom: true</code> und listet sie in <code>data.details.customChecksIds</code>, da
+				eigene Regeln nicht wie die eingebauten gegen die Spezifikationen geprüft sind. Eine
+				Überschreibung einer eingebauten Regel zählt dort, wo ihre eigene Zuordnung es sagt: an der
+				Stelle der eingebauten Regel, wenn sie diesem Kriterium zugeordnet ist, und nirgends, wenn
+				sie keinem zugeordnet ist (mit einer Warnung).
+			</p>
 
 			<h2>Eine Konformitätsstufe anpeilen (A / AA / AAA)</h2>
+			<p>Nennen Sie WCAG-Version und -Stufe in <code>runOnly.wcag</code>:</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.2 Level A and AA:",
+					"runDomRulesInPage(url, null, {}, { wcag: { version: '2.2', level: 'AA' } });",
+					"",
+					"// The same, and the best-practice rules, which test no WCAG criterion:",
+					"runDomRulesInPage(url, null, {}, { wcag: { version: '2.2', level: 'AA' }, bestPractices: true });",
+				]}
+			/>
 			<p>
-				Übergeben Sie <code>runOnly.tags</code> (oder <code>engineOptions.tags.include</code>) mit
-				den gewünschten Stufen-Tags:
+				Ein Ziel führt die Regeln für jedes Kriterium aus, das in dieser Version auf dieser Stufe
+				und darunter gilt, nach der Stufe, die jedes Kriterium in dieser Version hat
+				(<code>WCAG_CRITERIA</code> in <code>@surea11y/core/wcag</code>); 4.1.1 Syntaxanalyse gehört
+				also zu Zielen für 2.0 und 2.1, nicht aber zu Zielen für 2.2. Es legt außerdem die
+				WCAG-Version des Laufs und die Stufe der gemeldeten Zusammenfassungen fest. Siehe{" "}
+				<a href="/configuration/engine-options/#selecting-by-wcag-target-runonlywcag">Auswahl nach WCAG-Ziel</a>.
+			</p>
+			<p>
+				Jeder Eintrag in <code>WCAG_CRITERIA</code> hat außerdem die <code>id</code>, die das W3C
+				dem Kriterium in WCAG 2.2 gibt (<code>non-text-content</code>). Jede WCAG-Zuordnung einer
+				Regel verlinkt den Abschnitt ihres Kriteriums in der Empfehlung dieser Version
+				(<code>url</code>) und sein Understanding-Dokument (<code>understandingUrl</code>), für 2.1
+				und 2.2: Die Reporter verwenden das Understanding-Dokument als Hilfelink einer Regel, wenn
+				die Regel keinen eigenen hat.
+			</p>
+
+			<h3 id="with-tags">Mit Tags</h3>
+			<p>
+				Dieselben Ziele lassen sich auch mit Stufen-Tags angeben, in <code>runOnly.tags</code>{" "}
+				(oder <code>engineOptions.tags.include</code>):
 			</p>
 			<CodeBlock
 				lang="js"
@@ -127,11 +169,12 @@ export function WcagMappingContent() {
 				falsch gemacht.</strong>{" "}
 				Eine Regel trägt ein Stufen-Tag pro zugeordnetem Erfolgskriterium, mehr nicht: Eine Regel,
 				die nur einem AA-Kriterium zugeordnet ist, trägt <code>wcag2aa</code> und <em>nicht</em>{" "}
-				<code>wcag2a</code>. <code>{"{ tags: ['wcag2aa'] }"}</code> allein führt daher die 10 Regeln
+				<code>wcag2a</code>. <code>{"{ tags: ['wcag2aa'] }"}</code> allein führt daher die 9 Regeln
 				aus, die einem AA-Kriterium von 2.0 zugeordnet sind, nicht die rund 100, die ein Ziel A +
-				AA ausmachen. Listen Sie jede Stufe auf, die Sie meinen, oder überlassen Sie das{" "}
+				AA ausmachen. Listen Sie jede Stufe auf, die Sie meinen, oder verwenden Sie{" "}
+				<code>runOnly.wcag</code>, das dieses Problem nicht hat. Auch{" "}
 				<code>engineOptions.profile</code> (<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>,{" "}
-				<code>en301549-v3.2.1</code>, <code>section508</code>); siehe{" "}
+				<code>en301549-v3.2.1</code>, <code>section508</code>) erledigt das für Sie; siehe{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Konformitätsprofile</a>.
 			</p>
 			<p>
@@ -143,8 +186,8 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				<strong>Um das entfernte Kriterium kümmert sich die Engine.</strong> Jeder Lauf ermittelt
-				eine Ziel-Version von WCAG (<code>engineOptions.wcagVersion</code>, sonst was Ihre
-				Versions-Tags nahelegen, sonst <code>2.2</code>) und meldet sie als{" "}
+				eine Ziel-Version von WCAG (<code>engineOptions.wcagVersion</code>, sonst die Version von{" "}
+				<code>runOnly.wcag</code>, sonst was Ihre Versions-Tags nahelegen, sonst <code>2.2</code>) und meldet sie als{" "}
 				<code>engine.wcagVersion</code> zurück. Bei einem 2.2-Ziel kann eine Regel, die nur SC
 				4.1.1 Syntaxanalyse zugeordnet ist, kein <code>fail</code> melden: Sie läuft, meldet ihre
 				Vorkommen und liefert <code>cantTell</code> mit einem Feld <code>wcagVersionScope</code>,
@@ -154,7 +197,8 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				Zusammengesetzte Regeln werden, anders als atomare, <em>sehr wohl</em> kumulativ gefiltert.
-				Der Runner liest die höchste in <code>tags</code> genannte Stufe und verwirft jede
+				Der Runner liest die Stufe von <code>runOnly.wcag</code> oder die höchste in{" "}
+				<code>tags</code> genannte Stufe und verwirft jede
 				zusammengesetzte Regel darüber; mit <code>{"['wcag2a', 'wcag2aa']"}</code> gibt es also
 				keinen <code>rulesResults</code>-Eintrag für ein SC, das nur AAA ist. Die genaue
 				Rangfolge steht in <code>inferTargetLevelFromRunOnly</code>/
@@ -225,8 +269,15 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				EN 301 549 ist ein Eintrag in einem Register von Normen, das Runner, Regelkatalog und
-				Berichtsgeneratoren lesen; eine weitere Norm lässt sich also auf dieselbe Weise hinzufügen,
-				mit eigenen Profilen, Regeln und Zusammenfassungen. Wie man eine registriert, steht in{" "}
+				Berichtsgeneratoren lesen. Eine Norm mit eigenen Urteilen (Anforderungen, die ihre eigenen
+				Regeln prüfen, etwa eine nationale Norm wie RGAA) oder die Checkliste einer Organisation
+				kommt als <a href="/configuration/packs/">Pack</a>: ein eigenes Paket außerhalb von core,
+				das ein Scan in <code>engineOptions.packs</code> übernimmt und dessen Eintrag für diesen
+				Scan dem Register beitritt, mit eigenen Profilen, Regeln und Zusammenfassungen. Eine eigene
+				Regel kann in ihren eigenen <code>normativeMappings</code> jede beliebige Norm nennen, aber
+				nur registrierte Normen (die von core und die der Packs des Scans) erhalten ein Profil,
+				einen <code>mappings</code>-Schalter, Opt-in-Regeln, Zusammenfassungen oder einen Platz in
+				SARIF, JUnit und dem HTML-Bericht. Wie eine Norm in core selbst eingebaut wird, steht in{" "}
 				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
 					<code>WCAG_CONFORMANCE.md</code>
 				</a>
@@ -248,14 +299,28 @@ export function WcagMappingContent() {
 			<p>Was surea11y Ihnen ehrlicherweise <em>geben</em> kann:</p>
 			<ul>
 				<li>
-					Jedes <code>fail</code> ist ein echter, deterministischer, normativer Verstoß gegen die
-					angepeilte Norm und Version, nie eine Vermutung. Standardmäßig ist diese Norm WCAG: Eine
-					Regel für eine Anforderung, die nur eine andere Norm stellt, ist eine Opt-in-Regel und läuft
-					nur, wenn Sie diese Norm als Ziel wählen (siehe{" "}
-					<a href="/configuration/engine-options/#opt-in-rules">Opt-in-Regeln</a>), daher lässt ein
-					WCAG-Scan eine Seite nie an etwas scheitern, das WCAG nicht verlangt. Die einzige Ausnahme
-					ist ein Lauf, der alle Regeln anfordert (<code>engineOptions.optInRules</code>): Er zielt
-					auf keine einzelne Norm und weist das in <code>engine.optInRules</code> aus.
+					Die eingebauten Regeln von core sind so geschrieben, dass sie nur bei einem
+					deterministischen, normativen Verstoß gegen die angepeilte Norm und Version{" "}
+					<code>fail</code> ergeben und <code>cantTell</code> melden, wenn sie nicht sicher sein
+					können. Das ist ein Entwurfsziel, keine Garantie: Die Seite{" "}
+					<a href="/help/known-limitations/">Bekannte Einschränkungen</a> nennt Grenzfälle, in
+					denen eine Regel trotzdem falsch liegen kann, die Vorkommen jedes Befunds zeigen, worauf
+					er beruht, und die Seite <a href="/rules/">Regeln</a> nennt die Konfidenz jeder Regel.
+					Wie genau eine eigene Regel, eine Regel eines Packs oder eine Überschreibung ist, hängt
+					davon ab, wie sie geschrieben wurde. Standardmäßig ist diese Norm WCAG. Eine Regel für eine
+					Anforderung, die nur eine andere Norm stellt, ist eine Opt-in-Regel: Standardmäßig läuft
+					sie nur, wenn Sie diese Norm als Ziel wählen (siehe{" "}
+					<a href="/configuration/engine-options/#opt-in-rules">Opt-in-Regeln</a>).{" "}
+					<code>engineOptions.optInRules</code> schaltet Opt-in-Regeln frei, ohne das Profil oder
+					die Filter des Scans zu entfernen. Mit <code>optInRules: 'all'</code> und ohne Profil
+					und Filter umfasst der Lauf jede Regel und zielt auf keine einzelne Norm; eine Liste von
+					Tags schaltet nur diese Gruppen von Opt-in-Regeln frei. <code>engine.optInRules</code>{" "}
+					nennt die Tags, deren Regeln gelaufen sind. Unter einem WCAG-Profil läuft eine freigeschaltete Regel nur, wenn
+					ihre Tags zu diesem Profil passen, und der Lauf zielt weiterhin auf WCAG. Unter den Regeln
+					von core führt ein Scan mit WCAG-Ziel also nur die Regeln für die Kriterien des Ziels aus,
+					dazu die Best-Practice-Regeln, wenn Sie sie ergänzen. Eine eigene Regel, eine Überschreibung
+					oder eine Regel eines Packs ohne Opt-in-Tag läuft, wenn die Auswahl sie einschließt, und
+					kann dann für eine eigene Prüfung, die WCAG nicht verlangt, <code>fail</code> melden.
 				</li>
 				<li>
 					Jedes <code>cantTell</code> ist eine ausdrückliche Markierung zur menschlichen Prüfung,

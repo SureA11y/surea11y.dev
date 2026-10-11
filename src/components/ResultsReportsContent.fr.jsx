@@ -13,8 +13,8 @@ export function ResultsReportsContent() {
 	return (
 		<>
 			<p>
-				Chaque analyse renvoie un unique objet JSON : rien de caché, rien à reconstituer. Les quatre
-				formats de rapport ci-dessous reposent directement sur ce même objet, chacun pensé pour un
+				Chaque analyse renvoie un unique objet JSON. Les quatre formats de rapport ci-dessous sont
+				générés à partir de ce même objet, chacun pensé pour un
 				lecteur différent : une personne qui parcourt un onglet de navigateur, un tableau de bord
 				d’analyse de code qui ne comprend que SARIF, une vue de tests de CI qui lit JUnit, ou le format de rapport d’implémentation du W3C lui-même.
 				Choisissez la forme adaptée à la personne qui va réellement le lire.
@@ -44,8 +44,8 @@ export function ResultsReportsContent() {
 
 			<h2>Rapport HTML</h2>
 			<p>
-				Vous l’ouvrez, vous le comprenez : pas de serveur, pas d’étape de build, pas de JSON à
-				déchiffrer. Un résumé en langage clair en haut, une agrégation WCAG regroupée par niveau de
+				Un seul fichier HTML qui s’ouvre dans n’importe quel navigateur, sans serveur ni étape de
+				build. Un résumé en langage clair en haut, une agrégation WCAG regroupée par niveau de
 				conformité, issue des résultats composites du moteur lui-même, et un tableau complet
 				consultable en dessous pour qui veut creuser. C’est le rapport à remettre à un relecteur qui
 				ne veut pas lire la sortie brute. Voir{" "}

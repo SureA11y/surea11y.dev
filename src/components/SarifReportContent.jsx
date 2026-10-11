@@ -16,13 +16,15 @@ const sarifFieldRows = [
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, when present.</> },
 	{
 		id: "fingerprint",
-		field: <code>results[].partialFingerprints["surea11y/violation/v1"]</code>,
+		field: <code>results[].partialFingerprints["surea11y/violation/v2"]</code>,
 		source: (
 			<>
-				The same <code>ruleId + reasonCode + html</code> identity key used by{" "}
-				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code>)
-				— a stable, content-based fingerprint rather than a position-based one, for consumers that
-				read it.
+				The SHA-256 digest, 64 hex digits, of the same <code>ruleId + reasonCode + html</code>{" "}
+				identity key used by <a href="/conformance/baseline/">Baseline / allowlist</a> (
+				<code>computeBaselineKey</code>) — a stable, content-based fingerprint rather than a
+				position-based one, for consumers that read it: the same finding gets the same digest in
+				every report. Before 1.11, <code>surea11y/violation/v1</code> held the key itself, so a
+				tool that read <code>v1</code> sees each finding as new once.
 			</>
 		),
 	},
@@ -31,7 +33,8 @@ const sarifFieldRows = [
 		field: <code>results[].partialFingerprints.primaryLocationLineHash</code>,
 		source: (
 			<>
-				A hash of that key, <code>&lt;16 hex digits&gt;:&lt;n&gt;</code>, where <code>n</code> counts a
+				The digest's first 16 hex digits and a count, <code>&lt;16 hex digits&gt;:&lt;n&gt;</code>{" "}
+				(unchanged from before <code>v2</code>), where <code>n</code> counts a
 				finding repeated on the page (the same broken component twice). GitHub Code Scanning matches
 				alerts between uploads on this field alone. A DOM finding has no line for GitHub's upload
 				action to hash, so without it alerts were matched by position, and fixing one finding could
@@ -42,7 +45,8 @@ const sarifFieldRows = [
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>The result's own <code>severity</code>/<code>confidence</code>, plus the same <code>reasonCode</code> and <code>html</code> snippet the fingerprint above is keyed on — informational, not part of SARIF's own schema.</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, and a <code>wcag-&lt;SC&gt;</code> tag per WCAG Success Criterion in <code>meta.normativeMappings</code>. Understanding-document entries get no tag. Each EN 301 549 clause the result carries (only when the scan asked for them, see <a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>) gets an <code>en301549-&lt;clause&gt;</code> tag, e.g. <code>en301549-9.1.1.1</code>: clause numbers are the same in every version that has them, so the tag carries no version.</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, and a <code>wcag-&lt;SC&gt;</code> tag per WCAG Success Criterion in <code>meta.normativeMappings</code>. Understanding-document entries get no tag. Each EN 301 549 clause the result carries (only when the scan asked for them, see <a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>) gets an <code>en301549-&lt;clause&gt;</code> tag, e.g. <code>en301549-9.1.1.1</code>: clause numbers are the same in every version that has them, so the tag carries no version, and a pack's standard or checklist is tagged the same way under its own key (a checklist item's id, <code>acme-images</code>, is its own tag). Then the rule's own <code>meta.tags</code> (a custom rule's included), without the engine's bookkeeping tags and the criterion tags the <code>wcag-&lt;SC&gt;</code> tags already give.</> },
+	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, the rule's help link, when it is an absolute <code>http(s)</code> URL; otherwise the Understanding document of the first WCAG criterion it maps to; absent for a rule with neither, which no built-in rule is: one mapped to no criterion links its section of the rule catalog.</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>The <code>toolVersion</code> option, if given (a tool wrapping the engine passes its own); otherwise <code>engine.version</code>, the engine release that produced the result. <code>"0.0.0"</code> only for a result without one, from a release before 1.10.0.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>The <code>category</code> option, with a trailing <code>/</code> added if it has none (GitHub reads everything up to the last slash as the category). Absent when no category is given. See <a href="#scanning-at-several-viewport-widths">Scanning at several viewport widths</a>.</> },
 	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> and <code>environment</code> from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, the opt-in rule tags it added beyond that target when it added any, and the conditions the page was rendered under (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code>; see <a href="/results-reports/output-schema/">Output schema</a>). Omitted for results from engines that predate those fields.</> },
@@ -85,7 +89,7 @@ export function SarifReportContent() {
 				computable background. Those never become results — a consumer treats every result as an
 				alert, and "this was not evaluated" is not one — but they are not dropped either. They are
 				carried as <code>note</code>-level entries in{" "}
-				<code>runs[0].invocations[0].toolExecutionNotices</code>, each naming the rule it came
+				<code>runs[0].invocations[0].toolExecutionNotifications</code>, each naming the rule it came
 				from via <code>associatedRule.id</code>:
 			</p>
 			<CodeBlock
@@ -94,7 +98,7 @@ export function SarifReportContent() {
 					'"invocations": [',
 					"  {",
 					'    "executionSuccessful": true,',
-					'    "toolExecutionNotices": [',
+					'    "toolExecutionNotifications": [',
 					"      {",
 					'        "level": "note",',
 					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
@@ -110,6 +114,13 @@ export function SarifReportContent() {
 				health</strong>: no contrast alerts can mean the page is fine, or that contrast was never
 				computable, and only the notice separates the two. The block is emitted only when there is something to say, so
 				a run with nothing to report has no <code>invocations</code> key at all.
+			</p>
+			<p>
+				A rule that did not complete (it threw: <code>cantTell</code> with no occurrences and an{" "}
+				<code>error</code>) judged nothing, so it is no result either. It is an{" "}
+				<code>error</code>-level notification in the same list,{" "}
+				<code>"The rule &lt;id&gt; did not complete: &lt;error&gt;"</code>, naming the rule in{" "}
+				<code>associatedRule.id</code>, so the gap in coverage doesn't read as a pass.
 			</p>
 			<DataTable
 				label="Engine outcomes as SARIF levels"
@@ -139,6 +150,12 @@ export function SarifReportContent() {
 				]}
 				rows={sarifFieldRows}
 			/>
+			<p>
+				A compact result (<code>engineOptions.output.detail: 'findings'</code>, see{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Output schema</a>) is read as
+				the full result it stands for, so it is reported the same. A result whose{" "}
+				<code>standards</code> list is missing or damaged still tags every standard its rules name.
+			</p>
 
 			<h2 id="sarif-locations">Locations</h2>
 			<p>
@@ -167,6 +184,27 @@ export function SarifReportContent() {
 				<code>occurrence.selector</code> is additionally carried as a{" "}
 				<code>logicalLocations[].fullyQualifiedName</code>, so a consumer that reads logical
 				locations still gets the "which element" signal even without a usable physical location.
+			</p>
+
+			<h2 id="cross-frame-results">Cross-frame results</h2>
+			<p>
+				A result from <code>runa11yCoreAcrossFrames</code>, or a binding's{" "}
+				<code>.frames(true)</code> scan (see{" "}
+				<a href="/results-reports/output-schema/#cross-frame-result">Output schema</a>), is one run:
+				every frame's findings are results in it. A finding in a frame is located in that frame's
+				document (<code>artifactLocation.uri</code> is the frame's URL), and carries the frame's
+				path in <code>properties.frame</code>:
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={['"properties": { "severity": "serious", "confidence": "high", "frame": ["#checkout"] }']}
+			/>
+			<p>
+				The path is part of the finding's identity too (<code>partialFingerprints</code>), so the
+				same defect in the page and in a frame, or in two frames, are two alerts. A frame that did
+				not answer (no responder, or it timed out) is a <code>warning</code>-level notification,{" "}
+				<code>"The frame #ads (https://ads.example/) was not scanned: &lt;error&gt;"</code>, since
+				nothing in it was checked.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Scanning at several viewport widths</h2>

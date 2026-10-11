@@ -9,7 +9,9 @@ const outcomeRows = [
 		junit: (
 			<>
 				<code>&lt;failure type="fail"&gt;</code>, one line per failing occurrence (message, hint,
-				selector, markup)
+				selector, markup), then <code>help: &lt;url&gt;</code> when the rule has an{" "}
+				<code>http(s)</code> help link (<code>meta.helpUrl</code>), or else its first WCAG
+				criterion's Understanding document
 			</>
 		),
 		why: "The deterministic, gating case.",
@@ -41,6 +43,12 @@ const outcomeRows = [
 			</>
 		),
 	},
+	{
+		id: "ruleError",
+		outcome: <>a rule that did not complete (<code>cantTell</code> with no occurrences and an <code>error</code>: it threw)</>,
+		junit: <><code>&lt;error type="ruleError"&gt;</code> with the error, counted in <code>errors</code></>,
+		why: "JUnit's element for a test that could not run. The page was not checked against the rule, which is neither a pass nor something to review.",
+	},
 ];
 
 const optionRows = [
@@ -52,7 +60,8 @@ const optionRows = [
 			<>
 				<code>'failure'</code> reports <code>cantTell</code> rules as{" "}
 				<code>&lt;failure type="cantTell"&gt;</code>, for a pipeline that must not pass while
-				anything is undecided.
+				anything is undecided. Read in any case; another value throws a <code>TypeError</code>,
+				as a misspelt one would quietly not gate.
 			</>
 		),
 	},
@@ -70,7 +79,8 @@ const optionRows = [
 			<>
 				Entries from <a href="/conformance/baseline/">the baseline</a>'s{" "}
 				<code>buildBaselineEntries()</code>. Fail occurrences recorded there are dropped, exactly
-				as in SARIF. A rule whose every failure is already known is{" "}
+				as in SARIF. It takes the baseline file as saved (<code>JSON.parse</code> of it) or its{" "}
+				<code>entries</code> list. A rule whose every failure is already known is{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, not
 				passing: it did not pass.
 			</>
@@ -160,7 +170,11 @@ export function JunitReportContent() {
 				<li>
 					Suites come from each rule's own WCAG mappings, not from the composites, so every rule
 					that ran is reported even when composites were excluded. The composite, when it ran,
-					supplies the suite's title and the <code>criterionOutcome</code> property. A rule mapped
+					supplies the suite's title and the <code>criterionOutcome</code> property, which counts the
+					custom rules mapped to the criterion as it counts the built-in ones. A criterion checked
+					by several composites (4.1.2: its accessible name and its ARIA validity) takes the worst
+					of their outcomes, and the name their titles share (<code>WCAG 4.1.2 Name, role, value</code>).
+					A rule mapped
 					to two criteria appears in both suites. A rule mapped to no criterion goes into a final{" "}
 					<code>Other checks</code> suite with <code>classname="other"</code>.
 				</li>
@@ -189,9 +203,30 @@ export function JunitReportContent() {
 				<li>
 					<code>en301549</code> properties name the EN 301 549 clause that restates the criterion,
 					where there is one and the scan asked for EN 301 549 clauses (see{" "}
-					<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>).
+					<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>). Each other standard
+					listed in the result's <code>standards</code> adds properties named by its key, one per
+					requirement of it that the suite's rules map to: a{" "}
+					<a href="/configuration/packs/">pack</a>'s checklist item that groups the rule is listed
+					by its id, <code>&lt;property name="acme" value="acme-images"/&gt;</code>. A standard
+					that only a custom rule names adds no property.
 				</li>
 			</ul>
+			<p>
+				A compact result (<code>engineOptions.output.detail: 'findings'</code>) is read as the full
+				result it stands for, so it is reported the same.
+			</p>
+
+			<h2 id="cross-frame-results">Cross-frame results</h2>
+			<p>
+				A cross-frame result (see{" "}
+				<a href="/results-reports/output-schema/#cross-frame-result">Output schema</a>) gives the
+				page's suites first, then each frame's, named for the frame's path (
+				<code>Frame #checkout: WCAG 1.1.1 Non-text content: text alternatives</code>) and with a{" "}
+				<code>frame</code> property holding it, so a failure in a frame is not merged with the
+				page's. A frame that did not answer is a suite <code>Frame &lt;path&gt;</code> with one
+				skipped testcase, <code>Not scanned: &lt;error&gt;</code>: the frame was not checked, which
+				is not a pass. The totals on <code>&lt;testsuites&gt;</code> count every frame.
+			</p>
 
 			<h2>Outcomes</h2>
 			<DataTable

@@ -111,23 +111,33 @@ export function EarlReportContent() {
 				</li>
 				<li>
 					<strong><code>test.isPartOf</code></strong> lists the Success Criteria that rule maps
-					to, as <code>WCAG2:&lt;criterion-id&gt;</code>. Omitted entirely for a rule claiming no
-					criterion — <code>aria-allowed-role</code> is the engine's one automatic rule in that
-					position, and asserting an empty list would read as "maps to nothing we could find"
+					to, as <code>WCAG2:&lt;criterion-id&gt;</code>: each <code>normativeMappings</code> entry
+					whose <code>standard</code> is <code>WCAG</code> or absent (as in SARIF) and that has no{" "}
+					<code>type</code>. Omitted entirely for a rule claiming no criterion —{" "}
+					<code>aria-allowed-role</code> and <code>landmark-role-name-present</code> are the
+					engine's automatic rules in that position, and asserting an empty list would read as "maps to nothing we could find"
 					rather than "deliberately maps to none."
 				</li>
 				<li>
-					<strong><code>assertedBy</code></strong> and <strong><code>mode</code></strong> appear
-					only when you supply them.
+					<strong><code>assertedBy</code></strong> is always there unless you pass{" "}
+					<code>assertor: null</code>: it defaults to <code>surea11y</code> and the engine version
+					the results carry. <strong><code>mode</code></strong> appears only when you supply it.
 				</li>
 			</ul>
 			<p>
 				Criterion ids are derived from the criterion's own title (<code>Non-text Content</code> →{" "}
 				<code>non-text-content</code>). <code>normativeMappings</code> also carries
-				Understanding-document references and non-WCAG standards, which share{" "}
-				<code>standard: "WCAG"</code> and a <code>requirement</code> with the real thing; a Success
-				Criterion is the entry that states a conformance level and claims no other document type,
-				and only those are read.
+				Understanding-document references, which have a <code>type</code>, and other standards'
+				entries (EN 301 549 clauses, a pack's requirements or checklist items), which name their
+				own <code>standard</code>; both can share a <code>requirement</code> number with a
+				criterion. Only entries whose <code>standard</code> is <code>WCAG</code> or absent and that
+				have no <code>type</code> are read as Success Criteria. No conformance level is needed.{" "}
+				<code>isPartOf</code> lists WCAG criteria only; other standards' entries are left out.
+			</p>
+			<p>
+				A compact result (<code>engineOptions.output.detail: 'findings'</code>, see{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Output schema</a>) is read as
+				the full result it stands for, so it is reported the same.
 			</p>
 
 			<h2>Outcomes</h2>
@@ -174,15 +184,19 @@ export function EarlReportContent() {
 				Results sharing a URL merge into one subject — a caller scanning the same page under
 				different <code>engineOptions</code> is still describing one resource, and the context has
 				no way to express two subjects with the same source.{" "}
-				<strong>Where two results assert on the same rule for the same URL, the last one
-				wins.</strong> That includes the same page scanned at two viewport widths: EARL has no term
-				for the conditions a page was rendered under, so a report built from several widths keeps
-				only the last width's assertion for each rule. Render one report per width if the widths
-				matter.
+				<strong>Where two results assert on the same rule for the same URL, the worse outcome
+				is kept</strong>: <code>earl:failed</code>, then <code>earl:cantTell</code>, then{" "}
+				<code>earl:passed</code>, then <code>earl:inapplicable</code>, so no order of the inputs
+				can hide a failure. That includes the same page scanned at two viewport widths: EARL has
+				no term for the conditions a page was rendered under, so a report built from several
+				widths keeps, for each rule, a failure at any width. Render one report per width if the
+				widths themselves matter.
 			</p>
 			<p>
 				Output is deterministic: subjects sort by source, assertions by rule id, and the same
-				inputs produce byte-identical output in any order. That is what makes a diff between two
+				inputs produce byte-identical output in any order. The one exception is results without a
+				URL, which are told apart by their place in the list (<code>about:blank#result-2</code>);
+				give each result its URL when order should not matter. That is what makes a diff between two
 				engine versions meaningful.
 			</p>
 

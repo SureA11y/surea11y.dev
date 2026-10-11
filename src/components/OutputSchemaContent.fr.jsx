@@ -12,7 +12,7 @@ const topLevelRows = [
 		meaning: (
 			<>
 				La version de <code>@surea11y/core</code> qui a produit le résultat, par exemple{" "}
-				<code>"1.10.0"</code> : c’est elle qu’il faut citer dans un rapport de bug, et elle permet
+				<code>"1.11.1"</code> : c’est elle qu’il faut citer dans un rapport de bug, et elle permet
 				de distinguer des résultats de deux versions. Un résultat peut changer d’une version à
 				l’autre sans que sa forme change, donc ce n’est pas <code>schemaVersion</code>. Les
 				générateurs <a href="/results-reports/sarif-report/">SARIF</a> et{" "}
@@ -104,8 +104,9 @@ const topLevelRows = [
 		meaning: (
 			<>
 				Présent seulement quand le profil appliqué écarte des règles :{" "}
-				<code>{"{ rules, criteria }"}</code>, les règles qu’il nomme et les critères WCAG dont il
-				dispense. Leurs règles et agrégations WCAG ne se sont pas exécutées. Aucun profil intégré
+				<code>{"{ rules, criteria }"}</code>, les règles qu’il nomme et les critères WCAG qu’il
+				écarte. Leurs règles et agrégations WCAG ne se sont pas exécutées, ce qui restreint
+				l’analyse sans changer ce que WCAG exige. Aucun profil intégré
 				n’écarte quoi que ce soit.
 			</>
 		),
@@ -134,6 +135,39 @@ const topLevelRows = [
 				versions, <code>"en301549:V3.2.1"</code> pour une seule. Son absence signifie que chaque
 				résultat ne nomme que WCAG. Voir{" "}
 				<a href="/configuration/engine-options/#other-standards-mappings">Autres normes</a>.
+			</>
+		),
+	},
+	{
+		id: "engine.packs",
+		field: <code>engine.packs</code>,
+		meaning: (
+			<>
+				Présent seulement quand l’analyse s’est exécutée avec <code>engineOptions.packs</code> :
+				chaque pack qui s’est exécuté, sous la forme <code>name@version</code>, trié par nom. Voir{" "}
+				<a href="/configuration/packs/">Packs</a>.
+			</>
+		),
+	},
+	{
+		id: "engine.outputDetail",
+		field: <code>engine.outputDetail</code>,
+		meaning: (
+			<>
+				Présent seulement quand <code>engineOptions.output.detail</code> vaut{" "}
+				<code>'findings'</code>, sous la forme <code>"findings"</code> : chaque résultat de
+				vérification <code>pass</code> ou <code>notApplicable</code> qui ne liste aucune occurrence
+				est compact, <code>{"{ ruleId, outcome, type }"}</code> plus sa <code>margin</code> ou son{" "}
+				<code>error</code> s’il en a, sans le titre, la description et le <code>meta</code>, qui
+				appartiennent au catalogue et sont les mêmes sur chaque page. Les résultats{" "}
+				<code>fail</code> et <code>cantTell</code>, les agrégations et <code>engine</code> restent
+				complets : aucun verdict ne change. Les reporters (SARIF, JUnit, le rapport HTML, EARL, les
+				fonctions de baseline) lisent un résultat compact comme le résultat complet, en le
+				complétant à partir du catalogue de core. Un résultat que ce catalogue ne pourrait pas
+				compléter reste complet : chaque résultat de vérification d’une analyse avec{" "}
+				<code>packs</code>, celui d’une règle personnalisée, et celui dont les{" "}
+				<code>messages</code> de l’analyse ont modifié le titre ou la description. Le résultat
+				d’une page vide passe d’environ 236 Ko à 80 Ko.
 			</>
 		),
 	},
@@ -176,7 +210,7 @@ const topLevelRows = [
 			</>
 		),
 	},
-	{ id: "url", field: <code>url</code>, meaning: <>L’argument <code>pageUrl</code> que vous avez passé, ou <code>document.location.href</code> si vous avez passé <code>null</code> ou l’avez omis, ou <code>null</code> si ni l’un ni l’autre n’est disponible.</> },
+	{ id: "url", field: <code>url</code>, meaning: <>L’argument <code>pageUrl</code> que vous avez passé, ou <code>document.location.href</code> si vous avez passé <code>null</code> ou l’avez omis (ou avez passé autre chose qu’une chaîne, ce qui journalise aussi un <code>console.warn</code>), ou <code>null</code> si ni l’un ni l’autre n’est disponible.</> },
 	{ id: "title", field: <code>title</code>, meaning: <><code>document.title</code> au moment de l’analyse, ou <code>null</code>.</> },
 	{
 		id: "timestamp",
@@ -255,6 +289,42 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "standards",
+		field: <code>standards</code>,
+		meaning: (
+			<>
+				Présent seulement quand le résultat nomme une norme autre que WCAG dans une entrée de{" "}
+				<code>meta.normativeMappings</code> ou dans le <code>meta.standard</code> d’une agrégation :
+				un <code>{"{ key, standard, titleLang?, note? }"}</code> par norme enregistrée qu’il nomme,
+				y compris celle d’un pack, dans l’ordre du registre. <code>key</code> est la clé de la norme
+				(<code>"en301549"</code>), <code>standard</code> le nom que portent ses entrées (
+				<code>"EN 301 549"</code>), <code>titleLang</code> la langue dans laquelle sont rédigés les
+				titres de ses propres agrégations quand ce n’est pas celle de l’analyse, et{" "}
+				<code>note</code> le texte affiché au-dessus de ses propres agrégations dans le rapport
+				HTML, dans la langue de l’analyse. Les reporters le lisent à la place du registre, si bien
+				qu’un résultat enregistré s’affiche de la même façon où qu’il soit rendu, que cette
+				installation connaisse la norme ou non. Une norme que seule une règle personnalisée nomme
+				n’est pas listée.
+			</>
+		),
+	},
+	{
+		id: "skippedPacks",
+		field: <code>skippedPacks</code>,
+		meaning: (
+			<>
+				Présent seulement quand un pack de <code>engineOptions.packs</code> ne s’est pas exécuté :
+				chacun sous la forme <code>{"{ name, reason }"}</code>, <code>name</code> valant{" "}
+				<code>null</code> quand le pack n’en avait pas. Dans une page (
+				<code>runa11yCoreInPage</code>), <code>name</code> est le <code>name@version</code> fourni,
+				et la raison indique pourquoi la page ne l’a pas exécuté : aucun appel à{" "}
+				<code>packScript</code> n’a enregistré exactement l’ensemble nommé, ou le script a été
+				préparé avec une autre version de core. Chacun est aussi journalisé avec{" "}
+				<code>console.warn</code>.
+			</>
+		),
+	},
+	{
 		id: "overriddenBuiltinIds",
 		field: <code>overriddenBuiltinIds</code>,
 		meaning: (
@@ -279,7 +349,9 @@ const topLevelRows = [
 						lorsque l’entrée n’en avait pas) : pas d’id, un <code>runInPage</code> qui n’est pas une
 						fonction ou ne peut pas être reconstruit à partir de son code source, un <code>meta</code>{" "}
 						qui échoue à la validation, un id qu’une autre règle personnalisée porte déjà, ou l’id d’une
-						règle composite. Toujours un tableau ; vide lorsque toutes les règles personnalisées ont été
+						règle composite ; ou une règle valide que la sélection de l’exécution ne retient pas (sous
+						un profil ou une cible WCAG, une règle portant le tag <code>best-practice</code> ou sans
+						tag WCAG), dont la <code>reason</code> indique comment la sélectionner. Toujours un tableau ; vide lorsque toutes les règles personnalisées ont été
 						exécutées. Chacune est aussi journalisée avec <code>console.warn</code>. Une règle listée
 						ici ne figure dans aucun résultat, ce qui permet de distinguer une analyse qui l’a écartée
 						d’une analyse où elle a donné <code>pass</code>.
@@ -295,9 +367,15 @@ const occurrenceRows = [
 		meaning: (
 			<>
 				Un sélecteur CSS construit au mieux pour retrouver l’élément signalé (voir{" "}
-				<code>helpers.buildSelector</code> dans <code>RULE_AUTHORING.md</code>). Son unicité
-				n’est pas garantie face à des structures DOM hostiles, mais le moteur vérifie activement
-				qu’il résout bien vers l’élément signalé avant de l’utiliser. L’exception est une règle
+				<code>helpers.buildSelector</code> dans <code>RULE_AUTHORING.md</code>). Un id, un test id,
+				un <code>name</code> ou un <code>aria-label</code> ne sert de point d’ancrage que lorsqu’aucun
+				autre élément du document ne le porte, éléments masqués, exclus et hors périmètre compris,
+				puisque <code>querySelector</code> le résout sur tout le document ; sinon, le sélecteur est
+				un chemin. Son unicité n’est pas garantie pour toutes les structures DOM : un élément situé
+				dans une shadow root est nommé dans son propre arbre (<code>structuralPath</code> le situe),
+				et le chemin d’un élément très profond est raccourci par le haut. Sur 255 pages de test et
+				pages réelles, 15 des 39 857 sélecteurs ne désignaient pas exactement leur élément, tous
+				de ces types. L’exception est une règle
 				dont le constat <em>est</em> un élément absent : <code>page-title-present</code> signale{" "}
 				<code>head &gt; title</code> avec un <code>html</code> valant{" "}
 				<code>&lt;title&gt;(missing)&lt;/title&gt;</code>, dont aucun n’existe sur la page. Ce
@@ -415,7 +493,12 @@ const occurrenceRows = [
 				Le niveau auquel appartient cette occurrence, pour une règle qui a réparti ses constats
 				entre un niveau <code>fail</code> certain et un niveau <code>cantTell</code> à revoir.
 				Une règle qui ne signale qu’un seul niveau l’omet ; dans ce cas, l’<code>outcome</code>{" "}
-				du résultat lui-même est le niveau de l’occurrence.
+				du résultat lui-même est le niveau de l’occurrence. Le résultat concorde toujours avec les
+				niveaux : toute occurrence de niveau <code>fail</code> le rend <code>fail</code>, et un{" "}
+				<code>fail</code> dont toutes les occurrences sont de niveau <code>cantTell</code> devient{" "}
+				<code>cantTell</code>, si bien que SARIF, JUnit, EARL et les baselines donnent une seule
+				réponse. Le moteur tranche pour une règle personnalisée ou de pack qui les renvoie en
+				désaccord ; sous la politique par défaut, une règle manuelle n’est jamais <code>fail</code>.
 			</>
 		),
 	},
@@ -432,7 +515,7 @@ const uncertaintyRows = [
 ];
 
 const outcomeRows = [
-	{ id: "fail", outcome: <code>fail</code>, meaning: "Violation normative déterministe : la procédure de décision ne devine rien.", manual: "Non (converti en cantTell)" },
+	{ id: "fail", outcome: <code>fail</code>, meaning: "La règle signale que l’exigence qu’elle vérifie n’est pas satisfaite. Lisez sa correspondance, sa confiance et ses occurrences pour interpréter le constat.", manual: "Non, sous la politique par défaut (converti en cantTell)" },
 	{ id: "pass", outcome: <code>pass</code>, meaning: "La ou les cibles applicables de la règle existent et aucune n’a été signalée.", manual: "Oui" },
 	{ id: "cantTell", outcome: <code>cantTell</code>, meaning: "Nécessite un jugement humain : soit c’est réellement ambigu, soit c’est le constat indicatif d’une règle manuelle.", manual: "Oui" },
 	{ id: "notApplicable", outcome: <code>notApplicable</code>, meaning: "La règle n’a trouvé aucun élément auquel elle s’applique sur cette page ou dans ce périmètre.", manual: "Oui" },
@@ -458,17 +541,24 @@ export function OutputSchemaContent() {
 					"{",
 					"  engine: {",
 					"    tag: string,",
+					"    version: string,       // the @surea11y/core release that produced the result",
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
 					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
+					"    profileExcludes?: { rules: string[], criteria: string[] },",
+					"    optInRules?: string[],",
+					'    outputDetail?: "findings",',
+					"    packs?: string[],      // name@version",
 					"    environment: {",
 					"      layout: boolean,",
 					"      viewport?: { width: number, height: number },  // CSS px",
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
-					'      fonts?: "loaded" | "loading"',
+					'      fonts?: "loaded" | "loading",',
+					'      images?: "loaded" | "loading",',
+					"      animationsSettled?: number",
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -479,8 +569,10 @@ export function OutputSchemaContent() {
 					"  contextMatch: { elementCount: number, unmatchedSelectors: string[] } | null,",
 					"  checksResults: CheckResult[],",
 					"  rulesResults: CompositeResult[],",
+					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
-					"  skippedCustomRules: Array<{ id: string | null, reason: string }>",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string }>,",
+					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
 					"}",
 				]}
 			/>
@@ -508,8 +600,9 @@ export function OutputSchemaContent() {
 					"{",
 					"  topFrame: <the normal top-level result shape above>,",
 					"  frames: Array<",
-					"    | { url: string | null, topFrame: <top-level result>, frames: [...same shape, recursively] }",
-					"    | { url: string | null, error: string }",
+					"    | { url: string | null, selector: string | null, title: string | null,",
+					"        topFrame: <top-level result>, frames: [...same shape, recursively] }",
+					"    | { url: string | null, selector: string | null, title: string | null, error: string }",
 					"  >",
 					"}",
 				]}
@@ -522,7 +615,15 @@ export function OutputSchemaContent() {
 				</li>
 				<li>
 					<code>frames</code> contient une entrée par <code>&lt;iframe&gt;</code>/
-					<code>&lt;frame&gt;</code> enfant direct dans le périmètre analysé. Un enfant
+					<code>&lt;frame&gt;</code> enfant direct dans le périmètre analysé (shadow roots ouvertes
+					comprises, ainsi que le périmètre lui-même quand c’est un frame), sauf un frame que la page
+					n’affiche pas et un frame qu’exclut <code>excludeSelectors</code>, qui sont écartés avec
+					tout leur document. Chaque entrée nomme son élément frame : <code>selector</code> est un
+					sélecteur CSS de l’<code>&lt;iframe&gt;</code>/<code>&lt;frame&gt;</code> dans le document
+					parent, et <code>title</code> est l’attribut <code>title</code> de l’élément, ou{" "}
+					<code>null</code>, si bien que des frames qui chargent le même document se distinguent.{" "}
+					<code>url</code> est le document qu’affiche le frame ou, pour un frame qui n’a pas encore
+					navigué, son <code>src</code>. Un enfant
 					joignable (qui a appelé <code>a11yCoreEnableFrameResponder()</code>) fournit son propre{" "}
 					<code>{"{ url, topFrame, frames }"}</code> complet, y compris <em>ses propres</em>{" "}
 					<code>frames</code> imbriqués, récursivement, puisqu’un petit-enfant plus profond n’est
@@ -540,16 +641,36 @@ export function OutputSchemaContent() {
 					globale, donc l’imbrication est exprimée par la structure.
 					</li>
 					<li>
-						<strong>Les générateurs de rapports prennent un seul résultat de premier niveau, pas cet
-						arbre.</strong> <code>renderHtmlReport</code>, <code>renderSarifReport</code>,{" "}
-						<code>renderJunitReport</code>, <code>buildBaselineEntries</code> et{" "}
-						<code>matchBaseline</code> lèvent une <code>TypeError</code> lorsqu’on leur passe autre
-						chose qu’un objet doté d’un tableau <code>checksResults</code> (un résultat multi-frames,
-						un tableau, <code>null</code> ou <code>undefined</code> issu d’une analyse qui a échoué),
-						au lieu de le présenter comme une analyse qui n’a rien trouvé. Passez{" "}
-						<code>topFrame</code>, et le <code>topFrame</code> de chaque frame, dans des appels
-						séparés. <code>renderEarlReport</code> prend l’arbre tel quel : chaque frame qui a répondu
-						devient un sujet à part entière, identifié par son URL.
+						<strong>Les générateurs de rapports prennent l’arbre tel quel.</strong>{" "}
+						<code>renderHtmlReport</code>, <code>renderSarifReport</code>,{" "}
+						<code>renderJunitReport</code>, <code>buildBaselineEntries</code>,{" "}
+						<code>matchBaseline</code> et <code>renderEarlReport</code> en rapportent chaque frame :
+						chaque frame qui a répondu, avec ses propres constats, localisés dans son propre
+						document, et chaque frame qui n’a pas répondu comme non analysé, pour que le trou dans
+						la couverture ne se lise pas comme une réussite. Un frame est nommé par son{" "}
+						<strong>chemin</strong>, les <code>selector</code> des éléments frame qui y mènent
+						depuis la page, du plus extérieur au plus intérieur (
+						<code>#checkout → iframe:nth-of-type(2)</code>). Ils lèvent une <code>TypeError</code>{" "}
+						pour tout ce qui n’est ni un résultat d’analyse ni un résultat multi-frames (un tableau,{" "}
+						<code>null</code> ou <code>undefined</code> issu d’une analyse qui a échoué), au lieu de
+						le présenter comme une analyse qui n’a rien trouvé.
+					</li>
+					<li>
+						<strong>Ils acceptent aussi l’analyse de frames d’un binding.</strong> Le{" "}
+						<code>.frames(true)</code> des bindings navigateur renvoie{" "}
+						<code>{"{ topFrame, frames }"}</code>, chaque frame étant un résultat simple (ou{" "}
+						<code>{"{ url, error }"}</code>) plutôt qu’une entrée imbriquée ; les générateurs de
+						rapports, <code>getMargins</code> et <code>flattenCrossFrameResult</code> lisent chacun de
+						ces frames comme analysé, nommé par le chemin <code>['iframe']</code>, puisqu’il ne porte
+						pas de <code>selector</code>.
+					</li>
+					<li>
+						<code>flattenCrossFrameResult(result)</code>, de <code>@surea11y/core</code>, liste les
+						frames tels que les lisent les générateurs de rapports :{" "}
+						<code>{"[{ frame: { path, title, url }, result }]"}</code>, ou <code>error</code> à la
+						place de <code>result</code> pour un frame qui n’a pas répondu, la page d’abord et chaque
+						frame avant les frames qu’il contient. Le <code>path</code> de la page est{" "}
+						<code>[]</code>. Un résultat d’analyse simple donne une seule entrée.
 					</li>
 					</ul>
 
@@ -561,6 +682,8 @@ export function OutputSchemaContent() {
 					'  outcome: "pass" | "fail" | "cantTell" | "notApplicable",',
 					'  outcomeNormalized: "pass" | "fail" | "cantTell" | "inapplicable",',
 					'  severity: "minor" | "moderate" | "serious" | "critical",',
+					'  ruleSeverity?: "minor" | "moderate" | "serious" | "critical", // the rule\'s own, when a profile gave it another',
+					'  policyOutcome?: "pass" | "fail" | "cantTell" | "notApplicable", // what the rule found, when the policy made it cantTell',
 					'  confidence: "high" | "medium" | "low",',
 					'  type: "automatic" | "manual",',
 					"  occurrences: Occurrence[],",
@@ -576,7 +699,10 @@ export function OutputSchemaContent() {
 					"    deprecated: boolean,",
 					"    deprecation: object | null,",
 					'    category: "perceivable" | "operable" | "understandable" | "robust" | null,',
-					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string, conformanceLevel?: string, wcagSc?: string[] }>,",
+					"    helpUrl: string,       // where to read how to fix it; \"\" when there is none",
+					"    tags: string[],        // the rule's tags, its own and the engine's",
+					"    normativeMappings: Array<{ standard: string, version: string, requirement: string, title: string,",
+					"      conformanceLevel?: string, wcagSc?: string[], url?: string, understandingUrl?: string }>,",
 					"    standard: string | null,",
 					"    applicability: string,",
 					"    expectation: string,",
@@ -606,7 +732,7 @@ export function OutputSchemaContent() {
 					"    removedSc: string[],",
 					'    coercedFrom: "fail"',
 					"  },",
-					"  error?: string           // present only if the rule threw — see below",
+					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
 				]}
 			/>
@@ -619,22 +745,25 @@ export function OutputSchemaContent() {
 					aligner soit sur votre propre vocabulaire, soit sur celui du moteur.
 				</li>
 				<li>
-					<strong>Les règles <code>type: "manual"</code> ne peuvent jamais renvoyer{" "}
-					<code>outcome: "fail"</code>.</strong>{" "}
+					<strong>Sous la politique par défaut <code>a11y</code>, les règles{" "}
+					<code>type: "manual"</code> renvoient <code>cantTell</code> plutôt que{" "}
+					<code>fail</code>.</strong>{" "}
 					Si la logique propre d’une règle manuelle aurait conclu à <code>fail</code>, le moteur
 					le convertit en <code>cantTell</code> et ajoute une note explicative à{" "}
 					<code>error</code>. Ce comportement est imposé de façon centralisée (
 					<code>policy.coerceManualFailToCantTell</code>, activé par défaut sous le contrat de
 					politique <code>a11y</code> ; voir{" "}
 					<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>), et ce n’est pas à chaque
-					règle d’y penser. <code>fail</code> est réservé aux constats déterministes{" "}
+					règle d’y penser. Sous cette politique, <code>fail</code> est réservé aux constats déterministes{" "}
 					<code>type: "automatic"</code> uniquement.
 				</li>
 				<li>
 					<strong><code>meta.normativeMappings</code></strong> est ce qui relie un résultat de
-					vérification à un critère de succès WCAG : <code>[]</code> pour les règles sans
-					correspondance WCAG formelle (ce moteur les appelle des règles indicatives{" "}
-					<code>type: "manual"</code>). Voir{" "}
+					vérification à un critère de succès WCAG. Une liste vide signifie que la règle n’a
+					aucune correspondance formelle dans ce résultat. Elle ne dit pas si la règle est
+					automatique ou manuelle : c’est <code>type</code> qui l’indique (
+					<code>aria-allowed-role</code>, par exemple, est automatique et n’a aucune
+					correspondance WCAG). Voir{" "}
 					<a href="/conformance/wcag-mapping/">Conformité</a> pour la façon dont elles sont
 					agrégées. <strong>La liste n’est pas réservée à WCAG.</strong> Quand l’analyse demande
 					une autre norme (<code>engineOptions.mappings</code>, ou le profil d’une norme), chaque
@@ -697,19 +826,35 @@ export function OutputSchemaContent() {
 						ensembles ouverts qui peuvent s’enrichir dans une version mineure ; <code>context</code> est
 						propre à la règle et, comme <code>data.details</code>, ce n’est pas un contrat stable.{" "}
 						<code>getMargins(result)</code> renvoie toutes les marges d’un résultat sous la forme{" "}
-						<code>{"[{ ruleId, ...margin }]"}</code>, triées par <code>ruleId</code>.
+						<code>{"[{ ruleId, ...margin }]"}</code>, triées par <code>ruleId</code> ; pour un
+						résultat multi-frames, celles de chaque frame, celles d’un frame enfant avec{" "}
+						<code>frame</code>, le chemin qui y mène.
 					</li>
 				<li>
-					<strong><code>error</code></strong> : présent dans trois cas seulement. L’implémentation
-					de la règle a levé une exception non interceptée, la conversion des échecs
-					manuels décrite ci-dessus s’est appliquée, ou bien chaque occurrence d’un résultat{" "}
-					<code>fail</code> a vu son parcours des ancêtres atteindre une limite de profondeur
-					interne (le moteur n’a donc pas pu confirmer que le contenu signalé est réellement
-					exposé) et le résultat entier a été converti en <code>cantTell</code> de la même façon.
-					Une règle qui lève une exception apparaît toujours sous la forme{" "}
-					<code>outcome: "cantTell"</code> avec <code>occurrences: []</code> et <code>error</code>{" "}
-					contenant le message de l’exception : le moteur ne laisse jamais une règle défaillante
-					faire planter toute l’analyse.
+					<strong><code>error</code></strong> : présent quand la règle ne s’est pas terminée, ou
+					quand le moteur a modifié ou ignoré une partie de ce que la règle a renvoyé. Une règle qui
+					a levé une exception (ou renvoyé quelque chose qui n’est pas un résultat) apparaît
+					toujours sous la forme <code>outcome: "cantTell"</code> avec <code>occurrences: []</code>{" "}
+					et <code>error</code> contenant le message de l’exception : <code>cantTell</code> sans
+					occurrence et avec une <code>error</code> permet donc de reconnaître une règle qui ne
+					s’est pas terminée ; le moteur ne laisse jamais une règle défaillante faire planter toute
+					l’analyse. Sinon, <code>error</code> contient les notes du moteur, jointes par{" "}
+					<code>|</code> après toute <code>error</code> que la règle a elle-même renvoyée : la
+					conversion des échecs manuels décrite ci-dessus, un <code>outcome</code> ou une{" "}
+					<code>severity</code> hors de son ensemble, un <code>type</code> différent de celui de son
+					meta, des occurrences qui ne sont pas des objets (écartées), un <code>policyOutcome</code>{" "}
+					ou un <code>ruleSeverity</code> renvoyé par la règle (non retenu : le moteur définit les
+					deux), un <code>uncertainty.code</code> hors de l’ensemble fermé, et un <code>fail</code>{" "}
+					ramené à <code>cantTell</code> parce que le parcours des ancêtres, limité à 200 étapes,
+					s’est arrêté avant chacun des éléments signalés. Ces résultats gardent leurs
+					occurrences : la règle s’est terminée.
+				</li>
+				<li>
+					<strong><code>policyOutcome</code></strong> : présent quand les{" "}
+					<code>allowedOutcomes</code> de la politique n’autorisent pas le résultat trouvé par la
+					règle. Le résultat est alors <code>cantTell</code>, avec ici le résultat propre de la
+					règle et sans <code>error</code>, pour que les générateurs de rapports ne le lisent pas
+					comme une règle qui ne s’est pas terminée.
 				</li>
 				<li>
 					<strong><code>engineOptions</code></strong> sur chaque résultat est l’objet d’options{" "}
@@ -732,6 +877,9 @@ export function OutputSchemaContent() {
 
 			<h2 id="occurrence">Une occurrence (<code>occurrences[i]</code>)</h2>
 			<p>
+				Un <code>fail</code> en a toujours au moins une : le <code>fail</code> d’une règle
+				personnalisée qui ne nomme aucun élément en reçoit une sur l’élément du document (
+				<code>selector: "html"</code>, code de raison <code>FAIL_WITHOUT_OCCURRENCE</code>).
 				Normalement présente uniquement lorsque <code>outcome</code> vaut <code>fail</code> ou{" "}
 				<code>cantTell</code> : un résultat <code>pass</code> a <code>occurrences: []</code>,
 				puisque ce moteur n’énumère pas les éléments qu’il a validés, seulement ceux qu’il a
@@ -791,7 +939,8 @@ export function OutputSchemaContent() {
 				consommateur puisse agir selon la raison plutôt que d’analyser une chaîne de résumé. Il
 				n’est présent que sur une occurrence de niveau <code>cantTell</code> : une occurrence de
 				niveau <code>fail</code> affirmerait que la règle a à la fois tranché et pas tranché,
-				donc le moteur le retire.
+				donc le moteur le retire. Une incertitude dont le <code>code</code> ne fait pas partie des
+				codes ci-dessous est également écartée, et l’<code>error</code> de la règle nomme ce code.
 			</p>
 			<DataTable
 				label="Codes d’incertitude"
@@ -847,8 +996,9 @@ export function OutputSchemaContent() {
 					"      standard?: string,        // a standard's own rollup only, with version and criterion",
 					"      version?: string,",
 					"      criterion?: string,",
-					"      checksIds: string[],      // every atomic ruleId this composite rolls up",
-					"      contributors: Array<{ testId: string, outcome: string, severity: string | null }>,",
+					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
+					"      customChecksIds?: string[], // the custom rules among them; absent when none",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -867,6 +1017,15 @@ export function OutputSchemaContent() {
 				<a href="/conformance/wcag-mapping/">Conformité</a> pour ce que cela implique pour une
 				déclaration de conformité globale.
 			</p>
+			<p>
+				Les règles d’une agrégation WCAG sont sa propre liste plus chaque règle de{" "}
+				<code>engineOptions.customRules</code> qui s’est exécutée et qui est associée à l’un de ses
+				critères (par <code>meta.wcagSc</code> ou une entrée WCAG dans{" "}
+				<code>meta.normativeMappings</code>), marquée <code>custom: true</code> parmi les
+				contributrices et listée dans <code>customChecksIds</code>, pour qu’un lecteur voie quand une
+				règle personnalisée a déterminé le résultat. Les agrégations propres à une norme gardent
+				leurs listes.
+			</p>
 
 			<h2>Valeurs de résultat</h2>
 			<DataTable
@@ -880,8 +1039,8 @@ export function OutputSchemaContent() {
 				rows={outcomeRows}
 			/>
 			<p>
-				<code>fail</code> est volontairement le résultat le plus étroit et le plus exigeant de ce
-				moteur : il est réservé aux violations normatives déterministes ;{" "}
+				Dans les règles intégrées à core, <code>fail</code> est volontairement le résultat le plus
+				étroit et le plus exigeant : il est réservé aux violations normatives déterministes ;{" "}
 				<strong>la recherche de couverture ne doit jamais le diluer</strong>.
 			</p>
 
@@ -890,7 +1049,11 @@ export function OutputSchemaContent() {
 				<li>
 					<code>severity</code> : <code>minor</code> &lt; <code>moderate</code> &lt;{" "}
 					<code>serious</code> &lt; <code>critical</code> ; l’évaluation par l’auteur de la
-					règle de l’impact sur les utilisateurs, indépendante de <code>confidence</code>.
+					règle de l’impact sur les utilisateurs, indépendante de <code>confidence</code>. Un profil
+					peut donner une autre gravité à une règle (le <code>severity</code> d’un profil dans une
+					norme ou dans la liste de contrôle d’un pack) : sous ce profil, le résultat affiche celle du
+					profil, garde celle de la règle dans <code>ruleSeverity</code> (présent seulement dans ce
+					cas), et les agrégations prennent celle du profil.
 				</li>
 				<li>
 					<code>confidence</code> : <code>low</code> &lt; <code>medium</code> &lt;{" "}
@@ -912,7 +1075,8 @@ export function OutputSchemaContent() {
 				<code>form-control-programmatic-label-present</code>,{" "}
 				<code>identical-iframes-same-purpose</code>,{" "}
 				<code>svg-image-text-alternative-present</code>,{" "}
-				<code>video-poster-text-alternative-present</code> et <code>target-size-minimum</code>.{" "}
+				<code>video-poster-text-alternative-present</code>, <code>target-size-minimum</code> et{" "}
+				<code>text-spacing-content-loss</code>.{" "}
 				<code>confidence</code> figure sur chaque résultat, donc un consommateur qui ne veut que
 				les échecs les plus certains peut filtrer directement dessus ;{" "}
 				<code>policy.allowedConfidence</code> ne le fera pas pour vous, puisqu’une valeur non
@@ -968,7 +1132,7 @@ export function OutputSchemaContent() {
 					'          "html": "<button></button>",',
 					'          "structuralPath": [1, 1],',
 					'          "summary": "This button has no accessible name.",',
-					'          "hint": "Provide visible button text or a programmatic accessible-name mechanism (for example aria-label) so assistive technologies can identify the button.",',
+					'          "hint": "Give the button visible text, or name it with aria-label, so screen reader users know what it does.",',
 					'          "data": {',
 					'            "visibilityFilter": { "eligible": true, "reasons": [], "targetSet": "acc", "accEligible": true },',
 					'            "details": { "reasonCode": "name_missing" }',
@@ -987,7 +1151,7 @@ export function OutputSchemaContent() {
 					'          "selector": "html > body > img",',
 					'          "html": "<img src=\\"logo.png\\">",',
 					'          "structuralPath": [1, 0],',
-					'          "summary": "Missing alt attribute on <img>.",',
+					'          "summary": "This <img> has no alt attribute.",',
 					'          "hint": "Add an alt attribute (use alt=\\"\\" only for decorative images)."',
 					"        }",
 					"      ]",

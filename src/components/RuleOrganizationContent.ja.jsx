@@ -32,7 +32,7 @@ export function RuleOrganizationContent() {
 					<code>fail</code>
 					を報告できます。それでも
 					<code>cantTell</code>
-					が出る場面は3つあります。実際の違反はあるものの、それだけでは対応するWCAG達成基準の不適合が確定しない場合（公開される名前・役割・値がそれでも保たれている、ARIAの作成者要件など）。ルールは決定論的に判定するが、そもそも達成基準を主張していない場合（ベストプラクティスとタグ付けされた
+					が出るのは次の場面です。実際の違反はあるものの、それだけでは対応するWCAG達成基準の不適合が確定しない場合（公開される名前・役割・値がそれでも保たれている、ARIAの作成者要件など）。ルールは決定論的に判定するが、そもそも達成基準を主張していない場合（ベストプラクティスとタグ付けされた
 					<code>aria-allowed-role</code>
 					）。そして、ルールが確認できるのは仕組みが
 					<em>存在する</em>
@@ -40,7 +40,19 @@ export function RuleOrganizationContent() {
 					<code>aria-required-children</code>
 					と、対になる
 					<code>aria-prohibited-children</code>
-					）です。
+					）。あるいは、ルールが推測なしには判定できないため、不合格にする代わりに確認を求める場合です。閉じたシャドウルートや、読み取れないほど深く入れ子になったコンテンツから来ている可能性がある名前（
+					<code>*-name-present</code>
+					ルール）、間隔を広げると切れたり重なったりする可能性があるテキスト（
+					<code>text-spacing-content-loss</code>
+					）、ページのコンテンツ以外の要素を回転させる画面の向きのメディアブロック（
+					<code>css-orientation-lock</code>
+					）、比率を下回るプレースホルダー（
+					<code>contrast-minimum</code>
+					）、計算できない色やサイズ（コントラストのルール、
+					<code>target-size-minimum</code>
+					）がこれに当たります。例外を投げたルールも、安全策として
+					<code>cantTell</code>
+					と報告されます。
 				</li>
 				<li>
 					<strong>manual（手動）</strong>

@@ -45,6 +45,26 @@ const apiRows = [
 			</>
 		),
 	},
+	{
+		id: "runOnly",
+		param: <code>runOnly</code>,
+		type: "object、stringまたはstring[]（省略可）",
+		meaning: (
+			<>
+				スキャンの
+				<code>runOnly</code>
+				としてそのまま渡されます。WCAGの目標（
+				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code>
+				）、
+				<code>bestPractices</code>
+				、ルールのID、タグを指定できます。
+				<a href="#choosing-a-wcag-target">WCAGの目標を選ぶ</a>
+				を参照してください。
+				<code>received</code>
+				がすでにスキャン結果の場合は無視されます。
+			</>
+		),
+	},
 ];
 
 export function TestMatchersUsageContent() {
@@ -211,6 +231,93 @@ export function TestMatchersUsageContent() {
 				]}
 			/>
 
+			<h3 id="choosing-a-wcag-target">WCAGの目標を選ぶ（<code>runOnly</code>）</h3>
+			<p>
+				第3引数はスキャンの
+				<code>runOnly</code>
+				で、そのままエンジンに渡されます。
+				<code>runOnly.wcag</code>
+				は適合性の目標で選択します。
+				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code>
+				は、WCAG 2.2のレベルAとAAの達成基準のルールを、各達成基準がそのバージョンで持つレベルに従って実行します。
+				<code>bestPractices: true</code>
+				は、
+				<code>region</code>
+				や
+				<code>heading-order</code>
+				など、WCAGの達成基準を示さないルールを追加します。単独で使うとそれらのルールだけを実行し、
+				<code>engineOptions.profile</code>
+				と併用するとプロファイルのルールにそれらを追加します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.2 A and AA",
+					"expect(container).toHaveNoA11yViolations({}, { wcag: { version: '2.2', level: 'AA' } });",
+					"",
+					"// The same, and the best practices",
+					"expect(container).toHaveNoA11yViolations({}, { wcag: { version: '2.2', level: 'AA' }, bestPractices: true });",
+				]}
+			/>
+			<p>
+				<code>runOnly</code>
+				はルールのIDとタグ（
+				<code>includeRuleIds</code>
+				、
+				<code>tags</code>
+				、
+				<code>excludeRuleIds</code>
+				など）も受け取り、それらは目標のルールに追加されます。除外はその後に適用されます。何かを選択する
+				<code>runOnly</code>
+				は、
+				<code>engineOptions.rules</code>
+				／
+				<code>.tags</code>
+				での選択を完全に置き換えます。選択はどちらか一方の方法で指定し、両方を使わないでください。
+				<code>runOnly</code>
+				だけが必要な場合は、
+				<code>engineOptions</code>
+				として
+				<code>{"{}"}</code>
+				か
+				<code>null</code>
+				を渡してください。
+			</p>
+
+			<h2 id="packs">パックを使ったスキャン</h2>
+			<p>
+				<a href="/configuration/packs/">パック</a>
+				は、ルール、規格、チェックリストと、それらのプロファイルやメッセージを、それ自身のパッケージとして提供します。マッチャーはNodeでスキャンするため、パックはオブジェクトそのものとして
+				<code>engineOptions.packs</code>
+				に渡し、そのプロファイルは
+				<code>engineOptions.profile</code>
+				で選びます。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const acmePolicy = require('./acme-policy-pack');",
+					"const policy = { packs: [acmePolicy], profile: 'acme-web-2026' };",
+					"",
+					"test(\"a page that breaks the pack's house rule fails the assertion\", () => {",
+					"  document.body.innerHTML = '<main><h1>Welcome</h1><video autoplay src=\"intro.mp4\"></video></main>';",
+					"  expect(document).not.toHaveNoA11yViolations(policy);",
+					"});",
+					"",
+					"// A pack's checklist profile, and the best practices",
+					"expect(container).toHaveNoA11yViolations(policy, { bestPractices: true });",
+				]}
+			/>
+			<p>
+				パック自身のルールはコアのルールと同じように結果に現れ、そのIDはパックの名前空間で始まります（
+				<code>acme-no-autoplay</code>
+				）。パックのオブジェクトは1か所（セットアップファイルやモジュール）にまとめてください。コアはパックのオブジェクトのセットごとにエンジンを用意し、同じセットでの次のスキャンのために保持します。コアが実行できないパック（その
+				<code>core</code>
+				の範囲がインストールされているコアを含まない、妥当でない、名前空間がほかのパックと衝突する）は結果の
+				<code>skippedPacks</code>
+				に列挙され、パックのルールが一度も実行されないまま合格するのではなく、アサーションが失敗します。
+			</p>
+
 			<h2>API</h2>
 			<DataTable
 				label="マッチャーのパラメーター"
@@ -254,6 +361,29 @@ export function TestMatchersUsageContent() {
 				の結果が失敗メッセージに別の注記として追加されるので、見落とすことはありません。このエンジンがまったく自動化しないことについては
 				<a href="/help/known-limitations/">既知の制限事項</a>
 				を参照してください。
+			</p>
+			<p>
+				<strong>求められたものをチェックできなかったスキャンも失敗します</strong>
+				。何もないことで合格にはなりません。スキャンが実行されるドキュメントにない要素（切り離されたもの、または別のドキュメントのもの）、実行されなかったカスタムルール（
+				<code>skippedCustomRules</code>
+				に列挙されます）、実行されなかったパック（
+				<code>skippedPacks</code>
+				に列挙されます）が該当します。メッセージはそれぞれを理由とともに示します。
+			</p>
+			<p>
+				スキャン自体が例外を投げることもあり、その場合テストはエンジンのエラーで失敗します。エラーは
+				<code>code</code>
+				を持ちます。
+				<code>INVALID_RUN_ONLY</code>
+				（どの値もルールやタグを示さないルールやタグのリスト、または目標になっていない
+				<code>runOnly.wcag</code>
+				）、
+				<code>INVALID_ENGINE_OPTIONS</code>
+				（
+				<code>strictOptions: true</code>
+				のとき、エンジンが読まないオプションや使えない値）、
+				<code>PAGE_BUILTINS_BROKEN</code>
+				（テストやページ自身のコードが、エンジンが依存するJavaScriptの組み込みオブジェクトを壊した）のいずれかです。
 			</p>
 			<p>
 				<strong>要素に範囲を絞ると、その内側のことだけが報告されます</strong>
@@ -300,15 +430,19 @@ export function TestMatchersUsageContent() {
 
 			<h2>失敗メッセージ</h2>
 			<p>
-				ルール単位ではなく検出箇所ごとにすべて列挙します（1つのルールが複数の要素を検出することがあるためです）。各項目には、ルールID、重大度、読みやすい要約、問題のある要素のセレクター、そして可能な場合は修正のヒントが含まれます。
+				ルール単位ではなく検出箇所ごとにすべて列挙します（1つのルールが複数の要素を検出することがあるためです）。各項目には、ルールID、重大度、読みやすい要約、問題のある要素のセレクター、そして可能な場合は修正のヒントが含まれます。バグ報告で示せるよう、結果を生成した
+				<code>@surea11y/core</code>
+				のリリースも示します。
 			</p>
 			<CodeBlock
 				lines={[
 					"expected no accessibility violations, but found 1:",
 					"",
-					"1) img-alt-present (serious): Missing alt attribute on <img>.",
-					"   at html > body > img",
-					"   Add an alt attribute or use alt=\"\" for decorative images.",
+					"1) img-alt-present (serious): This <img> has no alt attribute.",
+					"   at body > img",
+					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
+					"",
+					"Scanned with @surea11y/core 1.11.1.",
 				]}
 			/>
 			<p>
@@ -320,13 +454,31 @@ export function TestMatchersUsageContent() {
 				<code>fail</code>
 				に影響を与えずに目に入るようになっています。
 			</p>
-			<CodeBlock lines={["2 rule(s) need manual review (cantTell, not counted as failures): link-name-quality-manual, color-contrast-computable"]} />
+			<CodeBlock lines={["3 rule(s) need manual review (cantTell, not counted as failures): contrast-computable, link-name-quality, manual-review"]} />
+			<p>実行されなかったパックは、理由とともに示されます。</p>
+			<CodeBlock
+				lines={[
+					"expected no accessibility violations, but the scan left out what it was asked to check:",
+					"",
+					"No accessibility violations found in what was scanned.",
+					"",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.11.1.",
+					"",
+					"Scanned with @surea11y/core 1.11.1.",
+				]}
+			/>
 
 			<p>
 				両フレームワークの実行可能な例を並べて用意しています：
 				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/basic.test.js">Jest</a>
 				、
 				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/basic.vitest.test.js">
+					Vitest
+				</a>
+				、パックを使った同じ例：
+				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/pack.test.js">Jest</a>
+				、
+				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/pack.vitest.test.js">
 					Vitest
 				</a>
 				。

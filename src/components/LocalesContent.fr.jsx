@@ -118,7 +118,7 @@ export function LocalesContent() {
 				« Non traduites » compte les valeurs identiques au texte anglais, caractère pour
 				caractère, à l’exception des mots qui sont à juste titre les mêmes dans une langue : en
 				français <em>Orientation</em>, <em>Interruptions</em> et <em>Occurrences</em>, en allemand{" "}
-				<em lang="de">Element</em>, en espagnol <em lang="es">Selector</em>. Ces mots sont listés
+				<em lang="de">Frame</em>, <em lang="de">Frames</em> et <em lang="de">Element</em>, en espagnol <em lang="es">Selector</em>. Ces mots sont listés
 				comme tels, chacun avec le texte anglais auquel il a été comparé, et comptent comme
 				traduits. Si l’anglais change, l’entrée ne s’applique plus et la chaîne compte comme non
 				traduite jusqu’à ce que quelqu’un la vérifie de nouveau. Le décompte ne voit pas un mot
@@ -290,6 +290,17 @@ export function LocalesContent() {
 				diffère de <code>unknown-locale</code>, qui signifie que le projet ne propose aucune traduction
 				dans cette langue.
 			</p>
+			<p>
+				Dans Node, ce même fichier séparé est un module : <code>require('@surea11y/core/i18n/de')</code>{" "}
+				renvoie <code>{"{ locale, messages }"}</code> (<code>locale</code> vaut <code>'de'</code>,{" "}
+				<code>messages</code> est la table plate qui associe chaque clé à son texte), sans avoir
+				besoin du bundle.
+			</p>
+			<p>
+				Les messages d’un <a href="/configuration/packs/">pack</a> se trouvent dans ses propres
+				dictionnaires, que le pack liste par langue ; dans une langue pour laquelle le pack n’a pas
+				de dictionnaire, ses messages s’affichent en anglais.
+			</p>
 
 			<h3>Fournir votre propre dictionnaire</h3>
 			<p>
@@ -365,7 +376,7 @@ export function LocalesContent() {
 				</li>
 			</ul>
 			<p>
-				Les deux figurent dans le résultat à côté du texte déjà résolu, ce qui vous permet de
+				Les clés de la règle, de la règle composite et de l’occurrence figurent dans le résultat à côté du texte déjà résolu, ce qui vous permet de
 				réafficher un résultat enregistré dans une autre langue sans relancer l’analyse.
 			</p>
 		</>

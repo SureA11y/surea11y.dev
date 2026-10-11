@@ -8,20 +8,33 @@ export function ConfigurationContent() {
 				configuración que mantener, sin una superficie de flags separada solo para la CLI que
 				sincronizar. La CLI y cada integración (<code>binding</code>) simplemente construyen ese objeto por ti a partir de sus
 				propios flags o métodos constructores, así que lo que aprendas aquí se aplica en cualquier
-				sitio donde ejecutes un análisis. Vale la pena acertar pronto en tres cosas:
+				sitio donde ejecutes un análisis. Vale la pena acertar pronto en cuatro cosas:
 			</p>
 
 			<h2>Opciones del motor</h2>
 			<p>
-				Limita un análisis exactamente a las reglas que quieres, por ID, por etiqueta o por
-				versión de conformidad de WCAG (2.0, 2.1 o 2.2), o nombrando un perfil de conformidad como
-				WCAG 2.2 AA, EN 301 549 o Section 508, para que una ejecución informe solo de lo
+				Limita un análisis exactamente a las reglas que quieres: nombrando una versión y un nivel de
+				WCAG (WCAG 2.2 AA en una sola opción, con las buenas prácticas encima si las quieres), por
+				ID, por etiqueta o nombrando un perfil de conformidad como WCAG 2.2 AA, EN 301 549 o
+				Section 508, para que una ejecución informe solo de lo
 				que realmente eres responsable, ni más ni menos. Silencia widgets globalmente ruidosos conocidos
 				o para una sola regla sin perder cobertura en el resto, ajusta cuán agresivas son las
 				comprobaciones de contraste para un auditor humano frente a una puerta de CI desatendida, e
 				incorpora una regla propia de tu organización junto a las incorporadas cuando el catálogo no
 				cubre algo que te importa. Ver{" "}
 				<a href="/configuration/engine-options/">Opciones del motor</a> para la referencia completa.
+			</p>
+
+			<h2>Packs</h2>
+			<p>
+				Prueba contra más que WCAG sin bifurcar el motor. Un pack trae un estándar nacional, la
+				política de accesibilidad de tu organización o unas cuantas reglas propias desde un paquete
+				independiente, y el motor lo ejecuta igual que sus propias reglas: sus perfiles seleccionan
+				qué se ejecuta, sus elementos de lista de comprobación devuelven un resultado cada uno, y
+				todos los informes los muestran junto a los criterios de WCAG. El mismo pack funciona desde
+				Node, cada integración, los test matchers y la CLI, y{" "}
+				<code>npx surea11y-pack new</code> genera uno que pasa sus propias pruebas tal como sale.
+				Ver <a href="/configuration/packs/">Packs</a> para usar uno o escribir uno.
 			</p>
 
 			<h2>Integración con CI</h2>

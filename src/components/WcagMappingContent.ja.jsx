@@ -140,13 +140,66 @@ export function WcagMappingContent() {
 				<code>cantTell</code>
 				の原因になったのかを正確に確認するのに使ってください。
 			</p>
+			<p>
+				実行されたカスタムルール（
+				<code>engineOptions.customRules</code>
+				）や
+				<a href="/configuration/packs/">パック</a>
+				のルールは、
+				<code>meta.wcagSc</code>
+				または
+				<code>meta.normativeMappings</code>
+				のWCAGのエントリーを通じて、組み込みルールと同じように、対応する各達成基準の複合ルールに算入されます。不合格になったものは複合ルールを不合格にします。カスタムルールは組み込みルールのように仕様と照合されていないため、複合ルールは貢献したルールの中でカスタムルールに
+				<code>custom: true</code>
+				を付け、
+				<code>data.details.customChecksIds</code>
+				に列挙します。組み込みルールの上書きは、それ自身の対応付けに従って算入されます。その達成基準に対応していれば組み込みルールの代わりに算入され、どの達成基準にも対応していなければどこにも算入されません（警告が出ます）。
+			</p>
 
 			<h2>適合レベル（A／AA／AAA）を対象にする</h2>
 			<p>
+				<code>runOnly.wcag</code>
+				にWCAGのバージョンとレベルを指定します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.2 Level A and AA:",
+					"runDomRulesInPage(url, null, {}, { wcag: { version: '2.2', level: 'AA' } });",
+					"",
+					"// The same, and the best-practice rules, which test no WCAG criterion:",
+					"runDomRulesInPage(url, null, {}, { wcag: { version: '2.2', level: 'AA' }, bestPractices: true });",
+				]}
+			/>
+			<p>
+				目標を指定すると、そのバージョンで有効な、そのレベル以下のすべての達成基準のルールが、各達成基準がそのバージョンで持つレベル（
+				<code>@surea11y/core/wcag</code>
+				の
+				<code>WCAG_CRITERIA</code>
+				）に従って実行されます。そのため、4.1.1「構文解析」は2.0と2.1の目標には含まれ、2.2の目標には含まれません。目標は、実行のWCAGバージョンと、報告する集約のレベルも設定します。
+				<a href="/configuration/engine-options/#selecting-by-wcag-target-runonlywcag">WCAGの目標で選ぶ</a>
+				を参照してください。
+			</p>
+			<p>
+				<code>WCAG_CRITERIA</code>
+				の各エントリーには、W3CがWCAG 2.2でその達成基準に付けている
+				<code>id</code>
+				（
+				<code>non-text-content</code>
+				）もあります。ルールが持つWCAGの対応付けはすべて、2.1と2.2について、そのバージョンの勧告にある達成基準の節（
+				<code>url</code>
+				）と、そのUnderstanding文書（
+				<code>understandingUrl</code>
+				）にリンクします。ルール自身にヘルプリンクがない場合、レポーターはUnderstanding文書をヘルプリンクとして使います。
+			</p>
+
+			<h3 id="with-tags">タグで指定する</h3>
+			<p>
+				同じ目標はレベルのタグでも指定できます。
 				<code>runOnly.tags</code>
 				（または
 				<code>engineOptions.tags.include</code>
-				）に、対象にしたいレベルのタグを渡します。
+				）に渡します。
 			</p>
 			<CodeBlock
 				lang="js"
@@ -165,9 +218,11 @@ export function WcagMappingContent() {
 				<em>付きません</em>
 				。そのため
 				<code>{"{ tags: ['wcag2aa'] }"}</code>
-				だけを指定すると、A＋AAを対象にする約100件のルールではなく、2.0のAAの達成基準に対応する10件のルールだけが実行されます。対象にするレベルはすべて列挙するか、
+				だけを指定すると、A＋AAを対象にする約100件のルールではなく、2.0のAAの達成基準に対応する9件のルールだけが実行されます。対象にするレベルはすべて列挙するか、この問題がない
+				<code>runOnly.wcag</code>
+				を使ってください。
 				<code>engineOptions.profile</code>
-				（<code>wcag22-aa</code>、<code>en301549-v4.1.1</code>、<code>en301549-v3.2.1</code>、<code>section508</code>）に任せてください。
+				（<code>wcag22-aa</code>、<code>en301549-v4.1.1</code>、<code>en301549-v3.2.1</code>、<code>section508</code>）に任せることもできます。
 				<a href="/configuration/engine-options/#conformance-profiles">適合性プロファイル</a>
 				を参照してください。
 			</p>
@@ -180,7 +235,9 @@ export function WcagMappingContent() {
 				<strong>削除された達成基準は自動的に処理されます。</strong>
 				どの実行でも、対象とするWCAGのバージョン（
 				<code>engineOptions.wcagVersion</code>
-				、なければバージョンのタグから導かれるもの、それもなければ
+				、なければ
+				<code>runOnly.wcag</code>
+				のバージョン、それもなければバージョンのタグから導かれるもの、それもなければ
 				<code>2.2</code>
 				）が決まり、
 				<code>engine.wcagVersion</code>
@@ -196,6 +253,8 @@ export function WcagMappingContent() {
 				アトミックルールとは違い、複合ルールは累積的に
 				<em>絞り込まれます</em>
 				。ランナーは
+				<code>runOnly.wcag</code>
+				のレベル、または
 				<code>tags</code>
 				で指定された最も高いレベルを読み取り、それより上のレベルの複合ルールをすべて除外します。そのため
 				<code>{"['wcag2a', 'wcag2aa']"}</code>
@@ -250,7 +309,15 @@ export function WcagMappingContent() {
 				<strong>これは公開された2つの文書の対応関係であり、適合の主張ではありません。</strong>結果に付いた条項は、そのWCAGの達成基準がEN 301 549のどの要件に当たるかを示すだけです。特定の法律がどのバージョンを求めるかは、エンジンの範囲外です。
 			</p>
 			<p>
-				EN 301 549は、ランナー、ルールカタログ、レポート生成のすべてが読む規格の登録簿の1つのエントリーです。そのため、ほかの規格も同じ方法で、独自のプロファイル、ルール、集約とともに追加できます。登録の方法は、GitHub上のコントリビューター向けガイドである
+				EN 301 549は、ランナー、ルールカタログ、レポート生成のすべてが読む規格の登録簿の1つのエントリーです。独自の判定を持つ規格（自身のルールが検査する要件を持つもの。たとえばRGAAのような国の規格）や組織のチェックリストは、
+				<a href="/configuration/packs/">パック</a>
+				として提供されます。パックはコアの外にある独自のパッケージで、スキャンは
+				<code>engineOptions.packs</code>
+				でそれを受け取り、そのエントリーはそのスキャンの間だけ登録簿に加わり、独自のプロファイル、ルール、集約を持ちます。カスタムルールは自身の
+				<code>normativeMappings</code>
+				で任意の規格を指定できますが、プロファイル、
+				<code>mappings</code>
+				の切り替え、オプトインルール、集約、SARIF・JUnit・HTMLレポートでの表示を得られるのは、登録された規格（コアの規格と、そのスキャンのパックの規格）だけです。規格をコア自体に組み込む方法は、GitHub上のコントリビューター向けガイドである
 				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
 					<code>WCAG_CONFORMANCE.md</code>
 				</a>
@@ -277,9 +344,15 @@ export function WcagMappingContent() {
 			</p>
 			<ul>
 				<li>
-					すべての
+					コアの組み込みルールは、対象にした規格とバージョンにおける決定論的で規範上の違反に対してだけ
 					<code>fail</code>
-					は、対象にした規格とバージョンにおける本物の、決定論的な、規範上の違反です。推測ではありません。デフォルトではその規格はWCAGです。ほかの規格だけが求める要件のルールはオプトインで、その規格を対象にしたときだけ実行されます（<a href="/configuration/engine-options/#opt-in-rules">オプトインルール</a>を参照）。そのため、WCAGのスキャンが、WCAGが求めていないことでページを不合格にすることはありません。唯一の例外はすべてのルールを要求する実行（<code>engineOptions.optInRules</code>）で、特定の規格を対象にせず、そのことを<code>engine.optInRules</code>に示します。
+					を報告し、確信が持てないときは
+					<code>cantTell</code>
+					を報告するように作られています。これは設計上の目標であり、保証ではありません。ルールがなお誤りうる例外的なケースは
+					<a href="/help/known-limitations/">既知の制限事項</a>
+					に挙げてあり、各検出結果の検出箇所は何に基づいて判断したかを示し、
+					<a href="/rules/">ルールカタログ</a>
+					は各ルールの確度を示します。カスタムルール、パックのルール、上書きがどれだけ正確かは、それがどう書かれたかによります。デフォルトではその規格はWCAGです。ほかの規格だけが求める要件のルールはオプトインで、デフォルトではその規格を対象にしたときだけ実行されます（<a href="/configuration/engine-options/#opt-in-rules">オプトインルール</a>を参照）。<code>engineOptions.optInRules</code>は、スキャンのプロファイルやフィルターをなくさずにオプトインルールを有効にします。<code>optInRules: 'all'</code>を指定し、プロファイルもフィルターもない場合、実行はすべてのルールを対象にし、特定の規格を対象にしません。タグのリストを指定した場合は、そのオプトインのグループだけが有効になります。<code>engine.optInRules</code>は、ルールが実行されたタグを列挙します。WCAGのプロファイルのもとでは、有効にしたルールはそのタグがプロファイルに一致するときだけ実行され、実行は引き続きWCAGを対象にします。そのため、コアのルールのうち、WCAGを対象にしたスキャンが実行するのは、対象の達成基準のルールと、追加した場合のベストプラクティスのルールだけです。オプトインのタグを持たないカスタムルール、上書き、パックのルールは、選択に含まれれば実行され、WCAGが求めていない独自のチェックについて<code>fail</code>を報告することがあります。
 				</li>
 				<li>
 					すべての

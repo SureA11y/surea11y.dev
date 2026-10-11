@@ -58,6 +58,15 @@ export function StandaloneUsageContent() {
 				を参照してください。
 			</p>
 			<p>
+				バンドルはモジュールとしても読み込めます。
+				<code>import a11ycore from '@surea11y/core/browser'</code>
+				、
+				<code>runa11yCoreInPage</code>
+				の名前付きインポート、
+				<code>require()</code>
+				のどれでもそのAPIを得られ、グローバルも引き続き定義されます。
+			</p>
+			<p>
 				<strong>バンドルから意図的に除外しているもの</strong>
 				：
 				<code>runa11yCoreAcrossFrames</code>
@@ -75,6 +84,56 @@ export function StandaloneUsageContent() {
 				を直接呼び出すのが、もう1つのスタンドアロンな方法です。
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
 				の<span lang="en">Pattern 1</span>/<span lang="en">Pattern 2</span>にあたります。実際のブラウザーなしでNode上のjsdomを使う方法と、バインディングを経由せずにPuppeteer/Playwrightを自分で操作する方法です。
+			</p>
+
+			<h2 id="packs-in-a-page">ページ内でのパック</h2>
+			<p>
+				<a href="/configuration/packs/">パック</a>
+				はNodeで用意されるため、スクリプトとしてページに届きます。
+				<code>@surea11y/core/pack</code>
+				の
+				<code>packScript(packs)</code>
+				は、パックを登録するスクリプトを返します。バンドルの後に（スキャンするすべてのフレームにも）読み込み、
+				<code>engineOptions.packs</code>
+				でパックを
+				<code>name@version</code>
+				の形で指定してください。あるいは、
+				<code>buildBrowserBundle({"{ packs }"})</code>
+				で、バンドルの後にパックを登録した1つのファイルとして配布することもできます。ルールのコードは関数としてスクリプトに書き込まれるため、コンテンツセキュリティポリシーが
+				<code>eval</code>
+				を禁止している環境でも動作します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// In Node: write the script once, beside the bundle.",
+					"const fs = require('node:fs');",
+					"const { packScript } = require('@surea11y/core/pack');",
+					"const acmePolicy = require('./acme-policy-pack');",
+					"fs.writeFileSync('acme-pack.js', packScript([acmePolicy]));",
+				]}
+			/>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
+					'<script src="acme-pack.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(location.href, null, {",
+					"    packs: ['@acme/a11y-policy@1.0.0'],",
+					"    profile: 'acme-web-2026'",
+					"  }, null);",
+					"</script>",
+				]}
+			/>
+			<p>
+				ページが実行するのは、1回の
+				<code>packScript</code>
+				の呼び出しが登録したとおりのパックのセットで、そのスクリプトを用意したときと同じコアで実行されます。スキャンに必要なパックはすべて1回の呼び出しに渡してください。指定されてもページが実行しないパックは、理由とともに
+				<code>skippedPacks</code>
+				に列挙されます。バインディングでは、
+				<code>.withPacks()</code>
+				がこれをすべて行います。
 			</p>
 
 			<h2 id="waiting-for-the-page">スキャン前にページの準備を待つ</h2>
@@ -125,6 +184,41 @@ export function StandaloneUsageContent() {
 				）と戻り値の詳細は、GitHub上の統合ガイド
 				<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}><code>INTEGRATION.md</code></a>
 				にあります。
+			</p>
+
+			<h2 id="a-time-limit-on-a-scan">スキャンの制限時間</h2>
+			<p>
+				スキャンはページ内で一度に実行され、いったん始まるとページ内のどれもそれを止められません。戻らないページのゲッターやルールは、そのタブを止めたままにします。スキャンを開始する側で時間を制限し、制限を過ぎたらそのタブを諦めてください。60秒は通常のページにかかる時間をはるかに上回るので、引っかかるのは壊れたページだけです。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Playwright or Puppeteer: page.evaluate has no time limit of its own.",
+					"async function scanWithin(page, ms, scan) {",
+					"  let timer;",
+					"  const late = new Promise((_, reject) => {",
+					"    timer = setTimeout(() => reject(new Error(`the scan took longer than ${ms} ms`)), ms);",
+					"  });",
+					"  try {",
+					"    return await Promise.race([scan(), late]);",
+					"  } catch (err) {",
+					"    // The tab may still be busy with the scan: close it, and use a new one.",
+					"    await page.close().catch(() => {});",
+					"    throw err;",
+					"  } finally {",
+					"    clearTimeout(timer);",
+					"  }",
+					"}",
+					"",
+					"const fs = require('node:fs');",
+					"await page.evaluate(fs.readFileSync(require.resolve('@surea11y/core/browser'), 'utf8'));",
+					"const result = await scanWithin(page, 60_000, () =>",
+					"  page.evaluate(() => window.a11ycore.runa11yCoreInPage(location.href, null, {}, null))",
+					");",
+				]}
+			/>
+			<p>
+				jsdomではスキャンがNode自身のスレッドで実行されるため、そこでのタイマーはスキャンが終わるまで発火できません。スキャンをワーカースレッドか子プロセスで実行し、制限を過ぎたらそれを終了してください。どちらの場合も、最後の手段はCIジョブ自体の制限時間です。
 			</p>
 		</>
 	);

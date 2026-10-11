@@ -104,11 +104,49 @@ export function WcagMappingContent() {
 				<code>fail</code>/<code>cantTell</code>, rather than treating the composite as a black
 				box.
 			</p>
+			<p>
+				A custom rule (<code>engineOptions.customRules</code>) or a{" "}
+				<a href="/configuration/packs/">pack</a>'s rule that ran counts toward the composite of
+				each criterion it maps to, through <code>meta.wcagSc</code> or a WCAG entry in{" "}
+				<code>meta.normativeMappings</code>, as a built-in rule does: a failing one fails the
+				composite. The composite marks a custom rule <code>custom: true</code> among its
+				contributors and lists it in <code>data.details.customChecksIds</code>, since custom rules
+				are not checked against the specs as the built-in ones are. An override of a built-in
+				counts where its own mapping says: in its built-in's place when it maps to that criterion,
+				nowhere when it maps to none (with a warning).
+			</p>
 
 			<h2>Targeting a conformance level (A / AA / AAA)</h2>
+			<p>Name the WCAG version and level in <code>runOnly.wcag</code>:</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// WCAG 2.2 Level A and AA:",
+					"runDomRulesInPage(url, null, {}, { wcag: { version: '2.2', level: 'AA' } });",
+					"",
+					"// The same, and the best-practice rules, which test no WCAG criterion:",
+					"runDomRulesInPage(url, null, {}, { wcag: { version: '2.2', level: 'AA' }, bestPractices: true });",
+				]}
+			/>
 			<p>
-				Pass <code>runOnly.tags</code> (or <code>engineOptions.tags.include</code>) with the
-				level tags you want:
+				A target runs the rules for every criterion in force in that version at that level and
+				below, by the level each criterion has in that version (<code>WCAG_CRITERIA</code> in{" "}
+				<code>@surea11y/core/wcag</code>), so 4.1.1 Parsing is part of 2.0 and 2.1 targets and not
+				of 2.2 ones. It also sets the run's WCAG version and the level of the rollups reported.
+				See <a href="/configuration/engine-options/#selecting-by-wcag-target-runonlywcag">Selecting by WCAG target</a>.
+			</p>
+			<p>
+				Each entry of <code>WCAG_CRITERIA</code> also has the <code>id</code> W3C gives the
+				criterion in WCAG 2.2 (<code>non-text-content</code>). Every WCAG mapping a rule carries
+				links its criterion's section in that version's Recommendation (<code>url</code>) and its
+				Understanding document (<code>understandingUrl</code>), for 2.1 and 2.2: the reporters use
+				the Understanding document as a rule's help link when the rule has none of its own.
+			</p>
+
+			<h3 id="with-tags">With tags</h3>
+			<p>
+				The same targets can be spelled with level tags, in <code>runOnly.tags</code> (or{" "}
+				<code>engineOptions.tags.include</code>):
 			</p>
 			<CodeBlock
 				lang="js"
@@ -122,10 +160,10 @@ export function WcagMappingContent() {
 				A rule carries one level tag per Success Criterion it maps to, and nothing more: a rule
 				mapped only to an AA criterion is tagged <code>wcag2aa</code> and <em>not</em>{" "}
 				<code>wcag2a</code>. Asking for <code>{"{ tags: ['wcag2aa'] }"}</code> on its own
-				therefore runs the 10 rules mapped to a 2.0 AA criterion, not the ~100 that make up an A
-				+ AA target. List every level you mean, or let{" "}
-				<code>engineOptions.profile</code> (<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>,{" "}
-				<code>en301549-v3.2.1</code>, <code>section508</code>) do it for you; see{" "}
+				therefore runs the 9 rules mapped to a 2.0 AA criterion, not the ~100 that make up an A
+				+ AA target. List every level you mean, or use <code>runOnly.wcag</code>, which does not
+				have the problem. <code>engineOptions.profile</code> (<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>,{" "}
+				<code>en301549-v3.2.1</code>, <code>section508</code>) does it for you too; see{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Conformance profiles</a>.
 				</p>
 			<p>
@@ -136,8 +174,8 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				<strong>The removed criterion is handled for you.</strong> Every run resolves a target
-				WCAG version (<code>engineOptions.wcagVersion</code>, else whatever your version tags
-				imply, else <code>2.2</code>) and reports it back as <code>engine.wcagVersion</code>.
+				WCAG version (<code>engineOptions.wcagVersion</code>, else the version of{" "}
+				<code>runOnly.wcag</code>, else whatever your version tags imply, else <code>2.2</code>) and reports it back as <code>engine.wcagVersion</code>.
 				Under a 2.2 target, a rule mapped only to SC 4.1.1 Parsing cannot report <code>fail</code>{" "}
 				— it runs, reports its occurrences, and comes back <code>cantTell</code> with a{" "}
 				<code>wcagVersionScope</code> field explaining the coercion. So a default scan never
@@ -145,8 +183,8 @@ export function WcagMappingContent() {
 				4.1.1 verdict.
 			</p>
 			<p>
-				Composites, unlike atomic rules, <em>are</em> filtered cumulatively. The runner reads the
-				highest level named in <code>tags</code> and drops every composite above it, so
+				Composites, unlike atomic rules, <em>are</em> filtered cumulatively. The runner reads the level
+				of <code>runOnly.wcag</code>, or the highest level named in <code>tags</code>, and drops every composite above it, so
 				requesting <code>{"['wcag2a', 'wcag2aa']"}</code> returns no <code>rulesResults</code>{" "}
 				entry for an AAA-only SC. That is <code>inferTargetLevelFromRunOnly</code>/
 				<code>isAllowedByTargetLevel</code> in <code>src/core/dom-runner.js</code> if you need
@@ -218,8 +256,14 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				EN 301 549 is one entry in a registry of standards that the runner, the rule catalog and
-				the reporters all read, so another standard can be added the same way, with its own
-				profiles, rules and rollups. How to register one is in{" "}
+				the reporters all read. A standard with verdicts of its own (requirements its own rules
+				check, a national standard such as RGAA, say), or an organisation's checklist, comes as a{" "}
+				<a href="/configuration/packs/">pack</a>: a package of its own outside core, which a scan
+				takes in <code>engineOptions.packs</code> and whose entry joins the registry for that scan,
+				with its own profiles, rules and rollups. A custom rule can name any standard in its own{" "}
+				<code>normativeMappings</code>, but only registered standards (core's and the scan's
+				packs') get a profile, a <code>mappings</code> switch, opt-in rules, rollups, or a place in
+				SARIF, JUnit and the HTML report. How a standard is built into core itself is in{" "}
 				<a href={`${core}/docs/WCAG_CONFORMANCE.md#adding-another-standard`}>
 					<code>WCAG_CONFORMANCE.md</code>
 				</a>
@@ -240,13 +284,26 @@ export function WcagMappingContent() {
 			<p>What surea11y <em>can</em> give you, honestly:</p>
 			<ul>
 				<li>
-					Every <code>fail</code> is a real, deterministic, normative violation of the standard and
-					version you targeted — never a guess. By default that standard is WCAG: a rule for a
-					requirement only another standard makes is opt-in and runs only when you target that
-					standard (see <a href="/configuration/engine-options/#opt-in-rules">Opt-in rules</a>), so a
-					WCAG scan never fails a page for something WCAG does not require. The one exception is a run
-					that asks for every rule (<code>engineOptions.optInRules</code>): it targets no single
-					standard, and says so in <code>engine.optInRules</code>.
+					Core's built-in rules are written to <code>fail</code> only on a deterministic, normative
+					violation of the standard and version you targeted, and to report <code>cantTell</code>{" "}
+					when they can't be sure. That is a design goal, not a guarantee: the{" "}
+					<a href="/help/known-limitations/">known limitations</a> list edge cases where a rule can
+					still be wrong, each finding's occurrences show what it was decided on, and the{" "}
+					<a href="/rules/">rule catalog</a> gives each rule's confidence. How accurate a custom rule, a pack rule or an override is depends on how it was written.
+					By default that standard is WCAG. A rule for a requirement only another standard makes is
+					opt-in: by default it runs only when you target that standard (see{" "}
+					<a href="/configuration/engine-options/#opt-in-rules">Opt-in rules</a>).{" "}
+					<code>engineOptions.optInRules</code> unlocks opt-in rules without removing the scan's
+					profile or filters. With <code>optInRules: 'all'</code> and no
+					profile or filter, the run covers every rule and targets no single standard; a list of tags
+					unlocks only those opt-in groups. <code>engine.optInRules</code> lists the tags whose rules
+					ran. Under a WCAG profile, an
+					unlocked rule runs only when its tags match that profile, and the run still targets WCAG.
+					So among core's
+					rules, a scan with a WCAG target runs only those for the target's criteria, plus the
+					best-practice rules if you add them. A custom rule, an override or a pack rule without an
+					opt-in tag runs when the selection includes it, and can then report a <code>fail</code>{" "}
+					for a check of its own that WCAG doesn't require.
 				</li>
 				<li>
 					Every <code>cantTell</code> is an explicit flag for human review, not a swallowed
