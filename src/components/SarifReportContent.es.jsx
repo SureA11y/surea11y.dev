@@ -16,13 +16,16 @@ const sarifFieldRows = [
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, cuando está presente.</> },
 	{
 		id: "fingerprint",
-		field: <code>results[].partialFingerprints["surea11y/violation/v1"]</code>,
+		field: <code>results[].partialFingerprints["surea11y/violation/v2"]</code>,
 		source: (
 			<>
-				La misma clave de identidad <code>ruleId + reasonCode + html</code> que usa{" "}
+				El resumen SHA-256, de 64 dígitos hexadecimales, de la misma clave de identidad{" "}
+				<code>ruleId + reasonCode + html</code> que usa{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code>):
 				una huella basada en el contenido y estable, no basada en la posición, para los consumidores
-				que la leen.
+				que la leen: el mismo hallazgo recibe el mismo resumen en todos los informes. Antes de la
+				1.11, <code>surea11y/violation/v1</code> contenía la propia clave, así que una herramienta que
+				leía <code>v1</code> ve cada hallazgo como nuevo una vez.
 			</>
 		),
 	},
@@ -31,7 +34,9 @@ const sarifFieldRows = [
 		field: <code>results[].partialFingerprints.primaryLocationLineHash</code>,
 		source: (
 			<>
-				Un hash de esa clave, <code>&lt;16 hex digits&gt;:&lt;n&gt;</code>, donde <code>n</code> cuenta
+				Los primeros 16 dígitos hexadecimales del resumen y un recuento,{" "}
+				<code>&lt;16 hex digits&gt;:&lt;n&gt;</code> (sin cambios respecto a antes de{" "}
+				<code>v2</code>), donde <code>n</code> cuenta
 				un hallazgo repetido en la página (el mismo componente defectuoso dos veces). <span lang="en">GitHub
 				Code Scanning</span> empareja las alertas entre subidas solo por este campo. Un hallazgo del DOM
 				no tiene ninguna línea a la que la acción de subida de GitHub pueda aplicar el hash, así que
@@ -43,7 +48,8 @@ const sarifFieldRows = [
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>El propio <code>severity</code>/<code>confidence</code> del resultado, más el mismo <code>reasonCode</code> y fragmento <code>html</code> sobre el que se calcula la huella anterior: informativo, no forma parte del propio esquema de SARIF.</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, y una etiqueta <code>wcag-&lt;SC&gt;</code> por cada criterio de conformidad de WCAG en <code>meta.normativeMappings</code>. Las entradas de documentos Understanding no reciben etiqueta. Cada cláusula de EN 301 549 que lleve el resultado (solo cuando el análisis las pidió, ver <a href="/configuration/engine-options/#other-standards-mappings">Otros estándares</a>) recibe una etiqueta <code>en301549-&lt;cláusula&gt;</code>, por ejemplo <code>en301549-9.1.1.1</code>: los números de cláusula son los mismos en todas las versiones que los tienen, así que la etiqueta no lleva versión.</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, y una etiqueta <code>wcag-&lt;SC&gt;</code> por cada criterio de conformidad de WCAG en <code>meta.normativeMappings</code>. Las entradas de documentos Understanding no reciben etiqueta. Cada cláusula de EN 301 549 que lleve el resultado (solo cuando el análisis las pidió, ver <a href="/configuration/engine-options/#other-standards-mappings">Otros estándares</a>) recibe una etiqueta <code>en301549-&lt;cláusula&gt;</code>, por ejemplo <code>en301549-9.1.1.1</code>: los números de cláusula son los mismos en todas las versiones que los tienen, así que la etiqueta no lleva versión, y el estándar o la lista de comprobación de un pack se etiqueta de la misma forma bajo su propia clave (el id de un elemento de lista de comprobación, <code>acme-images</code>, es su propia etiqueta). Después, las propias <code>meta.tags</code> de la regla (incluidas las de una regla personalizada), sin las etiquetas internas del motor ni las etiquetas de criterio que ya dan las etiquetas <code>wcag-&lt;SC&gt;</code>.</> },
+	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, el enlace de ayuda de la regla, cuando es una URL <code>http(s)</code> absoluta; si no, el documento Understanding del primer criterio de WCAG al que se asocia; ausente en una regla sin ninguno de los dos, lo que no ocurre con ninguna regla incorporada: una sin criterio asociado enlaza su sección del catálogo de reglas.</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>La opción <code>toolVersion</code>, si se indica (una herramienta que envuelve el motor pasa la suya); si no, <code>engine.version</code>, la versión del motor que produjo el resultado. <code>"0.0.0"</code> solo para un resultado que no lo tiene, de una versión anterior a la 1.10.0.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>La opción <code>category</code>, con una <code>/</code> final añadida si no la tiene (GitHub lee todo lo que hay hasta la última barra como la categoría). Ausente cuando no se indica ninguna categoría. Ver <a href="#scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</a>.</> },
 	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> y <code>environment</code> del <code>engine</code> del resultado: el objetivo de conformidad que usó la ejecución, para que un panel distinga una ejecución de WCAG 2.1 de una de 2.2, las etiquetas de reglas opcionales que añadió más allá de ese objetivo, cuando añadió alguna, y las condiciones en que se renderizó la página (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code>; ver <a href="/results-reports/output-schema/">Esquema de salida</a>). Se omiten en resultados de motores anteriores a esos campos.</> },
@@ -95,7 +101,7 @@ export function SarifReportContent() {
 				contraste cuando ningún texto tenía un fondo con el que calcular el contraste. Esas nunca se
 				convierten en resultados: un consumidor trata cada resultado como una alerta, y "esto no se
 				evaluó" no lo es. Pero tampoco se descartan. Se incluyen como entradas de nivel{" "}
-				<code>note</code> en <code>runs[0].invocations[0].toolExecutionNotices</code>, cada una
+				<code>note</code> en <code>runs[0].invocations[0].toolExecutionNotifications</code>, cada una
 				identificando la regla de la que proviene mediante <code>associatedRule.id</code>:
 			</p>
 			<CodeBlock
@@ -104,7 +110,7 @@ export function SarifReportContent() {
 					'"invocations": [',
 					"  {",
 					'    "executionSuccessful": true,',
-					'    "toolExecutionNotices": [',
+					'    "toolExecutionNotifications": [',
 					"      {",
 					'        "level": "note",',
 					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
@@ -124,6 +130,14 @@ export function SarifReportContent() {
 				contraste nunca fue calculable, y solo la notificación distingue entre ambos casos. El
 				bloque se emite solo cuando hay algo que decir, así que una ejecución sin nada que indicar
 				no tiene ninguna clave <code>invocations</code>.
+			</p>
+			<p>
+				Una regla que no terminó (lanzó una excepción: <code>cantTell</code> sin ocurrencias y con
+				un <code>error</code>) no juzgó nada, así que tampoco es un resultado. Es una notificación de
+				nivel <code>error</code> en la misma lista,{" "}
+				<code>"The rule &lt;id&gt; did not complete: &lt;error&gt;"</code>, que nombra la regla en{" "}
+				<code>associatedRule.id</code>, para que el hueco en la cobertura no se lea como un
+				aprobado.
 			</p>
 			<DataTable
 				label="Resultados del motor como niveles SARIF"
@@ -153,6 +167,13 @@ export function SarifReportContent() {
 				]}
 				rows={sarifFieldRows}
 			/>
+			<p>
+				Un resultado compacto (<code>engineOptions.output.detail: 'findings'</code>, ver{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Esquema de salida</a>) se lee
+				como el resultado completo que representa, así que se informa igual. Un resultado cuya lista{" "}
+				<code>standards</code> falta o está dañada sigue etiquetando todos los estándares que nombran
+				sus reglas.
+			</p>
 
 			<h2 id="sarif-locations">Ubicaciones</h2>
 			<p>
@@ -184,6 +205,28 @@ export function SarifReportContent() {
 				<code>logicalLocations[].fullyQualifiedName</code>, así que un consumidor que lea las
 				ubicaciones lógicas igual obtiene la señal de "qué elemento" incluso sin una ubicación
 				física utilizable.
+			</p>
+
+			<h2 id="cross-frame-results">Resultados entre frames</h2>
+			<p>
+				Un resultado de <code>runa11yCoreAcrossFrames</code>, o de un análisis{" "}
+				<code>.frames(true)</code> de una integración (ver{" "}
+				<a href="/results-reports/output-schema/#cross-frame-result">Esquema de salida</a>), es una
+				sola ejecución: los hallazgos de cada frame son resultados dentro de ella. Un hallazgo en un
+				frame se ubica en el documento de ese frame (<code>artifactLocation.uri</code> es la URL del
+				frame), y lleva la ruta del frame en <code>properties.frame</code>:
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={['"properties": { "severity": "serious", "confidence": "high", "frame": ["#checkout"] }']}
+			/>
+			<p>
+				La ruta también forma parte de la identidad del hallazgo (<code>partialFingerprints</code>),
+				así que el mismo defecto en la página y en un frame, o en dos frames, son dos alertas. Un
+				frame que no respondió (sin respondedor, o se agotó el tiempo) es una notificación de nivel{" "}
+				<code>warning</code>,{" "}
+				<code>"The frame #ads (https://ads.example/) was not scanned: &lt;error&gt;"</code>, ya que
+				no se comprobó nada en él.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</h2>

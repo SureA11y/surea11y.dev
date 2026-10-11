@@ -6,21 +6,18 @@ export function KnownLimitationsContent() {
 	return (
 		<>
 			<p>
-				Estas limitaciones se exponen con claridad desde el principio para que no tengas que
-				descubrirlas por tu cuenta. Cada elemento aquí es una decisión deliberada y razonada, no un
-				descuido, pero "deliberada" no significa "sin importancia antes de confiar en esta
-				herramienta".
+				Qué no evalúa el motor, qué depende del entorno en el que se ejecuta y qué necesita la
+				revisión de una persona. Léelo antes de confiar en un resultado sin hallazgos.
 			</p>
 
-			<h2>Estructurales: esta arquitectura no puede hacer esto en absoluto</h2>
+			<h2>Aspectos que el análisis no evalúa</h2>
 			<p>
-				surea11y es un <strong>análisis estático del DOM</strong>: lee el árbol DOM y los estilos
-				calculados en un instante determinado, sin capacidad de simular la interacción del
-				usuario, esperar cambios de estado asíncronos ni medir el diseño real en tamaños de
-				viewport arbitrarios. No se trata de reglas faltantes: ninguna implementación de regla,
-				por ingeniosa que sea, puede resolver esto sin una arquitectura fundamentalmente distinta
-				(automatización de navegador real que genere eventos de teclado/puntero reales a lo largo
-				del tiempo):
+				surea11y comprueba la página en su estado actual. Algunas reglas cambian brevemente el
+				foco o los estilos para medir una condición concreta, y en un navegador real las reglas
+				pueden medir el diseño (en jsdom no lo hay), pero el análisis no explora de forma
+				sistemática las interacciones del usuario, los estados asíncronos ni distintos tamaños de
+				viewport. Por eso lo siguiente necesita pruebas aparte, con automatización de navegador y
+				revisión humana según corresponda:
 			</p>
 			<ul>
 				<li>
@@ -31,9 +28,12 @@ export function KnownLimitationsContent() {
 					<a href={`${core}/docs/ACT_RULE_MAPPING.md#keyboard-trap-detection-scoping-notes`}>
 						<code>ACT_RULE_MAPPING.md</code>
 					</a>
-					), pero sería la primera comprobación de este motor que modifica la página que está
-					inspeccionando, así que no está implementada y, aunque lo estuviera, no formaría parte
-					de un análisis normal. Mientras tanto, nada en el marcado estático la sustituye.
+					), pero no está implementada: un análisis no explora las interacciones del usuario ni
+					los estados a los que llevan. Algunas comprobaciones modifican la página brevemente para
+					medirla (<code>aria-hidden-focus</code> intenta enfocar elementos,{" "}
+					<code>text-spacing-content-loss</code> aplica un espaciado de prueba), pero ninguna
+					mueve el foco por la página como lo haría la detección de trampas. Mientras tanto, nada
+					en el marcado estático la sustituye.
 				</li>
 				<li>
 					<strong>Reflujo / recorte al aplicar zoom</strong> (WCAG 1.4.10): requiere una medición
@@ -80,6 +80,41 @@ export function KnownLimitationsContent() {
 					texto que nunca hace salto de línea por otro motivo sigue informándose como fallo.
 				</li>
 				<li>
+					<strong>El motor se ejecuta sobre los objetos integrados de JavaScript de la propia
+					página.</strong> Una página cuyos scripts rompen uno del que depende (
+					<code>Array.prototype.filter</code>, <code>Map</code>, <code>JSON.stringify</code>,{" "}
+					<code>String.prototype.toLowerCase</code> y otros) detiene el análisis con un error de
+					código <code>PAGE_BUILTINS_BROKEN</code> que nombra cada uno, en lugar de dar un resultado
+					que parece correcto y es erróneo; uno roto antes de inyectar el bundle (
+					<code>Object.keys</code>) impide que el bundle se cargue. Una página que añade{" "}
+					<code>then</code> a <code>Object.prototype</code> se analiza como cualquier otra. Los
+					métodos del DOM que una página sustituye (<code>getComputedStyle</code>,{" "}
+					<code>querySelectorAll</code>, <code>getBoundingClientRect</code>) no se comprueban: las
+					reglas leen lo que devuelven.
+				</li>
+				<li>
+					<strong>Un nombre no se calcula a partir de contenido anidado a más de 256 niveles de
+					profundidad.</strong>{" "}
+					El recorrido se detiene ahí (Chrome no da ningún nombre a partir de contenido a 100 niveles
+					de profundidad), así que{" "}
+					<a href="/rules/button-name-present/"><code>button-name-present</code></a> y{" "}
+					<a href="/rules/link-name-present/"><code>link-name-present</code></a> preguntan (
+					<code>name_contentTooDeep</code>) por un botón o un enlace cuyo único nombre está más
+					abajo; otras reglas que obtienen el nombre del contenido leen ese contenido como vacío.
+				</li>
+				<li>
+					<strong>El contenido de una raíz shadow cerrada no se puede leer.</strong> Ningún script
+					llega dentro de <code>{"attachShadow({ mode: 'closed' })"}</code> ni de un{" "}
+					<code>shadowrootmode="closed"</code> declarativo, así que el motor no puede ver el nombre
+					que un navegador obtiene de ahí. <code>button-name-present</code> y{" "}
+					<code>link-name-present</code>, y las reglas de nombre de elemento de menú, opción,
+					pestaña, elemento de árbol, summary y tooltip, preguntan por un elemento cuyo nombre
+					podría venir de un elemento personalizado que se renderiza pero no muestra contenido
+					legible, en lugar de hacerlo fallar. Una raíz cerrada en un elemento incorporado (un{" "}
+					<code>&lt;span&gt;</code>) parece una vacía, como un icono dibujado con CSS, así que un
+					botón sobre una sigue fallando.
+				</li>
+				<li>
 					<strong>
 						Un análisis hecho con un diálogo modal abierto ve el diálogo, no la página.
 					</strong>{" "}
@@ -98,7 +133,7 @@ export function KnownLimitationsContent() {
 					propio construido con un elemento <code>role="dialog"</code> e <code>inert</code> o{" "}
 					<code>aria-hidden</code> en el resto de la página solo se trata a través de esos
 					atributos, que ocultan la página pero no indican a las reglas de estructura que hay un
-					diálogo abierto. Se comporta como axe-core; IBM Equal Access y Siteimprove Alfa juzgan la
+					diálogo abierto. Otros motores difieren aquí: algunos hacen lo mismo, otros juzgan la
 					página detrás del diálogo como si no hubiera nada abierto.
 				</li>
 				<li>
@@ -120,6 +155,16 @@ export function KnownLimitationsContent() {
 					una referencia de ID ARIA rota) antes de que un diálogo llegue a abrirse. Consulta{" "}
 					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>{" "}
 					para conocer la opción y exactamente qué mecanismos de ocultación cubre.
+				</li>
+				<li>
+					<strong>jsdom conserva el tamaño de fuente tal como está escrito.</strong> Un navegador
+					informa de un tamaño de fuente calculado en px; jsdom conserva una palabra clave o un{" "}
+					<code>calc()</code> tal como está escrito. El motor lee las palabras clave con los tamaños
+					de un navegador para un valor predeterminado de 16px (<code>xx-large</code> es 32px) y el{" "}
+					<code>calc()</code> de longitudes y números, así que el texto grande se distingue como en un
+					navegador. <code>larger</code> y <code>smaller</code>, que dependen del tamaño del padre, no
+					se resuelven bajo jsdom: ese texto se somete a la relación del texto normal, y su mensaje
+					indica su tamaño como 0px. Un navegador resuelve ambos.
 				</li>
 				<li>
 					<strong>
@@ -156,19 +201,37 @@ export function KnownLimitationsContent() {
 					vuelve perceptible a partir de aproximadamente 1000.
 				</li>
 				<li>
+					<strong>Bajo jsdom, el tiempo de análisis también crece con el tamaño de la hoja de
+					estilo.</strong> jsdom calcula un estilo comparando cada regla CSS con el elemento. El motor
+					no modifica el DOM durante un análisis, así que cada elemento se calcula una sola vez, pero
+					esa vez cuesta O(reglas): en una página de noticias guardada (7916 elementos, 2683 reglas
+					CSS, jsdom 29.1.1), el primer cálculo de 5735 elementos tarda unos 224 s de un análisis de
+					243 s. Ese es el coste de jsdom; un navegador real calcula la misma página en una fracción
+					de segundo. jsdom además deja sin sustituir las propiedades personalizadas, así que un
+					color definido con <code>var()</code> no se puede leer ahí: se pregunta por el texto o el
+					fondo (<code>contrast-computable</code>) en lugar de medirlo. Usa un navegador real para
+					páginas grandes de producción.
+				</li>
+				<li>
 					<strong>
 						En un navegador real, algunas reglas modifican la página mientras dura su comprobación, y
 						los propios scripts de la página pueden reaccionar.
 					</strong>{" "}
 					Para medir lo que dibuja el navegador, <code>css-hidden-focus</code> enfoca elementos como
 					lo haría el teclado y desactiva las transiciones en el elemento que mide;{" "}
-					<code>text-spacing-content-loss</code> añade una hoja de estilo con el espaciado de WCAG
+					<code>aria-hidden-focus</code> enfoca un elemento dentro de un subárbol{" "}
+					<code>aria-hidden</code> para ver si la página retira el foco de inmediato (un centinela de
+					trampa de foco); <code>text-spacing-content-loss</code> añade una hoja de estilo con el espaciado de WCAG
 					1.4.12. Todo esto se restablece antes de que la regla termine: el foco, la posición de
 					desplazamiento, los atributos style y la hoja de estilo añadida. Lo que no se puede
 					restablecer es lo que hagan los scripts de la página en respuesta, ya que enfocar un
-					elemento dispara sus manejadores <code>focus</code>: un carrusel puede pasar a la
-					diapositiva enfocada o activar un botón. Los hallazgos no se ven afectados, pero si
-					analizas una página que sigues usando, recárgala después.
+					elemento dispara sus manejadores <code>focus</code> y <code>focusin</code>: un carrusel
+					puede pasar a la diapositiva enfocada, moviendo <code>aria-hidden</code> con ella, o
+					activar un botón. Los hallazgos de ese análisis son los de la página tal como se encontró:{" "}
+					<code>aria-hidden-focus</code> lee qué subárboles están ocultos, y el marcado que informa,
+					antes de enfocar nada. Pero la página queda como la dejaron sus scripts, así que un segundo
+					análisis de la misma página puede encontrar otra cosa: si analizas una página que sigues
+					usando, o analizas una página dos veces, recárgala entre medias.
 				</li>
 				<li>
 					<strong>Marcado estático frente a estado del DOM en vivo o posterior a la hidratación.</strong>{" "}
@@ -228,29 +291,77 @@ export function KnownLimitationsContent() {
 					<code>engine.environment</code> si las fuentes o las imágenes aún estaban cargando.
 				</li>
 				<li>
-					<strong>
-						Las reglas de contraste miden el texto frente a los fondos de sus ancestros y, en un
-						navegador, comprueban si algo más pinta ahí.
-					</strong>{" "}
+					<strong>En un navegador, las reglas de contraste miden el texto frente a lo que se pinta
+					debajo de él, en el orden de pintado de CSS.</strong>{" "}
 					Un texto posicionado sobre un hermano, sobre una imagen <code>&lt;img&gt;</code> de
 					cabecera, sobre una superposición <code>::before</code>, o desplazado sobre otro bloque
 					con un margen negativo queda sobre una pintura que no pertenece a ninguno de sus
-					ancestros. En un navegador, el motor mide las cajas de línea del texto y busca elementos
-					que pinten un color de fondo, una imagen de fondo o contenido reemplazado (
-					<code>img</code>, <code>video</code>, <code>canvas</code>, <code>svg</code>,{" "}
-					<code>iframe</code>) y cubran al menos más o menos un glifo de una línea, y un{" "}
-					<code>::before</code> o <code>::after</code> posicionado con un color o un degradado;
-					cuando encuentra uno, <a href="/rules/contrast-computable/"><code>contrast-computable</code></a>{" "}
-					pregunta por el texto con el código de motivo <code>BACKGROUND_OVERLAP</code> y las
-					reglas que calculan la relación de contraste lo dejan fuera. No determina cuál de dos
-					cajas superpuestas se pinta encima, así que no calcula una relación de contraste frente a
-					la pintura que encontró. Tres límites
-					reducen el ruido, y cada uno puede pasar por alto un caso: solo cuenta la pintura dentro
-					del ancestro más cercano del texto con un fondo opaco (una tarjeta blanca sobre una
-					imagen de cabecera oculta la imagen), las cajas fijas y sticky quedan fuera (un banner de
-					cookies o una cabecera cubren el texto en lugar de quedar detrás), y se ignora la pintura
-					sólida del mismo color que el fondo ya medido. Bajo jsdom no hay diseño, así que no se
-					encuentra nada y el texto se mide solo frente a sus ancestros.
+					ancestros, y un texto que desborda la caja de un ancestro, o que tiene un{" "}
+					<code>z-index</code> negativo, no está sobre el fondo de ese ancestro. En un navegador, el
+					motor mide las cajas de línea del texto, encuentra los elementos que pintan ahí (un color o
+					una imagen de fondo, contenido reemplazado como <code>img</code>, <code>video</code>,{" "}
+					<code>canvas</code>, <code>iframe</code>, formas SVG) y los ordena junto con el texto y los
+					fondos de sus ancestros según el orden de pintado de CSS: contextos de apilamiento,{" "}
+					<code>z-index</code>, cajas posicionadas y flotantes, y después el orden del documento.
+					Cuando todo lo que hay entre el texto y la primera capa opaca es un color sólido que cubre
+					todo el texto, la relación de contraste se mide frente a eso; cuando interviene una imagen,
+					un degradado, una pintura que cubre solo parte del texto o una pintura dibujada sobre el
+					texto, <a href="/rules/contrast-computable/"><code>contrast-computable</code></a>{" "}
+					pregunta por el texto con el código de motivo <code>BACKGROUND_OVERLAP</code> y las reglas
+					que calculan la relación de contraste lo dejan fuera. El texto que una caja que recorta su
+					desbordamiento mantiene fuera de la vista, como las opciones más abajo en una lista con
+					desplazamiento, se mide tal como queda una vez desplazado dentro de esa caja. El texto que
+					una caja con <code>overflow: hidden</code> mantiene totalmente fuera de la vista, como una
+					diapositiva de carrusel fuera de su pista, no se mide en absoluto: solo por sus estilos,
+					esa caja no se puede distinguir de una que oculta ese texto definitivamente, así que el
+					texto se deja fuera en lugar de suponer. Analiza la página en ese estado (con la
+					diapositiva visible) para comprobarlo. Límites: una caja fija o sticky sobre el texto queda
+					fuera, ya que solo lo cubre en la posición de desplazamiento en la que se hizo el análisis;
+					un degradado bajo el texto no se muestrea, así que un texto tenue sobre un degradado tenue
+					se pregunta en lugar de fallar; y un efecto de grupo (<code>opacity</code>, un filtro, un
+					modo de fusión) en un ancestro deja la superposición a una comprobación más aproximada.
+					Bajo jsdom no hay diseño, así que el texto se mide solo frente a sus ancestros.
+				</li>
+				<li>
+					<strong>El texto de un campo de formulario se mide tal como lo dibuja el campo.</strong> El
+					valor de un <code>&lt;input&gt;</code> que muestra texto (text, search, email, url, tel,
+					password, number, los tipos de fecha y hora) y el valor actual de un{" "}
+					<code>&lt;textarea&gt;</code> se miden con el color del campo frente a su fondo; mientras
+					el valor está vacío, el texto provisional se mide con el color y la fuente de{" "}
+					<code>::placeholder</code>, atenuado por su <code>opacity</code>. No se mide: el texto que
+					dibuja el navegador cuando un campo de fecha u hora está vacío (<code>mm/dd/yyyy</code>),
+					el botón y el nombre de archivo de un input de archivo, y la opción mostrada de un{" "}
+					<code>&lt;select&gt;</code>. Bajo jsdom no hay estilo <code>::placeholder</code>, así que
+					ahí no se miden los textos provisionales; los valores sí. Un texto provisional por debajo
+					de su relación de contraste es <code>cantTell</code> en lugar de un fallo (
+					<code>PLACEHOLDER_BELOW_THRESHOLD</code>): WCAG somete el texto provisional a la relación
+					de contraste, pero considera que la cumplen los colores que la página dejó por completo al
+					navegador (técnica G148), y distinguir los colores del navegador de los de la página en
+					páginas reales aún no está resuelto, así que por ahora decide una persona.
+				</li>
+				<li>
+					<strong>
+						<code>target-size-minimum</code> mide la región que un puntero puede alcanzar,
+						calculada a partir del diseño.
+					</strong>{" "}
+					Un objetivo es su border box con sus esquinas redondeadas y sus transformaciones 2D,
+					recortado por <code>clip</code> y <code>clip-path: inset()</code> en su cadena de bloques
+					contenedores y no más grande que una caja de esa cadena que recorta su{" "}
+					<code>overflow</code>, con el contenido que sobresale de él, menos las cajas pintadas encima
+					que reciben eventos de puntero; es lo bastante grande cuando cabe dentro un cuadrado de 24
+					por 24 alineado con la página (<span lang="en">Understanding</span> 2.5.8). Como la región
+					sale del diseño y no de pruebas de impacto (hit-testing), los objetivos por debajo del
+					pliegue se miden igual que los visibles, y también los objetivos dentro de una caja que
+					recorta su desbordamiento, como si estuvieran desplazados dentro de ella. Las esquinas
+					redondeadas se miden tal como se dibujan. Las cajas fijas y sticky sobre un objetivo quedan
+					fuera; un objetivo antes del inicio de la página, adonde el desplazamiento no llega (un
+					enlace de salto en <code>left: -9999px</code>), no es un objetivo. Se dejan como su caja
+					delimitadora: las transformaciones 3D, otras formas de <code>clip-path</code> y el recorte
+					redondeado de un ancestro. Su excepción en línea cubre un enlace dentro de una frase, que
+					la regla interpreta como texto con una letra o un dígito fuera de cualquier objetivo en el
+					tramo del bloque del enlace entre saltos de línea; los enlaces separados solo por
+					separadores ("Edit | Delete") que se amontonan entre sí se preguntan en lugar de quedar
+					exentos. Bajo jsdom, que no tiene diseño, la regla es <code>notApplicable</code>.
 				</li>
 				<li>
 					<strong>El contraste se calcula en sRGB.</strong> Los colores dados en{" "}

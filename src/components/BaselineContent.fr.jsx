@@ -89,7 +89,7 @@ export function BaselineContent() {
 			<p>
 				où <code>reasonCode</code> est le code propre à la règle, issu de{" "}
 				<code>occurrence.data.details.reasonCode</code> (<code>"DEFAULT"</code> par défaut si la
-				règle n’en définit pas), et <code>html</code> est l’extrait de HTML externe de
+				règle n’en définit pas, ou définit autre chose qu’une chaîne non vide), et <code>html</code> est l’extrait de HTML externe de
 				l’occurrence. Cette identité repose sur le contenu et non sur la position : elle résiste au
 				déplacement de l’élément signalé dans la page (un réordonnancement, un élément frère sans
 				rapport ajouté ou supprimé) tant que le balisage propre de l’élément signalé ne change pas.
@@ -119,6 +119,20 @@ export function BaselineContent() {
 				(par exemple le même composant défectueux répété 3 fois) et que la baseline n’en a
 				enregistré qu’un, une nouvelle analyse en signale 1 connu et 2 nouveaux, et non les 3 comme
 				connus.
+			</p>
+			<p>
+				Un constat situé dans un frame d’un résultat multi-frames (<code>runa11yCoreAcrossFrames</code>)
+				se distingue aussi par son frame : son entrée enregistre le <strong>chemin</strong> du frame,
+				les sélecteurs des éléments frame qui y mènent (<code>"frame": ["#checkout"]</code>), et ne
+				correspond qu’à un constat situé dans le frame à ce chemin. Le même composant défectueux
+				dans la page et dans un frame donne deux constats. Les entrées sans <code>frame</code>{" "}
+				appartiennent à la page elle-même, si bien qu’une baseline écrite à partir d’une analyse
+				d’un seul document continue de correspondre à la page.
+			</p>
+			<p>
+				Un résultat compact (<code>engineOptions.output.detail: 'findings'</code>, voir{" "}
+				<a href="/results-reports/output-schema/#top-level-result">Schéma de sortie</a>) est lu
+				comme le résultat complet qu’il représente ; il est donc signalé de la même façon.
 			</p>
 			<p>
 				Les entrées de baseline qui ne correspondent à rien dans une nouvelle analyse sont
@@ -167,7 +181,10 @@ export function BaselineContent() {
 			<p>
 				<code>--baseline &lt;path&gt;</code> rejette tout fichier qui n’est pas de la forme{" "}
 				<code>{"{ version: 1, entries: [...] }"}</code> avec une erreur claire (code de sortie 2),
-				plutôt que d’essayer de deviner un format plus ancien ou différent.
+				plutôt que d’essayer de deviner un format plus ancien ou différent.{" "}
+				<code>matchBaseline</code>, ainsi que l’option <code>baselineEntries</code> des
+				reporters SARIF et JUnit, acceptent le fichier tel qu’il est enregistré (son{" "}
+				<code>JSON.parse</code>) ou sa liste <code>entries</code>.
 			</p>
 
 			<h2>Combinaison avec <code>--json</code></h2>

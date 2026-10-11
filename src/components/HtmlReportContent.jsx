@@ -29,7 +29,20 @@ export function HtmlReportContent() {
 					<code>cantTell</code> occurrences (not one per occurrence — a rule with many identical
 					occurrences is one thing worth attention, not many), each showing severity, WCAG SC
 					chip(s), a representative occurrence, and the total occurrence count. Capped at the 24
-					highest-priority rules with an overflow note past that.
+					highest-priority rules with an overflow note past that. A rule that did not complete (it
+					threw) gets a card too, saying so with its error, since the page was not checked against
+					it. A rule with an <code>http(s)</code> help link (<code>meta.helpUrl</code>, a custom
+					rule's included) gets a "How to fix &lt;rule&gt;" link on its card; a rule without one
+					links the Understanding document of the WCAG criterion it checks ("Understanding 1.1.1
+					Non-text Content").
+					</li>
+					<li>
+						<strong>Frames</strong>: only for a cross-frame result (<code>runa11yCoreAcrossFrames</code>,
+						or a binding's <code>.frames(true)</code>). The cards above are the page's own; this
+						section has one heading per frame, named by its path (the selectors of the frame
+						elements leading to it), with the frame's title and URL and its cards, or "Not scanned"
+						and why for a frame that did not answer. The rest of the report describes the page
+						itself.
 					</li>
 					<li>
 						<strong>Closest to the limit</strong>: shown when the scan has margins (
@@ -43,15 +56,21 @@ export function HtmlReportContent() {
 					<strong>WCAG rollup</strong>: grouped by conformance level (A / AA / AAA), sourced
 					directly from the engine's own <code>rulesResults[]</code> composite rollups (see{" "}
 					<a href="/conformance/wcag-mapping/">Conformance</a>) — one row per Success Criterion (with
-					the EN 301 549 clause that restates it, where there is one and the scan asked for EN 301
-					549 clauses), its outcome, a pass/fail/needs-review/n/a breakdown, and which atomic rules
-					contributed. This is real engine data, not an invented grouping — the same rollup you'd
+					the requirements of each other standard in the result's <code>standards</code> that its
+					rules map to, such as the EN 301 549 clause that restates it, where there is one and the
+					scan asked for EN 301 549 clauses), its outcome, a pass/fail/needs-review/n/a breakdown,
+					and which atomic rules contributed, a custom rule mapped to the criterion included. This is real engine data, not an invented grouping — the same rollup you'd
 					get from the raw JSON's <code>rulesResults</code>.
 					</li>
 					<li>
 						<strong>A standard's own rollup</strong>: only when the scan ran the rules of a standard
 						that has rollups of its own (its profile, or <code>engineOptions.optInRules</code>), one
-						row per rollup, with the standard's wording, the breakdown and the contributing rules.
+						row per rollup, with the standard's wording, the requirements of the rules that decided
+						the outcome, the breakdown and the contributing rules. This covers a{" "}
+						<a href="/configuration/packs/">pack</a>'s standard and a pack's checklist, whose items
+						are its rollups. Each such standard is one listed in the result's{" "}
+						<code>standards</code>, so a stored result renders the same wherever it is rendered;
+						when that list is missing or damaged, the report says so above the WCAG rollup.
 					</li>
 				<li>
 					<strong>Full technical data</strong> (collapsed by default): a scorecard (tiles per
@@ -59,6 +78,11 @@ export function HtmlReportContent() {
 					occurrence across the whole scan.
 				</li>
 			</ul>
+			<p>
+				The report follows the reader's color scheme, and its own text meets WCAG 1.4.3 in both:
+				every status color is at least 4.5:1 on its chip and tile, and the engine's own contrast
+				rules pass on the rendered report in light and dark mode.
+			</p>
 			<p>
 				The meta bar under the header carries the rule count, occurrence count, engine tag, schema
 				version, the WCAG version the scan targeted, the <code>engineOptions.profile</code> it used
@@ -86,6 +110,11 @@ export function HtmlReportContent() {
 					of the result, so the report cannot read labels from it; its findings are then marked with
 					their own language (<code>lang="nl"</code>, for instance), so a screen reader still reads
 					them with the right voice.
+				</p>
+				<p>
+					A compact result (<code>engineOptions.output.detail: 'findings'</code>, see{" "}
+					<a href="/results-reports/output-schema/#top-level-result">Output schema</a>) is read as
+					the full result it stands for, so it is reported the same.
 				</p>
 
 			<h2>Library usage</h2>

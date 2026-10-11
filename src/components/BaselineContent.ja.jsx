@@ -80,7 +80,7 @@ export function BaselineContent() {
 				<code>reasonCode</code>
 				は
 				<code>occurrence.data.details.reasonCode</code>
-				にあるルール固有のコード（ルールが設定しない場合は
+				にあるルール固有のコード（ルールが設定しない場合、または空でない文字列以外を設定した場合は
 				<code>"DEFAULT"</code>
 				）、
 				<code>html</code>
@@ -105,6 +105,24 @@ export function BaselineContent() {
 				+
 				<code>html</code>
 				がバイト単位で同一になる要素が3つあり（同じ壊れたコンポーネントが3回繰り返されている場合など）、ベースラインにはそのうち1つしか記録されていなければ、新しいスキャンは3つすべてを既知とはせず、既知1件、新規2件と報告します。
+			</p>
+			<p>
+				フレーム横断の結果（
+				<code>runa11yCoreAcrossFrames</code>
+				）でフレーム内にある検出結果は、フレームでも区別されます。そのエントリーにはフレームの
+				<strong>パス</strong>
+				、つまりそのフレームに至るフレーム要素のセレクター（
+				<code>"frame": ["#checkout"]</code>
+				）が記録され、そのパスのフレームにある検出結果とだけ一致します。ページとフレームにある同じ壊れたコンポーネントは、2つの検出結果です。
+				<code>frame</code>
+				のないエントリーはページ自身のものなので、単一ドキュメントのスキャンから書き出したベースラインは引き続きページと一致します。
+			</p>
+			<p>
+				コンパクトな結果（
+				<code>engineOptions.output.detail: 'findings'</code>
+				。
+				<a href="/results-reports/output-schema/#top-level-result">出力スキーマ</a>
+				を参照）は、それが表す完全な結果として読まれるので、同じように報告されます。
 			</p>
 			<p>
 				新しいスキャンのどれとも一致しないベースラインのエントリーは
@@ -140,6 +158,14 @@ export function BaselineContent() {
 				は、
 				<code>{"{ version: 1, entries: [...] }"}</code>
 				の形でないファイルを、古い形式や別の形式だと推測せず、終了コード2の明確なエラーで拒否します。
+				<code>matchBaseline</code>
+				と、SARIFおよびJUnitのレポーターの
+				<code>baselineEntries</code>
+				オプションは、保存したままのファイル（それを
+				<code>JSON.parse</code>
+				したもの）か、その
+				<code>entries</code>
+				リストを受け取ります。
 			</p>
 
 			<h2><code>--json</code>との併用</h2>

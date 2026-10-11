@@ -123,7 +123,7 @@ export function LocalesContent() {
 				}))}
 			/>
 			<p>
-				「未翻訳」は、英語のテキストと1文字残らず一致する値の数です。ただし、フランス語の「<span lang="fr">Orientation</span>」「<span lang="fr">Interruptions</span>」「<span lang="fr">Occurrences</span>」、ドイツ語の「<span lang="de">Element</span>」、スペイン語の「<span lang="es">Selector</span>」のように、その言語でも同じ語であるのが正しいものは除きます。こうした語は、照合した英語のテキストとともに一覧に登録され、翻訳済みとして数えられます。英語が変わるとその登録は当てはまらなくなり、誰かが改めて確認するまで、その文字列は未翻訳として数えられます。訳文の中に英単語が残っていても、この数には表れません。それはテキストを読んで見つけるもので、上のロケールには1つも残っていません。
+				「未翻訳」は、英語のテキストと1文字残らず一致する値の数です。ただし、フランス語の「<span lang="fr">Orientation</span>」「<span lang="fr">Interruptions</span>」「<span lang="fr">Occurrences</span>」、ドイツ語の「<span lang="de">Frame</span>」「<span lang="de">Frames</span>」「<span lang="de">Element</span>」、スペイン語の「<span lang="es">Selector</span>」のように、その言語でも同じ語であるのが正しいものは除きます。こうした語は、照合した英語のテキストとともに一覧に登録され、翻訳済みとして数えられます。英語が変わるとその登録は当てはまらなくなり、誰かが改めて確認するまで、その文字列は未翻訳として数えられます。訳文の中に英単語が残っていても、この数には表れません。それはテキストを読んで見つけるもので、上のロケールには1つも残っていません。
 			</p>
 
 			<h3 id="reading-coverage-from-the-package">パッケージからカバー率を読み取る</h3>
@@ -317,6 +317,23 @@ export function LocalesContent() {
 				<code>unknown-locale</code>
 				とは別のものです。
 			</p>
+			<p>
+				Nodeでは、同じ別ファイルがモジュールになります。
+				<code>require('@surea11y/core/i18n/de')</code>
+				は
+				<code>{"{ locale, messages }"}</code>
+				を返し（
+				<code>locale</code>
+				は
+				<code>'de'</code>
+				、
+				<code>messages</code>
+				はキーからテキストへのフラットなマップ）、バンドルは必要ありません。
+			</p>
+			<p>
+				<a href="/configuration/packs/">パック</a>
+				のメッセージはパック自身の辞書にあり、パックがロケールごとに列挙します。パックに辞書がないロケールでは、そのメッセージは英語で表示されます。
+			</p>
 
 			<h3>辞書を自分で渡す</h3>
 			<p>
@@ -429,7 +446,7 @@ export function LocalesContent() {
 				</li>
 			</ul>
 			<p>
-				どちらも解決済みのテキストと一緒に結果に含まれるので、保存した結果から、再スキャンせずに別のロケールで表示し直せます。
+				ルール、複合ルール、検出箇所のキーは解決済みのテキストと一緒に結果に含まれるので、保存した結果から、再スキャンせずに別のロケールで表示し直せます。
 			</p>
 		</>
 	);

@@ -8,13 +8,14 @@ export function ConfigurationContent() {
 				de configuration à maintenir, pas d’ensemble de flags propre à la CLI à garder synchronisé.
 				La CLI et chaque binding construisent cet objet pour vous à partir de leurs propres flags ou
 				méthodes de builder, donc ce que vous apprenez ici s’applique partout où vous lancez une
-				analyse. Trois points méritent d’être bien réglés dès le départ :
+				analyse. Quatre points méritent d’être bien réglés dès le départ :
 			</p>
 
 			<h2>Options du moteur</h2>
 			<p>
-				Limitez une analyse exactement aux règles voulues, par identifiant, par tag ou par version
-				de conformité WCAG (2.0, 2.1 ou 2.2), ou en nommant un profil de conformité comme WCAG 2.2 AA,
+				Limitez une analyse exactement aux règles voulues, en nommant une version et un niveau WCAG
+				(WCAG 2.2 AA en une seule option, avec les bonnes pratiques en plus si vous le souhaitez),
+				par identifiant, par tag, ou en nommant un profil de conformité comme WCAG 2.2 AA,
 				EN 301 549 ou Section 508, pour qu’une exécution rapporte ce dont vous êtes
 				réellement responsable, ni plus ni moins. Faites taire des widgets connus pour être bruyants,
 				globalement ou pour une seule règle, sans perdre la couverture ailleurs, ajustez le degré d’exigence
@@ -22,6 +23,18 @@ export function ConfigurationContent() {
 				sans surveillance, et ajoutez une règle propre à votre organisation à côté des règles
 				intégrées quand le catalogue ne couvre pas un point qui vous importe. Voir{" "}
 				<a href="/configuration/engine-options/">Options du moteur</a> pour la référence complète.
+			</p>
+
+			<h2>Packs</h2>
+			<p>
+				Testez au-delà des WCAG sans forker le moteur. Un pack apporte une norme nationale, la
+				politique d’accessibilité de votre organisation ou quelques règles maison depuis un paquet
+				qui lui est propre, et le moteur l’exécute comme ses propres règles : ses profils
+				choisissent ce qui s’exécute, chacun des points de sa liste de contrôle revient sous la forme d’un
+				résultat, et chaque rapport les affiche à côté des critères WCAG. Le même pack fonctionne
+				depuis Node, chaque binding, test-matchers et la CLI, et{" "}
+				<code>npx surea11y-pack new</code> en génère un qui réussit ses propres tests tel quel. Voir{" "}
+				<a href="/configuration/packs/">Packs</a> pour en utiliser un ou en écrire un.
 			</p>
 
 			<h2>Intégration CI</h2>

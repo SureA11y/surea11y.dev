@@ -82,34 +82,46 @@ export function GettingStartedContent() {
 			<CodeBlock
 				lines={[
 					"surea11y scan: file:///path/to/index.html",
-					"  pass: 6   fail: 2   cantTell: 3   notApplicable: 114",
+					"  engine: @surea11y/core 1.11.1",
+					"  pass: 13   fail: 3   cantTell: 3   notApplicable: 115",
 					"",
-					"  occurrences by tier: fail: 2   cantTell: 4",
+					"  occurrences by tier: fail: 3   cantTell: 4",
 					"",
-					"FAIL (2 rule(s)):",
+					"FAIL (3 rule(s)):",
 					"",
 					"  contrast-enhanced  (serious, 1 fail occurrence(s))",
 					"    - html > body > main > p",
-					"      Element has insufficient color contrast (AAA) of 2.85:1 (foreground: #999999,",
-					"      background: #ffffff, font size: 0px, font weight: normal). Expected contrast",
-					"      ratio of 7:1 (normal text).",
+					"      Element has insufficient color contrast (AAA) of 2.85:1 (foreground:",
+					"      #999999, background: #ffffff, font size: 16px, font weight: normal).",
+					"      Expected contrast ratio of 7:1 (normal text).",
+					"      hint: Change the text color, the background color, or both, so the",
+					"      contrast ratio reaches at least 7:1.",
 					"",
 					"  contrast-minimum  (serious, 1 fail occurrence(s))",
 					"    - html > body > main > p",
 					"      Element has insufficient color contrast of 2.85:1 (foreground: #999999,",
-					"      background: #ffffff, font size: 0px, font weight: normal). Expected contrast",
-					"      ratio of 4.5:1 (normal text).",
+					"      background: #ffffff, font size: 16px, font weight: normal). Expected",
+					"      contrast ratio of 4.5:1 (normal text).",
+					"      hint: Change the text color, the background color, or both, so the",
+					"      contrast ratio reaches at least 4.5:1.",
+					"",
+					"  page-title-present  (serious, 1 fail occurrence(s))",
+					"    - head > title",
+					"      This page has no <title> element.",
+					"      hint: Add a <title> that says what the page is about or what it is for.",
 					"",
 					"cantTell — needs human review (3 rule(s)): contrast-computable, link-name-quality,",
 					"manual-review",
 				]}
 			/>
 			<p>
-				エンジンが確信を持っている
+				エンジンが確信を持っている問題が2つあり、
 				<code>fail</code>
-				（コントラスト。AA基準とAAA基準の2つのルール）、人がレビューするための
+				になっています。AAとAAAの両方の比率で不合格になった低コントラストのテキストと、欠けている
+				<code>&lt;title&gt;</code>
+				です。次に、人がレビューするための
 				<code>cantTell</code>
-				の一覧（「<span lang="en">Click here</span>」はリンク名として適切か、同じ低コントラストのテキストが別のチェックでは合格するか、手動で確認すべきものがないか）、そして114件の
+				の一覧（「<span lang="en">Click here</span>」はリンク名として適切か、同じ低コントラストのテキストが別のチェックでは合格するか、手動で確認すべきものがないか）、そして115件の
 				<code>notApplicable</code>
 				の中に
 				<code>target-size-minimum</code>

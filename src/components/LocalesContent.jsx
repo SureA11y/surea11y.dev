@@ -115,8 +115,8 @@ export function LocalesContent() {
 			<p>
 				"Untranslated" counts values that match the English text character for character, apart
 				from words that are rightly the same in a language — French <em>Orientation</em>,{" "}
-				<em>Interruptions</em> and <em>Occurrences</em>, German <em>Element</em>, Spanish{" "}
-				<em>Selector</em>. Those are listed as such, each with the English text it was checked
+				<em>Interruptions</em> and <em>Occurrences</em>, German <em>Frame</em>, <em>Frames</em>{" "}
+				and <em>Element</em>, Spanish <em>Selector</em>. Those are listed as such, each with the English text it was checked
 				against, and counted as translated. If the English changes, the entry no longer applies
 				and the string counts as untranslated until someone checks it again. The count cannot see
 				an English word left inside an otherwise translated sentence; that is found by reading the
@@ -277,6 +277,16 @@ export function LocalesContent() {
 				<code>engine.locale.reason</code> set to <code>dictionary-not-loaded</code> — different
 				from <code>unknown-locale</code>, which means the project has no such translation at all.
 			</p>
+			<p>
+				In Node, the same side file is a module: <code>require('@surea11y/core/i18n/de')</code>{" "}
+				returns <code>{"{ locale, messages }"}</code> (<code>locale</code> is <code>'de'</code>,{" "}
+				<code>messages</code> the flat key-to-text map), without needing the bundle.
+			</p>
+			<p>
+				A <a href="/configuration/packs/">pack</a>'s messages are in its own dictionaries, which
+				the pack lists per locale; a locale the pack has no dictionary for shows its messages in
+				English.
+			</p>
 
 			<h3>Supplying a dictionary yourself</h3>
 			<p>
@@ -347,7 +357,8 @@ export function LocalesContent() {
 				</li>
 			</ul>
 			<p>
-				Both are included in the result alongside the already-resolved text, so you can re-render
+				The rule, composite and occurrence keys are included in the result alongside the
+				already-resolved text, so you can re-render
 				in a different locale from a saved result without re-scanning.
 			</p>
 		</>

@@ -43,6 +43,7 @@ export const contentPages: ContentPage[] = [
 
 	{ href: "/configuration/", title: "Configuration", content: "ConfigurationContent" },
 	{ href: "/configuration/engine-options/", title: "Engine options", content: "EngineOptionsContent" },
+	{ href: "/configuration/packs/", title: "Packs", content: "PacksContent" },
 	{ href: "/configuration/ci-integration/", title: "CI integration", content: "CiIntegrationContent" },
 	{ href: "/configuration/locales/", title: "Locales", content: "LocalesContent" },
 

@@ -27,7 +27,7 @@ export const bindingUsage = {
 			"  new A11yCoreBuilder()",
 			"    .include('#main')            // optional -- call multiple times for multi-region scans",
 			"    .exclude('.cookie-banner')    // optional",
-			"    .withTags(['wcag2a', 'wcag2aa'])",
+			"    .withWcag('2.2', 'AA')         // the rules for WCAG 2.2's A and AA criteria",
 			"    .disableRules(['meta-refresh-no-exceptions'])",
 			"    .analyze()",
 			"    .then((results) => {",
@@ -43,6 +43,17 @@ export const bindingUsage = {
 				Cypress. <code>cy</code> is ambient in every spec file and <em>is</em> the driver.{" "}
 				<strong><code>analyze()</code> returns a Cypress chainable, not a Promise — don't{" "}
 				<code>await</code> it</strong>; call <code>.then()</code> as shown.
+			</p>
+		),
+		packs: (
+			<p>
+				A <a href="/configuration/packs/">pack</a> is prepared in Node, and a Cypress spec runs in
+				the browser, so in Cypress <code>.withPacks()</code> takes each pack's module name (a
+				package name, or a path from the project root), and the binding's plugin,{" "}
+				<code>@surea11y/cypress/plugin</code>, prepares it in Node: register it in{" "}
+				<code>setupNodeEvents</code> with <code>surea11y(on, config)</code>.{" "}
+				<code>{".options({ profile })"}</code> chooses the pack's profile. A pack that doesn't run
+				is reported as a <code>'pack-skipped'</code> scan gap.
 			</p>
 		),
 		exampleHref: "https://github.com/SureA11y/cypress/blob/main/examples/basic-scan.cy.js",
@@ -79,7 +90,7 @@ export const bindingUsage = {
 			"const results = await new A11yCoreBuilder({ page })",
 			"  .include('#main')            // optional -- call multiple times for multi-region scans",
 			"  .exclude('.cookie-banner')    // optional",
-			"  .withTags(['wcag2a', 'wcag2aa'])",
+			"  .withWcag('2.2', 'AA')         // the rules for WCAG 2.2's A and AA criteria",
 			"  .disableRules(['meta-refresh-no-exceptions'])",
 			"  .analyze();",
 			"",
@@ -123,7 +134,7 @@ export const bindingUsage = {
 			"const results = await new A11yCoreBuilder({ page })",
 			"  .include('#main')            // optional -- call multiple times for multi-region scans",
 			"  .exclude('.cookie-banner')    // optional",
-			"  .withTags(['wcag2a', 'wcag2aa'])",
+			"  .withWcag('2.2', 'AA')         // the rules for WCAG 2.2's A and AA criteria",
 			"  .disableRules(['meta-refresh-no-exceptions'])",
 			"  .analyze();",
 			"",
@@ -165,7 +176,7 @@ export const bindingUsage = {
 			"const results = await new A11yCoreBuilder({ driver })",
 			"  .include('#main')            // optional -- call multiple times for multi-region scans",
 			"  .exclude('.cookie-banner')    // optional",
-			"  .withTags(['wcag2a', 'wcag2aa'])",
+			"  .withWcag('2.2', 'AA')         // the rules for WCAG 2.2's A and AA criteria",
 			"  .disableRules(['meta-refresh-no-exceptions'])",
 			"  .analyze();",
 			"",
@@ -215,7 +226,7 @@ export const bindingUsage = {
 			"const results = await new A11yCoreBuilder({ browser })",
 			"  .include('#main')            // optional -- call multiple times for multi-region scans",
 			"  .exclude('.cookie-banner')    // optional",
-			"  .withTags(['wcag2a', 'wcag2aa'])",
+			"  .withWcag('2.2', 'AA')         // the rules for WCAG 2.2's A and AA criteria",
 			"  .disableRules(['meta-refresh-no-exceptions'])",
 			"  .analyze();",
 			"",

@@ -11,7 +11,7 @@ export function FaqContent() {
 					「<code>runOnly</code>がエラーを投げた：<span lang="en">no rule or tag named …</span>、または<span lang="en">either rule ids or tags</span>」
 				</h2>
 				<p>
-					1.10.0以降、配列そのものや文字列として渡した<code>runOnly</code>は、axe-coreと同じように、ルールIDかタグとして読まれます（<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>を参照してください）。次の2つの場合はエラーを投げます。
+					1.10.0以降、配列そのものや文字列として渡した<code>runOnly</code>は、ルールIDかタグとして読まれます（<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>を参照してください）。次の2つの場合はエラーを投げます。
 				</p>
 				<ul>
 					<li>
@@ -40,6 +40,42 @@ export function FaqContent() {
 			</article>
 
 			<article>
+				<h2 id="untested-wcag-tag">
+					「<code>runOnly.tags: no rules for WCAG 2.2 Level A ("wcag22a")</code>」
+				</h2>
+				<p>
+					WCAGのバージョンとレベルを表す9つのタグ（<code>wcag2a</code>から<code>wcag22aaa</code>まで）は常に既知ですが、そのうち3つにはルールがありません。<code>wcag21aaa</code>、<code>wcag22a</code>、<code>wcag22aaa</code>で、これらの達成基準には自動チェックがないためです。ほかのタグと並べてこれらを指定すると、<code>console.info</code>でこの行が出力されます。リストの残りは実行され、これらの達成基準には手動確認が必要です。出力しないようにするには<code>engineOptions.logUntestedWcag: false</code>を渡すか、タグを指定しない目標による選択を使ってください。<code>{"runOnly: { wcag: { version: '2.2', level: 'AA' } }"}</code>です（<a href="/configuration/engine-options/#selecting-by-wcag-target-runonlywcag">WCAGの目標で選ぶ</a>を参照）。このようなタグだけのリストでは何も実行されないため、同じ説明とともに<code>INVALID_RUN_ONLY</code>を投げます。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="invalid-wcag-target">
+					「<code>runOnly.wcag.version must be …</code>」または「<code>runOnly.bestPractices must be true or false …</code>」
+				</h2>
+				<p>
+					<code>runOnly.wcag</code>は<code>{"{ version, level }"}</code>を受け取ります。<code>version</code>は<code>'2.0'</code>、<code>'2.1'</code>、<code>'2.2'</code>のいずれか（文字列です。数値の<code>2.2</code>は拒否されます）、<code>level</code>は<code>'A'</code>、<code>'AA'</code>、<code>'AAA'</code>のいずれかです。<code>runOnly.bestPractices</code>は<code>true</code>か<code>false</code>を受け取ります。それ以外の値は、意図しない選択で実行するのではなく、フィールドと値を示して<code>INVALID_RUN_ONLY</code>を投げます。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="invalid-engine-options">
+					「<code>engineOptions: unknown option "lcoale" (did you mean "locale"?)</code>」、またはスキャンが<code>INVALID_ENGINE_OPTIONS</code>を投げた
+				</h2>
+				<p>
+					既知のオプションと1文字か2文字だけ違う（大文字小文字は問いません）オプションのキーは、警告されたうえで無視されます。スキャンはそれがないものとして実行されるので、綴りを直してください。それ以外の未知のキーには何も出力されません。カスタムルールは<code>ctx.engineOptions</code>から独自の設定を読めるためです。<code>engineOptions.strictOptions: true</code>を指定すると、エンジンが読まないキー（入れ子のものを含む）や、型が誤っているか集合の外にある値に対して、スキャンは代わりに<code>code: 'INVALID_ENGINE_OPTIONS'</code>付きでエラーを投げ、それぞれを最も近い既知のキーとともに示します。エラーの<code>problems</code>がそれらを列挙します。<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">オプションの誤りを見つける</a>を参照してください。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="custom-rule-rollup">
+					「カスタムルールは不合格なのに、WCAGの集約は不合格にならない」
+				</h2>
+				<p>
+					カスタムルールは、対応する各達成基準のWCAGの集約（<code>rulesResults</code>）に算入されます。<code>meta.wcagSc: ['1.1.1']</code>か、<code>meta.normativeMappings</code>のWCAGのエントリーを指定してください。どちらもなければ、どの集約にも入りません。実行されなかったカスタムルール（<code>skippedCustomRules</code>に列挙されます）も算入されません。組み込みルールの上書きは、それ自身の対応付けが示す場所にだけ算入されます。そのため、対応付けを宣言しない上書きは、組み込みルールが算入されていた集約から外れ、警告（<code>customRules: "…" overrides a built-in rule but maps to none of the criteria of …</code>）がそれらを示します。そこに残すには、組み込みルールの達成基準を指定してください。
+				</p>
+			</article>
+
+			<article>
 				<h2 id="contextselector-matched-nothing">
 					「範囲を絞ったスキャンですべてが<code>notApplicable</code>になる」、または「<code>contextSelector</code>がエラーを投げた：<span lang="en">… is not a valid CSS selector</span>」
 				</h2>
@@ -53,10 +89,33 @@ export function FaqContent() {
 					</li>
 					<li>
 						<strong><code>code: 'INVALID_CONTEXT_SELECTOR'</code>付きでスキャンがエラーを投げた</strong>
-						：メッセージと、エラーの<code>selector</code>に示されたセレクターが、有効なCSSではありません。たとえば<code>'#main['</code>や<code>&gt;&gt;&gt;</code>結合子です。
+						：メッセージと、エラーの<code>selector</code>に示されたセレクターが、有効なCSSではありません。たとえば<code>'#main['</code>や<code>&gt;&gt;&gt;</code>結合子です。あるいは、範囲が要素や<code>{"{ include, exclude }"}</code>オブジェクトのように、そもそもセレクターではない場合で、メッセージは渡されたものを示します。その要素に一致するセレクターを渡し、除外は<code>engineOptions.excludeSelectors</code>で指定してください。
 					</li>
 				</ul>
-				<p>1.10.0より前は、どちらの場合もページ全体をスキャンしていました。</p>
+				<p>
+					以前は、これらの場合はどれも代わりにページ全体をスキャンしていました。何にも一致しないセレクターや解析できないセレクターは1.10.0まで、セレクターではない範囲は1.10.0でもそうでした。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="page-builtins-broken">「スキャンが<code>PAGE_BUILTINS_BROKEN</code>を投げた」</h2>
+				<p>
+					ページ自身のスクリプトが、エンジンが依存するJavaScriptの組み込みオブジェクト（<code>Array.prototype.filter</code>、<code>Map</code>、<code>JSON.stringify</code>など）を変更しているため、そのページのスキャンは、もっともらしく見えて誤っている結果を返す可能性があります。エラーのメッセージとその<code>broken</code>リストが、それぞれを示します。ページのスクリプトがそれらを変更する前にスキャンしてください（バンドルをもっと早く注入するか、それを行うスクリプトを含まないビルドをスキャンします）。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="scan-never-returns">「スキャンがいつまでも返らない」</h2>
+				<p>
+					ページ内の何かがスキャンを止めています。戻らないゲッターやスクリプト、あるいはパックやカスタムルールのループです。いったん始まったスキャンをページ内から止める手段はないので、スキャンを開始する側で制限時間を設け、それを過ぎたらそのタブを諦めてください。PlaywrightとPuppeteerでの方法は<a href="/getting-started/standalone/#a-time-limit-on-a-scan">スタンドアロン</a>にあります。jsdomでは、スキャンをワーカースレッドか子プロセスで実行してください。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="pack-did-not-run">「パックが実行されなかった」、または<code>skippedPacks</code>が空でない</h2>
+				<p>
+					<code>core</code>の範囲がインストールされているコアを含まないパック、妥当でないパック、コアと両立しないパック（名前空間の外にあるルールID、コアが持つ辞書のキー）はスキップされます。スキャンはそのパックなしで実行され、警告を出し、理由とともに<code>result.skippedPacks</code>に列挙します。<code>strictOptions</code>のもとではエラーを投げます。ページ内では、<code>engineOptions.packs</code>で指定されたのに、どの<code>packScript</code>の呼び出しも登録していないパックや、別のバージョンのコアで登録されたパックが、同じように列挙されます。バインディングはこれを<code>'pack-skipped'</code>のスキャンギャップとして報告し、test-matchersはアサーションを失敗させ、CLIは終了コード<code>2</code>で終了します。パックはそれを実行するパッケージと並べてインストールし、npmが両者に対して1つの<code>@surea11y/core</code>を解決するようにしてください。<a href="/configuration/packs/#when-a-pack-doesnt-run">パック</a>を参照してください。
+				</p>
 			</article>
 
 			<article>
@@ -241,7 +300,7 @@ export function FaqContent() {
 					、どちらを使えばよいのか」
 				</h2>
 				<p>
-					同じNodeプロセス内で直接呼び出す場合（jsdom、ブラウザー拡張機能のコンテンツスクリプト）は
+					同じNodeプロセス内で直接呼び出す場合（jsdom）は
 					<code>runDomRulesInPage</code>
 					です。
 					<em>関数そのもの</em>
