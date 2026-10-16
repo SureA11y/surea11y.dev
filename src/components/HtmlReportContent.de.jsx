@@ -67,7 +67,10 @@ export function HtmlReportContent() {
 					<code>standards</code> des Ergebnisses, auf die seine Regeln abgebildet sind, etwa der
 					EN-301-549-Klausel, die es wiedergibt, sofern es eine gibt und der Scan
 					EN-301-549-Klauseln angefordert hat) mit seinem Ergebnis, einer Aufschlüsselung nach
-					bestanden/nicht bestanden/zu prüfen/nicht anwendbar und den atomaren Regeln, die dazu
+					bestanden/nicht bestanden/zu prüfen/nicht anwendbar (mit einer Zeile „Teilweise geprüft“,
+					wenn der Scan nur einen Teil der Regeln des Kriteriums ausgewählt hat, siehe{" "}
+					<a href="/results-reports/output-schema/#partly-checked">Ein teilweise geprüftes
+					Kriterium</a>) und den atomaren Regeln, die dazu
 					beigetragen haben, einschließlich einer eigenen Regel, die dem Kriterium zugeordnet ist.
 					Das sind echte Engine-Daten, keine erfundene Gruppierung — dieselbe
 					Zusammenfassung, die Sie auch aus <code>rulesResults</code> im rohen JSON erhalten.
@@ -87,14 +90,30 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Vollständige technische Daten</strong> (standardmäßig eingeklappt): eine
 					Übersicht (Kacheln pro Ergebnis) und eine durchsuchbare, (nach Ergebnis) filterbare,
-					paginierte Tabelle aller einzelnen Vorkommen des gesamten Scans.
+					paginierte Tabelle aller einzelnen Vorkommen des gesamten Scans. Zeigt sie kein
+					Vorkommen, enthält sie eine Zeile, die das sagt: Der Scan hat keine erfasst, oder die
+					Filter blenden alle aus.
 				</li>
 			</ul>
+			<p>
+				Ein Element in einem Shadow Tree wird über die Selektoren der Shadow Hosts und dann seinen
+				eigenen verortet, verbunden mit <code>{" >>> "}</code>:{" "}
+				<code>{"html > body > main > x-card >>> button"}</code>. Die Karten, die Tabelle der Abstandswerte
+				und die Tabelle der Vorkommen zeigen es alle so, ebenso{" "}
+				<a href="/results-reports/sarif-report/#field-mapping">SARIF</a> und{" "}
+				<a href="/results-reports/junit-report/#outcomes">JUnit</a>.
+			</p>
 			<p>
 				Der Bericht folgt dem Farbschema der lesenden Person, und sein eigener Text erfüllt WCAG
 				1.4.3 in beiden: Jede Statusfarbe hat mindestens 4,5:1 auf ihrem Chip und ihrer Kachel, und
 				die eigenen Kontrastregeln der Engine bestehen auf dem dargestellten Bericht im hellen und
 				im dunklen Modus.
+			</p>
+			<p>
+				Der Bericht bricht bei 320 CSS-Pixeln um (WCAG 1.4.10): Die Seite scrollt nie seitwärts.
+				Eine Tabelle, die breiter als das Fenster ist, scrollt in einem eigenen Kasten, einem nach
+				der Überschrift der Tabelle benannten Bereich, der den Tastaturfokus annimmt, sodass er
+				sich mit den Pfeiltasten scrollen lässt.
 			</p>
 			<p>
 				Die Meta-Leiste unter dem Kopf enthält die Anzahl der Regeln, die Anzahl der Vorkommen,

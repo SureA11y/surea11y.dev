@@ -39,8 +39,9 @@ const optionRows = [
 		meaning: (
 			<>
 				<code>'2.0'</code>, <code>'2.1'</code> or <code>'2.2'</code> — which version of WCAG the
-				run is conformance-testing against. Defaults to whatever your version-origin tags imply,
-				and to <code>'2.2'</code> when they imply nothing.{" "}
+				run is conformance-testing against. Defaults to the version the run's pack profile names
+				(its <code>wcagVersion</code>), else to whatever your version-origin tags imply, and to{" "}
+				<code>'2.2'</code> when they imply nothing.{" "}
 				<strong>The only thing it currently changes is SC 4.1.1 Parsing, removed in 2.2</strong>:
 				under a 2.2 target a rule tagged{" "}
 				<code>wcag22-removed</code> still runs and still reports its occurrences, but cannot{" "}
@@ -48,6 +49,25 @@ const optionRows = [
 				<a href="#filtering-by-wcag-version">"Filtering by WCAG version"</a> above. Any other
 				value, of any type (the number <code>2.1</code>, <code>'3.0'</code>), is ignored with a{" "}
 				<code>console.warn</code> naming the version the run targets instead.
+			</>
+		),
+	},
+	{
+		id: "wcagLevel",
+		option: <code>wcagLevel</code>,
+		meaning: (
+			<>
+				Optional: <code>'A'</code>, <code>'AA'</code> or <code>'AAA'</code>, in any case — the
+				WCAG level of the criteria a run reports. WCAG rollups above it are left out of{" "}
+				<code>rulesResults</code> while their rules still run; it never changes what runs. It wins
+				over the level the selection implies; a rollup named by id is reported as named. Reported
+				back as <code>engine.wcagLevel</code>, which without the option holds the level the
+				selection implies, if any. Any other value is ignored with a <code>console.warn</code>, and
+				throws under <code>strictOptions</code>. See{" "}
+				<a href="#giving-the-level-of-a-scan-that-names-checks-wcaglevel">
+					"Giving the level of a scan that names checks"
+				</a>{" "}
+				above.
 			</>
 		),
 	},
@@ -128,7 +148,9 @@ const optionRows = [
 				mechanisms such as <code>display:none</code>, <code>[hidden]</code>, closed{" "}
 				<code>&lt;details&gt;</code> (everything but its first <code>&lt;summary&gt;</code>, at any
 				depth), <code>content-visibility:hidden</code> and <code>hidden="until-found"</code>{" "}
-				content, and hidden rendering-only host elements (with descendants excluded too).{" "}
+				content, content in an <code>[inert]</code> subtree (which rules about how content looks,
+				such as contrast and text spacing, still judge, since it is drawn), and hidden
+				rendering-only host elements (with descendants excluded too).{" "}
 				<code>runa11yCoreAcrossFrames</code> does not scan a frame that is hidden this way. Set{" "}
 				<code>true</code> to include those hidden/collapsed subtrees in
 				evaluation (legacy/static-markup behavior). It widens what the shared queries return;
@@ -225,11 +247,13 @@ const optionRows = [
 		meaning: (
 			<>
 				The assumed page background color when it's not computable at all — only matters in{" "}
-				<code>auditorAssist</code> mode. A page that asks for a dark color scheme (
-				<code>color-scheme: dark</code> on the root, or the <code>&lt;meta&gt;</code> form) is
-				measured on the dark canvas the browser paints behind it instead; the fallback applies
-				where that can't be read, as in jsdom. It must be an opaque color: another value is
-				measured as white, with a warning.
+				<code>auditorAssist</code> mode. In a browser, a page with no opaque background of its own
+				is measured on the canvas the browser paints behind it, in either mode: white, or the dark
+				canvas for a page that asks for a dark color scheme (<code>color-scheme: dark</code> on
+				the root, or the <code>&lt;meta&gt;</code> form). The fallback applies where the canvas
+				isn't read: under jsdom, and in a frame, whose canvas can let the parent page show
+				through (a frame that asks for dark is measured on the dark canvas). It must be an opaque
+				color: another value is measured as white, with a warning.
 			</>
 		),
 	},
@@ -348,8 +372,9 @@ const optionRows = [
 				pack objects for <code>runDomRulesInPage</code> and the catalog functions in Node, and for{" "}
 				<code>runa11yCoreInPage</code> the <code>name@version</code> of packs a{" "}
 				<code>packScript</code> registered in the page. Anything else runs no pack, with a
-				warning, and throws under <code>strictOptions</code>. Reported back as{" "}
-				<code>engine.packs</code>. See <a href="/configuration/packs/">Packs</a>.
+				warning, and throws under <code>strictOptions</code>, with{" "}
+				<code>code: 'INVALID_ENGINE_OPTIONS'</code>. Reported back as <code>engine.packs</code>.
+				See <a href="/configuration/packs/">Packs</a>.
 			</>
 		),
 	},
@@ -483,7 +508,8 @@ export function EngineOptionsContent() {
 				rule but those for 4.1.1 Parsing, which WCAG 2.2 removed. For anything finer, such as a
 				single criterion, a list of rules, or an exclusion, see{" "}
 				<a href="#advanced-selection-tags-and-rule-ids">"Advanced selection: tags and rule ids"</a>;
-				those fields combine with the ones above.
+				those fields combine with the ones above. A scan that names rules reports the criteria
+				they check too (<a href="#which-criteria-a-scan-reports">"Which criteria a scan reports"</a>).
 			</p>
 
 			<h3 id="selecting-by-wcag-target-runonlywcag">Selecting by WCAG target (<code>runOnly.wcag</code>)</h3>
@@ -527,14 +553,19 @@ export function EngineOptionsContent() {
 				<li>
 					The target's version is the run's WCAG target (<code>engine.wcagVersion</code>), unless{" "}
 					<code>engineOptions.wcagVersion</code> is set; its level decides which WCAG rollups are
-					reported, as a level tag does.
+					reported, as a level tag does, unless <code>engineOptions.wcagLevel</code> is set (
+					<a href="#giving-the-level-of-a-scan-that-names-checks-wcaglevel">
+						"Giving the level of a scan that names checks"
+					</a>
+					).
 				</li>
 				<li>
 					A target includes rules, so it selects them instead of <code>engineOptions.profile</code>,
 					as <code>tags</code> do. <code>getProfileWcagTarget(profile)</code> gives the target a
 					profile comes to (see <a href="#conformance-profiles">"Conformance profiles"</a>), and{" "}
 					<code>getChecksForRunOnly(runOnly, engineOptions)</code> lists the rules a{" "}
-					<code>runOnly</code> with <code>wcag</code> runs.
+					<code>runOnly</code> with <code>wcag</code> runs, and{" "}
+					<code>getRulesForRunOnly(runOnly, engineOptions)</code> the rollups it reports.
 				</li>
 				<li>
 					Anything else throws <code>INVALID_RUN_ONLY</code>, naming what is wrong:{" "}
@@ -556,7 +587,9 @@ export function EngineOptionsContent() {
 				<code>heading-order</code>, <code>page-has-heading-one</code>, <code>skip-link</code>,{" "}
 				<code>tabindex</code> and <code>image-redundant-alt</code>. They are the rules tagged{" "}
 				<code>best-practice</code>, so it is the same as adding that tag. A finding from one of them
-				is good practice, not a WCAG failure: no WCAG rollup counts it.
+				is good practice, not a WCAG failure: no WCAG rollup counts it. Most report{" "}
+				<code>cantTell</code>; one whose finding is itself a barrier reports <code>fail</code>, as{" "}
+				<code>empty-heading</code> does for a heading with no name.
 			</p>
 			<ul>
 				<li>
@@ -670,8 +703,11 @@ export function EngineOptionsContent() {
 				The WCAG target follows from the tags the same way it does for a hand-written set (see{" "}
 				<a href="#filtering-by-wcag-version">"Filtering by WCAG version"</a> below), so under{" "}
 				<code>en301549-v3.2.1</code> a duplicate id can still <code>fail</code>, and under{" "}
-				<code>en301549-v4.1.1</code> it cannot. Names are matched case-insensitively. A run that
-				used a profile reports it back as <code>engine.profile</code>.
+				<code>en301549-v4.1.1</code> it cannot. A pack's profile can name its version instead, with{" "}
+				<code>wcagVersion</code> (<a href="/configuration/packs/#profiles">Packs</a>): a profile
+				that runs only the rules its standard maps has no WCAG tags to imply one. Names are matched
+				case-insensitively. A run that used a profile reports it back as{" "}
+				<code>engine.profile</code>.
 			</p>
 			<p>
 				Precedence: anything that <em>includes</em> rules selects them instead of the profile — a{" "}
@@ -684,7 +720,7 @@ export function EngineOptionsContent() {
 				there is no <code>runOnly</code> filter, from <code>engineOptions</code> (
 				<code>tags.exclude</code>, <code>rules.exclude</code>, <code>tests.exclude</code>), and an
 				explicit <code>engineOptions.wcagVersion</code> still wins over the version the profile
-				implies. A profile that does not take effect — an unknown name, or one overridden as above
+				implies or names. A profile that does not take effect — an unknown name, or one overridden as above
 				— is not an error: the run proceeds as if none was given, logs a{" "}
 				<code>console.warn</code> saying why, and carries no <code>engine.profile</code>.{" "}
 				<code>runOnly.bestPractices: true</code> is not an include of that kind: it adds the
@@ -693,9 +729,12 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				A standard's profile may also leave rules out, when its standard waives a WCAG criterion or
-				replaces a WCAG check with its own: those rules and their WCAG rollups do not run, the rule
-				catalog leaves them out too, and <code>engine.profileExcludes</code> names what was left
-				out. No built-in profile excludes anything today.
+				replaces a WCAG check with its own: the rules it names, the rules whose every criterion it
+				waives, and the waived criteria's WCAG rollups do not run, and the rule catalog leaves them
+				out too. A rule that also checks a criterion the profile keeps still runs (
+				<code>link-name-present</code>, which checks 2.4.4 and 4.1.2, under a profile waiving
+				2.4.4), and <code>engine.profileExcludes</code> names what was left out. No built-in
+				profile excludes anything today.
 			</p>
 			<p>
 				<strong>A profile only chooses which rules run.</strong> It says nothing about whether
@@ -767,7 +806,11 @@ export function EngineOptionsContent() {
 				run. So with no filter and no profile, as above, the run covers every rule and every
 				standard's rollups; under <code>profile: 'wcag22-aa'</code> it still runs the WCAG rules
 				only, since opt-in rules carry no WCAG tag. Excludes apply as usual. A tag that is not an
-				opt-in tag is ignored with a <code>console.warn</code>.
+				opt-in tag is ignored with a <code>console.warn</code>. Only this engine option unlocks:{" "}
+				<code>runOnly</code> has no <code>optInTags</code> key, so one given there is an unknown
+				key, which throws <code>INVALID_RUN_ONLY</code> on its own and is ignored with a warning
+				beside keys <code>runOnly</code> reads, the message pointing to{" "}
+				<code>engineOptions.optInRules</code>.
 			</p>
 			<p>
 				This is for seeing everything the engine can report, during development or when exploring
@@ -822,7 +865,8 @@ export function EngineOptionsContent() {
 				catalog follows the same option: <code>getChecksCatalog(engineOptions)</code>,{" "}
 				<code>getCheckDefById(ruleId, engineOptions)</code>,{" "}
 				<code>getChecksForRunOnly(runOnly, engineOptions)</code>,{" "}
-				<code>getRulesCatalog(engineOptions)</code> and{" "}
+				<code>getRulesCatalog(engineOptions)</code>,{" "}
+				<code>getRulesForRunOnly(runOnly, engineOptions)</code> and{" "}
 				<code>getCompositeRuleById(id, engineOptions)</code> name the standards a scan with those
 				options would, a profile included when it would apply, so a catalog entry and a result
 				always agree. With no options they name WCAG only. A rule added through{" "}
@@ -923,16 +967,18 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				Names are checked, here and in <code>engineOptions.rules</code>/<code>.tags</code> below.
-				An include list (<code>includeRuleIds</code>, <code>tags</code>, the legacy{" "}
-				<code>values</code>, <code>rules.include</code>, <code>tags.include</code>) in which no
-				value names a rule or a tag throws, with <code>code: 'INVALID_RUN_ONLY'</code> and a
+				An include list (<code>includeRuleIds</code>, <code>includeTestIds</code>,{" "}
+				<code>tags</code>, the legacy <code>values</code>, <code>rules.include</code>,{" "}
+				<code>tags.include</code>) in which no value names a rule or a tag (one a rule or a rollup
+				carries, so a standard's tag is known though only its rollups carry it) throws, with <code>code: 'INVALID_RUN_ONLY'</code> and a
 				message naming the field and the values, since it would select nothing and a run of no
 				rules reads as a clean pass. A selection whose names all exist but whose parts cancel each
 				other (a rule both included and excluded, rules and tags with no rule in common under{" "}
 				<code>includeMode: 'and'</code>) also runs no rule: the scan warns, naming the parts, and
 				throws <code>INVALID_RUN_ONLY</code> under <code>strictOptions</code>.{" "}
 				<code>includeMode</code> is <code>'and'</code> or <code>'or'</code>; another value is read as{" "}
-				<code>'and'</code>, with a warning, and throws under <code>strictOptions</code>. A value that
+				<code>'and'</code>, with a warning, and throws under <code>strictOptions</code>; in a browser
+				binding, <code>.includeMode('or')</code> sets it. A value that
 				names nothing beside ones that do, or in an exclude list, is ignored with a{" "}
 				<code>console.warn</code>. Before 1.10.0 every such value was ignored silently.
 			</p>
@@ -956,7 +1002,11 @@ export function EngineOptionsContent() {
 			<p>
 				Rule IDs are bare (no engine prefix), e.g. <code>'img-alt-present'</code>. For backward
 				compatibility, matching also accepts a legacy <code>a11ycore-</code>-prefixed form of the
-				same id (<code>'a11ycore-img-alt-present'</code>).
+				same id (<code>'a11ycore-img-alt-present'</code>). Ids are matched in any case, as tags
+				are: <code>'IMG-ALT-PRESENT'</code> selects <code>img-alt-present</code>, in every list that
+				names rules (<code>runOnly</code> in each form, <code>engineOptions.rules</code> and{" "}
+				<code>engineOptions.tests</code>, include and exclude). No two rules have ids that differ
+				only in case, so this can't select the wrong one.
 			</p>
 			<p>
 				The <strong><code>{"{ type, values }"}</code> shape</strong> is also accepted as
@@ -974,6 +1024,184 @@ export function EngineOptionsContent() {
 				boolean, or an object none of whose keys the engine reads (
 				<code>{"{ includeRuleId: [...] }"}</code>): each used to run every rule. An empty array,
 				string or object still means the default selection.
+			</p>
+
+			<h3 id="which-criteria-a-scan-reports">Which criteria a scan reports</h3>
+			<p>
+				A scan reports a criterion's rollup (<code>rulesResults</code>) when the selection selects
+				it: a WCAG target or a version/level tag, a profile, the rollup's own id, or no selection at
+				all. It also reports the rollup of each criterion that a rule the selection{" "}
+				<strong>named on its own</strong> checks, when that rule ran:
+			</p>
+			<ul>
+				<li>
+					by its id (<code>includeRuleIds</code>, <code>includeTestIds</code>,{" "}
+					<code>rules.include</code>, or a profile's own rule list),
+				</li>
+				<li>
+					by a tag that is not a WCAG tag (a custom rule's, a pack's or a standard's; WCAG's tags
+					are the version/level tags, the criterion tags such as <code>wcag244</code>, and{" "}
+					<code>wcag22-removed</code>, so a custom tag such as <code>wcagteam</code> is not one),
+				</li>
+				<li>
+					by <code>optInRules</code>, or
+				</li>
+				<li>
+					as a best-practice rule (<code>bestPractices</code>).
+				</li>
+			</ul>
+			<p>
+				A rule a standard's profile runs only because its standard maps it (
+				<code>mappedRules</code>) is named for that standard, not on its own: it adds the
+				standard's requirements and none of its WCAG criteria. So a profile that runs only what its
+				standard asks for reports that standard alone (
+				<a href="/configuration/packs/#profiles">Packs</a>); a rule its <code>rules</code> list
+				names adds its WCAG criteria too. Before 1.12.0, a scan that named rules rather than
+				criteria had an empty <code>rulesResults</code>.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// The unnamed link fails link-name-present, and with it 2.4.4 and 4.1.2:",
+					"runDomRulesInPage(url, null, {}, { includeRuleIds: ['link-name-present'] });",
+					"// rulesResults: wcag-2.4.4-link-purpose-in-context: fail, wcag-4.1.2-name: fail",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>The verdict is the rollup's own.</strong> A failing rule fails the criterion. A
+					rule that passes doesn't make it pass when the scan left out the criterion's other rules:
+					it is <code>cantTell</code>, with <code>reasonCode</code>{" "}
+					<code>composite.rollup.cantTell.notSelectedChild</code>, and each rule the scan didn't
+					select is listed among the contributors as <code>missing</code> with{" "}
+					<code>notSelected: true</code>. The HTML report shows "Partly checked: 1 of 2 checks was
+					not selected for this scan" under it. See{" "}
+					<a href="/results-reports/output-schema/#partly-checked">the output schema</a>.
+				</li>
+				<li>
+					<strong>A criterion tag names its own criterion.</strong> <code>tags: ['wcag244']</code>{" "}
+					reports 2.4.4, and not the other criteria its rules check (4.1.2 for{" "}
+					<code>link-name-present</code>). A rule brought in by a rollup's id, a WCAG target, a
+					version or level tag, or a WCAG profile adds no criterion: the selection names the
+					criteria there. So a scan that selects its criteria reports what it reported before.
+				</li>
+				<li>
+					<strong>The run's WCAG version and level apply.</strong> A criterion is added only if it
+					is in force in <code>engine.wcagVersion</code> (<code>duplicate-id</code> alone adds no
+					4.1.1 under 2.2, and does under <code>wcagVersion: '2.1'</code>), and at or below the
+					run's level, as a target would: <code>engineOptions.wcagLevel</code> when given (next
+					section), else the level the selection gives (<code>runOnly.wcag.level</code>, or the
+					version/level tags beside the rule ids). With neither, every level is reported.
+				</li>
+				<li>
+					<strong>Excludes apply.</strong> A rollup the selection excludes (
+					<code>{"excludeRuleIds: ['wcag-4.1.2-name']"}</code>, or a tag) is not added. A rule the
+					caller excluded counts as not selected. A rule a profile excludes narrows the criterion:
+					it is <code>missing</code> without <code>notSelected</code>, and a criterion the profile
+					waives is never added.
+				</li>
+				<li>
+					<strong>A standard's own rollups</strong> (one per requirement) are added the same way,
+					but only while the standard is in play: the applied profile targets it, or the selection
+					names its tag or <code>optInRules</code> unlocks it. A WCAG scan never shows the
+					requirements of a standard nobody asked for. A profile that didn't apply, and{" "}
+					<code>mappings</code> alone, don't put a standard in play. Under its profile, only the
+					profile's version is added; unlocked without a profile, every version is, as a scan
+					selected by its tag reports them. This holds for a standard or checklist from a pack as
+					for one built in: a checklist profile that names its rules (<code>tags: []</code>,{" "}
+					<code>{"rules: [...]"}</code>) gets their WCAG criteria and its own items.
+				</li>
+				<li>
+					<strong>The list before the scan.</strong>{" "}
+					<code>getRulesForRunOnly(runOnly, engineOptions)</code> lists the rollups a scan with
+					that selection and those options reports, the added ones included, as{" "}
+					<code>getRulesCatalog</code> entries. It works them out with the scan's own rollup step,
+					so the two agree; <code>getChecksForRunOnly</code> lists the rules.{" "}
+					<code>getRulesCatalog(engineOptions)</code> lists every rollup the options make
+					available, whatever the selection. A tool can record what a scan checks before running
+					it; the browser bindings' builders give the same lists as <code>plannedChecks()</code>{" "}
+					and <code>plannedCriteria()</code>.
+				</li>
+			</ul>
+
+			<h3 id="giving-the-level-of-a-scan-that-names-checks-wcaglevel">
+				Giving the level of a scan that names checks (<code>wcagLevel</code>)
+			</h3>
+			<p>
+				A scan meant as WCAG 2.2 AA that runs only some checks names them, and gives the version
+				in <code>engineOptions.wcagVersion</code>. That says no level, so the criteria of those
+				checks are reported at every level: <code>contrast-computable</code> checks 1.4.3 (AA) and
+				1.4.6 (AAA), and both are reported. <code>engineOptions.wcagLevel</code> gives the level:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Only the contrast checks of a WCAG 2.2 AA scan: 1.4.3 is reported, 1.4.6 is not.",
+					"runDomRulesInPage(url, null,",
+					"  { wcagVersion: '2.2', wcagLevel: 'AA' },",
+					"  { includeRuleIds: ['contrast-computable'] });",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>Values.</strong> <code>'A'</code>, <code>'AA'</code> or <code>'AAA'</code>, in
+					any case. Another value is ignored with a <code>console.warn</code> (
+					<code>engineOptions.wcagLevel: ignoring "AA+"; use "A", "AA" or "AAA". ...</code>), and
+					throws <code>INVALID_ENGINE_OPTIONS</code> under <code>strictOptions</code>. The run
+					reports a valid level as <code>engine.wcagLevel</code>, written <code>'A'</code>,{" "}
+					<code>'AA'</code> or <code>'AAA'</code>; without the option, <code>engine.wcagLevel</code>{" "}
+					is the level the selection implies, and absent when it implies none.
+				</li>
+				<li>
+					<strong>It decides what is reported, never what runs.</strong> The selection decides
+					what runs, as without it. A check above the level that the selection names still runs
+					and reports its own result; only its criteria above the level are left out of{" "}
+					<code>rulesResults</code>.
+				</li>
+				<li>
+					<strong>It applies to every WCAG rollup, not only the criteria added for named
+					checks.</strong> <code>wcagLevel: 'AA'</code> on a full scan, a profile or a tag
+					selection leaves the AAA criteria out of <code>rulesResults</code>, while their checks
+					still run and report in <code>checksResults</code>. This differs from{" "}
+					<code>wcagVersion</code>, which never removes a rollup the selection selects: a 2.2 scan
+					still reports 4.1.1, with its rules coerced to <code>cantTell</code>. A scan without the
+					option reports what it reported before.
+				</li>
+				<li>
+					<strong>It wins over the level the selection implies</strong> (
+					<code>runOnly.wcag.level</code>, or the highest level its version/level tags name), as an
+					explicit <code>wcagVersion</code> wins over the version they imply. A conflict between
+					the two is not warned about, as one between <code>wcagVersion</code> and a target's
+					version isn't; <code>engine.wcagLevel</code> shows the level the criteria were gated by.
+				</li>
+				<li>
+					<strong>A rollup named by id is reported as named.</strong>{" "}
+					<code>{"includeRuleIds: ['wcag-1.4.6-contrast-enhanced']"}</code> with{" "}
+					<code>wcagLevel: 'AA'</code> reports 1.4.6: the option says which criteria to report,
+					not to drop one the caller asked for. A level the selection's own tags imply still gates
+					a named rollup, as it does without the option.
+				</li>
+				<li>
+					<strong>A standard's own rollups</strong> have no WCAG level and are not gated by it. A
+					pack's profile can't give a level (its tags imply one); its caller can pass{" "}
+					<code>wcagLevel</code>.
+				</li>
+				<li>
+					<code>getRulesForRunOnly(runOnly, engineOptions)</code> honors it, so it lists what the
+					scan reports, and warns about an invalid one as the scan does, or throws under{" "}
+					<code>strictOptions</code>.
+				</li>
+			</ul>
+			<p>
+				Without the option, version/level tags beside the rule ids give a level too, since the
+				default <code>includeMode: 'and'</code> keeps the named rules that carry one of them:{" "}
+				<code>{"{ includeRuleIds: ['contrast-computable'], tags: wcagTags('2.2') }"}</code> runs{" "}
+				<code>contrast-computable</code> and reports 1.4.3 alone. But the tags also decide what
+				runs: a named rule with no WCAG tag (a best-practice rule such as <code>region</code>, a
+				custom rule without WCAG tags), or one that checks only AAA criteria, is left out of the
+				run, and a version/level tag no rule carries (<code>wcag22a</code>) is noted with a{" "}
+				<code>console.info</code>. <code>wcagLevel</code> gives the level without changing what
+				runs. In a browser binding, the builder's <code>.wcagLevel('AA')</code> sets it.
 			</p>
 
 			<h3 id="filtering-by-wcag-version">Filtering by WCAG version (2.0, 2.1, 2.2)</h3>
@@ -1032,6 +1260,13 @@ export function EngineOptionsContent() {
 				<li>
 					<code>engineOptions.wcagVersion</code> — <code>'2.0'</code>, <code>'2.1'</code> or{" "}
 					<code>'2.2'</code>, if you set it.
+				</li>
+				<li>
+					The <code>wcagVersion</code> of the pack profile the run applies, if it names one: a
+					standard built on WCAG 2.1 whose profile runs only the rules it maps selects no WCAG
+					tag, so it says the version itself. It wins over the version the profile's own tags
+					imply. A profile that doesn't take effect (overridden by a selection of your own)
+					brings no version.
 				</li>
 				<li>The version of a <code>runOnly.wcag</code> target.</li>
 				<li>
@@ -1113,6 +1348,7 @@ export function EngineOptionsContent() {
 					"  strictOptions: false,            // default false — true throws on an unknown option or a value of the wrong type",
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
+					"  wcagLevel: 'AA',                 // optional — the level of the criteria reported",
 					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
 					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
 					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
@@ -1211,6 +1447,16 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
+				The catalog functions that take <code>engineOptions</code> (<code>getChecksCatalog</code>,{" "}
+				<code>getRulesCatalog</code>, <code>getCheckDefById</code>,{" "}
+				<code>getCompositeRuleById</code>, <code>getChecksForRunOnly</code>,{" "}
+				<code>getRulesForRunOnly</code>, <code>getTestsForRunOnly</code>) check them the same way,
+				in the same words: <code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code> warns,
+				reads the level as not given, and lists what a scan with those options reports; with{" "}
+				<code>strictOptions: true</code> it throws <code>INVALID_ENGINE_OPTIONS</code>, as the scan
+				does.
+			</p>
+			<p>
 				Not checked: a rule's own settings (<code>rules[ruleId]</code>), the keys of{" "}
 				<code>messages</code>, and <code>probes</code>, which the engine passes on unread; and the
 				custom rules, which have checks of their own (<code>skippedCustomRules</code>). In
@@ -1290,7 +1536,9 @@ export function EngineOptionsContent() {
 				/>
 				<p>
 					Add <code>bestPractices: true</code> beside <code>wcag</code> to also run the
-					best-practice rules, which a WCAG gate usually reports without failing on.
+					best-practice rules, which a WCAG gate usually reports without failing on. Some of them
+					can <code>fail</code> (<code>empty-heading</code>), so a gate that fails on any{" "}
+					<code>fail</code> fails on those too.
 				</p>
 			<p>
 				<strong>Human auditor doing a deep contrast pass in a real browser</strong> — trade some
@@ -1377,8 +1625,9 @@ export function EngineOptionsContent() {
 				<code>engineOptions</code> and list what a scan with them has:{" "}
 				<code>getChecksCatalog(engineOptions)</code> lists the valid custom rules, with each
 				override in place of its built-in, <code>getCheckDefById(id, engineOptions)</code> finds
-				them, and <code>getChecksForRunOnly(runOnly, engineOptions)</code> selects them as the scan
-				does. This is deliberate, not a limitation to work around:
+				them, <code>getChecksForRunOnly(runOnly, engineOptions)</code> selects them as the scan
+				does, and <code>getRulesForRunOnly(runOnly, engineOptions)</code> lists the rollups they
+				add. This is deliberate, not a limitation to work around:
 				surea11y already takes fresh <code>engineOptions</code> per call with no mutable global
 				config (unlike some other engines, which need a <code>configure()</code>/<code>reset()</code>{" "}
 				step against a shared runtime), and custom rules follow that same per-call model.
@@ -1463,7 +1712,11 @@ export function EngineOptionsContent() {
 					criterion it maps to, through <code>meta.wcagSc</code> or a WCAG entry in{" "}
 					<code>meta.normativeMappings</code>, as a built-in rule does: a failing one fails the
 					rollup. The rollup marks it <code>custom: true</code> among its contributors and lists it
-					in <code>data.details.customChecksIds</code>. An override counts where its own mapping
+					in <code>data.details.customChecksIds</code>. A custom rule the selection names on its
+					own (by its id or one of its tags) that ran reports the rollups of its criteria even when
+					the selection names none of them (
+					<a href="#which-criteria-a-scan-reports">"Which criteria a scan reports"</a>). An
+					override counts where its own mapping
 					says: in its built-in's place when it maps to that criterion, and in no rollup when it
 					maps to none, with a warning naming the rollups it left.
 				</li>
@@ -1476,8 +1729,11 @@ export function EngineOptionsContent() {
 					<code>best-practice</code>, or with no WCAG tag, is not part of the run: it is listed in{" "}
 					<code>skippedCustomRules</code>, with a <code>console.warn</code>, and runs when you give
 					it the tags of the criteria it checks (<code>'wcag111'</code>) or add{" "}
-					<code>runOnly.bestPractices: true</code>. An override runs wherever its built-in would
-					have.
+					<code>runOnly.bestPractices: true</code>. A custom rule the selection excludes (
+					<code>{"excludeRuleIds: ['org-b']"}</code>, <code>rules.exclude</code>...) is listed there
+					too, with the reason <code>excluded by the selection.</code> and{" "}
+					<code>excluded: true</code>, and not warned about. An override runs wherever its built-in
+					would have.
 				</li>
 				<li>
 					A custom rule can report a margin as a built-in rule does: declare{" "}
@@ -1553,7 +1809,8 @@ export function EngineOptionsContent() {
 					version, a rule id without the namespace, a dictionary key core has) is skipped with a{" "}
 					<code>console.warn</code>, listed in the result's <code>skippedPacks</code> as{" "}
 					<code>{"{ name, reason }"}</code>, and the scan runs without it; under{" "}
-					<code>strictOptions</code> it throws. Packs that clash with each other throw. In a page, a
+					<code>strictOptions</code> it throws, with <code>code: 'INVALID_ENGINE_OPTIONS'</code>.
+					Packs that clash with each other throw. In a page, a
 					pack is registered first with <code>packScript(packs)</code> and named in{" "}
 					<code>engineOptions.packs</code> as <code>name@version</code>. What a pack holds, how to
 					use one from each binding, the test matchers and the CLI, and how to write one, are on{" "}

@@ -52,6 +52,8 @@ export function EarlReportContent() {
 				で公開しており、
 				<code>scripts/act-report.js</code>
 				で再生成しています。
+				<code>--runner=chromium</code>
+				は、ブラウザーのバインディングがエンジンを実行するのと同じようにChromiumでのスキャンから同じレポートを生成し、アサーターの名前は「<span lang="en">SureA11y in a browser</span>」、レポートの説明にはChromiumのバージョンが入ります。
 			</p>
 			<p>
 				<strong>利用者</strong>
@@ -80,6 +82,12 @@ export function EarlReportContent() {
 				。実装レポートは、エンジンが
 				<em>あらゆる箇所</em>
 				で何を判定したかについての主張だからです。適用対象が見つからずに何も報告しなかったルールも、ノイズではなく証拠です。それによって読み手は、「このエンジンはチェックしたが、チェック対象がなかった」のか「このエンジンはそのルールをそもそも実装していない」のかを区別できます。
+				<strong>各アサーションは、1つの対象に対する1つのルールについてのものです</strong>
+				。ルールの
+				<code>passed</code>
+				は、そのルールが対応するWCAGの達成基準についての判定ではありません。ほとんどの達成基準には、どのルールも扱わない部分があります（
+				<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>
+				を参照）。
 			</p>
 
 			<h2>構造</h2>
@@ -140,9 +148,37 @@ export function EarlReportContent() {
 					<code>normativeMappings</code>
 					の各エントリーです。どの達成基準にも対応しないルールでは、このフィールド自体を省略します。空のリストを出すと、「意図的にどれにも対応させていない」ではなく「対応するものが見つからなかった」と読めてしまうためです。エンジンの自動ルールでこれに当たるのは
 					<code>aria-allowed-role</code>
-					と
+					、
+					<code>empty-heading</code>
+					、
 					<code>landmark-role-name-present</code>
-					です。
+					です。そうしたルールも
+					<code>fail</code>
+					になることはあります（
+					<code>empty-heading</code>
+					は名前のない見出しを
+					<code>fail</code>
+					にします）。その場合のアサーションは
+					<code>isPartOf</code>
+					のない
+					<code>earl:failed</code>
+					で、どのWCAG達成基準も主張しないルールが不合格になったことを示します。
+				</li>
+				<li>
+					<strong><code>isPartOf</code>はスキャンのWCAGのレベルとバージョンに従います。</strong>
+					それらによってスキャンが
+					<code>rulesResults</code>
+					から外した達成基準は列挙されません。たとえば、
+					<code>engineOptions.wcagLevel: 'AA'</code>
+					のもとでの1.4.6（AAA）や、WCAG 2.2で
+					<code>{"includeRuleIds: ['duplicate-id']"}</code>
+					を実行したときの、2.2で削除された4.1.1です。すべての達成基準が外されたルールには
+					<code>isPartOf</code>
+					がありません。アサーション自体はルールについてのものなので残ります。スキャンが報告する達成基準は列挙されます。レベルより上でもIDで指定された集約や、4.1.1を選んだ2.2のスキャンでの4.1.1です。
+					<code>engine.wcagLevel</code>
+					も
+					<code>engine.wcagVersion</code>
+					も記録していない結果では、すべての達成基準が列挙されます。
 				</li>
 				<li>
 					<strong><code>assertedBy</code></strong>
@@ -207,7 +243,7 @@ export function EarlReportContent() {
 				</strong>
 				ACT自身の一貫性のルールでは、自動化された実装が一部の例（すべてではありません）で「判断できない」と報告しても、一貫性があるものとして扱われます。部分的に一貫した実装に
 				<em>許されない</em>
-				のは誤検出です。つまり、ルール上passになるべき例や適用対象外の例をfailにすることです。注視すべきはこの点で、これはこのレポーターではなくルールの性質です。直近のフル実行の時点で、エンジンは対応する59件のルールをカバーする821件のACTの例で
+				のは誤検出です。つまり、ルール上passになるべき例や適用対象外の例をfailにすることです。注視すべきはこの点で、これはこのレポーターではなくルールの性質です。直近のフル実行の時点で、エンジンは対応する59件のルールについてW3Cが公開している942件の例で
 				<strong>誤検出ゼロ</strong>
 				です。詳しくは
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>
@@ -225,7 +261,19 @@ export function EarlReportContent() {
 			<CodeBlock lang="js" lines={["renderEarlReport([homeResult, checkoutResult, searchResult], { assertor });"]} />
 			<p>
 				<a href="/results-reports/output-schema/#cross-frame-result"><code>runa11yCoreAcrossFrames</code></a>
-				によるフレームをまたぐ結果は、単独でも配列の中でも、そのまま受け取ります。応答した各フレームが1つの結果として加わり、それぞれのURLを持つ対象になります。
+				によるフレームをまたぐ結果は、単独でも配列の中でも、そのまま受け取ります。応答した各フレームが1つの結果として加わり、それぞれのURLを持つ対象になります。最上位より下のフレームで、URLから区別できないもの（
+				<code>about:srcdoc</code>
+				や
+				<code>about:blank</code>
+				である場合や、結果の別のフレームが同じURLを持つ場合）は、そのURLとパス（SARIFとJUnitがそのフレームを示すのに使うセレクター）で名前が付けられます。パスの各セレクターはエンコードされ、
+				<code>/</code>
+				でつながれます：
+				<code>about:srcdoc#frame=%23pay</code>
+				、
+				<code>about:srcdoc#frame=%23widget/%23inner</code>
+				。セレクターを持たないバインディングのフレームのように、パスまで同じ場合は、結果のフレームの中での順番（1から）が加わります：
+				<code>about:srcdoc#frame=iframe&amp;n=3</code>
+				。
 				<code>null</code>
 				や文字列など、スキャン結果ではないものを渡すと
 				<code>TypeError</code>

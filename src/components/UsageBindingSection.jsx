@@ -28,7 +28,18 @@ function formatLinkList(items, locale) {
 	});
 }
 
-export function UsageBindingSection({ intro, install, installNote, usage, note, packs, exampleHref, locale = "en" }) {
+export function UsageBindingSection({
+	intro,
+	install,
+	installNote,
+	usage,
+	note,
+	packs,
+	internals,
+	more,
+	exampleHref,
+	locale = "en",
+}) {
 	return (
 		<>
 			{intro}
@@ -62,6 +73,15 @@ export function UsageBindingSection({ intro, install, installNote, usage, note, 
 				</p>
 			)}
 			{note}
+			{internals ? (
+				<>
+					{internals.intro}
+					<CodeBlock lang="js" lines={internals.code} />
+					{internals.note}
+					{internals.caveat}
+				</>
+			) : null}
+			{more}
 			{exampleHref ? (
 				<p>
 					<Trans

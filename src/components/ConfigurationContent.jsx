@@ -16,7 +16,9 @@ export function ConfigurationContent() {
 				AA in one option, best practices on top if you want them), by id, by tag, or by naming a
 				conformance profile such as WCAG 2.2 AA, EN 301 549 or
 				Section 508 — so a run reports what you're actually accountable for, nothing more
-				and nothing less. Silence known-noisy widgets globally or for a single rule without losing
+				and nothing less. Run only a few checks and still get the WCAG criteria they belong to, at
+				the level you're held to, and list what a scan will report before it runs. Silence
+				known-noisy widgets globally or for a single rule without losing
 				coverage everywhere else, tune how aggressive the contrast checks are for a human auditor
 				versus an unattended CI gate, and drop in an org-specific rule alongside the built-ins when
 				the catalog doesn't cover something you care about. See{" "}
@@ -41,7 +43,7 @@ export function ConfigurationContent() {
 				own exit code, baseline an existing site's pre-existing violations so you only fail on
 				genuinely new ones, and upload SARIF results straight into GitHub Code Scanning where your
 				team already looks. GitLab CI and Azure DevOps recipes put results in their own test views
-				as JUnit. See <a href="/configuration/ci-integration/">CI integration</a> for the
+				as JUnit, written by the CLI in the same step. See <a href="/configuration/ci-integration/">CI integration</a> for the
 				full templates.
 			</p>
 

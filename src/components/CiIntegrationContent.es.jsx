@@ -18,11 +18,20 @@ export function CiIntegrationContent() {
 				: esta página trata específicamente sobre la CLI como paso del pipeline de CI.
 			</p>
 			<p>
+				La CLI analiza HTML estático: no ejecuta el JavaScript de la página. Eso sirve para páginas
+				compiladas o renderizadas en el servidor; para una aplicación renderizada en el cliente, o
+				reglas que necesitan el layout, analiza en un navegador con una de las{" "}
+				<a href="/getting-started/">integraciones de navegador</a>.
+			</p>
+			<p>
 				Todas estas plantillas utilizan los códigos de salida de la CLI (<code>0</code> si no se encuentran
 				fallos, <code>1</code> si existe al menos un resultado <code>fail</code> (o uno{" "}
 				<em>nuevo</em> al utilizar <code>--baseline</code>) y <code>2</code> si se produce un error de uso
 				o de análisis) para controlar el pipeline de CI;
-				no se necesita scripting adicional para un control básico de aprobado/fallido.
+				no se necesita scripting adicional para un control básico de aprobado/fallido. Un
+				pipeline en verde significa que ninguna comprobación falló, o que no falló ninguna nueva.
+				No es una declaración de conformidad, y los hallazgos <code>cantTell</code> no lo hacen
+				fallar.
 			</p>
 
 			<h2><span lang="en">GitHub Actions</span></h2>
@@ -67,7 +76,9 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				Consulta <a href="/conformance/baseline/">Baseline / allowlist</a> para ver qué cuenta como
+				Un baseline evita que las violaciones conocidas hagan fallar la compilación; no las hace
+				aceptables. Corrígelas y reduce el archivo con el tiempo. Consulta{" "}
+				<a href="/conformance/baseline/">Baseline / allowlist</a> para ver qué cuenta como
 				"conocido" frente a "nuevo", y cómo regenerar el archivo a medida que se corrigen violaciones.
 			</p>
 
@@ -154,10 +165,10 @@ export function CiIntegrationContent() {
 			<p>
 				GitLab, Azure DevOps, Jenkins y CircleCI muestran JUnit XML en sus propias vistas de
 				pruebas: cada criterio de WCAG se convierte en una suite y cada regla en una prueba (ver{" "}
-				<a href="/results-reports/junit-report/">el informe JUnit</a>). Guarda el análisis como JSON,
-				genera el informe con <code>@surea11y/core/junit</code> y conserva el código de salida de la
-				CLI para la puerta. El paso de generación necesita <code>@surea11y/core</code> en las{" "}
-				<code>devDependencies</code> del propio proyecto.
+				<a href="/results-reports/junit-report/">el informe JUnit</a>). La CLI lo escribe con{" "}
+				<code>--junit &lt;path&gt;</code> (<code>@surea11y/cli</code> 1.1.0 o posterior), a partir
+				del mismo análisis que sus demás salidas, y el informe nunca cambia su código de salida,
+				así que el paso sigue controlando la compilación.
 			</p>
 			<h3><span lang="en">GitLab CI</span></h3>
 			<CodeBlock
@@ -168,9 +179,7 @@ export function CiIntegrationContent() {
 					"  script:",
 					"    - npm ci",
 					"    - npm run build",
-					"    - npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
-					"    - node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
-					"    - exit ${scan_exit:-0}",
+					"    - npx @surea11y/cli scan ./dist/index.html --junit a11y.junit.xml",
 					"  artifacts:",
 					"    when: always",
 					"    reports:",
@@ -190,9 +199,7 @@ export function CiIntegrationContent() {
 					"  - script: |",
 					"      npm ci",
 					"      npm run build",
-					"      npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
-					"      node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
-					"      exit ${scan_exit:-0}",
+					"      npx @surea11y/cli scan ./dist/index.html --junit a11y.junit.xml",
 					"    displayName: Accessibility scan",
 					"  - task: PublishTestResults@2",
 					"    condition: succeededOrFailed()",
@@ -202,10 +209,15 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				Las reglas <code>cantTell</code> llegan como pruebas omitidas, nunca como fallos. Para que
-				también condicionen la puerta, pasa <code>{"{ cantTellAs: 'failure' }"}</code> como segundo
-				argumento de <code>renderJunitReport</code>; ten en cuenta que esto cambia el informe, no el
-				código de salida de la CLI.
+				Las reglas <code>cantTell</code> llegan como pruebas omitidas, nunca como fallos. Con{" "}
+				<code>--baseline</code>, los fallos que ya están en el baseline también son pruebas
+				omitidas. Para mostrar las reglas <code>cantTell</code> como fallos, la CLI no tiene
+				opción: guarda el análisis con <code>--json</code> y genera el informe con{" "}
+				<code>{"renderJunitReport(result, { cantTellAs: 'failure' })"}</code> de{" "}
+				<code>@surea11y/core/junit</code> (ver{" "}
+				<a href="/results-reports/junit-report/">el informe JUnit</a>), que necesita{" "}
+				<code>@surea11y/core</code> en las <code>devDependencies</code> del propio proyecto. Eso
+				cambia el informe, no el código de salida de la CLI.
 			</p>
 
 			<h2>Límites de minutos en el nivel gratuito/repos privados</h2>

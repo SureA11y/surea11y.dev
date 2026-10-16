@@ -16,7 +16,9 @@ export function ConformanceContent() {
 			<p>
 				Voyez précisément comment s’articulent les règles atomiques, les facettes de couverture et
 				les règles composites d’agrégation par critère de succès WCAG, pour qu’un <code>pass</code>{" "}
-				composite signifie quelque chose de précis plutôt qu’un vague « ça a l’air correct ». Ciblez
+				composite signifie quelque chose de précis plutôt qu’un vague « ça a l’air correct ». Une analyse qui nomme quelques vérifications plutôt qu’une cible
+				rend quand même compte des critères auxquels elles appartiennent, et indique ceux qu’elle
+				n’a vérifiés qu’en partie. Ciblez
 				un niveau de conformité (A, AA ou AAA) sur n’importe quelle version de WCAG avec un seul jeu
 				de tags ou un profil nommé, rattachez chaque résultat à la clause d’EN 301 549 qui reprend son
 				critère quand c’est la norme sur laquelle vous rendez compte, et obtenez une réponse claire à la question qui compte vraiment : que peut vous

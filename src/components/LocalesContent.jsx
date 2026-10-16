@@ -120,7 +120,9 @@ export function LocalesContent() {
 				against, and counted as translated. If the English changes, the entry no longer applies
 				and the string counts as untranslated until someone checks it again. The count cannot see
 				an English word left inside an otherwise translated sentence; that is found by reading the
-				text, and none remain in the locales above.
+				text, and none remain in the locales above. Nor does it measure whether a translation is
+				accurate or uses a language's usual accessibility terms; that takes a reader of the
+				language.
 			</p>
 
 			<h3 id="reading-coverage-from-the-package">Reading coverage from the package</h3>
@@ -258,8 +260,10 @@ export function LocalesContent() {
 			/>
 			<p>
 				The bundle is split because it travels over the network to every page that uses it, and
-				no page needs every language. Keeping English inline and the rest optional took about
-				280 KB off the download and stops it growing as languages are added. Nothing else
+				no page needs every language. Keeping English inline and the rest optional keeps the other
+				languages off the download, and stops it growing as languages are added. Each side file,{" "}
+				<code>surea11y.i18n.&lt;locale&gt;.js</code>, is about as large as the English text it
+				replaces (130 to 160 KB today), and a page loads only the ones it uses. Nothing else
 				changes: the Node package and the bindings are unaffected.
 			</p>
 			<CodeBlock

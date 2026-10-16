@@ -29,18 +29,22 @@ export function RuleOrganizationContent() {
 					Puede informar <code>fail</code>. <code>cantTell</code> igual aparece aquí, en estas
 					situaciones: existe una violación real pero por sí sola no establece que el criterio de
 					WCAG asignado falle (un requisito de autoría de ARIA cuyo nombre/rol/valor expuesto sigue
-					siendo válido); la regla decide de forma determinista pero no reclama ningún Criterio de
-					Éxito en absoluto (<code>aria-allowed-role</code>, etiquetada como buena práctica); o la
+					siendo válido); la regla decide de forma determinista que se incumple una buena práctica,
+					no reclama ningún Criterio de Éxito, y lo que encontró no tiene por qué perjudicar a nadie,
+					ya que el rol o el elemento sigue llegando tal cual a la tecnología de asistencia (
+					<code>aria-allowed-role</code>, <code>landmark-role-name-present</code>, etiquetadas como
+					buena práctica); o la
 					regla solo puede confirmar que un mecanismo está <em>presente</em>, mientras que si lo que
 					está presente es realmente válido le corresponde a una regla hermana (
 					<code>aria-required-children</code>, emparejada con <code>aria-prohibited-children</code>);
 					o la regla no puede decidir sin adivinar, así que pregunta en lugar de fallar: un nombre que
-					puede venir de una raíz shadow cerrada o de contenido anidado a demasiada profundidad para
-					leerlo (las reglas <code>*-name-present</code>), texto que puede recortarse o solaparse al
+					puede venir de una raíz shadow cerrada, de <code>ElementInternals</code> que el motor no puede
+					leer o de contenido anidado a demasiada profundidad para leerlo (las reglas <code>*-name-present</code>), texto que puede recortarse o solaparse al
 					aumentar el espaciado (<code>text-spacing-content-loss</code>), un bloque de consulta de
 					medios de orientación que gira un elemento distinto del contenido de la página (
-					<code>css-orientation-lock</code>), un texto provisional por debajo de su relación de
-					contraste (<code>contrast-minimum</code>), o un color o tamaño que no se puede calcular (las
+					<code>css-orientation-lock</code>), un texto provisional, o un carácter suelto que hace
+					de nombre de su control, por debajo de su relación de contraste (
+					<code>contrast-minimum</code>), o un color o tamaño que no se puede calcular (las
 					reglas de contraste, <code>target-size-minimum</code>). Una regla que lanza una excepción
 					también se informa como <code>cantTell</code>, como red de seguridad.
 				</li>
@@ -57,6 +61,16 @@ export function RuleOrganizationContent() {
 					preciso, nunca informa <code>pass</code>.
 				</li>
 			</ul>
+			<p>
+				Una regla etiquetada como buena práctica no reclama ningún Criterio de Éxito, y aun así
+				informa <code>fail</code> cuando lo que decide es en sí una barrera: un encabezado vacío se
+				anuncia como un encabezado sin nada dentro (
+				<a href="/rules/empty-heading/"><code>empty-heading</code></a>, como lo informa la regla
+				ACT del W3C correspondiente). Su <code>fail</code> dice que no se cumple la expectativa de
+				la propia regla, no la de un criterio: ningún resultado agregado de WCAG lo cuenta. Cuando
+				el hallazgo puede no perjudicar a nadie, informa <code>cantTell</code> en su lugar, como
+				arriba.
+			</p>
 			<p>
 				<strong>Que una regla manual informe <code>cantTell</code> no es el mismo evento que una regla
 				automática informe <code>cantTell</code>, aunque el valor sea idéntico</strong>: la regla

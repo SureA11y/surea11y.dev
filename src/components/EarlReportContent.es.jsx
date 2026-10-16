@@ -47,7 +47,10 @@ export function EarlReportContent() {
 				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
 					https://surea11y.github.io/act-report/act-report.jsonld
 				</a>{" "}
-				y se regenera con <code>scripts/act-report.js</code>.
+				y se regenera con <code>scripts/act-report.js</code>.{" "}
+				<code>--runner=chromium</code> genera el mismo informe a partir de un análisis en
+				Chromium, como ejecutan el motor los bindings de navegador, con el asertor llamado
+				«SureA11y in a browser» y la versión de Chromium en la descripción del informe.
 			</p>
 			<p>
 				Un <strong>consumidor</strong> obtiene un formato de intercambio. EARL es lo que lee una
@@ -69,7 +72,11 @@ export function EarlReportContent() {
 				, porque un informe de implementación es una afirmación sobre lo que decidió el motor{" "}
 				<em>en todos los casos</em>. Una regla que no dijo nada porque no encontró nada aplicable es
 				evidencia, no ruido: es lo que permite distinguir "este motor comprobó y no encontró nada
-				que comprobar" de "este motor no implementa esa regla en absoluto".
+				que comprobar" de "este motor no implementa esa regla en absoluto".{" "}
+				<strong>Cada aserción trata de una regla sobre un sujeto</strong>: el <code>passed</code>{" "}
+				de una regla no es un veredicto sobre el criterio de WCAG al que se asocia, la mayoría de
+				los cuales tienen partes que ninguna regla cubre (ver{" "}
+				<a href="/conformance/wcag-mapping/">Mapeo de conformidad con WCAG</a>).
 			</p>
 
 			<h2>Forma</h2>
@@ -127,9 +134,24 @@ export function EarlReportContent() {
 					<code>WCAG2:&lt;criterion-id&gt;</code>: cada entrada de <code>normativeMappings</code>{" "}
 					cuyo <code>standard</code> es <code>WCAG</code> o está ausente (como en SARIF) y que no
 					tiene <code>type</code>. Se omite por completo para una regla que no reclama ningún
-					criterio: <code>aria-allowed-role</code> y <code>landmark-role-name-present</code> son las
-					reglas automáticas del motor en esa situación, y afirmar una lista vacía se leería como "no encontramos a qué se
-					asocia" en lugar de "deliberadamente no se asocia a ninguno".
+					criterio: <code>aria-allowed-role</code>, <code>empty-heading</code> y{" "}
+					<code>landmark-role-name-present</code> son las reglas automáticas del motor en esa
+					situación, y afirmar una lista vacía se leería como "no encontramos a qué se asocia" en
+					lugar de "deliberadamente no se asocia a ninguno". Una regla así puede dar{" "}
+					<code>fail</code> igualmente (<code>empty-heading</code> falla con un encabezado sin
+					nombre): su aserción es entonces <code>earl:failed</code> sin <code>isPartOf</code>, un
+					fallo de la regla que no afirma que haya fallado ningún criterio de WCAG.
+				</li>
+				<li>
+					<strong><code>isPartOf</code> sigue el nivel y la versión de WCAG del análisis.</strong>{" "}
+					Un criterio que el análisis dejó fuera de <code>rulesResults</code> por ellos no se
+					enumera, como 1.4.6 (AAA) con <code>engineOptions.wcagLevel: 'AA'</code>, o 4.1.1 cuando{" "}
+					<code>{"includeRuleIds: ['duplicate-id']"}</code> se ejecutó con WCAG 2.2, que lo
+					eliminó; una regla cuyos criterios quedan todos fuera no tiene <code>isPartOf</code>. La
+					aserción en sí se mantiene, ya que trata de la regla. Un criterio que el análisis informa
+					sí se enumera, como un resultado agregado nombrado por id por encima del nivel, o 4.1.1 en
+					un análisis 2.2 que lo seleccionó, y también todos los criterios de un resultado que no
+					registra ni <code>engine.wcagLevel</code> ni <code>engine.wcagVersion</code>.
 				</li>
 				<li>
 					<strong>
@@ -186,8 +208,8 @@ export function EarlReportContent() {
 				es producir un falso positivo: fallar un ejemplo que la regla dice que debería pasar o que
 				es inaplicable. Esa es la condición que vale la pena vigilar, y es una propiedad de las
 				reglas, no de este informe. Según la última ejecución completa, el motor produce{" "}
-				<strong>cero falsos positivos</strong> entre los 821 ejemplos ACT que cubren sus 59 reglas
-				asociadas. Ver{" "}
+				<strong>cero falsos positivos</strong> entre los 942 ejemplos que el W3C publica para sus
+				59 reglas asociadas. Ver{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}>
 					<code>ACT_RULE_MAPPING.md</code>
 				</a>
@@ -204,8 +226,15 @@ export function EarlReportContent() {
 			<p>
 				Un resultado entre frames de <a href="/results-reports/output-schema/#cross-frame-result"><code>runa11yCoreAcrossFrames</code></a> se acepta tal
 				cual, solo o dentro del array: cada frame que respondió es un resultado más y se convierte
-				en un sujeto con su propia URL. Cualquier otra cosa que no sea un resultado de análisis,
-				como <code>null</code> o una cadena, lanza un <code>TypeError</code>.
+				en un sujeto con su propia URL. Un frame por debajo del superior cuya URL no lo distingue,
+				porque es <code>about:srcdoc</code> o <code>about:blank</code> o porque otro frame del
+				resultado también la tiene, se nombra por su URL y su ruta, los selectores con los que lo
+				nombran SARIF y JUnit, cada uno codificado y unidos con <code>/</code>:{" "}
+				<code>about:srcdoc#frame=%23pay</code>, <code>about:srcdoc#frame=%23widget/%23inner</code>.
+				Donde incluso la ruta se comparte, como en los frames de un binding, que no llevan
+				selector, se añade su posición entre los frames del resultado, desde 1:{" "}
+				<code>about:srcdoc#frame=iframe&amp;n=3</code>. Cualquier otra cosa que no sea un resultado
+				de análisis, como <code>null</code> o una cadena, lanza un <code>TypeError</code>.
 			</p>
 			<p>
 				Los resultados que comparten una URL se fusionan en un solo sujeto: quien llama y analiza

@@ -1,22 +1,102 @@
 import React from "react";
+import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+
+const remedyRows = [
+	{
+		id: "interaction",
+		situation: "Content appears only after a click, a hover or a data load",
+		remedy: "Bring the page to that state yourself, then scan it. Scan each state that matters.",
+	},
+	{
+		id: "layout",
+		situation: "A check needs layout: target size, text spacing, contrast against what is painted under text",
+		remedy: (
+			<>
+				Scan in a real browser. jsdom has no layout (the result's{" "}
+				<code>engine.environment.layout</code> is <code>false</code>), so these rules measure less
+				there or report <code>notApplicable</code>, as the sections below say.
+			</>
+		),
+	},
+	{
+		id: "keyboard",
+		situation: "A requirement is about keyboard operation, such as a keyboard trap",
+		remedy: "Test it with a keyboard. No scan covers it.",
+	},
+	{
+		id: "canttell",
+		situation: (
+			<>
+				A result is <code>cantTell</code>
+			</>
+		),
+		remedy: (
+			<>
+				Read the occurrence's <code>uncertainty.code</code> and <code>uncertainty.needed</code>,
+				and decide it by hand.
+			</>
+		),
+	},
+	{
+		id: "responsive",
+		situation: "The page is responsive",
+		remedy: "Scan at each width you care about.",
+	},
+	{
+		id: "differ",
+		situation: "Two runs of the same page differ",
+		remedy: (
+			<>
+				Compare <code>engine.version</code> and <code>engine.environment</code> (viewport, fonts
+				and images still loading), and reload the page between scans.
+			</>
+		),
+	},
+	{
+		id: "no-failures",
+		situation: "A scan reports no failures",
+		remedy: (
+			<>
+				That is not a conformance claim. See{" "}
+				<a href="/conformance/wcag-mapping/">WCAG conformance mapping</a>.
+			</>
+		),
+	},
+];
 
 export function KnownLimitationsContent() {
 	return (
 		<>
 			<p>
-				What the engine doesn't evaluate, what depends on the environment it runs in, and what
-				needs a person to review. Read this before you rely on a clean result.
+				What the engine doesn't evaluate, what depends on where a scan runs (jsdom, a browser, or
+				the page's own scripts), and what needs a person to review. Some items are design
+				decisions, each with its reasoning; each says what a scan can't establish and, where there
+				is one, what to do about it. Read this before you rely on a clean result.
 			</p>
 
-			<h2>Aspects the scan does not evaluate</h2>
+			<h2>What to do about them</h2>
+			<DataTable
+				label="What to do about each limitation"
+				rowKey="id"
+				columns={[
+					{ key: "situation", label: "If…", width: "40%" },
+					{ key: "remedy", label: "Then…" },
+				]}
+				rows={remedyRows}
+			/>
+			<p>The sections below give the reasons.</p>
+
+			<h2 id="outside-what-one-scan-can-see">Outside what one scan can see</h2>
 			<p>
-				surea11y checks the page in its current state. Some rules briefly change focus or styles to
-				measure a specific condition, and in a real browser rules can measure layout (in jsdom there
-				is none), but the scan does not systematically explore user interactions, asynchronous
-				states or different viewport sizes. The following therefore need separate testing, with
-				browser automation and human review as appropriate:
+				A scan reads the page at one moment, in one state, at one viewport: the DOM, its computed
+				styles and, in a real browser, its layout. It does not use the page as a person does. It
+				doesn't move through it with a keyboard, open its menus, wait for its data or resize it.
+				(In a browser a few rules focus an element or add a style sheet for the time of their
+				check, and put it back; see the next section.) The items here need that kind of
+				interaction over time, so another rule can't close them. They need an interaction test or
+				a person:
 			</p>
 			<ul>
 				<li>
@@ -27,10 +107,8 @@ export function KnownLimitationsContent() {
 						<code>ACT_RULE_MAPPING.md</code>
 					</a>
 					), but it isn't built: a scan doesn't explore user interactions or the states they lead
-					to. A few checks change the page briefly to measure it (<code>aria-hidden-focus</code>{" "}
-					tries to focus elements, <code>text-spacing-content-loss</code> applies test spacing),
-					but none drives focus through the page the way trap detection would. Nothing in static markup
-					stands in for it in the meantime.
+					to, and none of the checks that change the page briefly drives focus through it the way
+					trap detection would. Nothing in static markup stands in for it in the meantime.
 				</li>
 				<li>
 					<strong>Reflow / clipping at zoom</strong> (WCAG 1.4.10) — requires real layout
@@ -46,6 +124,8 @@ export function KnownLimitationsContent() {
 					DOM. If your framework renders it eagerly (even off-screen/<code>hidden</code>), it's
 					scannable; if it only exists after interaction, it isn't, unless you drive that
 					interaction yourself before scanning (e.g. click the button, <em>then</em> scan).
+					Scanning the opened state checks what is in it, not whether a keyboard or screen-reader
+					user can open, use and close it.
 				</li>
 			</ul>
 
@@ -85,11 +165,13 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>A name is not worked out from content nested more than 256 levels deep.</strong>{" "}
-					The walk stops there (Chrome gives no name from content 100 levels down), so a button or
-					link whose only name is deeper is asked about (<code>name_contentTooDeep</code>) by{" "}
-					<a href="/rules/button-name-present/"><code>button-name-present</code></a> and{" "}
-					<a href="/rules/link-name-present/"><code>link-name-present</code></a>; other rules that
-					name from content read such content as empty.
+					The walk stops there (Chrome gives no name from content 100 levels down), so an element
+					whose only name is deeper is asked about (<code>name_contentTooDeep</code>) by{" "}
+					<a href="/rules/button-name-present/"><code>button-name-present</code></a>,{" "}
+					<a href="/rules/link-name-present/"><code>link-name-present</code></a>, the menu item,
+					option, summary, tab, tooltip and tree item name rules, and{" "}
+					<a href="/rules/empty-heading/"><code>empty-heading</code></a>; other rules that name from
+					content read such content as empty.
 				</li>
 				<li>
 					<strong>Content in a closed shadow root can't be read.</strong> No script reaches inside{" "}
@@ -100,7 +182,35 @@ export function KnownLimitationsContent() {
 					name could come from a custom element that renders but shows no readable content,
 					instead of failing it. A closed root on a built-in element (a <code>&lt;span&gt;</code>)
 					looks like an empty one, such as an icon drawn by CSS, so a button over one is still
-					failed.
+					failed. Check what such a component exposes by hand, for example with a screen reader.
+				</li>
+				<li>
+					<strong>
+						A name or state a custom element sets through <code>ElementInternals</code> can't be
+						read.
+					</strong>{" "}
+					<code>{"this.attachInternals().ariaLabel = 'Save'"}</code> names the element in every
+					browser, but no script can read it back. Where a component keeps its internals on a
+					property (<code>_internals</code>, <code>internals</code>, <code>internals_</code>,{" "}
+					<code>__internals</code>), the engine reads them through it, and passes or fails the
+					element by what they say. For any other defined custom element with no name (or no
+					required state), the name rules and{" "}
+					<a href="/rules/aria-required-attr/"><code>aria-required-attr</code></a> ask (
+					<code>name_internals</code>, <code>state_internals</code>) instead of failing. Check
+					those in the browser's accessibility tree, or install the opt-in internals hook before
+					the page's scripts run: <code>installInternalsHook()</code> in each binding (see{" "}
+					<a href="/getting-started/">Getting Started</a>) and in test-matchers, or core's{" "}
+					<code>internalsHookScript()</code> for a page of your own (see{" "}
+					<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, which shows where to install it). The hook records every element's internals for the
+					scan, so it also tells an element that never attached any. A role set only through
+					internals (<code>internals.role</code>) is read where the internals are, through a
+					property or the hook, as the element's default role; kept in a private field without
+					the hook, it is not seen, and the element is not asked about, since nearly every
+					component could have one. Built-in elements, and custom elements that aren't defined,
+					are judged as before.
 				</li>
 				<li>
 					<strong>A scan taken while a modal dialog is open sees the dialog, not the page.</strong>{" "}
@@ -126,7 +236,9 @@ export function KnownLimitationsContent() {
 					</strong>{" "}
 					(no <code>open</code> attribute, <code>display: none</code> by spec), along with any
 					other subtree hidden via <code>display:none</code>, <code>visibility:hidden</code>,{" "}
-					<code>[hidden]</code>, or closed <code>&lt;details&gt;</code>, are{" "}
+					<code>[hidden]</code>, or closed <code>&lt;details&gt;</code>, and an{" "}
+					<code>[inert]</code> subtree (which rules about how content looks, such as contrast and
+					text spacing, still judge, since it is drawn), are{" "}
 					<strong>excluded from rule evaluation by default</strong> — matching the
 					visibility-aware behavior of other established engines. This is a deliberate default (
 					<code>engineOptions.includeHiddenElements: false</code>), not an oversight: hidden
@@ -136,6 +248,16 @@ export function KnownLimitationsContent() {
 					subtrees anyway — e.g. to catch a markup defect (like a broken ARIA ID reference) before
 					a dialog ever opens. See <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>{" "}
 					for the option and exactly which hiding mechanisms it covers.
+				</li>
+				<li>
+					<strong>jsdom has no popovers.</strong> It ships HTML's rule hiding a closed{" "}
+					<code>[popover]</code>, but no <code>showPopover()</code>, and reads{" "}
+					<code>:popover-open</code> inconsistently. Where the DOM has no <code>showPopover</code>,
+					the engine treats every <code>[popover]</code> other than an open{" "}
+					<code>&lt;dialog&gt;</code> as closed and hidden, so its content is not checked; a
+					popover the page's own CSS keeps visible is not checked under jsdom either. In a browser
+					the engine reads what is displayed. To check a popover's content, scan the page in a
+					browser with the popover open.
 				</li>
 				<li>
 					<strong>jsdom keeps a font size as written.</strong> A browser reports a computed font
@@ -161,6 +283,20 @@ export function KnownLimitationsContent() {
 					single scan is unaffected. It only surfaces if you read{" "}
 					<code>getComputedStyle(el).textShadow</code> yourself, more than once, against the same
 					jsdom-parsed element — a real browser has no such bug.
+				</li>
+				<li>
+					<strong>
+						A second scan of the same jsdom DOM can lose a style that overrides a shorthand.
+					</strong>{" "}
+					jsdom keeps an element's computed style once read, until the DOM next changes, and the
+					copy it gives back from that cache loses a longhand that overrides a shorthand from a
+					less specific rule: with <code>{"*{background:#888}"}</code> and{" "}
+					<code>style="background-image:url(hero.png)"</code>, the first read gives the image and
+					every later one <code>none</code>. A scan keeps the style it read first, so it is
+					unaffected, but a second scan of the same unchanged DOM can miss the image and pass text
+					the first asked about (<code>contrast-computable</code>). Scan a fresh parse, or change
+					the DOM between scans, which clears jsdom's cache; <code>@surea11y/core/testing</code>{" "}
+					does this for its own second scan. A real browser has no such bug.
 				</li>
 				<li>
 					<strong>
@@ -259,70 +395,72 @@ export function KnownLimitationsContent() {
 					<code>engine.environment</code> whether fonts or images were still loading.
 				</li>
 				<li>
-					<strong>In a browser, the contrast rules measure text against what is painted under it,
-					in CSS's painting order.</strong>{" "}
-					Text positioned over a sibling, over an <code>&lt;img&gt;</code> hero, over a{" "}
-					<code>::before</code> overlay, or pulled over another block by a negative margin sits on
-					paint none of its ancestors own, and text that overflows an ancestor's box, or has a
-					negative <code>z-index</code>, isn't over that ancestor's background. In a browser the
-					engine measures the text's line boxes, finds the elements that paint there (a background
-					color or image, replaced content such as <code>img</code>, <code>video</code>,{" "}
-					<code>canvas</code>, <code>iframe</code>, SVG shapes), and orders them with the text and
-					its ancestors' backgrounds by the CSS painting order: stacking contexts,{" "}
-					<code>z-index</code>, positioned boxes and floats, then document order. When everything
-					between the text and the first opaque layer is a solid color covering all of the text,
-					the ratio is measured against that; when an image, a gradient, paint covering only part of
-					the text, or paint drawn over the text is involved,{" "}
-					<a href="/rules/contrast-computable/"><code>contrast-computable</code></a> asks about the
-					text with reason code <code>BACKGROUND_OVERLAP</code> and the ratio rules leave it out.
-					Text that a box clipping its overflow keeps out of view, such as the options further down
-					a scrolled list, is measured as it is once scrolled into that box. Text a box with{" "}
+					<strong>
+						In a browser, contrast is measured against what is painted under the text, as the
+						page is at that moment.
+					</strong>{" "}
+					Text over an image, a gradient, or paint covering only part of it is asked about (
+					<a href="/rules/contrast-computable/"><code>contrast-computable</code></a>, reason code{" "}
+					<code>BACKGROUND_OVERLAP</code>) rather than measured. Text that a box with{" "}
 					<code>overflow: hidden</code> keeps wholly out of view, such as a carousel slide off its
-					track, is not measured at all: from its styles alone, such a box can't be told from one
-					that hides that text for good, so the text is left out rather than guessed at. Scan the
-					page in that state (the slide shown) to check it. Limits: a fixed or sticky box over the
-					text is left out, since it covers it only at the scroll position the scan was taken at; a
-					gradient under the text is not sampled, so faint text on a faint gradient is asked about
-					rather than failed; and a group effect (<code>opacity</code>, a filter, a blend mode) on
-					an ancestor leaves the overlap to a coarser check. Under jsdom there is no layout, so text
-					is measured against its ancestors alone.
+					track, is left out until it is in view, so scan the page in that state to check it.
+					Fixed and sticky boxes over text are ignored. Under jsdom, text is measured against its
+					ancestors alone. Scanned under forced colors (Windows high contrast, or an emulated{" "}
+					<code>forced-colors: active</code>), the page is kept in its own colors while it is
+					measured, so the outcomes are those with forced colors off; where it can't be (a
+					Content Security Policy blocking the engine's <code>&lt;style&gt;</code> in a browser
+					that can't adopt a style sheet), the colors measured are partly the browser's, and each
+					contrast occurrence says so (<code>details.forcedColors</code>). How the measurement
+					works, step by step:{" "}
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#contrast`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					, on GitHub.
 				</li>
 				<li>
-					<strong>A form field's text is measured as the field draws it.</strong> The value of an{" "}
-					<code>&lt;input&gt;</code> that shows text (text, search, email, url, tel, password,
-					number, the date and time types) and the current value of a{" "}
-					<code>&lt;textarea&gt;</code> are measured in the field's color against its background;
-					while the value is empty, the placeholder is measured in the <code>::placeholder</code>{" "}
-					color and font, faded by its <code>opacity</code>. Not measured: the text the browser draws
-					when a date or time field is empty (<code>mm/dd/yyyy</code>), a file input's button and
-					file name, and a <code>&lt;select&gt;</code>'s shown option. Under jsdom there is no{" "}
-					<code>::placeholder</code> style, so placeholders are not measured there; values are. A
-					placeholder below its ratio is <code>cantTell</code> rather than a fail (
-					<code>PLACEHOLDER_BELOW_THRESHOLD</code>): WCAG holds placeholder text to the ratio, but
-					counts colours the page left entirely to the browser as meeting it (technique G148), and
-					telling the browser's colours from the page's on real pages is not settled yet, so a
-					person decides for now.
+					<strong>Generated text is measured only in a browser, and only where it can be read.</strong>{" "}
+					The text a <code>::before</code> or <code>::after</code> <code>content</code> writes and
+					a list item's <code>::marker</code> are measured in the pseudo-element's color and font;
+					content that can't be read (a counter in a page's own <code>@counter-style</code>), and
+					a <code>::before</code> or <code>::after</code> positioned out of the flow with no
+					background of its own, are asked about (<code>contrast-computable</code>) instead.
+					Markers are looked for only on <code>&lt;li&gt;</code>. Under jsdom, which computes no
+					pseudo-element styles, generated text is left out.
 				</li>
 				<li>
 					<strong>
-						<code>target-size-minimum</code> measures the region a pointer can hit, worked out from
-						the layout.
+						A form field's text and placeholder are measured as the field draws them, with gaps.
 					</strong>{" "}
-					A target is its border box with its rounded corners and 2D transforms, clipped by{" "}
-					<code>clip</code> and <code>clip-path: inset()</code> on its containing-block chain and
-					no larger than a box there that clips its <code>overflow</code>, with content sticking out
-					of it, less the boxes painted over it that take pointer events; it is large enough when a
-					24 by 24 square aligned to the page fits inside (Understanding 2.5.8). Because the region
-					comes from the layout rather than from hit-testing, targets below the fold are measured
-					as those in view, and so are targets in a box that clips its overflow, as scrolled into
-					it. Rounded corners are measured as drawn. Fixed and sticky boxes over a target are left
-					out; a target before the start of the page, where scrolling can't reach (a skip link at{" "}
-					<code>left: -9999px</code>), is no target. Left as their bounding box: 3D transforms,
-					other <code>clip-path</code> shapes, and an ancestor's rounded clipping. Its inline
-					exception covers a link in a sentence, which it reads as text with a letter or a digit
-					outside any target in the stretch of the link's block between line breaks; links between
-					separators alone ("Edit | Delete") that crowd each other are asked about rather than
-					exempted. Under jsdom, which has no layout, the rule is <code>notApplicable</code>.
+					The text a browser draws in an empty date or time field, and a file input's button and
+					file name, are not measured. A drop-down <code>&lt;select&gt;</code> is measured as the
+					closed control draws it, its shown option in the select's own colors; another of its
+					options with colors of its own is shown only in the list the platform draws when it
+					opens, and is <code>cantTell</code> (<code>SELECT_OPTION_COLOR</code>). A placeholder
+					below its ratio is <code>cantTell</code> (<code>PLACEHOLDER_BELOW_THRESHOLD</code>)
+					rather than a fail: WCAG holds placeholder text to the ratio, but counts colours the
+					page left entirely to the browser as meeting it (technique G148), and telling the two
+					apart on real pages is not settled yet. Under jsdom, placeholders are not measured at
+					all. Details:{" "}
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#form-fields`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					.
+				</li>
+				<li>
+					<strong>
+						<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a> works the
+						hit region out from the layout rather than by hit-testing.
+					</strong>{" "}
+					Targets below the fold or in a scrolling box are measured whole, as if scrolled into
+					view; fixed and sticky boxes over a target are ignored; 3D transforms, most{" "}
+					<code>clip-path</code> shapes and an ancestor's rounded clipping are measured as a
+					bounding box; and links between separators alone ("Edit | Delete") that crowd each other
+					are asked about rather than exempted. Under jsdom the rule is{" "}
+					<code>notApplicable</code>. Details:{" "}
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#target-size`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					.
 				</li>
 				<li>
 					<strong>Contrast is computed in sRGB.</strong> Colors given in <code>oklch()</code>,{" "}
@@ -364,8 +502,12 @@ export function KnownLimitationsContent() {
 					invisible to a static scan in the first place; not just a heuristic-design problem.
 				</li>
 				<li>
-					<strong>Fine-grained time-based-media sub-checks</strong> (WCAG 1.2.x has ~8 distinct
-					ACT-rule-level cases beyond what's built) — audio/video content itself is fundamentally
+					<strong>Fine-grained time-based-media sub-checks</strong> (WCAG 1.2.x has 13 ACT rules
+					with no rule here; see the gaps section of{" "}
+					<a href={`${core}/docs/ACT_RULE_MAPPING.md#gaps-no-corresponding-rule`}>
+						<code>ACT_RULE_MAPPING.md</code>
+					</a>
+					) — audio/video content itself is fundamentally
 					unverifiable from static markup; the two broadest, safest cases are covered (
 					<code>media-alternative-transcript-evidence</code>, <code>video-caption</code>), the
 					narrower ones are not, by design.
@@ -392,9 +534,11 @@ export function KnownLimitationsContent() {
 
 			<h2>What this means in practice</h2>
 			<p>
-				None of the above is unique to surea11y — every static-analysis accessibility tool (other
-				established engines included) shares the structural limitations, and most share the
-				judgment-call ones too. The reason to state it explicitly here: <strong>a <code>pass</code> from
+				Most of the above is not unique to surea11y. Any tool that judges one state of the DOM
+				shares the limits in{" "}
+				<a href="#outside-what-one-scan-can-see">Outside what one scan can see</a>, and most automated tools leave the
+				judgment calls to a person too, though tools differ in how they run, what they check, and
+				how they report what they can't decide. The reason to state it explicitly here: <strong>a <code>pass</code> from
 				this engine (or any automated tool) is never a substitute for the manual review WCAG
 				itself requires for the criteria above.</strong> See{" "}
 				<a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a> for exactly what a{" "}

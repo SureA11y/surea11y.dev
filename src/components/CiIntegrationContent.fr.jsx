@@ -17,11 +17,19 @@ export function CiIntegrationContent() {
 				</a>{"\u00a0"}: cette page porte spécifiquement sur la CLI utilisée comme étape de pipeline.
 			</p>
 			<p>
+				La CLI analyse du HTML statique : elle n’exécute pas le JavaScript de la page. Cela convient
+				aux pages générées ou rendues côté serveur ; pour une application rendue côté client, ou
+				pour les règles qui ont besoin de la mise en page, analysez plutôt dans un navigateur avec
+				l’un des <a href="/getting-started/">bindings de navigateur</a>.
+			</p>
+			<p>
 				Tous reposent sur les codes de sortie de la CLI (<code>0</code> si aucun <code>fail</code>,{" "}
 				<code>1</code> s’il y a au moins un résultat <code>fail</code> (ou au moins un{" "}
 				<em>nouveau</em> avec <code>--baseline</code>), <code>2</code> en cas d’erreur
 				d’utilisation ou d’analyse) pour contrôler le pipeline ; aucun script supplémentaire n’est
-				nécessaire pour un contrôle réussite/échec de base.
+				nécessaire pour un contrôle réussite/échec de base. Un pipeline au vert signifie qu’aucune
+				vérification n’a échoué, ou qu’aucune nouvelle n’a échoué. Ce n’est pas une déclaration de
+				conformité, et les constats <code>cantTell</code> ne le font pas échouer.
 			</p>
 
 			<h2><span lang="en">GitHub Actions</span></h2>
@@ -66,7 +74,9 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				Voir <a href="/conformance/baseline/">Baseline / allowlist</a> pour ce qui compte comme
+				Une baseline empêche les violations connues de faire échouer le build ; elle ne les rend
+				pas acceptables. Corrigez-les et réduisez le fichier au fil du temps. Voir{" "}
+				<a href="/conformance/baseline/">Baseline / allowlist</a> pour ce qui compte comme
 				« connu » ou « nouveau », et pour régénérer le fichier au fil des corrections.
 			</p>
 
@@ -152,10 +162,10 @@ export function CiIntegrationContent() {
 			<p>
 				GitLab, Azure DevOps, Jenkins et CircleCI affichent le JUnit XML dans leurs propres vues de
 				tests : chaque critère WCAG devient une suite et chaque règle un test (voir{" "}
-				<a href="/results-reports/junit-report/">le rapport JUnit</a>). Enregistrez l’analyse en
-				JSON, produisez le rapport avec <code>@surea11y/core/junit</code>, et gardez le code de
-				sortie de la CLI pour le contrôle. L’étape de rendu a besoin de <code>@surea11y/core</code>{" "}
-				dans les <code>devDependencies</code> du projet lui-même.
+				<a href="/results-reports/junit-report/">le rapport JUnit</a>). La CLI l’écrit avec{" "}
+				<code>--junit &lt;path&gt;</code> (<code>@surea11y/cli</code> 1.1.0 ou ultérieure), à
+				partir de la même analyse que ses autres sorties, et le rapport ne change jamais son code
+				de sortie : l’étape contrôle donc toujours le build.
 			</p>
 			<h3><span lang="en">GitLab CI</span></h3>
 			<CodeBlock
@@ -166,9 +176,7 @@ export function CiIntegrationContent() {
 					"  script:",
 					"    - npm ci",
 					"    - npm run build",
-					"    - npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
-					"    - node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
-					"    - exit ${scan_exit:-0}",
+					"    - npx @surea11y/cli scan ./dist/index.html --junit a11y.junit.xml",
 					"  artifacts:",
 					"    when: always",
 					"    reports:",
@@ -188,9 +196,7 @@ export function CiIntegrationContent() {
 					"  - script: |",
 					"      npm ci",
 					"      npm run build",
-					"      npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
-					"      node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
-					"      exit ${scan_exit:-0}",
+					"      npx @surea11y/cli scan ./dist/index.html --junit a11y.junit.xml",
 					"    displayName: Accessibility scan",
 					"  - task: PublishTestResults@2",
 					"    condition: succeededOrFailed()",
@@ -200,10 +206,15 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				Les règles <code>cantTell</code> arrivent sous forme de tests ignorés, jamais d’échecs. Pour
-				qu’elles bloquent aussi, passez <code>{"{ cantTellAs: 'failure' }"}</code> comme second
-				argument de <code>renderJunitReport</code> ; cela modifie le rapport, pas le code de sortie de
-				la CLI.
+				Les règles <code>cantTell</code> arrivent sous forme de tests ignorés, jamais d’échecs. Avec{" "}
+				<code>--baseline</code>, les échecs déjà présents dans la baseline sont aussi des tests
+				ignorés. Pour afficher les règles <code>cantTell</code> comme des échecs, la CLI n’a pas
+				d’option : enregistrez l’analyse avec <code>--json</code> et produisez le rapport avec{" "}
+				<code>{"renderJunitReport(result, { cantTellAs: 'failure' })"}</code> depuis{" "}
+				<code>@surea11y/core/junit</code> (voir{" "}
+				<a href="/results-reports/junit-report/">le rapport JUnit</a>), ce qui demande{" "}
+				<code>@surea11y/core</code> dans les <code>devDependencies</code> du projet lui-même. Cela
+				modifie le rapport, pas le code de sortie de la CLI.
 			</p>
 
 			<h2>Limites de minutes des offres gratuites et dépôts privés</h2>

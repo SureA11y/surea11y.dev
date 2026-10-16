@@ -30,19 +30,21 @@ export function RuleOrganizationContent() {
 					supposition. Peut rapporter <code>fail</code>. <code>cantTell</code> apparaît quand même
 					ici, dans les situations suivantes : une violation réelle existe mais n’établit pas à elle seule
 					l’échec du critère WCAG associé (une exigence d’auteur ARIA dont le nom, le rôle ou la
-					valeur exposés restent valables) ; la règle tranche de façon déterministe mais ne
-					revendique aucun critère de succès (<code>aria-allowed-role</code>, marquée comme bonne
-					pratique) ; ou la règle peut seulement confirmer qu’un mécanisme est <em>présent</em>,
+					valeur exposés restent valables) ; la règle établit de façon déterministe qu’une bonne
+					pratique n’est pas respectée, ne revendique aucun critère de succès, et ce qu’elle a
+					trouvé ne gêne pas forcément qui que ce soit, puisque le rôle ou l’élément parvient tel
+					quel aux technologies d’assistance (<code>aria-allowed-role</code>,{" "}
+					<code>landmark-role-name-present</code>, marquées comme bonne pratique) ; ou la règle peut seulement confirmer qu’un mécanisme est <em>présent</em>,
 					tandis que la validité de ce qui est présent relève d’une règle sœur
 					(<code>aria-required-children</code>, associée à{" "}
 					<code>aria-prohibited-children</code>) ; ou la règle ne peut pas trancher sans supposer,
 					et pose donc la question au lieu d’échouer : un nom qui peut provenir d’une shadow root
-					fermée ou d’un contenu imbriqué trop profondément pour être lu (les règles{" "}
+					fermée, d’un <code>ElementInternals</code> que le moteur ne peut pas lire, ou d’un contenu imbriqué trop profondément pour être lu (les règles{" "}
 					<code>*-name-present</code>), un texte qui peut être tronqué ou se chevaucher une fois
 					espacé (<code>text-spacing-content-loss</code>), un bloc de media query d’orientation qui
 					fait pivoter un autre élément que le contenu de la page (
-					<code>css-orientation-lock</code>), un texte de placeholder sous son rapport (
-					<code>contrast-minimum</code>), ou une couleur ou une taille impossible à calculer (les
+					<code>css-orientation-lock</code>), un texte de placeholder, ou un caractère isolé qui tient
+					lieu de nom à son contrôle, sous son rapport (<code>contrast-minimum</code>), ou une couleur ou une taille impossible à calculer (les
 					règles de contraste, <code>target-size-minimum</code>). Une règle qui lève une exception
 					est également signalée comme <code>cantTell</code>, par sécurité.
 				</li>
@@ -59,6 +61,16 @@ export function RuleOrganizationContent() {
 					rapporte jamais <code>pass</code>.
 				</li>
 			</ul>
+			<p>
+				Une règle marquée comme bonne pratique ne revendique aucun critère de succès, et rapporte
+				pourtant <code>fail</code> quand ce qu’elle établit est en soi un obstacle : un titre vide
+				est annoncé comme un titre sans rien dedans (
+				<a href="/rules/empty-heading/"><code>empty-heading</code></a>, comme le rapporte la règle
+				ACT du W3C correspondante). Son <code>fail</code> dit que l’attente propre à la règle n’est
+				pas remplie, pas celle d’un critère : aucune agrégation WCAG n’en tient compte. Là où le
+				constat ne gêne peut-être personne, elle rapporte <code>cantTell</code> à la place, comme
+				ci-dessus.
+			</p>
 			<p>
 				<strong>Une règle manuelle qui rapporte <code>cantTell</code> ne correspond pas au même
 				événement qu’une règle automatique qui rapporte <code>cantTell</code>, même si la valeur

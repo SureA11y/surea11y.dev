@@ -109,24 +109,36 @@ export function JunitReportContent() {
 				<a href="https://github.com/SureA11y/cli#readme">
 					<code>@surea11y/cli</code>
 				</a>
-				の<code>surea11y scan &lt;target&gt; --json</code>の出力のように、以前にJSONとして保存した結果にも同じように使えます。GitLabと<span lang="en">Azure DevOps</span>のレシピは
+				の<code>surea11y scan &lt;target&gt; --json</code>の出力のように、以前にJSONとして保存した結果にも同じように使えます。コマンドラインからは呼び出す必要はありません。<code>surea11y scan &lt;target&gt; --junit a11y.junit.xml</code>（CLI 1.1.0以降）がデフォルトのオプションと<code>--baseline</code>ファイルの<code>baselineEntries</code>でレポートを書き出します。GitLabと<span lang="en">Azure DevOps</span>のレシピは
 				<a href="/configuration/ci-integration/#junit-test-reports">CI連携</a>
 				を参照してください。
 			</p>
 
 			<h2>構造</h2>
 			<p>
-				WCAGの達成基準ごとに1つの<code>&lt;testsuite&gt;</code>、そこに対応するルールごとに1つの<code>&lt;testcase&gt;</code>です。
+				WCAGの達成基準ごとに1つの<code>&lt;testsuite&gt;</code>、そこに対応するルールごとに1つの<code>&lt;testcase&gt;</code>です。上の呼び出しで次のページをスキャンすると：
 			</p>
 			<CodeBlock
 				lang="html"
 				lines={[
-					'<testsuites name="surea11y" tests="14" failures="2" errors="0" skipped="4" time="0">',
-					'  <testsuite name="WCAG 1.1.1 Non-text content: text alternatives" tests="1" failures="1" errors="0" skipped="0" time="0">',
+					"<!doctype html>",
+					'<html lang="en">',
+					"<head><title>Home</title></head>",
+					'<body><main><h1>Welcome</h1><img src="a.png"></main></body>',
+					"</html>",
+				]}
+			/>
+			<p>結果は次のとおりです。</p>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<?xml version="1.0" encoding="UTF-8"?>',
+					'<testsuites name="surea11y" tests="13" failures="1" errors="0" skipped="5" time="0">',
+					'  <testsuite name="WCAG 1.1.1" tests="1" failures="1" errors="0" skipped="0" time="0">',
 					"    <properties>",
 					'      <property name="wcagCriterion" value="1.1.1"/>',
+					'      <property name="title" value="Non-text content: text alternatives"/>',
 					'      <property name="wcagLevel" value="A"/>',
-					'      <property name="en301549" value="9.1.1.1"/>',
 					'      <property name="criterionOutcome" value="fail"/>',
 					'      <property name="engine" value="a11ycore"/>',
 					'      <property name="schemaVersion" value="1.0.0"/>',
@@ -137,23 +149,34 @@ export function JunitReportContent() {
 					'      <property name="url" value="https://example.test/"/>',
 					"    </properties>",
 					'    <testcase classname="wcag-1.1.1" name="img-alt-present" time="0">',
-					'      <failure type="fail" message="1 failing occurrence: Missing alt attribute on &lt;img&gt;.">- Missing alt attribute on &lt;img&gt;. Add an alt attribute (use alt=&quot;&quot; only for decorative images).',
+					'      <failure type="fail" message="1 failing occurrence: This &lt;img&gt; has no alt attribute.">- This &lt;img&gt; has no alt attribute. Add an alt attribute that says what the image shows, or alt=&quot;&quot; if the image is purely decorative.',
 					"  selector: html &gt; body &gt; main &gt; img",
-					"  html: &lt;img src=&quot;a.png&quot;&gt;</failure>",
+					"  html: &lt;img src=&quot;a.png&quot;&gt;",
+					"help: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html</failure>",
 					"    </testcase>",
 					"  </testsuite>",
+					"  <!-- 10 more suites trimmed: 12 tests, 5 of them skipped (manual review) -->",
 					"</testsuites>",
 				]}
 			/>
 			<ul>
 				<li>
+					<strong>達成基準の名前を持つ緑のスイート</strong>は、その達成基準について実行されたルールが失敗を報告しなかったことを意味します。達成基準が完全にチェックされた、あるいは満たされたという意味ではありません。ほとんどの達成基準には、どのルールも扱わない部分があります（<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照）。
+				</li>
+				<li>
 					<strong>スイートは達成基準に従います。</strong>人が追跡するのは達成基準だからです。<strong>テストケースは検出箇所ではなくルールに従います。</strong>そのため、ページ内で40回繰り返される不具合も、本文に40件すべてを列挙した1つの失敗したテストになり、テスト数は実行ごとに安定します。
 				</li>
-				<li>
-					スイートは複合ルールではなく各ルール自身のWCAGとの対応から作られるため、複合ルールを除外していても、実行されたすべてのルールが報告されます。複合ルールが実行された場合は、スイートのタイトルと<code>criterionOutcome</code>プロパティを提供します。このプロパティは、その達成基準に対応するカスタムルールを組み込みルールと同じように数えます。複数の複合ルールが検査する達成基準（4.1.2：アクセシブルな名前とARIAの妥当性）は、それらの判定結果のうち最も悪いものと、それらのタイトルに共通する名前（<code>WCAG 4.1.2 Name, role, value</code>）を取ります。2つの達成基準に対応するルールは両方のスイートに現れます。どの達成基準にも対応しないルールは、<code>classname="other"</code>を持つ最後の<code>Other checks</code>スイートに入ります。
+				<li id="names-in-every-locale">
+					<strong>名前はどのロケールでも同じです。</strong>スイートの名前は<code>WCAG &lt;criterion&gt;</code>（<code>WCAG 1.4.3</code>）、どの達成基準にも対応しないルールのスイートは<code>Other checks</code>、テストケースの名前はルールのid、その<code>classname</code>は<code>wcag-&lt;criterion&gt;</code>または<code>other</code>で、スキャンがどの<code>engineOptions.locale</code>で実行されても変わりません。CIのテスト履歴（GitLab、Jenkins、GitHubのテストレポーター）はこれらの名前をキーにしているため、フランス語で読んだスキャンも英語で読んだスキャンと同じテストになります。翻訳される達成基準のタイトルは、スイートの<code>title</code>プロパティに入ります（<code>Contrast: minimum</code>、<code>Contraste (minimum)</code>）。検出結果自身のテキスト（各検出箇所のメッセージとヒント）はスキャンのロケールで、レポートがその周りに加える語句はどのロケールでも英語です。<code>message</code>の先頭の件数（<code>1 failing occurrence: Cet élément &lt;img&gt; n’a pas d’attribut alt.</code>）、<code>selector:</code>、<code>html:</code>、<code>help:</code>のラベル、<code>&lt;skipped&gt;</code>のメッセージがそれに当たります。<strong>core 1.12より前は、スイートの名前に達成基準のタイトルが含まれていました</strong>（<code>WCAG 1.1.1 Non-text content: text alternatives</code>）。そのため、古い名前で追跡していたダッシュボードでは、アップグレード後の最初のレポートですべてのテストが一度だけ新規として表示され、履歴はそこから始まり直します。
 				</li>
 				<li>
-					実行の<code>engine</code>、<code>schemaVersion</code>、<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>、<a href="/results-reports/output-schema/"><code>engine.environment</code></a>にあるレンダリングの条件（<code>layout</code>と、ブラウザーでは<code>1280x720</code>の形の<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>fonts</code>）、<code>locale</code>、<code>url</code>は、結果にある場合だけ、各スイートのプロパティとして繰り返されます。ビューポートの幅によって出たり消えたりする失敗は、実行が使った幅までたどれます。上の例はjsdomでのスキャンなので、レイアウトがありません。
+					スイートは複合ルールではなく各ルール自身のWCAGとの対応から作られるため、複合ルールを除外していても、実行されたすべてのルールが報告されます。複合ルールが実行された場合は、スイートの<code>title</code>プロパティと<code>criterionOutcome</code>プロパティを提供します。このプロパティは、その達成基準に対応するカスタムルールを組み込みルールと同じように数えます。複数の複合ルールが検査する達成基準（4.1.2：アクセシブルな名前とARIAの妥当性）は、それらの判定結果のうち最も悪いもの（一部が<code>fail</code>なら達成基準も<code>fail</code>になるため）と、それらのタイトルに共通するタイトル（<code>Name, role, value</code>）を取ります。2つの達成基準に対応するルールは両方のスイートに現れます。どの達成基準にも対応しないルールは、<code>classname="other"</code>を持つ最後の<code>Other checks</code>スイートに入ります。
+				</li>
+				<li>
+					<strong>スイートはスキャンのWCAGのレベルとバージョンに従います。</strong>それらによってスキャンが<code>rulesResults</code>から外した達成基準にはスイートがありません。<code>engineOptions.wcagLevel: 'AA'</code>（<code>engine.wcagLevel</code>）のもとでのAAAの達成基準や、WCAG 2.2（<code>engine.wcagVersion</code>）で<code>{"includeRuleIds: ['duplicate-id']"}</code>を実行したときの、2.2で削除された4.1.1（構文解析）です。スキャンが報告する達成基準は残ります。レベルより上でもIDで指定された集約、<a href="/results-reports/output-schema/#partly-checked">一部だけチェックされた</a>達成基準、4.1.1を選んだ2.2のスキャンでの4.1.1などです。外された達成基準だけに対応するルールは<code>Other checks</code>に入り、その失敗は<code>&lt;skipped message="Not counted: WCAG 1.4.6 is outside the scan's target, WCAG 2.2 AA; 1 failing occurrence"&gt;</code>になり、検出箇所は<code>&lt;system-out&gt;</code>に入ります。ルールは実行されて失敗しており、レポートはそれを示しますが、AAのビルドがAAAの達成基準で失敗することはありません。完了しなかったルールは引き続き<code>&lt;error&gt;</code>です。選択が示すレベル（<code>runOnly.wcag.level</code>、またはレベルのタグ）も<code>engine.wcagLevel</code>として記録され、同じようにスイートを絞り込みます。古いエンジンの結果のように、<code>engine.wcagLevel</code>も<code>engine.wcagVersion</code>も記録していない結果では、すべての達成基準が残ります。
+				</li>
+				<li>
+					実行の<code>engine</code>、<code>schemaVersion</code>、<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>、<a href="/results-reports/output-schema/"><code>engine.environment</code></a>にあるレンダリングの条件（<code>layout</code>と、ブラウザーでは<code>1280x720</code>の形の<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>）、<code>locale</code>、<code>url</code>は、結果にある場合だけ、各スイートのプロパティとして繰り返されます。ビューポートの幅によって出たり消えたりする失敗は、実行が使った幅までたどれます。上の例はjsdomでのスキャンなので、レイアウトがありません。
 				</li>
 				<li>
 					複数のビューポート幅でスキャンしたページは、どの幅でも同じスイート名とテスト名になるため、CIのテスト表示でまとめられてしまうことがあります。幅ごとに1つのファイルを書き出し、CIのレポート設定でファイルを幅ごとに名前付けするかグループ化してください。<code>viewport</code>プロパティには、そのファイルがどの幅を表しているかが記録されます。
@@ -171,10 +194,10 @@ export function JunitReportContent() {
 
 			<h2 id="cross-frame-results">フレーム横断の結果</h2>
 			<p>
-				フレーム横断の結果（<a href="/results-reports/output-schema/#cross-frame-result">出力スキーマ</a>を参照）では、まずページのスイートが、続いて各フレームのスイートが出力されます。フレームのスイートはフレームのパスで名前が付けられ（<code>Frame #checkout: WCAG 1.1.1 Non-text content: text alternatives</code>）、パスを保持する<code>frame</code>プロパティを持つため、フレーム内の失敗がページの失敗と混ざることはありません。応答しなかったフレームは、スキップされたテストケース<code>Not scanned: &lt;error&gt;</code>を1つ持つスイート<code>Frame &lt;path&gt;</code>になります。そのフレームは検査されておらず、それは合格ではないからです。<code>&lt;testsuites&gt;</code>の合計はすべてのフレームを数えます。
+				フレーム横断の結果（<a href="/results-reports/output-schema/#cross-frame-result">出力スキーマ</a>を参照）では、まずページのスイートが、続いて各フレームのスイートが出力されます。フレームのスイートはフレームのパスで名前が付けられ（<code>Frame #checkout: WCAG 1.1.1</code>。どのロケールでも同じです）、パスを保持する<code>frame</code>プロパティを持ち、そのテストケースの<code>classname</code>はパスで始まります（<code>frame #checkout wcag-1.1.1</code>）。そのため、スイート名、または<code>classname</code>と<code>name</code>をキーにするCIでも、フレーム内の失敗がページの失敗と混ざることはありません。応答しなかったフレームは、スキップされたテストケース<code>Not scanned: &lt;error&gt;</code>を1つ持つスイート<code>Frame &lt;path&gt;</code>になります。そのフレームは検査されておらず、それは合格ではないからです。<code>&lt;testsuites&gt;</code>の合計はすべてのフレームを数えます。
 			</p>
 
-			<h2>判定結果</h2>
+			<h2 id="outcomes">判定結果</h2>
 			<DataTable
 				label="JUnitでのルールの判定結果"
 				rowKey="id"
@@ -187,6 +210,9 @@ export function JunitReportContent() {
 			/>
 			<p>
 				<code>cantTell</code>の検出箇所も持つ<code>fail</code>のルールは、不合格を<code>&lt;failure&gt;</code>に、未判断のものをダッシュボードがテスト出力を表示する<code>&lt;system-out&gt;</code>に報告します。スキップされた<code>cantTell</code>のルールも同様です。
+			</p>
+			<p>
+				シャドウツリー内の要素の<code>selector:</code>行は、シャドウホストを先に、続いて要素を示し、<code>{" >>> "}</code>でつなぎます：<code>{"html > body > main > x-card >>> button"}</code>。<a href="/results-reports/sarif-report/#field-mapping">SARIF</a>と<a href="/results-reports/html-report/">HTMLレポート</a>が示すのと同じ位置です。
 			</p>
 
 			<h2>オプション</h2>

@@ -16,7 +16,9 @@ export function ConformanceContent() {
 			<p>
 				Sehen Sie genau, wie atomare Regeln, Abdeckungsfacetten und zusammengesetzte Regeln pro
 				WCAG-Erfolgskriterium zusammenspielen, sodass ein zusammengesetztes <code>pass</code> etwas
-				Bestimmtes bedeutet statt eines vagen „sieht gut aus“. Zielen Sie mit einem einzigen Tag-Set auf
+				Bestimmtes bedeutet statt eines vagen „sieht gut aus“. Ein Scan, der einige Prüfungen statt
+				eines Ziels nennt, meldet trotzdem die Kriterien, zu denen sie gehören, und sagt, welche er
+				nur teilweise geprüft hat. Zielen Sie mit einem einzigen Tag-Set auf
 				eine Konformitätsstufe (A, AA oder AAA) über jede WCAG-Version hinweg oder nutzen Sie ein
 				benanntes Profil, ordnen Sie jedem Ergebnis die Klausel von EN 301 549 zu, die sein Kriterium
 				wiedergibt, wenn Sie nach dieser Norm berichten, und erhalten Sie eine klare

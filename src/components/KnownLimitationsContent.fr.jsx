@@ -1,24 +1,106 @@
 import React from "react";
+import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+
+const remedyRows = [
+	{
+		id: "interaction",
+		situation: "Un contenu n’apparaît qu’après un clic, un survol ou un chargement de données",
+		remedy: "Amenez vous-même la page dans cet état, puis analysez-la. Analysez chaque état qui compte.",
+	},
+	{
+		id: "layout",
+		situation:
+			"Une vérification a besoin de la mise en page : taille des cibles, espacement du texte, contraste par rapport à ce qui est peint sous le texte",
+		remedy: (
+			<>
+				Analysez dans un vrai navigateur. jsdom n’a pas de mise en page (la propriété{" "}
+				<code>engine.environment.layout</code> du résultat vaut <code>false</code>) : ces règles
+				y mesurent donc moins, ou renvoient <code>notApplicable</code>, comme l’indiquent les
+				sections ci-dessous.
+			</>
+		),
+	},
+	{
+		id: "keyboard",
+		situation: "Une exigence porte sur l’utilisation au clavier, comme un piège au clavier",
+		remedy: "Testez-la au clavier. Aucune analyse ne la couvre.",
+	},
+	{
+		id: "canttell",
+		situation: (
+			<>
+				Un résultat est <code>cantTell</code>
+			</>
+		),
+		remedy: (
+			<>
+				Lisez les propriétés <code>uncertainty.code</code> et <code>uncertainty.needed</code> de
+				l’occurrence, et tranchez à la main.
+			</>
+		),
+	},
+	{
+		id: "responsive",
+		situation: "La page est responsive",
+		remedy: "Analysez à chaque largeur qui vous importe.",
+	},
+	{
+		id: "differ",
+		situation: "Deux exécutions sur la même page diffèrent",
+		remedy: (
+			<>
+				Comparez <code>engine.version</code> et <code>engine.environment</code> (viewport,
+				polices et images encore en cours de chargement), et rechargez la page entre les analyses.
+			</>
+		),
+	},
+	{
+		id: "no-failures",
+		situation: "Une analyse ne rapporte aucun échec",
+		remedy: (
+			<>
+				Ce n’est pas une déclaration de conformité. Voir{" "}
+				<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>.
+			</>
+		),
+	},
+];
 
 export function KnownLimitationsContent() {
 	return (
 		<>
 			<p>
-				Ce que le moteur n’évalue pas, ce qui dépend de l’environnement où il s’exécute, et ce
-				qui demande une revue par une personne. Lisez ceci avant de vous fier à un résultat sans
-				constat.
+				Ce que le moteur n’évalue pas, ce qui dépend de l’endroit où une analyse s’exécute (jsdom,
+				un navigateur, ou les scripts de la page elle-même), et ce qui demande une revue par une
+				personne. Certains points sont des choix de conception, chacun avec sa justification ;
+				chacun indique ce qu’une analyse ne peut pas établir et, quand il existe, ce qu’il faut
+				faire. Lisez ceci avant de vous fier à un résultat sans constat.
 			</p>
 
-			<h2>Aspects que l’analyse n’évalue pas</h2>
+			<h2>Que faire</h2>
+			<DataTable
+				label="Que faire pour chaque limite"
+				rowKey="id"
+				columns={[
+					{ key: "situation", label: "Si…", width: "40%" },
+					{ key: "remedy", label: "Alors…" },
+				]}
+				rows={remedyRows}
+			/>
+			<p>Les sections ci-dessous en donnent les raisons.</p>
+
+			<h2 id="outside-what-one-scan-can-see">Hors de ce qu’une analyse peut voir</h2>
 			<p>
-				surea11y vérifie la page dans son état actuel. Certaines règles modifient brièvement le
-				focus ou les styles pour mesurer une condition précise, et dans un vrai navigateur les
-				règles peuvent mesurer la mise en page (jsdom n’en a pas), mais l’analyse n’explore pas
-				systématiquement les interactions des utilisateurs, les états asynchrones ni les
-				différentes tailles de viewport. Les points suivants demandent donc des tests à part, avec
-				de l’automatisation de navigateur et une revue humaine selon le cas :
+				Une analyse lit la page à un moment donné, dans un seul état, à un seul viewport : le DOM,
+				ses styles calculés et, dans un vrai navigateur, sa mise en page. Elle n’utilise pas la
+				page comme le fait une personne. Elle ne la parcourt pas au clavier, n’ouvre pas ses
+				menus, n’attend pas ses données et ne la redimensionne pas. (Dans un navigateur, quelques
+				règles donnent le focus à un élément ou ajoutent une feuille de style le temps de leur
+				vérification, puis rétablissent la page ; voir la section suivante.) Les points ci-dessous
+				demandent ce type d’interaction dans la durée : une règle de plus ne peut donc pas les
+				couvrir. Ils demandent un test d’interaction ou une personne :
 			</p>
 			<ul>
 				<li>
@@ -30,11 +112,9 @@ export function KnownLimitationsContent() {
 						<code>ACT_RULE_MAPPING.md</code>
 					</a>
 					), mais elle n’est pas implémentée : une analyse n’explore pas les interactions des
-					utilisateurs ni les états auxquels elles mènent. Quelques vérifications modifient
-					brièvement la page pour la mesurer (<code>aria-hidden-focus</code> tente de donner le
-					focus à des éléments, <code>text-spacing-content-loss</code> applique un espacement de
-					test), mais aucune ne fait parcourir la page au focus comme le ferait la détection des
-					pièges. En attendant, rien dans le balisage statique ne peut la remplacer.
+					utilisateurs ni les états auxquels elles mènent, et aucune des vérifications qui
+					modifient brièvement la page ne lui fait parcourir le focus comme le ferait la détection
+					des pièges. En attendant, rien dans le balisage statique ne peut la remplacer.
 				</li>
 				<li>
 					<strong>Redistribution / rognage au zoom</strong> (WCAG 1.4.10) : il faut une mesure
@@ -51,7 +131,8 @@ export function KnownLimitationsContent() {
 					d’emblée (même hors écran ou <code>hidden</code>), il peut être analysé ; s’il n’existe
 					qu’après une interaction, il ne le peut pas, à moins que vous ne déclenchiez vous-même
 					cette interaction avant l’analyse (par exemple, cliquer sur le bouton, <em>puis</em>{" "}
-					analyser).
+					analyser). Analyser l’état ouvert vérifie ce qu’il contient, pas si une personne qui
+					utilise le clavier ou un lecteur d’écran peut l’ouvrir, l’utiliser et le refermer.
 				</li>
 			</ul>
 
@@ -98,10 +179,12 @@ export function KnownLimitationsContent() {
 				<li>
 					<strong>Un nom n’est pas calculé à partir d’un contenu imbriqué sur plus de 256 niveaux.</strong>{" "}
 					Le parcours s’arrête là (Chrome ne donne aucun nom à partir d’un contenu situé 100 niveaux
-					plus bas) : pour un bouton ou un lien dont le seul nom se trouve plus profond,{" "}
-					<a href="/rules/button-name-present/"><code>button-name-present</code></a> et{" "}
-					<a href="/rules/link-name-present/"><code>link-name-present</code></a> posent la
-					question (<code>name_contentTooDeep</code>) ; les autres règles qui calculent un nom à
+					plus bas) : pour un élément dont le seul nom se trouve plus profond,{" "}
+					<a href="/rules/button-name-present/"><code>button-name-present</code></a>,{" "}
+					<a href="/rules/link-name-present/"><code>link-name-present</code></a>, les règles de
+					nom des éléments de menu, options, éléments summary, onglets, infobulles et éléments
+					d’arbre, ainsi que <a href="/rules/empty-heading/"><code>empty-heading</code></a>, posent
+					la question (<code>name_contentTooDeep</code>) ; les autres règles qui calculent un nom à
 					partir du contenu lisent un tel contenu comme vide.
 				</li>
 				<li>
@@ -114,7 +197,37 @@ export function KnownLimitationsContent() {
 					pour un élément dont le nom pourrait provenir d’un élément personnalisé qui s’affiche
 					sans montrer de contenu lisible, au lieu de le faire échouer. Une racine fermée sur un
 					élément intégré (un <code>&lt;span&gt;</code>) ressemble à une racine vide, comme une
-					icône dessinée en CSS : un bouton qui en contient une échoue donc toujours.
+					icône dessinée en CSS : un bouton qui en contient une échoue donc toujours. Vérifiez à la
+					main ce qu’expose un tel composant, par exemple avec un lecteur d’écran.
+				</li>
+				<li>
+					<strong>
+						Un nom ou un état qu’un élément personnalisé définit par <code>ElementInternals</code>{" "}
+						ne peut pas être lu.
+					</strong>{" "}
+					<code>{"this.attachInternals().ariaLabel = 'Save'"}</code> nomme l’élément dans tous les
+					navigateurs, mais aucun script ne peut le relire. Quand un composant conserve ses
+					internals dans une propriété (<code>_internals</code>, <code>internals</code>,{" "}
+					<code>internals_</code>, <code>__internals</code>), le moteur les lit par elle, et fait
+					réussir ou échouer l’élément selon ce qu’ils indiquent. Pour tout autre élément
+					personnalisé défini sans nom (ou sans état requis), les règles de nom et{" "}
+					<a href="/rules/aria-required-attr/"><code>aria-required-attr</code></a> posent la
+					question (<code>name_internals</code>, <code>state_internals</code>) au lieu de le faire
+					échouer. Vérifiez ces éléments dans l’arbre d’accessibilité du navigateur, ou installez
+					le hook optionnel des internals avant l’exécution des scripts de la page :{" "}
+					<code>installInternalsHook()</code> dans chaque binding (voir{" "}
+					<a href="/getting-started/">Premiers pas</a>) et dans test-matchers, ou{" "}
+					<code>internalsHookScript()</code> de core pour une page à vous (voir{" "}
+					<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, qui montre où l’installer). Le hook enregistre les internals de chaque élément pour
+					l’analyse : il signale donc aussi un élément qui n’en a jamais attaché. Un rôle défini
+					uniquement par les internals (<code>internals.role</code>) est lu là où se trouvent les
+					internals, par une propriété ou par le hook, comme rôle par défaut de l’élément ;
+					conservé dans un champ privé sans le hook, il n’est pas vu, et l’élément ne fait pas
+					l’objet d’une question, puisque presque tous les composants pourraient en avoir un. Les
+					éléments intégrés, et les éléments personnalisés non définis, sont jugés comme avant.
 				</li>
 				<li>
 					<strong>
@@ -148,7 +261,9 @@ export function KnownLimitationsContent() {
 					(sans attribut <code>open</code>, <code>display: none</code> selon la spécification),
 					ainsi que tout autre sous-arbre masqué via <code>display:none</code>,{" "}
 					<code>visibility:hidden</code>, <code>[hidden]</code> ou un{" "}
-					<code>&lt;details&gt;</code> fermé, sont{" "}
+					<code>&lt;details&gt;</code> fermé, et un sous-arbre <code>[inert]</code> (que les
+					règles portant sur l’apparence du contenu, comme le contraste et l’espacement du texte,
+					jugent quand même, puisqu’il est dessiné), sont{" "}
 					<strong>exclus de l’évaluation des règles par défaut</strong>, comme le font les autres
 					moteurs établis qui tiennent compte de la visibilité. C’est un choix par défaut délibéré (
 					<code>engineOptions.includeHiddenElements: false</code>), pas un oubli : un contenu
@@ -159,6 +274,16 @@ export function KnownLimitationsContent() {
 					défaut de balisage (comme une référence d’ID ARIA cassée) avant même l’ouverture d’une
 					boîte de dialogue. Voir <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>{" "}
 					pour l’option et la liste exacte des mécanismes de masquage qu’elle couvre.
+				</li>
+				<li>
+					<strong>jsdom n’a pas de popovers.</strong> Il intègre la règle HTML qui masque un{" "}
+					<code>[popover]</code> fermé, mais pas <code>showPopover()</code>, et lit{" "}
+					<code>:popover-open</code> de façon incohérente. Là où le DOM n’a pas de{" "}
+					<code>showPopover</code>, le moteur traite tout <code>[popover]</code> autre qu’un{" "}
+					<code>&lt;dialog&gt;</code> ouvert comme fermé et masqué : son contenu n’est donc pas
+					vérifié ; un popover que le CSS de la page garde visible n’est pas vérifié non plus sous
+					jsdom. Dans un navigateur, le moteur lit ce qui est affiché. Pour vérifier le contenu
+					d’un popover, analysez la page dans un navigateur avec le popover ouvert.
 				</li>
 				<li>
 					<strong>jsdom conserve une taille de police telle qu’elle est écrite.</strong> Un
@@ -187,6 +312,23 @@ export function KnownLimitationsContent() {
 					qu’une analyse n’est pas affectée. Le problème n’apparaît que si vous lisez vous-même{" "}
 					<code>getComputedStyle(el).textShadow</code> plus d’une fois sur le même élément analysé
 					par jsdom ; un vrai navigateur n’a pas ce bug.
+				</li>
+				<li>
+					<strong>
+						Une deuxième analyse du même DOM jsdom peut perdre un style qui surcharge une
+						propriété raccourcie.
+					</strong>{" "}
+					jsdom conserve le style calculé d’un élément une fois lu, jusqu’à la prochaine
+					modification du DOM, et la copie qu’il renvoie depuis ce cache perd une propriété
+					détaillée qui surcharge une propriété raccourcie venant d’une règle moins spécifique :
+					avec <code>{"*{background:#888}"}</code> et{" "}
+					<code>style="background-image:url(hero.png)"</code>, la première lecture donne l’image
+					et toutes les suivantes <code>none</code>. Une analyse garde le style lu en premier et
+					n’est donc pas affectée, mais une deuxième analyse du même DOM inchangé peut manquer
+					l’image et valider un texte sur lequel la première posait la question (
+					<code>contrast-computable</code>). Analysez un nouveau parsing, ou modifiez le DOM entre
+					les analyses, ce qui vide le cache de jsdom ; <code>@surea11y/core/testing</code> le fait
+					pour sa propre deuxième analyse. Un vrai navigateur n’a pas ce bug.
 				</li>
 				<li>
 					<strong>
@@ -299,80 +441,82 @@ export function KnownLimitationsContent() {
 					chargement.
 				</li>
 				<li>
-					<strong>Dans un navigateur, les règles de contraste mesurent le texte par rapport à ce qui
-					est peint en dessous, dans l’ordre de peinture CSS.</strong>{" "}
-					Un texte positionné au-dessus d’un élément frère, d’une image <code>&lt;img&gt;</code>{" "}
-					d’en-tête, d’une superposition <code>::before</code>, ou ramené sur un autre bloc par une
-					marge négative repose sur un rendu qui n’appartient à aucun de ses ancêtres, et un texte
-					qui déborde de la boîte d’un ancêtre, ou qui a un <code>z-index</code> négatif, ne se
-					trouve pas sur l’arrière-plan de cet ancêtre. Dans un navigateur, le moteur mesure les
-					boîtes de ligne du texte, trouve les éléments qui peignent à cet endroit (une couleur ou
-					une image d’arrière-plan, un contenu remplacé comme <code>img</code>, <code>video</code>,{" "}
-					<code>canvas</code>, <code>iframe</code>, des formes SVG), et les ordonne avec le texte et
-					les arrière-plans de ses ancêtres selon l’ordre de peinture CSS : contextes
-					d’empilement, <code>z-index</code>, boîtes positionnées et flottants, puis ordre du
-					document. Quand tout ce qui se trouve entre le texte et la première couche opaque est une
-					couleur unie qui couvre tout le texte, le rapport est mesuré par rapport à celle-ci ;
-					quand une image, un dégradé, un rendu qui ne couvre qu’une partie du texte ou un rendu
-					peint par-dessus le texte entre en jeu,{" "}
-					<a href="/rules/contrast-computable/"><code>contrast-computable</code></a> pose la
-					question pour ce texte avec le <code>reasonCode</code> <code>BACKGROUND_OVERLAP</code>,
-					et les règles qui calculent un rapport de contraste l’écartent. Un texte qu’une boîte
-					qui rogne son débordement garde hors de vue, comme les options plus bas dans une liste
-					défilante, est mesuré tel qu’il apparaît une fois défilé dans cette boîte. Un texte qu’une
-					boîte en <code>overflow: hidden</code> garde entièrement hors de vue, comme une
-					diapositive de carrousel hors de son rail, n’est pas mesuré du tout : d’après ses seuls
-					styles, une telle boîte ne se distingue pas d’une boîte qui masque ce texte
-					définitivement, si bien que le texte est écarté plutôt que deviné. Analysez la page dans
-					cet état (la diapositive affichée) pour le vérifier. Limites : une boîte fixe ou sticky
-					au-dessus du texte est écartée, puisqu’elle ne le couvre qu’à la position de défilement
-					où l’analyse a été faite ; un dégradé sous le texte n’est pas échantillonné, si bien
-					qu’un texte pâle sur un dégradé pâle fait l’objet d’une question plutôt que d’un échec ;
-					et un effet de groupe (<code>opacity</code>, un filtre, un mode de fusion) sur un ancêtre
-					laisse le chevauchement à une vérification plus grossière. Sous jsdom, il n’y a pas de
-					mise en page : le texte est mesuré par rapport à ses seuls ancêtres.
-				</li>
-				<li>
-					<strong>Le texte d’un champ de formulaire est mesuré tel que le champ le dessine.</strong>{" "}
-					La valeur d’un <code>&lt;input&gt;</code> qui affiche du texte (text, search, email, url,
-					tel, password, number, les types de date et d’heure) et la valeur actuelle d’un{" "}
-					<code>&lt;textarea&gt;</code> sont mesurées dans la couleur du champ par rapport à son
-					arrière-plan ; tant que la valeur est vide, le placeholder est mesuré dans la couleur et
-					la police de <code>::placeholder</code>, atténuées par son <code>opacity</code>. Non
-					mesurés : le texte que le navigateur dessine quand un champ de date ou d’heure est vide
-					(<code>mm/dd/yyyy</code>), le bouton et le nom de fichier d’un champ de fichier, et
-					l’option affichée d’un <code>&lt;select&gt;</code>. Sous jsdom, il n’y a pas de style{" "}
-					<code>::placeholder</code> : les placeholders n’y sont donc pas mesurés, les valeurs si.
-					Un placeholder sous son rapport donne <code>cantTell</code> plutôt qu’un échec (
-					<code>PLACEHOLDER_BELOW_THRESHOLD</code>) : WCAG soumet le texte de placeholder au
-					rapport, mais considère que les couleurs que la page laisse entièrement au navigateur le
-					respectent (technique G148), et distinguer les couleurs du navigateur de celles de la page
-					sur de vraies pages n’est pas encore établi : pour l’instant, une personne tranche.
+					<strong>
+						Dans un navigateur, le contraste est mesuré par rapport à ce qui est peint sous le
+						texte, tel que la page se présente à ce moment-là.
+					</strong>{" "}
+					Un texte sur une image, un dégradé, ou un rendu qui n’en couvre qu’une partie fait
+					l’objet d’une question (
+					<a href="/rules/contrast-computable/"><code>contrast-computable</code></a>,{" "}
+					<code>reasonCode</code> <code>BACKGROUND_OVERLAP</code>) au lieu d’être mesuré. Un texte
+					qu’une boîte en <code>overflow: hidden</code> garde entièrement hors de vue, comme une
+					diapositive de carrousel hors de son rail, est écarté tant qu’il n’est pas visible :
+					analysez la page dans cet état pour le vérifier. Les boîtes fixes et sticky au-dessus du
+					texte sont ignorées. Sous jsdom, le texte est mesuré par rapport à ses seuls ancêtres.
+					Analysée en couleurs forcées (contraste élevé de Windows, ou{" "}
+					<code>forced-colors: active</code> émulé), la page est maintenue dans ses propres
+					couleurs pendant la mesure : les résultats sont donc ceux obtenus sans couleurs forcées ;
+					là où ce n’est pas possible (une Content Security Policy qui bloque le{" "}
+					<code>&lt;style&gt;</code> du moteur dans un navigateur qui ne sait pas adopter une
+					feuille de style), les couleurs mesurées sont en partie celles du navigateur, et chaque
+					occurrence de contraste le signale (<code>details.forcedColors</code>). Le
+					fonctionnement de la mesure, étape par étape, est décrit dans{" "}
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#contrast`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					, sur GitHub.
 				</li>
 				<li>
 					<strong>
-						<code>target-size-minimum</code> mesure la zone qu’un pointeur peut atteindre, calculée
-						à partir de la mise en page.
+						Le texte généré n’est mesuré que dans un navigateur, et seulement là où il peut être
+						lu.
 					</strong>{" "}
-					Une cible est sa border box, avec ses coins arrondis et ses transformations 2D, rognée par{" "}
-					<code>clip</code> et <code>clip-path: inset()</code> sur sa chaîne de blocs conteneurs et
-					pas plus grande qu’une boîte de cette chaîne qui rogne son <code>overflow</code>, avec le
-					contenu qui en dépasse, moins les boîtes peintes par-dessus qui reçoivent les événements
-					de pointeur ; elle est assez grande quand un carré de 24 sur 24 aligné sur la page tient à
-					l’intérieur (Understanding 2.5.8). Comme la zone vient de la mise en page et non d’un
-					test d’atteinte, les cibles sous la ligne de flottaison sont mesurées comme celles qui
-					sont visibles, de même que les cibles situées dans une boîte qui rogne son débordement,
-					telles qu’une fois défilées dans celle-ci. Les coins arrondis sont mesurés tels qu’ils
-					sont dessinés. Les boîtes fixes et sticky au-dessus d’une cible sont écartées ; une cible
-					placée avant le début de la page, là où le défilement ne peut pas aller (un lien
-					d’évitement à <code>left: -9999px</code>), n’est pas une cible. Restent mesurées par leur
-					boîte englobante : les transformations 3D, les autres formes de <code>clip-path</code>, et
-					le rognage arrondi d’un ancêtre. Son exception « en ligne » couvre un lien dans une
-					phrase, ce qu’elle lit comme du texte contenant une lettre ou un chiffre hors de toute
-					cible dans le segment du bloc du lien compris entre deux retours à la ligne ; les liens
-					séparés uniquement par des séparateurs (« Edit | Delete ») qui se gênent mutuellement
-					font l’objet d’une question plutôt que d’être exemptés. Sous jsdom, qui n’a pas de mise
-					en page, la règle renvoie <code>notApplicable</code>.
+					Le texte qu’écrit le <code>content</code> d’un <code>::before</code> ou d’un{" "}
+					<code>::after</code>, et le <code>::marker</code> d’un élément de liste, sont mesurés
+					dans la couleur et la police du pseudo-élément ; un contenu illisible (un compteur dans
+					un <code>@counter-style</code> propre à la page), et un <code>::before</code> ou un{" "}
+					<code>::after</code> positionné hors du flux sans arrière-plan propre, font l’objet d’une
+					question (<code>contrast-computable</code>) à la place. Les marqueurs ne sont recherchés
+					que sur <code>&lt;li&gt;</code>. Sous jsdom, qui ne calcule aucun style de
+					pseudo-élément, le texte généré est écarté.
+				</li>
+				<li>
+					<strong>
+						Le texte et le placeholder d’un champ de formulaire sont mesurés tels que le champ les
+						dessine, avec des lacunes.
+					</strong>{" "}
+					Le texte que le navigateur dessine dans un champ de date ou d’heure vide, ainsi que le
+					bouton et le nom de fichier d’un champ de fichier, ne sont pas mesurés. Un{" "}
+					<code>&lt;select&gt;</code> déroulant est mesuré tel que le contrôle fermé le dessine,
+					son option affichée dans les couleurs du select ; une autre de ses options avec ses
+					propres couleurs n’apparaît que dans la liste que la plateforme dessine à l’ouverture, et
+					donne <code>cantTell</code> (<code>SELECT_OPTION_COLOR</code>). Un placeholder sous son
+					rapport donne <code>cantTell</code> (<code>PLACEHOLDER_BELOW_THRESHOLD</code>) plutôt
+					qu’un échec : WCAG soumet le texte de placeholder au rapport, mais considère que les
+					couleurs que la page laisse entièrement au navigateur le respectent (technique G148), et
+					distinguer les deux sur de vraies pages n’est pas encore établi. Sous jsdom, les
+					placeholders ne sont pas mesurés du tout. Détails :{" "}
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#form-fields`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					.
+				</li>
+				<li>
+					<strong>
+						<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a> calcule la
+						zone atteignable à partir de la mise en page plutôt que par un test d’atteinte.
+					</strong>{" "}
+					Les cibles sous la ligne de flottaison ou dans une boîte défilante sont mesurées en
+					entier, comme si elles étaient défilées jusqu’à être visibles ; les boîtes fixes et
+					sticky au-dessus d’une cible sont ignorées ; les transformations 3D, la plupart des
+					formes de <code>clip-path</code> et le rognage arrondi d’un ancêtre sont mesurés par leur
+					boîte englobante ; et les liens séparés uniquement par des séparateurs (« Edit |
+					Delete ») qui se gênent mutuellement font l’objet d’une question plutôt que d’être
+					exemptés. Sous jsdom, la règle renvoie <code>notApplicable</code>. Détails :{" "}
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#target-size`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					.
 				</li>
 				<li>
 					<strong>Le contraste est calculé en sRGB.</strong> Les couleurs exprimées en{" "}
@@ -418,7 +562,11 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>Sous-vérifications fines sur les médias temporels</strong> (WCAG 1.2.x compte
-					environ 8 cas distincts au niveau des règles ACT au-delà de ce qui est implémenté) : le
+					13 règles ACT sans règle correspondante ici ; voir la section des lacunes de{" "}
+					<a href={`${core}/docs/ACT_RULE_MAPPING.md#gaps-no-corresponding-rule`}>
+						<code>ACT_RULE_MAPPING.md</code>
+					</a>
+					) : le
 					contenu audio/vidéo lui-même est fondamentalement invérifiable à partir du balisage
 					statique ; les deux cas les plus larges et les plus sûrs sont couverts (
 					<code>media-alternative-transcript-evidence</code>, <code>video-caption</code>), les
@@ -448,9 +596,12 @@ export function KnownLimitationsContent() {
 
 			<h2>Ce que cela signifie en pratique</h2>
 			<p>
-				Rien de ce qui précède n’est propre à surea11y : tous les outils d’accessibilité par
-				analyse statique (y compris les autres moteurs établis) partagent les limites
-				structurelles, et la plupart partagent aussi celles qui relèvent du jugement. Si nous le
+				L’essentiel de ce qui précède n’est pas propre à surea11y. Tout outil qui juge un seul état
+				du DOM partage les limites décrites dans{" "}
+				<a href="#outside-what-one-scan-can-see">Hors de ce qu’une analyse peut voir</a>, et la
+				plupart des outils automatisés laissent aussi les jugements à une personne, même si les
+				outils diffèrent par leur façon de s’exécuter, ce qu’ils vérifient et la façon dont ils
+				rapportent ce qu’ils ne peuvent pas trancher. Si nous le
 				disons explicitement ici, c’est pour une raison : <strong>un <code>pass</code> de ce
 				moteur (ou de tout outil automatisé) ne remplace jamais la revue manuelle que les WCAG
 				exigent elles-mêmes pour les critères ci-dessus.</strong> Voir{" "}

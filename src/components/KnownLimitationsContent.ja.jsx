@@ -1,17 +1,88 @@
 import React from "react";
+import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+
+const remedyRows = [
+	{
+		id: "interaction",
+		situation: "クリック、ホバー、データの読み込みの後にしか現れないコンテンツがある",
+		remedy: "自分でページをその状態にしてからスキャンします。重要な状態ごとにスキャンしてください。",
+	},
+	{
+		id: "layout",
+		situation: "チェックにレイアウトが必要（ターゲットサイズ、テキスト間隔、テキストの下に描画されているものに対するコントラスト）",
+		remedy: (
+			<>
+				本物のブラウザーでスキャンします。jsdomにはレイアウトがないため（結果の<code>engine.environment.layout</code>は<code>false</code>）、これらのルールはそこでは計測できる範囲が狭まるか、<code>notApplicable</code>を報告します。詳しくは以下の各節のとおりです。
+			</>
+		),
+	},
+	{
+		id: "keyboard",
+		situation: "キーボードトラップのような、キーボード操作に関する要件がある",
+		remedy: "キーボードでテストします。どのスキャンもこれをカバーしません。",
+	},
+	{
+		id: "canttell",
+		situation: (
+			<>
+				結果が<code>cantTell</code>である
+			</>
+		),
+		remedy: (
+			<>
+				出現箇所の<code>uncertainty.code</code>と<code>uncertainty.needed</code>を読み、人が判断します。
+			</>
+		),
+	},
+	{
+		id: "responsive",
+		situation: "ページがレスポンシブである",
+		remedy: "必要な幅ごとにスキャンします。",
+	},
+	{
+		id: "differ",
+		situation: "同じページの2回の実行結果が異なる",
+		remedy: (
+			<>
+				<code>engine.version</code>と<code>engine.environment</code>（ビューポート、まだ読み込み中のフォントや画像）を比べ、スキャンの間にページを再読み込みします。
+			</>
+		),
+	},
+	{
+		id: "no-failures",
+		situation: "スキャンで不合格が報告されない",
+		remedy: (
+			<>
+				それは適合性の主張ではありません。<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。
+			</>
+		),
+	},
+];
 
 export function KnownLimitationsContent() {
 	return (
 		<>
 			<p>
-				エンジンが評価しないもの、実行環境に左右されるもの、人によるレビューが必要なものをまとめています。問題のない結果を信頼する前にお読みください。
+				エンジンが評価しないもの、スキャンを実行する場所（jsdom、ブラウザー、ページ自身のスクリプト）に左右されるもの、人によるレビューが必要なものをまとめています。設計上の判断である項目には、それぞれ理由を添えています。どの項目も、スキャンで確定できないことと、対処法があればその対処法を示します。問題のない結果を信頼する前にお読みください。
 			</p>
 
-			<h2>スキャンが評価しない側面</h2>
+			<h2>対処法</h2>
+			<DataTable
+				label="制限ごとの対処法"
+				rowKey="id"
+				columns={[
+					{ key: "situation", label: "こういうとき", width: "40%" },
+					{ key: "remedy", label: "こうします" },
+				]}
+				rows={remedyRows}
+			/>
+			<p>理由は以下の各節で説明します。</p>
+
+			<h2 id="outside-what-one-scan-can-see">1回のスキャンで見えないもの</h2>
 			<p>
-				surea11yは、ページをその時点の状態でチェックします。特定の条件を計測するために、フォーカスやスタイルを一時的に変えるルールもあり、実際のブラウザーではルールがレイアウトを計測できます（jsdomにはレイアウトがありません）。しかし、スキャンはユーザー操作、非同期の状態、異なるビューポートサイズを体系的にたどりはしません。そのため、以下の項目は、必要に応じてブラウザー自動化と人によるレビューを使った別のテストが必要です。
+				スキャンは、ページを1つの時点、1つの状態、1つのビューポートで読みます。読むのはDOM、その計算済みスタイル、そして本物のブラウザーではレイアウトです。人がするようにページを使うことはありません。キーボードで移動したり、メニューを開いたり、データを待ったり、サイズを変えたりはしません（ブラウザーでは、いくつかのルールが確認の間だけ要素にフォーカスを当てたりスタイルシートを追加したりして、元に戻します。次の節を参照してください）。ここに挙げる項目には、そうした時間をかけた操作が必要なので、ルールを追加しても解決できません。操作のテストか人が必要です。
 			</p>
 			<ul>
 				<li>
@@ -20,11 +91,7 @@ export function KnownLimitationsContent() {
 					<a href={`${core}/docs/ACT_RULE_MAPPING.md#keyboard-trap-detection-scoping-notes`}>
 						<code>ACT_RULE_MAPPING.md</code>
 					</a>
-					のキーボードトラップの節を参照）、実装はしていません。スキャンはユーザー操作や、それによって生じる状態をたどらないからです。いくつかのチェックは計測のためにページを一時的に変更しますが（
-					<code>aria-hidden-focus</code>
-					は要素へのフォーカスを試み、
-					<code>text-spacing-content-loss</code>
-					はテスト用の間隔を適用します）、トラップの検出のようにページ内でフォーカスを動かしていくものはありません。それまでの間、静的なマークアップで代わりになるものはありません。
+					のキーボードトラップの節を参照）、実装はしていません。スキャンはユーザー操作や、それによって生じる状態をたどらず、ページを一時的に変更するチェックのどれも、トラップの検出のようにページ内でフォーカスを動かしていくことはないからです。それまでの間、静的なマークアップで代わりになるものはありません。
 				</li>
 				<li>
 					<strong>拡大時のリフロー／切り取り</strong>
@@ -42,7 +109,7 @@ export function KnownLimitationsContent() {
 					<code>hidden</code>
 					でも）スキャンできます。操作後にしか存在しない場合は、スキャン前に自分でその操作を行わない限りスキャンできません（例：ボタンをクリックし、
 					<em>その後で</em>
-					スキャンする）。
+					スキャンする）。開いた状態をスキャンして確認できるのはその中身であって、キーボードやスクリーンリーダーの利用者がそれを開き、使い、閉じられるかどうかではありません。
 				</li>
 			</ul>
 
@@ -78,11 +145,15 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>256階層より深く入れ子になったコンテンツからは、名前を求めません。</strong>
-					たどる処理はそこで止まります（Chromeは100階層下のコンテンツから名前を与えません）。そのため、名前がそれより深い場所にしかないボタンやリンクについては、<a href="/rules/button-name-present/"><code>button-name-present</code></a>と<a href="/rules/link-name-present/"><code>link-name-present</code></a>が確認を求めます（<code>name_contentTooDeep</code>）。コンテンツから名前を求めるほかのルールは、そうしたコンテンツを空として読みます。
+					たどる処理はそこで止まります（Chromeは100階層下のコンテンツから名前を与えません）。そのため、名前がそれより深い場所にしかない要素については、<a href="/rules/button-name-present/"><code>button-name-present</code></a>、<a href="/rules/link-name-present/"><code>link-name-present</code></a>、メニュー項目、オプション、summary、タブ、ツールチップ、ツリー項目の名前のルール、そして<a href="/rules/empty-heading/"><code>empty-heading</code></a>が確認を求めます（<code>name_contentTooDeep</code>）。コンテンツから名前を求めるほかのルールは、そうしたコンテンツを空として読みます。
 				</li>
 				<li>
 					<strong>閉じたシャドウルート内のコンテンツは読み取れません。</strong>
-					<code>{"attachShadow({ mode: 'closed' })"}</code>や宣言的な<code>shadowrootmode="closed"</code>の内側にはどのスクリプトも届かないため、ブラウザーがそこから求める名前をエンジンは見られません。<code>button-name-present</code>と<code>link-name-present</code>、そしてメニュー項目、オプション、タブ、ツリー項目、summary、ツールチップの名前のルールは、描画はされるが読み取れるコンテンツを示さないカスタム要素から名前が来ている可能性がある要素について、不合格にする代わりに確認を求めます。組み込み要素（<code>&lt;span&gt;</code>）上の閉じたルートは、CSSで描いたアイコンのような空のものと見分けがつかないため、その上にあるボタンは引き続き不合格になります。
+					<code>{"attachShadow({ mode: 'closed' })"}</code>や宣言的な<code>shadowrootmode="closed"</code>の内側にはどのスクリプトも届かないため、ブラウザーがそこから求める名前をエンジンは見られません。<code>button-name-present</code>と<code>link-name-present</code>、そしてメニュー項目、オプション、タブ、ツリー項目、summary、ツールチップの名前のルールは、描画はされるが読み取れるコンテンツを示さないカスタム要素から名前が来ている可能性がある要素について、不合格にする代わりに確認を求めます。組み込み要素（<code>&lt;span&gt;</code>）上の閉じたルートは、CSSで描いたアイコンのような空のものと見分けがつかないため、その上にあるボタンは引き続き不合格になります。そうしたコンポーネントが何を公開しているかは、スクリーンリーダーなどを使って人が確認してください。
+				</li>
+				<li>
+					<strong>カスタム要素が<code>ElementInternals</code>を通じて設定した名前や状態は読み取れません。</strong>
+					<code>{"this.attachInternals().ariaLabel = 'Save'"}</code>はどのブラウザーでも要素に名前を付けますが、どのスクリプトもそれを読み戻せません。コンポーネントがinternalsをプロパティ（<code>_internals</code>、<code>internals</code>、<code>internals_</code>、<code>__internals</code>）に保持している場合、エンジンはそこから読み取り、その内容に従って要素を合格または不合格にします。名前（または必須の状態）のないほかの定義済みカスタム要素については、名前のルールと<a href="/rules/aria-required-attr/"><code>aria-required-attr</code></a>が、不合格にする代わりに確認を求めます（<code>name_internals</code>、<code>state_internals</code>）。それらはブラウザーのアクセシビリティツリーで確認するか、ページのスクリプトが動く前に、オプトインのinternalsフックをインストールしてください。各バインディング（<a href="/getting-started/">はじめに</a>を参照）とtest-matchersの<code>installInternalsHook()</code>、自分で用意したページならcoreの<code>internalsHookScript()</code>を使います（インストールする場所は<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}><code>INTEGRATION.md</code></a>を参照してください）。フックはスキャンのためにすべての要素のinternalsを記録するので、internalsを一度も付けていない要素も判別できます。internalsだけで設定したロール（<code>internals.role</code>）は、internalsを読める場所（プロパティかフック）であれば、要素のデフォルトのロールとして読み取ります。フックなしでプライベートフィールドに保持されている場合は見えず、その要素について確認も求めません。ほぼすべてのコンポーネントがそうしたロールを持ちうるからです。組み込み要素と、定義されていないカスタム要素は、これまでどおりに判定します。
 				</li>
 				<li>
 					<strong>モーダルダイアログが開いている間に行ったスキャンは、ページではなくダイアログを見ます。</strong>
@@ -105,7 +176,9 @@ export function KnownLimitationsContent() {
 					<code>[hidden]</code>
 					、閉じた
 					<code>&lt;details&gt;</code>
-					で非表示になっているその他のサブツリーは、
+					で非表示になっているその他のサブツリー、そして
+					<code>[inert]</code>
+					のサブツリー（描画はされるので、コントラストやテキスト間隔など見た目に関するルールは引き続き判定します）は、
 					<strong>デフォルトでルールの評価対象から除外されます</strong>
 					。ほかの定評あるエンジンの、表示状態を考慮した動作に合わせています。これは見落としではなく意図的なデフォルトです（
 					<code>engineOptions.includeHiddenElements: false</code>
@@ -114,6 +187,10 @@ export function KnownLimitationsContent() {
 					を設定してください。たとえば、ダイアログが開かれる前にマークアップの欠陥（壊れたARIAのID参照など）を見つけたい場合です。このオプションと、対象になる非表示の仕組みの詳細は
 					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>
 					を参照してください。
+				</li>
+				<li>
+					<strong>jsdomにはポップオーバーがありません。</strong>
+					jsdomは閉じた<code>[popover]</code>を隠すHTMLの規則は備えていますが、<code>showPopover()</code>はなく、<code>:popover-open</code>の読み方も一定しません。DOMに<code>showPopover</code>がない場合、エンジンは開いた<code>&lt;dialog&gt;</code>以外のすべての<code>[popover]</code>を閉じていて非表示のものとして扱うため、その中身はチェックされません。ページ自身のCSSで表示し続けているポップオーバーも、jsdomではチェックされません。ブラウザーでは、エンジンは表示されているものを読みます。ポップオーバーの中身をチェックするには、ポップオーバーを開いた状態でブラウザーでページをスキャンしてください。
 				</li>
 				<li>
 					<strong>jsdomはフォントサイズを書かれたとおりに保持します。</strong>
@@ -138,6 +215,10 @@ export function KnownLimitationsContent() {
 					を参照）。そのため1回のスキャンには影響しません。問題が表に出るのは、同じjsdomでパースした要素に対して、
 					<code>getComputedStyle(el).textShadow</code>
 					を自分で2回以上読んだ場合だけです。本物のブラウザーにはこのバグはありません。
+				</li>
+				<li>
+					<strong>同じjsdomのDOMを2回目にスキャンすると、ショートハンドを上書きするスタイルが失われることがあります。</strong>
+					jsdomは要素の計算済みスタイルを、一度読むと次にDOMが変わるまで保持しますが、そのキャッシュから返すコピーでは、詳細度の低いルールのショートハンドを上書きするロングハンドが失われます。<code>{"*{background:#888}"}</code>と<code>style="background-image:url(hero.png)"</code>がある場合、1回目の読み取りでは画像が得られ、それ以降はすべて<code>none</code>になります。スキャンは最初に読んだスタイルを使い続けるので影響を受けませんが、変更のない同じDOMを2回目にスキャンすると、画像を見落とし、1回目で確認を求めたテキストを合格にすることがあります（<code>contrast-computable</code>）。新しくパースしたものをスキャンするか、スキャンの間にDOMを変更してjsdomのキャッシュを消してください。<code>@surea11y/core/testing</code>は自身の2回目のスキャンでそうしています。本物のブラウザーにはこのバグはありません。
 				</li>
 				<li>
 					<strong>
@@ -188,18 +269,20 @@ export function KnownLimitationsContent() {
 					ブラウザーが描画する内容を計測するルール（<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>、<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>、<a href="/rules/skip-link/"><code>skip-link</code></a>）の結果は、ページをスキャンしたビューポートでのみ成り立ちます。レスポンシブなページは、ある幅ではテキストを切ったりターゲットを小さくしたりしても、別の幅ではそうしないことがあります。また、Webフォントの読み込み前に計測したテキストは、幅が異なります。結果はその両方を<a href="/results-reports/output-schema/"><code>engine.environment</code></a>に記録し、これらのルールの検出結果は、ビューポートを繰り返し記録したうえで、何を計測したか（テキストが端からどれだけはみ出したか、ターゲットの大きさと隣のターゲットとの近さ）を示します。そのため、実行によって異なる検出結果を、その条件までたどることができます。必要な幅ごとにスキャンし、スキャンの前にページが落ち着くのを待ってください。<code>waitForPageReady()</code>はloadイベント、Webフォント、画像を待ちます（スキャンの前に呼び出す方法は<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}><code>INTEGRATION.md</code></a>を参照してください）。結果には、フォントや画像がまだ読み込み中だったかどうかが<code>engine.environment</code>に記録されます。
 				</li>
 				<li>
-					<strong>ブラウザーでは、コントラストのルールは、テキストの下に描画されているものに対して、CSSの描画順序に従ってテキストを計測します。</strong>
-					兄弟要素の上、<code>&lt;img&gt;</code>のヒーロー画像の上、<code>::before</code>のオーバーレイの上に配置されたテキストや、負のマージンで別のブロックの上に引き寄せられたテキストは、どの祖先のものでもない描画の上にあります。また、祖先のボックスからはみ出したテキストや、負の<code>z-index</code>を持つテキストは、その祖先の背景の上にはありません。ブラウザーでは、エンジンはテキストの行ボックスを計測し、そこに描画する要素（背景色や背景画像、<code>img</code>、<code>video</code>、<code>canvas</code>、<code>iframe</code>などの置換コンテンツ、SVGの図形）を見つけ、テキストとその祖先の背景とともに、CSSの描画順序（スタッキングコンテキスト、<code>z-index</code>、配置されたボックスとフロート、そして文書順）で並べます。テキストと最初の不透明なレイヤーの間にあるものがすべて、テキスト全体を覆う単色であれば、その色に対してコントラスト比を計測します。画像、グラデーション、テキストの一部だけを覆う描画、テキストの上に描かれた描画が関わる場合は、<a href="/rules/contrast-computable/"><code>contrast-computable</code></a>が理由コード<code>BACKGROUND_OVERLAP</code>でそのテキストについて確認を求め、コントラスト比を計算するルールはそのテキストを対象から外します。オーバーフローを切り取るボックスが表示範囲外に置いているテキスト（スクロールしたリストのさらに下にある選択肢など）は、そのボックス内にスクロールしたときの姿で計測します。<code>overflow: hidden</code>のボックスが完全に表示範囲外に置いているテキスト（トラックの外にあるカルーセルのスライドなど）は、まったく計測しません。スタイルだけでは、そうしたボックスと、そのテキストをずっと隠しておくボックスとを見分けられないため、推測せずにテキストを対象から外します。それを確認するには、その状態（スライドを表示した状態）でページをスキャンしてください。制限：テキストの上にある固定配置やstickyのボックスは、スキャンした時点のスクロール位置でしかテキストを覆わないため、対象外です。テキストの下のグラデーションはサンプリングしないため、薄いグラデーション上の薄いテキストは、不合格ではなく確認を求めます。祖先のグループ効果（<code>opacity</code>、フィルター、ブレンドモード）がある場合、重なりの判定はより粗いチェックに任されます。jsdomにはレイアウトがないため、テキストは祖先に対してだけ計測されます。
+					<strong>ブラウザーでは、コントラストは、その時点のページでテキストの下に描画されているものに対して計測されます。</strong>
+					画像、グラデーション、テキストの一部だけを覆う描画の上にあるテキストは、計測せずに確認を求めます（<a href="/rules/contrast-computable/"><code>contrast-computable</code></a>、理由コード<code>BACKGROUND_OVERLAP</code>）。<code>overflow: hidden</code>のボックスが完全に表示範囲外に置いているテキスト（トラックの外にあるカルーセルのスライドなど）は、表示されるまで対象外になるので、それを確認するにはその状態でページをスキャンしてください。テキストの上にある固定配置やstickyのボックスは無視されます。jsdomでは、テキストは祖先に対してだけ計測されます。強制カラー（Windowsのハイコントラストや、エミュレートした<code>forced-colors: active</code>）のもとでスキャンした場合、計測の間はページ自身の色に保たれるので、判定結果は強制カラーをオフにしたときと同じになります。それができない場合（スタイルシートを採用できないブラウザーで、Content Security Policyがエンジンの<code>&lt;style&gt;</code>をブロックしている場合）は、計測される色の一部がブラウザーの色になり、コントラストの各出現箇所がそのことを示します（<code>details.forcedColors</code>）。計測の仕組みの詳細は、GitHubの<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#contrast`}><code>LAYOUT_MEASUREMENT.md</code></a>にあります。
 				</li>
 				<li>
-					<strong>フォームフィールドのテキストは、フィールドが描画するとおりに計測されます。</strong>
-					テキストを表示する<code>&lt;input&gt;</code>（text、search、email、url、tel、password、number、日付と時刻の種類）の値と、<code>&lt;textarea&gt;</code>の現在の値は、フィールドの色でその背景に対して計測されます。値が空の間は、プレースホルダーを<code>::placeholder</code>の色とフォントで、その<code>opacity</code>で薄めて計測します。計測しないもの：日付や時刻のフィールドが空のときにブラウザーが描画するテキスト（<code>mm/dd/yyyy</code>）、ファイル入力のボタンとファイル名、<code>&lt;select&gt;</code>に表示されている選択肢。jsdomには<code>::placeholder</code>のスタイルがないため、そこではプレースホルダーは計測されませんが、値は計測されます。比率を下回るプレースホルダーは、不合格ではなく<code>cantTell</code>になります（<code>PLACEHOLDER_BELOW_THRESHOLD</code>）。WCAGはプレースホルダーのテキストにも比率を求めますが、ページが完全にブラウザーに任せた色は満たしているものとみなします（達成方法G148）。実際のページでブラウザーの色とページの色を見分ける方法はまだ確立していないため、当面は人が判断します。
+					<strong>生成されたテキストは、ブラウザーでだけ、しかも読み取れる場合にだけ計測されます。</strong>
+					<code>::before</code>や<code>::after</code>の<code>content</code>が書き出すテキストと、リスト項目の<code>::marker</code>は、その疑似要素の色とフォントで計測されます。読み取れない内容（ページ独自の<code>@counter-style</code>のカウンター）や、独自の背景を持たずにフローの外に配置された<code>::before</code>や<code>::after</code>は、代わりに確認を求めます（<code>contrast-computable</code>）。マーカーは<code>&lt;li&gt;</code>でだけ探します。疑似要素のスタイルを計算しないjsdomでは、生成されたテキストは対象外です。
 				</li>
 				<li>
-					<strong>
-						<code>target-size-minimum</code>は、ポインターが当たる領域を、レイアウトから求めて計測します。
-					</strong>
-					ターゲットとは、角の丸みと2Dのtransformを反映したボーダーボックスで、包含ブロックの連鎖上にある<code>clip</code>と<code>clip-path: inset()</code>で切り取られ、そこにある<code>overflow</code>を切り取るボックスより大きくはならず、はみ出した内容を含み、その上に描画されてポインターイベントを受け取るボックスを差し引いたものです。ページの軸に沿った24×24の正方形がその中に収まれば、十分な大きさです（Understanding 2.5.8）。領域はヒットテストではなくレイアウトから求めるため、スクロールしないと見えない位置にあるターゲットも表示範囲内のものと同じように計測され、オーバーフローを切り取るボックス内のターゲットも、そのボックス内にスクロールしたときの姿で計測されます。角の丸みは描画されたとおりに計測されます。ターゲットの上にある固定配置やstickyのボックスは対象外です。スクロールでは届かない、ページの始まりより前にあるターゲット（<code>left: -9999px</code>のスキップリンク）はターゲットではありません。バウンディングボックスのまま扱うもの：3Dのtransform、ほかの<code>clip-path</code>の形状、祖先による角の丸い切り取り。インラインの例外は文中のリンクを対象にし、リンクのブロックのうち改行と改行の間の範囲に、どのターゲットにも含まれない、文字または数字を含むテキストがあるものとして読みます。区切り文字だけを挟んで互いに詰まっているリンク（「<span lang="en">Edit | Delete</span>」）は、例外にせず確認を求めます。レイアウトのないjsdomでは、このルールは<code>notApplicable</code>になります。
+					<strong>フォームフィールドのテキストとプレースホルダーは、フィールドが描画するとおりに計測されますが、計測しないものもあります。</strong>
+					日付や時刻のフィールドが空のときにブラウザーが描画するテキストと、ファイル入力のボタンとファイル名は計測しません。ドロップダウンの<code>&lt;select&gt;</code>は、閉じたコントロールが描画するとおりに、表示中の選択肢をselect自身の色で計測します。独自の色を持つほかの選択肢は、開いたときにプラットフォームが描画するリストにしか表示されないため、<code>cantTell</code>になります（<code>SELECT_OPTION_COLOR</code>）。比率を下回るプレースホルダーは、不合格ではなく<code>cantTell</code>になります（<code>PLACEHOLDER_BELOW_THRESHOLD</code>）。WCAGはプレースホルダーのテキストにも比率を求めますが、ページが完全にブラウザーに任せた色は満たしているものとみなします（達成方法G148）。実際のページでこの2つを見分ける方法はまだ確立していません。jsdomでは、プレースホルダーはまったく計測しません。詳細：<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#form-fields`}><code>LAYOUT_MEASUREMENT.md</code></a>。
+				</li>
+				<li>
+					<strong><a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>は、ポインターが当たる領域を、ヒットテストではなくレイアウトから求めます。</strong>
+					スクロールしないと見えない位置や、スクロールするボックス内にあるターゲットは、そこまでスクロールしたものとして全体を計測します。ターゲットの上にある固定配置やstickyのボックスは無視します。3Dのtransform、ほとんどの<code>clip-path</code>の形状、祖先による角の丸い切り取りは、バウンディングボックスとして計測します。区切り文字だけを挟んで互いに詰まっているリンク（「<span lang="en">Edit | Delete</span>」）は、例外にせず確認を求めます。jsdomでは、このルールは<code>notApplicable</code>になります。詳細：<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#target-size`}><code>LAYOUT_MEASUREMENT.md</code></a>。
 				</li>
 				<li>
 					<strong>コントラストはsRGBで計算されます。</strong>
@@ -236,7 +319,9 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>時間依存メディアの細かいサブチェック</strong>
-					（WCAG 1.2.xには、実装済みのもの以外にACTルールレベルで約8つの別個のケースがあります）：音声・映像のコンテンツそのものは、静的なマークアップからは本質的に検証できません。最も広く安全な2つのケース（
+					（WCAG 1.2.xには、このエンジンに対応するルールのないACTルールが13あります。
+					<a href={`${core}/docs/ACT_RULE_MAPPING.md#gaps-no-corresponding-rule`}><code>ACT_RULE_MAPPING.md</code></a>
+					のギャップの節を参照）：音声・映像のコンテンツそのものは、静的なマークアップからは本質的に検証できません。最も広く安全な2つのケース（
 					<code>media-alternative-transcript-evidence</code>
 					、
 					<code>video-caption</code>
@@ -265,7 +350,9 @@ export function KnownLimitationsContent() {
 
 			<h2>実際に意味すること</h2>
 			<p>
-				ここに挙げたことは、どれもsurea11yに固有のものではありません。静的解析を行うアクセシビリティツールは（ほかの定評あるエンジンも含めて）どれも構造上の制限を共有しており、判断を要するものについてもほとんどが同じです。それでもここで明記する理由は、
+				ここに挙げたことの多くは、surea11yに固有のものではありません。DOMの1つの状態を判定するツールはどれも
+				<a href="#outside-what-one-scan-can-see">1回のスキャンで見えないもの</a>
+				の制限を共有しており、ほとんどの自動ツールは判断を要するものも人に任せています。ただし、ツールによって、実行のしかた、チェックする内容、判断できないものの報告のしかたは異なります。それでもここで明記する理由は、
 				<strong>
 					このエンジン（あるいはどんな自動ツール）の
 					<code>pass</code>

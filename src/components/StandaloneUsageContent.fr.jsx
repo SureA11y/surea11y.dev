@@ -33,7 +33,26 @@ export function StandaloneUsageContent() {
 				<code>a11ycore.runa11yCoreInPage</code> est exactement la même fonction que celle
 				qu’appellent les bindings en interne : le bundle sert uniquement à la <em>charger</em>{" "}
 				sans <code>require</code> ni système de modules, pas à ajouter une API distincte.
+				Les arguments sont les mêmes que partout ailleurs. Une analyse limitée à une
+				région et à WCAG 2.2 A et AA, qui laisse de côté deux widgets bruyants :
 			</p>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(",
+					"    location.href,",
+					"    '#main', // contextSelector: scan only this region",
+					"    {",
+					"      excludeSelectors: ['#cookie-banner', '.intercom-launcher'],",
+					"      contrast: { mode: 'auditorAssist' } // trade some false-positive protection for more findings",
+					"    },",
+					"    { wcag: { version: '2.2', level: 'AA' } } // runOnly",
+					"  );",
+					"</script>",
+				]}
+			/>
 			<p>
 				<strong>Le bundle ne contient que l’anglais.</strong> Chaque autre langue est fournie à
 				côté, dans son propre fichier : chargez ce fichier après le bundle et la langue devient
@@ -75,6 +94,10 @@ export function StandaloneUsageContent() {
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>, à savoir jsdom
 				dans Node sans vrai navigateur, ou piloter vous-même Puppeteer/Playwright au lieu de
 				passer par un binding.
+				Pour les tests, <code>runa11yCoreOnHtml(html, options)</code> de{" "}
+				<code>@surea11y/core/testing</code> analyse une chaîne HTML dans jsdom et
+				prépare le document pour vous ; depuis core 1.12, son option{" "}
+				<code>contentType</code> lit un document SVG ou XHTML comme ce qu’il est.
 			</p>
 
 			<h2 id="packs-in-a-page">Packs dans une page</h2>
@@ -137,6 +160,9 @@ export function StandaloneUsageContent() {
 				défaut <code>5000</code>). Elle ne rejette jamais : quand le temps est écoulé, elle se
 				résout quand même avec <code>ready: false</code> et indique ce qui était encore en
 				attente.
+				Analyser quand même, attendre plus longtemps ou s’arrêter, c’est à vous de
+				choisir ; si vous analysez, conservez avec le résultat ce qui était encore en
+				attente.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -163,7 +189,7 @@ export function StandaloneUsageContent() {
 				Une analyse s’exécute d’un seul tenant dans la page, et rien dans la page ne peut
 				l’arrêter une fois lancée : un getter de la page ou une règle qui ne rend jamais la main
 				bloque cet onglet définitivement. Limitez la durée depuis l’endroit où vous lancez
-				l’analyse, et abandonnez l’onglet quand la limite est dépassée. 60 secondes, c’est bien
+				l’analyse, et abandonnez l’onglet quand la limite est dépassée : votre limite de temps arrête l’attente, pas le script qui s’exécute dans la page. 60 secondes, c’est bien
 				plus que ce que prend une page normale : seules les pages défaillantes sont donc
 				concernées :
 			</p>
@@ -199,6 +225,86 @@ export function StandaloneUsageContent() {
 				s’y déclencher avant qu’elle se termine. Exécutez l’analyse dans un worker thread ou un
 				processus enfant, et arrêtez-le quand la limite est dépassée. La limite de temps propre au
 				job de CI reste le dernier recours dans les deux cas.
+			</p>
+
+			<h2 id="internals-hook">Composants web aux internals privés</h2>
+			<p>
+				Un élément personnalisé peut se nommer, fixer ses états et se donner un rôle par
+				ses <code>ElementInternals</code>. Beaucoup gardent leurs internals dans un
+				champ privé, où aucun script ne peut les relire : l’analyse pose donc la
+				question pour un tel élément (<code>cantTell</code>) au lieu de le juger, et ne
+				voit pas du tout un rôle donné ainsi.
+			</p>
+			<p>
+				<code>internalsHookScript()</code>, de <code>@surea11y/core</code> (pas du
+				bundle), renvoie un script qui enregistre les internals de chaque élément à
+				mesure que la page les attache, pour que l’analyse puisse les lire. Il est
+				facultatif : core ne l’installe jamais. Installez-le avant les scripts de la
+				page, dans chaque frame que vous analysez : avec l’API de scripts
+				d’initialisation de votre driver, ou, sur une page que vous construisez
+				vous-même, comme premier <code>&lt;script&gt;</code> du{" "}
+				<code>&lt;head&gt;</code>. Dans un fichier de setup jsdom, qui s’exécute une
+				fois le document chargé mais avant la définition de tout composant, passez{" "}
+				<code>{"{ early: true }"}</code> :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { internalsHookScript } = require('@surea11y/core');",
+					"",
+					"// Playwright",
+					"await page.addInitScript({ content: internalsHookScript() });",
+					"",
+					"// Puppeteer",
+					"await page.evaluateOnNewDocument(internalsHookScript());",
+					"",
+					"// jest.setup.js or vitest.setup.js, before any component is imported",
+					"window.eval(internalsHookScript({ early: true }));",
+				]}
+			/>
+			<p>
+				Le résultat indique s’il était là, dans{" "}
+				<code>engine.environment.internalsHook</code> : <code>'early'</code> s’il a été
+				installé avant les scripts de la page, <code>'late'</code> s’il l’a été après,
+				auquel cas il ne voit que ce que la page attache ensuite. Tout script de la page
+				peut lire ce que le hook enregistre, si bien que les internals privés d’un
+				composant ne le sont plus : installez-le pour des exécutions de test et d’audit,
+				pas dans des pages servies aux utilisateurs. Les autres façons de l’installer,
+				et ce qu’une page peut remarquer, sont dans{" "}
+				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}><code>INTEGRATION.md</code></a>.
+			</p>
+
+			<h2 id="what-a-scan-covers">Savoir ce que couvre une analyse</h2>
+			<p>
+				Un outil qui rapporte par critère WCAG et laisse ses utilisateurs choisir des
+				vérifications peut dire à quelle cible l’analyse correspond :{" "}
+				<code>engineOptions.wcagLevel</code>, à côté de <code>wcagVersion</code>, laisse
+				de côté les critères au-dessus de ce niveau sans changer les vérifications
+				exécutées. <code>getRulesForRunOnly(runOnly, engineOptions)</code> liste les
+				critères que rapporte une analyse avec cette sélection, avant de la lancer, avec
+				la logique même de l’analyse :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { getRulesForRunOnly, runDomRulesInPage } = require('@surea11y/core');",
+					"",
+					"const engineOptions = { wcagVersion: '2.2', wcagLevel: 'AA' };",
+					"const runOnly = { includeRuleIds: ['contrast-computable'] };",
+					"",
+					"getRulesForRunOnly(runOnly, engineOptions).map((r) => r.id); // before the scan",
+					"const result = runDomRulesInPage(url, null, engineOptions, runOnly);",
+				]}
+			/>
+			<p>
+				Un critère dont seules certaines vérifications ont été exécutées revient en{" "}
+				<code>cantTell</code>, chaque vérification non exécutée étant marquée{" "}
+				<code>notSelected: true</code> : affichez-le comme vérifié en partie, jamais
+				comme réussi. Construire votre propre outil sur core (une CLI, une intégration
+				CI, un tableau de bord, un générateur de rapports de conformité) est traité dans{" "}
+				<a href={`${core}/docs/BUILDING_ON_CORE.md`}><code>BUILDING_ON_CORE.md</code></a>,
+				sur GitHub : ce sur quoi vous pouvez compter, lancer des analyses, choisir des
+				vérifications, présenter les résultats honnêtement et comparer des exécutions.
 			</p>
 		</>
 	);

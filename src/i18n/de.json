@@ -46,7 +46,7 @@
 	"homepage.description": "Deterministische WCAG-2.2-Barrierefreiheitstests für Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest und CI, überprüft anhand des ACT-Regelkorpus des W3C und offen darüber, was sie nicht beurteilen können.",
 	"homepage.tagline": "Barrierefreiheitstests, die Ihnen sagen, was sie nicht beurteilen können.",
 	"homepage.subtitle": "Deterministische Barrierefreiheitstests für Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest und CI-Pipelines.",
-	"homepage.stats": "{rules} Barrierefreiheitsregeln · 59 am ACT-Korpus validiert · 821 Referenzfälle · deterministische Ergebnisse · ausgewiesene Unsicherheit",
+	"homepage.stats": "{rules} Barrierefreiheitsregeln · 59 an den ACT-Testfällen des W3C geprüft · 942 Referenzfälle · deterministische Ergebnisse · ausgewiesene Unsicherheit",
 	"homepage.changelog": "Änderungen im neuesten Release ansehen",
 	"homepage.getStarted": "Loslegen",
 	"homepage.viewOnGitHub": "Auf GitHub ansehen",

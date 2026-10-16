@@ -7,6 +7,80 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
+				<h2 id="results-changed-1-12">„Meine CI-Ergebnisse haben sich nach dem Update auf core 1.12 geändert“</h2>
+				<p>
+					Was die Engine findet, ist größtenteils gleich geblieben; wo es landet, und einige Regeln,
+					haben sich geändert. Die Änderungen, die sich am ehesten in einer Pipeline zeigen:
+				</p>
+				<ul>
+					<li>
+						<strong>Eine leere Überschrift ergibt <code>fail</code>.</strong>{" "}
+						<a href="/rules/empty-heading/"><code>empty-heading</code></a> lässt eine Überschrift
+						ohne zugänglichen Namen scheitern, wo es bisher nachfragte. Es ist eine Best Practice,
+						läuft also in einem Scan ohne Auswahl oder mit ergänzten Best Practices, nicht unter
+						einem WCAG-Ziel, Tags oder einem Profil. Beheben Sie die Überschrift, oder scannen Sie
+						ein WCAG-Ziel.
+					</li>
+					<li>
+						<strong>
+							<a href="/rules/label-in-name/"><code>label-in-name</code></a> zählt Text mit, der
+							nur mit <code>aria-hidden</code> verborgen ist
+						</strong>
+						, da er weiterhin gezeichnet wird:{" "}
+						<code>{'Download <span aria-hidden="true">gizmo</span> specification'}</code> mit dem
+						Namen „<span lang="en">Download specification</span>“ verletzt jetzt 2.5.3.
+					</li>
+					<li>
+						<strong>Scans, die Prüfungen nennen, melden ihre Kriterien.</strong> Regel-IDs, ein
+						Tag, das keine WCAG-Stufe nennt, oder die Best Practices füllen{" "}
+						<code>rulesResults</code> jetzt mit den Kriterien, zu denen diese Regeln gehören, wo es
+						leer war; ein Kriterium, dessen andere Regeln nicht ausgewählt wurden, ist{" "}
+						<code>cantTell</code>, teilweise geprüft. Setzen Sie{" "}
+						<code>engineOptions.wcagLevel</code> (<code>.wcagLevel()</code> in den Bindings,{" "}
+						<code>--wcag-level</code> in der CLI), um sie auf eine Stufe zu begrenzen. Siehe{" "}
+						<a href="/conformance/wcag-mapping/">WCAG-Konformitätszuordnung</a>.
+					</li>
+					<li>
+						<strong>Fünf Regeln zählen zu weiteren Kriterien</strong>, so wie die ACT-Regeln des
+						W3C sie zuordnen: <code>input-image-alt-present</code> kommt zu 4.1.2,{" "}
+						<code>aria-roles-valid</code> zu 1.3.1, <code>link-name-present</code> und{" "}
+						<code>link-name-quality</code> zu 2.4.9 (AAA) und{" "}
+						<code>meta-refresh-timing-absent</code> zu 2.2.4 und 3.2.5 (AAA). Die Befunde ändern
+						sich nicht, aber die zusammengesetzten Regeln für 1.3.1 und 4.1.2 können jetzt{" "}
+						<code>fail</code> ergeben, wo sie bestanden.
+					</li>
+					<li>
+						<strong>JUnit-Suite-Namen sind in jeder Locale gleich</strong> (
+						<code>WCAG 4.1.2</code>), und der Titel wandert in die Eigenschaft <code>title</code>{" "}
+						der Suite. Ein Dashboard, das Tests nach Suite-Namen verfolgt, zeigt sie einmal als
+						neu. Siehe <a href="/results-reports/junit-report/">JUnit-Bericht</a>.
+					</li>
+					<li>
+						<strong>Kontrast wird so gemessen, wie die Seite gezeichnet wird.</strong> Im Browser
+						werden Text auf einer Seite ohne Hintergrund, generierter Text (<code>::before</code>,{" "}
+						<code>::after</code>, <code>::marker</code>) und ein geschlossenes{" "}
+						<code>&lt;select&gt;</code> gemessen, wo sie bisher ausgelassen oder{" "}
+						<code>cantTell</code> waren; es können also neue Kontrastverstöße auftauchen. Zu einem
+						einzelnen Zeichen, das für den Namen seines Bedienelements steht, etwa „X“ in einem
+						Button mit dem Namen „<span lang="en">Close</span>“, wird unter dem Verhältnis
+						nachgefragt, statt es scheitern zu lassen.
+					</li>
+					<li>
+						<strong>Unbenannte Web Components sind Fragen.</strong> Ein definiertes Custom Element
+						ohne lesbaren Namen ist <code>cantTell</code>, wo es bisher scheiterte; siehe{" "}
+						<a href="#web-component-canttell">den Eintrag zu Web Components</a>.
+					</li>
+				</ul>
+				<p>
+					Die vollständige Liste steht in{" "}
+					<a href={`${core}/CHANGELOG.md`}>
+						<code>CHANGELOG.md</code>
+					</a>{" "}
+					von core.
+				</p>
+			</article>
+
+			<article>
 				<h2 id="runonly-threw">
 					„<code>runOnly</code> hat einen Fehler geworfen: <span lang="en">no rule or tag named …</span>,
 					oder <span lang="en">either rule ids or tags</span>“
@@ -21,7 +95,9 @@ export function FaqContent() {
 					<li>
 						<strong>Ein Wert, der weder eine Regel noch einen Tag benennt</strong>, meist ein
 						Tippfehler: <code>runOnly: ['img-alt-presnt']</code>. Prüfen Sie die ID gegen{" "}
-						<code>getChecksCatalog()</code>.
+						<code>getChecksCatalog()</code>. An der Groß- und Kleinschreibung liegt es nicht:
+						Regel-IDs und Tags werden unabhängig davon erkannt, <code>IMG-ALT-PRESENT</code> wählt
+						also <code>img-alt-present</code> aus.
 					</li>
 					<li>
 						<strong>Regel-IDs und Tags in einem Array</strong>:{" "}
@@ -49,6 +125,48 @@ export function FaqContent() {
 					keine Regeln, was sich wie ein Scan ohne Befunde liest. Ein einzelner unbekannter Wert
 					neben bekannten, oder in einer Ausschlussliste, erzeugt nur ein{" "}
 					<code>console.warn</code>.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="tags-and-rules-run-nothing">
+					„Ich habe Tags und Regel-IDs ausgewählt, und der Scan hat keine Regel ausgeführt, sieht aber
+					ohne Befunde aus“
+				</h2>
+				<p>
+					Unter dem Standard <code>includeMode: 'and'</code> führt eine Auswahl aus Tags und
+					Regel-IDs nur die Regeln aus, die zu beidem passen.{" "}
+					<code>.withTags('wcag2a').withRules('region')</code> führt nichts aus, da{" "}
+					<code>region</code> eine Best Practice ohne den Tag <code>wcag2a</code> ist, und ein Scan
+					ohne Regeln hat keine Verstöße. Die Engine warnt in der Konsole der Seite, die ein
+					Testlauf nicht zeigt, und wirft <code>INVALID_RUN_ONLY</code> nur unter{" "}
+					<code>strictOptions</code>. Um beides auszuführen, fordern Sie es an:{" "}
+					<code>.includeMode('or')</code> in den Bindings, <code>includeMode: 'or'</code> in{" "}
+					<code>runOnly</code> (oben) oder <code>--include-mode or</code> in der{" "}
+					<a href="/getting-started/cli/">CLI</a>. Ab Version 1.3.0 beendet sich die CLI mit{" "}
+					<code>2</code> und diesem Hinweis, wenn die beiden keine gemeinsame Regel haben.
+				</p>
+				<p>
+					Um eine Auswahl, die nichts trifft, vor dem Lauf zu erkennen, prüfen Sie{" "}
+					<code>plannedChecks()</code> des Builders, die Regeln, die der Scan ausführen wird,
+					ermittelt ohne Seite (in Cypress ein Chainable):
+				</p>
+				<CodeBlock
+					lang="js"
+					lines={[
+						"const builder = new A11yCoreBuilder({ page })",
+						"  .withTags('wcag2a')",
+						"  .withRules('region')",
+						"  .includeMode('or'); // the wcag2a rules, plus region",
+						"",
+						"if (builder.plannedChecks().length === 0) {",
+						"  throw new Error('This selection runs no rule.');",
+						"}",
+					]}
+				/>
+				<p>
+					Wie sich die Teile einer Auswahl kombinieren, steht in{" "}
+					<a href="/configuration/engine-options/#via-runonly-4th-argument">Engine-Optionen</a>.
 				</p>
 			</article>
 
@@ -144,8 +262,8 @@ export function FaqContent() {
 					<li>
 						<strong>Alles ist <code>notApplicable</code></strong>: Sehen Sie sich{" "}
 						<code>result.contextMatch</code> an. <code>elementCount: 0</code> bedeutet, dass der
-						Selektor auf nichts gepasst hat, und <code>unmatchedSelectors</code> nennt ihn. Prüfen
-						Sie ihn auf Tippfehler, oder ob das Element beim Scan schon auf der Seite ist (etwa
+						Selektor auf nichts gepasst hat, also nichts gescannt wurde: Das ist kein Ergebnis ohne
+						Befunde. <code>unmatchedSelectors</code> nennt den Selektor. Prüfen Sie ihn auf Tippfehler, oder ob das Element beim Scan schon auf der Seite ist (etwa
 						Inhalt, den ein Skript erst nach dem Laden rendert).
 					</li>
 					<li>
@@ -245,6 +363,36 @@ export function FaqContent() {
 			</article>
 
 			<article>
+				<h2 id="web-component-canttell">
+					„Eine Web Component ergibt <code>cantTell</code> (<code>name_internals</code>)“
+				</h2>
+				<p>
+					Ein Custom Element, das sich über ein in einem privaten Feld (<code>#internals</code>)
+					gehaltenes <code>ElementInternals</code> benennt, seine Zustände setzt oder sich eine
+					Rolle gibt, wird vom Browser bereitgestellt, aber kein Skript der Seite kann das
+					zurücklesen. Seit 1.12 liest die Engine Internals, die in einer Eigenschaft liegen (
+					<code>_internals</code>, <code>internals</code>, …), und fragt bei jedem anderen
+					definierten Custom Element ohne lesbaren Namen oder erforderlichen Zustand nach (
+					<code>name_internals</code>, <code>state_internals</code>), statt es scheitern zu lassen.
+				</p>
+				<p>
+					Damit der Scan solche Elemente beurteilen kann, installieren Sie den Internals-Hook, bevor
+					die Skripte der Seite laufen: <code>installInternalsHook()</code> in jedem Binding (an der
+					Seite oder dem Kontext in <a href="/getting-started/playwright/">Playwright</a>, an der
+					Seite in <a href="/getting-started/puppeteer/">Puppeteer</a>, am Driver in{" "}
+					<a href="/getting-started/selenium/">Selenium</a>, am Browser in{" "}
+					<a href="/getting-started/webdriverio/">WebdriverIO</a>, in der Support-Datei oder in{" "}
+					<code>onBeforeLoad</code> in <a href="/getting-started/cypress/">Cypress</a>) und in der
+					Setup-Datei von <a href="/getting-started/test-matchers/">test-matchers</a>, oder{" "}
+					<code>internalsHookScript()</code> aus core für eine eigene Seite.{" "}
+					<code>engine.environment.internalsHook</code> im Ergebnis sagt, ob er gelaufen ist (
+					<code>'early'</code> oder <code>'late'</code>). Der Hook lässt jedes Skript der Seite die
+					Internals jeder Komponente lesen und ist daher für Test- und Audit-Läufe gedacht. Siehe{" "}
+					<a href="/help/known-limitations/">Bekannte Einschränkungen</a>.
+				</p>
+			</article>
+
+			<article>
 				<h2>
 					„Ich sehe nur <code>fail</code>-/<code>cantTell</code>-Vorkommen — wo ist die Liste der
 					Elemente, die bestanden haben?“
@@ -252,8 +400,10 @@ export function FaqContent() {
 				<p>
 					<strong>Diese Engine listet absichtlich nie die Elemente auf, die eine Regel <em>bestanden</em> haben —
 					nur die gemeldeten.</strong> Ein Gesamtergebnis <code>outcome: 'pass'</code> einer Regel bedeutet
-					„anwendbare Ziele waren vorhanden, und keines wurde gemeldet“, aber{" "}
-					<code>occurrences</code> ist in beiden Fällen <code>[]</code>. Wenn Sie wissen müssen,
+					„anwendbare Ziele waren vorhanden, und keines wurde gemeldet“, und{" "}
+					<code>occurrences</code> ist <code>[]</code>. Die Ausnahme sind die Kontrastregeln: Ihr{" "}
+					<code>pass</code> trägt ein Vorkommen mit leerem <code>selector</code>, das den Scan
+					beschreibt (wie viel Text in Frage kam und berechenbar war), kein Element. Wenn Sie wissen müssen,
 					welche Elemente konkret geprüft und für in Ordnung befunden wurden: Das wird derzeit
 					nicht bereitgestellt — siehe{" "}
 					<a href="/results-reports/output-schema/"><code>OUTPUT_SCHEMA.md</code></a>.
@@ -297,7 +447,12 @@ export function FaqContent() {
 				<h2>„Bedeutet ein Scan ohne Befunde (überall <code>pass</code>), dass die Seite WCAG-konform ist?“</h2>
 				<p>
 					Nein — siehe <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
-					<strong>Ein <code>pass</code> bedeutet, dass jede <em>automatisierbare</em> Prüfung ohne Befund blieb.</strong> Ein
+					<strong>
+						Ein <code>pass</code> bedeutet, dass die gelaufenen Prüfungen in dem Teil der Seite,
+						den sie gescannt haben, ohne Befund blieben.
+					</strong>{" "}
+					Ein Scan, der auf einen Teil der Seite begrenzt ist, auf einige Regeln beschränkt ist
+					oder unter jsdom läuft, prüft weniger, als er könnte. Ein
 					nennenswerter Teil der WCAG erfordert menschliches Urteil (zutreffende Alternativtexte,
 					verständliche Fehlermeldungen) oder dynamische Tests, die die Architektur dieser Engine
 					überhaupt nicht leisten kann (Tastaturfallen, Reflow beim Zoomen) — siehe{" "}
@@ -310,10 +465,12 @@ export function FaqContent() {
 				<h2>„Sollte ich <code>cantTell</code> als Fehler behandeln?“</h2>
 				<p>
 					<strong>Behandeln Sie es als „ein Mensch muss draufschauen“ — es ist bewusst weder bestanden noch
-					nicht bestanden.</strong> Die meisten Teams protokollieren <code>cantTell</code>-Befunde,
-					ohne die CI daran scheitern zu lassen, denn wenn ein Build an etwas scheitert, das die
-					Engine ausdrücklich nicht bestimmen konnte, gewöhnen sich die Leute schnell daran, das
-					Gate zu ignorieren. Siehe <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>,
+					nicht bestanden.</strong> Häufig werden <code>cantTell</code>-Befunde protokolliert, ohne
+					die CI daran scheitern zu lassen, denn wenn ein Build an etwas scheitert, das die Engine
+					ausdrücklich nicht bestimmen konnte, gewöhnen sich die Beteiligten schnell daran, das
+					Gate zu ignorieren. Ein Team, das jeden Befund vor einem Merge geprüft haben will, kann
+					stattdessen daran scheitern lassen; so oder so sollten Sie sie von Verstößen getrennt
+					halten. Siehe <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>,
 					wenn Sie dieses Verhalten anpassen möchten (z. B. über einen eigenen Policy-Vertrag),
 					und{" "}
 					<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>

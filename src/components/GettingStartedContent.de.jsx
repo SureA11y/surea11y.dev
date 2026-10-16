@@ -83,7 +83,7 @@ export function GettingStartedContent() {
 			<CodeBlock
 				lines={[
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.11.1",
+					"  engine: @surea11y/core 1.12.0",
 					"  pass: 13   fail: 3   cantTell: 3   notApplicable: 115",
 					"",
 					"  occurrences by tier: fail: 3   cantTell: 4",
@@ -113,6 +113,20 @@ export function GettingStartedContent() {
 					"",
 					"cantTell — needs human review (3 rule(s)): contrast-computable, link-name-quality,",
 					"manual-review",
+					"",
+					"criteria (WCAG 2.2):",
+					"  fail       1.4.3 Contrast: minimum; 1.4.6 Contrast: enhanced;",
+					"             2.4.2 Page titled",
+					"  cantTell   2.1.1 Keyboard; 2.4.3 Focus order;",
+					"             2.4.4 Link Purpose (In Context); 2.4.7 Focus visible;",
+					"             2.4.9 Link Purpose (Link Only)",
+					"  pass       1.3.1 Info and Relationships; 2.2.2 Pause, Stop, Hide;",
+					"             2.4.1 Bypass Blocks; 3.1.1 Language of page;",
+					"             4.1.2 Name, role, value: accessible name;",
+					"             4.1.2 Name, role, value: ARIA validity",
+					"  notApplicable: 20",
+					"  A criterion that passes here means the checks that ran found nothing in it,",
+					"  not that the page conforms.",
 				]}
 			/>
 			<p>
@@ -123,7 +137,16 @@ export function GettingStartedContent() {
 				kontrastarme Text eine andere Prüfung, gibt es hier etwas, das manuell angesehen werden
 				muss) und unter den 115 <code>notApplicable</code>-Ergebnissen{" "}
 				<code>target-size-minimum</code> — diese Regel kann ohne echtes CSS-Layout nicht laufen,
-				und das hat ein Scan von statischem HTML nicht. Unter{" "}
+				und das hat ein Scan von statischem HTML nicht.
+			</p>
+			<p>
+				Der letzte Block zeigt dasselbe Ergebnis nach WCAG-2.2-Erfolgskriterium: 1.4.3, 1.4.6 und
+				2.4.2 ergeben <code>fail</code>; 2.1.1, 2.4.3, 2.4.4, 2.4.7 und 2.4.9 sind{" "}
+				<code>cantTell</code> und bleiben einer Person überlassen; 1.3.1, 2.2.2, 2.4.1, 3.1.1 und
+				beide Einträge zu 4.1.2 ergeben <code>pass</code>; und die 20 Kriterien, bei denen es
+				nichts zu beurteilen gab, werden nur gezählt. Seine letzte Zeile sollte man sich merken:
+				Besteht ein Kriterium hier, haben die ausgeführten Prüfungen darin nichts gefunden; dass die
+				Seite konform ist, heißt das nicht. Unter{" "}
 				<a href="/results-reports/output-schema/">Ergebnisse und Berichte</a> erfahren Sie, was
 				jedes Feld eines vollständigen Ergebnisses bedeutet.
 			</p>

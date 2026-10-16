@@ -155,6 +155,9 @@ export function WcagMappingContent() {
 				<code>data.details.customChecksIds</code>
 				に列挙します。組み込みルールの上書きは、それ自身の対応付けに従って算入されます。その達成基準に対応していれば組み込みルールの代わりに算入され、どの達成基準にも対応していなければどこにも算入されません（警告が出ます）。
 			</p>
+			<p>
+				達成基準ではなくルールを指定したスキャン（<code>{"includeRuleIds: ['link-name-present']"}</code>、WCAGのレベルを示さないタグ、ベストプラクティス）でも、それらのルールがチェックする達成基準の複合ルールが得られます（<a href="/configuration/engine-options/#which-criteria-a-scan-reports">エンジンオプション</a>を参照）。1.12より前は、そうしたスキャンは複合ルールを1つも報告しませんでした。判定は上の表で決まります。不合格のルールがあればその達成基準は不合格になり、スキャンが選ばなかったルールは実行されなかった構成ルールとして扱われるので、その達成基準はよくても<code>cantTell</code>、つまり一部だけチェックしたものになります（<code>reasonCode</code>は<code>composite.rollup.cantTell.notSelectedChild</code>で、そうした構成ルールにはそれぞれ<code>notSelected: true</code>が付きます。<a href="/results-reports/html-report/">HTMLレポート</a>では「一部のみ確認」と表示されます）。
+			</p>
 
 			<h2>適合レベル（A／AA／AAA）を対象にする</h2>
 			<p>
@@ -235,7 +238,11 @@ export function WcagMappingContent() {
 				<strong>削除された達成基準は自動的に処理されます。</strong>
 				どの実行でも、対象とするWCAGのバージョン（
 				<code>engineOptions.wcagVersion</code>
-				、なければ
+				、なければ実行が適用する
+				<a href="/configuration/packs/">パック</a>
+				のプロファイルの
+				<code>wcagVersion</code>
+				、それもなければ
 				<code>runOnly.wcag</code>
 				のバージョン、それもなければバージョンのタグから導かれるもの、それもなければ
 				<code>2.2</code>
@@ -253,6 +260,8 @@ export function WcagMappingContent() {
 				アトミックルールとは違い、複合ルールは累積的に
 				<em>絞り込まれます</em>
 				。ランナーは
+				<code>engineOptions.wcagLevel</code>
+				、なければ
 				<code>runOnly.wcag</code>
 				のレベル、または
 				<code>tags</code>
@@ -260,10 +269,10 @@ export function WcagMappingContent() {
 				<code>{"['wcag2a', 'wcag2aa']"}</code>
 				を指定すると、AAAだけの達成基準については
 				<code>rulesResults</code>
-				のエントリーが返りません。正確な優先順位が必要なら、
+				のエントリーが返りません。目標ではなくチェックを指定するスキャンで設定するのは<code>wcagLevel</code>（<code>'A'</code>、<code>'AA'</code>、<code>'AAA'</code>）です。選んだルールはすべて実行され、報告する達成基準だけがそのレベルまでに絞られます。そのため、<code>contrast-computable</code>を<code>'AA'</code>でスキャンすると、AAAの1.4.6ではなく1.4.3が報告されます。実行はこれを<code>engine.wcagLevel</code>として記録します。正確な優先順位が必要なら、
 				<code>src/core/dom-runner.js</code>
 				の
-				<code>inferTargetLevelFromRunOnly</code>
+				<code>targetWcagLevelOf</code>
 				／
 				<code>isAllowedByTargetLevel</code>
 				を参照してください。
@@ -352,7 +361,7 @@ export function WcagMappingContent() {
 					<a href="/help/known-limitations/">既知の制限事項</a>
 					に挙げてあり、各検出結果の検出箇所は何に基づいて判断したかを示し、
 					<a href="/rules/">ルールカタログ</a>
-					は各ルールの確度を示します。カスタムルール、パックのルール、上書きがどれだけ正確かは、それがどう書かれたかによります。デフォルトではその規格はWCAGです。ほかの規格だけが求める要件のルールはオプトインで、デフォルトではその規格を対象にしたときだけ実行されます（<a href="/configuration/engine-options/#opt-in-rules">オプトインルール</a>を参照）。<code>engineOptions.optInRules</code>は、スキャンのプロファイルやフィルターをなくさずにオプトインルールを有効にします。<code>optInRules: 'all'</code>を指定し、プロファイルもフィルターもない場合、実行はすべてのルールを対象にし、特定の規格を対象にしません。タグのリストを指定した場合は、そのオプトインのグループだけが有効になります。<code>engine.optInRules</code>は、ルールが実行されたタグを列挙します。WCAGのプロファイルのもとでは、有効にしたルールはそのタグがプロファイルに一致するときだけ実行され、実行は引き続きWCAGを対象にします。そのため、コアのルールのうち、WCAGを対象にしたスキャンが実行するのは、対象の達成基準のルールと、追加した場合のベストプラクティスのルールだけです。オプトインのタグを持たないカスタムルール、上書き、パックのルールは、選択に含まれれば実行され、WCAGが求めていない独自のチェックについて<code>fail</code>を報告することがあります。
+					は各ルールの確度を示します。カスタムルール、パックのルール、上書きがどれだけ正確かは、それがどう書かれたかによります。デフォルトではその規格はWCAGです。ほかの規格だけが求める要件のルールはオプトインで、デフォルトではその規格を対象にしたときだけ実行されます（<a href="/configuration/engine-options/#opt-in-rules">オプトインルール</a>を参照）。<code>engineOptions.optInRules</code>は、スキャンのプロファイルやフィルターをなくさずにオプトインルールを有効にします。<code>optInRules: 'all'</code>を指定し、プロファイルもフィルターもない場合、実行はすべてのルールを対象にし、特定の規格を対象にしません。タグのリストを指定した場合は、そのオプトインのグループだけが有効になります。<code>engine.optInRules</code>は、ルールが実行されたタグを列挙します。WCAGのプロファイルのもとでは、有効にしたルールはそのタグがプロファイルに一致するときだけ実行され、実行は引き続きWCAGを対象にします。そのため、コアのルールのうち、WCAGを対象にしたスキャンが実行するのは、対象の達成基準のルールと、追加した場合のベストプラクティスのルールだけです。ベストプラクティスのルールは達成基準を示しませんが、見つけたもの自体がバリアである場合は<code>fail</code>を報告することがあります。空の見出し（<a href="/rules/empty-heading/"><code>empty-heading</code></a>）がその例で、WCAGの複合ルールはそれを算入しません。オプトインのタグを持たないカスタムルール、上書き、パックのルールは、選択に含まれれば実行され、WCAGが求めていない独自のチェックについて<code>fail</code>を報告することがあります。
 				</li>
 				<li>
 					すべての

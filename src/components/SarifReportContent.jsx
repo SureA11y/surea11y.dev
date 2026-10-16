@@ -13,7 +13,7 @@ const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
 	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code>. An occurrence with no summary (a custom rule's, say) uses the rule's title, or its id, since GitHub rejects a result with empty text.</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>The scanned target — see <a href="#sarif-locations">Locations</a> below.</> },
-	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, when present.</> },
+	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <>The element's location, with <code>kind: "element"</code>, when <code>occurrence.selector</code> is a string that isn't empty. Outside a shadow tree it is the selector. For an element inside a shadow tree it is the shadow hosts' selectors, then the element's own, joined with <code>{" >>> "}</code>: <code>{"html > body > main > x-card >>> button"}</code>. JUnit's <code>selector:</code> line and the HTML report show the same text.</> },
 	{
 		id: "fingerprint",
 		field: <code>results[].partialFingerprints["surea11y/violation/v2"]</code>,
@@ -45,11 +45,18 @@ const sarifFieldRows = [
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>The result's own <code>severity</code>/<code>confidence</code>, plus the same <code>reasonCode</code> and <code>html</code> snippet the fingerprint above is keyed on — informational, not part of SARIF's own schema.</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, and a <code>wcag-&lt;SC&gt;</code> tag per WCAG Success Criterion in <code>meta.normativeMappings</code>. Understanding-document entries get no tag. Each EN 301 549 clause the result carries (only when the scan asked for them, see <a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>) gets an <code>en301549-&lt;clause&gt;</code> tag, e.g. <code>en301549-9.1.1.1</code>: clause numbers are the same in every version that has them, so the tag carries no version, and a pack's standard or checklist is tagged the same way under its own key (a checklist item's id, <code>acme-images</code>, is its own tag). Then the rule's own <code>meta.tags</code> (a custom rule's included), without the engine's bookkeeping tags and the criterion tags the <code>wcag-&lt;SC&gt;</code> tags already give.</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>,and a <code>wcag-&lt;SC&gt;</code> tag per WCAG Success Criterion in <code>meta.normativeMappings</code> that the scan's WCAG level and version keep. A criterion the scan left out of <code>rulesResults</code> because of them gets no tag: an AAA criterion under <code>engineOptions.wcagLevel: 'AA'</code>, or 4.1.1 when <code>{"includeRuleIds: ['duplicate-id']"}</code> ran under WCAG 2.2. A criterion the scan reports, such as a rollup named by id above the level, keeps its tag, and so does every criterion of a result that records neither <code>engine.wcagLevel</code> nor <code>engine.wcagVersion</code>. The rule stays, and its results too, as notes when every criterion it maps to is left out (see <a href="#outside-the-target">above</a>). Understanding-document entries get no tag. Each EN 301 549 clause the result carries (only when the scan asked for them, see <a href="/configuration/engine-options/#other-standards-mappings">Other standards</a>) gets an <code>en301549-&lt;clause&gt;</code> tag, e.g. <code>en301549-9.1.1.1</code>: clause numbers are the same in every version that has them, so the tag carries no version, and a pack's standard or checklist is tagged the same way under its own key (a checklist item's id, <code>acme-images</code>, is its own tag). Then the rule's own <code>meta.tags</code> (a custom rule's included), without the engine's bookkeeping tags and the criterion tags the <code>wcag-&lt;SC&gt;</code> tags already give.</> },
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, the rule's help link, when it is an absolute <code>http(s)</code> URL; otherwise the Understanding document of the first WCAG criterion it maps to; absent for a rule with neither, which no built-in rule is: one mapped to no criterion links its section of the rule catalog.</> },
-	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>The <code>toolVersion</code> option, if given (a tool wrapping the engine passes its own); otherwise <code>engine.version</code>, the engine release that produced the result. <code>"0.0.0"</code> only for a result without one, from a release before 1.10.0.</> },
+	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>The <code>toolVersion</code> option, if given (a tool wrapping the engine passes its own); otherwise <code>engine.version</code>, the engine release that produced the result.<code>"0.0.0"</code> only for a result without one, from a release before 1.10.0, or whose <code>engine.version</code> is not a string.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>The <code>category</code> option, with a trailing <code>/</code> added if it has none (GitHub reads everything up to the last slash as the category). Absent when no category is given. See <a href="#scanning-at-several-viewport-widths">Scanning at several viewport widths</a>.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> and <code>environment</code> from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, the opt-in rule tags it added beyond that target when it added any, and the conditions the page was rendered under (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code>; see <a href="/results-reports/output-schema/">Output schema</a>). Omitted for results from engines that predate those fields.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>,source: <><code>wcagVersion</code>, <code>wcagLevel</code> (when the scan had a level: <code>engineOptions.wcagLevel</code>, or the one its selection gives), <code>profile</code>, <code>optInRules</code> and <code>environment</code> from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, and an AA run from one at every level, the opt-in rule tags it added beyond that target when it added any, and the conditions the page was rendered under (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>,<code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code>; see <a href="/results-reports/output-schema/">Output schema</a>). Omitted for results from engines that predate those fields.</> },
+];
+
+const sarifOptionRows = [
+	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>, for a tool wrapping the engine.</> },
+	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>, the tool's home page.</> },
+	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "none", effect: <>The baseline file as saved (<code>JSON.parse</code> of it) or its <code>entries</code> list, see <a href="/conformance/baseline/#file-format">File format</a>. Fail occurrences recorded there are left out, as <code>--baseline</code> does (see below).</> },
+	{ id: "category", option: <code>category</code>, def: "none", effect: <><code>runs[0].automationDetails.id</code>, see <a href="#scanning-at-several-viewport-widths">Scanning at several viewport widths</a>.</> },
 ];
 
 export function SarifReportContent() {
@@ -81,7 +88,10 @@ export function SarifReportContent() {
 			<p>
 				<strong>Only <code>fail</code>/<code>cantTell</code> occurrences produce SARIF results</strong>{" "}
 				(same "violations only" framing as the{" "}
-				<a href="/results-reports/html-report/">HTML report</a>).
+				<a href="/results-reports/html-report/">HTML report</a>).{" "}
+				<strong>So a log with no results says nothing failed or needs review among the checks
+				that ran</strong>; it doesn't say what was checked, and it is not a conformance claim. Keep
+				the JSON result for that.
 			</p>
 			<p>
 				A <code>notApplicable</code> check is not always empty: a rule may attach one occurrence
@@ -113,7 +123,8 @@ export function SarifReportContent() {
 				<strong>That keeps a SARIF-only pipeline from reading silence as a clean bill of
 				health</strong>: no contrast alerts can mean the page is fine, or that contrast was never
 				computable, and only the notice separates the two. The block is emitted only when there is something to say, so
-				a run with nothing to report has no <code>invocations</code> key at all.
+				a run with nothing to report has no <code>invocations</code> key at all. A rule that
+				passed writes no notification.
 			</p>
 			<p>
 				A rule that did not complete (it threw: <code>cantTell</code> with no occurrences and an{" "}
@@ -132,15 +143,27 @@ export function SarifReportContent() {
 				]}
 				rows={sarifLevelRows}
 			/>
+			<p id="outside-the-target">
+				A rule whose every WCAG criterion is outside the scan's target (an AAA rule under{" "}
+				<code>engineOptions.wcagLevel: 'AA'</code>, or <code>duplicate-id</code> under WCAG 2.2:
+				the criteria the scan left out of <code>rulesResults</code>, as for the{" "}
+				<code>wcag-&lt;SC&gt;</code> tags below) still ran, and its <code>fail</code> and{" "}
+				<code>cantTell</code> findings are still results, at level <code>note</code>, so they are
+				seen without failing a build scoped to the target. Each says why in{" "}
+				<code>properties.outsideTarget</code>:{" "}
+				<code>{'{ "criteria": ["1.4.6"], "target": "WCAG 2.2 AA" }'}</code>.
+			</p>
 			<p>
 				Every rule that ran (regardless of whether it produced a result) is listed once in{" "}
 				<code>runs[0].tool.driver.rules</code>, with <code>defaultConfiguration.level</code> set
 				from the rule's <code>type</code>: <code>automatic</code> (fail-capable) →{" "}
 				<code>error</code>, <code>manual</code> (never <code>fail</code>) →{" "}
-				<code>warning</code>.
+				<code>warning</code>. A rule id that is not a string, in a stored result, is written as
+				its text; a check with no rule id names no rule, and is left out, as JUnit and EARL leave
+				it.
 			</p>
 
-			<h2>Field mapping</h2>
+			<h2 id="field-mapping">Field mapping</h2>
 			<DataTable
 				label="SARIF field mapping"
 				rowKey="id"
@@ -177,11 +200,22 @@ export function SarifReportContent() {
 					the finding, but can't attach an inline annotation to a URL that isn't a file in the
 					repository — this is inherent to how SARIF/Code Scanning associate findings with
 					source, not a surea11y limitation. If you need inline annotations, scan the rendered
-					HTML file (e.g. a build output artifact) rather than a live URL.
+					HTML file (e.g. a build output artifact) rather than a live URL. The URL is written as a
+					URL parser serializes it, so what a URI can't hold is percent-encoded (
+					<code>https://example.test/a%20b</code>).
+				</li>
+				<li>
+					<strong>Other targets</strong>: a result whose <code>url</code> is not a URL, such as the
+					path a page was scanned under (<code>runDomRulesInPage('dist/my page.html', …)</code>), is
+					a relative path, forward-slashed, with each segment percent-encoded (
+					<code>dist/my%20page.html</code>); a Windows path is an absolute <code>file:</code> URL. A
+					result with no <code>url</code>, or one that is not a string, is located at{" "}
+					<code>about:blank</code>.
 				</li>
 			</ul>
 			<p>
-				<code>occurrence.selector</code> is additionally carried as a{" "}
+				The element's location (its selector, prefixed with its shadow hosts' selectors and{" "}
+				<code>{" >>> "}</code> when it is inside a shadow tree) is additionally carried as a{" "}
 				<code>logicalLocations[].fullyQualifiedName</code>, so a consumer that reads logical
 				locations still gets the "which element" signal even without a usable physical location.
 			</p>
@@ -197,7 +231,15 @@ export function SarifReportContent() {
 			</p>
 			<CodeBlock
 				lang="json"
-				lines={['"properties": { "severity": "serious", "confidence": "high", "frame": ["#checkout"] }']}
+				lines={[
+					'"properties": {',
+					'  "severity": "serious",',
+					'  "confidence": "high",',
+					'  "reasonCode": "DEFAULT",',
+					'  "html": "<img src=\\"card.png\\">",',
+					'  "frame": ["#checkout"]',
+					"}",
+				]}
 			/>
 			<p>
 				The path is part of the finding's identity too (<code>partialFingerprints</code>), so the
@@ -238,6 +280,22 @@ export function SarifReportContent() {
 				analyses apart. <code>runs[0].properties.environment</code> records the viewport each run
 				used.
 			</p>
+
+			<h2>Options</h2>
+			<p>
+				<code>renderSarifReport(result, options)</code> from <code>@surea11y/core/sarif</code>{" "}
+				returns the log as JSON text. It takes:
+			</p>
+			<DataTable
+				label="renderSarifReport options"
+				rowKey="id"
+				columns={[
+					{ key: "option", label: "Option", width: "22%" },
+					{ key: "def", label: "Default", width: "30%", wrap: true },
+					{ key: "effect", label: "Effect", wrap: true },
+				]}
+				rows={sarifOptionRows}
+			/>
 
 			<h2>Combining with <code>--baseline</code></h2>
 			<p>
