@@ -88,8 +88,9 @@ const fileRows = [
 const profileFieldRows = [
 	{ id: "tags", field: <code>tags</code>, what: <>Rules carrying any of these tags. <code>wcagTags(version, levels)</code> from <code>@surea11y/core/pack</code> gives core's WCAG tags (<code>wcagTags('2.1')</code> is 2.0 and 2.1, A and AA).</> },
 	{ id: "rules", field: <code>rules</code>, what: <>Rules by id, core's or the pack's: a best-practice rule no WCAG tag selects, or, with <code>tags: []</code>, the core rules the profile runs besides the pack's own.</> },
-	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code> leaves rules out of the scan; <code>{"{ criteria: ['2.5.8'] }"}</code> leaves out those criteria's checks and rollups. This narrows what the scan checks: WCAG's requirements stay as they are.</> },
+	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code> leaves rules out of the scan; <code>{"{ criteria: ['2.5.8'] }"}</code> waives those criteria: their rollups go, and so does each rule whose every criterion is waived; a rule that also checks a criterion the profile keeps still runs. This narrows what the scan checks: WCAG's requirements stay as they are.</> },
 	{ id: "severity", field: <code>severity</code>, what: <><code>{"{ ruleId: level }"}</code>: another severity under the profile. Results show it and keep the rule's own as <code>ruleSeverity</code>; baselines and finding ids don't change.</> },
+	{ id: "wcagVersion", field: <code>wcagVersion</code>, what: <><code>'2.0'</code>, <code>'2.1'</code> or <code>'2.2'</code>: the WCAG version the profile's scans are judged by (<code>engine.wcagVersion</code>). Without it, the WCAG tags in <code>tags</code> imply the version, and a profile with none is judged by 2.2. A scan's own <code>engineOptions.wcagVersion</code> still wins. Core 1.12.0 and later.</> },
 	{ id: "version", field: <><code>version</code>, <code>mappedRules</code></>, what: <>A standard's profile only: the standard's version it targets, and <code>mappedRules: true</code> to run every rule the standard maps for that version.</> },
 ];
 
@@ -288,6 +289,8 @@ export function PacksContent() {
 					its namespace (<code>acme-no-autoplay</code>). A pack rule that maps to a WCAG criterion
 					counts toward that criterion's rollup, unless it carries the pack's opt-in namespace tag:
 					those rules check what WCAG doesn't require, so they count only in the pack's own rollups.
+					Their <code>wcagSc</code> still names the WCAG criteria they check, for the reporters, and
+					no other standard (EN 301 549, which maps every rule by its WCAG criteria) claims them.
 					An override counts in place of the core rule it replaces, where its own mapping puts it.
 				</li>
 				<li>
@@ -312,11 +315,14 @@ export function PacksContent() {
 				that doesn't fit with core (a rule id outside its namespace, a dictionary key core has, a
 				variant of a rule that isn't there) is skipped: the scan runs without it, warns, and lists
 				it in <code>skippedPacks</code> as <code>{"{ name, reason }"}</code>. Under{" "}
-				<code>strictOptions</code> it throws. Two packs that clash with each other (a dictionary
+				<code>strictOptions</code> it throws, with <code>code: 'INVALID_ENGINE_OPTIONS'</code>, as
+				every error in <code>engineOptions.packs</code> has. Two packs that clash with each other (a dictionary
 				key both define, two standards with one key) throw, since any way of choosing between them
 				would depend on the order they were passed in. In a page, a pack named in{" "}
 				<code>engineOptions.packs</code> that no <code>packScript</code> call registered, or that
-				was registered with another core version, is listed the same way.
+				was registered with another core version, is listed the same way. So a scan can finish
+				without the checks you added the pack for: a tool that depends on a pack should check{" "}
+				<code>skippedPacks</code> before treating the scan as complete.
 			</p>
 			<p>Each tool turns a skipped pack into a failure you can see:</p>
 			<ul>
@@ -368,8 +374,10 @@ export function PacksContent() {
 			/>
 			<p>
 				The pack works as generated: its tests pass, its rules lint clean, its examples agree with
-				its rules. Change it step by step from there, running <code>npm test</code> as you go. Its
-				README walks through each file:
+				its rules. <code>surea11y-pack new</code> checks the pack as a scan would before writing anything, and
+				refuses a name, namespace or title that would make it invalid (a title of <code>WCAG</code>{" "}
+				names its standard as one of core's), saying why. Change it step by step from there,
+				running <code>npm test</code> as you go. Its README walks through each file:
 			</p>
 			<DataTable
 				label="Files of a generated pack"
@@ -448,6 +456,29 @@ export function PacksContent() {
 				rows={profileFieldRows}
 			/>
 			<p>
+				<strong>A profile that runs only what its standard asks for.</strong> A standard's profile
+				with <code>{"tags: [<ns>]"}</code> and <code>mappedRules: true</code> runs the pack's own
+				rules and the core rules its map links to a requirement, and nothing else: no rule checks
+				what the standard doesn't, and results hold no WCAG criteria. With no WCAG tag, though,
+				nothing says which WCAG version the standard is built on, and the run is judged by 2.2.
+				For a standard built on 2.1 that is wrong: 4.1.1 Parsing is gone in 2.2, so{" "}
+				<code>duplicate-id</code> asks instead of failing. Give the version. The generated{" "}
+				<code>index.js</code> reads it from <code>requirements.js</code>, where each version of
+				the standard names the WCAG version it is built on (
+				<code>{"{ version: '1.0', wcagVersion: '2.2' }"}</code>):
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'city-1.0': {",
+					"  version: '1.0',",
+					"  tags: ['city'],                      // the pack's own rules",
+					"  mappedRules: true,                   // and the core rules its map links to a requirement",
+					"  wcagVersion: wcagVersionOf('1.0')    // judged by the WCAG version requirements.js gives for 1.0",
+					"}",
+				]}
+			/>
+			<p>
 				Core's rules, with their ids and tags, are in the <a href="/rules/">rule catalog</a>.
 			</p>
 
@@ -475,9 +506,13 @@ export function PacksContent() {
 				<code>applicability</code> when it applies only sometimes, with the same <code>ctx</code>.{" "}
 				<code>runInPage(ctx)</code> runs in the page, so it uses only <code>ctx</code>, never a
 				variable or module from outside it, and it only reads: a pack's rules run after core's, and
-				the helpers and options they are given are read-only. Three shortcuts need little or no
+				the helpers and options they are given are read-only. Read-only is a rule, not a sandbox:
+				nothing stops a rule's code from doing more, so load only packs you trust (see core's{" "}
+				<a href={`${core}/SECURITY.md`}>security policy</a> on GitHub). Three shortcuts need little or no
 				code: <strong>a variant</strong> runs a core rule at other settings (
-				<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>),{" "}
+				<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>;
+				each setting is a threshold, a finite number above 0, and <code>definePack</code> refuses
+				another value),{" "}
 				<strong>an override</strong> replaces a core rule (listed in <code>overrides</code>, and
 				in results' <code>overriddenBuiltinIds</code>), and <strong>a core rule as it is</strong>{" "}
 				needs only its id in a profile or a rollup. Writing a rule is in core's{" "}
@@ -509,8 +544,9 @@ export function PacksContent() {
 				<li>
 					<strong>Docs</strong> (<code>npm run docs</code>, <code>surea11y-pack docs</code>) write
 					the pack's <code>docs/RULE_CATALOG.md</code> and run every example of its{" "}
-					<code>docs/RULE_EXAMPLES.md</code> in Chromium; <code>--check</code> fails when either is
-					stale, for the pack's CI.
+					<code>docs/RULE_EXAMPLES.md</code> in Chromium (<code>CHROMIUM_EXECUTABLE_PATH</code>{" "}
+					names another Chromium build); <code>--check</code> fails when either is stale, for the
+					pack's CI.
 				</li>
 			</ul>
 

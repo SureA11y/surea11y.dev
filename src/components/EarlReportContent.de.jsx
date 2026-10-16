@@ -48,7 +48,10 @@ export function EarlReportContent() {
 				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
 					https://surea11y.github.io/act-report/act-report.jsonld
 				</a>{" "}
-				veröffentlicht und wird von <code>scripts/act-report.js</code> neu erzeugt.
+				veröffentlicht und wird von <code>scripts/act-report.js</code> neu erzeugt.{" "}
+				<code>--runner=chromium</code> erzeugt denselben Bericht aus einem Scan in Chromium, so wie
+				die Browser-Bindings die Engine ausführen, mit dem Assertor „SureA11y in a browser“ und der
+				Chromium-Version in der Beschreibung des Berichts.
 			</p>
 			<p>
 				Wer die Engine <strong>nutzt</strong>, bekommt ein Austauschformat. EARL ist das, was
@@ -68,7 +71,11 @@ export function EarlReportContent() {
 				Aussage darüber ist, was die Engine <em>überall</em> entschieden hat. Eine Regel, die
 				stumm blieb, weil sie nichts Anwendbares fand, ist ein Beleg, kein Rauschen: Nur so lässt
 				sich unterscheiden zwischen „diese Engine hat geprüft und nichts zu prüfen gefunden“
-				und „diese Engine implementiert diese Regel gar nicht“.
+				und „diese Engine implementiert diese Regel gar nicht“.{" "}
+				<strong>Jede Aussage betrifft eine Regel auf einem Subjekt</strong>: Ein{" "}
+				<code>passed</code> einer Regel ist kein Urteil über das WCAG-Kriterium, dem sie
+				zugeordnet ist; die meisten Kriterien haben Teile, die keine Regel abdeckt (siehe{" "}
+				<a href="/conformance/wcag-mapping/">WCAG-Konformitätszuordnung</a>).
 			</p>
 
 			<h2>Aufbau</h2>
@@ -117,10 +124,25 @@ export function EarlReportContent() {
 					zugeordnet ist, als <code>WCAG2:&lt;criterion-id&gt;</code>: jeden Eintrag in{" "}
 					<code>normativeMappings</code>, dessen <code>standard</code> <code>WCAG</code> ist oder
 					fehlt (wie in SARIF) und der keinen <code>type</code> hat. Bei einer Regel, die kein
-					Kriterium beansprucht, fehlt das Feld ganz: <code>aria-allowed-role</code> und{" "}
-					<code>landmark-role-name-present</code> sind die automatischen Regeln der Engine in dieser
-					Lage, und eine leere Liste würde sich
-					lesen wie „keine Zuordnung gefunden“ statt „bewusst keiner zugeordnet“.
+					Kriterium beansprucht, fehlt das Feld ganz: <code>aria-allowed-role</code>,{" "}
+					<code>empty-heading</code> und <code>landmark-role-name-present</code> sind die
+					automatischen Regeln der Engine in dieser Lage, und eine leere Liste würde sich lesen wie
+					„keine Zuordnung gefunden“ statt „bewusst keiner zugeordnet“. Eine solche Regel kann
+					trotzdem <code>fail</code> ergeben (<code>empty-heading</code> bei einer Überschrift ohne
+					Namen): Ihre Aussage ist dann <code>earl:failed</code> ohne <code>isPartOf</code>, ein
+					Fehlschlag der Regel, nicht eines WCAG-Kriteriums, denn sie beansprucht keins.
+				</li>
+				<li>
+					<strong><code>isPartOf</code> folgt der WCAG-Stufe und -Version des Scans.</strong> Ein
+					Kriterium, das der Scan ihretwegen aus <code>rulesResults</code> ausgelassen hat, wird
+					nicht aufgeführt, etwa 1.4.6 (AAA) unter <code>engineOptions.wcagLevel: 'AA'</code> oder
+					4.1.1, wenn <code>{"includeRuleIds: ['duplicate-id']"}</code> unter WCAG 2.2 lief, da WCAG 2.2 es
+					gestrichen hat; eine Regel, deren sämtliche Kriterien ausgelassen werden, hat kein{" "}
+					<code>isPartOf</code>. Die Aussage selbst bleibt, da sie die Regel betrifft. Ein
+					Kriterium, das der Scan meldet, wird aufgeführt, etwa eine per ID genannte
+					Zusammenfassung oberhalb der Stufe oder 4.1.1 in einem 2.2-Scan, der es ausgewählt hat,
+					ebenso jedes Kriterium eines Ergebnisses, das weder <code>engine.wcagLevel</code> noch{" "}
+					<code>engine.wcagVersion</code> festhält.
 				</li>
 				<li>
 					<strong><code>assertedBy</code></strong> ist immer vorhanden, außer Sie übergeben{" "}
@@ -169,8 +191,8 @@ export function EarlReportContent() {
 				Ergebnis erzeugen: ein Beispiel scheitern lassen, das laut Regel bestehen soll oder nicht anwendbar
 				ist. Das ist die Schwelle, auf die es ankommt, und sie ist eine Eigenschaft der Regeln,
 				nicht dieses Berichts. Beim letzten vollständigen Lauf erzeugte die Engine{" "}
-				<strong>null falsch positive Ergebnisse</strong> über die 821 ACT-Beispiele hinweg, die ihre 59
-				zugeordneten Regeln abdecken. Siehe{" "}
+				<strong>null falsch positive Ergebnisse</strong> über die 942 Beispiele hinweg, die das W3C
+				für ihre 59 zugeordneten Regeln veröffentlicht. Siehe{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>, und
 				führen Sie <code>scripts/act-testcase-check.js</code> für die aktuelle Zahl erneut aus,
 				statt sich unbegrenzt auf diese zu verlassen.
@@ -185,7 +207,15 @@ export function EarlReportContent() {
 			<p>
 				Ein Frame-übergreifendes Ergebnis von <a href="/results-reports/output-schema/#cross-frame-result"><code>runa11yCoreAcrossFrames</code></a> wird
 				so übernommen, wie es ist, allein oder im Array: Jeder Frame, der geantwortet hat, ist ein
-				weiteres Ergebnis und wird zu einem Subjekt unter seiner eigenen URL. Alles andere, was
+				weiteres Ergebnis und wird zu einem Subjekt unter seiner eigenen URL. Ein Frame unterhalb
+				des obersten, dessen URL ihn nicht unterscheidet, weil sie <code>about:srcdoc</code> oder{" "}
+				<code>about:blank</code> ist oder ein anderer Frame des Ergebnisses sie ebenfalls hat, wird
+				nach seiner URL und seinem Pfad benannt, den Selektoren, mit denen SARIF und JUnit ihn
+				benennen, jeweils kodiert und mit <code>/</code> verbunden:{" "}
+				<code>about:srcdoc#frame=%23pay</code>, <code>about:srcdoc#frame=%23widget/%23inner</code>.
+				Wo selbst der Pfad geteilt wird, etwa bei den Frames eines Bindings, die keinen Selektor
+				tragen, kommt seine Position unter den Frames des Ergebnisses hinzu, ab 1:{" "}
+				<code>about:srcdoc#frame=iframe&amp;n=3</code>. Alles andere, was
 				kein Scan-Ergebnis ist, etwa <code>null</code> oder ein String, wirft einen{" "}
 				<code>TypeError</code>.
 			</p>

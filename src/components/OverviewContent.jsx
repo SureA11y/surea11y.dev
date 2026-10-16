@@ -11,9 +11,10 @@ const packageRows = [
 	{ id: "selenium", want: "…Selenium", install: <code>@surea11y/selenium</code> },
 	{ id: "cypress", want: "…Cypress", install: <code>@surea11y/cypress</code> },
 	{ id: "webdriverio", want: "…WebdriverIO", install: <code>@surea11y/webdriverio</code> },
-	{ id: "cli", want: "Scan static HTML from a terminal or CI pipeline", install: <code>@surea11y/cli</code> },
 	{ id: "test-matchers", want: "Assert accessibility in Jest/Vitest component or unit tests", install: <code>@surea11y/test-matchers</code> },
+	{ id: "cli", want: "Scan static HTML from a terminal or CI pipeline", install: <code>@surea11y/cli</code> },
 	{ id: "core", want: "Run the engine against a DOM you already have", install: <code>@surea11y/core</code> },
+	{ id: "core-build", want: "Build your own tool on the engine: a CLI, an extension, a dashboard, a report generator", install: <code>@surea11y/core</code> },
 ];
 
 export function OverviewLead() {
@@ -48,7 +49,8 @@ export function OverviewContent() {
 			<p>
 				surea11y is a family of packages sharing one engine, not one tool with one install
 				command. Install the one that matches how you already test — each pulls in{" "}
-				<code>@surea11y/core</code> for you:
+				<code>@surea11y/core</code> for you. Install core itself to run the engine on a DOM you
+				already have, or to build a tool of your own on it:
 			</p>
 			<DataTable
 				label="Which package to install"
@@ -60,7 +62,10 @@ export function OverviewContent() {
 				rows={packageRows}
 			/>
 			<p>
-				See <a href="/getting-started/">Getting Started</a> for install and usage per binding.
+				See <a href="/getting-started/">Getting Started</a> for install and usage per binding. If
+				you're building a tool, <a href={`${core}/docs/BUILDING_ON_CORE.md`}><code>BUILDING_ON_CORE.md</code></a>{" "}
+				on GitHub covers the stable contract, running scans, choosing checks, and presenting
+				results without claiming more than they say.
 			</p>
 
 			<h2>How its results differ</h2>
@@ -111,26 +116,67 @@ export function OverviewContent() {
 				<a href="/configuration/engine-options/#selecting-which-rules-run">Engine options</a> and{" "}
 				<a href="/configuration/packs/">Packs</a>.
 			</p>
+			<p>
+				Name checks rather than a standard, and the result still says which WCAG criteria they
+				bear on. A scan that runs only <code>link-name-present</code> reports 2.4.4 and 4.1.2
+				too, plus the AAA 2.4.9 unless the scan sets a level, and a criterion whose other checks the scan left out comes back{" "}
+				<code>cantTell</code> ("Partly checked" in the HTML report), not <code>pass</code>. <code>wcagLevel: 'AA'</code>{" "}
+				sets the level of the criteria a scan reports, and the JUnit, SARIF and EARL reports follow
+				it, so an AA build doesn't fail on an AAA criterion.
+			</p>
+			<p>
+				Web components are judged by what they expose. A custom element that gives itself a name,
+				states or a role through <code>ElementInternals</code> is checked against them where the
+				engine can read them, and asked about where it can't. For test and audit runs,{" "}
+				<code>internalsHookScript()</code> is an opt-in script that lets a scan read the internals a
+				component keeps private, so those elements pass or fail instead of coming back{" "}
+				<code>cantTell</code>.{" "}
+				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>{" "}
+				on GitHub shows how to install it before the page's own scripts.
+			</p>
+			<p>
+				In a browser, contrast is measured as the page is drawn: text on a page with no background
+				of its own, on the canvas the browser paints, light or dark; generated text from{" "}
+				<code>::before</code>, <code>::after</code> and list markers; a closed{" "}
+				<code>&lt;select&gt;</code>; and text drawn only by an outline. These used to be skipped or
+				asked about. A lone character standing in for a control's name, the "X" in a button named
+				"Close", is asked about rather than failed: whether it's an icon or a letter takes a person.
+			</p>
 
-			<h3>Checked against the ACT corpus</h3>
+			<h3 id="checked-against-the-act-corpus">Checked against the ACT corpus</h3>
 			<p>
 				The engine ships {rules.length} rules. Fifty-nine of them have a{" "}
-				<a href="https://act-rules.github.io/">W3C ACT Rules</a> counterpart and run against
-				ACT's own published test cases — 821 examples across those 59 rules. The engine fails
-				none of the examples ACT marks passed or inapplicable, so it reports no false positives
-				against that corpus. Thirty examples ACT marks failed go unflagged — mostly judgement
-				calls, such as whether a heading describes the content under it — see{" "}
+				<a href="https://www.w3.org/WAI/standards-guidelines/act/rules/">W3C ACT Rules</a>{" "}
+				counterpart and run against the test cases W3C publishes for them, the set W3C's own
+				implementation listing scores: 942 examples across those 59 rules. The engine fails none of
+				the examples ACT marks passed or inapplicable, so it reports no false positives against
+				that corpus. That is a result on those examples, not a guarantee for every page; where the
+				engine can't decide a case, it returns <code>cantTell</code>, which ACT permits for an
+				automated implementation.
+			</p>
+			<p>
+				It holds in both places the engine runs: in jsdom, as test-matchers and the CLI run it, and
+				in Chromium, as the browser bindings do, with each test case loaded as a real page, its
+				scripts and linked style sheets included. Twenty-five examples ACT marks failed go
+				unflagged in jsdom and 21 in Chromium. Most are judgement calls, such as whether a heading
+				describes the content under it; the four a browser catches need a page's own scripts or
+				style sheets, which jsdom doesn't run. See{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a> for every
 				one, with the reasoning.
 			</p>
 			<p>
-				The <a href="https://surea11y.github.io/act-report/act-report.jsonld">
-					EARL implementation report
-				</a>{" "}
-				records the outcome for every one of those cases, passes and inapplicable results
-				included, so a rule that stayed silent because nothing applied is distinguishable from one
-				that isn't implemented at all. See <a href="/results-reports/earl-report/">EARL report</a>{" "}
-				for the format.
+				Two EARL implementation reports record the outcome for every one of those cases, passes and
+				inapplicable results included, so a rule that stayed silent because nothing applied is
+				distinguishable from one that isn't implemented at all:{" "}
+				<a href="https://surea11y.github.io/act-report/act-report.jsonld">SureA11y</a>, run in
+				jsdom, and{" "}
+				<a href="https://surea11y.github.io/act-report/act-report-browser.jsonld">
+					SureA11y in a browser
+				</a>
+				, run in Chromium. See <a href="/results-reports/earl-report/">EARL report</a> for the
+				format.
 			</p>
 
 			<h2>Key principles</h2>

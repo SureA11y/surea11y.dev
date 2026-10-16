@@ -18,11 +18,19 @@ export function CiIntegrationContent() {
 				— diese Seite behandelt speziell die CLI als Pipeline-Schritt.
 			</p>
 			<p>
+				Die CLI scannt statisches HTML: Sie führt das JavaScript der Seite nicht aus. Das passt zu
+				gebauten oder serverseitig gerenderten Seiten; für eine clientseitig gerenderte App oder
+				Regeln, die ein Layout brauchen, scannen Sie stattdessen im Browser mit einem der{" "}
+				<a href="/getting-started/">Browser-Bindings</a>.
+			</p>
+			<p>
 				Alle Vorlagen nutzen die Exit-Codes der CLI (<code>0</code> bestanden, <code>1</code>{" "}
 				mindestens ein — bzw. mit <code>--baseline</code> mindestens ein <em>neues</em> —{" "}
 				<code>fail</code>-Ergebnis, <code>2</code> ein Aufruf- oder Scan-Fehler), um die
 				Pipeline zu steuern; für ein einfaches Bestanden/Nicht-bestanden-Gating ist kein
-				zusätzliches Skript nötig.
+				zusätzliches Skript nötig. Eine grüne Pipeline bedeutet, dass keine Prüfung
+				fehlgeschlagen ist, bzw. keine neue. Sie ist keine Konformitätsaussage, und{" "}
+				<code>cantTell</code>-Befunde lassen sie nicht scheitern.
 			</p>
 
 			<h2><span lang="en">GitHub Actions</span></h2>
@@ -67,7 +75,9 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				Unter <a href="/conformance/baseline/">Baseline / Allowlist</a> erfahren Sie, was als
+				Eine Baseline verhindert, dass bekannte Verstöße den Build scheitern lassen; sie macht
+				sie nicht akzeptabel. Beheben Sie sie und verkleinern Sie die Datei mit der Zeit. Unter{" "}
+				<a href="/conformance/baseline/">Baseline / Allowlist</a> erfahren Sie, was als
 				„bekannt“ und was als „neu“ gilt und wie Sie die Datei neu erzeugen, während Verstöße
 				behoben werden.
 			</p>
@@ -155,10 +165,10 @@ export function CiIntegrationContent() {
 			<p>
 				GitLab, Azure DevOps, Jenkins und CircleCI zeigen JUnit-XML in ihren eigenen Testansichten:
 				Jedes WCAG-Kriterium wird zu einer Suite und jede Regel zu einem Test (siehe{" "}
-				<a href="/results-reports/junit-report/">JUnit-Bericht</a>). Speichern Sie den Scan als JSON,
-				erzeugen Sie den Bericht mit <code>@surea11y/core/junit</code> und behalten Sie den Exit-Code
-				der CLI für das Gate. Der Render-Schritt braucht <code>@surea11y/core</code> in den eigenen{" "}
-				<code>devDependencies</code> des Projekts.
+				<a href="/results-reports/junit-report/">JUnit-Bericht</a>). Die CLI schreibt ihn mit{" "}
+				<code>--junit &lt;path&gt;</code> (<code>@surea11y/cli</code> 1.1.0 oder neuer) aus
+				demselben Scan wie ihre anderen Ausgaben, und der Bericht ändert nie ihren Exit-Code, sodass
+				der Schritt den Build weiterhin steuert.
 			</p>
 			<h3><span lang="en">GitLab CI</span></h3>
 			<CodeBlock
@@ -169,9 +179,7 @@ export function CiIntegrationContent() {
 					"  script:",
 					"    - npm ci",
 					"    - npm run build",
-					"    - npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
-					"    - node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
-					"    - exit ${scan_exit:-0}",
+					"    - npx @surea11y/cli scan ./dist/index.html --junit a11y.junit.xml",
 					"  artifacts:",
 					"    when: always",
 					"    reports:",
@@ -191,9 +199,7 @@ export function CiIntegrationContent() {
 					"  - script: |",
 					"      npm ci",
 					"      npm run build",
-					"      npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
-					"      node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
-					"      exit ${scan_exit:-0}",
+					"      npx @surea11y/cli scan ./dist/index.html --junit a11y.junit.xml",
 					"    displayName: Accessibility scan",
 					"  - task: PublishTestResults@2",
 					"    condition: succeededOrFailed()",
@@ -203,10 +209,15 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				<code>cantTell</code>-Regeln erscheinen als übersprungene Tests, nie als Fehlschläge. Soll
-				das Gate auch an ihnen scheitern, übergeben Sie <code>{"{ cantTellAs: 'failure' }"}</code>{" "}
-				als zweites Argument an <code>renderJunitReport</code>; das ändert den Bericht, nicht den
-				Exit-Code der CLI.
+				<code>cantTell</code>-Regeln erscheinen als übersprungene Tests, nie als Fehlschläge. Mit{" "}
+				<code>--baseline</code> sind auch Fehlschläge, die schon in der Baseline stehen,
+				übersprungene Tests. Für <code>cantTell</code>-Regeln als Fehlschläge hat die CLI kein
+				Flag: Speichern Sie den Scan mit <code>--json</code> und erzeugen Sie den Bericht mit{" "}
+				<code>{"renderJunitReport(result, { cantTellAs: 'failure' })"}</code> aus{" "}
+				<code>@surea11y/core/junit</code> (siehe{" "}
+				<a href="/results-reports/junit-report/">JUnit-Bericht</a>); dafür braucht das Projekt{" "}
+				<code>@surea11y/core</code> in seinen eigenen <code>devDependencies</code>. Das ändert den
+				Bericht, nicht den Exit-Code der CLI.
 			</p>
 
 			<h2>Minutenlimits bei Free-Tier und privaten Repositories</h2>

@@ -13,7 +13,7 @@ const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
 	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code>. Une occurrence sans résumé (celle d’une règle personnalisée, par exemple) utilise le titre de la règle, ou son id, puisque GitHub rejette un résultat dont le texte est vide.</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>La cible analysée ; voir <a href="#sarif-locations">Emplacements</a> ci-dessous.</> },
-	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>, lorsqu’il est présent.</> },
+	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>,source: <>L’emplacement de l’élément, avec <code>kind: "element"</code>, lorsque <code>occurrence.selector</code> est une chaîne non vide. Hors d’un arbre shadow, c’est le sélecteur. Pour un élément situé dans un arbre shadow, ce sont les sélecteurs des shadow hosts, puis celui de l’élément, joints par <code>{" >>> "}</code> : <code>{"html > body > main > x-card >>> button"}</code>. La ligne <code>selector:</code> de JUnit et le rapport HTML affichent le même texte.</> },
 	{
 		id: "fingerprint",
 		field: <code>results[].partialFingerprints["surea11y/violation/v2"]</code>,
@@ -48,11 +48,18 @@ const sarifFieldRows = [
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code> / <code>.confidence</code> / <code>.reasonCode</code> / <code>.html</code></>, source: <>Les <code>severity</code>/<code>confidence</code> du résultat lui-même, plus le même <code>reasonCode</code> et le même extrait <code>html</code> sur lesquels repose l’empreinte ci-dessus ; à titre informatif, hors du schéma propre à SARIF.</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, et un tag <code>wcag-&lt;SC&gt;</code> par critère de succès WCAG présent dans <code>meta.normativeMappings</code>. Les entrées de documents Understanding n’ont pas de tag. Chaque clause d’EN 301 549 que porte le résultat (seulement quand l’analyse les a demandées, voir <a href="/configuration/engine-options/#other-standards-mappings">Autres normes</a>) reçoit un tag <code>en301549-&lt;clause&gt;</code>, p. ex. <code>en301549-9.1.1.1</code> : les numéros de clause sont les mêmes dans toutes les versions qui les contiennent, le tag ne porte donc pas de version, et la norme ou la liste de contrôle d’un pack reçoit des tags de la même façon, sous sa propre clé (l’id d’un point de la liste de contrôle, <code>acme-images</code>, est son propre tag). Viennent ensuite les <code>meta.tags</code> de la règle elle-même (y compris ceux d’une règle personnalisée), sans les tags internes du moteur ni les tags de critère que les tags <code>wcag-&lt;SC&gt;</code> donnent déjà.</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>, <code>automatic</code>/<code>manual</code>, et un tag <code>wcag-&lt;SC&gt;</code>par critère de succès WCAG présent dans <code>meta.normativeMappings</code> que le niveau et la version WCAG de l’analyse conservent. Un critère que l’analyse a écarté de <code>rulesResults</code> à cause d’eux ne reçoit pas de tag : un critère AAA sous <code>engineOptions.wcagLevel: 'AA'</code>, ou 4.1.1 quand <code>{"includeRuleIds: ['duplicate-id']"}</code> s’est exécuté sous WCAG 2.2. Un critère que l’analyse signale, comme une agrégation nommée par son id au-dessus du niveau, garde son tag, tout comme chaque critère d’un résultat qui n’enregistre ni <code>engine.wcagLevel</code> ni <code>engine.wcagVersion</code>. La règle reste, et ses résultats aussi, en notes quand chaque critère auquel elle est associée est écarté (voir <a href="#outside-the-target">plus haut</a>). Les entrées de documents Understanding n’ont pas de tag. Chaque clause d’EN 301 549 que porte le résultat (seulement quand l’analyse les a demandées, voir <a href="/configuration/engine-options/#other-standards-mappings">Autres normes</a>) reçoit un tag <code>en301549-&lt;clause&gt;</code>, p. ex. <code>en301549-9.1.1.1</code> : les numéros de clause sont les mêmes dans toutes les versions qui les contiennent, le tag ne porte donc pas de version, et la norme ou la liste de contrôle d’un pack reçoit des tags de la même façon, sous sa propre clé (l’id d’un point de la liste de contrôle, <code>acme-images</code>, est son propre tag). Viennent ensuite les <code>meta.tags</code> de la règle elle-même (y compris ceux d’une règle personnalisée), sans les tags internes du moteur ni les tags de critère que les tags <code>wcag-&lt;SC&gt;</code> donnent déjà.</> },
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, le lien d’aide de la règle, quand c’est une URL <code>http(s)</code> absolue ; sinon le document Understanding du premier critère WCAG auquel elle est associée ; absent pour une règle qui n’a ni l’un ni l’autre, ce qui n’est le cas d’aucune règle intégrée : une règle associée à aucun critère renvoie à sa section du catalogue des règles.</> },
-	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>L’option <code>toolVersion</code>, si elle est fournie (un outil qui enveloppe le moteur passe la sienne) ; sinon <code>engine.version</code>, la version du moteur qui a produit le résultat. <code>"0.0.0"</code> seulement pour un résultat qui n’en a pas, issu d’une version antérieure à 1.10.0.</> },
+	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>L’option <code>toolVersion</code>, si elle est fournie (un outil qui enveloppe le moteur passe la sienne) ; sinon <code>engine.version</code>, la version du moteur qui a produit le résultat.<code>"0.0.0"</code> seulement pour un résultat qui n’en a pas, issu d’une version antérieure à 1.10.0, ou dont l’<code>engine.version</code> n’est pas une chaîne.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>L’option <code>category</code>, avec un <code>/</code> final ajouté s’il n’y en a pas (GitHub lit tout ce qui précède la dernière barre oblique comme la catégorie). Absent lorsqu’aucune catégorie n’est fournie. Voir <a href="#scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</a>.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>profile</code>, <code>optInRules</code> et <code>environment</code> issus de l’<code>engine</code> du résultat : la cible de conformité utilisée par l’exécution, pour qu’un tableau de bord distingue une exécution WCAG 2.1 d’une exécution 2.2, les tags de règles optionnelles qu’elle a ajoutés au-delà de cette cible, s’il y en a, et les conditions dans lesquelles la page a été rendue (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>fonts</code> ; voir <a href="/results-reports/output-schema/">Schéma de sortie</a>). Omis pour les résultats de moteurs antérieurs à ces champs.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>,source: <><code>wcagVersion</code>, <code>wcagLevel</code> (quand l’analyse avait un niveau : <code>engineOptions.wcagLevel</code>, ou celui que donne sa sélection), <code>profile</code>, <code>optInRules</code> et <code>environment</code> issus de l’<code>engine</code> du résultat : la cible de conformité utilisée par l’exécution, pour qu’un tableau de bord distingue une exécution WCAG 2.1 d’une exécution 2.2, et une exécution AA d’une exécution à tous les niveaux, les tags de règles optionnelles qu’elle a ajoutés au-delà de cette cible, s’il y en a, et les conditions dans lesquelles la page a été rendue (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>,<code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code> ; voir <a href="/results-reports/output-schema/">Schéma de sortie</a>). Omis pour les résultats de moteurs antérieurs à ces champs.</> },
+];
+
+const sarifOptionRows = [
+	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>, pour un outil qui enveloppe le moteur.</> },
+	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>, la page d’accueil de l’outil.</> },
+	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "aucune", effect: <>Le fichier de baseline tel qu’enregistré (son <code>JSON.parse</code>) ou sa liste <code>entries</code>, voir <a href="/conformance/baseline/#file-format">Format du fichier</a>. Les occurrences <code>fail</code> qui y sont enregistrées sont omises, comme le fait <code>--baseline</code> (voir ci-dessous).</> },
+	{ id: "category", option: <code>category</code>, def: "aucune", effect: <><code>runs[0].automationDetails.id</code>, voir <a href="#scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</a>.</> },
 ];
 
 export function SarifReportContent() {
@@ -87,7 +94,10 @@ export function SarifReportContent() {
 			<p>
 				<strong>Seules les occurrences <code>fail</code>/<code>cantTell</code> produisent des résultats SARIF</strong>{" "}
 				(la même approche « violations uniquement » que le{" "}
-				<a href="/results-reports/html-report/">rapport HTML</a>).
+				<a href="/results-reports/html-report/">rapport HTML</a>).{" "}
+				<strong>Un journal sans résultat indique donc que rien n’a échoué ni ne demande de revue
+				parmi les vérifications exécutées</strong> ; il ne dit pas ce qui a été vérifié, et ce
+				n’est pas une déclaration de conformité. Conservez le résultat JSON pour cela.
 			</p>
 			<p>
 				Une vérification <code>notApplicable</code> n’est pas toujours vide : une règle peut
@@ -121,7 +131,8 @@ export function SarifReportContent() {
 				certificat de bonne santé</strong> : l’absence d’alerte de contraste peut signifier que la
 				page est correcte, ou que le contraste n’a jamais pu être calculé, et seule la notice
 				permet de distinguer les deux. Le bloc n’est émis que s’il y a quelque chose à signaler :
-				une exécution sans rien à rapporter n’a donc aucune clé <code>invocations</code>.
+				une exécution sans rien à rapporter n’a donc aucune clé <code>invocations</code>. Une
+				règle qui a réussi n’écrit aucune notification.
 			</p>
 			<p>
 				Une règle qui ne s’est pas terminée (elle a levé une exception : <code>cantTell</code>{" "}
@@ -141,15 +152,27 @@ export function SarifReportContent() {
 				]}
 				rows={sarifLevelRows}
 			/>
+			<p id="outside-the-target">
+				Une règle dont chaque critère WCAG est hors de la cible de l’analyse (une règle AAA sous{" "}
+				<code>engineOptions.wcagLevel: 'AA'</code>, ou <code>duplicate-id</code> sous WCAG 2.2 :
+				les critères que l’analyse a écartés de <code>rulesResults</code>, comme pour les tags{" "}
+				<code>wcag-&lt;SC&gt;</code> ci-dessous) s’est quand même exécutée, et ses constats{" "}
+				<code>fail</code> et <code>cantTell</code> restent des résultats, au niveau{" "}
+				<code>note</code>, pour qu’ils soient visibles sans faire échouer un build limité à la
+				cible. Chacun en donne la raison dans <code>properties.outsideTarget</code> :{" "}
+				<code>{'{ "criteria": ["1.4.6"], "target": "WCAG 2.2 AA" }'}</code>.
+			</p>
 			<p>
 				Chaque règle exécutée (qu’elle ait produit un résultat ou non) est listée une fois dans{" "}
 				<code>runs[0].tool.driver.rules</code>, avec <code>defaultConfiguration.level</code>{" "}
 				défini d’après le <code>type</code> de la règle : <code>automatic</code> (peut renvoyer
 				fail) → <code>error</code>, <code>manual</code> (jamais <code>fail</code>) →{" "}
-				<code>warning</code>.
+				<code>warning</code>. Un id de règle qui n’est pas une chaîne, dans un résultat
+				enregistré, est écrit sous forme de texte ; une vérification sans id de règle ne nomme
+				aucune règle, et elle est omise, comme JUnit et EARL l’omettent.
 			</p>
 
-			<h2>Correspondance des champs</h2>
+			<h2 id="field-mapping">Correspondance des champs</h2>
 			<DataTable
 				label="Correspondance des champs SARIF"
 				rowKey="id"
@@ -189,11 +212,24 @@ export function SarifReportContent() {
 					n’est pas un fichier du dépôt : cela tient à la façon dont SARIF et <span lang="en">Code Scanning</span>{" "}
 					rattachent les résultats au code source, ce n’est pas une limite de surea11y. Si vous
 					avez besoin d’annotations en ligne, analysez le fichier HTML rendu (par exemple un
-					artefact de build) plutôt qu’une URL en direct.
+					artefact de build) plutôt qu’une URL en direct. L’URL est écrite telle qu’un analyseur
+					d’URL la sérialise : ce qu’une URI ne peut pas contenir est encodé en pourcentage (
+					<code>https://example.test/a%20b</code>).
+				</li>
+				<li>
+					<strong>Autres cibles</strong> : un résultat dont l’<code>url</code> n’est pas une URL,
+					comme le chemin sous lequel une page a été analysée (
+					<code>runDomRulesInPage('dist/my page.html', …)</code>), devient un chemin relatif, avec
+					des barres obliques et chaque segment encodé en pourcentage (
+					<code>dist/my%20page.html</code>) ; un chemin Windows devient une URL <code>file:</code>{" "}
+					absolue. Un résultat sans <code>url</code>, ou dont l’<code>url</code> n’est pas une
+					chaîne, est situé à <code>about:blank</code>.
 				</li>
 			</ul>
 			<p>
-				<code>occurrence.selector</code> est également transmis comme{" "}
+				L’emplacement de l’élément (son sélecteur, précédé des sélecteurs de ses shadow hosts et
+				de <code>{" >>> "}</code> lorsqu’il est situé dans un arbre shadow) est également
+				transmis comme{" "}
 				<code>logicalLocations[].fullyQualifiedName</code>, de sorte qu’un consommateur qui lit les
 				emplacements logiques sait tout de même « quel élément » est concerné, même sans
 				emplacement physique exploitable.
@@ -211,7 +247,15 @@ export function SarifReportContent() {
 			</p>
 			<CodeBlock
 				lang="json"
-				lines={['"properties": { "severity": "serious", "confidence": "high", "frame": ["#checkout"] }']}
+				lines={[
+					'"properties": {',
+					'  "severity": "serious",',
+					'  "confidence": "high",',
+					'  "reasonCode": "DEFAULT",',
+					'  "html": "<img src=\\"card.png\\">",',
+					'  "frame": ["#checkout"]',
+					"}",
+				]}
 			/>
 			<p>
 				Le chemin fait aussi partie de l’identité du constat (<code>partialFingerprints</code>) :
@@ -255,6 +299,22 @@ export function SarifReportContent() {
 				sépare les analyses. <code>runs[0].properties.environment</code> enregistre le viewport
 				utilisé par chaque exécution.
 			</p>
+
+			<h2>Options</h2>
+			<p>
+				<code>renderSarifReport(result, options)</code>, de <code>@surea11y/core/sarif</code>,
+				renvoie le journal sous forme de texte JSON. Elle accepte :
+			</p>
+			<DataTable
+				label="Options de renderSarifReport"
+				rowKey="id"
+				columns={[
+					{ key: "option", label: "Option", width: "22%" },
+					{ key: "def", label: "Par défaut", width: "30%", wrap: true },
+					{ key: "effect", label: "Effet", wrap: true },
+				]}
+				rows={sarifOptionRows}
+			/>
 
 			<h2>Combiner avec <code>--baseline</code></h2>
 			<p>

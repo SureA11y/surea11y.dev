@@ -126,9 +126,10 @@ export function BaselineContent() {
 			</p>
 			<p>
 				Baseline entries that don't match anything in a fresh scan are reported as{" "}
-				<strong>stale</strong> (the violation was presumably fixed) — this is informational only
-				and never gates the build; regenerate the baseline with <code>--write-baseline</code>{" "}
-				periodically to clean these up.
+				<strong>stale</strong>: the violation may have been fixed, or the element's markup
+				changed, or the scan didn't reach it (another viewport, scope or set of rules). This is
+				informational only and never gates the build; look at them, then regenerate the baseline
+				with <code>--write-baseline</code> periodically to clean them up.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Scanning at several viewport widths</h2>
@@ -153,7 +154,7 @@ export function BaselineContent() {
 				stale, so the stale count stops telling you what was fixed.
 			</p>
 
-			<h2>File format</h2>
+			<h2 id="file-format">File format</h2>
 			<CodeBlock
 				lang="json"
 				lines={[

@@ -124,24 +124,41 @@ export function JunitReportContent() {
 				<a href="https://github.com/SureA11y/cli#readme">
 					<code>@surea11y/cli</code>
 				</a>
-				. See <a href="/configuration/ci-integration/#junit-test-reports">CI integration</a> for
-				GitLab and Azure DevOps recipes.
+				. From the command line there is no need to call it:{" "}
+				<code>surea11y scan &lt;target&gt; --junit a11y.junit.xml</code> (CLI 1.1.0 or later)
+				writes the report itself, with the default options plus the <code>baselineEntries</code>{" "}
+				of its <code>--baseline</code> file. See{" "}
+				<a href="/configuration/ci-integration/#junit-test-reports">CI integration</a> for GitLab
+				and Azure DevOps recipes.
 			</p>
 
 			<h2>Shape</h2>
 			<p>
 				One <code>&lt;testsuite&gt;</code> per WCAG Success Criterion, one{" "}
-				<code>&lt;testcase&gt;</code> per rule mapped to it:
+				<code>&lt;testcase&gt;</code> per rule mapped to it. Scanning this page with the call
+				above:
 			</p>
 			<CodeBlock
 				lang="html"
 				lines={[
-					'<testsuites name="surea11y" tests="14" failures="2" errors="0" skipped="4" time="0">',
-					'  <testsuite name="WCAG 1.1.1 Non-text content: text alternatives" tests="1" failures="1" errors="0" skipped="0" time="0">',
+					"<!doctype html>",
+					'<html lang="en">',
+					"<head><title>Home</title></head>",
+					'<body><main><h1>Welcome</h1><img src="a.png"></main></body>',
+					"</html>",
+				]}
+			/>
+			<p>gives:</p>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<?xml version="1.0" encoding="UTF-8"?>',
+					'<testsuites name="surea11y" tests="13" failures="1" errors="0" skipped="5" time="0">',
+					'  <testsuite name="WCAG 1.1.1" tests="1" failures="1" errors="0" skipped="0" time="0">',
 					"    <properties>",
 					'      <property name="wcagCriterion" value="1.1.1"/>',
+					'      <property name="title" value="Non-text content: text alternatives"/>',
 					'      <property name="wcagLevel" value="A"/>',
-					'      <property name="en301549" value="9.1.1.1"/>',
 					'      <property name="criterionOutcome" value="fail"/>',
 					'      <property name="engine" value="a11ycore"/>',
 					'      <property name="schemaVersion" value="1.0.0"/>',
@@ -152,31 +169,83 @@ export function JunitReportContent() {
 					'      <property name="url" value="https://example.test/"/>',
 					"    </properties>",
 					'    <testcase classname="wcag-1.1.1" name="img-alt-present" time="0">',
-					'      <failure type="fail" message="1 failing occurrence: Missing alt attribute on &lt;img&gt;.">- Missing alt attribute on &lt;img&gt;. Add an alt attribute (use alt=&quot;&quot; only for decorative images).',
+					'      <failure type="fail" message="1 failing occurrence: This &lt;img&gt; has no alt attribute.">- This &lt;img&gt; has no alt attribute. Add an alt attribute that says what the image shows, or alt=&quot;&quot; if the image is purely decorative.',
 					"  selector: html &gt; body &gt; main &gt; img",
-					"  html: &lt;img src=&quot;a.png&quot;&gt;</failure>",
+					"  html: &lt;img src=&quot;a.png&quot;&gt;",
+					"help: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html</failure>",
 					"    </testcase>",
 					"  </testsuite>",
+					"  <!-- 10 more suites trimmed: 12 tests, 5 of them skipped (manual review) -->",
 					"</testsuites>",
 				]}
 			/>
 			<ul>
+				<li>
+					<strong>A green suite named for a criterion</strong> means the rules that ran for it
+					reported no failure. It doesn't mean the criterion was fully checked, or met: most
+					criteria have parts no rule covers (see{" "}
+					<a href="/conformance/wcag-mapping/">WCAG mapping</a>).
+				</li>
 				<li>
 					<strong>Suites follow the criterion</strong>, because that is what people track, and{" "}
 					<strong>testcases follow the rule</strong> rather than the occurrence, so a defect
 					repeated forty times on a page is one failing test whose body lists all forty, and test
 					counts stay stable between runs.
 				</li>
+				<li id="names-in-every-locale">
+					<strong>Names are the same in every locale.</strong> A suite is named{" "}
+					<code>WCAG &lt;criterion&gt;</code> (<code>WCAG 1.4.3</code>), the suite of rules mapped to
+					no criterion <code>Other checks</code>, a testcase by its rule id, and its{" "}
+					<code>classname</code> is <code>wcag-&lt;criterion&gt;</code> or <code>other</code>,
+					whatever <code>engineOptions.locale</code> the scan ran in. CI test history (GitLab,
+					Jenkins, GitHub test reporters) is keyed on these names, so a scan read in French gives the
+					same tests as one read in English. The criterion's title, which is translated, is the
+					suite's <code>title</code> property (<code>Contrast: minimum</code>,{" "}
+					<code>Contraste (minimum)</code>). The findings' own text (each occurrence's message and
+					hint) is in the scan's locale; the words the report adds around it are English in every
+					locale: the count that starts a <code>message</code> (
+					<code>1 failing occurrence: Cet élément &lt;img&gt; n’a pas d’attribut alt.</code>), the{" "}
+					<code>selector:</code>, <code>html:</code> and <code>help:</code> labels, and the{" "}
+					<code>&lt;skipped&gt;</code> messages.{" "}
+					<strong>Before core 1.12, a suite's name carried the criterion's title</strong> (
+					<code>WCAG 1.1.1 Non-text content: text alternatives</code>), so the first report after
+					upgrading shows every test once as new in a dashboard that tracked the old names, and
+					their history starts again from there.
+				</li>
 				<li>
 					Suites come from each rule's own WCAG mappings, not from the composites, so every rule
 					that ran is reported even when composites were excluded. The composite, when it ran,
-					supplies the suite's title and the <code>criterionOutcome</code> property, which counts the
+					supplies the suite's <code>title</code> property and the <code>criterionOutcome</code>{" "}
+					property, which counts the
 					custom rules mapped to the criterion as it counts the built-in ones. A criterion checked
 					by several composites (4.1.2: its accessible name and its ARIA validity) takes the worst
-					of their outcomes, and the name their titles share (<code>WCAG 4.1.2 Name, role, value</code>).
+					of their outcomes, since one part failing fails the criterion, and the title their titles
+					share (<code>Name, role, value</code>).
 					A rule mapped
 					to two criteria appears in both suites. A rule mapped to no criterion goes into a final{" "}
 					<code>Other checks</code> suite with <code>classname="other"</code>.
+				</li>
+				<li>
+					<strong>Suites follow the scan's WCAG level and version.</strong> A criterion the scan
+					left out of <code>rulesResults</code> because of them gets no suite: an AAA criterion
+					under <code>engineOptions.wcagLevel: 'AA'</code> (<code>engine.wcagLevel</code>), or 4.1.1
+					Parsing when <code>{"includeRuleIds: ['duplicate-id']"}</code> ran under WCAG 2.2 (
+					<code>engine.wcagVersion</code>), which removed it. A criterion the scan does report is
+					kept, such as a rollup named by id above the level, a{" "}
+					<a href="/results-reports/output-schema/#partly-checked">partly checked</a> one, or 4.1.1
+					in a 2.2 scan that selected it. A rule mapped only to criteria left out goes into{" "}
+					<code>Other checks</code>, and its failures are{" "}
+					<code>
+						&lt;skipped message="Not counted: WCAG 1.4.6 is outside the scan's target, WCAG 2.2
+						AA; 1 failing occurrence"&gt;
+					</code>
+					, with the occurrences in <code>&lt;system-out&gt;</code>: the rule ran and failed, which
+					the report shows, but an AA build does not fail on an AAA criterion. A rule that did not
+					complete is still an <code>&lt;error&gt;</code>. A level the selection gives (
+					<code>runOnly.wcag.level</code>, or level tags) is recorded as{" "}
+					<code>engine.wcagLevel</code> too, and gates the suites the same way. A result that
+					records neither <code>engine.wcagLevel</code> nor <code>engine.wcagVersion</code>, as an
+					older engine's, keeps every criterion.
 				</li>
 				<li>
 					The run's <code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
@@ -185,7 +254,8 @@ export function JunitReportContent() {
 						<code>engine.environment</code>
 					</a>{" "}
 					(<code>layout</code>, and in a browser <code>viewport</code> as <code>1280x720</code>,{" "}
-					<code>devicePixelRatio</code>, <code>colorScheme</code> and <code>fonts</code>),{" "}
+					<code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code> and{" "}
+					<code>fonts</code>),{" "}
 					<code>locale</code> and <code>url</code> are repeated as properties on every suite, each
 					only when the result has it. A failure that comes and goes with the viewport width can be
 					traced to the width the run used. The example above is a jsdom scan, which has no layout.
@@ -221,14 +291,16 @@ export function JunitReportContent() {
 				A cross-frame result (see{" "}
 				<a href="/results-reports/output-schema/#cross-frame-result">Output schema</a>) gives the
 				page's suites first, then each frame's, named for the frame's path (
-				<code>Frame #checkout: WCAG 1.1.1 Non-text content: text alternatives</code>) and with a{" "}
-				<code>frame</code> property holding it, so a failure in a frame is not merged with the
-				page's. A frame that did not answer is a suite <code>Frame &lt;path&gt;</code> with one
+				<code>Frame #checkout: WCAG 1.1.1</code>, the same in every locale) and with a{" "}
+				<code>frame</code> property holding it, and their testcases' <code>classname</code> starts
+				with it (<code>frame #checkout wcag-1.1.1</code>), so a failure in a frame is not merged
+				with the page's, by a CI that keys tests on suite names or on <code>classname</code> and{" "}
+				<code>name</code>. A frame that did not answer is a suite <code>Frame &lt;path&gt;</code> with one
 				skipped testcase, <code>Not scanned: &lt;error&gt;</code>: the frame was not checked, which
 				is not a pass. The totals on <code>&lt;testsuites&gt;</code> count every frame.
 			</p>
 
-			<h2>Outcomes</h2>
+			<h2 id="outcomes">Outcomes</h2>
 			<DataTable
 				label="Rule outcomes in JUnit"
 				rowKey="id"
@@ -244,6 +316,13 @@ export function JunitReportContent() {
 				failures in <code>&lt;failure&gt;</code> and the undecided ones in{" "}
 				<code>&lt;system-out&gt;</code>, where dashboards show test output. A skipped{" "}
 				<code>cantTell</code> rule does the same.
+			</p>
+			<p>
+				The <code>selector:</code> line of an element inside a shadow tree names the shadow hosts
+				first, then the element, joined with <code>{" >>> "}</code>:{" "}
+				<code>{"html > body > main > x-card >>> button"}</code>. It is the same location{" "}
+				<a href="/results-reports/sarif-report/#field-mapping">SARIF</a> and the{" "}
+				<a href="/results-reports/html-report/">HTML report</a> give.
 			</p>
 
 			<h2>Options</h2>

@@ -70,6 +70,11 @@ export function TestMatchersUsageContent() {
 				über ein aufgelöstes Promise stillschweigend besteht.
 			</p>
 			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/test-matchers", command: true }]} />
+			<p>
+				<code>@surea11y/core</code> wird mit installiert; mehr ist nicht nötig. Um
+				gebautes HTML stattdessen vom Terminal oder in einem CI-Schritt zu prüfen,
+				außerhalb eines Test-Runners, siehe <a href="/getting-started/cli/">CLI</a>.
+			</p>
 
 			<h2>Einrichtung</h2>
 			<p>
@@ -199,6 +204,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"// Ignore a third-party widget you don't control",
 					"expect(container).toHaveNoA11yViolations({ excludeSelectors: ['.intercom-launcher'] });",
+					"",
+					"// EN 301 549 V4.1.1 (WCAG 2.2 A and AA); 'en301549-v3.2.1' for V3.2.1 (WCAG 2.1 A and AA)",
+					"expect(container).toHaveNoA11yViolations({ profile: 'en301549-v4.1.1' });",
 				]}
 			/>
 
@@ -231,7 +239,25 @@ export function TestMatchersUsageContent() {
 				eine Auswahl auf die eine oder die andere Weise an, nicht auf beide. Übergeben Sie{" "}
 				<code>{"{}"}</code> oder <code>null</code> als <code>engineOptions</code>, wenn Sie nur{" "}
 				<code>runOnly</code> brauchen.
+				Regel-IDs werden ohne Rücksicht auf Groß- und Kleinschreibung gelesen
+				(<code>'IMG-ALT-PRESENT'</code>).
 			</p>
+			<p>
+				Ein Ziel bringt seine Stufe mit. Ein Test, der stattdessen Regeln oder Tags
+				benennt, kann eine mit <code>engineOptions.wcagLevel</code> setzen
+				(<code>@surea11y/core</code> 1.12.0 und neuer): die Stufe der Kriterien, die der
+				Scan meldet, ohne zu ändern, welche Regeln laufen.{" "}
+				<code>contrast-computable</code> prüft 1.4.3 (AA) und 1.4.6 (AAA), daher meldet
+				der Scan unten nur 1.4.3. Die Assertion entscheidet nach Ergebnissen mit{" "}
+				<code>fail</code>, daher ändert das die Kriterien im Ergebnis, nicht, woran der
+				Test scheitert.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"expect(container).toHaveNoA11yViolations({ wcagLevel: 'AA' }, { includeRuleIds: ['contrast-computable'] });",
+				]}
+			/>
 
 			<h2 id="packs">Mit Packs scannen</h2>
 			<p>
@@ -281,6 +307,8 @@ export function TestMatchersUsageContent() {
 				Gibt die Form <code>{"{ pass, message }"}</code> zurück, die <code>expect.extend()</code>{" "}
 				in beiden Frameworks erwartet. Sie rufen das nie direkt auf; es wird einmal über{" "}
 				<code>expect.extend()</code> eingebunden, wie oben unter Einrichtung gezeigt.
+				Das Paket exportiert außerdem <code>installInternalsHook(win?)</code>, für{" "}
+				<a href="#web-components">Web Components</a>.
 			</p>
 
 			<h2>Was geprüft wird und was nicht</h2>
@@ -301,6 +329,18 @@ export function TestMatchersUsageContent() {
 				läuft (abgetrennt oder aus einem anderen Dokument), eine eigene Regel, die nicht gelaufen
 				ist (aufgeführt in <code>skippedCustomRules</code>), oder ein Pack, das nicht gelaufen ist
 				(aufgeführt in <code>skippedPacks</code>). Die Meldung nennt jedes davon mit dem Grund.
+				Eine eigene Regel, die der Test selbst ausschließt, ist keine Lücke und lässt
+				ihn nicht scheitern.
+			</p>
+			<p>
+				<strong>Ein Aufruf ohne Auswahl führt auch die Best Practices aus.</strong> Seit{" "}
+				<code>@surea11y/core</code> 1.12 lässt eine davon, <code>empty-heading</code>,
+				eine Überschrift ohne zugänglichen Namen scheitern, wo sie früher nachfragte.
+				Eine Komponente, die <code>&lt;h2&gt;&lt;/h2&gt;</code> rendert (oft ein
+				Titel-Prop, das im Test leer bleibt), lässt daher einen Aufruf ohne Optionen
+				scheitern. Ein Screenreader kündigt diese Überschrift ohne Inhalt an: Geben Sie
+				dem Test echten Inhalt oder beheben Sie die Komponente. Ein Aufruf mit einem
+				WCAG-Ziel, das die Best Practices auslässt, führt sie nicht aus.
 			</p>
 			<p>
 				Der Scan selbst kann eine Ausnahme werfen, und der Test scheitert dann mit dem Fehler der
@@ -334,6 +374,67 @@ export function TestMatchersUsageContent() {
 				statt in jedem Test.
 			</p>
 
+			<h2 id="web-components">Web Components</h2>
+			<p>
+				Viele Web Components halten ihre <code>ElementInternals</code> in einem privaten
+				Feld und geben sich darüber einen Namen, setzen ihre Zustände oder geben sich
+				eine Rolle. Kein Skript kann das zurücklesen, daher fragt der Scan standardmäßig
+				bei einem solchen Element nach (<code>cantTell</code>), statt es zu beurteilen:
+				Der Test scheitert nicht, aber geprüft wird auch nichts, und eine so gesetzte
+				Rolle wird gar nicht gesehen.
+			</p>
+			<p>
+				<code>installInternalsHook(win?)</code> lässt den Scan sie lesen. Rufen Sie es
+				einmal in der Setup-Datei auf, bevor eine Komponente definiert wird, damit es
+				jeden Aufruf von <code>attachInternals()</code> sieht; <code>win</code> ist
+				standardmäßig das globale <code>window</code>:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// jest.setup.js",
+					"const {",
+					"  toHaveNoA11yViolations,",
+					"  installInternalsHook",
+					"} = require('@surea11y/test-matchers');",
+					"",
+					"installInternalsHook();",
+					"expect.extend({ toHaveNoA11yViolations });",
+				]}
+			/>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// vitest.setup.js",
+					"import { expect } from 'vitest';",
+					"import {",
+					"  toHaveNoA11yViolations,",
+					"  installInternalsHook",
+					"} from '@surea11y/test-matchers';",
+					"",
+					"installInternalsHook();",
+					"expect.extend({ toHaveNoA11yViolations });",
+				]}
+			/>
+			<p>
+				Damit besteht eine Komponente, die sich über ihre <code>ElementInternals</code>{" "}
+				benennt; eine, die sie anhängt, aber keinen Namen setzt, scheitert wie jedes
+				unbenannte Bedienelement; und eine, die nur über sie ein <code>switch</code>{" "}
+				ist, wird als solcher geprüft. <code>engine.environment.internalsHook</code> im
+				Scan-Ergebnis zeigt, ob der Hook da war. Er umhüllt{" "}
+				<code>HTMLElement.prototype.attachInternals</code> im Testfenster, was in einem
+				Test harmlos ist und der Grund, warum er optional ist. Zwei Grenzen gibt es
+				vorerst: <code>jest-environment-jsdom</code> 30 bringt jsdom 26 mit, wo eine
+				Komponente, die eine ARIA-Eigenschaft auf ihren <code>ElementInternals</code>{" "}
+				setzt, einen Fehler wirft, mit oder ohne Hook (Vitest mit jsdom 29 kommt damit
+				zurecht); und unter Vitest erfasst <code>@surea11y/core</code> 1.12.0 den Hook
+				als <code>'late'</code>, sodass eine Komponente, die nie{" "}
+				<code>ElementInternals</code> angehängt hat, dort eine offene Frage bleibt. Die
+				Details stehen in der{" "}
+				<a href="https://github.com/SureA11y/test-matchers#web-components-names-set-through-elementinternals">README
+				des Pakets</a>.
+			</p>
+
 			<h2>Fehlermeldungen</h2>
 			<p>
 				Listet jedes Vorkommen auf, nicht nur jede Regel (eine Regel kann mehrere Elemente
@@ -350,9 +451,15 @@ export function TestMatchersUsageContent() {
 					"   at body > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.11.1.",
+					"Scanned with @surea11y/core 1.12.0.",
 				]}
 			/>
+			<p>
+				Vor der Versionszeile kann die Meldung einen Hinweis darauf enthalten, wie der
+				Scan lief: Wenn der Scan bei Custom Elements nachgefragt hat, die er mit dem{" "}
+				<a href="#web-components">Internals-Hook</a> hätte lesen können, sagt eine
+				Zeile, wie viele es sind, und dass Sie ihn installieren sollten.
+			</p>
 			<p>
 				Alle <code>cantTell</code>-Ergebnisse neben den Fehlern werden als separater Hinweis
 				angehängt, damit sie sichtbar bleiben, ohne <code>pass</code>/<code>fail</code> zu
@@ -366,9 +473,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.11.1.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.12.0.",
 					"",
-					"Scanned with @surea11y/core 1.11.1.",
+					"Scanned with @surea11y/core 1.12.0.",
 				]}
 			/>
 

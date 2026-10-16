@@ -70,9 +70,10 @@ const topLevelRows = [
 		field: <code>engine.wcagVersion</code>,
 		meaning: (
 			<>
-				Which version of WCAG this run was conformance-tested against: your{" "}
-				<code>engineOptions.wcagVersion</code>, or what your version-origin tags implied, or the
-				default <code>"2.2"</code>. It affects one thing today — <strong>a rule mapped only to SC
+				Which version of WCAG this run checked against: your{" "}
+				<code>engineOptions.wcagVersion</code>, or the <code>wcagVersion</code> of the pack
+				profile the run applied, or what your version-origin tags implied, or the default{" "}
+				<code>"2.2"</code>. It affects one thing today — <strong>a rule mapped only to SC
 				4.1.1 Parsing cannot <code>fail</code> under a 2.2 target</strong> (see{" "}
 				<code>checksResults[i].wcagVersionScope</code> below). Reported once per result: a run has
 				one target throughout.
@@ -80,6 +81,27 @@ const topLevelRows = [
 				),
 				},
 				{
+					id: "engine.wcagLevel",
+					field: <code>engine.wcagLevel</code>,
+					meaning: (
+						<>
+							The WCAG level the reported criteria were gated by, <code>"A"</code>,{" "}
+							<code>"AA"</code> or <code>"AAA"</code>: <code>engineOptions.wcagLevel</code> when it
+							was given and valid, or else the level the selection gives (
+							<code>runOnly.wcag.level</code>, or the highest level its version/level tags name, a
+							profile's tags included). WCAG rollups above it are not in <code>rulesResults</code>,
+							though their rules ran and are in <code>checksResults</code>; a rollup the selection
+							named by id is reported whatever <code>engineOptions.wcagLevel</code> says. Absent when
+							the scan had no level, as a full scan or one that names rules only, which reports every
+							level. The reporters gate the criteria they name by it. See{" "}
+							<a href="/configuration/engine-options/#giving-the-level-of-a-scan-that-names-checks-wcaglevel">
+								Giving the level of a scan that names checks
+							</a>
+							.
+						</>
+					),
+				},
+{
 					id: "engine.profile",
 					field: <code>engine.profile</code>,
 					meaning: (
@@ -99,8 +121,10 @@ const topLevelRows = [
 					meaning: (
 						<>
 							Present only when the applied profile leaves rules out: <code>{"{ rules, criteria }"}</code>,
-							the rules it names and the WCAG criteria it leaves out. Their rules and WCAG rollups did not
-							run, which narrows the scan without changing what WCAG requires. No built-in profile leaves anything out.
+							the rules it names and the WCAG criteria it leaves out. The rules it names, the rules
+							whose every criterion it leaves out, and those criteria's WCAG rollups did not run; a
+							rule that also checks a criterion the profile keeps ran, and counts toward that
+							criterion. This narrows the scan without changing what WCAG requires. No built-in profile leaves anything out.
 						</>
 					),
 				},
@@ -175,10 +199,16 @@ const topLevelRows = [
 							, can give another outcome for the same markup at another viewport width or while web
 							fonts are still loading, so this is what you need to reproduce a run.{" "}
 							<code>layout</code> is whether the page had one: <code>false</code> in jsdom and other
-							DOM emulators, and then it is the only field. In a browser, <code>viewport</code> is{" "}
+							DOM emulators, and then the viewport and the other rendering fields are left out, since
+							they describe nothing that was measured; only <code>internalsHook</code> can sit beside
+							it, where the page runs the hook. In a browser, <code>viewport</code> is{" "}
 							<code>innerWidth</code>/<code>innerHeight</code> in CSS pixels,{" "}
 							<code>devicePixelRatio</code> the page's (browser zoom shows here too),{" "}
-							<code>colorScheme</code> what <code>prefers-color-scheme</code> matches, and{" "}
+							<code>colorScheme</code> what <code>prefers-color-scheme</code> matches,{" "}
+							<code>forcedColors</code> whether <code>forced-colors: active</code> matches (
+							<code>"active"</code> under Windows high contrast or Chromium's emulated forced colors,{" "}
+							<code>"none"</code> otherwise; the rules measure the page's own colors either way, see{" "}
+							<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}>Forced colors</a>), and{" "}
 							<code>fonts</code> is <code>"loading"</code> while any of the page's font faces is still
 							loading, <code>"loaded"</code> otherwise. A field the page can't report is left out.
 							Reading these adds no nondeterminism: like the DOM, they are input. For results you can
@@ -192,8 +222,19 @@ const topLevelRows = [
 							that repeats for ever (a marquee, a spinner) at its start, and each is put back exactly
 							where it was afterwards, so a page scanned during a fade-in gets the same result as one
 							scanned after it. The browser never paints the held state, since the scan is one
-							synchronous task. Each frame in a <a href="#cross-frame-result">cross-frame result</a>{" "}
-							carries its own.
+							synchronous task. <code>internalsHook</code> is there only where the page runs the
+							opt-in internals hook (<code>internalsHookScript()</code>, see{" "}
+							<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+								<code>INTEGRATION.md</code>
+							</a>
+							) in the scanned document, with or without a layout: <code>"early"</code> when it was
+							installed before the page's scripts and is still the page's{" "}
+							<code>attachInternals</code>, so the scan read every custom element's{" "}
+							<code>ElementInternals</code> and an element with none is no question;{" "}
+							<code>"late"</code> when it was installed after them, or the page replaced{" "}
+							<code>attachInternals</code> after it, so only internals attached after it were read.
+							Without a hook the field is absent and the result is as before. Each frame in a{" "}
+							<a href="#cross-frame-result">cross-frame result</a> carries its own.
 						</>
 					),
 				},
@@ -267,8 +308,11 @@ const topLevelRows = [
 				<a href="#composite-result">A composite result</a> and{" "}
 				<a href="/conformance/wcag-mapping/">Conformance</a>. Normally one per WCAG Success
 				Criterion; a run under the profile of a standard with rollups of its own also gets those (
-				<code>meta.standard</code> set). Empty array if no composite matched the current{" "}
-				<code>runOnly</code>/tag filter.
+				<code>meta.standard</code> set). It holds the rollups the selection selects, and the
+				rollups of the criteria checked by a rule the selection named on its own (by id, say),
+				which may be <a href="#partly-checked">partly checked</a> (see{" "}
+				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Which criteria a scan reports</a>
+				). Empty array when neither gives any.
 			</>
 		),
 	},
@@ -329,9 +373,13 @@ const topLevelRows = [
 						source, a <code>meta</code> that fails validation, an id another custom rule already has,
 						or a composite rule's id; or a valid rule the run's selection does not select (under a
 						profile or a WCAG target, a rule tagged <code>best-practice</code> or with no WCAG tag),
-						whose <code>reason</code> says how to select it. Always an array; empty when every
-						custom rule ran. Each is also
-						logged with <code>console.warn</code>. A rule listed here is in no result, so a scan that
+						whose <code>reason</code> says how to select it; or a rule the selection's excludes leave
+						out (<code>excludeRuleIds</code>, <code>excludeTestIds</code>, <code>excludeTags</code>,{" "}
+						<code>rules.exclude</code>…), whose <code>reason</code> is{" "}
+						<code>excluded by the selection.</code> and which also has <code>excluded: true</code>, so
+						a tool can tell the caller's choice from a gap without reading the reason. Always an
+						array; empty when every custom rule ran. Each is also logged with{" "}
+						<code>console.warn</code>, except an excluded rule, which the caller asked to leave out. A rule listed here is in no result, so a scan that
 						leaves one out can be told apart from one where it passed.
 					</>
 				),
@@ -373,7 +421,11 @@ const occurrenceRows = [
 						<code>document.querySelector(s[0]).shadowRoot.querySelector(s[1])…shadowRoot.querySelector(selector)</code>{" "}
 						finds the element. Two components with the same content give the same{" "}
 						<code>selector</code> and differ here. Like <code>selector</code>, it is not part of a
-						finding's identity.
+						finding's identity. The <a href="/results-reports/html-report/">HTML report</a>,{" "}
+						<a href="/results-reports/sarif-report/">SARIF</a> (<code>logicalLocations</code>),{" "}
+						<a href="/results-reports/junit-report/">JUnit</a> and baseline entries show the two as
+						one location, the hosts and then the selector joined with <code>{" >>> "}</code> (
+						<code>{"#card >>> img"}</code>).
 					</>
 				),
 				},
@@ -468,7 +520,10 @@ const occurrenceRows = [
 				<code>fail</code>-tier occurrence makes it <code>fail</code>, and a <code>fail</code> whose
 				occurrences are all <code>cantTell</code>-tier is <code>cantTell</code>, so SARIF, JUnit,
 				EARL and baselines give one answer. The engine settles a custom or pack rule that returns
-				them at odds; under the default policy, a manual rule is never <code>fail</code>.
+				them at odds; under the default policy, a manual rule is never <code>fail</code>. The
+				reporters read a result stored before the engine did this by the same rule, under the
+				policy its <code>engineOptions</code> record, and roll its WCAG rollups up again from what
+				they read.
 			</>
 		),
 	},
@@ -482,6 +537,16 @@ const uncertaintyRows = [
 	{ id: "equivalence-unknown", code: <code>equivalence-unknown</code>, meaning: "Two things may or may not serve the same purpose, and neither the markup nor the content settles it.", shape: "Two frames sharing an accessible name but embedding different resources." },
 	{ id: "judgement-required", code: <code>judgement-required</code>, meaning: "The question is inherently a human call.", shape: "Whether an undersized target is essential; every type: \"manual\" rule." },
 	{ id: "out-of-scope", code: <code>out-of-scope</code>, meaning: "The finding is real but falls outside the standard this run targets.", shape: "A rule mapped only to a criterion the target WCAG version removed." },
+];
+
+const rollupReasonRows = [
+	{ id: "anyFail", code: <code>composite.rollup.fail.anyFail</code>, outcome: <code>fail</code>, when: "A contributor failed." },
+	{ id: "anyCantTell", code: <code>composite.rollup.cantTell.anyCantTell</code>, outcome: <code>cantTell</code>, when: <>None failed, and one is <code>cantTell</code>.</> },
+	{ id: "notSelectedChild", code: <code>composite.rollup.cantTell.notSelectedChild</code>, outcome: <code>cantTell</code>, when: <>None failed or is <code>cantTell</code>, and some didn't run because the scan didn't select them: partly checked.</> },
+	{ id: "missingChild", code: <code>composite.rollup.cantTell.missingChild</code>, outcome: <code>cantTell</code>, when: <>None failed or is <code>cantTell</code>, and some didn't run for another reason.</> },
+	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>Every contributor is <code>notApplicable</code>.</> },
+	{ id: "emptyComposite", code: <code>composite.rollup.cantTell.emptyComposite</code>, outcome: <code>cantTell</code>, when: "The rollup has no rules." },
+	{ id: "otherwise", code: <code>composite.rollup.pass.otherwise</code>, outcome: <code>pass</code>, when: "Otherwise." },
 ];
 
 const outcomeRows = [
@@ -514,7 +579,8 @@ export function OutputSchemaContent() {
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
-					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+					'    wcagLevel?: "A" | "AA" | "AAA",',
+'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
 					"    optInRules?: string[],",
@@ -525,9 +591,11 @@ export function OutputSchemaContent() {
 					"      viewport?: { width: number, height: number },  // CSS px",
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
+					'      forcedColors?: "active" | "none",',
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
-					"      animationsSettled?: number",
+					"      animationsSettled?: number,",
+					'      internalsHook?: "early" | "late"  // only where the page runs the internals hook',
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -540,7 +608,7 @@ export function OutputSchemaContent() {
 					"  rulesResults: CompositeResult[],",
 					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
-					"  skippedCustomRules: Array<{ id: string | null, reason: string }>,",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
 					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
 					"}",
 				]}
@@ -736,7 +804,8 @@ export function OutputSchemaContent() {
 					</li>
 					<li>
 						<strong><code>rollupIds</code></strong> lists the composites in{" "}
-						<code>rulesResults</code> that group this rule in this run. An empty list means the
+						<code>rulesResults</code> that group this rule in this run, those reported because the
+						selection named the rule on its own included. An empty list means the
 						rule's findings appear in no rollup, so a consumer that reads only{" "}
 						<code>rulesResults</code> never sees them; <code>heading-order</code>, for instance,
 						belongs to no WCAG rollup.
@@ -940,7 +1009,7 @@ export function OutputSchemaContent() {
 					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
 					"      customChecksIds?: string[], // the custom rules among them; absent when none",
-					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true }>,",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -964,6 +1033,32 @@ export function OutputSchemaContent() {
 				contributors and listed in <code>customChecksIds</code>, so a reader sees when a custom
 				rule decided the outcome. A standard's own rollups keep their lists.
 			</p>
+			<p id="partly-checked">
+				<strong>A partly checked criterion.</strong> A scan that names rules rather than
+				criteria (<code>{"includeRuleIds: ['link-name-present']"}</code>) also gets the rollups of
+				the criteria those rules check, when the selection doesn't select them itself (see{" "}
+				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Which criteria a scan reports</a>
+				). The precedence above decides them as any other, so a failing rule fails the criterion,
+				and rules the scan didn't select keep it from passing. Each of those is a contributor with{" "}
+				<code>outcome: "missing"</code> and <code>notSelected: true</code>, counted in{" "}
+				<code>missingCount</code> as before. When they are what makes the rollup{" "}
+				<code>cantTell</code>, its <code>reasonCode</code> is{" "}
+				<code>composite.rollup.cantTell.notSelectedChild</code>, and the{" "}
+				<a href="/results-reports/html-report/">HTML report</a> says “Partly checked: 1 of 2 checks was not selected for this scan”.{" "}
+				<code>composite.rollup.cantTell.missingChild</code> keeps meaning a rule that didn't run
+				for another reason, such as one the profile excludes (<code>engine.profileExcludes</code>),
+				which is never marked <code>notSelected</code>.
+			</p>
+			<DataTable
+				label="Rollup reason codes"
+				rowKey="id"
+				columns={[
+					{ key: "code", label: "reasonCode", width: "40%" },
+					{ key: "outcome", label: "Outcome", width: "16%" },
+					{ key: "when", label: "When", wrap: true },
+				]}
+				rows={rollupReasonRows}
+			/>
 
 			<h2>Outcome values</h2>
 			<DataTable
@@ -1092,8 +1187,42 @@ export function OutputSchemaContent() {
 					"      ]",
 					"    }",
 					"  ],",
-					'  "rulesResults": [],',
-					'  "overriddenBuiltinIds": [],',
+					'  "rulesResults": [',
+					"    {",
+					'      "ruleId": "wcag-1.1.1-non-text-content",',
+					'      "outcome": "fail",',
+					'      "severity": "serious",',
+					'      "title": "Non-text content: text alternatives",',
+					'      "occurrences": [],',
+					'      "data": {',
+					'        "details": {',
+					'          "reasonCode": "composite.rollup.fail.anyFail",',
+					'          "checksIds": ["area-alt-present", "img-alt-decorative", "img-alt-quality", "..."],',
+					'          "contributors": [',
+					'            { "testId": "area-alt-present", "outcome": "missing", "notSelected": true },',
+					'            "...",',
+					'            { "testId": "img-alt-present", "outcome": "fail", "severity": "serious" },',
+					'            "..."',
+					"          ],",
+					'          "metrics": { "failCount": 1, "cantTellCount": 0, "notApplicableCount": 0, "passCount": 0, "missingCount": 20 }',
+					"        }",
+					"      }",
+					"    },",
+					"    {",
+					'      "ruleId": "wcag-4.1.2-name",',
+					'      "outcome": "fail",',
+					'      "severity": "serious",',
+					'      "title": "Name, role, value: accessible name",',
+					'      "occurrences": [],',
+					'      "data": {',
+					'        "details": {',
+					'          "reasonCode": "composite.rollup.fail.anyFail",',
+					'          "metrics": { "failCount": 1, "cantTellCount": 0, "notApplicableCount": 0, "passCount": 0, "missingCount": 23 }',
+					"        }",
+					"      }",
+					"    }",
+					"  ],",
+'  "overriddenBuiltinIds": [],',
 					'  "skippedCustomRules": []',
 					"}",
 				]}
@@ -1102,9 +1231,14 @@ export function OutputSchemaContent() {
 				(Trimmed for readability — the real result also includes{" "}
 				<code>title</code>/<code>description</code>/<code>i18n</code>/<code>meta</code>/
 				<code>engineOptions</code>/<code>schemaVersion</code> on every entry, per the full shape
-				above. <code>rulesResults</code> is empty here because{" "}
-				<code>runOnly.includeRuleIds</code> scoped the scan to two atomic rules and no composite's
-				own ID was included.)
+				above, and every contributor of each rollup. <code>rulesResults</code> holds the criteria
+				the two named rules check: 1.1.1 for <code>img-alt-present</code> and 4.1.2 for{" "}
+				<code>button-name-present</code>, each <code>fail</code> because its rule failed. The other
+				rules of those criteria weren't selected, so they are <code>missing</code> with{" "}
+				<code>notSelected: true</code>; with no failing rule, the criteria would be{" "}
+				<code>cantTell</code> (<code>notSelectedChild</code>),{" "}
+				<a href="#partly-checked">partly checked</a>. Each check result's{" "}
+				<code>rollupIds</code> names its rollup.)
 			</p>
 		</>
 	);

@@ -59,8 +59,9 @@ export function ResultsReportsContent() {
 				SARIF con una huella estable basada en contenido, así que un{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a> sigue filtrando con
 				limpieza y un panel puede seguir un hallazgo a través de commits en lugar de perderlo cada
-				vez que cambia un número de línea. Ver{" "}
-				<a href="/results-reports/sarif-report/">Informe SARIF</a>.
+				vez que cambia un número de línea. Un registro sin resultados significa que nada falló ni
+				necesita revisión entre las comprobaciones que se ejecutaron; no es una declaración de
+				conformidad. Ver <a href="/results-reports/sarif-report/">Informe SARIF</a>.
 			</p>
 
 			<h2>Informe JUnit</h2>
@@ -70,7 +71,11 @@ export function ResultsReportsContent() {
 				tus pruebas unitarias. Cada criterio de WCAG es una suite y cada regla una prueba, así que
 				un defecto repetido en una página es una sola prueba fallida y los recuentos se mantienen
 				estables entre ejecuciones. <code>cantTell</code> llega como prueba omitida, visible sin
-				poner la compilación en rojo. Ver <a href="/results-reports/junit-report/">Informe JUnit</a>.
+				poner la compilación en rojo. Los nombres de las suites son los mismos en todos los
+				idiomas, así que el historial de pruebas no se reinicia cuando cambia el idioma del
+				análisis. Una suite en verde significa que las reglas que se ejecutaron para un criterio
+				no encontraron nada, no que el criterio se cumpla. Ver{" "}
+				<a href="/results-reports/junit-report/">Informe JUnit</a>.
 			</p>
 
 			<h2>Informe EARL</h2>

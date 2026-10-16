@@ -7,6 +7,46 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
+				<h2 id="results-changed-1-12">「core 1.12にアップグレードしたら、CIの結果が変わった」</h2>
+				<p>
+					エンジンが見つけるものはほとんど変わっていません。変わったのは、それがどこに表れるかと、いくつかのルールです。パイプラインに表れやすい変更は次のとおりです。
+				</p>
+				<ul>
+					<li>
+						<strong>空の見出しが不合格になります。</strong>
+						<a href="/rules/empty-heading/"><code>empty-heading</code></a>は、アクセシブルな名前のない見出しについて、確認を求める代わりに不合格にします。ベストプラクティスなので、何も選択しないスキャンや、ベストプラクティスを追加したスキャンで実行され、WCAGの目標、タグ、プロファイルのもとでは実行されません。見出しを直すか、WCAGの目標でスキャンしてください。
+					</li>
+					<li>
+						<strong><a href="/rules/label-in-name/"><code>label-in-name</code></a>は、<code>aria-hidden</code>だけで隠したテキストも数えます。</strong>
+						そうしたテキストも描画はされているからです。「<span lang="en">Download specification</span>」という名前の<code>{'Download <span aria-hidden="true">gizmo</span> specification'}</code>は、2.5.3で不合格になるようになりました。
+					</li>
+					<li>
+						<strong>チェックを指定したスキャンも、その達成基準を報告します。</strong>
+						ルールID、WCAGのレベルを示さないタグ、ベストプラクティスを指定したスキャンは、これまで空だった<code>rulesResults</code>に、それらのルールが属する達成基準を入れるようになりました。ほかのルールが選ばれていない達成基準は<code>cantTell</code>、つまり一部だけチェックしたものになります。それらをあるレベルまでに絞るには、<code>engineOptions.wcagLevel</code>（バインディングでは<code>.wcagLevel()</code>、CLIでは<code>--wcag-level</code>）を設定してください。<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。
+					</li>
+					<li>
+						<strong>5つのルールが、より多くの達成基準に算入されます。</strong>
+						W3CのACTルールの対応付けに合わせたものです。<code>input-image-alt-present</code>は4.1.2、<code>aria-roles-valid</code>は1.3.1、<code>link-name-present</code>と<code>link-name-quality</code>は2.4.9（AAA）、<code>meta-refresh-timing-absent</code>は2.2.4と3.2.5（AAA）が加わります。検出結果は変わりませんが、1.3.1と4.1.2の集約が、これまで合格だったところで不合格になることがあります。
+					</li>
+					<li>
+						<strong>JUnitのスイート名がどのロケールでも同じになります</strong>
+						（<code>WCAG 4.1.2</code>）。タイトルはスイートの<code>title</code>プロパティに移ります。スイート名でテストを追跡しているダッシュボードでは、それらが一度だけ新しいテストとして表示されます。<a href="/results-reports/junit-report/">JUnitレポート</a>を参照してください。
+					</li>
+					<li>
+						<strong>コントラストは、ページが描画されるとおりに計測されます。</strong>
+						ブラウザーでは、背景のないページ上のテキスト、生成されたテキスト（<code>::before</code>、<code>::after</code>、<code>::marker</code>）、閉じた<code>&lt;select&gt;</code>が、これまで対象外か<code>cantTell</code>だったところで計測されるため、新たにコントラストの不合格が出ることがあります。コントロールの名前の代わりになっている1文字（「<span lang="en">Close</span>」という名前のボタンの「X」など）は、比率を下回っても不合格にせず、確認を求めます。
+					</li>
+					<li>
+						<strong>名前のないWebコンポーネントは確認の対象になります。</strong>
+						読み取れる名前のない定義済みのカスタム要素は、これまで不合格だったところで<code>cantTell</code>になります。<a href="#web-component-canttell">Webコンポーネントの項目</a>を参照してください。
+					</li>
+				</ul>
+				<p>
+					変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
+				</p>
+			</article>
+
+			<article>
 				<h2 id="runonly-threw">
 					「<code>runOnly</code>がエラーを投げた：<span lang="en">no rule or tag named …</span>、または<span lang="en">either rule ids or tags</span>」
 				</h2>
@@ -16,7 +56,7 @@ export function FaqContent() {
 				<ul>
 					<li>
 						<strong>どのルールもタグも指していない値</strong>
-						。たいていはタイプミスです（<code>runOnly: ['img-alt-presnt']</code>）。IDを<code>getChecksCatalog()</code>と照らし合わせてください。
+						。たいていはタイプミスです（<code>runOnly: ['img-alt-presnt']</code>）。IDを<code>getChecksCatalog()</code>と照らし合わせてください。大文字小文字は原因になりません。ルールIDとタグは大文字小文字を問わず照合されるので、<code>IMG-ALT-PRESENT</code>は<code>img-alt-present</code>を選択します。
 					</li>
 					<li>
 						<strong>1つの配列にルールIDとタグが混在している場合</strong>
@@ -36,6 +76,34 @@ export function FaqContent() {
 				<p>1.10.0より前は、配列そのものを渡すと無視され、すべてのルールが実行されていました。</p>
 				<p>
 					オブジェクト形式（<code>{"{ includeRuleIds }"}</code>、<code>{"{ tags }"}</code>、<code>{"{ type: 'tag', values }"}</code>）や、<code>engineOptions.rules.include</code>／<code>.tags.include</code>も、リスト内のどの値もルールやタグを指していない場合は、<code>code: 'INVALID_RUN_ONLY'</code>付きでエラーを投げます（<code>runOnly.tags: no tag named "wcag2.2aa".</code>）。以前はルールが1つも実行されず、問題のない合格のように見えていました。既知の値と並んだ未知の値が1つだけの場合や、除外リスト内の未知の値は、<code>console.warn</code>を出力するだけです。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="tags-and-rules-run-nothing">
+					「タグとルールIDを選んだら、スキャンがルールを1つも実行しなかったのに問題のない結果に見える」
+				</h2>
+				<p>
+					デフォルトの<code>includeMode: 'and'</code>のもとでは、タグとルールIDの両方を含む選択は、両方に一致するルールだけを実行します。<code>region</code>は<code>wcag2a</code>タグを持たないベストプラクティスなので、<code>.withTags('wcag2a').withRules('region')</code>は何も実行せず、ルールを1つも実行しないスキャンには不合格がありません。エンジンはページのコンソールに警告を出しますが、テストの実行ではそれは表示されません。<code>INVALID_RUN_ONLY</code>を投げるのは<code>strictOptions</code>のもとでだけです。どちらかに一致するものを実行するには、そう指定します。バインディングでは<code>.includeMode('or')</code>、<code>runOnly</code>では<code>includeMode: 'or'</code>（上記）、<a href="/getting-started/cli/">CLI</a>では<code>--include-mode or</code>です。バージョン1.3.0以降のCLIは、2つに共通するルールがない場合、そのヒントを示して終了コード<code>2</code>で終了します。
+				</p>
+				<p>
+					何も選ばない選択を実行前に見つけるには、ビルダーの<code>plannedChecks()</code>を確認してください。スキャンが実行するルールを、ページなしで求めます（Cypressではchainableを返します）。
+				</p>
+				<CodeBlock
+					lang="js"
+					lines={[
+						"const builder = new A11yCoreBuilder({ page })",
+						"  .withTags('wcag2a')",
+						"  .withRules('region')",
+						"  .includeMode('or'); // the wcag2a rules, plus region",
+						"",
+						"if (builder.plannedChecks().length === 0) {",
+						"  throw new Error('This selection runs no rule.');",
+						"}",
+					]}
+				/>
+				<p>
+					選択の各部分がどう組み合わさるかは、<a href="/configuration/engine-options/#via-runonly-4th-argument">エンジンオプション</a>を参照してください。
 				</p>
 			</article>
 
@@ -85,7 +153,7 @@ export function FaqContent() {
 				<ul>
 					<li>
 						<strong>すべてが<code>notApplicable</code>になる</strong>
-						：<code>result.contextMatch</code>を確認してください。<code>elementCount: 0</code>はセレクターが何にも一致しなかったことを意味し、<code>unmatchedSelectors</code>にそのセレクターが示されます。タイプミスがないか、またスキャンの時点でその要素がもうページ上にあるか（読み込み後にスクリプトが描画するコンテンツなど）を確認してください。
+						：<code>result.contextMatch</code>を確認してください。<code>elementCount: 0</code>はセレクターが何にも一致せず、何もスキャンされなかったことを意味します。これは問題のない結果ではありません。<code>unmatchedSelectors</code>にそのセレクターが示されます。タイプミスがないか、またスキャンの時点でその要素がもうページ上にあるか（読み込み後にスクリプトが描画するコンテンツなど）を確認してください。
 					</li>
 					<li>
 						<strong><code>code: 'INVALID_CONTEXT_SELECTOR'</code>付きでスキャンがエラーを投げた</strong>
@@ -173,6 +241,18 @@ export function FaqContent() {
 			</article>
 
 			<article>
+				<h2 id="web-component-canttell">
+					「Webコンポーネントが<code>cantTell</code>（<code>name_internals</code>）になる」
+				</h2>
+				<p>
+					プライベートフィールド（<code>#internals</code>）に保持した<code>ElementInternals</code>を通じて、自分に名前を付けたり、状態を設定したり、ロールを与えたりするカスタム要素は、ブラウザーによって公開されますが、ページのスクリプトはそれを読み戻せません。1.12以降、エンジンはプロパティ（<code>_internals</code>、<code>internals</code>など）に保持されたinternalsを読み取り、読み取れる名前や必須の状態がないほかの定義済みカスタム要素については、不合格にする代わりに確認を求めます（<code>name_internals</code>、<code>state_internals</code>）。
+				</p>
+				<p>
+					そうした要素をスキャンで判定できるようにするには、ページのスクリプトが動く前にinternalsフックをインストールしてください。各バインディングの<code>installInternalsHook()</code>（<a href="/getting-started/playwright/">Playwright</a>ではページかコンテキスト、<a href="/getting-started/puppeteer/">Puppeteer</a>ではページ、<a href="/getting-started/selenium/">Selenium</a>ではドライバー、<a href="/getting-started/webdriverio/">WebdriverIO</a>ではブラウザー、<a href="/getting-started/cypress/">Cypress</a>ではサポートファイルか<code>onBeforeLoad</code>で呼び出します）、<a href="/getting-started/test-matchers/">test-matchers</a>のセットアップファイル、自分で用意したページならcoreの<code>internalsHookScript()</code>を使います。フックが動いたかどうかは、結果の<code>engine.environment.internalsHook</code>（<code>'early'</code>または<code>'late'</code>）でわかります。フックがあると、ページ上のどのスクリプトもすべてのコンポーネントのinternalsを読めるため、テストと監査のための実行に限って使うものです。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
+				</p>
+			</article>
+
+			<article>
 				<h2>
 					「
 					<code>fail</code>
@@ -188,11 +268,15 @@ export function FaqContent() {
 					</strong>
 					ルール全体の
 					<code>outcome: 'pass'</code>
-					は「適用対象が存在し、どれも指摘されなかった」ことを意味しますが、どちらの場合も
+					は「適用対象が存在し、どれも指摘されなかった」ことを意味し、
 					<code>occurrences</code>
 					は
 					<code>[]</code>
-					です。具体的にどの要素がチェックされて問題なしとされたのかを知りたい場合、その情報は現在公開されていません。
+					です。例外はコントラストのルールで、その
+					<code>pass</code>
+					には、要素ではなくスキャンについて説明する（対象となり計算できたテキストがどれだけあったか）、
+					<code>selector</code>
+					が空の出現箇所が1つ付きます。具体的にどの要素がチェックされて問題なしとされたのかを知りたい場合、その情報は現在公開されていません。
 					<a href="/results-reports/output-schema/"><code>OUTPUT_SCHEMA.md</code></a>
 					を参照してください。
 				</p>
@@ -251,11 +335,9 @@ export function FaqContent() {
 					を参照してください。
 					<strong>
 						<code>pass</code>
-						が意味するのは、
-						<em>自動化できる</em>
-						チェックがすべて問題なしだったということです。
+						が意味するのは、実行されたチェックが、スキャンしたページの範囲で問題なしだったということです。
 					</strong>
-					WCAGのかなりの部分は、人の判断（正確な代替テキスト、理解しやすいエラーメッセージ）や、このエンジンの設計ではまったく行えない動的なテスト（キーボードトラップ、ズーム時のリフロー）を必要とします。明示的な、意図的に網羅を目指していない一覧は
+					ページの一部に絞ったスキャン、一部のルールに限ったスキャン、jsdomで実行したスキャンは、チェックできる範囲が狭くなります。WCAGのかなりの部分は、人の判断（正確な代替テキスト、理解しやすいエラーメッセージ）や、このエンジンの設計ではまったく行えない動的なテスト（キーボードトラップ、ズーム時のリフロー）を必要とします。明示的な、意図的に網羅を目指していない一覧は
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>
 					を参照してください。
 				</p>
@@ -265,9 +347,9 @@ export function FaqContent() {
 				<h2>「<code>cantTell</code>は失敗として扱うべきか」</h2>
 				<p>
 					<strong>「人が確認する必要がある」として扱ってください。設計上、合格でも不合格でもありません。</strong>
-					多くのチームは
+					よくある選択は、
 					<code>cantTell</code>
-					の検出結果を記録するだけで、CIを失敗させることはしません。エンジンが判定できないと明言したものでビルドを失敗させると、みんながゲートを無視するようになりがちだからです。この動作を変えたい場合（カスタムポリシーの契約を使うなど）は
+					の検出結果を記録するだけで、CIを失敗させないことです。エンジンが判定できないと明言したものでビルドを失敗させると、みんながゲートを無視するようになりがちだからです。マージ前にすべてをレビューしたいチームは、それでゲートを設けることもできます。どちらの場合も、不合格とは分けて扱ってください。この動作を変えたい場合（カスタムポリシーの契約を使うなど）は
 					<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>
 					を、CIゲートの具体例は
 					<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>

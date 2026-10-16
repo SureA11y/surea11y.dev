@@ -115,6 +115,17 @@ export function WcagMappingContent() {
 				counts where its own mapping says: in its built-in's place when it maps to that criterion,
 				nowhere when it maps to none (with a warning).
 			</p>
+			<p>
+				A scan that names rules rather than criteria (<code>{"includeRuleIds: ['link-name-present']"}</code>,
+				a tag that names no WCAG level, the best practices) gets the composites of the criteria
+				those rules check too (see <a href="/configuration/engine-options/#which-criteria-a-scan-reports">Engine options</a>).
+				Before 1.12 such a scan reported none. The table above decides them: a failing rule fails
+				the criterion, and the rules the scan didn't select are contributors that didn't run, so
+				the criterion is at best <code>cantTell</code>, partly checked (<code>reasonCode</code>{" "}
+				<code>composite.rollup.cantTell.notSelectedChild</code>, each such contributor marked{" "}
+				<code>notSelected: true</code>; "Partly checked" in the{" "}
+				<a href="/results-reports/html-report/">HTML report</a>).
+			</p>
 
 			<h2>Targeting a conformance level (A / AA / AAA)</h2>
 			<p>Name the WCAG version and level in <code>runOnly.wcag</code>:</p>
@@ -174,8 +185,9 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				<strong>The removed criterion is handled for you.</strong> Every run resolves a target
-				WCAG version (<code>engineOptions.wcagVersion</code>, else the version of{" "}
-				<code>runOnly.wcag</code>, else whatever your version tags imply, else <code>2.2</code>) and reports it back as <code>engine.wcagVersion</code>.
+				WCAG version (<code>engineOptions.wcagVersion</code>, else the <code>wcagVersion</code>{" "}
+				of the <a href="/configuration/packs/">pack</a> profile the run applies, else the version
+				of <code>runOnly.wcag</code>, else whatever your version tags imply, else <code>2.2</code>) and reports it back as <code>engine.wcagVersion</code>.
 				Under a 2.2 target, a rule mapped only to SC 4.1.1 Parsing cannot report <code>fail</code>{" "}
 				— it runs, reports its occurrences, and comes back <code>cantTell</code> with a{" "}
 				<code>wcagVersionScope</code> field explaining the coercion. So a default scan never
@@ -183,10 +195,16 @@ export function WcagMappingContent() {
 				4.1.1 verdict.
 			</p>
 			<p>
-				Composites, unlike atomic rules, <em>are</em> filtered cumulatively. The runner reads the level
-				of <code>runOnly.wcag</code>, or the highest level named in <code>tags</code>, and drops every composite above it, so
+				Composites, unlike atomic rules, <em>are</em> filtered cumulatively. The runner reads{" "}
+				<code>engineOptions.wcagLevel</code>, else the level of <code>runOnly.wcag</code>, or the
+				highest level named in <code>tags</code>, and drops every composite above it, so
 				requesting <code>{"['wcag2a', 'wcag2aa']"}</code> returns no <code>rulesResults</code>{" "}
-				entry for an AAA-only SC. That is <code>inferTargetLevelFromRunOnly</code>/
+				entry for an AAA-only SC. <code>wcagLevel</code> (<code>'A'</code>, <code>'AA'</code> or{" "}
+				<code>'AAA'</code>) is the one to set on a scan that names checks rather than a target:
+				every selected rule still runs, and only the criteria it reports are kept to that level,
+				so a scan of <code>contrast-computable</code> at <code>'AA'</code> reports 1.4.3 and not
+				the AAA 1.4.6. The run records it as <code>engine.wcagLevel</code>. That is{" "}
+				<code>targetWcagLevelOf</code>/
 				<code>isAllowedByTargetLevel</code> in <code>src/core/dom-runner.js</code> if you need
 				the exact precedence.
 			</p>
@@ -301,7 +319,10 @@ export function WcagMappingContent() {
 					unlocked rule runs only when its tags match that profile, and the run still targets WCAG.
 					So among core's
 					rules, a scan with a WCAG target runs only those for the target's criteria, plus the
-					best-practice rules if you add them. A custom rule, an override or a pack rule without an
+					best-practice rules if you add them. A best-practice rule names no criterion, and can still
+					report <code>fail</code> where what it finds is itself a barrier, such as an empty heading
+					(<a href="/rules/empty-heading/"><code>empty-heading</code></a>); no WCAG composite counts
+					it. A custom rule, an override or a pack rule without an
 					opt-in tag runs when the selection includes it, and can then report a <code>fail</code>{" "}
 					for a check of its own that WCAG doesn't require.
 				</li>

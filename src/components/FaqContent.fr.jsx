@@ -7,6 +7,80 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
+				<h2 id="results-changed-1-12">« Mes résultats de CI ont changé après la mise à jour vers core 1.12 »</h2>
+				<p>
+					Ce que le moteur trouve reste pour l’essentiel le même ; c’est l’endroit où cela apparaît,
+					et quelques règles, qui ont changé. Les changements les plus susceptibles de se voir dans
+					un pipeline :
+				</p>
+				<ul>
+					<li>
+						<strong>Un titre vide échoue.</strong>{" "}
+						<a href="/rules/empty-heading/"><code>empty-heading</code></a> fait échouer un titre
+						sans nom accessible, là où elle posait la question. C’est une bonne pratique : elle
+						s’exécute donc dans une analyse sans sélection ou avec les bonnes pratiques ajoutées,
+						pas sous une cible WCAG, des tags ou un profil. Corrigez le titre, ou analysez une
+						cible WCAG.
+					</li>
+					<li>
+						<strong>
+							<a href="/rules/label-in-name/"><code>label-in-name</code></a> compte le texte masqué
+							seulement par <code>aria-hidden</code>
+						</strong>
+						, puisqu’il reste affiché :{" "}
+						<code>{'Download <span aria-hidden="true">gizmo</span> specification'}</code> nommé
+						« Download specification » échoue désormais au 2.5.3.
+					</li>
+					<li>
+						<strong>Les analyses qui nomment des vérifications rapportent leurs critères.</strong>{" "}
+						Des identifiants de règles, un tag qui ne désigne aucun niveau WCAG ou les bonnes
+						pratiques remplissent désormais <code>rulesResults</code> avec les critères auxquels
+						ces règles appartiennent, là où il était vide ; un critère dont les autres règles
+						n’ont pas été sélectionnées est <code>cantTell</code>, vérifié en partie. Définissez{" "}
+						<code>engineOptions.wcagLevel</code> (<code>.wcagLevel()</code> dans les bindings,{" "}
+						<code>--wcag-level</code> dans la CLI) pour les limiter à un niveau. Voir{" "}
+						<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>.
+					</li>
+					<li>
+						<strong>Cinq règles comptent pour davantage de critères</strong>, selon la
+						correspondance des règles ACT du W3C : <code>input-image-alt-present</code> ajoute le
+						4.1.2, <code>aria-roles-valid</code> le 1.3.1, <code>link-name-present</code> et{" "}
+						<code>link-name-quality</code> le 2.4.9 (AAA), et{" "}
+						<code>meta-refresh-timing-absent</code> les 2.2.4 et 3.2.5 (AAA). Les constats ne
+						changent pas, mais les agrégats 1.3.1 et 4.1.2 peuvent désormais échouer là où ils
+						réussissaient.
+					</li>
+					<li>
+						<strong>Les noms des suites JUnit sont les mêmes dans toutes les langues</strong> (
+						<code>WCAG 4.1.2</code>), et le titre passe dans la propriété <code>title</code> de la
+						suite. Un tableau de bord qui suit les tests par nom de suite les affiche une fois comme
+						nouveaux. Voir <a href="/results-reports/junit-report/">Rapport JUnit</a>.
+					</li>
+					<li>
+						<strong>Le contraste est mesuré tel que la page est dessinée.</strong> Dans un
+						navigateur, le texte d’une page sans arrière-plan, le texte généré (<code>::before</code>,{" "}
+						<code>::after</code>, <code>::marker</code>) et un <code>&lt;select&gt;</code> fermé sont
+						mesurés, là où ils étaient laissés de côté ou en <code>cantTell</code> : de nouveaux
+						échecs de contraste peuvent donc apparaître. Un caractère isolé qui tient lieu de nom à
+						son contrôle, comme « X » dans un bouton nommé « Close », fait l’objet d’une question
+						plutôt que d’un échec sous le rapport.
+					</li>
+					<li>
+						<strong>Les composants web sans nom deviennent des questions.</strong> Un élément
+						personnalisé défini sans nom lisible est <code>cantTell</code> là où il échouait ; voir{" "}
+						<a href="#web-component-canttell">l’entrée sur les composants web</a>.
+					</li>
+				</ul>
+				<p>
+					La liste complète se trouve dans le{" "}
+					<a href={`${core}/CHANGELOG.md`}>
+						<code>CHANGELOG.md</code>
+					</a>{" "}
+					de core.
+				</p>
+			</article>
+
+			<article>
 				<h2 id="runonly-threw">
 					« <code>runOnly</code> a levé une erreur : <span lang="en">no rule or tag named …</span>,
 					ou <span lang="en">either rule ids or tags</span> »
@@ -21,7 +95,9 @@ export function FaqContent() {
 					<li>
 						<strong>Une valeur qui ne désigne aucune règle ni aucun tag</strong>, en général une
 						faute de frappe : <code>runOnly: ['img-alt-presnt']</code>. Vérifiez l’identifiant
-						avec <code>getChecksCatalog()</code>.
+						avec <code>getChecksCatalog()</code>. La casse n’y est pour rien : les identifiants de
+						règles et les tags sont reconnus quelle que soit leur casse, donc{" "}
+						<code>IMG-ALT-PRESENT</code> sélectionne <code>img-alt-present</code>.
 					</li>
 					<li>
 						<strong>Des identifiants de règles et des tags dans un même tableau</strong> :{" "}
@@ -49,6 +125,49 @@ export function FaqContent() {
 					Auparavant, elles n’exécutaient aucune règle, ce qui se lit comme une analyse sans
 					constat. Une seule valeur inconnue à côté de valeurs connues, ou dans une liste
 					d’exclusion, ne produit qu’un <code>console.warn</code>.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="tags-and-rules-run-nothing">
+					« J’ai sélectionné des tags et des identifiants de règles, et l’analyse n’a exécuté aucune
+					règle mais paraît sans erreur »
+				</h2>
+				<p>
+					Avec le <code>includeMode: 'and'</code> par défaut, une sélection qui contient à la fois
+					des tags et des identifiants de règles n’exécute que les règles qui correspondent aux
+					deux. <code>.withTags('wcag2a').withRules('region')</code> n’exécute rien, puisque{" "}
+					<code>region</code> est une bonne pratique sans tag <code>wcag2a</code>, et une analyse
+					sans aucune règle n’a aucun échec. Le moteur affiche un avertissement dans la console de
+					la page, qu’une exécution de tests ne montre pas, et ne lève{" "}
+					<code>INVALID_RUN_ONLY</code> qu’avec <code>strictOptions</code>. Pour exécuter l’un ou
+					l’autre, demandez-le : <code>.includeMode('or')</code> dans les bindings,{" "}
+					<code>includeMode: 'or'</code> dans <code>runOnly</code> (ci-dessus), ou{" "}
+					<code>--include-mode or</code> dans la <a href="/getting-started/cli/">CLI</a>. À partir
+					de sa version 1.3.0, la CLI se termine avec le code <code>2</code> et cette suggestion
+					quand les deux n’ont aucune règle en commun.
+				</p>
+				<p>
+					Pour repérer avant l’exécution une sélection qui ne retient rien, vérifiez{" "}
+					<code>plannedChecks()</code> sur le builder : les règles que l’analyse exécutera,
+					calculées sans page (un chainable dans Cypress) :
+				</p>
+				<CodeBlock
+					lang="js"
+					lines={[
+						"const builder = new A11yCoreBuilder({ page })",
+						"  .withTags('wcag2a')",
+						"  .withRules('region')",
+						"  .includeMode('or'); // the wcag2a rules, plus region",
+						"",
+						"if (builder.plannedChecks().length === 0) {",
+						"  throw new Error('This selection runs no rule.');",
+						"}",
+					]}
+				/>
+				<p>
+					Voir <a href="/configuration/engine-options/#via-runonly-4th-argument">Options du moteur</a>{" "}
+					pour la façon dont les parties d’une sélection se combinent.
 				</p>
 			</article>
 
@@ -145,7 +264,8 @@ export function FaqContent() {
 					<li>
 						<strong>Tout est <code>notApplicable</code></strong> : regardez{" "}
 						<code>result.contextMatch</code>. <code>elementCount: 0</code> signifie que le
-						sélecteur n’a rien trouvé, et <code>unmatchedSelectors</code> le nomme. Vérifiez qu’il
+						sélecteur n’a rien trouvé, donc que rien n’a été analysé : ce n’est pas un résultat
+						sans erreur. <code>unmatchedSelectors</code> nomme le sélecteur. Vérifiez qu’il
 						ne contient pas de faute de frappe, ou que l’élément est déjà sur la page au moment de
 						l’analyse (un contenu rendu par un script après le chargement, par exemple).
 					</li>
@@ -246,6 +366,38 @@ export function FaqContent() {
 			</article>
 
 			<article>
+				<h2 id="web-component-canttell">
+					« Un composant web revient en <code>cantTell</code> (<code>name_internals</code>) »
+				</h2>
+				<p>
+					Un élément personnalisé qui se nomme, définit ses états ou se donne un rôle par un{" "}
+					<code>ElementInternals</code> conservé dans un champ privé (<code>#internals</code>) est
+					exposé par le navigateur, mais aucun script de la page ne peut le relire. Depuis la 1.12,
+					le moteur lit les internals conservés dans une propriété (<code>_internals</code>,{" "}
+					<code>internals</code>, …), et pose la question pour tout autre élément personnalisé
+					défini sans nom lisible ni état requis (<code>name_internals</code>,{" "}
+					<code>state_internals</code>) au lieu de le faire échouer.
+				</p>
+				<p>
+					Pour que l’analyse puisse juger ces éléments, installez le hook des internals avant
+					l’exécution des scripts de la page : <code>installInternalsHook()</code> dans chaque
+					binding (sur la page ou le contexte dans{" "}
+					<a href="/getting-started/playwright/">Playwright</a>, la page dans{" "}
+					<a href="/getting-started/puppeteer/">Puppeteer</a>, le driver dans{" "}
+					<a href="/getting-started/selenium/">Selenium</a>, le navigateur dans{" "}
+					<a href="/getting-started/webdriverio/">WebdriverIO</a>, le fichier de support ou{" "}
+					<code>onBeforeLoad</code> dans <a href="/getting-started/cypress/">Cypress</a>) et dans
+					le fichier de configuration de{" "}
+					<a href="/getting-started/test-matchers/">test-matchers</a>, ou{" "}
+					<code>internalsHookScript()</code> de core pour une page à vous. La propriété{" "}
+					<code>engine.environment.internalsHook</code> du résultat indique s’il s’est exécuté (
+					<code>'early'</code> ou <code>'late'</code>). Le hook permet à n’importe quel script de
+					la page de lire les internals de chaque composant : il est donc destiné aux exécutions de
+					test et d’audit. Voir <a href="/help/known-limitations/">Limites connues</a>.
+				</p>
+			</article>
+
+			<article>
 				<h2>
 					« Je ne vois que des occurrences <code>fail</code>/<code>cantTell</code> : où est la
 					liste des éléments qui ont réussi ? »
@@ -254,8 +406,10 @@ export function FaqContent() {
 					<strong>Par conception, ce moteur n’énumère jamais les éléments qu’une règle a{" "}
 					<em>validés</em>, seulement ceux qu’elle a signalés.</strong> Un{" "}
 					<code>outcome: 'pass'</code> global pour une règle signifie « des cibles applicables
-					existaient et aucune n’a été signalée », mais <code>occurrences</code> vaut{" "}
-					<code>[]</code> dans les deux cas. Si vous devez savoir quels éléments précis ont été
+					existaient et aucune n’a été signalée », et <code>occurrences</code> vaut{" "}
+					<code>[]</code>. Les règles de contraste font exception : leur <code>pass</code> porte
+					une occurrence au <code>selector</code> vide qui décrit l’analyse (la quantité de texte
+					éligible et calculable), et non un élément. Si vous devez savoir quels éléments précis ont été
 					vérifiés et jugés corrects, cette information n’est pas exposée actuellement : voir{" "}
 					<a href="/results-reports/output-schema/"><code>OUTPUT_SCHEMA.md</code></a>.
 				</p>
@@ -296,8 +450,12 @@ export function FaqContent() {
 				<h2>« Une analyse sans erreur (<code>pass</code> partout) signifie-t-elle que la page est conforme WCAG ? »</h2>
 				<p>
 					Non : voir <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
-					<strong>Un <code>pass</code> signifie que chaque vérification <em>automatisable</em> est
-					revenue sans erreur.</strong> Une part non négligeable de WCAG exige un jugement humain
+					<strong>
+						Un <code>pass</code> signifie que les vérifications exécutées sont revenues sans erreur
+						sur la partie de la page qu’elles ont analysée.
+					</strong>{" "}
+					Une analyse limitée à une partie de la page, à certaines règles, ou exécutée sous jsdom
+					vérifie moins qu’elle ne le pourrait. Une part non négligeable de WCAG exige un jugement humain
 					(texte alternatif pertinent, messages d’erreur compréhensibles) ou des tests dynamiques
 					que l’architecture de ce moteur ne permet pas du tout (pièges au clavier, redistribution
 					du contenu en cas de zoom) : voir{" "}
@@ -310,10 +468,11 @@ export function FaqContent() {
 				<h2>« Dois-je traiter <code>cantTell</code> comme un échec ? »</h2>
 				<p>
 					<strong>Traitez-le comme « une personne doit regarder » : par conception, ce n’est ni une
-					réussite ni un échec.</strong> La plupart des équipes consignent les résultats{" "}
+					réussite ni un échec.</strong> Un choix courant consiste à consigner les résultats{" "}
 					<code>cantTell</code> sans faire échouer la CI, car faire échouer un build sur quelque
 					chose que le moteur n’a explicitement pas pu déterminer habitue les gens à ignorer le
-					contrôle. Voir <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> si vous
+					contrôle. Une équipe qui veut que chacun soit examiné avant une fusion peut au contraire
+					bloquer sur eux ; dans les deux cas, gardez-les à part des échecs. Voir <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> si vous
 					voulez modifier ce comportement (par exemple via un contrat de politique personnalisé),
 					et{" "}
 					<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>

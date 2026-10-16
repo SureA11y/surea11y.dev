@@ -31,7 +31,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.11.1",
+					"  engine: @surea11y/core 1.12.0",
 					"  pass: 15   fail: 4   cantTell: 4   notApplicable: 111",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 5",
@@ -46,15 +46,40 @@ export function CliUsageContent() {
 					"",
 					"cantTell — needs human review (4 rule(s)): contrast-computable, link-name-quality,",
 					"manual-review, page-title-patterns",
+					"",
+					"criteria (WCAG 2.2):",
+					"  fail       1.1.1 Non-text content: text alternatives; 1.4.3 Contrast: minimum;",
+					"             1.4.6 Contrast: enhanced; 4.1.2 Name, role, value: accessible name",
+					"  cantTell   2.1.1 Keyboard; 2.4.2 Page titled; 2.4.3 Focus order; 2.4.4 Link",
+					"             Purpose (In Context); 2.4.7 Focus visible; 2.4.9 Link Purpose (Link Only)",
+					"  pass       1.3.1 Info and Relationships; 2.2.2 Pause, Stop, Hide; 2.4.1 Bypass",
+					"             Blocks; 3.1.1 Language of page; 4.1.2 Name, role, value: ARIA validity",
+					"  notApplicable: 19",
+					"  A criterion that passes here means the checks that ran found nothing in it, not",
+					"  that the page conforms.",
 				]}
 			/>
+			<p>
+				<code>criteria</code>
+				のブロックは、同じスキャンをWCAGの達成基準ごとに読み直したものです。「1.4.3で不合格か」という、よくある問い方に合わせています。
+				<code>fail</code>
+				、
+				<code>cantTell</code>
+				、
+				<code>pass</code>
+				の順に並び、
+				<code>notApplicable</code>
+				は件数だけを示します。合格した達成基準は、実行されたチェックがその中に何も見つけなかったという意味で、ページがその基準を満たしているという意味ではありません。ほとんどの達成基準は、人が確認する必要があります。このブロックが終了コードを変えることはなく、
+				<code>--compact</code>
+				では件数だけを示します。
+			</p>
 
 			<h2 id="choosing-what-runs">実行するものを選ぶ</h2>
 			<p>
 				<code>--wcag</code>
 				は、WCAGの適合性の目標に対応するルールを、各達成基準がそのバージョンで持つレベルに従って選択します。
 				<code>--wcag-level</code>
-				はレベルを設定します（指定しなければ
+				はその目標のレベルを設定します（指定しなければ
 				<code>AA</code>
 				）。
 				<code>--best-practices</code>
@@ -109,6 +134,77 @@ export function CliUsageContent() {
 				に対応します（
 				<a href="/configuration/engine-options/#selecting-which-rules-run">エンジンオプション</a>
 				を参照）。
+			</p>
+
+			<h2 id="naming-checks">チェックを自分で指定する</h2>
+			<p>
+				両方を指定すると、
+				<code>--rules</code>
+				と
+				<code>--tags</code>
+				は両方に一致するルールを実行します。「この領域に加えて、これらのチェックも」としたい場合は
+				<code>--include-mode or</code>
+				を指定します。どちらかに一致するルールを実行します。これを付けないと、下のスキャンはルールを1つも実行しません。
+				<code>contrast-computable</code>
+				には
+				<code>forms</code>
+				のタグがないためです。その場合、何もチェックせずに合格するのではなく、終了コード
+				<code>2</code>
+				で終了します。
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan ./dist/form.html --tags forms --rules contrast-computable --include-mode or", command: true },
+				]}
+			/>
+			<p>
+				チェックを指定したスキャンは、それらのチェックが属するWCAGの達成基準を、すべてのレベルで報告します。
+				<code>contrast-computable</code>
+				は1.4.3（AA）と1.4.6（AAA）をチェックするため、AAを満たすサイトでも、目指していないAAAの達成基準が不合格として表示されることがあります。
+				<code>--wcag</code>
+				を付けない場合、
+				<code>--wcag-level</code>
+				は、実行するルールを変えずに、報告する達成基準のレベルを設定します。
+			</p>
+			<CodeBlock
+				lines={[
+					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
+					"",
+					"surea11y scan: file:///path/to/index.html",
+					"  engine: @surea11y/core 1.12.0",
+					"  WCAG level reported: AA",
+					"  pass: 0   fail: 0   cantTell: 1   notApplicable: 0",
+					"",
+					"  occurrences by tier: fail: 0   cantTell: 2",
+					"",
+					"cantTell — needs human review (1 rule(s)): contrast-computable",
+					"",
+					"criteria (WCAG 2.2 AA):",
+					"  cantTell   1.4.3 Contrast: minimum (partly checked: 1 of 2 checks not selected)",
+					"  A criterion that passes here means the checks that ran found nothing in it, not",
+					"  that the page conforms.",
+				]}
+			/>
+			<p>
+				1.4.3は
+				<em>一部だけチェック済み</em>
+				です。もう1つのチェックである
+				<code>contrast-minimum</code>
+				が選ばれていないため、その判定結果は実行されたチェックだけに基づきます。ルールIDとレベルは大文字小文字を区別しません（
+				<code>--rules IMG-ALT-PRESENT</code>
+				、
+				<code>--wcag-level aa</code>
+				）。
+				<code>--include-mode</code>
+				は
+				<code>engineOptions.includeMode</code>
+				に、
+				<code>--wcag</code>
+				なしの
+				<code>--wcag-level</code>
+				は
+				<code>engineOptions.wcagLevel</code>
+				に対応します。
 			</p>
 
 			<h2 id="packs">パック</h2>

@@ -58,8 +58,10 @@ export function HtmlReportContent() {
 					<a href="/conformance/wcag-mapping/">Conformance</a>) — one row per Success Criterion (with
 					the requirements of each other standard in the result's <code>standards</code> that its
 					rules map to, such as the EN 301 549 clause that restates it, where there is one and the
-					scan asked for EN 301 549 clauses), its outcome, a pass/fail/needs-review/n/a breakdown,
-					and which atomic rules contributed, a custom rule mapped to the criterion included. This is real engine data, not an invented grouping — the same rollup you'd
+					scan asked for EN 301 549 clauses), its outcome, a pass/fail/needs-review/n/a breakdown
+					(with a “Partly checked” line when the scan selected only some of the criterion's rules, such as “Partly checked: 1 of 2 checks was not selected for this scan”,
+					see <a href="/results-reports/output-schema/#partly-checked">A partly checked
+					criterion</a>), and which atomic rules contributed, a custom rule mapped to the criterion included. This is real engine data, not an invented grouping — the same rollup you'd
 					get from the raw JSON's <code>rulesResults</code>.
 					</li>
 					<li>
@@ -75,13 +77,26 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Full technical data</strong> (collapsed by default): a scorecard (tiles per
 					outcome) and a searchable, filterable (by outcome), paginated table of every individual
-					occurrence across the whole scan.
+					occurrence across the whole scan. When it shows no occurrence, it holds one row saying
+					so: the scan recorded none, or the filters hide them all.
 				</li>
 			</ul>
+			<p>
+				An element inside a shadow tree is located by the shadow hosts' selectors, then its own,
+				joined with <code>{" >>> "}</code>: <code>{"html > body > main > x-card >>> button"}</code>.
+				The cards, the margins table and the occurrence table all show it that way, as do{" "}
+				<a href="/results-reports/sarif-report/#field-mapping">SARIF</a> and{" "}
+				<a href="/results-reports/junit-report/#outcomes">JUnit</a>.
+			</p>
 			<p>
 				The report follows the reader's color scheme, and its own text meets WCAG 1.4.3 in both:
 				every status color is at least 4.5:1 on its chip and tile, and the engine's own contrast
 				rules pass on the rendered report in light and dark mode.
+			</p>
+			<p>
+				The report reflows at 320 CSS px (WCAG 1.4.10): the page never scrolls sideways. A table
+				wider than the window scrolls in a box of its own, a region named by the table's heading
+				that takes keyboard focus, so it can be scrolled with the arrow keys.
 			</p>
 			<p>
 				The meta bar under the header carries the rule count, occurrence count, engine tag, schema

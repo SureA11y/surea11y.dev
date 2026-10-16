@@ -59,7 +59,9 @@ export function ResultsReportsContent() {
 				résultats SARIF avec une empreinte stable, fondée sur le contenu, si bien qu’une{" "}
 				<a href="/conformance/baseline/">baseline / allowlist</a>{" "}
 				filtre toujours de façon fiable et qu’un tableau de bord peut suivre un constat d’un commit à
-				l’autre au lieu de le perdre dès qu’un numéro de ligne change. Voir{" "}
+				l’autre au lieu de le perdre dès qu’un numéro de ligne change. Un journal sans résultat
+				signifie que rien n’a échoué ni ne demande de revue parmi les vérifications exécutées ;
+				ce n’est pas une déclaration de conformité. Voir{" "}
 				<a href="/results-reports/sarif-report/">Rapport SARIF</a>.
 			</p>
 
@@ -70,7 +72,11 @@ export function ResultsReportsContent() {
 				de vos tests unitaires. Chaque critère WCAG est une suite et chaque règle un test : un défaut
 				répété sur une page est un seul test en échec, et les décomptes restent stables d’une
 				exécution à l’autre. <code>cantTell</code> arrive sous forme de test ignoré, visible sans
-				faire passer le build au rouge. Voir <a href="/results-reports/junit-report/">Rapport JUnit</a>.
+				faire passer le build au rouge. Les noms des suites sont les mêmes dans toutes les
+				langues : l’historique des tests ne repart pas de zéro quand la langue de l’analyse
+				change. Une suite verte signifie que les règles exécutées pour un critère n’ont rien
+				trouvé, pas que le critère est satisfait. Voir{" "}
+				<a href="/results-reports/junit-report/">Rapport JUnit</a>.
 			</p>
 
 			<h2>Rapport EARL</h2>

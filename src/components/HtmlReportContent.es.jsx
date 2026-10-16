@@ -61,7 +61,10 @@ export function HtmlReportContent() {
 					de Éxito (con los requisitos de cada otro estándar del <code>standards</code> del resultado
 					a los que se asocian sus reglas, como la cláusula de EN 301 549 que lo reformula, cuando la
 					hay y el análisis pidió cláusulas de EN 301 549), su resultado, un desglose de
-					aprobado/fallido/necesita revisión/n.a. y qué reglas atómicas contribuyeron, incluida una
+					aprobado/fallido/necesita revisión/n.a. (con una línea «Comprobado en parte» cuando el análisis
+					seleccionó solo algunas de las reglas del criterio, como «Comprobado en parte: 1 de 2 comprobaciones no se seleccionó para este análisis», ver{" "}
+					<a href="/results-reports/output-schema/#partly-checked">Un criterio comprobado en
+					parte</a>) y qué reglas atómicas contribuyeron, incluida una
 					regla personalizada asociada al criterio. Son datos reales del motor, no una agrupación inventada:
 					el mismo resultado agregado que obtendrías del <code>rulesResults</code> del JSON sin procesar.
 				</li>
@@ -80,13 +83,29 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Datos técnicos completos</strong> (contraído por defecto): una tarjeta resumen
 					(mosaicos por resultado) y una tabla con función de búsqueda, filtrable (por resultado) y paginada de
-					cada ocurrencia individual de todo el análisis.
+					cada ocurrencia individual de todo el análisis. Cuando no muestra ninguna ocurrencia,
+					contiene una fila que lo dice: el análisis no registró ninguna, o los filtros las ocultan
+					todas.
 				</li>
 			</ul>
+			<p>
+				Un elemento dentro de un árbol shadow se localiza por los selectores de sus hosts shadow
+				y luego el suyo propio, unidos con <code>{" >>> "}</code>:{" "}
+				<code>{"html > body > main > x-card >>> button"}</code>. Las tarjetas, la tabla de márgenes
+				y la tabla de ocurrencias lo muestran así, igual que{" "}
+				<a href="/results-reports/sarif-report/#field-mapping">SARIF</a> y{" "}
+				<a href="/results-reports/junit-report/#outcomes">JUnit</a>.
+			</p>
 			<p>
 				El informe sigue el esquema de color del lector, y su propio texto cumple WCAG 1.4.3 en
 				ambos: cada color de estado tiene al menos 4,5:1 sobre su chip y su mosaico, y las propias
 				reglas de contraste del motor pasan en el informe renderizado en modo claro y oscuro.
+			</p>
+			<p>
+				El informe se reorganiza a 320 px CSS (WCAG 1.4.10): la página nunca se desplaza en
+				horizontal. Una tabla más ancha que la ventana se desplaza dentro de su propia caja, una
+				región con el nombre del encabezado de la tabla que recibe el foco del teclado, así que se
+				puede desplazar con las flechas.
 			</p>
 			<p>
 				La barra de metadatos bajo la cabecera lleva el recuento de reglas, el recuento de

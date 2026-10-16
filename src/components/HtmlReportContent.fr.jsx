@@ -64,7 +64,10 @@ export function HtmlReportContent() {
 					<code>standards</code> du résultat auxquelles ses règles sont associées, comme la clause
 					d’EN 301 549 qui le reprend, quand il y en a une et que l’analyse a demandé les clauses
 					d’EN 301 549), avec son résultat, une ventilation réussite/échec/à examiner/non
-					applicable, et les règles atomiques qui y ont contribué, y compris une règle
+					applicable (avec une ligne « Vérifié en partie » quand l’analyse n’a sélectionné qu’une
+					partie des règles du critère, comme « Vérifié en partie : 1 contrôle sur 2 n’a pas été sélectionné pour cette analyse », voir{" "}
+					<a href="/results-reports/output-schema/#partly-checked">Un critère partiellement
+					vérifié</a>), et les règles atomiques qui y ont contribué, y compris une règle
 					personnalisée associée au critère. Ce sont de vraies
 					données du moteur, pas un regroupement inventé : la même agrégation que celle du champ{" "}
 					<code>rulesResults</code> du JSON brut.
@@ -84,14 +87,30 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Données techniques complètes</strong> (repliées par défaut) : un tableau de
 					scores (une tuile par résultat) et un tableau paginé, consultable et filtrable (par
-					résultat), de chaque occurrence de toute l’analyse.
+					résultat), de chaque occurrence de toute l’analyse. Quand il n’affiche aucune
+					occurrence, il contient une ligne qui le dit : l’analyse n’en a enregistré aucune, ou
+					les filtres les masquent toutes.
 				</li>
 			</ul>
+			<p>
+				Un élément situé dans un arbre shadow est localisé par les sélecteurs des shadow hosts,
+				puis par le sien, joints par <code>{" >>> "}</code> :{" "}
+				<code>{"html > body > main > x-card >>> button"}</code>. Les cartes, le tableau des marges
+				et le tableau des occurrences l’affichent tous ainsi, tout comme{" "}
+				<a href="/results-reports/sarif-report/#field-mapping">SARIF</a> et{" "}
+				<a href="/results-reports/junit-report/#outcomes">JUnit</a>.
+			</p>
 			<p>
 				Le rapport suit le schéma de couleurs du lecteur, et son propre texte respecte WCAG 1.4.3
 				dans les deux : chaque couleur d’état atteint au moins 4,5:1 sur sa pastille et sa tuile,
 				et les règles de contraste du moteur lui-même réussissent sur le rapport rendu, en mode
 				clair comme en mode sombre.
+			</p>
+			<p>
+				Le rapport se réorganise à 320 px CSS (WCAG 1.4.10) : la page ne défile jamais
+				horizontalement. Un tableau plus large que la fenêtre défile dans une zone qui lui est
+				propre, une région nommée par le titre du tableau qui reçoit le focus clavier, pour qu’on
+				puisse la faire défiler avec les touches fléchées.
 			</p>
 			<p>
 				La barre de métadonnées sous l’en-tête indique le nombre de règles, le nombre

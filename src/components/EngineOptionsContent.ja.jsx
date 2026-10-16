@@ -28,7 +28,16 @@ const optionRows = [
 		option: <code>wcagVersion</code>,
 		meaning: (
 			<>
-				<code>'2.0'</code>、<code>'2.1'</code>、<code>'2.2'</code>のいずれかで、そのスキャンがどのバージョンのWCAGへの適合を検証するかを指定します。省略すると導入バージョンタグから推定されるバージョンになり、タグから何も推定できなければ<code>'2.2'</code>になります。<strong>現時点でこのオプションが影響するのは、2.2で削除されたSC 4.1.1（構文解析）だけです</strong>。2.2を対象にすると、<code>wcag22-removed</code>タグの付いたルールは引き続き実行され、検出箇所も報告しますが、<code>fail</code>にはなりません。前述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照してください。それ以外の値は、型を問わず（数値の<code>2.1</code>、<code>'3.0'</code>）、代わりに実行が対象とするバージョンを示す<code>console.warn</code>を出して無視されます。
+				<code>'2.0'</code>、<code>'2.1'</code>、<code>'2.2'</code>のいずれかで、そのスキャンがどのバージョンのWCAGへの適合を検証するかを指定します。省略すると、実行が適用するパックのプロファイルが示すバージョン（その<code>wcagVersion</code>）になり、それがなければ導入バージョンタグから推定されるバージョン、タグから何も推定できなければ<code>'2.2'</code>になります。<strong>現時点でこのオプションが影響するのは、2.2で削除されたSC 4.1.1（構文解析）だけです</strong>。2.2を対象にすると、<code>wcag22-removed</code>タグの付いたルールは引き続き実行され、検出箇所も報告しますが、<code>fail</code>にはなりません。前述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照してください。それ以外の値は、型を問わず（数値の<code>2.1</code>、<code>'3.0'</code>）、代わりに実行が対象とするバージョンを示す<code>console.warn</code>を出して無視されます。
+			</>
+		),
+	},
+	{
+		id: "wcagLevel",
+		option: <code>wcagLevel</code>,
+		meaning: (
+			<>
+				省略可：<code>'A'</code>、<code>'AA'</code>、<code>'AAA'</code>のいずれか（大文字小文字は問いません）で、実行が報告する達成基準のWCAGレベルを指定します。それより上のWCAGの集約は、ルールは実行されたまま<code>rulesResults</code>から除かれます。何を実行するかは決して変えません。選択が示すレベルより優先されます。IDで指定した集約は指定どおり報告されます。<code>engine.wcagLevel</code>として返し、オプションがない場合は選択が示すレベルがあればそれを保持します。それ以外の値は<code>console.warn</code>を出して無視され、<code>strictOptions</code>のもとではエラーを投げます。前述の<a href="#giving-the-level-of-a-scan-that-names-checks-wcaglevel">「チェックを指定するスキャンのレベルを示す」</a>を参照してください。
 			</>
 		),
 	},
@@ -82,7 +91,7 @@ const optionRows = [
 		option: <code>includeHiddenElements</code>,
 		meaning: (
 			<>
-				デフォルトは<code>false</code>です。ヘルパーのクエリは、<code>display:none</code>、<code>[hidden]</code>、閉じた<code>&lt;details&gt;</code>（最初の<code>&lt;summary&gt;</code>を除くすべて。深さを問いません）、<code>content-visibility:hidden</code>と<code>hidden="until-found"</code>のコンテンツ、非表示のレンダリング専用ホスト要素など、構造やCSSの仕組みで隠された要素を除外します（その子孫も除外されます）。<code>runa11yCoreAcrossFrames</code>は、このように隠されたフレームをスキャンしません。<code>true</code>にすると、こうした非表示・折りたたみ状態のサブツリーも評価の対象になります（旧来の、静的マークアップ向けの動作）。これは共通のクエリが返す範囲を広げるものです。それでもほとんどのルールはアクセシビリティツリーにあるものだけを判定します。非表示の要素にはチェックすべき名前もロールもないため、そうしたルールでは何も変わりません。意味があるのは、壊れたID参照など、マークアップそのものを扱うルールです。
+				デフォルトは<code>false</code>です。ヘルパーのクエリは、<code>display:none</code>、<code>[hidden]</code>、閉じた<code>&lt;details&gt;</code>（最初の<code>&lt;summary&gt;</code>を除くすべて。深さを問いません）、<code>content-visibility:hidden</code>と<code>hidden="until-found"</code>のコンテンツ、<code>[inert]</code>のサブツリー内のコンテンツ（描画はされるため、コントラストやテキストの間隔など見た目に関するルールは引き続き判定します）、非表示のレンダリング専用ホスト要素など、構造やCSSの仕組みで隠された要素を除外します（その子孫も除外されます）。<code>runa11yCoreAcrossFrames</code>は、このように隠されたフレームをスキャンしません。<code>true</code>にすると、こうした非表示・折りたたみ状態のサブツリーも評価の対象になります（旧来の、静的マークアップ向けの動作）。これは共通のクエリが返す範囲を広げるものです。それでもほとんどのルールはアクセシビリティツリーにあるものだけを判定します。非表示の要素にはチェックすべき名前もロールもないため、そうしたルールでは何も変わりません。意味があるのは、壊れたID参照など、マークアップそのものを扱うルールです。
 			</>
 		),
 	},
@@ -136,7 +145,7 @@ const optionRows = [
 		option: <code>contrast.rootCanvasFallback</code>,
 		meaning: (
 			<>
-				背景色がまったく計算できない場合に想定するページの背景色です。意味を持つのは<code>auditorAssist</code>モードのときだけです。ダークなカラースキームを求めるページ（ルートの<code>color-scheme: dark</code>、または<code>&lt;meta&gt;</code>の形式）は、代わりにブラウザーがその背後に描画するダークなキャンバスの上で計測されます。このフォールバックが適用されるのは、jsdomのようにそれを読み取れない場合です。不透明な色でなければなりません。それ以外の値は、警告を出して白として計測されます。
+				背景色がまったく計算できない場合に想定するページの背景色です。意味を持つのは<code>auditorAssist</code>モードのときだけです。ブラウザーでは、自身の不透明な背景を持たないページは、どちらのモードでも、ブラウザーがその背後に描画するキャンバスの上で計測されます。白か、ダークなカラースキームを求めるページ（ルートの<code>color-scheme: dark</code>、または<code>&lt;meta&gt;</code>の形式）ならダークなキャンバスです。このフォールバックが適用されるのは、キャンバスを読み取らない場合です。jsdomのもとと、親ページが透けて見えることがあるキャンバスを持つフレームの中がそうです（ダークを求めるフレームはダークなキャンバスの上で計測されます）。不透明な色でなければなりません。それ以外の値は、警告を出して白として計測されます。
 			</>
 		),
 	},
@@ -194,7 +203,7 @@ const optionRows = [
 		option: <code>packs</code>,
 		meaning: (
 			<>
-				<code>@surea11y/core/pack</code>によるパック（省略可）：コアの外から来るルール、コアのルールのバリアント、規格やチェックリスト、メッセージで、スキャンに加わります。リストで指定します。Nodeの<code>runDomRulesInPage</code>とカタログ関数ではパックのオブジェクト、<code>runa11yCoreInPage</code>では<code>packScript</code>がページに登録したパックの<code>name@version</code>です。それ以外の値ではパックは実行されず、警告が出ます。<code>strictOptions</code>のもとではエラーを投げます。<code>engine.packs</code>として返します。<a href="/configuration/packs/">パック</a>を参照してください。
+				<code>@surea11y/core/pack</code>によるパック（省略可）：コアの外から来るルール、コアのルールのバリアント、規格やチェックリスト、メッセージで、スキャンに加わります。リストで指定します。Nodeの<code>runDomRulesInPage</code>とカタログ関数ではパックのオブジェクト、<code>runa11yCoreInPage</code>では<code>packScript</code>がページに登録したパックの<code>name@version</code>です。それ以外の値ではパックは実行されず、警告が出ます。<code>strictOptions</code>のもとでは<code>code: 'INVALID_ENGINE_OPTIONS'</code>付きのエラーを投げます。<code>engine.packs</code>として返します。<a href="/configuration/packs/">パック</a>を参照してください。
 			</>
 		),
 	},
@@ -290,7 +299,7 @@ export function EngineOptionsContent() {
 					"});",
 				]} />
 			<p>
-				どのルールもWCAGの達成基準を検査するか、ベストプラクティスであるかのどちらかです。そのため<code>{"{ wcag: { version: '2.2', level: 'AAA' }, bestPractices: true }"}</code>は、WCAG 2.2で削除された4.1.1「構文解析」のルールを除くすべてのルールを実行します。1つの達成基準、ルールのリスト、除外など、より細かい指定は<a href="#advanced-selection-tags-and-rule-ids">「高度な選択：タグとルールID」</a>を参照してください。それらのフィールドは上のものと組み合わせられます。
+				どのルールもWCAGの達成基準を検査するか、ベストプラクティスであるかのどちらかです。そのため<code>{"{ wcag: { version: '2.2', level: 'AAA' }, bestPractices: true }"}</code>は、WCAG 2.2で削除された4.1.1「構文解析」のルールを除くすべてのルールを実行します。1つの達成基準、ルールのリスト、除外など、より細かい指定は<a href="#advanced-selection-tags-and-rule-ids">「高度な選択：タグとルールID」</a>を参照してください。それらのフィールドは上のものと組み合わせられます。ルールを指定するスキャンは、それらが検査する達成基準も報告します（<a href="#which-criteria-a-scan-reports">「スキャンが報告する達成基準」</a>）。
 			</p>
 
 			<h3 id="selecting-by-wcag-target-runonlywcag">WCAGの目標で選ぶ（<code>runOnly.wcag</code>）</h3>
@@ -315,10 +324,10 @@ export function EngineOptionsContent() {
 					どの達成基準も示さないルール（ベストプラクティスのルール）は、どの目標にも含まれません。それらは<code>bestPractices: true</code>（次の節）で、個別のルールは<code>tags</code>か<code>includeRuleIds</code>で追加してください。<code>wcag</code>と併用すると、これらはすべてルールを<strong>追加で</strong>選択し、目標のルールとそれらが選択するものの和集合になります。<code>excludeTags</code>、<code>excludeRuleIds</code>、<code>excludeTestIds</code>は、いつもどおりその後に適用されます。
 				</li>
 				<li>
-					<code>engineOptions.wcagVersion</code>が設定されていない限り、目標のバージョンが実行のWCAGの対象（<code>engine.wcagVersion</code>）になります。目標のレベルは、レベルのタグと同じように、報告されるWCAGの集約を決めます。
+					<code>engineOptions.wcagVersion</code>が設定されていない限り、目標のバージョンが実行のWCAGの対象（<code>engine.wcagVersion</code>）になります。目標のレベルは、レベルのタグと同じように、報告されるWCAGの集約を決めます。ただし<code>engineOptions.wcagLevel</code>が設定されている場合は別です（<a href="#giving-the-level-of-a-scan-that-names-checks-wcaglevel">「チェックを指定するスキャンのレベルを示す」</a>）。
 				</li>
 				<li>
-					目標はルールを含めるものなので、<code>tags</code>と同じく<code>engineOptions.profile</code>の代わりにルールを選択します。<code>getProfileWcagTarget(profile)</code>はプロファイルが相当する目標を返し（<a href="#conformance-profiles">「適合性プロファイル」</a>を参照）、<code>getChecksForRunOnly(runOnly, engineOptions)</code>は<code>wcag</code>を持つ<code>runOnly</code>が実行するルールを列挙します。
+					目標はルールを含めるものなので、<code>tags</code>と同じく<code>engineOptions.profile</code>の代わりにルールを選択します。<code>getProfileWcagTarget(profile)</code>はプロファイルが相当する目標を返し（<a href="#conformance-profiles">「適合性プロファイル」</a>を参照）、<code>getChecksForRunOnly(runOnly, engineOptions)</code>は<code>wcag</code>を持つ<code>runOnly</code>が実行するルールを、<code>getRulesForRunOnly(runOnly, engineOptions)</code>はそれが報告する集約を列挙します。
 				</li>
 				<li>
 					それ以外の値は、何が誤っているかを示して<code>INVALID_RUN_ONLY</code>を投げます。<code>runOnly.wcag.version must be "2.0", "2.1" or "2.2", not "3.0".</code>
@@ -331,7 +340,7 @@ export function EngineOptionsContent() {
 
 			<h3 id="adding-the-best-practices-runonlybestpractices">ベストプラクティスを追加する（<code>runOnly.bestPractices</code>）</h3>
 			<p>
-				<code>bestPractices: true</code>はベストプラクティスのルールを選択します。<code>region</code>、<code>landmark-one-main</code>、<code>heading-order</code>、<code>page-has-heading-one</code>、<code>skip-link</code>、<code>tabindex</code>、<code>image-redundant-alt</code>など、WCAGの達成基準を示さないルールです。これらは<code>best-practice</code>のタグを持つルールなので、そのタグを追加するのと同じです。これらのルールの検出結果は望ましい実践についてのもので、WCAGの不合格ではありません。どのWCAGの集約もそれを算入しません。
+				<code>bestPractices: true</code>はベストプラクティスのルールを選択します。<code>region</code>、<code>landmark-one-main</code>、<code>heading-order</code>、<code>page-has-heading-one</code>、<code>skip-link</code>、<code>tabindex</code>、<code>image-redundant-alt</code>など、WCAGの達成基準を示さないルールです。これらは<code>best-practice</code>のタグを持つルールなので、そのタグを追加するのと同じです。これらのルールの検出結果は望ましい実践についてのもので、WCAGの不合格ではありません。どのWCAGの集約もそれを算入しません。ほとんどは<code>cantTell</code>を報告しますが、検出結果そのものがバリアであるものは<code>fail</code>を報告します。名前のない見出しに対する<code>empty-heading</code>がそうです。
 			</p>
 			<ul>
 				<li>
@@ -423,13 +432,13 @@ export function EngineOptionsContent() {
 				<a href="/configuration/packs/">パック</a>の規格やチェックリストは、独自のプロファイルをこの一覧に加えます。
 			</p>
 			<p>
-				WCAGの対象バージョンは、手書きのタグセットと同じようにタグから決まります（後述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照）。そのため<code>en301549-v3.2.1</code>では重複したidが<code>fail</code>になりえますが、<code>en301549-v4.1.1</code>ではなりません。名前の大文字と小文字は区別しません。プロファイルを使った実行は、それを<code>engine.profile</code>として返します。
+				WCAGの対象バージョンは、手書きのタグセットと同じようにタグから決まります（後述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照）。そのため<code>en301549-v3.2.1</code>では重複したidが<code>fail</code>になりえますが、<code>en301549-v4.1.1</code>ではなりません。パックのプロファイルは、代わりに<code>wcagVersion</code>で自身のバージョンを示せます（<a href="/configuration/packs/#profiles">パック</a>）。規格が対応付けたルールだけを実行するプロファイルには、バージョンを示すWCAGのタグがないためです。名前の大文字と小文字は区別しません。プロファイルを使った実行は、それを<code>engine.profile</code>として返します。
 			</p>
 			<p>
-				優先順位：ルールを<em>含める</em>指定はすべて、プロファイルの代わりにルールを選びます。<code>wcag</code>、<code>tags</code>、<code>includeRuleIds</code>、<code>includeTestIds</code>を持つ<code>runOnly</code>、または<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>の<code>include</code>です。除外はプロファイルの上に引き続き適用されます。<code>runOnly</code>の除外（<code>excludeTags</code>、<code>excludeRuleIds</code>、<code>excludeTestIds</code>。そのためバインディングの<code>disableTags()</code>はプロファイルを置き換えるのではなく絞り込みます）でも、<code>runOnly</code>のフィルターがない場合の<code>engineOptions</code>の除外（<code>tags.exclude</code>、<code>rules.exclude</code>、<code>tests.exclude</code>）でも同じです。また、明示的な<code>engineOptions.wcagVersion</code>は、プロファイルが示すバージョンより常に優先されます。効果のないプロファイル（不明な名前や、上記のように上書きされたもの）はエラーではありません。実行は指定がなかったものとして続き、理由を示す<code>console.warn</code>を出力し、<code>engine.profile</code>は含まれません。<code>runOnly.bestPractices: true</code>はこの種の「含める」指定ではありません。プロファイルのルールにベストプラクティスのルールを追加し、プロファイルは適用されます（<a href="#adding-the-best-practices-runonlybestpractices">「ベストプラクティスを追加する」</a>）。
+				優先順位：ルールを<em>含める</em>指定はすべて、プロファイルの代わりにルールを選びます。<code>wcag</code>、<code>tags</code>、<code>includeRuleIds</code>、<code>includeTestIds</code>を持つ<code>runOnly</code>、または<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>の<code>include</code>です。除外はプロファイルの上に引き続き適用されます。<code>runOnly</code>の除外（<code>excludeTags</code>、<code>excludeRuleIds</code>、<code>excludeTestIds</code>。そのためバインディングの<code>disableTags()</code>はプロファイルを置き換えるのではなく絞り込みます）でも、<code>runOnly</code>のフィルターがない場合の<code>engineOptions</code>の除外（<code>tags.exclude</code>、<code>rules.exclude</code>、<code>tests.exclude</code>）でも同じです。また、明示的な<code>engineOptions.wcagVersion</code>は、プロファイルが示す、または指定するバージョンより常に優先されます。効果のないプロファイル（不明な名前や、上記のように上書きされたもの）はエラーではありません。実行は指定がなかったものとして続き、理由を示す<code>console.warn</code>を出力し、<code>engine.profile</code>は含まれません。<code>runOnly.bestPractices: true</code>はこの種の「含める」指定ではありません。プロファイルのルールにベストプラクティスのルールを追加し、プロファイルは適用されます（<a href="#adding-the-best-practices-runonlybestpractices">「ベストプラクティスを追加する」</a>）。
 			</p>
 			<p>
-				規格のプロファイルは、その規格がWCAGの達成基準を免除したり、WCAGのチェックを独自のものに置き換えたりする場合に、ルールを除外することもあります。そうしたルールとそのWCAGの集約は実行されず、ルールカタログからも除かれ、<code>engine.profileExcludes</code>が除外したものを示します。現在、何かを除外する組み込みのプロファイルはありません。
+				規格のプロファイルは、その規格がWCAGの達成基準を免除したり、WCAGのチェックを独自のものに置き換えたりする場合に、ルールを除外することもあります。プロファイルが指定するルール、すべての達成基準が免除されるルール、免除された達成基準のWCAGの集約は実行されず、ルールカタログからも除かれます。プロファイルが残す達成基準も検査するルールは引き続き実行され（2.4.4を免除するプロファイルのもとで、2.4.4と4.1.2を検査する<code>link-name-present</code>）、<code>engine.profileExcludes</code>が除外したものを示します。現在、何かを除外する組み込みのプロファイルはありません。
 			</p>
 			<p>
 				<strong>プロファイルが選ぶのは、実行するルールだけです。</strong>それらに合格すれば名前の由来となった規格を満たすかどうかについては何も示しません。ほとんどの達成基準には、自動化されたルールでは扱えない人の判断が必要です（<a href="/conformance/wcag-mapping/#what-this-engine-cannot-tell-you">このエンジンにはわからないこと</a>を参照）。
@@ -467,7 +476,7 @@ export function EngineOptionsContent() {
 			</p>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { optInRules: 'all' }, null);"]} />
 			<p>
-				<code>'all'</code>はすべての規格のオプトインルールを解除し、タグのリストを渡すとそのタグのルールだけを解除します。解除するのは制限だけで、どのルールを実行するかは引き続きほかの選択が決めます。そのため、上のようにフィルターもプロファイルもなければ、すべてのルールとすべての規格の集約が実行されます。<code>profile: 'wcag22-aa'</code>の下では、オプトインルールはWCAGのタグを持たないため、実行されるのは引き続きWCAGのルールだけです。除外は通常どおり適用されます。オプトインのタグでないタグは<code>console.warn</code>を出して無視します。
+				<code>'all'</code>はすべての規格のオプトインルールを解除し、タグのリストを渡すとそのタグのルールだけを解除します。解除するのは制限だけで、どのルールを実行するかは引き続きほかの選択が決めます。そのため、上のようにフィルターもプロファイルもなければ、すべてのルールとすべての規格の集約が実行されます。<code>profile: 'wcag22-aa'</code>の下では、オプトインルールはWCAGのタグを持たないため、実行されるのは引き続きWCAGのルールだけです。除外は通常どおり適用されます。オプトインのタグでないタグは<code>console.warn</code>を出して無視します。解除できるのはこのエンジンオプションだけです。<code>runOnly</code>には<code>optInTags</code>キーがないため、そこに渡すと未知のキーとなり、単独なら<code>INVALID_RUN_ONLY</code>を投げ、<code>runOnly</code>が読むキーと並んでいれば警告を出して無視されます。メッセージは<code>engineOptions.optInRules</code>を案内します。
 			</p>
 			<p>
 				これは、開発中やサイトを調べるときに、エンジンが報告できるものをすべて見るためのものです。<strong>適合性の目標ではありません。</strong>このような実行は、WCAGが認めていてほかの規格だけが禁じていることでもページを不合格にします。結果はそれを示します。<code>engine.optInRules</code>は実行されたルールのタグを列挙し、HTMLレポート、SARIF、JUnitはそれをプロファイルの横に表示します。結果にほかの規格の番号は追加しません。そのためには<code>mappings</code>を渡してください。例えば<code>{"{ optInRules: 'all', mappings: ['<key>'] }"}</code>です。
@@ -504,7 +513,7 @@ export function EngineOptionsContent() {
 				配列またはカンマ区切りの文字列を受け付け、名前とバージョンの大文字と小文字は区別しません。<code>profile: 'en301549-v4.1.1'</code>の下ではV4.1.1の条項は指定しなくても含まれ、<code>mappings</code>でさらに追加できます。エンジンに表がない名前やバージョンは<code>console.warn</code>を出して無視します。ほかの規格を含む実行は、それを正規の表記で<code>engine.mappings</code>に示します（<code>["en301549:V3.2.1"]</code>、すべてのバージョンなら<code>["en301549"]</code>）。
 			</p>
 			<p>
-				変わるのは結果が示す内容だけで、実行されるルールやその判定結果は変わりません。ルールカタログも同じオプションに従います。<code>getChecksCatalog(engineOptions)</code>、<code>getCheckDefById(ruleId, engineOptions)</code>、<code>getChecksForRunOnly(runOnly, engineOptions)</code>、<code>getRulesCatalog(engineOptions)</code>、<code>getCompositeRuleById(id, engineOptions)</code>は、そのオプションでスキャンした場合と同じ規格を（適用される場合はプロファイルも含めて）示すため、カタログのエントリーと結果は常に一致します。オプションがなければ、WCAGだけを示します。<code>customRules</code>で追加したルールは、宣言した対応付けをそのまま保ちます。条項の内容と2つのバージョンの違いは<a href="/conformance/wcag-mapping/#en-301-549">WCAG適合性との対応</a>を参照してください。
+				変わるのは結果が示す内容だけで、実行されるルールやその判定結果は変わりません。ルールカタログも同じオプションに従います。<code>getChecksCatalog(engineOptions)</code>、<code>getCheckDefById(ruleId, engineOptions)</code>、<code>getChecksForRunOnly(runOnly, engineOptions)</code>、<code>getRulesCatalog(engineOptions)</code>、<code>getRulesForRunOnly(runOnly, engineOptions)</code>、<code>getCompositeRuleById(id, engineOptions)</code>は、そのオプションでスキャンした場合と同じ規格を（適用される場合はプロファイルも含めて）示すため、カタログのエントリーと結果は常に一致します。オプションがなければ、WCAGだけを示します。<code>customRules</code>で追加したルールは、宣言した対応付けをそのまま保ちます。条項の内容と2つのバージョンの違いは<a href="/conformance/wcag-mapping/#en-301-549">WCAG適合性との対応</a>を参照してください。
 			</p>
 
 			<h2 id="advanced-selection-tags-and-rule-ids">高度な選択：タグとルールID</h2>
@@ -575,7 +584,7 @@ export function EngineOptionsContent() {
 				いずれも配列とカンマ区切りの文字列のどちらでも指定でき、後述の<code>engineOptions</code>の形式と揃えてあります。<code>includeRuleIds: 'img-alt-present, button-name-present'</code>と<code>includeRuleIds: ['img-alt-present', 'button-name-present']</code>は同じ意味です。
 			</p>
 			<p>
-				名前は、ここでも後述の<code>engineOptions.rules</code>/<code>.tags</code>でも検証されます。含めるリスト（<code>includeRuleIds</code>、<code>tags</code>、旧来の<code>values</code>、<code>rules.include</code>、<code>tags.include</code>）のどの値もルールやタグを指していない場合は、<code>code: 'INVALID_RUN_ONLY'</code>と、フィールドと値を示すメッセージを伴う例外を投げます。そのままでは何も選ばれず、ルールを1つも実行しない実行は問題のないスキャンのように見えてしまうからです。名前はすべて存在するのに、部分どうしが打ち消し合う選択（含めると同時に除外されたルールや、<code>includeMode: 'and'</code>のもとで共通するルールのないルールとタグ）も、ルールを1つも実行しません。スキャンはその部分を示して警告し、<code>strictOptions</code>のもとでは<code>INVALID_RUN_ONLY</code>を投げます。<code>includeMode</code>は<code>'and'</code>か<code>'or'</code>です。それ以外の値は警告を出して<code>'and'</code>として読まれ、<code>strictOptions</code>のもとではエラーを投げます。何も指していない値でも、ほかに有効な値と並んでいる場合や除外リストにある場合は、<code>console.warn</code>を出したうえで無視されます。1.10.0より前は、こうした値はすべて何の通知もなく無視されていました。
+				名前は、ここでも後述の<code>engineOptions.rules</code>/<code>.tags</code>でも検証されます。含めるリスト（<code>includeRuleIds</code>、<code>includeTestIds</code>、<code>tags</code>、旧来の<code>values</code>、<code>rules.include</code>、<code>tags.include</code>）のどの値もルールやタグ（ルールか集約が持つもの。そのため、集約だけが持つ規格のタグも既知です）を指していない場合は、<code>code: 'INVALID_RUN_ONLY'</code>と、フィールドと値を示すメッセージを伴う例外を投げます。そのままでは何も選ばれず、ルールを1つも実行しない実行は問題のないスキャンのように見えてしまうからです。名前はすべて存在するのに、部分どうしが打ち消し合う選択（含めると同時に除外されたルールや、<code>includeMode: 'and'</code>のもとで共通するルールのないルールとタグ）も、ルールを1つも実行しません。スキャンはその部分を示して警告し、<code>strictOptions</code>のもとでは<code>INVALID_RUN_ONLY</code>を投げます。<code>includeMode</code>は<code>'and'</code>か<code>'or'</code>です。それ以外の値は警告を出して<code>'and'</code>として読まれ、<code>strictOptions</code>のもとではエラーを投げます。ブラウザーのバインディングでは<code>.includeMode('or')</code>で設定します。何も指していない値でも、ほかに有効な値と並んでいる場合や除外リストにある場合は、<code>console.warn</code>を出したうえで無視されます。1.10.0より前は、こうした値はすべて何の通知もなく無視されていました。
 			</p>
 			<p>
 				WCAGのバージョンとレベルを表す9つのタグ（<code>wcag2a</code>から<code>wcag22aaa</code>まで）は、ルールが持っているかどうかにかかわらず常に既知です。現在、ルールを1つも持たないものがあります（<code>wcag21aaa</code>、<code>wcag22a</code>、<code>wcag22aaa</code>）。それらの達成基準には自動化されたルールがないためで、タイプミスではありません。含めるリストでほかの値と並んでいる場合、このようなタグは警告ではなく<code>console.info</code>で注記されます。
@@ -585,10 +594,100 @@ export function EngineOptionsContent() {
 				<code>engineOptions.logUntestedWcag: false</code>にすると、この行は出力されません。含めるリストのすべての値がこのようなタグの場合は何も実行されないため、理由を示して引き続き<code>INVALID_RUN_ONLY</code>を投げます。独自にルールを選択する<code>runOnly.wcag</code>の目標や<code>bestPractices: true</code>と併用した場合は、注記だけになります。除外リストでは何もしません。
 			</p>
 			<p>
-				ルールIDにはエンジンのプレフィックスを付けません（例：<code>'img-alt-present'</code>）。後方互換性のため、同じIDに旧来の<code>a11ycore-</code>プレフィックスを付けた形式（<code>'a11ycore-img-alt-present'</code>）も照合できます。
+				ルールIDにはエンジンのプレフィックスを付けません（例：<code>'img-alt-present'</code>）。後方互換性のため、同じIDに旧来の<code>a11ycore-</code>プレフィックスを付けた形式（<code>'a11ycore-img-alt-present'</code>）も照合できます。IDはタグと同じく大文字小文字を問わずに照合されます。<code>'IMG-ALT-PRESENT'</code>は<code>img-alt-present</code>を選択し、これはルールを指定するすべてのリスト（各形式の<code>runOnly</code>、<code>engineOptions.rules</code>と<code>engineOptions.tests</code>、含めるものと除外するもの）で同じです。大文字小文字だけが違うIDを持つルールはないため、誤ったルールが選ばれることはありません。
 			</p>
 			<p>
 				<code>runOnly</code>の値全体として、<strong><code>{"{ type, values }"}</code>形式</strong>も受け付けます。<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>は<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>と、<code>{"{ type: 'rule', values: ['img-alt-present'] }"}</code>は<code>{"{ includeRuleIds: ['img-alt-present'] }"}</code>と同じ意味です（<code>'tags'</code>と<code>'rules'</code>も使えます）。<code>values</code>はカンマ区切りの文字列でもよく、その名前はほかのルールIDやタグと同じように検証され、並べて指定したほかのキー（<code>excludeTags</code>、<code>excludeRuleIds</code>など）も引き続き適用されます。名前の<code>Set</code>は、それが持つリストとして読まれます。オブジェクト形式が読むキーと並んでいる、読まないキーは、警告を出して無視されます。それ以外の<code>type</code>は<code>INVALID_RUN_ONLY</code>を投げます。数値や真偽値の<code>runOnly</code>や、エンジンが読むキーを1つも持たないオブジェクト（<code>{"{ includeRuleId: [...] }"}</code>）も同様です。これらはいずれも、以前はすべてのルールを実行していました。空の配列、文字列、オブジェクトは、これまでどおり既定の選択を意味します。
+			</p>
+
+			<h3 id="which-criteria-a-scan-reports">スキャンが報告する達成基準</h3>
+			<p>
+				スキャンは、選択がその達成基準の集約（<code>rulesResults</code>）を選択する場合に、それを報告します。WCAGの目標やバージョンとレベルのタグ、プロファイル、集約自身のID、または選択なしがそうです。さらに、選択が<strong>単独で指定した</strong>ルールが実行された場合は、そのルールが検査する各達成基準の集約も報告します。単独で指定するとは、次のいずれかです。
+			</p>
+			<ul>
+				<li>
+					IDによって（<code>includeRuleIds</code>、<code>includeTestIds</code>、<code>rules.include</code>、またはプロファイル自身のルールのリスト）
+				</li>
+				<li>
+					WCAGのタグでないタグによって（カスタムルール、パック、規格のタグ。WCAGのタグとは、バージョンとレベルのタグ、<code>wcag244</code>のような達成基準のタグ、<code>wcag22-removed</code>なので、<code>wcagteam</code>のような独自のタグはWCAGのタグではありません）
+				</li>
+				<li>
+					<code>optInRules</code>によって
+				</li>
+				<li>
+					ベストプラクティスのルールとして（<code>bestPractices</code>）
+				</li>
+			</ul>
+			<p>
+				規格のプロファイルが、その規格が対応付けているという理由だけで実行するルール（<code>mappedRules</code>）は、単独ではなくその規格のために指定されたものです。規格の要件は追加しますが、WCAGの達成基準は追加しません。そのため、規格が求めるものだけを実行するプロファイルは、その規格だけを報告します（<a href="/configuration/packs/#profiles">パック</a>）。プロファイルの<code>rules</code>リストが指定するルールは、そのWCAGの達成基準も追加します。1.12.0より前は、達成基準ではなくルールを指定したスキャンの<code>rulesResults</code>は空でした。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// The unnamed link fails link-name-present, and with it 2.4.4 and 4.1.2:",
+					"runDomRulesInPage(url, null, {}, { includeRuleIds: ['link-name-present'] });",
+					"// rulesResults: wcag-2.4.4-link-purpose-in-context: fail, wcag-4.1.2-name: fail",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>判定は集約自身のものです。</strong>不合格のルールは達成基準を不合格にします。スキャンがその達成基準のほかのルールを除いた場合、合格したルールがあっても達成基準は合格になりません。<code>reasonCode</code>が<code>composite.rollup.cantTell.notSelectedChild</code>の<code>cantTell</code>になり、スキャンが選択しなかった各ルールは、貢献したルールの中に<code>notSelected: true</code>付きの<code>missing</code>として列挙されます。HTMLレポートはその下に「一部のみ確認」と、選択されなかったチェックの件数を表示します。<a href="/results-reports/output-schema/#partly-checked">出力スキーマ</a>を参照してください。
+				</li>
+				<li>
+					<strong>達成基準のタグは、その達成基準自身を指定します。</strong><code>tags: ['wcag244']</code>は2.4.4を報告し、そのルールが検査するほかの達成基準（<code>link-name-present</code>なら4.1.2）は報告しません。集約のID、WCAGの目標、バージョンやレベルのタグ、WCAGのプロファイルによって加わったルールは、達成基準を追加しません。そこでは選択自体が達成基準を指定しているからです。そのため、達成基準を選択するスキャンの報告は以前と変わりません。
+				</li>
+				<li>
+					<strong>実行のWCAGのバージョンとレベルが適用されます。</strong>達成基準が追加されるのは、<code>engine.wcagVersion</code>で有効な場合（<code>duplicate-id</code>だけでは2.2で4.1.1は追加されず、<code>wcagVersion: '2.1'</code>なら追加されます）、かつ目標と同じように実行のレベル以下の場合だけです。レベルは、指定されていれば<code>engineOptions.wcagLevel</code>（次の節）、なければ選択が与えるレベル（<code>runOnly.wcag.level</code>、またはルールIDと並べたバージョンとレベルのタグ）です。どちらもなければ、すべてのレベルが報告されます。
+				</li>
+				<li>
+					<strong>除外が適用されます。</strong>選択が除外する集約（<code>{"excludeRuleIds: ['wcag-4.1.2-name']"}</code>、またはタグ）は追加されません。呼び出し側が除外したルールは選択されなかったものとして扱われます。プロファイルが除外するルールは達成基準を狭めます。そのルールは<code>notSelected</code>なしの<code>missing</code>になり、プロファイルが免除する達成基準は決して追加されません。
+				</li>
+				<li>
+					<strong>規格独自の集約</strong>（要件ごとに1つ）も同じように追加されますが、その規格が対象になっている場合だけです。適用されたプロファイルがその規格を対象とするか、選択がそのタグを指定するか、<code>optInRules</code>がそれを解除している場合です。WCAGのスキャンに、誰も求めていない規格の要件が表示されることはありません。適用されなかったプロファイルや、<code>mappings</code>だけでは、規格は対象になりません。その規格のプロファイルのもとではプロファイルのバージョンだけが追加され、プロファイルなしで解除した場合は、タグで選択したスキャンと同じくすべてのバージョンが追加されます。これは組み込みの規格やチェックリストと同じく、パックのものにも当てはまります。ルールを指定するチェックリストのプロファイル（<code>tags: []</code>、<code>{"rules: [...]"}</code>）は、それらのWCAGの達成基準と自身の項目を得ます。
+				</li>
+				<li>
+					<strong>スキャン前の一覧。</strong><code>getRulesForRunOnly(runOnly, engineOptions)</code>は、その選択とオプションでのスキャンが報告する集約を、追加されるものも含めて<code>getRulesCatalog</code>のエントリーとして列挙します。スキャン自身の集約の処理で求めるため、両者は一致します。ルールを列挙するのは<code>getChecksForRunOnly</code>です。<code>getRulesCatalog(engineOptions)</code>は、選択にかかわらず、そのオプションで利用できるすべての集約を列挙します。ツールは、スキャンを実行する前に何を検査するかを記録できます。ブラウザーのバインディングのビルダーは、同じ一覧を<code>plannedChecks()</code>と<code>plannedCriteria()</code>として提供します。
+				</li>
+			</ul>
+
+			<h3 id="giving-the-level-of-a-scan-that-names-checks-wcaglevel">チェックを指定するスキャンのレベルを示す（<code>wcagLevel</code>）</h3>
+			<p>
+				WCAG 2.2 AAを意図し、一部のチェックだけを実行するスキャンは、それらのチェックを指定し、バージョンを<code>engineOptions.wcagVersion</code>で示します。これではレベルが示されないため、それらのチェックの達成基準はすべてのレベルで報告されます。<code>contrast-computable</code>は1.4.3（AA）と1.4.6（AAA）を検査するので、両方が報告されます。<code>engineOptions.wcagLevel</code>はレベルを示します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Only the contrast checks of a WCAG 2.2 AA scan: 1.4.3 is reported, 1.4.6 is not.",
+					"runDomRulesInPage(url, null,",
+					"  { wcagVersion: '2.2', wcagLevel: 'AA' },",
+					"  { includeRuleIds: ['contrast-computable'] });",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>値。</strong><code>'A'</code>、<code>'AA'</code>、<code>'AAA'</code>のいずれかで、大文字小文字は問いません。それ以外の値は<code>console.warn</code>（<code>engineOptions.wcagLevel: ignoring "AA+"; use "A", "AA" or "AAA". ...</code>）を出して無視され、<code>strictOptions</code>のもとでは<code>INVALID_ENGINE_OPTIONS</code>を投げます。実行は有効なレベルを<code>'A'</code>、<code>'AA'</code>、<code>'AAA'</code>の表記で<code>engine.wcagLevel</code>として報告します。オプションがない場合、<code>engine.wcagLevel</code>は選択が示すレベルで、何も示さなければ含まれません。
+				</li>
+				<li>
+					<strong>決めるのは何を報告するかで、何を実行するかは決して決めません。</strong>何を実行するかは、オプションがない場合と同じく選択が決めます。選択が指定した、そのレベルより上のチェックも実行され、自身の結果を報告します。<code>rulesResults</code>から除かれるのは、そのレベルより上の達成基準だけです。
+				</li>
+				<li>
+					<strong>指定したチェックのために追加された達成基準だけでなく、すべてのWCAGの集約に適用されます。</strong>全体のスキャン、プロファイル、タグによる選択で<code>wcagLevel: 'AA'</code>を指定すると、AAAの達成基準は<code>rulesResults</code>から除かれますが、それらのチェックは引き続き実行され、<code>checksResults</code>で報告されます。これは<code>wcagVersion</code>とは異なります。<code>wcagVersion</code>は選択が選んだ集約を決して除きません。2.2のスキャンは引き続き4.1.1を報告し、そのルールは<code>cantTell</code>に強制変換されます。オプションのないスキャンの報告は以前と変わりません。
+				</li>
+				<li>
+					<strong>選択が示すレベルより優先されます</strong>（<code>runOnly.wcag.level</code>、またはバージョンとレベルのタグが示す最も高いレベル）。明示的な<code>wcagVersion</code>がタグの示すバージョンより優先されるのと同じです。両者の食い違いは、<code>wcagVersion</code>と目標のバージョンの食い違いと同じく警告されません。<code>engine.wcagLevel</code>が、達成基準の絞り込みに使われたレベルを示します。
+				</li>
+				<li>
+					<strong>IDで指定した集約は指定どおり報告されます。</strong><code>wcagLevel: 'AA'</code>とともに<code>{"includeRuleIds: ['wcag-1.4.6-contrast-enhanced']"}</code>を指定すると、1.4.6が報告されます。このオプションが示すのはどの達成基準を報告するかであって、呼び出し側が求めたものを除くことではありません。選択自身のタグが示すレベルは、オプションがない場合と同じく、指定した集約にも引き続き適用されます。
+				</li>
+				<li>
+					<strong>規格独自の集約</strong>にはWCAGのレベルがなく、このオプションの影響を受けません。パックのプロファイルはレベルを示せません（そのタグがレベルを示します）。呼び出し側が<code>wcagLevel</code>を渡せます。
+				</li>
+				<li>
+					<code>getRulesForRunOnly(runOnly, engineOptions)</code>もこれに従うため、スキャンが報告するものを列挙します。無効な値にはスキャンと同じように警告し、<code>strictOptions</code>のもとではエラーを投げます。
+				</li>
+			</ul>
+			<p>
+				オプションがなくても、ルールIDと並べたバージョンとレベルのタグはレベルを示します。デフォルトの<code>includeMode: 'and'</code>は、指定したルールのうちそれらのタグのいずれかを持つものを残すからです。<code>{"{ includeRuleIds: ['contrast-computable'], tags: wcagTags('2.2') }"}</code>は<code>contrast-computable</code>を実行し、1.4.3だけを報告します。ただし、タグは何を実行するかも決めます。WCAGのタグを持たない指定したルール（<code>region</code>のようなベストプラクティスのルールや、WCAGのタグのないカスタムルール）や、AAAの達成基準だけを検査するルールは実行から除かれ、どのルールも持たないバージョンとレベルのタグ（<code>wcag22a</code>）は<code>console.info</code>で注記されます。<code>wcagLevel</code>は、何を実行するかを変えずにレベルを示します。ブラウザーのバインディングでは、ビルダーの<code>.wcagLevel('AA')</code>で設定します。
 			</p>
 
 			<h3 id="filtering-by-wcag-version">WCAGバージョンによる絞り込み（2.0、2.1、2.2）</h3>
@@ -621,6 +720,9 @@ export function EngineOptionsContent() {
 			<ol>
 				<li>
 					<code>engineOptions.wcagVersion</code>：指定されていれば<code>'2.0'</code>、<code>'2.1'</code>、<code>'2.2'</code>のいずれか。
+				</li>
+				<li>
+					実行が適用するパックのプロファイルの<code>wcagVersion</code>（指定されている場合）。対応付けたルールだけを実行するプロファイルを持つ、WCAG 2.1に基づく規格はWCAGのタグを選択しないため、バージョンを自ら示します。プロファイル自身のタグが示すバージョンより優先されます。効果のないプロファイル（自分で指定した選択に上書きされたもの）はバージョンを持ち込みません。
 				</li>
 				<li><code>runOnly.wcag</code>の目標のバージョン。</li>
 				<li>
@@ -677,6 +779,7 @@ export function EngineOptionsContent() {
 					"  strictOptions: false,            // default false — true throws on an unknown option or a value of the wrong type",
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
+					"  wcagLevel: 'AA',                 // optional — the level of the criteria reported",
 					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
 					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
 					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
@@ -752,6 +855,9 @@ export function EngineOptionsContent() {
 					"// Error: engineOptions: unknown option \"lcoale\" (did you mean \"locale\"?). (strictOptions)",
 				]} />
 			<p>
+				<code>engineOptions</code>を受け取るカタログ関数（<code>getChecksCatalog</code>、<code>getRulesCatalog</code>、<code>getCheckDefById</code>、<code>getCompositeRuleById</code>、<code>getChecksForRunOnly</code>、<code>getRulesForRunOnly</code>、<code>getTestsForRunOnly</code>）も、同じ方法、同じ文言でそれを確認します。<code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code>は警告を出し、レベルを指定がなかったものとして読み、そのオプションでのスキャンが報告するものを列挙します。<code>strictOptions: true</code>を指定すると、スキャンと同じように<code>INVALID_ENGINE_OPTIONS</code>を投げます。
+			</p>
+			<p>
 				確認しないもの：ルール自身の設定（<code>rules[ruleId]</code>）、<code>messages</code>のキー、エンジンが読まずに受け渡す<code>probes</code>、そして独自の確認を持つカスタムルール（<code>skippedCustomRules</code>）です。TypeScriptでは、<code>StrictEngineOptions</code>は、任意のキーをコンパイルできるようにするインデックスシグネチャを持たない同じオプションの集合なので、綴りを誤ったオプションはそこでもエラーになります。
 			</p>
 
@@ -795,7 +901,7 @@ export function EngineOptionsContent() {
 						"}, { wcag: { version: '2.2', level: 'AA' } });",
 					]} />
 			<p>
-				ベストプラクティスのルールも実行するには、<code>wcag</code>と並べて<code>bestPractices: true</code>を追加してください。WCAGのゲートでは通常、それらは失敗させずに報告します。
+				ベストプラクティスのルールも実行するには、<code>wcag</code>と並べて<code>bestPractices: true</code>を追加してください。WCAGのゲートでは通常、それらは失敗させずに報告します。ただし一部は<code>fail</code>になりうる（<code>empty-heading</code>）ため、<code>fail</code>が1つでもあれば失敗させるゲートは、それらでも失敗します。
 			</p>
 			<p>
 				<strong>人間の監査担当者が実際のブラウザーでコントラストを詳しく確認する</strong>：誤検出への備えを一部手放して、より多くの検出結果を得ます。実際のブラウザーでは、コントラストのルールはすでに計算済みスタイルだけでなくレイアウトもチェックするので、設定が必要なのはコントラストのモードだけです。例ではPuppeteerの<code>page.evaluate</code>（複数の引数を受け付けます）を使っています。Playwrightの場合は、先に4つの位置引数を1つのオブジェクトにまとめてください。<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>を参照してください。
@@ -850,7 +956,7 @@ export function EngineOptionsContent() {
 
 			<h2><code>customRules</code>：実行時に登録するルール</h2>
 			<p>
-				同梱のルールはすべて、ビルド時に<code>src/core.js</code>に組み込まれます。<code>engineOptions.customRules</code>は実行時のための抜け道で、その呼び出しに限って登録されるルール記述子の配列です。静的なカタログには何も追加されず、呼び出しをまたいで残るものもありません。カタログ関数も同じ<code>engineOptions</code>を受け取り、それを使ったスキャンが持つものを列挙します。<code>getChecksCatalog(engineOptions)</code>は有効なカスタムルールを、各上書きを組み込みルールの位置に置いて列挙し、<code>getCheckDefById(id, engineOptions)</code>はそれらを見つけ、<code>getChecksForRunOnly(runOnly, engineOptions)</code>はスキャンと同じようにそれらを選択します。これは回避すべき制限ではなく、意図した設計です。surea11yはもともと呼び出しごとに新しい<code>engineOptions</code>を受け取り、変更可能なグローバル設定を持ちません（共有ランタイムに対して<code>configure()</code>/<code>reset()</code>の手順が必要な他のエンジンとは異なります）。カスタムルールもこの呼び出し単位のモデルに従います。
+				同梱のルールはすべて、ビルド時に<code>src/core.js</code>に組み込まれます。<code>engineOptions.customRules</code>は実行時のための抜け道で、その呼び出しに限って登録されるルール記述子の配列です。静的なカタログには何も追加されず、呼び出しをまたいで残るものもありません。カタログ関数も同じ<code>engineOptions</code>を受け取り、それを使ったスキャンが持つものを列挙します。<code>getChecksCatalog(engineOptions)</code>は有効なカスタムルールを、各上書きを組み込みルールの位置に置いて列挙し、<code>getCheckDefById(id, engineOptions)</code>はそれらを見つけ、<code>getChecksForRunOnly(runOnly, engineOptions)</code>はスキャンと同じようにそれらを選択し、<code>getRulesForRunOnly(runOnly, engineOptions)</code>はそれらが追加する集約を列挙します。これは回避すべき制限ではなく、意図した設計です。surea11yはもともと呼び出しごとに新しい<code>engineOptions</code>を受け取り、変更可能なグローバル設定を持ちません（共有ランタイムに対して<code>configure()</code>/<code>reset()</code>の手順が必要な他のエンジンとは異なります）。カスタムルールもこの呼び出し単位のモデルに従います。
 			</p>
 			<p>
 				ライブラリーを直接呼び出すのが1つの方法ですが、CLIでも<code>--custom-rules &lt;path&gt;</code>（ローカルファイル。スキャンごとに1回読み込まれます）で利用できます。<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#custom-rules">CLIのドキュメント</a>を参照してください。
@@ -881,10 +987,10 @@ export function EngineOptionsContent() {
 					カスタムルールの<code>id</code>が組み込みルールと重複した場合は、両方を実行するのではなく、<strong>そのスキャンでは組み込みルールを上書きします</strong>。同名のカスタムルールは、意図した上書きであるのと同じくらい偶然の衝突である可能性もあるため、衝突は必ず2つの方法で知らされます。該当するIDを示す<code>console.warn</code>と、結果のトップレベルにある<code>overriddenBuiltinIds</code>配列（衝突がなければ空）です。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照してください。IDは大文字小文字を問わずに照合されます。カスタムルール<code>IMG-ALT-PRESENT</code>は<code>img-alt-present</code>を上書きしてそのIDを引き継ぎ、2つ目の警告が両方の綴りを示します。
 				</li>
 				<li>
-					実行されたカスタムルールは、<code>meta.wcagSc</code>または<code>meta.normativeMappings</code>のWCAGのエントリーを通じて、組み込みルールと同じように、対応する各達成基準のWCAGの集約（<code>rulesResults</code>）に算入されます。不合格になったものは集約を不合格にします。集約は貢献したルールの中でそれに<code>custom: true</code>を付け、<code>data.details.customChecksIds</code>に列挙します。上書きは、それ自身の対応付けが示す場所に算入されます。その達成基準に対応していれば組み込みルールの代わりに算入され、どれにも対応していなければどの集約にも算入されず、外れた集約を示す警告が出ます。
+					実行されたカスタムルールは、<code>meta.wcagSc</code>または<code>meta.normativeMappings</code>のWCAGのエントリーを通じて、組み込みルールと同じように、対応する各達成基準のWCAGの集約（<code>rulesResults</code>）に算入されます。不合格になったものは集約を不合格にします。集約は貢献したルールの中でそれに<code>custom: true</code>を付け、<code>data.details.customChecksIds</code>に列挙します。選択が単独で（そのIDやタグのいずれかで）指定し、実行されたカスタムルールは、選択がその達成基準を1つも指定していなくても、その達成基準の集約を報告します（<a href="#which-criteria-a-scan-reports">「スキャンが報告する達成基準」</a>）。上書きは、それ自身の対応付けが示す場所に算入されます。その達成基準に対応していれば組み込みルールの代わりに算入され、どれにも対応していなければどの集約にも算入されず、外れた集約を示す警告が出ます。
 				</li>
 				<li>
-					カスタムルールは、組み込みルールと同じように、IDと<code>meta.tags</code>で選択されます。スキャンがスキップしたカスタムルールを指定する<code>runOnly</code>は、スキップされた理由とともに<code>INVALID_RUN_ONLY</code>を投げます。<code>customRules</code>はリストです。単独で渡したルールは実行されず、<code>skippedCustomRules</code>に列挙されます。プロファイルやWCAGの目標のもとでは、<code>best-practice</code>のタグを持つルールや、WCAGのタグを持たないルールは実行に含まれません。それらは<code>console.warn</code>とともに<code>skippedCustomRules</code>に列挙され、検査する達成基準のタグ（<code>'wcag111'</code>）を付けるか、<code>runOnly.bestPractices: true</code>を追加すると実行されます。上書きは、組み込みルールが実行されたはずの場所ではどこでも実行されます。
+					カスタムルールは、組み込みルールと同じように、IDと<code>meta.tags</code>で選択されます。スキャンがスキップしたカスタムルールを指定する<code>runOnly</code>は、スキップされた理由とともに<code>INVALID_RUN_ONLY</code>を投げます。<code>customRules</code>はリストです。単独で渡したルールは実行されず、<code>skippedCustomRules</code>に列挙されます。プロファイルやWCAGの目標のもとでは、<code>best-practice</code>のタグを持つルールや、WCAGのタグを持たないルールは実行に含まれません。それらは<code>console.warn</code>とともに<code>skippedCustomRules</code>に列挙され、検査する達成基準のタグ（<code>'wcag111'</code>）を付けるか、<code>runOnly.bestPractices: true</code>を追加すると実行されます。選択が除外したカスタムルール（<code>{"excludeRuleIds: ['org-b']"}</code>、<code>rules.exclude</code>など）もそこに列挙されます。理由は<code>excluded by the selection.</code>で、<code>excluded: true</code>が付き、警告は出ません。上書きは、組み込みルールが実行されたはずの場所ではどこでも実行されます。
 				</li>
 				<li>
 					カスタムルールも組み込みルールと同じようにマージンを報告できます。<code>meta.margin</code>（<code>{"{ measure, unit, limit }"}</code>）を宣言し、<code>marginCandidates</code>を返してください（GitHub上のルール作成ガイド<a href={`${core}/docs/RULE_AUTHORING.md#metamargin`}><code>RULE_AUTHORING.md</code>の<code>meta.margin</code></a>を参照）。形式が正しくない<code>meta.margin</code>は無視され、そのルールはマージンを報告しませんが、スキャンは続行します。
@@ -916,7 +1022,7 @@ export function EngineOptionsContent() {
 						"getChecksCatalog({ packs: [acmePolicy] }); // core's rules and the pack's",
 					]} />
 			<p>
-				コアと両立しないパック（その<code>core</code>の範囲がこのバージョンを含まない、名前空間のないルールID、コアが持つ辞書のキー）は、<code>console.warn</code>を出してスキップされ、結果の<code>skippedPacks</code>に<code>{"{ name, reason }"}</code>として列挙され、スキャンはそのパックなしで実行されます。<code>strictOptions</code>のもとではエラーを投げます。互いに衝突するパックはエラーを投げます。ページ内では、まず<code>packScript(packs)</code>でパックを登録し、<code>engineOptions.packs</code>で<code>name@version</code>として指定します。パックが持つもの、各バインディング、test-matchers、CLIからの使い方、パックの書き方は<a href="/configuration/packs/">パック</a>にあります。
+				コアと両立しないパック（その<code>core</code>の範囲がこのバージョンを含まない、名前空間のないルールID、コアが持つ辞書のキー）は、<code>console.warn</code>を出してスキップされ、結果の<code>skippedPacks</code>に<code>{"{ name, reason }"}</code>として列挙され、スキャンはそのパックなしで実行されます。<code>strictOptions</code>のもとでは<code>code: 'INVALID_ENGINE_OPTIONS'</code>付きのエラーを投げます。互いに衝突するパックはエラーを投げます。ページ内では、まず<code>packScript(packs)</code>でパックを登録し、<code>engineOptions.packs</code>で<code>name@version</code>として指定します。パックが持つもの、各バインディング、test-matchers、CLIからの使い方、パックの書き方は<a href="/configuration/packs/">パック</a>にあります。
 			</p>
 
 			<h2><code>contextSelector</code>（ランナーの第2引数。<code>engineOptions</code>のフィールドではありません）</h2>

@@ -88,8 +88,9 @@ const fileRows = [
 const profileFieldRows = [
 	{ id: "tags", field: <code>tags</code>, what: <>Regeln, die eines dieser Tags tragen. <code>wcagTags(version, levels)</code> aus <code>@surea11y/core/pack</code> liefert die WCAG-Tags von core (<code>wcagTags('2.1')</code> sind 2.0 und 2.1, A und AA).</> },
 	{ id: "rules", field: <code>rules</code>, what: <>Regeln nach ID, aus core oder dem Pack: eine Best-Practice-Regel, die kein WCAG-Tag auswählt, oder, mit <code>tags: []</code>, die Regeln von core, die das Profil neben den eigenen des Packs ausführt.</> },
-	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code> lässt Regeln aus dem Scan weg; <code>{"{ criteria: ['2.5.8'] }"}</code> lässt die Prüfungen und Zusammenfassungen dieser Kriterien weg. Das schränkt ein, was der Scan prüft: Die Anforderungen der WCAG bleiben, wie sie sind.</> },
+	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code> lässt Regeln aus dem Scan weg; <code>{"{ criteria: ['2.5.8'] }"}</code> erlässt diese Kriterien: Ihre Zusammenfassungen entfallen, ebenso jede Regel, deren Kriterien alle erlassen sind; eine Regel, die auch ein Kriterium prüft, das das Profil behält, läuft weiter. Das schränkt ein, was der Scan prüft: Die Anforderungen der WCAG bleiben, wie sie sind.</> },
 	{ id: "severity", field: <code>severity</code>, what: <><code>{"{ ruleId: level }"}</code>: ein anderer Schweregrad unter dem Profil. Ergebnisse zeigen ihn und behalten den ursprünglichen Schweregrad der Regel als <code>ruleSeverity</code>; Baselines und Befund-IDs ändern sich nicht.</> },
+	{ id: "wcagVersion", field: <code>wcagVersion</code>, what: <><code>'2.0'</code>, <code>'2.1'</code> oder <code>'2.2'</code>: die WCAG-Version, nach der die Scans des Profils beurteilt werden (<code>engine.wcagVersion</code>). Ohne das Feld ergibt sich die Version aus den WCAG-Tags in <code>tags</code>, und ein Profil ohne solche Tags wird nach 2.2 beurteilt. Eine eigene <code>engineOptions.wcagVersion</code> des Scans hat weiterhin Vorrang. Ab core 1.12.0.</> },
 	{ id: "version", field: <><code>version</code>, <code>mappedRules</code></>, what: <>Nur beim Profil einer Norm: die Version der Norm, auf die es zielt, und <code>mappedRules: true</code>, um jede Regel auszuführen, die die Norm für diese Version zuordnet.</> },
 ];
 
@@ -295,7 +296,10 @@ export function PacksContent() {
 					die mit seinem Namensraum beginnen (<code>acme-no-autoplay</code>). Eine Regel eines Packs,
 					die einem WCAG-Kriterium zugeordnet ist, zählt für die Zusammenfassung dieses Kriteriums,
 					es sei denn, sie trägt das Opt-in-Namensraum-Tag des Packs: Solche Regeln prüfen, was die
-					WCAG nicht verlangen, und zählen daher nur in den eigenen Zusammenfassungen des Packs. Eine
+					WCAG nicht verlangen, und zählen daher nur in den eigenen Zusammenfassungen des Packs. Ihr{" "}
+					<code>wcagSc</code> nennt trotzdem die WCAG-Kriterien, die sie prüfen, für die Berichte, und
+					keine andere Norm (EN 301 549, die jede Regel über ihre WCAG-Kriterien zuordnet)
+					beansprucht sie. Eine
 					Überschreibung zählt anstelle der Regel von core, die sie ersetzt, dort, wohin ihre eigene
 					Zuordnung sie stellt.
 				</li>
@@ -322,13 +326,17 @@ export function PacksContent() {
 				gültig ist oder das nicht zu core passt (eine Regel-ID außerhalb seines Namensraums, ein
 				Wörterbuchschlüssel, den core hat, eine Variante einer Regel, die es nicht gibt), wird
 				übersprungen: Der Scan läuft ohne es, warnt und listet es in <code>skippedPacks</code> als{" "}
-				<code>{"{ name, reason }"}</code>. Unter <code>strictOptions</code> wirft er einen Fehler.
+				<code>{"{ name, reason }"}</code>. Unter <code>strictOptions</code> wirft er einen Fehler
+				mit <code>code: 'INVALID_ENGINE_OPTIONS'</code>, wie jeder Fehler in{" "}
+				<code>engineOptions.packs</code>.
 				Zwei Packs, die miteinander kollidieren (ein Wörterbuchschlüssel, den beide definieren, zwei
 				Normen mit einem Schlüssel), werfen einen Fehler, da jede Art, zwischen ihnen zu wählen, von
 				der Reihenfolge abhinge, in der sie übergeben wurden. In einer Seite wird ein in{" "}
 				<code>engineOptions.packs</code> genanntes Pack, das kein Aufruf von <code>packScript</code>{" "}
 				registriert hat oder das mit einer anderen core-Version registriert wurde, genauso
-				aufgeführt.
+				aufgeführt. Ein Scan kann also ohne die Prüfungen enden, für die Sie das Pack hinzugefügt
+				haben: Ein Tool, das von einem Pack abhängt, sollte <code>skippedPacks</code> prüfen, bevor
+				es den Scan als vollständig behandelt.
 			</p>
 			<p>Jedes Tool macht aus einem übersprungenen Pack einen sichtbaren Fehlschlag:</p>
 			<ul>
@@ -383,7 +391,10 @@ export function PacksContent() {
 			/>
 			<p>
 				Das Pack funktioniert direkt nach dem Erzeugen: Seine Tests bestehen, seine Regeln bestehen
-				den Lint ohne Befunde, seine Beispiele stimmen mit seinen Regeln überein. Ändern Sie es von
+				den Lint ohne Befunde, seine Beispiele stimmen mit seinen Regeln überein.{" "}
+				<code>surea11y-pack new</code> prüft das Pack vor dem Schreiben so, wie ein Scan es täte,
+				und lehnt einen Namen, Namensraum oder Titel ab, der es ungültig machen würde (ein Titel{" "}
+				<code>WCAG</code> gibt seine Norm als eine von core aus), mit Begründung. Ändern Sie es von
 				dort aus Schritt für Schritt und führen Sie dabei <code>npm test</code> aus. Seine README
 				geht jede Datei durch:
 			</p>
@@ -470,6 +481,30 @@ export function PacksContent() {
 				rows={profileFieldRows}
 			/>
 			<p>
+				<strong>Ein Profil, das nur ausführt, was seine Norm verlangt.</strong> Das Profil einer
+				Norm mit <code>{"tags: [<ns>]"}</code> und <code>mappedRules: true</code> führt die eigenen
+				Regeln des Packs und die Regeln von core aus, die seine Zuordnung mit einer Anforderung
+				verknüpft, und sonst nichts: Keine Regel prüft, was die Norm nicht verlangt, und die
+				Ergebnisse enthalten keine WCAG-Kriterien. Ohne WCAG-Tag sagt allerdings nichts, auf
+				welcher WCAG-Version die Norm aufbaut, und der Lauf wird nach 2.2 beurteilt. Für eine Norm,
+				die auf 2.1 aufbaut, ist das falsch: 4.1.1 Syntaxanalyse gibt es in 2.2 nicht mehr, sodass{" "}
+				<code>duplicate-id</code> nachfragt, statt fehlzuschlagen. Geben Sie die Version an. Die
+				erzeugte <code>index.js</code> liest sie aus <code>requirements.js</code>, wo jede Version
+				der Norm die WCAG-Version nennt, auf der sie aufbaut (
+				<code>{"{ version: '1.0', wcagVersion: '2.2' }"}</code>):
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'city-1.0': {",
+					"  version: '1.0',",
+					"  tags: ['city'],                      // the pack's own rules",
+					"  mappedRules: true,                   // and the core rules its map links to a requirement",
+					"  wcagVersion: wcagVersionOf('1.0')    // judged by the WCAG version requirements.js gives for 1.0",
+					"}",
+				]}
+			/>
+			<p>
 				Die Regeln von core mit ihren IDs und Tags stehen unter <a href="/rules/">Regeln</a>.
 			</p>
 
@@ -500,9 +535,14 @@ export function PacksContent() {
 				<code>ctx</code>. <code>runInPage(ctx)</code> läuft in der Seite, verwendet also nur{" "}
 				<code>ctx</code>, nie eine Variable oder ein Modul von außerhalb, und liest nur: Die Regeln
 				eines Packs laufen nach denen von core, und die Helfer und Optionen, die sie erhalten, sind
-				schreibgeschützt. Drei Abkürzungen brauchen wenig oder keinen Code:{" "}
+				schreibgeschützt. Schreibschutz ist eine Regel, keine Sandbox: Nichts hindert den Code
+				einer Regel daran, mehr zu tun, laden Sie also nur Packs, denen Sie vertrauen (siehe die{" "}
+				<a href={`${core}/SECURITY.md`}>Sicherheitsrichtlinie</a> von core auf GitHub). Drei
+				Abkürzungen brauchen wenig oder keinen Code:{" "}
 				<strong>eine Variante</strong> führt eine Regel von core mit anderen Einstellungen aus (
-				<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>),{" "}
+				<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>;
+				jede Einstellung ist ein Schwellenwert, eine endliche Zahl über 0, und{" "}
+				<code>definePack</code> lehnt andere Werte ab),{" "}
 				<strong>eine Überschreibung</strong> ersetzt eine Regel von core (aufgeführt in{" "}
 				<code>overrides</code> und in <code>overriddenBuiltinIds</code> der Ergebnisse), und{" "}
 				<strong>eine Regel von core, wie sie ist</strong>, braucht nur ihre ID in einem Profil oder
@@ -538,7 +578,8 @@ export function PacksContent() {
 				<li>
 					<strong>Docs</strong> (<code>npm run docs</code>, <code>surea11y-pack docs</code>)
 					schreiben <code>docs/RULE_CATALOG.md</code> des Packs und führen jedes Beispiel aus seinem{" "}
-					<code>docs/RULE_EXAMPLES.md</code> in Chromium aus; <code>--check</code> schlägt fehl,
+					<code>docs/RULE_EXAMPLES.md</code> in Chromium aus (<code>CHROMIUM_EXECUTABLE_PATH</code>{" "}
+					nennt einen anderen Chromium-Build); <code>--check</code> schlägt fehl,
 					wenn eines davon veraltet ist, für die CI des Packs.
 				</li>
 			</ul>
