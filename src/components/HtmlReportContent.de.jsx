@@ -68,7 +68,7 @@ export function HtmlReportContent() {
 					EN-301-549-Klausel, die es wiedergibt, sofern es eine gibt und der Scan
 					EN-301-549-Klauseln angefordert hat) mit seinem Ergebnis, einer Aufschlüsselung nach
 					bestanden/nicht bestanden/zu prüfen/nicht anwendbar (mit einer Zeile „Teilweise geprüft“,
-					wenn der Scan nur einen Teil der Regeln des Kriteriums ausgewählt hat, siehe{" "}
+					wenn der Scan nur einen Teil der Regeln des Kriteriums ausgewählt hat, etwa „Teilweise geprüft: 1 von 2 Prüfungen war für diesen Scan nicht ausgewählt“, siehe{" "}
 					<a href="/results-reports/output-schema/#partly-checked">Ein teilweise geprüftes
 					Kriterium</a>) und den atomaren Regeln, die dazu
 					beigetragen haben, einschließlich einer eigenen Regel, die dem Kriterium zugeordnet ist.

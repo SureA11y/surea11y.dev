@@ -59,7 +59,7 @@ export function HtmlReportContent() {
 					the requirements of each other standard in the result's <code>standards</code> that its
 					rules map to, such as the EN 301 549 clause that restates it, where there is one and the
 					scan asked for EN 301 549 clauses), its outcome, a pass/fail/needs-review/n/a breakdown
-					(with a “Partly checked” line when the scan selected only some of the criterion's rules,
+					(with a “Partly checked” line when the scan selected only some of the criterion's rules, such as “Partly checked: 1 of 2 checks was not selected for this scan”,
 					see <a href="/results-reports/output-schema/#partly-checked">A partly checked
 					criterion</a>), and which atomic rules contributed, a custom rule mapped to the criterion included. This is real engine data, not an invented grouping — the same rollup you'd
 					get from the raw JSON's <code>rulesResults</code>.
