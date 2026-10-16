@@ -62,7 +62,7 @@ export function HtmlReportContent() {
 					a los que se asocian sus reglas, como la cláusula de EN 301 549 que lo reformula, cuando la
 					hay y el análisis pidió cláusulas de EN 301 549), su resultado, un desglose de
 					aprobado/fallido/necesita revisión/n.a. (con una línea «Comprobado en parte» cuando el análisis
-					seleccionó solo algunas de las reglas del criterio, ver{" "}
+					seleccionó solo algunas de las reglas del criterio, como «Comprobado en parte: 1 de 2 comprobaciones no se seleccionó para este análisis», ver{" "}
 					<a href="/results-reports/output-schema/#partly-checked">Un criterio comprobado en
 					parte</a>) y qué reglas atómicas contribuyeron, incluida una
 					regla personalizada asociada al criterio. Son datos reales del motor, no una agrupación inventada:

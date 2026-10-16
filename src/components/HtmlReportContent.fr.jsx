@@ -65,7 +65,7 @@ export function HtmlReportContent() {
 					d’EN 301 549 qui le reprend, quand il y en a une et que l’analyse a demandé les clauses
 					d’EN 301 549), avec son résultat, une ventilation réussite/échec/à examiner/non
 					applicable (avec une ligne « Vérifié en partie » quand l’analyse n’a sélectionné qu’une
-					partie des règles du critère, voir{" "}
+					partie des règles du critère, comme « Vérifié en partie : 1 contrôle sur 2 n’a pas été sélectionné pour cette analyse », voir{" "}
 					<a href="/results-reports/output-schema/#partly-checked">Un critère partiellement
 					vérifié</a>), et les règles atomiques qui y ont contribué, y compris une règle
 					personnalisée associée au critère. Ce sont de vraies
