@@ -57,8 +57,9 @@ export function ResultsReportsContent() {
 				without writing a converter yourself. Violations map to SARIF results with a stable,
 				content-based fingerprint, so a <a href="/conformance/baseline/">baseline / allowlist</a>{" "}
 				still filters cleanly and a dashboard can track a
-				finding across commits instead of losing it every time a line number shifts. See{" "}
-				<a href="/results-reports/sarif-report/">SARIF report</a>.
+				finding across commits instead of losing it every time a line number shifts. A log with
+				no results means nothing failed or needs review among the checks that ran; it is not a
+				conformance claim. See <a href="/results-reports/sarif-report/">SARIF report</a>.
 			</p>
 
 			<h2>JUnit report</h2>
@@ -67,7 +68,9 @@ export function ResultsReportsContent() {
 				widget, Azure DevOps' Tests tab, Jenkins, CircleCI — next to your unit tests. Each WCAG
 				criterion is a suite and each rule a test, so a defect repeated across a page is one
 				failing test, and counts stay stable between runs. <code>cantTell</code> arrives as a
-				skipped test, visible without turning the build red. See{" "}
+				skipped test, visible without turning the build red. Suite names are the same in every
+				locale, so test history doesn't restart when the scan's language changes. A green suite
+				means the rules that ran for a criterion found nothing, not that the criterion is met. See{" "}
 				<a href="/results-reports/junit-report/">JUnit report</a>.
 			</p>
 

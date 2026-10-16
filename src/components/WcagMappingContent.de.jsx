@@ -122,6 +122,19 @@ export function WcagMappingContent() {
 				Stelle der eingebauten Regel, wenn sie diesem Kriterium zugeordnet ist, und nirgends, wenn
 				sie keinem zugeordnet ist (mit einer Warnung).
 			</p>
+			<p>
+				Ein Scan, der Regeln statt Kriterien nennt (<code>{"includeRuleIds: ['link-name-present']"}</code>,
+				ein Tag, das keine WCAG-Stufe nennt, die Best Practices), bekommt ebenfalls die
+				zusammengesetzten Regeln der Kriterien, die diese Regeln prüfen (siehe{" "}
+				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Engine-Optionen</a>). Vor 1.12 meldete ein solcher
+				Scan keine. Die Tabelle oben entscheidet über sie: Eine Regel mit <code>fail</code> lässt das
+				Kriterium scheitern, und die Regeln, die der Scan nicht ausgewählt hat, sind Beitragende,
+				die nicht gelaufen sind; das Kriterium ist also bestenfalls <code>cantTell</code>, teilweise
+				geprüft (<code>reasonCode</code>{" "}
+				<code>composite.rollup.cantTell.notSelectedChild</code>, jede solche beitragende Regel mit{" "}
+				<code>notSelected: true</code> markiert; „Teilweise geprüft“ im{" "}
+				<a href="/results-reports/html-report/">HTML-Bericht</a>).
+			</p>
 
 			<h2>Eine Konformitätsstufe anpeilen (A / AA / AAA)</h2>
 			<p>Nennen Sie WCAG-Version und -Stufe in <code>runOnly.wcag</code>:</p>
@@ -186,8 +199,9 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				<strong>Um das entfernte Kriterium kümmert sich die Engine.</strong> Jeder Lauf ermittelt
-				eine Ziel-Version von WCAG (<code>engineOptions.wcagVersion</code>, sonst die Version von{" "}
-				<code>runOnly.wcag</code>, sonst was Ihre Versions-Tags nahelegen, sonst <code>2.2</code>) und meldet sie als{" "}
+				eine Ziel-Version von WCAG (<code>engineOptions.wcagVersion</code>, sonst die{" "}
+				<code>wcagVersion</code> des <a href="/configuration/packs/">Pack</a>-Profils, das der Lauf
+				anwendet, sonst die Version von <code>runOnly.wcag</code>, sonst was Ihre Versions-Tags nahelegen, sonst <code>2.2</code>) und meldet sie als{" "}
 				<code>engine.wcagVersion</code> zurück. Bei einem 2.2-Ziel kann eine Regel, die nur SC
 				4.1.1 Syntaxanalyse zugeordnet ist, kein <code>fail</code> melden: Sie läuft, meldet ihre
 				Vorkommen und liefert <code>cantTell</code> mit einem Feld <code>wcagVersionScope</code>,
@@ -197,11 +211,16 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				Zusammengesetzte Regeln werden, anders als atomare, <em>sehr wohl</em> kumulativ gefiltert.
-				Der Runner liest die Stufe von <code>runOnly.wcag</code> oder die höchste in{" "}
-				<code>tags</code> genannte Stufe und verwirft jede
-				zusammengesetzte Regel darüber; mit <code>{"['wcag2a', 'wcag2aa']"}</code> gibt es also
-				keinen <code>rulesResults</code>-Eintrag für ein SC, das nur AAA ist. Die genaue
-				Rangfolge steht in <code>inferTargetLevelFromRunOnly</code>/
+				Der Runner liest <code>engineOptions.wcagLevel</code>, sonst die Stufe von{" "}
+				<code>runOnly.wcag</code> oder die höchste in <code>tags</code> genannte Stufe, und verwirft
+				jede zusammengesetzte Regel darüber; mit <code>{"['wcag2a', 'wcag2aa']"}</code> gibt es
+				also keinen <code>rulesResults</code>-Eintrag für ein SC, das nur AAA ist.{" "}
+				<code>wcagLevel</code> (<code>'A'</code>, <code>'AA'</code> oder <code>'AAA'</code>) ist die
+				Option für einen Scan, der Prüfungen statt eines Ziels nennt: Jede ausgewählte Regel läuft
+				weiterhin, nur die gemeldeten Kriterien werden auf diese Stufe begrenzt, sodass ein Scan von{" "}
+				<code>contrast-computable</code> bei <code>'AA'</code> 1.4.3 meldet und nicht das AAA-Kriterium
+				1.4.6. Der Lauf hält sie als <code>engine.wcagLevel</code> fest. Die genaue Rangfolge steht in{" "}
+				<code>targetWcagLevelOf</code>/
 				<code>isAllowedByTargetLevel</code> in <code>src/core/dom-runner.js</code>.
 			</p>
 			<p>
@@ -318,7 +337,11 @@ export function WcagMappingContent() {
 					nennt die Tags, deren Regeln gelaufen sind. Unter einem WCAG-Profil läuft eine freigeschaltete Regel nur, wenn
 					ihre Tags zu diesem Profil passen, und der Lauf zielt weiterhin auf WCAG. Unter den Regeln
 					von core führt ein Scan mit WCAG-Ziel also nur die Regeln für die Kriterien des Ziels aus,
-					dazu die Best-Practice-Regeln, wenn Sie sie ergänzen. Eine eigene Regel, eine Überschreibung
+					dazu die Best-Practice-Regeln, wenn Sie sie ergänzen. Eine Best-Practice-Regel nennt kein
+					Kriterium und kann trotzdem <code>fail</code> melden, wo das Gefundene selbst eine Barriere
+					ist, etwa eine leere Überschrift (
+					<a href="/rules/empty-heading/"><code>empty-heading</code></a>); keine zusammengesetzte
+					WCAG-Regel zählt sie mit. Eine eigene Regel, eine Überschreibung
 					oder eine Regel eines Packs ohne Opt-in-Tag läuft, wenn die Auswahl sie einschließt, und
 					kann dann für eine eigene Prüfung, die WCAG nicht verlangt, <code>fail</code> melden.
 				</li>

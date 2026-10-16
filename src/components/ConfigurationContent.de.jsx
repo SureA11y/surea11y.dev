@@ -17,7 +17,9 @@ export function ConfigurationContent() {
 				WCAG-Version und -Stufe (WCAG 2.2 AA in einer Option, auf Wunsch Best Practices dazu), nach
 				ID, nach Tag oder über ein benanntes Konformitätsprofil wie
 				WCAG 2.2 AA, EN 301 549 oder Section 508 —, damit ein Lauf das meldet, wofür Sie tatsächlich
-				verantwortlich sind, nicht mehr und nicht weniger. Nehmen Sie Widgets, die
+				verantwortlich sind, nicht mehr und nicht weniger. Führen Sie nur einige Prüfungen aus und
+				erhalten Sie trotzdem die WCAG-Kriterien, zu denen sie gehören, auf der Stufe, an der Sie
+				gemessen werden, und lassen Sie sich vor dem Scan auflisten, was er melden wird. Nehmen Sie Widgets, die
 				bekanntermaßen störende Befunde liefern, global oder für eine einzelne Regel vom Scan
 				aus, ohne überall sonst Abdeckung zu verlieren, stellen Sie ein, wie streng die Kontrastprüfungen für einen
 				menschlichen Auditor im Vergleich zu einem unbeaufsichtigten CI-Gate sein sollen, und
@@ -47,7 +49,7 @@ export function ConfigurationContent() {
 				Verstöße einer bestehenden Website in eine Baseline auf, sodass nur tatsächlich neue zum
 				Fehlschlag führen, und laden SARIF-Ergebnisse direkt in <span lang="en">GitHub Code Scanning</span> hoch, wo Ihr
 				Team ohnehin hinschaut. Rezepte für GitLab CI und Azure DevOps bringen die Ergebnisse als
-				JUnit in deren eigene Testansichten. Die vollständigen Vorlagen finden Sie unter{" "}
+				JUnit in deren eigene Testansichten, von der CLI im selben Schritt geschrieben. Die vollständigen Vorlagen finden Sie unter{" "}
 				<a href="/configuration/ci-integration/">CI-Integration</a>.
 			</p>
 

@@ -74,9 +74,10 @@ const topLevelRows = [
 		field: <code>engine.wcagVersion</code>,
 		meaning: (
 			<>
-				La version de WCAG par rapport à laquelle cette exécution a testé la conformité : votre{" "}
-				<code>engineOptions.wcagVersion</code>, ou ce qu’impliquaient vos tags d’origine de
-				version, ou la valeur par défaut <code>"2.2"</code>. Elle n’a aujourd’hui qu’un effet :{" "}
+				La version de WCAG par rapport à laquelle cette exécution a vérifié : votre{" "}
+				<code>engineOptions.wcagVersion</code>, ou le <code>wcagVersion</code> du profil de pack
+				que l’exécution a appliqué, ou ce qu’impliquaient vos tags d’origine de version, ou la
+				valeur par défaut <code>"2.2"</code>. Elle n’a aujourd’hui qu’un effet :{" "}
 				<strong>une règle associée uniquement au critère 4.1.1 Analyse syntaxique ne peut pas
 				renvoyer <code>fail</code> avec une cible 2.2</strong> (voir{" "}
 				<code>checksResults[i].wcagVersionScope</code> ci-dessous). Indiquée une fois par
@@ -85,6 +86,29 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "engine.wcagLevel",
+		field: <code>engine.wcagLevel</code>,
+		meaning: (
+			<>
+				Le niveau WCAG qui a filtré les critères signalés, <code>"A"</code>, <code>"AA"</code>{" "}
+				ou <code>"AAA"</code> : <code>engineOptions.wcagLevel</code> quand il a été fourni et est
+				valide, sinon le niveau que donne la sélection (<code>runOnly.wcag.level</code>, ou le
+				niveau le plus élevé que nomment ses tags de version/niveau, ceux d’un profil compris).
+				Les agrégations WCAG au-dessus de ce niveau ne figurent pas dans{" "}
+				<code>rulesResults</code>, bien que leurs règles se soient exécutées et figurent dans{" "}
+				<code>checksResults</code> ; une agrégation que la sélection a nommée par son id est
+				signalée quoi que dise <code>engineOptions.wcagLevel</code>. Absent quand l’analyse
+				n’avait pas de niveau, comme une analyse complète ou une analyse qui ne nomme que des
+				règles, qui signale tous les niveaux. Les reporters filtrent par ce niveau les critères
+				qu’ils nomment. Voir{" "}
+				<a href="/configuration/engine-options/#giving-the-level-of-a-scan-that-names-checks-wcaglevel">
+					Donner le niveau d’une analyse qui nomme des vérifications
+				</a>
+				.
+			</>
+		),
+	},
+{
 		id: "engine.profile",
 		field: <code>engine.profile</code>,
 		meaning: (
@@ -105,7 +129,9 @@ const topLevelRows = [
 			<>
 				Présent seulement quand le profil appliqué écarte des règles :{" "}
 				<code>{"{ rules, criteria }"}</code>, les règles qu’il nomme et les critères WCAG qu’il
-				écarte. Leurs règles et agrégations WCAG ne se sont pas exécutées, ce qui restreint
+				écarte. Les règles qu’il nomme, les règles dont il écarte tous les critères et les
+				agrégations WCAG de ces critères ne se sont pas exécutées ; une règle qui vérifie aussi un
+				critère que le profil conserve s’est exécutée, et compte pour ce critère. Cela restreint
 				l’analyse sans changer ce que WCAG exige. Aucun profil intégré
 				n’écarte quoi que ce soit.
 			</>
@@ -186,10 +212,17 @@ const topLevelRows = [
 				ou pendant que des polices web sont encore en cours de chargement : c’est donc ce dont
 				vous avez besoin pour reproduire une exécution. <code>layout</code> indique si la page
 				avait une mise en page : <code>false</code> dans jsdom et les autres émulateurs de DOM, et
-				c’est alors le seul champ. Dans un navigateur, <code>viewport</code> vaut{" "}
+				le viewport et les autres champs de rendu sont alors omis, puisqu’ils ne décrivent rien
+				de mesuré ; seul <code>internalsHook</code> peut figurer à côté, là où la page exécute le
+				hook. Dans un navigateur, <code>viewport</code> vaut{" "}
 				<code>innerWidth</code>/<code>innerHeight</code> en pixels CSS,{" "}
 				<code>devicePixelRatio</code> celui de la page (le zoom du navigateur s’y reflète aussi),{" "}
-				<code>colorScheme</code> ce à quoi correspond <code>prefers-color-scheme</code>, et{" "}
+				<code>colorScheme</code> ce à quoi correspond <code>prefers-color-scheme</code>,{" "}
+				<code>forcedColors</code> si <code>forced-colors: active</code> correspond (
+				<code>"active"</code> sous le contraste élevé de Windows ou les couleurs forcées émulées de
+				Chromium, <code>"none"</code> sinon ; les règles mesurent les propres couleurs de la page
+				dans les deux cas, voir{" "}
+				<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}>Forced colors</a>), et{" "}
 				<code>fonts</code> vaut <code>"loading"</code> tant qu’une des polices de la page est
 				encore en cours de chargement, <code>"loaded"</code> sinon. Un champ que la page ne peut
 				pas fournir est omis. Lire ces valeurs n’ajoute aucun non-déterminisme : comme le DOM, ce
@@ -205,8 +238,20 @@ const topLevelRows = [
 				indéfiniment (un texte défilant, un indicateur de chargement) à son début, et chacune est
 				remise exactement où elle était ensuite, si bien qu’une page analysée pendant un fondu
 				d’apparition donne le même résultat qu’une page analysée après. Le navigateur n’affiche
-				jamais l’état figé, puisque l’analyse est une seule tâche synchrone. Chaque frame d’un{" "}
-				<a href="#cross-frame-result">résultat multi-frames</a> porte le sien.
+				jamais l’état figé, puisque l’analyse est une seule tâche synchrone.{" "}
+				<code>internalsHook</code> n’est présent que là où la page exécute le hook d’internals
+				optionnel (<code>internalsHookScript()</code>, voir{" "}
+				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				) dans le document analysé, avec ou sans mise en page : <code>"early"</code> quand il a
+				été installé avant les scripts de la page et reste l’<code>attachInternals</code> de la
+				page, si bien que l’analyse a lu les <code>ElementInternals</code> de chaque élément
+				personnalisé et qu’un élément qui n’en a pas ne pose aucune question ;{" "}
+				<code>"late"</code> quand il a été installé après eux, ou que la page a remplacé{" "}
+				<code>attachInternals</code> après lui, si bien que seuls les internals attachés après
+				lui ont été lus. Sans hook, le champ est absent et le résultat est le même qu’avant.
+				Chaque frame d’un <a href="#cross-frame-result">résultat multi-frames</a> porte le sien.
 			</>
 		),
 	},
@@ -283,8 +328,12 @@ const topLevelRows = [
 				exécutée ; voir <a href="#composite-result">Un résultat composite</a> et{" "}
 				<a href="/conformance/wcag-mapping/">Conformité</a>. En principe une par critère de succès
 				WCAG ; une exécution sous le profil d’une norme dotée de ses propres agrégations reçoit aussi
-				celles-ci (avec <code>meta.standard</code>). Tableau vide si aucun composite ne
-				correspond au filtre <code>runOnly</code>/tags en cours.
+				celles-ci (avec <code>meta.standard</code>). Il contient les agrégations que la sélection
+				retient, et les agrégations des critères vérifiés par une règle que la sélection a nommée
+				seule (par son id, par exemple), qui peuvent être{" "}
+				<a href="#partly-checked">partiellement vérifiés</a> (voir{" "}
+				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Les critères que rapporte une analyse</a>
+				). Tableau vide quand ni l’une ni l’autre n’en donne.
 			</>
 		),
 	},
@@ -351,8 +400,14 @@ const topLevelRows = [
 						qui échoue à la validation, un id qu’une autre règle personnalisée porte déjà, ou l’id d’une
 						règle composite ; ou une règle valide que la sélection de l’exécution ne retient pas (sous
 						un profil ou une cible WCAG, une règle portant le tag <code>best-practice</code> ou sans
-						tag WCAG), dont la <code>reason</code> indique comment la sélectionner. Toujours un tableau ; vide lorsque toutes les règles personnalisées ont été
-						exécutées. Chacune est aussi journalisée avec <code>console.warn</code>. Une règle listée
+						tag WCAG), dont la <code>reason</code> indique comment la sélectionner ; ou une règle
+						que les exclusions de la sélection écartent (<code>excludeRuleIds</code>,{" "}
+						<code>excludeTestIds</code>, <code>excludeTags</code>, <code>rules.exclude</code>…),
+						dont la <code>reason</code> est <code>excluded by the selection.</code> et qui a aussi{" "}
+						<code>excluded: true</code>, pour qu’un outil distingue le choix de l’appelant d’une
+						lacune sans lire la raison. Toujours un tableau ; vide lorsque toutes les règles
+						personnalisées ont été exécutées. Chacune est aussi journalisée avec{" "}
+						<code>console.warn</code>, sauf une règle exclue, que l’appelant a demandé d’écarter. Une règle listée
 						ici ne figure dans aucun résultat, ce qui permet de distinguer une analyse qui l’a écartée
 						d’une analyse où elle a donné <code>pass</code>.
 					</>
@@ -398,7 +453,12 @@ const occurrenceRows = [
 						<code>document.querySelector(s[0]).shadowRoot.querySelector(s[1])…shadowRoot.querySelector(selector)</code>{" "}
 						trouve l’élément. Deux composants au contenu identique donnent le même{" "}
 						<code>selector</code> et se distinguent ici. Comme <code>selector</code>, il ne fait pas
-						partie de l’identité d’un constat.
+						partie de l’identité d’un constat. Le{" "}
+						<a href="/results-reports/html-report/">rapport HTML</a>,{" "}
+						<a href="/results-reports/sarif-report/">SARIF</a> (<code>logicalLocations</code>),{" "}
+						<a href="/results-reports/junit-report/">JUnit</a> et les entrées de baseline affichent
+						les deux comme un seul emplacement, les hôtes puis le sélecteur joints par{" "}
+						<code>{" >>> "}</code> (<code>{"#card >>> img"}</code>).
 					</>
 				),
 				},
@@ -499,6 +559,9 @@ const occurrenceRows = [
 				<code>cantTell</code>, si bien que SARIF, JUnit, EARL et les baselines donnent une seule
 				réponse. Le moteur tranche pour une règle personnalisée ou de pack qui les renvoie en
 				désaccord ; sous la politique par défaut, une règle manuelle n’est jamais <code>fail</code>.
+				Les reporters lisent un résultat enregistré avant que le moteur ne le fasse selon la même
+				règle, sous la politique que consignent ses <code>engineOptions</code>, et recalculent ses
+				agrégations WCAG à partir de ce qu’ils ont lu.
 			</>
 		),
 	},
@@ -512,6 +575,16 @@ const uncertaintyRows = [
 	{ id: "equivalence-unknown", code: <code>equivalence-unknown</code>, meaning: "Deux éléments servent peut-être le même objectif, peut-être pas, et ni le balisage ni le contenu ne permettent de trancher.", shape: "Deux frames qui partagent un nom accessible mais intègrent des ressources différentes." },
 	{ id: "judgement-required", code: <code>judgement-required</code>, meaning: "La question relève par nature d’une décision humaine.", shape: "Savoir si une cible trop petite est essentielle ; toute règle type: \"manual\"." },
 	{ id: "out-of-scope", code: <code>out-of-scope</code>, meaning: "Le constat est réel, mais sort du cadre de la norme visée par cette exécution.", shape: "Une règle associée uniquement à un critère que la version WCAG cible a retiré." },
+];
+
+const rollupReasonRows = [
+	{ id: "anyFail", code: <code>composite.rollup.fail.anyFail</code>, outcome: <code>fail</code>, when: "Une contributrice a échoué." },
+	{ id: "anyCantTell", code: <code>composite.rollup.cantTell.anyCantTell</code>, outcome: <code>cantTell</code>, when: <>Aucune n’a échoué, et l’une est <code>cantTell</code>.</> },
+	{ id: "notSelectedChild", code: <code>composite.rollup.cantTell.notSelectedChild</code>, outcome: <code>cantTell</code>, when: <>Aucune n’a échoué ni n’est <code>cantTell</code>, et certaines ne se sont pas exécutées parce que l’analyse ne les a pas sélectionnées : partiellement vérifié.</> },
+	{ id: "missingChild", code: <code>composite.rollup.cantTell.missingChild</code>, outcome: <code>cantTell</code>, when: <>Aucune n’a échoué ni n’est <code>cantTell</code>, et certaines ne se sont pas exécutées pour une autre raison.</> },
+	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>Toutes les contributrices sont <code>notApplicable</code>.</> },
+	{ id: "emptyComposite", code: <code>composite.rollup.cantTell.emptyComposite</code>, outcome: <code>cantTell</code>, when: "L’agrégation n’a aucune règle." },
+	{ id: "otherwise", code: <code>composite.rollup.pass.otherwise</code>, outcome: <code>pass</code>, when: "Dans tous les autres cas." },
 ];
 
 const outcomeRows = [
@@ -545,7 +618,8 @@ export function OutputSchemaContent() {
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
-					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+					'    wcagLevel?: "A" | "AA" | "AAA",',
+'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
 					"    optInRules?: string[],",
@@ -556,9 +630,11 @@ export function OutputSchemaContent() {
 					"      viewport?: { width: number, height: number },  // CSS px",
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
+					'      forcedColors?: "active" | "none",',
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
-					"      animationsSettled?: number",
+					"      animationsSettled?: number,",
+					'      internalsHook?: "early" | "late"  // only where the page runs the internals hook',
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -571,7 +647,7 @@ export function OutputSchemaContent() {
 					"  rulesResults: CompositeResult[],",
 					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
-					"  skippedCustomRules: Array<{ id: string | null, reason: string }>,",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
 					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
 					"}",
 				]}
@@ -778,7 +854,8 @@ export function OutputSchemaContent() {
 				</li>
 				<li>
 					<strong><code>rollupIds</code></strong> liste les composites de{" "}
-					<code>rulesResults</code> qui regroupent cette règle dans cette exécution. Une liste vide
+					<code>rulesResults</code> qui regroupent cette règle dans cette exécution, y compris
+					celles signalées parce que la sélection a nommé la règle seule. Une liste vide
 					signifie que les résultats de la règle n’apparaissent dans aucune agrégation : qui ne lit
 					que <code>rulesResults</code> ne les voit jamais ; <code>heading-order</code>, par
 					exemple, n’appartient à aucune agrégation WCAG.
@@ -998,7 +1075,7 @@ export function OutputSchemaContent() {
 					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
 					"      customChecksIds?: string[], // the custom rules among them; absent when none",
-					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true }>,",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -1026,6 +1103,34 @@ export function OutputSchemaContent() {
 				règle personnalisée a déterminé le résultat. Les agrégations propres à une norme gardent
 				leurs listes.
 			</p>
+			<p id="partly-checked">
+				<strong>Un critère partiellement vérifié.</strong> Une analyse qui nomme des règles
+				plutôt que des critères (<code>{"includeRuleIds: ['link-name-present']"}</code>) reçoit
+				aussi les agrégations des critères que ces règles vérifient, quand la sélection ne les
+				retient pas elle-même (voir{" "}
+				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Les critères que rapporte une analyse</a>
+				). La priorité ci-dessus les tranche comme les autres : une règle en échec fait échouer le
+				critère, et les règles que l’analyse n’a pas sélectionnées l’empêchent de donner{" "}
+				<code>pass</code>. Chacune d’elles est une contributrice avec{" "}
+				<code>outcome: "missing"</code> et <code>notSelected: true</code>, comptée dans{" "}
+				<code>missingCount</code> comme avant. Quand ce sont elles qui rendent l’agrégation{" "}
+				<code>cantTell</code>, son <code>reasonCode</code> est{" "}
+				<code>composite.rollup.cantTell.notSelectedChild</code>, et le{" "}
+				<a href="/results-reports/html-report/">rapport HTML</a> indique « Vérifié en partie : 1 contrôle sur 2 n’a pas été sélectionné pour cette analyse ».{" "}
+				<code>composite.rollup.cantTell.missingChild</code> désigne toujours une règle qui ne s’est
+				pas exécutée pour une autre raison, comme une règle que le profil exclut (
+				<code>engine.profileExcludes</code>), qui n’est jamais marquée <code>notSelected</code>.
+			</p>
+			<DataTable
+				label="Codes de raison des agrégations"
+				rowKey="id"
+				columns={[
+					{ key: "code", label: "reasonCode", width: "40%" },
+					{ key: "outcome", label: "Résultat", width: "16%" },
+					{ key: "when", label: "Quand", wrap: true },
+				]}
+				rows={rollupReasonRows}
+			/>
 
 			<h2>Valeurs de résultat</h2>
 			<DataTable
@@ -1157,8 +1262,42 @@ export function OutputSchemaContent() {
 					"      ]",
 					"    }",
 					"  ],",
-					'  "rulesResults": [],',
-					'  "overriddenBuiltinIds": [],',
+					'  "rulesResults": [',
+					"    {",
+					'      "ruleId": "wcag-1.1.1-non-text-content",',
+					'      "outcome": "fail",',
+					'      "severity": "serious",',
+					'      "title": "Non-text content: text alternatives",',
+					'      "occurrences": [],',
+					'      "data": {',
+					'        "details": {',
+					'          "reasonCode": "composite.rollup.fail.anyFail",',
+					'          "checksIds": ["area-alt-present", "img-alt-decorative", "img-alt-quality", "..."],',
+					'          "contributors": [',
+					'            { "testId": "area-alt-present", "outcome": "missing", "notSelected": true },',
+					'            "...",',
+					'            { "testId": "img-alt-present", "outcome": "fail", "severity": "serious" },',
+					'            "..."',
+					"          ],",
+					'          "metrics": { "failCount": 1, "cantTellCount": 0, "notApplicableCount": 0, "passCount": 0, "missingCount": 20 }',
+					"        }",
+					"      }",
+					"    },",
+					"    {",
+					'      "ruleId": "wcag-4.1.2-name",',
+					'      "outcome": "fail",',
+					'      "severity": "serious",',
+					'      "title": "Name, role, value: accessible name",',
+					'      "occurrences": [],',
+					'      "data": {',
+					'        "details": {',
+					'          "reasonCode": "composite.rollup.fail.anyFail",',
+					'          "metrics": { "failCount": 1, "cantTellCount": 0, "notApplicableCount": 0, "passCount": 0, "missingCount": 23 }',
+					"        }",
+					"      }",
+					"    }",
+					"  ],",
+'  "overriddenBuiltinIds": [],',
 					'  "skippedCustomRules": []',
 					"}",
 				]}
@@ -1167,9 +1306,15 @@ export function OutputSchemaContent() {
 				(Version abrégée pour la lisibilité : le résultat réel inclut aussi{" "}
 				<code>title</code>/<code>description</code>/<code>i18n</code>/<code>meta</code>/
 				<code>engineOptions</code>/<code>schemaVersion</code> sur chaque entrée, conformément à
-				la forme complète ci-dessus. <code>rulesResults</code> est vide ici parce que{" "}
-				<code>runOnly.includeRuleIds</code> a limité l’analyse à deux règles atomiques et qu’aucun
-				ID de composite n’était inclus.)
+				la forme complète ci-dessus, et chaque contributrice de chaque agrégation.{" "}
+				<code>rulesResults</code> contient les critères que vérifient les deux règles nommées :
+				1.1.1 pour <code>img-alt-present</code> et 4.1.2 pour <code>button-name-present</code>,
+				chacun <code>fail</code> parce que sa règle a échoué. Les autres règles de ces critères
+				n’ont pas été sélectionnées, elles sont donc <code>missing</code> avec{" "}
+				<code>notSelected: true</code> ; sans règle en échec, les critères seraient{" "}
+				<code>cantTell</code> (<code>notSelectedChild</code>),{" "}
+				<a href="#partly-checked">partiellement vérifiés</a>. Le <code>rollupIds</code> de chaque
+				résultat de vérification nomme son agrégation.)
 			</p>
 		</>
 	);

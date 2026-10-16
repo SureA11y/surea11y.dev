@@ -11,9 +11,10 @@ const packageRows = [
 	{ id: "selenium", want: "Seleniumのテストに追加する", install: <code>@surea11y/selenium</code> },
 	{ id: "cypress", want: "Cypressのテストに追加する", install: <code>@surea11y/cypress</code> },
 	{ id: "webdriverio", want: "WebdriverIOのテストに追加する", install: <code>@surea11y/webdriverio</code> },
-	{ id: "cli", want: "ターミナルやCIパイプラインから静的なHTMLをスキャンする", install: <code>@surea11y/cli</code> },
 	{ id: "test-matchers", want: "Jest／Vitestのコンポーネントテストやユニットテストでアクセシビリティをアサーションする", install: <code>@surea11y/test-matchers</code> },
+	{ id: "cli", want: "ターミナルやCIパイプラインから静的なHTMLをスキャンする", install: <code>@surea11y/cli</code> },
 	{ id: "core", want: "手元にあるDOMに対してエンジンを実行する", install: <code>@surea11y/core</code> },
+	{ id: "core-build", want: "エンジンの上に独自のツール（CLI、拡張機能、ダッシュボード、レポート生成ツールなど）を作る", install: <code>@surea11y/core</code> },
 ];
 
 export function OverviewLead() {
@@ -47,7 +48,7 @@ export function OverviewContent() {
 			<p>
 				surea11yは、1つのコマンドでインストールする1つのツールではなく、1つのエンジンを共有するパッケージ群です。今のテストのやり方に合うものをインストールしてください。どれも
 				<code>@surea11y/core</code>
-				を自動的に取り込みます。
+				を自動的に取り込みます。手元にあるDOMに対してエンジンを実行する場合や、その上に独自のツールを作る場合は、コアそのものをインストールしてください。
 			</p>
 			<DataTable
 				label="インストールするパッケージ"
@@ -61,7 +62,9 @@ export function OverviewContent() {
 			<p>
 				バインディングごとのインストール方法と使い方は
 				<a href="/getting-started/">はじめに</a>
-				を参照してください。
+				を参照してください。ツールを作る場合は、GitHub上の
+				<a href={`${core}/docs/BUILDING_ON_CORE.md`}><code>BUILDING_ON_CORE.md</code></a>
+				（英語）が、安定した契約、スキャンの実行、チェックの選び方、そして結果が示す以上のことを主張しない提示の仕方を説明しています。
 			</p>
 
 			<h2>結果の違い</h2>
@@ -134,20 +137,61 @@ export function OverviewContent() {
 				<a href="/configuration/packs/">パック</a>
 				を参照してください。
 			</p>
+			<p>
+				規格ではなくチェックを指定しても、結果にはそれが関わるWCAGの達成基準が示されます。
+				<code>link-name-present</code>
+				だけを実行するスキャンでも2.4.4と4.1.2が報告され（レベルを指定しない場合はAAAの2.4.9も）、スキャンがほかのチェックを除外した達成基準は
+				<code>pass</code>
+				ではなく
+				<code>cantTell</code>
+				（HTMLレポートでは「一部のみ確認」）になります。
+				<code>wcagLevel: 'AA'</code>
+				はスキャンが報告する達成基準のレベルを決め、JUnit、SARIF、EARLの各レポートもそれに従います。そのため、AAのビルドがAAAの達成基準で失敗することはありません。
+			</p>
+			<p>
+				Webコンポーネントは、公開している情報で判定されます。
+				<code>ElementInternals</code>
+				で名前、状態、ロールを与えるカスタム要素は、エンジンがそれを読み取れる場合はその内容で確認され、読み取れない場合は人の確認に回されます。テストや監査の実行向けには、オプトインのスクリプト
+				<code>internalsHookScript()</code>
+				があり、コンポーネントが非公開で保持している
+				<code>internals</code>
+				をスキャンが読み取れるようにします。これにより、そうした要素も
+				<code>cantTell</code>
+				ではなく合格か不合格かで判定されます。ページ自身のスクリプトより前にインストールする方法は、GitHub上の
+				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				を参照してください。
+			</p>
+			<p>
+				ブラウザーでは、コントラストをページが描画されたとおりに測定します。対象は、独自の背景を持たないページのテキスト（ブラウザーが描くキャンバスの上で、明るい場合も暗い場合も）、
+				<code>::before</code>
+				、
+				<code>::after</code>
+				、リストマーカーによる生成テキスト、閉じた状態の
+				<code>&lt;select&gt;</code>
+				、輪郭線だけで描かれたテキストです。これらは以前はスキップされるか、人の確認に回されていました。一方、コントロールの名前の代わりに置かれた1文字（「閉じる」という名前のボタンの「X」など）は、失敗とせず人の確認に回します。アイコンなのか文字なのかは、人が判断する必要があるためです。
+			</p>
 
 			<h3 id="checked-against-the-act-corpus">ACTコーパスによる検証</h3>
 			<p>
 				エンジンには{rules.length}件のルールがあります。そのうち59件は
-				<a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a>
-				に対応するルールがあり、ACTが公開しているテストケース（この59件のルールにわたる821件の例）に対して実行しています。ACTがpassedまたはinapplicableとしている例をエンジンがfailにしたものは1件もなく、このコーパスに対して誤検出はありません。ACTがfailedとしている例のうち30件は検出していません。その多くは、見出しがその下の内容を説明しているかどうかといった、判断を要するものです。1件ずつの理由は
+				<a href="https://www.w3.org/WAI/standards-guidelines/act/rules/"><span lang="en">W3C ACT Rules</span></a>
+				に対応するルールがあり、W3Cがそれらのルールについて公開しているテストケース、つまりW3Cの実装一覧が評価に使うもの（この59件のルールにわたる942件の例）に対して実行しています。ACTがpassedまたはinapplicableとしている例をエンジンがfailにしたものは1件もなく、このコーパスに対して誤検出はありません。これはこれらの例についての結果であり、あらゆるページについての保証ではありません。エンジンが判断できないケースでは
+				<code>cantTell</code>
+				を返します。これはACTが自動テストの実装に認めているものです。
+			</p>
+			<p>
+				この結果は、エンジンが動く2つの環境の両方で成り立ちます。test-matchersとCLIが使うjsdomと、ブラウザーのバインディングが使うChromiumです。Chromiumでは、各テストケースをスクリプトやリンクされたスタイルシートも含めて実際のページとして読み込みます。ACTがfailedとしている例のうち、jsdomでは25件、Chromiumでは21件を検出していません。その多くは、見出しがその下の内容を説明しているかどうかといった、判断を要するものです。ブラウザーで検出できる4件は、jsdomが実行しないページ自身のスクリプトやスタイルシートを必要とします。1件ずつの理由は
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>
 				にまとめています。
 			</p>
 			<p>
-				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
-					EARL実装レポート
-				</a>
-				には、passやinapplicableの結果も含め、これらのケースすべての判定結果を記録しています。そのため、適用対象がなくて何も報告しなかったルールと、そもそも実装されていないルールを区別できます。形式については
+				2つのEARL実装レポートには、passやinapplicableの結果も含め、これらのケースすべての判定結果を記録しています。そのため、適用対象がなくて何も報告しなかったルールと、そもそも実装されていないルールを区別できます。jsdomで実行した
+				<a href="https://surea11y.github.io/act-report/act-report.jsonld" lang="en">SureA11y</a>
+				と、Chromiumで実行した
+				<a href="https://surea11y.github.io/act-report/act-report-browser.jsonld" lang="en">SureA11y in a browser</a>
+				です。形式については
 				<a href="/results-reports/earl-report/">EARLレポート</a>
 				を参照してください。
 			</p>

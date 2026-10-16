@@ -17,7 +17,9 @@ export function ConfigurationContent() {
 				WCAG (WCAG 2.2 AA en una sola opción, con las buenas prácticas encima si las quieres), por
 				ID, por etiqueta o nombrando un perfil de conformidad como WCAG 2.2 AA, EN 301 549 o
 				Section 508, para que una ejecución informe solo de lo
-				que realmente eres responsable, ni más ni menos. Silencia widgets globalmente ruidosos conocidos
+				que realmente eres responsable, ni más ni menos. Ejecuta solo unas pocas comprobaciones y
+				obtén igualmente los criterios de WCAG a los que pertenecen, en el nivel que se te exige, y
+				enumera lo que informará un análisis antes de ejecutarlo. Silencia widgets globalmente ruidosos conocidos
 				o para una sola regla sin perder cobertura en el resto, ajusta cuán agresivas son las
 				comprobaciones de contraste para un auditor humano frente a una puerta de CI desatendida, e
 				incorpora una regla propia de tu organización junto a las incorporadas cuando el catálogo no
@@ -44,7 +46,7 @@ export function ConfigurationContent() {
 				compilación al propio código de salida de la CLI, establecen una línea base de las violaciones
 				preexistentes de un sitio ya existente para que solo falles en las genuinamente nuevas, y
 				suben resultados SARIF directamente a <span lang="en">GitHub Code Scanning</span> donde tu equipo ya mira. Las recetas para GitLab CI y Azure DevOps llevan los resultados a
-				sus propias vistas de pruebas como JUnit. Ver{" "}
+				sus propias vistas de pruebas como JUnit, escrito por la CLI en el mismo paso. Ver{" "}
 				<a href="/configuration/ci-integration/">Integración con CI</a> para las plantillas
 				completas.
 			</p>

@@ -82,7 +82,7 @@ export function GettingStartedContent() {
 			<CodeBlock
 				lines={[
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.11.1",
+					"  engine: @surea11y/core 1.12.0",
 					"  pass: 13   fail: 3   cantTell: 3   notApplicable: 115",
 					"",
 					"  occurrences by tier: fail: 3   cantTell: 4",
@@ -112,6 +112,20 @@ export function GettingStartedContent() {
 					"",
 					"cantTell — needs human review (3 rule(s)): contrast-computable, link-name-quality,",
 					"manual-review",
+					"",
+					"criteria (WCAG 2.2):",
+					"  fail       1.4.3 Contrast: minimum; 1.4.6 Contrast: enhanced;",
+					"             2.4.2 Page titled",
+					"  cantTell   2.1.1 Keyboard; 2.4.3 Focus order;",
+					"             2.4.4 Link Purpose (In Context); 2.4.7 Focus visible;",
+					"             2.4.9 Link Purpose (Link Only)",
+					"  pass       1.3.1 Info and Relationships; 2.2.2 Pause, Stop, Hide;",
+					"             2.4.1 Bypass Blocks; 3.1.1 Language of page;",
+					"             4.1.2 Name, role, value: accessible name;",
+					"             4.1.2 Name, role, value: ARIA validity",
+					"  notApplicable: 20",
+					"  A criterion that passes here means the checks that ran found nothing in it,",
+					"  not that the page conforms.",
 				]}
 			/>
 			<p>
@@ -125,7 +139,16 @@ export function GettingStartedContent() {
 				<code>notApplicable</code>
 				の中に
 				<code>target-size-minimum</code>
-				があります。このルールは実際のCSSレイアウトがないと実行できず、静的なHTMLのスキャンにはそれがないためです。完全な結果の各フィールドの意味は
+				があります。このルールは実際のCSSレイアウトがないと実行できず、静的なHTMLのスキャンにはそれがないためです。
+			</p>
+			<p>
+				最後のブロックは、同じ結果をWCAG 2.2の達成基準ごとに示しています。1.4.3、1.4.6、2.4.2は
+				<code>fail</code>
+				、2.1.1、2.4.3、2.4.4、2.4.7、2.4.9は人が判断する
+				<code>cantTell</code>
+				、1.3.1、2.2.2、2.4.1、3.1.1と4.1.2の2項目は
+				<code>pass</code>
+				です。判断する対象のなかった20の達成基準は件数だけが示されます。覚えておきたいのは最終行です。ここで合格した達成基準は、実行されたチェックがその中に何も見つけなかったという意味であり、ページが適合しているという意味ではありません。完全な結果の各フィールドの意味は
 				<a href="/results-reports/output-schema/">結果とレポート</a>
 				を参照してください。
 			</p>

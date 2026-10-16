@@ -134,7 +134,9 @@ export function LocalesContent() {
 				deja de aplicarse y la cadena cuenta como no traducida hasta que alguien la vuelva a
 				comprobar. El recuento no puede ver una palabra en inglés que quede dentro de una frase por
 				lo demás traducida; eso se detecta leyendo el texto, y no queda ninguna en las
-				configuraciones regionales de arriba.
+				configuraciones regionales de arriba. Tampoco mide si una traducción es precisa o usa los
+				términos de accesibilidad habituales de un idioma; para eso hace falta alguien que lea ese
+				idioma.
 			</p>
 
 			<h3 id="reading-coverage-from-the-package">Leer la cobertura desde el paquete</h3>
@@ -276,9 +278,12 @@ export function LocalesContent() {
 			/>
 			<p>
 				El paquete está dividido porque viaja por la red a cada página que lo usa, y ninguna página
-				necesita todos los idiomas. Mantener el inglés incorporado y el resto como opcional redujo
-				unos 280 KB de la descarga y evita que siga creciendo a medida que se añaden idiomas. Nada
-				más cambia: el paquete de Node y las integraciones no se ven afectados.
+				necesita todos los idiomas. Mantener el inglés incorporado y el resto como opcional deja los
+				demás idiomas fuera de la descarga, y evita que siga creciendo a medida que se añaden
+				idiomas. Cada archivo lateral, <code>surea11y.i18n.&lt;locale&gt;.js</code>, ocupa
+				más o menos lo mismo que el texto en inglés al que sustituye (entre 130 y 160 KB hoy), y
+				una página carga solo los que usa. Nada más cambia: el paquete de Node y las integraciones
+				no se ven afectados.
 			</p>
 			<CodeBlock
 				lang="html"

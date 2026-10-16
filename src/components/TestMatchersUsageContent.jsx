@@ -67,6 +67,11 @@ export function TestMatchersUsageContent() {
 				forgetting one and silently passing on a resolved promise.
 			</p>
 			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/test-matchers", command: true }]} />
+			<p>
+				<code>@surea11y/core</code> is installed with it; there is nothing else to add. To check
+				built HTML from the terminal or a CI step instead, outside a test runner, see the{" "}
+				<a href="/getting-started/cli/">CLI</a>.
+			</p>
 
 			<h2>Setup</h2>
 			<p>
@@ -194,6 +199,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"// Ignore a third-party widget you don't control",
 					"expect(container).toHaveNoA11yViolations({ excludeSelectors: ['.intercom-launcher'] });",
+					"",
+					"// EN 301 549 V4.1.1 (WCAG 2.2 A and AA); 'en301549-v3.2.1' for V3.2.1 (WCAG 2.1 A and AA)",
+					"expect(container).toHaveNoA11yViolations({ profile: 'en301549-v4.1.1' });",
 				]}
 			/>
 
@@ -223,8 +231,23 @@ export function TestMatchersUsageContent() {
 				excludes apply after. A <code>runOnly</code> that selects anything replaces the selection
 				in <code>engineOptions.rules</code>/<code>.tags</code> outright: give a selection one way
 				or the other, not both. Pass <code>{"{}"}</code> or <code>null</code> as{" "}
-				<code>engineOptions</code> when you only need <code>runOnly</code>.
+				<code>engineOptions</code> when you only need <code>runOnly</code>. Rule ids are read in
+				any case (<code>'IMG-ALT-PRESENT'</code>).
 			</p>
+			<p>
+				A target implies its level. A test that names rules or tags instead can set one with{" "}
+				<code>engineOptions.wcagLevel</code> (<code>@surea11y/core</code> 1.12.0 and later): the
+				level of the criteria the scan reports, without changing which rules run.{" "}
+				<code>contrast-computable</code> checks 1.4.3 (AA) and 1.4.6 (AAA), so the scan below
+				reports only 1.4.3. The assertion gates on <code>fail</code> outcomes, so this changes the
+				criteria in the result rather than what fails the test.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"expect(container).toHaveNoA11yViolations({ wcagLevel: 'AA' }, { includeRuleIds: ['contrast-computable'] });",
+				]}
+			/>
 
 			<h2 id="packs">Scanning with packs</h2>
 			<p>
@@ -272,7 +295,8 @@ export function TestMatchersUsageContent() {
 			<p>
 				Returns the <code>{"{ pass, message }"}</code> shape both frameworks' <code>expect.extend()</code>{" "}
 				expect — you never call this directly; it's wired up once via <code>expect.extend()</code> as
-				shown in Setup above.
+				shown in Setup above. The package also exports <code>installInternalsHook(win?)</code>, for{" "}
+				<a href="#web-components">web components</a>.
 			</p>
 
 			<h2>What it checks and doesn't</h2>
@@ -291,7 +315,17 @@ export function TestMatchersUsageContent() {
 				passing on nothing: an element that is not in the document the scan runs in (detached, or
 				from another document), a custom rule that did not run (listed in{" "}
 				<code>skippedCustomRules</code>), or a pack that did not run (listed in{" "}
-				<code>skippedPacks</code>). The message names each with the reason.
+				<code>skippedPacks</code>). The message names each with the reason. A custom rule the
+				test excludes itself is not a gap, and doesn't fail it.
+			</p>
+			<p>
+				<strong>A call with no selection runs the best practices too.</strong> Since{" "}
+				<code>@surea11y/core</code> 1.12, one of them, <code>empty-heading</code>, fails a heading
+				with no accessible name where it used to ask about it, so a component that renders{" "}
+				<code>&lt;h2&gt;&lt;/h2&gt;</code> (often a title prop left empty in the test) fails a
+				default call. A screen reader announces that heading with nothing in it: give the test real
+				content or fix the component. A call with a WCAG target, which leaves the best practices
+				out, doesn't run it.
 			</p>
 			<p>
 				The scan itself can throw, and the test then fails with the engine's error, which carries
@@ -321,6 +355,63 @@ export function TestMatchersUsageContent() {
 				per test.
 			</p>
 
+			<h2 id="web-components">Web components</h2>
+			<p>
+				Many web components keep their <code>ElementInternals</code> in a private field and name
+				themselves, set their states or give themselves a role through it. No script can read those
+				back, so by default the scan asks about such an element (<code>cantTell</code>) instead of
+				judging it: the test doesn't fail, but nothing is checked either, and a role set this way
+				isn't seen at all.
+			</p>
+			<p>
+				<code>installInternalsHook(win?)</code> lets the scan read them. Call it once in the setup
+				file, before any component is defined, so it sees every <code>attachInternals()</code>{" "}
+				call; <code>win</code> defaults to the global <code>window</code>:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// jest.setup.js",
+					"const {",
+					"  toHaveNoA11yViolations,",
+					"  installInternalsHook",
+					"} = require('@surea11y/test-matchers');",
+					"",
+					"installInternalsHook();",
+					"expect.extend({ toHaveNoA11yViolations });",
+				]}
+			/>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// vitest.setup.js",
+					"import { expect } from 'vitest';",
+					"import {",
+					"  toHaveNoA11yViolations,",
+					"  installInternalsHook",
+					"} from '@surea11y/test-matchers';",
+					"",
+					"installInternalsHook();",
+					"expect.extend({ toHaveNoA11yViolations });",
+				]}
+			/>
+			<p>
+				With it, a component that names itself through its internals passes, one that attaches
+				internals but sets no name fails like any unnamed control, and one that is a{" "}
+				<code>switch</code> only through its internals is checked as one. A scan result's{" "}
+				<code>engine.environment.internalsHook</code> says whether the hook was there. It wraps{" "}
+				<code>HTMLElement.prototype.attachInternals</code> in the test window, which is harmless in
+				a test and why it's opt-in. Two limits for now: <code>jest-environment-jsdom</code> 30 ships
+				jsdom 26, where a component that sets an ARIA property on its internals throws, hook or
+				not (Vitest with jsdom 29 handles it); and under Vitest, <code>@surea11y/core</code> 1.12.0
+				records the hook as <code>'late'</code>, so a component that never attached internals
+				stays a question there. The{" "}
+				<a href="https://github.com/SureA11y/test-matchers#web-components-names-set-through-elementinternals">
+					package README
+				</a>{" "}
+				has the details.
+			</p>
+
 			<h2>Failure messages</h2>
 			<p>
 				Lists every occurrence, not just every rule — one rule can flag several elements — with the
@@ -336,9 +427,14 @@ export function TestMatchersUsageContent() {
 					"   at body > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.11.1.",
+					"Scanned with @surea11y/core 1.12.0.",
 				]}
 			/>
+			<p>
+				Before the version line, the message can carry a note on how the scan ran: when the scan
+				asked about custom elements it could have read with the{" "}
+				<a href="#web-components">internals hook</a>, a line says how many and to install it.
+			</p>
 			<p>
 				Any <code>cantTell</code> results alongside the failures are appended as a separate note, so
 				they stay visible without affecting <code>pass</code>/<code>fail</code>:
@@ -351,9 +447,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.11.1.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.12.0.",
 					"",
-					"Scanned with @surea11y/core 1.11.1.",
+					"Scanned with @surea11y/core 1.12.0.",
 				]}
 			/>
 

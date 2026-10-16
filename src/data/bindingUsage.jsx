@@ -1,5 +1,45 @@
 import React from "react";
 
+/** Opens each binding's internals-hook passage; the snippet and its binding-specific note follow. */
+const webComponents = (
+	<p>
+		<strong>Web components.</strong> A component that keeps its <code>ElementInternals</code> in a
+		private field, and names itself, sets its states or gives itself a role through it, can't be
+		read back by any page script. By default the scan asks about such a component
+		(<code>cantTell</code>) instead of judging it, and a role set only that way isn't checked at
+		all. If you build or test a component library, install the binding's opt-in internals hook
+		before the page's own scripts run, and those components are judged like any other control:
+	</p>
+);
+
+const hookCaveat = (repo) => (
+	<p>
+		The hook is for test and audit runs: it keeps what it records where any script on the page can
+		read it, which is why it's opt-in. Without it, the scan says once when it asked about such
+		components. The{" "}
+		<a href={`https://github.com/SureA11y/${repo}#web-components-the-internals-hook`}>README's internals hook section</a>{" "}
+		has the details.
+	</p>
+);
+
+/** A pointer to the builder methods this page leaves to the binding's README. */
+const alsoAvailable = (repo, { logger = true } = {}) => (
+	<p>
+		The builder also has <code>.wcagLevel()</code>, which keeps the reported criteria to a WCAG
+		level without changing which rules run; <code>.includeMode('or')</code>, which runs a tag's
+		rules plus rules you name; <code>.plannedChecks()</code> and <code>.plannedCriteria()</code>,
+		which list what a scan will check before it runs, so a selection that runs nothing can't pass
+		as a clean scan;{" "}
+		{logger ? (
+			<>
+				<code>.logger()</code>, which sends scan-gap warnings to your own log;{" "}
+			</>
+		) : null}
+		and <code>getScanNotes(results)</code>, which says how the page was scanned. The{" "}
+		<a href={`https://github.com/SureA11y/${repo}#readme`}>binding's README</a> covers each.
+	</p>
+);
+
 export const bindingUsage = {
 	cypress: {
 		intro: (
@@ -56,6 +96,26 @@ export const bindingUsage = {
 				is reported as a <code>'pack-skipped'</code> scan gap.
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"// cypress/support/e2e.js",
+				"import { installInternalsHook } from '@surea11y/cypress';",
+				"",
+				"installInternalsHook();",
+			],
+			note: (
+				<p>
+					Called once in the support file, it runs on every visit, through Cypress's{" "}
+					<code>window:before:load</code>. For a single visit, pass it to <code>cy.visit()</code> as{" "}
+					<code>{"{ onBeforeLoad: installInternalsHook }"}</code>. It runs with the app window's{" "}
+					<code>eval</code>, which works because Cypress strips the app's Content Security Policy by
+					default, and frames inside the app don't get it.
+				</p>
+			),
+			caveat: hookCaveat("cypress"),
+		},
+		more: alsoAvailable("cypress", { logger: false }),
 		exampleHref: "https://github.com/SureA11y/cypress/blob/main/examples/basic-scan.cy.js",
 	},
 
@@ -103,6 +163,26 @@ export const bindingUsage = {
 				Firefox and WebKit runs.
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"const context = await browser.newContext();",
+				"await A11yCoreBuilder.installInternalsHook(context); // before any page navigates",
+				"const page = await context.newPage();",
+				"await page.goto('https://example.com/');",
+			],
+			note: (
+				<p>
+					Call it before <code>page.goto()</code>, on the page or on its browser context. It runs
+					through <code>addInitScript()</code>, so one call covers every frame and every navigation of
+					the page, or of every page the context opens, in Chromium, Firefox and WebKit. With{" "}
+					<code>@playwright/test</code>, call it in a <code>beforeEach</code> on the{" "}
+					<code>context</code> fixture.
+				</p>
+			),
+			caveat: hookCaveat("playwright"),
+		},
+		more: alsoAvailable("playwright"),
 		exampleHref: "https://github.com/SureA11y/playwright/blob/main/examples/basic-scan.js",
 	},
 
@@ -142,6 +222,24 @@ export const bindingUsage = {
 			"await browser.close();",
 		],
 		note: null,
+		internals: {
+			intro: webComponents,
+			code: [
+				"const page = await browser.newPage();",
+				"await A11yCoreBuilder.installInternalsHook(page); // before goto",
+				"await page.goto('https://example.com/');",
+			],
+			note: (
+				<p>
+					Call it before <code>page.goto()</code>. It runs through{" "}
+					<code>page.evaluateOnNewDocument()</code>, so one call covers the page's frames and
+					navigations for its lifetime, in Chrome and Firefox; a new tab the page opens itself doesn't
+					get it.
+				</p>
+			),
+			caveat: hookCaveat("puppeteer"),
+		},
+		more: alsoAvailable("puppeteer"),
 		exampleHref: "https://github.com/SureA11y/puppeteer/blob/main/examples/basic-scan.js",
 	},
 
@@ -190,6 +288,27 @@ export const bindingUsage = {
 				difference. Everything downstream is identical.
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"const options = new chrome.Options().enableBidi(); // the webSocketUrl: true capability",
+				"const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(options).build();",
+				"",
+				"await A11yCoreBuilder.installInternalsHook(driver); // 'bidi' (or 'cdp' without BiDi on Chrome)",
+				"await driver.get('https://example.com/');",
+			],
+			note: (
+				<p>
+					Call it before <code>driver.get()</code>. Classic WebDriver can't run a script before
+					the page's own, so the hook uses WebDriver BiDi when the session has it (Chrome, Edge and
+					Firefox, with BiDi enabled when the driver is built, as above), and otherwise the DevTools
+					protocol on Chrome and Edge; it resolves to <code>'bidi'</code> or <code>'cdp'</code>. On a
+					classic session in Safari, or in Firefox without BiDi, the call rejects.
+				</p>
+			),
+			caveat: hookCaveat("selenium"),
+		},
+		more: alsoAvailable("selenium"),
 		exampleHref: "https://github.com/SureA11y/selenium/blob/main/examples/basic-scan.js",
 	},
 
@@ -243,6 +362,24 @@ export const bindingUsage = {
 				steady ~150ms per scan.
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"await A11yCoreBuilder.installInternalsHook(browser); // 'bidi' or 'cdp'",
+				"await browser.url('https://example.com/');",
+			],
+			note: (
+				<p>
+					Call it before <code>browser.url()</code>; in the WDIO testrunner, in a{" "}
+					<code>before</code> hook. It uses <code>browser.addInitScript()</code> in a BiDi session,
+					and otherwise the DevTools protocol through chromedriver on Chrome and Edge, which covers the
+					classic session recommended above. On a classic session in Firefox or Safari, the call
+					rejects.
+				</p>
+			),
+			caveat: hookCaveat("webdriverio"),
+		},
+		more: alsoAvailable("webdriverio"),
 		exampleHref: "https://github.com/SureA11y/webdriverio/blob/main/examples/basic-scan.js",
 	},
 };

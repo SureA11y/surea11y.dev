@@ -119,6 +119,19 @@ export function WcagMappingContent() {
 				règle intégrée quand elle est associée à ce critère, nulle part quand elle n’est associée
 				à aucun (avec un avertissement).
 			</p>
+			<p>
+				Une analyse qui nomme des règles plutôt que des critères (<code>{"includeRuleIds: ['link-name-present']"}</code>,
+				un tag qui ne désigne aucun niveau WCAG, les bonnes pratiques) obtient aussi les règles
+				composites des critères que ces règles vérifient (voir{" "}
+				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Options du moteur</a>). Avant la 1.12, une telle
+				analyse n’en rapportait aucune. Le tableau ci-dessus les tranche : une règle qui échoue
+				fait échouer le critère, et les règles que l’analyse n’a pas sélectionnées sont des
+				contributeurs qui ne se sont pas exécutés, si bien que le critère est au mieux{" "}
+				<code>cantTell</code>, vérifié en partie (<code>reasonCode</code>{" "}
+				<code>composite.rollup.cantTell.notSelectedChild</code>, chacun de ces contributeurs
+				marqué <code>notSelected: true</code> ; « Vérifié en partie » dans le{" "}
+				<a href="/results-reports/html-report/">rapport HTML</a>).
+			</p>
 
 			<h2>Cibler un niveau de conformité (A / AA / AAA)</h2>
 			<p>Nommez la version et le niveau WCAG dans <code>runOnly.wcag</code> :</p>
@@ -184,8 +197,9 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				<strong>Le critère retiré est géré pour vous.</strong> Chaque exécution détermine une
-				version WCAG cible (<code>engineOptions.wcagVersion</code>, sinon la version de{" "}
-				<code>runOnly.wcag</code>, sinon celle qu’impliquent vos tags de version, sinon{" "}
+				version WCAG cible (<code>engineOptions.wcagVersion</code>, sinon la{" "}
+				<code>wcagVersion</code> du profil de <a href="/configuration/packs/">pack</a> que
+				l’exécution applique, sinon la version de <code>runOnly.wcag</code>, sinon celle qu’impliquent vos tags de version, sinon{" "}
 				<code>2.2</code>) et la renvoie dans <code>engine.wcagVersion</code>.
 				Avec une cible 2.2, une règle associée uniquement au CS 4.1.1 Analyse syntaxique ne peut
 				pas renvoyer <code>fail</code> : elle s’exécute, rapporte ses occurrences et renvoie{" "}
@@ -195,11 +209,17 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				Les règles composites, contrairement aux règles atomiques, <em>sont</em> filtrées de façon
-				cumulative. Le runner lit le niveau de <code>runOnly.wcag</code>, ou le niveau le plus
-				élevé indiqué dans <code>tags</code>, et écarte
-				toutes les règles composites au-dessus : demander <code>{"['wcag2a', 'wcag2aa']"}</code>{" "}
-				ne renvoie donc aucune entrée <code>rulesResults</code> pour un CS de niveau AAA
-				uniquement. Voir <code>inferTargetLevelFromRunOnly</code>/
+				cumulative. Le runner lit <code>engineOptions.wcagLevel</code>, sinon le niveau de{" "}
+				<code>runOnly.wcag</code>, ou le niveau le plus élevé indiqué dans <code>tags</code>, et
+				écarte toutes les règles composites au-dessus : demander{" "}
+				<code>{"['wcag2a', 'wcag2aa']"}</code> ne renvoie donc aucune entrée{" "}
+				<code>rulesResults</code> pour un CS de niveau AAA uniquement. <code>wcagLevel</code>{" "}
+				(<code>'A'</code>, <code>'AA'</code> ou <code>'AAA'</code>) est l’option à définir pour une
+				analyse qui nomme des vérifications plutôt qu’une cible : toutes les règles sélectionnées
+				s’exécutent toujours, et seuls les critères rapportés sont limités à ce niveau, si bien
+				qu’une analyse de <code>contrast-computable</code> au niveau <code>'AA'</code> rapporte le
+				1.4.3 et non le 1.4.6, de niveau AAA. L’exécution l’enregistre dans{" "}
+				<code>engine.wcagLevel</code>. Voir <code>targetWcagLevelOf</code>/
 				<code>isAllowedByTargetLevel</code> dans <code>src/core/dom-runner.js</code> si vous avez
 				besoin de l’ordre de priorité exact.
 			</p>
@@ -319,7 +339,11 @@ export function WcagMappingContent() {
 					s’exécute que si ses tags correspondent à ce profil, et l’exécution vise toujours WCAG.
 					Parmi les
 					règles de core, une analyse qui vise WCAG n’exécute donc que celles des critères ciblés,
-					plus les règles de bonnes pratiques si vous les ajoutez. Une règle personnalisée, une
+					plus les règles de bonnes pratiques si vous les ajoutez. Une règle de bonne pratique ne
+					nomme aucun critère, et peut quand même renvoyer <code>fail</code> là où ce qu’elle
+					trouve est en soi un obstacle, comme un titre vide (
+					<a href="/rules/empty-heading/"><code>empty-heading</code></a>) ; aucune règle composite
+					WCAG n’en tient compte. Une règle personnalisée, une
 					surcharge ou une règle de pack sans tag optionnel s’exécute quand la sélection l’inclut, et
 					peut alors renvoyer un <code>fail</code> pour une vérification qui lui est propre et que
 					WCAG n’exige pas.

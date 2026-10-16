@@ -88,8 +88,9 @@ const fileRows = [
 const profileFieldRows = [
 	{ id: "tags", field: <code>tags</code>, what: <>これらのタグのいずれかを持つルールです。<code>@surea11y/core/pack</code>の<code>wcagTags(version, levels)</code>はコアのWCAGのタグを返します（<code>wcagTags('2.1')</code>は2.0と2.1の、AとAAです）。</> },
 	{ id: "rules", field: <code>rules</code>, what: <>コアまたはパックのルールをIDで指定します。WCAGのタグでは選択されないベストプラクティスのルールや、<code>tags: []</code>と組み合わせて、パック自身のルールのほかにプロファイルが実行するコアのルールを指定します。</> },
-	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code>はルールをスキャンから除外します。<code>{"{ criteria: ['2.5.8'] }"}</code>はそれらの達成基準のチェックと集約を除外します。これはスキャンがチェックする範囲を狭めるもので、WCAGの要件は変わりません。</> },
+	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code>はルールをスキャンから除外します。<code>{"{ criteria: ['2.5.8'] }"}</code>はそれらの達成基準を免除します。その集約は除かれ、すべての達成基準が免除されたルールも除かれます。プロファイルが残す達成基準も検査するルールは引き続き実行されます。これはスキャンがチェックする範囲を狭めるもので、WCAGの要件は変わりません。</> },
 	{ id: "severity", field: <code>severity</code>, what: <><code>{"{ ruleId: level }"}</code>：そのプロファイルでの別の重大度です。結果にはそれが表示され、ルール自身の重大度は<code>ruleSeverity</code>として保持されます。ベースラインと検出結果のIDは変わりません。</> },
+	{ id: "wcagVersion", field: <code>wcagVersion</code>, what: <><code>'2.0'</code>、<code>'2.1'</code>、<code>'2.2'</code>のいずれかで、プロファイルのスキャンを判定するWCAGのバージョン（<code>engine.wcagVersion</code>）です。指定しない場合は<code>tags</code>のWCAGのタグがバージョンを示し、WCAGのタグがないプロファイルは2.2で判定されます。スキャン自身の<code>engineOptions.wcagVersion</code>が引き続き優先されます。コア1.12.0以降です。</> },
 	{ id: "version", field: <><code>version</code>、<code>mappedRules</code></>, what: <>規格のプロファイルの場合のみ：対象とする規格のバージョンと、そのバージョンで規格が対応付けるすべてのルールを実行するための<code>mappedRules: true</code>です。</> },
 ];
 
@@ -236,7 +237,7 @@ export function PacksContent() {
 					<code>engine.packs</code>は実行された各パックを<code>name@version</code>の形で示し、<code>engine.profile</code>は適用されたプロファイルを示します。
 				</li>
 				<li>
-					パックのルールはコアのルールと同じように<code>checksResults</code>に現れ、そのIDはパックの名前空間で始まります（<code>acme-no-autoplay</code>）。WCAGの達成基準に対応するパックのルールは、その達成基準の集約に算入されます。ただし、パックのオプトインの名前空間のタグを持つルールは除きます。それらのルールはWCAGが求めていないことをチェックするため、パック自身の集約にだけ算入されます。上書きは、置き換えるコアのルールの代わりに、それ自身の対応が示す集約に算入されます。
+					パックのルールはコアのルールと同じように<code>checksResults</code>に現れ、そのIDはパックの名前空間で始まります（<code>acme-no-autoplay</code>）。WCAGの達成基準に対応するパックのルールは、その達成基準の集約に算入されます。ただし、パックのオプトインの名前空間のタグを持つルールは除きます。それらのルールはWCAGが求めていないことをチェックするため、パック自身の集約にだけ算入されます。それでもその<code>wcagSc</code>は、レポーターのために、検査するWCAGの達成基準を示します。ほかの規格（すべてのルールをWCAGの達成基準で対応付けるEN 301 549）がそれらを自身のものとすることはありません。上書きは、置き換えるコアのルールの代わりに、それ自身の対応が示す集約に算入されます。
 				</li>
 				<li>
 					チェックリストの項目や規格の要件は<code>rulesResults</code>の集約で、チェックリストや規格の名前を<code>meta.standard</code>として持ちます。<a href="/results-reports/html-report/">HTMLレポート</a>はそれらを独自のセクションに表示し、<a href="/results-reports/sarif-report/">SARIF</a>は各ルールに、それが属する項目のタグ（<code>acme-images</code>）を付け、<a href="/results-reports/junit-report/">JUnit</a>はそれらをプロパティとして列挙します。結果の<code>standards</code>がチェックリストを示すため、保存した結果はどこでレンダリングしても同じになります。
@@ -248,7 +249,7 @@ export function PacksContent() {
 
 			<h2 id="when-a-pack-doesnt-run">パックが実行されない場合</h2>
 			<p>
-				<code>core</code>の範囲がインストールされているコアを含まないパック、妥当でないパック、コアと両立しないパック（名前空間の外にあるルールID、コアが持つ辞書のキー、存在しないルールのバリアント）はスキップされます。スキャンはそのパックなしで実行され、警告を出し、<code>skippedPacks</code>に<code>{"{ name, reason }"}</code>として列挙します。<code>strictOptions</code>のもとではエラーを投げます。互いに衝突する2つのパック（両方が定義する辞書のキー、1つのキーを持つ2つの規格）はエラーを投げます。どちらかを選ぶ方法は、どれも渡された順序に左右されてしまうからです。ページ内では、<code>engineOptions.packs</code>で指定されたのに、どの<code>packScript</code>の呼び出しも登録していないパックや、別のバージョンのコアで登録されたパックが、同じように列挙されます。
+				<code>core</code>の範囲がインストールされているコアを含まないパック、妥当でないパック、コアと両立しないパック（名前空間の外にあるルールID、コアが持つ辞書のキー、存在しないルールのバリアント）はスキップされます。スキャンはそのパックなしで実行され、警告を出し、<code>skippedPacks</code>に<code>{"{ name, reason }"}</code>として列挙します。<code>strictOptions</code>のもとでは、<code>engineOptions.packs</code>のすべてのエラーと同じく<code>code: 'INVALID_ENGINE_OPTIONS'</code>付きのエラーを投げます。互いに衝突する2つのパック（両方が定義する辞書のキー、1つのキーを持つ2つの規格）はエラーを投げます。どちらかを選ぶ方法は、どれも渡された順序に左右されてしまうからです。ページ内では、<code>engineOptions.packs</code>で指定されたのに、どの<code>packScript</code>の呼び出しも登録していないパックや、別のバージョンのコアで登録されたパックが、同じように列挙されます。そのため、パックを追加した目的のチェックがないままスキャンが終わることもあります。パックに依存するツールは、スキャンを完了したものとして扱う前に<code>skippedPacks</code>を確認してください。
 			</p>
 			<p>どのツールも、スキップされたパックを目に見える失敗に変えます。</p>
 			<ul>
@@ -290,7 +291,7 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				パックは生成した時点で動作します。テストは合格し、ルールはlintを通り、例はルールと一致します。そこから少しずつ変更し、その都度<code>npm test</code>を実行してください。READMEが各ファイルを順に説明しています。
+				パックは生成した時点で動作します。テストは合格し、ルールはlintを通り、例はルールと一致します。<code>surea11y-pack new</code>は、何かを書き出す前にスキャンと同じようにパックを確認し、パックを無効にする名前、名前空間、タイトル（<code>WCAG</code>というタイトルは、その規格をコアの規格の1つとして示してしまいます）を、理由を示して拒否します。そこから少しずつ変更し、その都度<code>npm test</code>を実行してください。READMEが各ファイルを順に説明しています。
 			</p>
 			<DataTable
 				label="生成されたパックのファイル"
@@ -349,6 +350,20 @@ export function PacksContent() {
 				rows={profileFieldRows}
 			/>
 			<p>
+				<strong>規格が求めるものだけを実行するプロファイル。</strong><code>{"tags: [<ns>]"}</code>と<code>mappedRules: true</code>を持つ規格のプロファイルは、パック自身のルールと、その対応表が要件に結び付けるコアのルールだけを実行します。規格が求めないことを検査するルールはなく、結果にWCAGの達成基準は含まれません。ただし、WCAGのタグがないため、その規格がどのWCAGのバージョンに基づくかを示すものがなく、実行は2.2で判定されます。2.1に基づく規格ではこれは誤りです。4.1.1「構文解析」は2.2にはないため、<code>duplicate-id</code>は不合格にせず確認を求めます。バージョンを指定してください。生成された<code>index.js</code>は、それを<code>requirements.js</code>から読みます。そこでは規格の各バージョンが、基づくWCAGのバージョンを示しています（<code>{"{ version: '1.0', wcagVersion: '2.2' }"}</code>）。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'city-1.0': {",
+					"  version: '1.0',",
+					"  tags: ['city'],                      // the pack's own rules",
+					"  mappedRules: true,                   // and the core rules its map links to a requirement",
+					"  wcagVersion: wcagVersionOf('1.0')    // judged by the WCAG version requirements.js gives for 1.0",
+					"}",
+				]}
+			/>
+			<p>
 				コアのルールとそのID、タグは、<a href="/rules/">ルール</a>のカタログにあります。
 			</p>
 
@@ -362,7 +377,7 @@ export function PacksContent() {
 
 			<h3 id="rules">ルール</h3>
 			<p>
-				ルールはコアのルールモジュールと同じ形です。<code>{"{ id, meta, runInPage }"}</code>に、一部の場合にだけ適用されるときは<code>applicability</code>を加え、同じ<code>ctx</code>を受け取ります。<code>runInPage(ctx)</code>はページ内で実行されるため、<code>ctx</code>だけを使い、その外の変数やモジュールは決して使いません。また、読み取りしか行いません。パックのルールはコアのルールの後に実行され、渡されるヘルパーとオプションは読み取り専用です。コードがほとんど、またはまったく要らない近道が3つあります。<strong>バリアント</strong>はコアのルールを別の設定で実行し（<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>）、<strong>上書き</strong>はコアのルールを置き換え（<code>overrides</code>に列挙し、結果の<code>overriddenBuiltinIds</code>にも示されます）、<strong>そのままのコアのルール</strong>はプロファイルや集約にIDを書くだけで済みます。ルールの書き方は、GitHub上のコアの<a href={`${core}/docs/RULE_AUTHORING.md`}>ルール作成ガイド</a>にあります。
+				ルールはコアのルールモジュールと同じ形です。<code>{"{ id, meta, runInPage }"}</code>に、一部の場合にだけ適用されるときは<code>applicability</code>を加え、同じ<code>ctx</code>を受け取ります。<code>runInPage(ctx)</code>はページ内で実行されるため、<code>ctx</code>だけを使い、その外の変数やモジュールは決して使いません。また、読み取りしか行いません。パックのルールはコアのルールの後に実行され、渡されるヘルパーとオプションは読み取り専用です。読み取り専用は決まりであって、サンドボックスではありません。ルールのコードがそれ以上のことをするのを止めるものはないため、信頼できるパックだけを読み込んでください（GitHub上のコアの<a href={`${core}/SECURITY.md`}>セキュリティポリシー</a>を参照）。コードがほとんど、またはまったく要らない近道が3つあります。<strong>バリアント</strong>はコアのルールを別の設定で実行し（<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>。各設定はしきい値で、0より大きい有限の数です。<code>definePack</code>はそれ以外の値を拒否します）、<strong>上書き</strong>はコアのルールを置き換え（<code>overrides</code>に列挙し、結果の<code>overriddenBuiltinIds</code>にも示されます）、<strong>そのままのコアのルール</strong>はプロファイルや集約にIDを書くだけで済みます。ルールの書き方は、GitHub上のコアの<a href={`${core}/docs/RULE_AUTHORING.md`}>ルール作成ガイド</a>にあります。
 			</p>
 
 			<h3 id="messages">メッセージと言語</h3>
@@ -379,7 +394,7 @@ export function PacksContent() {
 					<strong>lint</strong>（<code>npm run lint</code>、<code>@surea11y/core/eslint-plugin</code>）は、パックのルールに、コアのルールと同じlintルールを適用します。
 				</li>
 				<li>
-					<strong>ドキュメント</strong>（<code>npm run docs</code>、<code>surea11y-pack docs</code>）は、パックの<code>docs/RULE_CATALOG.md</code>を書き出し、その<code>docs/RULE_EXAMPLES.md</code>のすべての例をChromiumで実行します。<code>--check</code>は、どちらかが古くなっていれば失敗するので、パックのCIで使えます。
+					<strong>ドキュメント</strong>（<code>npm run docs</code>、<code>surea11y-pack docs</code>）は、パックの<code>docs/RULE_CATALOG.md</code>を書き出し、その<code>docs/RULE_EXAMPLES.md</code>のすべての例をChromiumで実行します（<code>CHROMIUM_EXECUTABLE_PATH</code>で別のChromiumビルドを指定できます）。<code>--check</code>は、どちらかが古くなっていれば失敗するので、パックのCIで使えます。
 				</li>
 			</ul>
 

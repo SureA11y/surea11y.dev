@@ -123,6 +123,19 @@ export function WcagMappingContent() {
 				la incorporada cuando se asocia a ese criterio, y en ninguna parte cuando no se asocia a
 				ninguno (con un aviso).
 			</p>
+			<p>
+				Un análisis que nombra reglas en lugar de criterios (<code>{"includeRuleIds: ['link-name-present']"}</code>,
+				una etiqueta que no nombra ningún nivel de WCAG, las buenas prácticas) también obtiene
+				los compuestos de los criterios que esas reglas comprueban (consulta{" "}
+				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Opciones del motor</a>). Antes de 1.12, un
+				análisis así no informaba de ninguno. La tabla anterior los decide: una regla que falla
+				hace fallar el criterio, y las reglas que el análisis no seleccionó son contribuyentes que
+				no se ejecutaron, así que el criterio es como mucho <code>cantTell</code>, comprobado en
+				parte (<code>reasonCode</code>{" "}
+				<code>composite.rollup.cantTell.notSelectedChild</code>, con cada uno de esos
+				contribuyentes marcado <code>notSelected: true</code>; «Comprobado en parte» en el{" "}
+				<a href="/results-reports/html-report/">informe HTML</a>).
+			</p>
 
 			<h2>Apuntar a un nivel de conformidad (A / AA / AAA)</h2>
 			<p>Nombra la versión y el nivel de WCAG en <code>runOnly.wcag</code>:</p>
@@ -194,8 +207,9 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				<strong>El criterio eliminado se maneja automáticamente.</strong> Cada ejecución resuelve
-				una versión de WCAG objetivo (<code>engineOptions.wcagVersion</code>, si no, la versión
-				de <code>runOnly.wcag</code>, si no, lo que impliquen tus etiquetas de versión, si no, <code>2.2</code>) y la devuelve como{" "}
+				una versión de WCAG objetivo (<code>engineOptions.wcagVersion</code>, si no, el{" "}
+				<code>wcagVersion</code> del perfil del <a href="/configuration/packs/">pack</a> que
+				aplica la ejecución, si no, la versión de <code>runOnly.wcag</code>, si no, lo que impliquen tus etiquetas de versión, si no, <code>2.2</code>) y la devuelve como{" "}
 				<code>engine.wcagVersion</code>. Bajo un objetivo 2.2, una regla asociada solo al SC 4.1.1
 				<span lang="en">Parsing</span> no puede devolver <code>fail</code>: se ejecuta, informa de sus ocurrencias, y vuelve
 				como <code>cantTell</code> con un campo <code>wcagVersionScope</code> que explica la
@@ -204,12 +218,17 @@ export function WcagMappingContent() {
 			</p>
 			<p>
 				Los compuestos, a diferencia de las reglas atómicas, <em>sí</em> se filtran de forma
-				acumulativa. El ejecutor lee el nivel de <code>runOnly.wcag</code>, o el nivel más alto
-				nombrado en <code>tags</code>, y descarta
+				acumulativa. El ejecutor lee <code>engineOptions.wcagLevel</code>, si no, el nivel de{" "}
+				<code>runOnly.wcag</code>, o el nivel más alto nombrado en <code>tags</code>, y descarta
 				todo compuesto por encima de él, así que pedir{" "}
 				<code>{"['wcag2a', 'wcag2aa']"}</code> no devuelve ninguna entrada en{" "}
-				<code>rulesResults</code> para un SC exclusivo de AAA. Eso es{" "}
-				<code>inferTargetLevelFromRunOnly</code>/<code>isAllowedByTargetLevel</code> en{" "}
+				<code>rulesResults</code> para un SC exclusivo de AAA. <code>wcagLevel</code> (
+				<code>'A'</code>, <code>'AA'</code> o <code>'AAA'</code>) es la opción para un análisis
+				que nombra comprobaciones en lugar de un objetivo: todas las reglas seleccionadas se
+				siguen ejecutando, y solo los criterios que informa se limitan a ese nivel, así que un
+				análisis de <code>contrast-computable</code> con <code>'AA'</code> informa del 1.4.3 y no
+				del 1.4.6 de nivel AAA. La ejecución lo registra como <code>engine.wcagLevel</code>. Eso
+				es <code>targetWcagLevelOf</code>/<code>isAllowedByTargetLevel</code> en{" "}
 				<code>src/core/dom-runner.js</code> si necesitas la precedencia exacta.
 			</p>
 			<p>
@@ -329,8 +348,11 @@ export function WcagMappingContent() {
 					se ejecuta cuando sus etiquetas coinciden con ese perfil, y la ejecución sigue apuntando a
 					WCAG. Así,
 					entre las reglas de core, un análisis con un objetivo de WCAG solo ejecuta las de los
-					criterios del objetivo, más las reglas de buenas prácticas si las añades. Una regla
-					personalizada, una sustitución o una regla de un pack sin etiqueta opcional se ejecuta
+					criterios del objetivo, más las reglas de buenas prácticas si las añades. Una regla de
+					buenas prácticas no nombra ningún criterio, y aun así puede informar <code>fail</code>{" "}
+					cuando lo que encuentra es en sí una barrera, como un encabezado vacío (
+					<a href="/rules/empty-heading/"><code>empty-heading</code></a>); ningún compuesto de WCAG
+					lo cuenta. Una regla personalizada, una sustitución o una regla de un pack sin etiqueta opcional se ejecuta
 					cuando la selección la incluye, y entonces puede informar un <code>fail</code> por una
 					comprobación propia que WCAG no exige.
 				</li>

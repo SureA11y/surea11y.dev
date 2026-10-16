@@ -138,9 +138,11 @@ export function BaselineContent() {
 			</p>
 			<p>
 				Baseline-Einträge, die in einem neuen Scan auf nichts mehr passen, werden als{" "}
-				<strong>veraltet</strong> (<span lang="en">stale</span>) gemeldet (der Verstoß wurde vermutlich behoben) — das
-				ist rein informativ und lässt den Build nie fehlschlagen; erzeugen Sie die Baseline
-				regelmäßig mit <code>--write-baseline</code> neu, um diese Einträge zu bereinigen.
+				<strong>veraltet</strong> (<span lang="en">stale</span>) gemeldet: Der Verstoß wurde
+				vielleicht behoben, oder das Markup des Elements hat sich geändert, oder der Scan hat es
+				nicht erreicht (ein anderer Viewport, Bereich oder Regelsatz). Das ist rein informativ und
+				lässt den Build nie fehlschlagen; sehen Sie sich diese Einträge an und erzeugen Sie die
+				Baseline dann regelmäßig mit <code>--write-baseline</code> neu, um sie zu bereinigen.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Scannen bei mehreren Viewport-Breiten</h2>
@@ -166,7 +168,7 @@ export function BaselineContent() {
 				Einträge sagt Ihnen nicht mehr, was behoben wurde.
 			</p>
 
-			<h2>Dateiformat</h2>
+			<h2 id="file-format">Dateiformat</h2>
 			<CodeBlock
 				lang="json"
 				lines={[

@@ -13,7 +13,7 @@ const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
 	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code>＋<code>occurrence.hint</code>。要約のない検出箇所（カスタムルールのものなど）では、ルールのタイトル、またはそのIDを使います。GitHubは空のテキストを持つresultを拒否するためです。</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>スキャン対象そのものです。後述の<a href="#sarif-locations">位置情報</a>を参照してください。</> },
-	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <><code>occurrence.selector</code>（ある場合）。</> },
+	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <>要素の位置で、<code>kind: "element"</code>を伴います。<code>occurrence.selector</code>が空でない文字列の場合に含まれます。シャドウツリーの外ではセレクターそのものです。シャドウツリー内の要素では、シャドウホストのセレクター、続いて要素自身のセレクターを<code>{" >>> "}</code>でつないだものです：<code>{"html > body > main > x-card >>> button"}</code>。JUnitの<code>selector:</code>行とHTMLレポートも同じテキストを示します。</> },
 	{
 		id: "fingerprint",
 		field: <code>results[].partialFingerprints["surea11y/violation/v2"]</code>,
@@ -42,11 +42,18 @@ const sarifFieldRows = [
 		),
 	},
 	{ id: "props", field: <><code>results[].properties.severity</code>／<code>.confidence</code>／<code>.reasonCode</code>／<code>.html</code></>, source: <>結果自身の<code>severity</code>／<code>confidence</code>と、上のフィンガープリントのキーになっているのと同じ<code>reasonCode</code>と<code>html</code>の断片です。参考情報であり、SARIF自体のスキーマには含まれません。</> },
-	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>、<code>automatic</code>／<code>manual</code>、そして<code>meta.normativeMappings</code>内のWCAG達成基準ごとに1つの<code>wcag-&lt;SC&gt;</code>タグです。Understanding文書のエントリーにはタグを付けません。結果が持つEN 301 549の各条項（スキャンが要求した場合のみ。<a href="/configuration/engine-options/#other-standards-mappings">ほかの規格</a>を参照）には<code>en301549-&lt;条項&gt;</code>タグ（例：<code>en301549-9.1.1.1</code>）が付きます。条項番号はそれを含むどのバージョンでも同じなので、タグにバージョンは含めません。パックの規格やチェックリストも、それ自身のキーで同じようにタグ付けされます（チェックリスト項目のid、<code>acme-images</code>がそのままタグになります）。続いて、ルール自身の<code>meta.tags</code>（カスタムルールのものも含む）が入ります。エンジンの管理用のタグと、<code>wcag-&lt;SC&gt;</code>タグがすでに示している達成基準のタグは除きます。</> },
+	{ id: "tags", field: <code>tool.driver.rules[].properties.tags</code>, source: <><code>accessibility</code>、<code>automatic</code>／<code>manual</code>、そして<code>meta.normativeMappings</code>内のWCAG達成基準のうち、スキャンのWCAGのレベルとバージョンが残すものごとに1つの<code>wcag-&lt;SC&gt;</code>タグです。それらによってスキャンが<code>rulesResults</code>から外した達成基準にはタグが付きません。<code>engineOptions.wcagLevel: 'AA'</code>のもとでのAAAの達成基準や、WCAG 2.2で<code>{"includeRuleIds: ['duplicate-id']"}</code>を実行したときの4.1.1です。スキャンが報告する達成基準は、レベルより上でもIDで指定された集約のように、タグを保ちます。<code>engine.wcagLevel</code>も<code>engine.wcagVersion</code>も記録していない結果では、すべての達成基準がタグを保ちます。ルール自体は残り、対応するすべての達成基準が外された場合は、そのresultもnoteとして残ります（<a href="#outside-the-target">前述</a>を参照）。Understanding文書のエントリーにはタグを付けません。結果が持つEN 301 549の各条項（スキャンが要求した場合のみ。<a href="/configuration/engine-options/#other-standards-mappings">ほかの規格</a>を参照）には<code>en301549-&lt;条項&gt;</code>タグ（例：<code>en301549-9.1.1.1</code>）が付きます。条項番号はそれを含むどのバージョンでも同じなので、タグにバージョンは含めません。パックの規格やチェックリストも、それ自身のキーで同じようにタグ付けされます（チェックリスト項目のid、<code>acme-images</code>がそのままタグになります）。続いて、ルール自身の<code>meta.tags</code>（カスタムルールのものも含む）が入ります。エンジンの管理用のタグと、<code>wcag-&lt;SC&gt;</code>タグがすでに示している達成基準のタグは除きます。</> },
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <>ルールのヘルプリンクである<code>meta.helpUrl</code>が絶対<code>http(s)</code> URLならその値、そうでなければ対応する最初のWCAG達成基準のUnderstanding文書です。どちらもないルールでは含まれませんが、組み込みルールにそうしたものはありません。どの達成基準にも対応しないルールは、ルールカタログにある自身の節にリンクします。</> },
-	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <><code>toolVersion</code>オプションが指定されていればその値（エンジンを組み込んだツールは自身のバージョンを渡します）、なければ結果を生成したエンジンのリリースである<code>engine.version</code>です。<code>"0.0.0"</code>になるのは、1.10.0より前のリリースによる、この値を持たない結果の場合だけです。</> },
+	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <><code>toolVersion</code>オプションが指定されていればその値（エンジンを組み込んだツールは自身のバージョンを渡します）、なければ結果を生成したエンジンのリリースである<code>engine.version</code>です。<code>"0.0.0"</code>になるのは、1.10.0より前のリリースによる、この値を持たない結果か、<code>engine.version</code>が文字列でない結果の場合だけです。</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <><code>category</code>オプションの値で、末尾に<code>/</code>がなければ追加します（GitHubは最後のスラッシュまでをカテゴリーとして読むためです）。カテゴリーを指定しない場合は含まれません。<a href="#scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</a>を参照してください。</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <>結果の<code>engine</code>にある<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>、<code>environment</code>です。実行が使った適合性の目標を示すので、ダッシュボードはWCAG 2.1の実行と2.2の実行を区別できます。その目標を超えてオプトインルールのタグを追加した場合は、それも示します。また、ページがレンダリングされた条件（<code>layout</code>、<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>fonts</code>。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）も示します。これらのフィールドより前のエンジンの結果では省略されます。</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <>結果の<code>engine</code>にある<code>wcagVersion</code>、<code>wcagLevel</code>（スキャンにレベルがあった場合。<code>engineOptions.wcagLevel</code>、または選択が示すレベル）、<code>profile</code>、<code>optInRules</code>、<code>environment</code>です。実行が使った適合性の目標を示すので、ダッシュボードはWCAG 2.1の実行と2.2の実行を、またAAの実行とすべてのレベルの実行を区別できます。その目標を超えてオプトインルールのタグを追加した場合は、それも示します。また、ページがレンダリングされた条件（<code>layout</code>、<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）も示します。これらのフィールドより前のエンジンの結果では省略されます。</> },
+];
+
+const sarifOptionRows = [
+	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>です。エンジンを組み込んだツールのためのものです。</> },
+	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>、つまりツールのホームページです。</> },
+	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "なし", effect: <>保存したままのベースラインファイル（それを<code>JSON.parse</code>したもの）、またはその<code>entries</code>の一覧です。<a href="/conformance/baseline/#file-format">ファイル形式</a>を参照してください。そこに記録された<code>fail</code>の検出箇所は、<code>--baseline</code>と同じく省かれます（後述）。</> },
+	{ id: "category", option: <code>category</code>, def: "なし", effect: <><code>runs[0].automationDetails.id</code>です。<a href="#scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</a>を参照してください。</> },
 ];
 
 export function SarifReportContent() {
@@ -100,6 +107,8 @@ export function SarifReportContent() {
 				（
 				<a href="/results-reports/html-report/">HTMLレポート</a>
 				と同じく「違反だけ」という考え方です）。
+				<strong>そのため、resultのないログが示すのは、実行されたチェックの中に不合格やレビューが必要なものがなかったということだけです</strong>
+				。何がチェックされたかは示さず、適合の表明でもありません。それにはJSONの結果を保存してください。
 			</p>
 			<p>
 				<code>notApplicable</code>
@@ -132,7 +141,7 @@ export function SarifReportContent() {
 				<strong>これにより、SARIFだけを使うパイプラインが、何も報告がないことを問題なしと読み違えずに済みます</strong>
 				。コントラストのアラートがないのは、ページに問題がないからかもしれませんし、コントラストがそもそも計算できなかったからかもしれません。その2つを区別できるのはこの通知だけです。このブロックは伝えることがあるときにだけ出力されるので、報告することがない実行では
 				<code>invocations</code>
-				キー自体がありません。
+				キー自体がありません。合格したルールは通知を書き出しません。
 			</p>
 			<p>
 				完了しなかったルール（例外を投げたもの。検出箇所がなく
@@ -157,6 +166,27 @@ export function SarifReportContent() {
 				]}
 				rows={sarifLevelRows}
 			/>
+			<p id="outside-the-target">
+				WCAGの達成基準がすべてスキャンの目標の外にあるルール（
+				<code>engineOptions.wcagLevel: 'AA'</code>
+				のもとでのAAAのルールや、WCAG 2.2のもとでの
+				<code>duplicate-id</code>
+				。後述の
+				<code>wcag-&lt;SC&gt;</code>
+				タグと同じく、スキャンが
+				<code>rulesResults</code>
+				から外した達成基準です）も実行されており、その
+				<code>fail</code>
+				と
+				<code>cantTell</code>
+				の検出結果はresultとして残ります。レベルは
+				<code>note</code>
+				で、目標に合わせたビルドを不合格にせずに目に入るようにしています。それぞれ
+				<code>properties.outsideTarget</code>
+				で理由を示します：
+				<code>{'{ "criteria": ["1.4.6"], "target": "WCAG 2.2 AA" }'}</code>
+				。
+			</p>
 			<p>
 				実行されたルールは（resultを出したかどうかにかかわらず）すべて
 				<code>runs[0].tool.driver.rules</code>
@@ -174,10 +204,10 @@ export function SarifReportContent() {
 				<code>fail</code>
 				にはならない）なら
 				<code>warning</code>
-				です。
+				です。保存された結果で文字列でないルールIDは、そのテキストとして書き出されます。ルールIDのないチェックはどのルールも示さないため、JUnitやEARLと同じく省かれます。
 			</p>
 
-			<h2>フィールドの対応</h2>
+			<h2 id="field-mapping">フィールドの対応</h2>
 			<DataTable
 				label="SARIFのフィールドの対応"
 				rowKey="id"
@@ -210,12 +240,17 @@ export function SarifReportContent() {
 				</li>
 				<li>
 					<strong>URLのスキャン</strong>
-					：スキャンしたURLそのものです。<span lang="en">GitHub Code Scanning</span>は検出結果を一覧には表示しますが、リポジトリ内のファイルではないURLにインラインの注釈を付けることはできません。これはSARIF／<span lang="en">Code Scanning</span>が検出結果とソースを結び付ける仕組みによるもので、surea11yの制限ではありません。インラインの注釈が必要なら、公開中のURLではなく、レンダリング済みのHTMLファイル（ビルド成果物など）をスキャンしてください。
+					：スキャンしたURLそのものです。<span lang="en">GitHub Code Scanning</span>は検出結果を一覧には表示しますが、リポジトリ内のファイルではないURLにインラインの注釈を付けることはできません。これはSARIF／<span lang="en">Code Scanning</span>が検出結果とソースを結び付ける仕組みによるもので、surea11yの制限ではありません。インラインの注釈が必要なら、公開中のURLではなく、レンダリング済みのHTMLファイル（ビルド成果物など）をスキャンしてください。URLはURLパーサーがシリアライズするとおりに書き出されるため、URIに入れられない文字はパーセントエンコードされます（<code>https://example.test/a%20b</code>）。
+				</li>
+				<li>
+					<strong>その他の対象</strong>
+					：<code>url</code>がURLでない結果、たとえばページをスキャンしたときのパス（<code>runDomRulesInPage('dist/my page.html', …)</code>）は、相対パス（区切りはスラッシュ）になり、各セグメントはパーセントエンコードされます（<code>dist/my%20page.html</code>）。Windowsのパスは絶対<code>file:</code> URLになります。<code>url</code>がない結果や、文字列でない結果の位置は<code>about:blank</code>です。
 				</li>
 			</ul>
 			<p>
-				<code>occurrence.selector</code>
-				は
+				要素の位置（そのセレクター。シャドウツリー内にある場合は、シャドウホストのセレクターと
+				<code>{" >>> "}</code>
+				を前に付けたもの）は
 				<code>logicalLocations[].fullyQualifiedName</code>
 				としても記録されるので、論理的な位置を読む利用側なら、使える物理的な位置がなくても「どの要素か」という情報を得られます。
 			</p>
@@ -235,7 +270,15 @@ export function SarifReportContent() {
 			</p>
 			<CodeBlock
 				lang="json"
-				lines={['"properties": { "severity": "serious", "confidence": "high", "frame": ["#checkout"] }']}
+				lines={[
+					'"properties": {',
+					'  "severity": "serious",',
+					'  "confidence": "high",',
+					'  "reasonCode": "DEFAULT",',
+					'  "html": "<img src=\\"card.png\\">",',
+					'  "frame": ["#checkout"]',
+					"}",
+				]}
 			/>
 			<p>
 				パスは検出結果の識別（
@@ -268,6 +311,24 @@ export function SarifReportContent() {
 			<p>
 				検出結果の識別にはビューポートは含まれず、含める必要もありません。同じ要素の同じ欠陥は、どの幅でも同じ検出結果であり、分析を分けておくのはカテゴリーの役割です。<code>runs[0].properties.environment</code>には、各実行が使ったビューポートが記録されます。
 			</p>
+
+			<h2>オプション</h2>
+			<p>
+				<code>@surea11y/core/sarif</code>
+				の
+				<code>renderSarifReport(result, options)</code>
+				は、ログをJSONのテキストとして返します。次のオプションを取ります。
+			</p>
+			<DataTable
+				label="renderSarifReportのオプション"
+				rowKey="id"
+				columns={[
+					{ key: "option", label: "オプション", width: "22%" },
+					{ key: "def", label: "デフォルト", width: "30%", wrap: true },
+					{ key: "effect", label: "効果", wrap: true },
+				]}
+				rows={sarifOptionRows}
+			/>
 
 			<h2>
 				<code>--baseline</code>

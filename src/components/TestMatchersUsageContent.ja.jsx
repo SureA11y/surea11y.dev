@@ -88,6 +88,12 @@ export function TestMatchersUsageContent() {
 				は不要で、書き忘れて解決済みのPromiseに対して黙って成功してしまうこともありません。
 			</p>
 			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/test-matchers", command: true }]} />
+			<p>
+				<code>@surea11y/core</code>
+				も一緒にインストールされるので、ほかに追加するものはありません。テストランナーの外で、ビルドしたHTMLをターミナルやCIのステップからチェックしたい場合は
+				<a href="/getting-started/cli/">CLI</a>
+				を参照してください。
+			</p>
 
 			<h2>セットアップ</h2>
 			<p>
@@ -228,6 +234,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"// Ignore a third-party widget you don't control",
 					"expect(container).toHaveNoA11yViolations({ excludeSelectors: ['.intercom-launcher'] });",
+					"",
+					"// EN 301 549 V4.1.1 (WCAG 2.2 A and AA); 'en301549-v3.2.1' for V3.2.1 (WCAG 2.1 A and AA)",
+					"expect(container).toHaveNoA11yViolations({ profile: 'en301549-v4.1.1' });",
 				]}
 			/>
 
@@ -281,8 +290,27 @@ export function TestMatchersUsageContent() {
 				<code>{"{}"}</code>
 				か
 				<code>null</code>
-				を渡してください。
+				を渡してください。ルールIDは大文字小文字を区別しません（
+				<code>'IMG-ALT-PRESENT'</code>
+				）。
 			</p>
+			<p>
+				目標を指定すれば、そのレベルも決まります。代わりにルールやタグを指定するテストでは、
+				<code>engineOptions.wcagLevel</code>
+				（
+				<code>@surea11y/core</code>
+				1.12.0以降）でレベルを設定できます。実行するルールを変えずに、スキャンが報告する達成基準のレベルを決めるものです。
+				<code>contrast-computable</code>
+				は1.4.3（AA）と1.4.6（AAA）をチェックするため、下のスキャンは1.4.3だけを報告します。アサーションは
+				<code>fail</code>
+				の判定結果で決まるので、これで変わるのは結果に含まれる達成基準であり、テストを失敗させるものではありません。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"expect(container).toHaveNoA11yViolations({ wcagLevel: 'AA' }, { includeRuleIds: ['contrast-computable'] });",
+				]}
+			/>
 
 			<h2 id="packs">パックを使ったスキャン</h2>
 			<p>
@@ -336,7 +364,11 @@ export function TestMatchersUsageContent() {
 				<code>{"{ pass, message }"}</code>
 				の形を返します。これを直接呼ぶことはありません。上の「セットアップ」で示したとおり、
 				<code>expect.extend()</code>
-				で1度登録するだけです。
+				で1度登録するだけです。このパッケージは、
+				<a href="#web-components">Webコンポーネント</a>
+				向けに
+				<code>installInternalsHook(win?)</code>
+				もエクスポートしています。
 			</p>
 
 			<h2>チェックすること、しないこと</h2>
@@ -368,7 +400,17 @@ export function TestMatchersUsageContent() {
 				<code>skippedCustomRules</code>
 				に列挙されます）、実行されなかったパック（
 				<code>skippedPacks</code>
-				に列挙されます）が該当します。メッセージはそれぞれを理由とともに示します。
+				に列挙されます）が該当します。メッセージはそれぞれを理由とともに示します。テスト自身が除外したカスタムルールは抜け漏れではないので、テストは失敗しません。
+			</p>
+			<p>
+				<strong>選択を指定しない呼び出しでは、ベストプラクティスのルールも実行されます</strong>
+				。
+				<code>@surea11y/core</code>
+				1.12から、その1つである
+				<code>empty-heading</code>
+				は、アクセシブルな名前のない見出しについて、以前のように問いかけるのではなく不合格にします。そのため、
+				<code>&lt;h2&gt;&lt;/h2&gt;</code>
+				を描画するコンポーネント（テストでタイトルのpropが空になっていることがよくあります）は、オプションなしの呼び出しで失敗します。スクリーンリーダーは中身のない見出しとして読み上げるので、テストに実際の内容を与えるか、コンポーネントを修正してください。ベストプラクティスを含まないWCAGの目標を指定した呼び出しでは、このルールは実行されません。
 			</p>
 			<p>
 				スキャン自体が例外を投げることもあり、その場合テストはエンジンのエラーで失敗します。エラーは
@@ -428,6 +470,77 @@ export function TestMatchersUsageContent() {
 				を設定してください。
 			</p>
 
+			<h2 id="web-components">Webコンポーネント</h2>
+			<p>
+				多くのWebコンポーネントは、
+				<code>ElementInternals</code>
+				をプライベートフィールドに保持し、それを通じて名前を付けたり、状態を設定したり、ロールを与えたりします。スクリプトからはそれを読み返せないため、既定ではスキャンはそうした要素を判定せずに問いかけます（
+				<code>cantTell</code>
+				）。テストは失敗しませんが、何もチェックされず、このように設定されたロールはまったく認識されません。
+			</p>
+			<p>
+				<code>installInternalsHook(win?)</code>
+				を使うと、スキャンがそれを読めるようになります。すべての
+				<code>attachInternals()</code>
+				の呼び出しを捉えられるよう、コンポーネントが定義される前に、セットアップファイルで1度呼び出してください。
+				<code>win</code>
+				の既定値はグローバルの
+				<code>window</code>
+				です。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// jest.setup.js",
+					"const {",
+					"  toHaveNoA11yViolations,",
+					"  installInternalsHook",
+					"} = require('@surea11y/test-matchers');",
+					"",
+					"installInternalsHook();",
+					"expect.extend({ toHaveNoA11yViolations });",
+				]}
+			/>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// vitest.setup.js",
+					"import { expect } from 'vitest';",
+					"import {",
+					"  toHaveNoA11yViolations,",
+					"  installInternalsHook",
+					"} from '@surea11y/test-matchers';",
+					"",
+					"installInternalsHook();",
+					"expect.extend({ toHaveNoA11yViolations });",
+				]}
+			/>
+			<p>
+				これにより、
+				<code>ElementInternals</code>
+				で名前を付けるコンポーネントは合格し、それを取り付けても名前を設定しないコンポーネントは名前のないコントロールと同じく失敗し、それを通じてだけ
+				<code>switch</code>
+				になるコンポーネントはスイッチとしてチェックされます。フックがあったかどうかは、スキャン結果の
+				<code>engine.environment.internalsHook</code>
+				でわかります。フックはテスト用ウィンドウの
+				<code>HTMLElement.prototype.attachInternals</code>
+				をラップします。テストでは無害ですが、オプトインになっているのはこのためです。現時点での制限は2つあります。
+				<code>jest-environment-jsdom</code>
+				30に含まれるjsdom 26では、
+				<code>ElementInternals</code>
+				にARIAプロパティを設定するコンポーネントは、フックの有無にかかわらず例外を投げます（jsdom 29を使うVitestでは問題ありません）。また、Vitestでは
+				<code>@surea11y/core</code>
+				1.12.0がフックを
+				<code>'late'</code>
+				として記録するため、
+				<code>ElementInternals</code>
+				を一度も取り付けていないコンポーネントは、そこでは問いかけのまま残ります。詳しくは
+				<a href="https://github.com/SureA11y/test-matchers#web-components-names-set-through-elementinternals">
+					パッケージのREADME
+				</a>
+				を参照してください。
+			</p>
+
 			<h2>失敗メッセージ</h2>
 			<p>
 				ルール単位ではなく検出箇所ごとにすべて列挙します（1つのルールが複数の要素を検出することがあるためです）。各項目には、ルールID、重大度、読みやすい要約、問題のある要素のセレクター、そして可能な場合は修正のヒントが含まれます。バグ報告で示せるよう、結果を生成した
@@ -442,9 +555,14 @@ export function TestMatchersUsageContent() {
 					"   at body > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.11.1.",
+					"Scanned with @surea11y/core 1.12.0.",
 				]}
 			/>
+			<p>
+				メッセージには、バージョンの行の前に、スキャンの実行状況についての注記が入ることがあります。
+				<a href="#web-components">internalsフック</a>
+				があれば読めたカスタム要素についてスキャンが問いかけた場合、その数と、フックをインストールするよう伝える行が入ります。
+			</p>
 			<p>
 				失敗と一緒に
 				<code>cantTell</code>
@@ -462,9 +580,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.11.1.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.12.0.",
 					"",
-					"Scanned with @surea11y/core 1.11.1.",
+					"Scanned with @surea11y/core 1.12.0.",
 				]}
 			/>
 

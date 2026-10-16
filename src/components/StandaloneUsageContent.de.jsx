@@ -33,7 +33,26 @@ export function StandaloneUsageContent() {
 				<code>a11ycore.runa11yCoreInPage</code> ist genau dieselbe Funktion, die die Bindings
 				intern aufrufen — das Bundle existiert nur, um das <em>Laden</em> ohne{" "}
 				<code>require</code>/Modulsystem zu lösen, nicht um eine separate API anzubieten.
+				Die Argumente sind dieselben wie überall sonst. Ein Scan, der auf einen Bereich
+				und auf WCAG 2.2 A und AA beschränkt ist und zwei störende Widgets auslässt:
 			</p>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(",
+					"    location.href,",
+					"    '#main', // contextSelector: scan only this region",
+					"    {",
+					"      excludeSelectors: ['#cookie-banner', '.intercom-launcher'],",
+					"      contrast: { mode: 'auditorAssist' } // trade some false-positive protection for more findings",
+					"    },",
+					"    { wcag: { version: '2.2', level: 'AA' } } // runOnly",
+					"  );",
+					"</script>",
+				]}
+			/>
 			<p>
 				<strong>Das Bundle enthält nur Englisch.</strong> Jede andere Locale wird daneben als eigene Datei
 				ausgeliefert — laden Sie eine nach dem Bundle, und diese Sprache steht zur Verfügung:
@@ -75,6 +94,10 @@ export function StandaloneUsageContent() {
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom in Node
 				ohne echten Browser, oder Puppeteer/Playwright selbst steuern, statt über ein Binding zu
 				gehen.
+				Für Tests scannt <code>runa11yCoreOnHtml(html, options)</code> aus{" "}
+				<code>@surea11y/core/testing</code> einen HTML-String in jsdom und richtet das
+				Dokument für Sie ein; seit core 1.12 liest seine Option <code>contentType</code>{" "}
+				ein SVG- oder XHTML-Dokument als das, was es ist.
 			</p>
 
 			<h2 id="packs-in-a-page">Packs in einer Seite</h2>
@@ -136,6 +159,8 @@ export function StandaloneUsageContent() {
 				<code>loading="lazy"</code>), höchstens <code>timeoutMs</code> lang (Standard{" "}
 				<code>5000</code>). Es lehnt nie ab: Läuft die Zeit ab, löst es trotzdem auf, mit{" "}
 				<code>ready: false</code>, und nennt, was noch ausstand.
+				Ob Sie trotzdem scannen, länger warten oder abbrechen, entscheiden Sie; wenn Sie
+				scannen, bewahren Sie mit dem Ergebnis auf, was noch ausstand.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -162,7 +187,7 @@ export function StandaloneUsageContent() {
 				Ein Scan läuft in einem Zug innerhalb der Seite, und nichts in der Seite kann ihn anhalten,
 				sobald er begonnen hat: Ein Getter der Seite oder eine Regel, die nie zurückkehrt, blockiert
 				diesen Tab endgültig. Begrenzen Sie die Zeit dort, wo Sie den Scan starten, und geben Sie
-				den Tab auf, wenn das Limit überschritten ist. 60 Sekunden liegen weit über dem, was eine
+				den Tab auf, wenn das Limit überschritten ist: Ihr Zeitlimit beendet das Warten, nicht das Skript, das in der Seite läuft. 60 Sekunden liegen weit über dem, was eine
 				normale Seite braucht, und erfassen daher nur die defekten:
 			</p>
 			<CodeBlock
@@ -197,6 +222,86 @@ export function StandaloneUsageContent() {
 				auslösen, wenn er endet: Führen Sie den Scan in einem Worker-Thread oder einem
 				Kindprozess aus, und beenden Sie diesen, wenn das Limit überschritten ist. Das Zeitlimit des
 				CI-Jobs selbst ist in beiden Fällen der letzte Ausweg.
+			</p>
+
+			<h2 id="internals-hook">Web Components mit privaten Internals</h2>
+			<p>
+				Ein Custom Element kann sich über <code>ElementInternals</code> einen Namen
+				geben, seine Zustände setzen und sich eine Rolle geben. Viele halten ihre
+				Internals in einem privaten Feld, wo kein Skript sie zurücklesen kann. Ein Scan
+				fragt deshalb bei einem solchen Element nach (<code>cantTell</code>), statt es
+				zu beurteilen, und sieht eine so gesetzte Rolle gar nicht.
+			</p>
+			<p>
+				<code>internalsHookScript()</code> aus <code>@surea11y/core</code> (nicht aus
+				dem Bundle) gibt ein Skript zurück, das die Internals jedes Elements erfasst,
+				sobald die Seite sie anhängt, damit der Scan sie lesen kann. Es ist optional:
+				Core installiert es nie. Installieren Sie es vor den eigenen Skripten der Seite,
+				in jedem Frame, den Sie scannen: mit der Init-Script-API Ihres Treibers oder,
+				auf einer Seite, die Sie selbst bauen, als erstes <code>&lt;script&gt;</code> im{" "}
+				<code>&lt;head&gt;</code>. In einer jsdom-Setup-Datei, die läuft, nachdem das
+				Dokument geladen ist, aber bevor eine Komponente definiert wird, übergeben Sie{" "}
+				<code>{"{ early: true }"}</code>:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { internalsHookScript } = require('@surea11y/core');",
+					"",
+					"// Playwright",
+					"await page.addInitScript({ content: internalsHookScript() });",
+					"",
+					"// Puppeteer",
+					"await page.evaluateOnNewDocument(internalsHookScript());",
+					"",
+					"// jest.setup.js or vitest.setup.js, before any component is imported",
+					"window.eval(internalsHookScript({ early: true }));",
+				]}
+			/>
+			<p>
+				Ob der Hook da war, zeigt das Ergebnis in{" "}
+				<code>engine.environment.internalsHook</code>: <code>'early'</code>, wenn er vor
+				den Skripten der Seite installiert wurde, <code>'late'</code>, wenn er danach
+				kam und nur sieht, was die Seite ab dann anhängt. Jedes Skript der Seite kann
+				lesen, was der Hook erfasst, private Internals einer Komponente sind damit nicht
+				mehr privat: Installieren Sie ihn für Test- und Audit-Läufe, nicht in Seiten,
+				die Sie an Nutzende ausliefern. Alle anderen Wege, ihn zu installieren, und was
+				eine Seite davon bemerken kann, stehen in{" "}
+				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}><code>INTEGRATION.md</code></a>.
+			</p>
+
+			<h2 id="what-a-scan-covers">Wissen, was ein Scan abdeckt</h2>
+			<p>
+				Ein Werkzeug, das nach WCAG-Kriterium berichtet und seine Nutzenden Prüfungen
+				auswählen lässt, kann angeben, für welches Ziel der Scan gilt:{" "}
+				<code>engineOptions.wcagLevel</code> neben <code>wcagVersion</code> lässt
+				Kriterien oberhalb dieser Stufe aus, ohne zu ändern, welche Prüfungen laufen.{" "}
+				<code>getRulesForRunOnly(runOnly, engineOptions)</code> listet die Kriterien
+				auf, die ein Scan mit dieser Auswahl meldet, bevor Sie ihn ausführen, mit der
+				Logik des Scans selbst:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { getRulesForRunOnly, runDomRulesInPage } = require('@surea11y/core');",
+					"",
+					"const engineOptions = { wcagVersion: '2.2', wcagLevel: 'AA' };",
+					"const runOnly = { includeRuleIds: ['contrast-computable'] };",
+					"",
+					"getRulesForRunOnly(runOnly, engineOptions).map((r) => r.id); // before the scan",
+					"const result = runDomRulesInPage(url, null, engineOptions, runOnly);",
+				]}
+			/>
+			<p>
+				Ein Kriterium, von dessen Prüfungen nur einige liefen, kommt als{" "}
+				<code>cantTell</code> zurück, und jede Prüfung, die nicht lief, ist mit{" "}
+				<code>notSelected: true</code> markiert: Zeigen Sie es als teilweise geprüft,
+				nie als bestanden. Wie Sie ein eigenes Werkzeug auf core aufbauen (eine CLI,
+				eine CI-Integration, ein Dashboard, einen Generator für Konformitätsberichte),
+				beschreibt{" "}
+				<a href={`${core}/docs/BUILDING_ON_CORE.md`}><code>BUILDING_ON_CORE.md</code></a>{" "}
+				auf GitHub: worauf Sie sich verlassen können, Scans ausführen, Prüfungen
+				auswählen, Ergebnisse ehrlich darstellen und Läufe vergleichen.
 			</p>
 		</>
 	);
