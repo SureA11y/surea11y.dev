@@ -12,10 +12,10 @@ export function HelpContent() {
 
 			<h2>FAQ</h2>
 			<p>
-				Les questions les plus fréquentes, avec des réponses claires : pourquoi <code>runOnly</code>{" "}
-				a exécuté en silence toutes les règles au lieu de celle demandée, pourquoi une règle
-				personnalisée renvoie sans cesse <code>cantTell</code> sans cause évidente, pourquoi une
-				règle dépendant de la géométrie indique <code>notApplicable</code> sous jsdom, et ce
+				Les questions les plus fréquentes, avec des réponses claires : pourquoi une sélection de
+				tags et d’identifiants de règle peut n’exécuter aucune règle et paraître pourtant sans
+				erreur, pourquoi un composant web revient en <code>cantTell</code>, ce qui change dans vos
+				résultats après la mise à jour vers core 1.12, pourquoi une règle dépendant de la géométrie indique <code>notApplicable</code> sous jsdom, et ce
 				qu’une analyse sans erreur signifie vraiment, ou pas. Quinze minutes ici vous épargnent
 				l’essentiel du débogage que la plupart des gens finissent par faire de toute façon. Voir la{" "}
 				<a href="/help/faq/">FAQ</a>.
@@ -23,11 +23,11 @@ export function HelpContent() {
 
 			<h2>Limites connues</h2>
 			<p>
-				Chaque limite de l’architecture de ce moteur, fondée sur l’analyse statique du DOM, est
-				nommée explicitement plutôt que découverte par surprise : ce qu’il ne peut structurellement
-				pas faire, ce qui dépend de l’environnement dans lequel vous l’exécutez, et ce qu’il refuse
+				Chaque limite de ce moteur est nommée explicitement plutôt que découverte par surprise : ce
+				qu’une analyse d’un seul état de la page ne peut pas voir, ce qui dépend de l’endroit où
+				vous l’exécutez (jsdom, un navigateur, les scripts de la page elle-même), et ce qu’il refuse
 				délibérément de deviner, parce qu’une mauvaise supposition serait pire qu’un{" "}
-				<code>cantTell</code> honnête. Les connaître d’avance, c’est ce qui vous permet de faire
+				<code>cantTell</code> honnête, avec pour chacune ce qu’il faut faire. Les connaître d’avance, c’est ce qui vous permet de faire
 				confiance au reste des résultats. Voir{" "}
 				<a href="/help/known-limitations/">Limites connues</a>.
 			</p>

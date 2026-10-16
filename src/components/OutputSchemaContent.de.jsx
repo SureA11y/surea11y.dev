@@ -74,9 +74,10 @@ const topLevelRows = [
 		field: <code>engine.wcagVersion</code>,
 		meaning: (
 			<>
-				Gegen welche WCAG-Version dieser Lauf auf Konformität geprüft hat: Ihr{" "}
-				<code>engineOptions.wcagVersion</code>, die Version, die sich aus Ihren
-				Versionsursprungs-Tags ergab, oder der Standard <code>"2.2"</code>. Derzeit wirkt sich
+				Gegen welche WCAG-Version dieser Lauf geprüft hat: Ihr{" "}
+				<code>engineOptions.wcagVersion</code>, die <code>wcagVersion</code> des Pack-Profils,
+				das der Lauf angewendet hat, die Version, die sich aus Ihren Versionsursprungs-Tags ergab,
+				oder der Standard <code>"2.2"</code>. Derzeit wirkt sich
 				das auf genau eine Sache aus:{" "}
 				<strong>Eine Regel, die nur auf Erfolgskriterium 4.1.1 „Syntaxanalyse“ abgebildet ist, kann bei
 				einem 2.2-Ziel nicht <code>fail</code> ergeben</strong> (siehe{" "}
@@ -86,6 +87,29 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "engine.wcagLevel",
+		field: <code>engine.wcagLevel</code>,
+		meaning: (
+			<>
+				Die WCAG-Stufe, nach der die gemeldeten Kriterien begrenzt wurden, <code>"A"</code>,{" "}
+				<code>"AA"</code> oder <code>"AAA"</code>: <code>engineOptions.wcagLevel</code>, wenn es
+				angegeben und gültig war, sonst die Stufe, die sich aus der Auswahl ergibt (
+				<code>runOnly.wcag.level</code> oder die höchste Stufe, die ihre Versions- bzw.
+				Stufen-Tags nennen, die Tags eines Profils eingeschlossen). WCAG-Zusammenfassungen
+				oberhalb dieser Stufe stehen nicht in <code>rulesResults</code>, obwohl ihre Regeln
+				gelaufen sind und in <code>checksResults</code> stehen; eine Zusammenfassung, die die
+				Auswahl per ID nennt, wird gemeldet, gleich was <code>engineOptions.wcagLevel</code> sagt.
+				Fehlt, wenn der Scan keine Stufe hatte, etwa ein vollständiger Scan oder einer, der nur
+				Regeln nennt; der meldet jede Stufe. Die Reporter begrenzen die Kriterien, die sie nennen,
+				nach diesem Wert. Siehe{" "}
+				<a href="/configuration/engine-options/#giving-the-level-of-a-scan-that-names-checks-wcaglevel">
+					Die Stufe eines Scans angeben, der Prüfungen benennt
+				</a>
+				.
+			</>
+		),
+	},
+{
 		id: "engine.profile",
 		field: <code>engine.profile</code>,
 		meaning: (
@@ -107,8 +131,10 @@ const topLevelRows = [
 			<>
 				Nur vorhanden, wenn das angewendete Profil Regeln auslässt:{" "}
 				<code>{"{ rules, criteria }"}</code>, die genannten Regeln und die WCAG-Kriterien, die es
-				auslässt. Deren Regeln und WCAG-Zusammenfassungen sind nicht gelaufen; das schränkt den Scan
-				ein, ohne zu ändern, was die WCAG verlangen. Kein eingebautes
+				auslässt. Die genannten Regeln, die Regeln, deren sämtliche Kriterien es auslässt, und die
+				WCAG-Zusammenfassungen dieser Kriterien sind nicht gelaufen; eine Regel, die auch ein
+				Kriterium prüft, das das Profil behält, ist gelaufen und zählt für dieses Kriterium. Das
+				schränkt den Scan ein, ohne zu ändern, was die WCAG verlangen. Kein eingebautes
 				Profil lässt etwas aus.
 			</>
 		),
@@ -184,11 +210,18 @@ const topLevelRows = [
 				, können für dasselbe Markup bei einer anderen Viewport-Breite oder während noch Webfonts
 				laden ein anderes Ergebnis liefern; das hier brauchen Sie also, um einen Lauf zu
 				reproduzieren. <code>layout</code> gibt an, ob die Seite ein Layout hatte:{" "}
-				<code>false</code> in jsdom und anderen DOM-Emulatoren, und dann ist es das einzige Feld. In
-				einem Browser ist <code>viewport</code> <code>innerWidth</code>/<code>innerHeight</code> in
+				<code>false</code> in jsdom und anderen DOM-Emulatoren, und dann fehlen der Viewport und die
+				übrigen Darstellungsfelder, da sie nichts Gemessenes beschreiben; nur{" "}
+				<code>internalsHook</code> kann daneben stehen, wo die Seite den Hook ausführt. In einem
+				Browser ist <code>viewport</code> <code>innerWidth</code>/<code>innerHeight</code> in
 				CSS-Pixeln, <code>devicePixelRatio</code> der Wert der Seite (auch der Browser-Zoom zeigt
-				sich hier), <code>colorScheme</code> das, worauf <code>prefers-color-scheme</code> passt,
-				und <code>fonts</code> ist <code>"loading"</code>, solange noch eine der Schriften der Seite
+				sich hier), <code>colorScheme</code> das, worauf <code>prefers-color-scheme</code> passt,{" "}
+				<code>forcedColors</code>, ob <code>forced-colors: active</code> zutrifft (
+				<code>"active"</code> unter dem Windows-Kontrastmodus oder den emulierten Forced Colors von
+				Chromium, sonst <code>"none"</code>; die Regeln messen in beiden Fällen die eigenen Farben
+				der Seite, siehe{" "}
+				<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}>Forced colors</a>), und{" "}
+				<code>fonts</code> ist <code>"loading"</code>, solange noch eine der Schriften der Seite
 				lädt, sonst <code>"loaded"</code>. Ein Feld, das die Seite nicht liefern kann, fehlt. Das
 				Auslesen bringt keinen Nichtdeterminismus mit sich: Wie das DOM sind diese Werte Eingabe.
 				Für Ergebnisse, die sich zwischen Läufen vergleichen lassen, warten Sie vor dem Scan auf{" "}
@@ -202,8 +235,20 @@ const topLevelRows = [
 				wiederholt (ein Laufband, ein Ladekreisel), an ihrem Anfang, und jede wird danach genau
 				dorthin zurückgesetzt, wo sie war. So ergibt eine Seite, die während eines Einblendens
 				gescannt wird, dasselbe Ergebnis wie eine danach gescannte. Der Browser zeichnet den
-				angehaltenen Zustand nie, da der Scan eine einzige synchrone Aufgabe ist. Jeder Frame in
-				einem <a href="#cross-frame-result">Frame-übergreifenden Ergebnis</a> trägt sein eigenes.
+				angehaltenen Zustand nie, da der Scan eine einzige synchrone Aufgabe ist.{" "}
+				<code>internalsHook</code> ist nur vorhanden, wo die Seite den optionalen Internals-Hook (
+				<code>internalsHookScript()</code>, siehe{" "}
+				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				) im gescannten Dokument ausführt, mit oder ohne Layout: <code>"early"</code>, wenn er vor
+				den Skripten der Seite installiert wurde und noch das <code>attachInternals</code> der
+				Seite ist, sodass der Scan die <code>ElementInternals</code> jedes Custom Elements gelesen
+				hat und ein Element ohne welche keine offene Frage ist; <code>"late"</code>, wenn er nach
+				ihnen installiert wurde oder die Seite <code>attachInternals</code> danach ersetzt hat,
+				sodass nur danach angehängte Internals gelesen wurden. Ohne Hook fehlt das Feld, und das
+				Ergebnis ist wie bisher. Jeder Frame in einem{" "}
+				<a href="#cross-frame-result">Frame-übergreifenden Ergebnis</a> trägt sein eigenes.
 			</>
 		),
 	},
@@ -281,8 +326,12 @@ const topLevelRows = [
 				ist, siehe <a href="#composite-result">Ein zusammengesetztes Ergebnis</a> und{" "}
 				<a href="/conformance/wcag-mapping/">Konformität</a>. Normalerweise eine pro
 				WCAG-Erfolgskriterium; ein Lauf unter dem Profil einer Norm mit eigenen Zusammenfassungen
-				erhält auch diese (mit <code>meta.standard</code>). Leeres Array, wenn keine
-				zusammengesetzte Regel zum aktuellen <code>runOnly</code>- bzw. Tag-Filter passte.
+				erhält auch diese (mit <code>meta.standard</code>). Es enthält die Zusammenfassungen, die
+				die Auswahl auswählt, und die Zusammenfassungen der Kriterien, die eine Regel prüft, die
+				die Auswahl einzeln nennt (etwa per ID); diese können{" "}
+				<a href="#partly-checked">teilweise geprüft</a> sein (siehe{" "}
+				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Welche Kriterien ein Scan meldet</a>
+				). Leeres Array, wenn keins von beiden welche ergibt.
 			</>
 		),
 	},
@@ -348,8 +397,15 @@ const topLevelRows = [
 						zusammengesetzten Regel; oder eine gültige Regel, die die Auswahl des Laufs nicht
 						auswählt (unter einem Profil oder einem WCAG-Ziel eine Regel mit dem Tag{" "}
 						<code>best-practice</code> oder ohne WCAG-Tag), deren <code>reason</code> sagt, wie sie
-						sich auswählen lässt. Immer ein Array; leer, wenn jede eigene Regel ausgeführt wurde.
-						Jeder Eintrag wird zusätzlich mit <code>console.warn</code> protokolliert. Eine hier
+						sich auswählen lässt; oder eine Regel, die die Ausschlüsse der Auswahl auslassen (
+						<code>excludeRuleIds</code>, <code>excludeTestIds</code>, <code>excludeTags</code>,{" "}
+						<code>rules.exclude</code>…), deren <code>reason</code>{" "}
+						<code>excluded by the selection.</code> lautet und die zusätzlich{" "}
+						<code>excluded: true</code> trägt, sodass ein Werkzeug die Entscheidung des Aufrufers
+						von einer Lücke unterscheiden kann, ohne den Grund zu lesen. Immer ein Array; leer, wenn
+						jede eigene Regel ausgeführt wurde. Jeder Eintrag wird zusätzlich mit{" "}
+						<code>console.warn</code> protokolliert, außer einer ausgeschlossenen Regel, deren
+						Auslassen der Aufrufer verlangt hat. Eine hier
 						aufgeführte Regel steht in keinem Ergebnis, so lässt sich ein Scan, der sie ausgelassen
 						hat, von einem unterscheiden, in dem sie <code>pass</code> ergab.
 					</>
@@ -396,7 +452,12 @@ const occurrenceRows = [
 						<code>document.querySelector(s[0]).shadowRoot.querySelector(s[1])…shadowRoot.querySelector(selector)</code>{" "}
 						das Element findet. Zwei Komponenten mit gleichem Inhalt ergeben denselben{" "}
 						<code>selector</code> und unterscheiden sich hier. Wie <code>selector</code> gehört es
-						nicht zur Identität eines Befunds.
+						nicht zur Identität eines Befunds. Der{" "}
+						<a href="/results-reports/html-report/">HTML-Bericht</a>,{" "}
+						<a href="/results-reports/sarif-report/">SARIF</a> (<code>logicalLocations</code>),{" "}
+						<a href="/results-reports/junit-report/">JUnit</a> und Baseline-Einträge zeigen beides
+						als eine Fundstelle: die Hosts und dann den Selektor, verbunden mit{" "}
+						<code>{" >>> "}</code> (<code>{"#card >>> img"}</code>).
 					</>
 				),
 				},
@@ -496,7 +557,10 @@ const occurrenceRows = [
 				<code>cantTell</code>-Stufe gehören, ist <code>cantTell</code>, sodass SARIF, JUnit, EARL
 				und Baselines eine einzige Antwort geben. Die Engine gleicht eine eigene Regel oder eine
 				Regel eines Packs an, die sie widersprüchlich zurückgibt; unter der Standard-Policy ist
-				eine manuelle Regel nie <code>fail</code>.
+				eine manuelle Regel nie <code>fail</code>. Ein Ergebnis, das gespeichert wurde, bevor die
+				Engine das tat, lesen die Reporter nach derselben Regel, unter der Policy, die seine{" "}
+				<code>engineOptions</code> festhalten, und fassen seine WCAG-Zusammenfassungen aus dem
+				Gelesenen neu zusammen.
 			</>
 		),
 	},
@@ -510,6 +574,16 @@ const uncertaintyRows = [
 	{ id: "equivalence-unknown", code: <code>equivalence-unknown</code>, meaning: "Zwei Dinge dienen womöglich demselben Zweck, womöglich nicht, und weder Markup noch Inhalt klären das.", shape: "Zwei Frames mit demselben zugänglichen Namen, die verschiedene Ressourcen einbetten." },
 	{ id: "judgement-required", code: <code>judgement-required</code>, meaning: "Die Frage kann grundsätzlich nur ein Mensch beantworten.", shape: "Ob ein zu kleines Ziel unverzichtbar ist; jede Regel mit type: \"manual\"." },
 	{ id: "out-of-scope", code: <code>out-of-scope</code>, meaning: "Der Befund ist real, liegt aber außerhalb des Standards, gegen den dieser Lauf prüft.", shape: "Eine Regel, die nur auf ein Kriterium abgebildet ist, das die WCAG-Zielversion entfernt hat." },
+];
+
+const rollupReasonRows = [
+	{ id: "anyFail", code: <code>composite.rollup.fail.anyFail</code>, outcome: <code>fail</code>, when: <>Eine beitragende Regel ergab <code>fail</code>.</> },
+	{ id: "anyCantTell", code: <code>composite.rollup.cantTell.anyCantTell</code>, outcome: <code>cantTell</code>, when: <>Keine ergab <code>fail</code>, und eine ist <code>cantTell</code>.</> },
+	{ id: "notSelectedChild", code: <code>composite.rollup.cantTell.notSelectedChild</code>, outcome: <code>cantTell</code>, when: <>Keine ergab <code>fail</code> oder ist <code>cantTell</code>, und einige sind nicht gelaufen, weil der Scan sie nicht ausgewählt hat: teilweise geprüft.</> },
+	{ id: "missingChild", code: <code>composite.rollup.cantTell.missingChild</code>, outcome: <code>cantTell</code>, when: <>Keine ergab <code>fail</code> oder ist <code>cantTell</code>, und einige sind aus einem anderen Grund nicht gelaufen.</> },
+	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>Jede beitragende Regel ist <code>notApplicable</code>.</> },
+	{ id: "emptyComposite", code: <code>composite.rollup.cantTell.emptyComposite</code>, outcome: <code>cantTell</code>, when: "Die Zusammenfassung hat keine Regeln." },
+	{ id: "otherwise", code: <code>composite.rollup.pass.otherwise</code>, outcome: <code>pass</code>, when: "Sonst." },
 ];
 
 const outcomeRows = [
@@ -543,7 +617,8 @@ export function OutputSchemaContent() {
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
-					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+					'    wcagLevel?: "A" | "AA" | "AAA",',
+'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
 					"    optInRules?: string[],",
@@ -554,9 +629,11 @@ export function OutputSchemaContent() {
 					"      viewport?: { width: number, height: number },  // CSS px",
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
+					'      forcedColors?: "active" | "none",',
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
-					"      animationsSettled?: number",
+					"      animationsSettled?: number,",
+					'      internalsHook?: "early" | "late"  // only where the page runs the internals hook',
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -569,7 +646,7 @@ export function OutputSchemaContent() {
 					"  rulesResults: CompositeResult[],",
 					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
-					"  skippedCustomRules: Array<{ id: string | null, reason: string }>,",
+					"  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
 					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
 					"}",
 				]}
@@ -777,7 +854,8 @@ export function OutputSchemaContent() {
 				</li>
 				<li>
 					<strong><code>rollupIds</code></strong> listet die zusammengesetzten Regeln in{" "}
-					<code>rulesResults</code>, die diese Regel in diesem Lauf gruppieren. Eine leere Liste
+					<code>rulesResults</code>, die diese Regel in diesem Lauf gruppieren, einschließlich
+					derer, die gemeldet werden, weil die Auswahl die Regel einzeln genannt hat. Eine leere Liste
 					bedeutet, dass die Befunde der Regel in keiner Zusammenfassung erscheinen; wer nur{" "}
 					<code>rulesResults</code> liest, sieht sie also nie. <code>heading-order</code> gehört zum
 					Beispiel zu keiner WCAG-Zusammenfassung.
@@ -999,7 +1077,7 @@ export function OutputSchemaContent() {
 					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
 					"      customChecksIds?: string[], // the custom rules among them; absent when none",
-					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true }>,",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -1026,6 +1104,34 @@ export function OutputSchemaContent() {
 				sodass eine lesende Person sieht, wann eine eigene Regel das Ergebnis entschieden hat. Die
 				eigenen Zusammenfassungen einer Norm behalten ihre Listen.
 			</p>
+			<p id="partly-checked">
+				<strong>Ein teilweise geprüftes Kriterium.</strong> Ein Scan, der Regeln statt Kriterien
+				nennt (<code>{"includeRuleIds: ['link-name-present']"}</code>), erhält auch die
+				Zusammenfassungen der Kriterien, die diese Regeln prüfen, wenn die Auswahl sie nicht selbst
+				auswählt (siehe{" "}
+				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Welche Kriterien ein Scan meldet</a>
+				). Die obige Rangfolge entscheidet sie wie jede andere: Eine Regel mit <code>fail</code>{" "}
+				lässt das Kriterium scheitern, und Regeln, die der Scan nicht ausgewählt hat, verhindern,
+				dass es <code>pass</code> ergibt. Jede davon ist eine beitragende Regel mit{" "}
+				<code>outcome: "missing"</code> und <code>notSelected: true</code>, wie bisher in{" "}
+				<code>missingCount</code> gezählt. Wenn sie es sind, die die Zusammenfassung zu{" "}
+				<code>cantTell</code> machen, ist ihr <code>reasonCode</code>{" "}
+				<code>composite.rollup.cantTell.notSelectedChild</code>, und der{" "}
+				<a href="/results-reports/html-report/">HTML-Bericht</a> zeigt „Teilweise geprüft: 1 von 2 Prüfungen war für diesen Scan nicht ausgewählt“.{" "}
+				<code>composite.rollup.cantTell.missingChild</code> steht weiterhin für eine Regel, die aus
+				einem anderen Grund nicht gelaufen ist, etwa eine, die das Profil ausschließt (
+				<code>engine.profileExcludes</code>); sie ist nie mit <code>notSelected</code> markiert.
+			</p>
+			<DataTable
+				label="Grundcodes der Zusammenfassungen"
+				rowKey="id"
+				columns={[
+					{ key: "code", label: "reasonCode", width: "40%" },
+					{ key: "outcome", label: "Ergebnis", width: "16%" },
+					{ key: "when", label: "Wann", wrap: true },
+				]}
+				rows={rollupReasonRows}
+			/>
 
 			<h2>Ergebniswerte</h2>
 			<DataTable
@@ -1157,8 +1263,42 @@ export function OutputSchemaContent() {
 					"      ]",
 					"    }",
 					"  ],",
-					'  "rulesResults": [],',
-					'  "overriddenBuiltinIds": [],',
+					'  "rulesResults": [',
+					"    {",
+					'      "ruleId": "wcag-1.1.1-non-text-content",',
+					'      "outcome": "fail",',
+					'      "severity": "serious",',
+					'      "title": "Non-text content: text alternatives",',
+					'      "occurrences": [],',
+					'      "data": {',
+					'        "details": {',
+					'          "reasonCode": "composite.rollup.fail.anyFail",',
+					'          "checksIds": ["area-alt-present", "img-alt-decorative", "img-alt-quality", "..."],',
+					'          "contributors": [',
+					'            { "testId": "area-alt-present", "outcome": "missing", "notSelected": true },',
+					'            "...",',
+					'            { "testId": "img-alt-present", "outcome": "fail", "severity": "serious" },',
+					'            "..."',
+					"          ],",
+					'          "metrics": { "failCount": 1, "cantTellCount": 0, "notApplicableCount": 0, "passCount": 0, "missingCount": 20 }',
+					"        }",
+					"      }",
+					"    },",
+					"    {",
+					'      "ruleId": "wcag-4.1.2-name",',
+					'      "outcome": "fail",',
+					'      "severity": "serious",',
+					'      "title": "Name, role, value: accessible name",',
+					'      "occurrences": [],',
+					'      "data": {',
+					'        "details": {',
+					'          "reasonCode": "composite.rollup.fail.anyFail",',
+					'          "metrics": { "failCount": 1, "cantTellCount": 0, "notApplicableCount": 0, "passCount": 0, "missingCount": 23 }',
+					"        }",
+					"      }",
+					"    }",
+					"  ],",
+'  "overriddenBuiltinIds": [],',
 					'  "skippedCustomRules": []',
 					"}",
 				]}
@@ -1167,9 +1307,16 @@ export function OutputSchemaContent() {
 				(Zur besseren Lesbarkeit gekürzt: Das echte Ergebnis enthält laut der vollständigen
 				Struktur oben in jedem Eintrag zusätzlich{" "}
 				<code>title</code>/<code>description</code>/<code>i18n</code>/<code>meta</code>/
-				<code>engineOptions</code>/<code>schemaVersion</code>. <code>rulesResults</code> ist hier
-				leer, weil <code>runOnly.includeRuleIds</code> den Scan auf zwei atomare Regeln
-				eingegrenzt hat und keine ID einer zusammengesetzten Regel enthalten war.)
+				<code>engineOptions</code>/<code>schemaVersion</code>, und jede beitragende Regel jeder
+				Zusammenfassung. <code>rulesResults</code> enthält die Kriterien, die die beiden genannten
+				Regeln prüfen: 1.1.1 für <code>img-alt-present</code> und 4.1.2 für{" "}
+				<code>button-name-present</code>, beide <code>fail</code>, weil ihre Regel{" "}
+				<code>fail</code> ergab. Die übrigen Regeln dieser Kriterien wurden nicht ausgewählt und
+				sind daher <code>missing</code> mit <code>notSelected: true</code>; ohne eine Regel mit{" "}
+				<code>fail</code> wären die Kriterien <code>cantTell</code> (
+				<code>notSelectedChild</code>),{" "}
+				<a href="#partly-checked">teilweise geprüft</a>. Die <code>rollupIds</code> jedes
+				Prüfergebnisses nennen seine Zusammenfassung.)
 			</p>
 		</>
 	);

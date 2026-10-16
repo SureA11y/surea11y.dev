@@ -59,7 +59,9 @@ export function ResultsReportsContent() {
 				SARIF-Ergebnisse mit einem stabilen, inhaltsbasierten Fingerprint abgebildet. So filtert
 				eine <a href="/conformance/baseline/">Baseline / Allowlist</a> weiterhin zuverlässig, und ein
 				Dashboard kann einen Befund über Commits hinweg verfolgen, statt ihn jedes Mal zu
-				verlieren, wenn sich eine Zeilennummer verschiebt. Siehe{" "}
+				verlieren, wenn sich eine Zeilennummer verschiebt. Ein Log ohne Ergebnisse bedeutet, dass
+				unter den gelaufenen Prüfungen nichts <code>fail</code> ergab oder eine Prüfung braucht;
+				es ist keine Konformitätsaussage. Siehe{" "}
 				<a href="/results-reports/sarif-report/">SARIF-Bericht</a>.
 			</p>
 
@@ -70,7 +72,10 @@ export function ResultsReportsContent() {
 				Ihre Unit-Tests. Jedes WCAG-Kriterium ist eine Suite und jede Regel ein Test, sodass ein auf
 				einer Seite wiederholter Fehler ein einziger fehlgeschlagener Test ist und die Zahlen
 				zwischen Läufen stabil bleiben. <code>cantTell</code> erscheint als übersprungener Test,
-				sichtbar, ohne den Build rot zu färben. Siehe{" "}
+				sichtbar, ohne den Build rot zu färben. Die Namen der Suites sind in jeder Locale gleich,
+				daher beginnt die Testhistorie nicht von vorn, wenn sich die Sprache des Scans ändert.
+				Eine grüne Suite bedeutet, dass die für ein Kriterium gelaufenen Regeln nichts gefunden
+				haben, nicht, dass das Kriterium erfüllt ist. Siehe{" "}
 				<a href="/results-reports/junit-report/">JUnit-Bericht</a>.
 			</p>
 

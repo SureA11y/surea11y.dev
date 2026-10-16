@@ -4,7 +4,7 @@ The docs and rules site for `@surea11y/core`. Scaffold only as of 2026-09-16 —
 Astro + `@astrojs/react`, design tokens wired in. As of the same day it also
 has: a nav/page shell (`BaseLayout`/`SiteNav`, one stub page per IA section),
 Overview turned into a section-index landing (badges + a card grid linking
-the other six sections), a real Rules catalog + generated rule pages (134 as of core 1.11.1)
+the other six sections), a real Rules catalog + generated rule pages (134 as of core 1.12.0)
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
 `src/components/design-system/` — see below). All seven IA sections have
@@ -246,7 +246,7 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   (`src/components/OverviewContent.jsx`) — the net-new content the IA doc
   calls for turned out to already be mostly written: the README's tagline,
   "Which package do I need?" table, outcome vocabulary, ACT-corpus
-  verification numbers (798 examples/58 rules/zero false positives), key
+  verification numbers (since 1.12: 942 W3C test cases/59 rules/zero false positives), key
   principles, and Philosophy section are adapted, not invented. Left out
   deliberately: Installation/Quick Start (that's `/getting-started/`'s
   job, already built), the Documentation table (a sitemap of `core`'s own
@@ -581,9 +581,22 @@ Open English-source issues found in that review, not yet decided:
 - Found updating to core 1.10.0 and fixed in core 1.11.0: `region`'s cut-off
   "Applies to" (SureA11y/core#87) and the `contrast-computable`
   `BACKGROUND_OVERLAP` noise from the language menu inside a closed
-  `<details>` (SureA11y/core#86). Still in core 1.11.1:
-  `definition-list-children-valid`'s applicability ends "(see
-  implementation-notes)", a note readers can't see.
+  `<details>` (SureA11y/core#86). `definition-list-children-valid`'s
+  "(see implementation-notes)" was fixed in core 1.12.0.
+- Found updating to core 1.12.0 (rule JSDoc in `core`, translated as
+  written): `aria-prohibited-children`'s expectation keeps "regardless of
+  whether group/rowgroup is itself in the container's own required-owned-
+  roles set" right after the new condition that contradicts it;
+  `table-th-has-data-cells` names a "header" role (no such ARIA role);
+  `empty-heading` cites "the engines implementing" ACT `ffd0e9`; the three
+  contrast rules point readers at `docs/LAYOUT_MEASUREMENT.md` (and
+  `LIMITATIONS.md`); `contrast-computable` says stroke/shadow-only text
+  "below the AA ratio" fails both contrast rules, `contrast-enhanced` says
+  "below the ratio" (7:1); "colour"/"color" mixed. Not in the rule text
+  at all though the CHANGELOG has them: `aria-prohibited-attr`'s
+  `aria-braillelabel`/`aria-roledescription` checks, the contrast rules'
+  `SYMBOLIC_CHARACTER_BELOW_THRESHOLD`, `label-in-name`'s `aria-hidden`
+  change.
 - Bugs outside translation: ~~`AccessibilityStatementContent`'s issue link
   resolves to `…/core/blob/main/issues`~~ (fixed 2026-10-11, every
   language: `core` is now the repo root);
@@ -786,6 +799,47 @@ contrast rules and `page-title-present`). Every mention of other engines
 by name was removed from Engine options, FAQ and Known limitations, in
 every language, as the 1.11 docs did. The homepage got one paragraph on WCAG
 targets and packs under "How its results differ".
+
+## Core 1.12.0 update (2026-10-16)
+
+Pinned `@surea11y/core` 1.12.0 and `@surea11y/playwright` 1.4.1. Covers
+the bindings at 1.4.x (cypress, playwright, puppeteer, selenium,
+webdriverio), `@surea11y/cli` 1.3.0 and `@surea11y/test-matchers` 1.3.0,
+read from their release notes and README diffs. 61 rules' text changed
+(mostly a sentence on custom elements whose `ElementInternals` give them
+a role); every overlay follows it. Content pages, every language:
+
+- Homepage/Overview: ACT figures are now W3C's own corpus (942 test cases,
+  59 rules, no false positive in jsdom or Chromium; both EARL reports
+  linked, the browser one checked live); new paragraphs on criteria
+  reported for named checks + `wcagLevel`, web components, contrast in a
+  browser; "Which package" table gains "build your own tool" (core).
+- Getting Started: install is still just the binding. Bindings 1.4.0
+  made core a peer (binding-base#6); that broke Yarn / npm 6 /
+  `legacy-peer-deps` installs and pinned-older-core installs in a minor
+  release, so 1.4.1 (2026-10-16) made it a regular dependency again, and
+  the site never documents the peer. Each binding page gained a "Web components"
+  block (`installInternalsHook`, per-binding call) and an "also available"
+  line (`.wcagLevel()`, `.includeMode()`, `plannedChecks()`, `logger()`,
+  `getScanNotes()`), via new optional props on `UsageBindingSection`.
+  Quickstart and CLI samples re-captured with CLI 1.3.0 (criteria block).
+- CLI (`#naming-checks`: `--include-mode`, `--wcag-level` alone),
+  test-matchers (`#web-components`), Standalone (`#internals-hook`,
+  `#what-a-scan-covers`, link to `BUILDING_ON_CORE.md`, treated as
+  GitHub-only like `INTEGRATION.md`).
+- Engine options (`#which-criteria-a-scan-reports`,
+  `#giving-the-level-of-a-scan-that-names-checks-wcaglevel`), Packs
+  (profile `wcagVersion`), CI integration, Locales, Output schema
+  (`#partly-checked`), HTML/SARIF (`#outside-the-target`)/JUnit
+  (`#names-in-every-locale`: the one-time CI history reset)/EARL,
+  Baseline, WCAG mapping, How rules are organized, Known limitations
+  (rewritten to core's new LIMITATIONS.md), FAQ (`#results-changed-1-12`,
+  first and dated — move or drop it later; `#tags-and-rules-run-nothing`;
+  `#web-component-canttell`).
+- Engine strings the HTML report prints ("Partly checked: …") are quoted
+  in the report language core itself uses (`report_rollup_notSelected*`
+  in core's locale files), not in English, since the report follows the
+  scan's locale.
 
 ## Content/structure review implementation
 

@@ -29,7 +29,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.11.1",
+					"  engine: @surea11y/core 1.12.0",
 					"  pass: 15   fail: 4   cantTell: 4   notApplicable: 111",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 5",
@@ -44,13 +44,33 @@ export function CliUsageContent() {
 					"",
 					"cantTell — needs human review (4 rule(s)): contrast-computable, link-name-quality,",
 					"manual-review, page-title-patterns",
+					"",
+					"criteria (WCAG 2.2):",
+					"  fail       1.1.1 Non-text content: text alternatives; 1.4.3 Contrast: minimum;",
+					"             1.4.6 Contrast: enhanced; 4.1.2 Name, role, value: accessible name",
+					"  cantTell   2.1.1 Keyboard; 2.4.2 Page titled; 2.4.3 Focus order; 2.4.4 Link",
+					"             Purpose (In Context); 2.4.7 Focus visible; 2.4.9 Link Purpose (Link Only)",
+					"  pass       1.3.1 Info and Relationships; 2.2.2 Pause, Stop, Hide; 2.4.1 Bypass",
+					"             Blocks; 3.1.1 Language of page; 4.1.2 Name, role, value: ARIA validity",
+					"  notApplicable: 19",
+					"  A criterion that passes here means the checks that ran found nothing in it, not",
+					"  that the page conforms.",
 				]}
 			/>
+			<p>
+				Der Block <code>criteria</code> liest denselben Scan nach WCAG-Kriterium, so wie
+				man meist fragt („scheitert sie an 1.4.3?“): zuerst <code>fail</code>, dann{" "}
+				<code>cantTell</code> und <code>pass</code>, und die Anzahl der Kriterien mit{" "}
+				<code>notApplicable</code>. Ein bestandenes Kriterium heißt, dass die
+				ausgeführten Prüfungen darin nichts gefunden haben, nicht, dass die Seite es
+				erfüllt: Die meisten Kriterien muss eine Person prüfen. Der Block ändert nie den
+				Exit-Code, und <code>--compact</code> zeigt ihn als Anzahlen.
+			</p>
 
 			<h2 id="choosing-what-runs">Auswählen, was läuft</h2>
 			<p>
 				<code>--wcag</code> wählt die Regeln für ein WCAG-Konformitätsziel aus, nach der Stufe, die
-				jedes Kriterium in dieser Version hat; <code>--wcag-level</code> legt die Stufe fest
+				jedes Kriterium in dieser Version hat; <code>--wcag-level</code> legt dessen Stufe fest
 				(<code>AA</code>, sofern nichts anderes angegeben ist). <code>--best-practices</code>{" "}
 				ergänzt die Regeln, die kein WCAG-Kriterium prüfen, etwa <code>region</code> und{" "}
 				<code>heading-order</code>; allein angegeben führt es nur diese aus. <code>--profile</code>{" "}
@@ -73,6 +93,57 @@ export function CliUsageContent() {
 				mit Exit-Code <code>2</code>. Sie entsprechen <code>runOnly.wcag</code>,{" "}
 				<code>runOnly.bestPractices</code> und <code>engineOptions.profile</code> (siehe{" "}
 				<a href="/configuration/engine-options/#selecting-which-rules-run">Engine-Optionen</a>).
+			</p>
+
+			<h2 id="naming-checks">Prüfungen selbst benennen</h2>
+			<p>
+				Sind beide angegeben, führen <code>--rules</code> und <code>--tags</code> die
+				Regeln aus, die zu beiden passen. Für „dieser Bereich, und dazu diese Prüfungen“
+				geben Sie <code>--include-mode or</code> an, das die Regeln ausführt, die zu
+				einem von beiden passen. Ohne diese Option führt der Scan unten keine Regel aus,
+				da <code>contrast-computable</code> nicht mit <code>forms</code> getaggt ist,
+				und endet mit <code>2</code>, statt ohne geprüfte Regel zu bestehen.
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan ./dist/form.html --tags forms --rules contrast-computable --include-mode or", command: true },
+				]}
+			/>
+			<p>
+				Ein Scan, der Prüfungen benennt, meldet die WCAG-Kriterien, zu denen sie
+				gehören, auf jeder Stufe. <code>contrast-computable</code> prüft 1.4.3 (AA) und
+				1.4.6 (AAA), sodass eine Website, die AA erfüllt, ein nicht bestandenes
+				AAA-Kriterium zeigen kann, das sie nie angestrebt hat. Ohne <code>--wcag</code>{" "}
+				legt <code>--wcag-level</code> die Stufe der gemeldeten Kriterien fest, ohne zu
+				ändern, welche Regeln laufen:
+			</p>
+			<CodeBlock
+				lines={[
+					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
+					"",
+					"surea11y scan: file:///path/to/index.html",
+					"  engine: @surea11y/core 1.12.0",
+					"  WCAG level reported: AA",
+					"  pass: 0   fail: 0   cantTell: 1   notApplicable: 0",
+					"",
+					"  occurrences by tier: fail: 0   cantTell: 2",
+					"",
+					"cantTell — needs human review (1 rule(s)): contrast-computable",
+					"",
+					"criteria (WCAG 2.2 AA):",
+					"  cantTell   1.4.3 Contrast: minimum (partly checked: 1 of 2 checks not selected)",
+					"  A criterion that passes here means the checks that ran found nothing in it, not",
+					"  that the page conforms.",
+				]}
+			/>
+			<p>
+				1.4.3 ist <em>teilweise geprüft</em>: Seine andere Prüfung,{" "}
+				<code>contrast-minimum</code>, wurde nicht ausgewählt, daher deckt sein Ergebnis
+				nur die ausgeführte Prüfung ab. Regel-IDs und Stufen werden ohne Rücksicht auf
+				Groß- und Kleinschreibung gelesen (<code>--rules IMG-ALT-PRESENT</code>,{" "}
+				<code>--wcag-level aa</code>). <code>--include-mode</code> entspricht{" "}
+				<code>engineOptions.includeMode</code>, und <code>--wcag-level</code> ohne{" "}
+				<code>--wcag</code> entspricht <code>engineOptions.wcagLevel</code>.
 			</p>
 
 			<h2 id="packs">Packs</h2>

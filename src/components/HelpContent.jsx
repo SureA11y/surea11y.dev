@@ -12,20 +12,20 @@ export function HelpContent() {
 
 			<h2>FAQ</h2>
 			<p>
-				The questions that come up most, answered plainly: why <code>runOnly</code> silently ran
-				every rule instead of the one you asked for, why a custom rule keeps returning{" "}
-				<code>cantTell</code> with no obvious cause, why a geometry-dependent rule reports{" "}
-				<code>notApplicable</code> under jsdom, and what a clean scan actually does and doesn't
-				mean. Fifteen minutes here saves most of the debugging most people end up doing anyway. See{" "}
+				The questions that come up most, answered plainly: why a selection of tags and rule ids
+				can run no rule and still look clean, why a web component comes back{" "}
+				<code>cantTell</code>, what changes in your results after upgrading to core 1.12, why a
+				geometry-dependent rule reports <code>notApplicable</code> under jsdom, and what a clean
+				scan actually does and doesn't mean. Fifteen minutes here saves most of the debugging most people end up doing anyway. See{" "}
 				<a href="/help/faq/">FAQ</a>.
 			</p>
 
 			<h2>Known limitations</h2>
 			<p>
-				Every boundary of this engine's static-DOM-scan architecture, named explicitly rather than
-				discovered by surprise: what it structurally cannot do at all, what depends on the
-				environment you run it in, and what it deliberately declines to guess at because a wrong
-				guess would be worse than an honest <code>cantTell</code>. Knowing these up front is what
+				Every boundary of this engine, named explicitly rather than discovered by surprise: what
+				one scan of one page state can't see, what depends on where you run it (jsdom, a browser,
+				the page's own scripts), and what it deliberately declines to guess at because a wrong
+				guess would be worse than an honest <code>cantTell</code>, each with what to do about it. Knowing these up front is what
 				lets you trust the rest of the results. See{" "}
 				<a href="/help/known-limitations/">Known limitations</a>.
 			</p>

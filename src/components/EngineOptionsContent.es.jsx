@@ -40,7 +40,8 @@ const optionRows = [
 		meaning: (
 			<>
 				<code>'2.0'</code>, <code>'2.1'</code> o <code>'2.2'</code>: qué versión de WCAG está
-				probando la conformidad de la ejecución. El valor predeterminado es el que implican tus
+				probando la conformidad de la ejecución. El valor predeterminado es la versión que nombra
+				el perfil de pack de la ejecución (su <code>wcagVersion</code>); si no, la que implican tus
 				etiquetas de origen de versión, y <code>'2.2'</code> cuando no implican ninguna.{" "}
 				<strong>Lo único que cambia actualmente es el criterio de éxito 4.1.1 <span lang="en">Parsing</span>, eliminado en 2.2</strong>:
 				bajo un objetivo 2.2, una regla etiquetada{" "}
@@ -50,6 +51,26 @@ const optionRows = [
 				Cualquier otro valor, de cualquier tipo (el número <code>2.1</code>, <code>'3.0'</code>), se
 				ignora con un <code>console.warn</code> que nombra la versión a la que apunta la ejecución
 				en su lugar.
+			</>
+		),
+	},
+	{
+		id: "wcagLevel",
+		option: <code>wcagLevel</code>,
+		meaning: (
+			<>
+				Opcional: <code>'A'</code>, <code>'AA'</code> o <code>'AAA'</code>, en mayúsculas o
+				minúsculas: el nivel de WCAG de los criterios que informa una ejecución. Los resultados
+				agregados de WCAG por encima de él quedan fuera de <code>rulesResults</code> mientras sus
+				reglas se siguen ejecutando; nunca cambia lo que se ejecuta. Gana al nivel que implica la
+				selección; un resultado agregado nombrado por id se informa tal como se nombró. Se
+				devuelve como <code>engine.wcagLevel</code>, que sin la opción contiene el nivel que
+				implica la selección, si implica alguno. Cualquier otro valor se ignora con un{" "}
+				<code>console.warn</code>, y lanza un error con <code>strictOptions</code>. Consulta{" "}
+				<a href="#giving-the-level-of-a-scan-that-names-checks-wcaglevel">
+					"Indicar el nivel de un análisis que nombra comprobaciones"
+				</a>{" "}
+				más arriba.
 			</>
 		),
 	},
@@ -135,7 +156,9 @@ const optionRows = [
 				por mecanismos estructurales/CSS como <code>display:none</code>, <code>[hidden]</code>,{" "}
 				<code>&lt;details&gt;</code> cerrados (todo salvo su primer <code>&lt;summary&gt;</code>, a
 				cualquier profundidad), contenido <code>content-visibility:hidden</code> y{" "}
-				<code>hidden="until-found"</code>, y elementos host ocultos de solo renderizado (con sus
+				<code>hidden="until-found"</code>, el contenido de un subárbol <code>[inert]</code> (que
+				las reglas sobre cómo se ve el contenido, como contraste y espaciado del texto, siguen
+				juzgando, ya que se dibuja), y elementos host ocultos de solo renderizado (con sus
 				descendientes también excluidos). <code>runa11yCoreAcrossFrames</code> no analiza un frame
 				oculto de esta forma. Configura <code>true</code> para incluir esos
 				subárboles ocultos/colapsados en la evaluación (comportamiento heredado/de marcado
@@ -240,11 +263,13 @@ const optionRows = [
 		meaning: (
 			<>
 				El color de fondo de página que se asume cuando no se puede calcular en absoluto: solo
-				importa en el modo <code>auditorAssist</code>. Una página que pide un esquema de color
-				oscuro (<code>color-scheme: dark</code> en la raíz, o la forma <code>&lt;meta&gt;</code>) se
-				mide en cambio sobre el lienzo oscuro que el navegador pinta detrás de ella; el valor de
-				reserva se aplica donde eso no se puede leer, como en jsdom. Debe ser un color opaco:
-				cualquier otro valor se mide como blanco, con un aviso.
+				importa en el modo <code>auditorAssist</code>. En un navegador, una página sin un fondo
+				opaco propio se mide sobre el lienzo que el navegador pinta detrás de ella, en cualquiera
+				de los dos modos: blanco, o el lienzo oscuro para una página que pide un esquema de color
+				oscuro (<code>color-scheme: dark</code> en la raíz, o la forma <code>&lt;meta&gt;</code>).
+				El valor de reserva se aplica donde no se lee el lienzo: con jsdom, y en un frame, cuyo
+				lienzo puede dejar ver la página padre (un frame que pide oscuro se mide sobre el lienzo
+				oscuro). Debe ser un color opaco: cualquier otro valor se mide como blanco, con un aviso.
 			</>
 		),
 	},
@@ -374,7 +399,8 @@ const optionRows = [
 				funciones de catálogo en Node, y para <code>runa11yCoreInPage</code> el{" "}
 				<code>name@version</code> de los packs que un <code>packScript</code> registró en la
 				página. Cualquier otra cosa no ejecuta ningún pack, con un aviso, y lanza un error con{" "}
-				<code>strictOptions</code>. Se devuelve como <code>engine.packs</code>. Consulta{" "}
+				<code>strictOptions</code>, con <code>code: 'INVALID_ENGINE_OPTIONS'</code>. Se devuelve
+				como <code>engine.packs</code>. Consulta{" "}
 				<a href="/configuration/packs/">Packs</a>.
 			</>
 		),
@@ -515,7 +541,9 @@ export function EngineOptionsContent() {
 				todas las reglas salvo las del 4.1.1 <span lang="en">Parsing</span>, que WCAG 2.2 eliminó.
 				Para algo más fino, como un solo criterio, una lista de reglas o una exclusión, consulta{" "}
 				<a href="#advanced-selection-tags-and-rule-ids">"Selección avanzada: etiquetas e ids de regla"</a>;
-				esos campos se combinan con los de arriba.
+				esos campos se combinan con los de arriba. Un análisis que nombra reglas informa también de
+				los criterios que comprueban (
+				<a href="#which-criteria-a-scan-reports">"Qué criterios informa un análisis"</a>).
 			</p>
 
 			<h3 id="selecting-by-wcag-target-runonlywcag">Seleccionar por objetivo de WCAG (<code>runOnly.wcag</code>)</h3>
@@ -562,7 +590,11 @@ export function EngineOptionsContent() {
 					La versión del objetivo es el objetivo de WCAG de la ejecución (
 					<code>engine.wcagVersion</code>), salvo que se defina <code>engineOptions.wcagVersion</code>;
 					su nivel decide qué resultados agregados de WCAG se informan, como hace una etiqueta de
-					nivel.
+					nivel, salvo que se defina <code>engineOptions.wcagLevel</code> (
+					<a href="#giving-the-level-of-a-scan-that-names-checks-wcaglevel">
+						"Indicar el nivel de un análisis que nombra comprobaciones"
+					</a>
+					).
 				</li>
 				<li>
 					Un objetivo incluye reglas, así que las selecciona en lugar de{" "}
@@ -570,7 +602,9 @@ export function EngineOptionsContent() {
 					<code>getProfileWcagTarget(profile)</code> da el objetivo al que equivale un perfil
 					(consulta <a href="#conformance-profiles">"Perfiles de conformidad"</a>), y{" "}
 					<code>getChecksForRunOnly(runOnly, engineOptions)</code> enumera las reglas que ejecuta un{" "}
-					<code>runOnly</code> con <code>wcag</code>.
+					<code>runOnly</code> con <code>wcag</code>, y{" "}
+					<code>getRulesForRunOnly(runOnly, engineOptions)</code> los resultados agregados que
+					informa.
 				</li>
 				<li>
 					Cualquier otra cosa lanza <code>INVALID_RUN_ONLY</code>, nombrando lo que está mal:{" "}
@@ -593,7 +627,9 @@ export function EngineOptionsContent() {
 				<code>tabindex</code> e <code>image-redundant-alt</code>. Son las reglas etiquetadas como{" "}
 				<code>best-practice</code>, así que equivale a añadir esa etiqueta. Un hallazgo de una de
 				ellas es una buena práctica, no un fallo de WCAG: ningún resultado agregado de WCAG lo
-				cuenta.
+				cuenta. La mayoría informan <code>cantTell</code>; una cuyo hallazgo es en sí una barrera
+				informa <code>fail</code>, como hace <code>empty-heading</code> con un encabezado sin
+				nombre.
 			</p>
 			<ul>
 				<li>
@@ -709,8 +745,11 @@ export function EngineOptionsContent() {
 				El objetivo de WCAG se deduce de las etiquetas igual que con un conjunto escrito a mano (ver{" "}
 				<a href="#filtering-by-wcag-version">"Filtrado por versión de WCAG"</a> más abajo), así que
 				con <code>en301549-v3.2.1</code> un id duplicado todavía puede dar <code>fail</code>, y con{" "}
-				<code>en301549-v4.1.1</code> no. Los nombres no distinguen mayúsculas y minúsculas. Una
-				ejecución que usó un perfil lo devuelve como <code>engine.profile</code>.
+				<code>en301549-v4.1.1</code> no. El perfil de un pack puede nombrar su versión en su lugar,
+				con <code>wcagVersion</code> (<a href="/configuration/packs/#profiles">Packs</a>): un
+				perfil que ejecuta solo las reglas que asocia su estándar no tiene etiquetas de WCAG que
+				impliquen una. Los nombres no distinguen mayúsculas y minúsculas. Una ejecución que usó un
+				perfil lo devuelve como <code>engine.profile</code>.
 			</p>
 			<p>
 				Precedencia: cualquier cosa que <em>incluya</em> reglas las selecciona en lugar del perfil:
@@ -722,8 +761,8 @@ export function EngineOptionsContent() {
 				que el <code>disableTags()</code> de una integración acota el perfil en lugar de
 				sustituirlo) como, si no hay filtro <code>runOnly</code>, de <code>engineOptions</code> (
 				<code>tags.exclude</code>, <code>rules.exclude</code>, <code>tests.exclude</code>), y un{" "}
-				<code>engineOptions.wcagVersion</code> explícito sigue ganando a la versión que implica el
-				perfil. Un perfil que no surte efecto (un nombre desconocido, o uno anulado como se acaba de
+				<code>engineOptions.wcagVersion</code> explícito sigue ganando a la versión que implica o
+				nombra el perfil. Un perfil que no surte efecto (un nombre desconocido, o uno anulado como se acaba de
 				describir) no es un error: la ejecución continúa como si no se hubiera indicado ninguno,
 				registra un <code>console.warn</code> que explica por qué y no lleva{" "}
 				<code>engine.profile</code>. <code>runOnly.bestPractices: true</code> no es una inclusión de
@@ -732,10 +771,13 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				El perfil de un estándar también puede dejar reglas fuera, cuando su estándar exime de un
-				criterio de WCAG o sustituye una comprobación de WCAG por una propia: esas reglas y sus
-				resultados agregados de WCAG no se ejecutan, el catálogo de reglas también las deja fuera, y{" "}
-				<code>engine.profileExcludes</code> nombra lo que se dejó fuera. Hoy ningún perfil incluido
-				excluye nada.
+				criterio de WCAG o sustituye una comprobación de WCAG por una propia: las reglas que nombra,
+				las reglas de las que exime todos los criterios y los resultados agregados de WCAG de los
+				criterios eximidos no se ejecutan, y el catálogo de reglas también los deja fuera. Una
+				regla que también comprueba un criterio que el perfil conserva se sigue ejecutando (
+				<code>link-name-present</code>, que comprueba 2.4.4 y 4.1.2, con un perfil que exime del
+				2.4.4), y <code>engine.profileExcludes</code> nombra lo que se dejó fuera. Hoy ningún perfil
+				incluido excluye nada.
 			</p>
 			<p>
 				<strong>Un perfil solo elige qué reglas se ejecutan.</strong> No dice nada sobre si
@@ -812,7 +854,11 @@ export function EngineOptionsContent() {
 				ejecución cubre todas las reglas y los resultados agregados de todos los estándares; con{" "}
 				<code>profile: 'wcag22-aa'</code> sigue ejecutando solo las reglas de WCAG, ya que las
 				reglas opcionales no llevan etiquetas de WCAG. Las exclusiones se aplican como siempre. Una
-				etiqueta que no es de reglas opcionales se ignora con un <code>console.warn</code>.
+				etiqueta que no es de reglas opcionales se ignora con un <code>console.warn</code>. Solo
+				esta opción del motor desbloquea: <code>runOnly</code> no tiene clave{" "}
+				<code>optInTags</code>, así que una indicada ahí es una clave desconocida, que lanza{" "}
+				<code>INVALID_RUN_ONLY</code> por sí sola y se ignora con un aviso junto a claves que{" "}
+				<code>runOnly</code> lee, con un mensaje que remite a <code>engineOptions.optInRules</code>.
 			</p>
 			<p>
 				Sirve para ver todo lo que el motor puede informar, durante el desarrollo o al explorar un
@@ -868,7 +914,8 @@ export function EngineOptionsContent() {
 				catálogo de reglas sigue la misma opción: <code>getChecksCatalog(engineOptions)</code>,{" "}
 				<code>getCheckDefById(ruleId, engineOptions)</code>,{" "}
 				<code>getChecksForRunOnly(runOnly, engineOptions)</code>,{" "}
-				<code>getRulesCatalog(engineOptions)</code> y{" "}
+				<code>getRulesCatalog(engineOptions)</code>,{" "}
+				<code>getRulesForRunOnly(runOnly, engineOptions)</code> y{" "}
 				<code>getCompositeRuleById(id, engineOptions)</code> nombran los estándares que nombraría un
 				análisis con esas opciones, incluido un perfil cuando se aplicaría, así que una entrada del
 				catálogo y un resultado siempre coinciden. Sin opciones, solo nombran WCAG. Una regla
@@ -973,9 +1020,11 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				Los nombres se comprueban, aquí y en <code>engineOptions.rules</code>/<code>.tags</code>{" "}
-				más abajo. Una lista de inclusión (<code>includeRuleIds</code>, <code>tags</code>, el{" "}
-				<code>values</code> heredado, <code>rules.include</code>, <code>tags.include</code>) en
-				la que ningún valor nombra una regla o una etiqueta lanza un error con{" "}
+				más abajo. Una lista de inclusión (<code>includeRuleIds</code>,{" "}
+				<code>includeTestIds</code>, <code>tags</code>, el <code>values</code> heredado,{" "}
+				<code>rules.include</code>, <code>tags.include</code>) en la que ningún valor nombra una
+				regla o una etiqueta (una que lleva una regla o un resultado agregado, así que la etiqueta
+				de un estándar se conoce aunque solo la lleven sus resultados agregados) lanza un error con{" "}
 				<code>code: 'INVALID_RUN_ONLY'</code> y un mensaje que nombra el campo y los valores, ya
 				que no seleccionaría nada y una ejecución sin reglas se lee como un resultado limpio. Una
 				selección cuyos nombres existen todos pero cuyas partes se anulan entre sí (una regla
@@ -983,8 +1032,8 @@ export function EngineOptionsContent() {
 				<code>includeMode: 'and'</code>) tampoco ejecuta ninguna regla: el análisis avisa, nombrando
 				las partes, y lanza <code>INVALID_RUN_ONLY</code> con <code>strictOptions</code>.{" "}
 				<code>includeMode</code> es <code>'and'</code> u <code>'or'</code>; cualquier otro valor se
-				lee como <code>'and'</code>, con un aviso, y lanza un error con <code>strictOptions</code>.
-				Un valor que no nombra nada junto a otros que sí, o en una lista de exclusión, se ignora con
+				lee como <code>'and'</code>, con un aviso, y lanza un error con <code>strictOptions</code>;
+				en una integración de navegador, lo define <code>.includeMode('or')</code>. Un valor que no nombra nada junto a otros que sí, o en una lista de exclusión, se ignora con
 				un <code>console.warn</code>. Antes de la 1.10.0, todos esos valores se ignoraban en
 				silencio.
 			</p>
@@ -1010,7 +1059,12 @@ export function EngineOptionsContent() {
 				Los IDs de regla van sin prefijo (sin prefijo del motor), por ejemplo{" "}
 				<code>'img-alt-present'</code>. Por compatibilidad con versiones anteriores, la
 				coincidencia también acepta una forma heredada con el prefijo <code>a11ycore-</code> del
-				mismo id (<code>'a11ycore-img-alt-present'</code>).
+				mismo id (<code>'a11ycore-img-alt-present'</code>). Los ids se comparan sin distinguir
+				mayúsculas y minúsculas, igual que las etiquetas: <code>'IMG-ALT-PRESENT'</code> selecciona{" "}
+				<code>img-alt-present</code>, en toda lista que nombra reglas (<code>runOnly</code> en cada
+				una de sus formas, <code>engineOptions.rules</code> y <code>engineOptions.tests</code>,
+				inclusión y exclusión). No hay dos reglas cuyos ids difieran solo en mayúsculas, así que
+				esto no puede seleccionar la equivocada.
 			</p>
 			<p>
 				También se acepta la <strong>forma <code>{"{ type, values }"}</code></strong> como valor
@@ -1029,6 +1083,197 @@ export function EngineOptionsContent() {
 				<code>{"{ includeRuleId: [...] }"}</code>): antes, cada uno de estos casos ejecutaba
 				todas las reglas. Un array, una cadena o un objeto vacíos siguen significando la selección
 				predeterminada.
+			</p>
+
+			<h3 id="which-criteria-a-scan-reports">Qué criterios informa un análisis</h3>
+			<p>
+				Un análisis informa el resultado agregado de un criterio (<code>rulesResults</code>) cuando
+				la selección lo selecciona: un objetivo de WCAG o una etiqueta de versión/nivel, un perfil,
+				el propio id del resultado agregado, o ninguna selección. También informa el resultado
+				agregado de cada criterio que comprueba una regla que la selección{" "}
+				<strong>nombró por sí misma</strong>, cuando esa regla se ejecutó:
+			</p>
+			<ul>
+				<li>
+					por su id (<code>includeRuleIds</code>, <code>includeTestIds</code>,{" "}
+					<code>rules.include</code>, o la propia lista de reglas de un perfil),
+				</li>
+				<li>
+					por una etiqueta que no es de WCAG (la de una regla personalizada, la de un pack o la de un
+					estándar; las etiquetas de WCAG son las de versión/nivel, las de criterio como{" "}
+					<code>wcag244</code>, y <code>wcag22-removed</code>, así que una etiqueta personalizada
+					como <code>wcagteam</code> no lo es),
+				</li>
+				<li>
+					por <code>optInRules</code>, o
+				</li>
+				<li>
+					como regla de buenas prácticas (<code>bestPractices</code>).
+				</li>
+			</ul>
+			<p>
+				Una regla que el perfil de un estándar ejecuta solo porque su estándar la asocia (
+				<code>mappedRules</code>) está nombrada para ese estándar, no por sí misma: añade los
+				requisitos del estándar y ninguno de sus criterios de WCAG. Así, un perfil que ejecuta solo
+				lo que pide su estándar informa únicamente de ese estándar (
+				<a href="/configuration/packs/#profiles">Packs</a>); una regla que nombra su lista{" "}
+				<code>rules</code> añade también sus criterios de WCAG. Antes de la 1.12.0, un análisis que
+				nombraba reglas en lugar de criterios tenía un <code>rulesResults</code> vacío.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// The unnamed link fails link-name-present, and with it 2.4.4 and 4.1.2:",
+					"runDomRulesInPage(url, null, {}, { includeRuleIds: ['link-name-present'] });",
+					"// rulesResults: wcag-2.4.4-link-purpose-in-context: fail, wcag-4.1.2-name: fail",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>El veredicto es el del propio resultado agregado.</strong> Una regla que falla
+					hace fallar el criterio. Una regla que se supera no hace que se supere cuando el análisis
+					dejó fuera las demás reglas del criterio: es <code>cantTell</code>, con{" "}
+					<code>reasonCode</code> <code>composite.rollup.cantTell.notSelectedChild</code>, y cada
+					regla que el análisis no seleccionó figura entre los contribuyentes como{" "}
+					<code>missing</code> con <code>notSelected: true</code>. El informe HTML muestra
+					«Comprobado en parte: 1 de 2 comprobaciones no se seleccionó para este análisis» debajo. Consulta{" "}
+					<a href="/results-reports/output-schema/#partly-checked">el esquema de salida</a>.
+				</li>
+				<li>
+					<strong>Una etiqueta de criterio nombra su propio criterio.</strong>{" "}
+					<code>tags: ['wcag244']</code> informa del 2.4.4, y no de los demás criterios que
+					comprueban sus reglas (el 4.1.2 en el caso de <code>link-name-present</code>). Una regla
+					que entra por el id de un resultado agregado, un objetivo de WCAG, una etiqueta de versión
+					o de nivel, o un perfil de WCAG no añade ningún criterio: ahí la selección nombra los
+					criterios. Así, un análisis que selecciona sus criterios informa lo mismo que antes.
+				</li>
+				<li>
+					<strong>Se aplican la versión y el nivel de WCAG de la ejecución.</strong> Un criterio
+					solo se añade si está vigente en <code>engine.wcagVersion</code> (
+					<code>duplicate-id</code> por sí sola no añade el 4.1.1 con 2.2, y sí lo hace con{" "}
+					<code>wcagVersion: '2.1'</code>), y si está en el nivel de la ejecución o por debajo,
+					como haría un objetivo: <code>engineOptions.wcagLevel</code> cuando se indica (siguiente
+					sección); si no, el nivel que da la selección (<code>runOnly.wcag.level</code>, o las
+					etiquetas de versión/nivel junto a los ids de regla). Sin ninguno de los dos, se informan
+					todos los niveles.
+				</li>
+				<li>
+					<strong>Las exclusiones se aplican.</strong> Un resultado agregado que la selección
+					excluye (<code>{"excludeRuleIds: ['wcag-4.1.2-name']"}</code>, o una etiqueta) no se
+					añade. Una regla que excluyó quien llama cuenta como no seleccionada. Una regla que excluye
+					un perfil acota el criterio: figura como <code>missing</code> sin{" "}
+					<code>notSelected</code>, y un criterio del que exime el perfil nunca se añade.
+				</li>
+				<li>
+					<strong>Los resultados agregados propios de un estándar</strong> (uno por requisito) se
+					añaden del mismo modo, pero solo mientras el estándar está en juego: el perfil aplicado
+					apunta a él, o la selección nombra su etiqueta, o <code>optInRules</code> lo desbloquea.
+					Un análisis de WCAG nunca muestra los requisitos de un estándar que nadie pidió. Un perfil
+					que no se aplicó, y <code>mappings</code> por sí solo, no ponen un estándar en juego. Con
+					su perfil, solo se añade la versión del perfil; desbloqueado sin perfil, se añaden todas
+					las versiones, igual que las informa un análisis seleccionado por su etiqueta. Esto vale
+					tanto para un estándar o una lista de comprobación de un pack como para uno incluido: un
+					perfil de lista de comprobación que nombra sus reglas (<code>tags: []</code>,{" "}
+					<code>{"rules: [...]"}</code>) obtiene sus criterios de WCAG y sus propios elementos.
+				</li>
+				<li>
+					<strong>La lista antes del análisis.</strong>{" "}
+					<code>getRulesForRunOnly(runOnly, engineOptions)</code> enumera los resultados agregados
+					que informa un análisis con esa selección y esas opciones, incluidos los añadidos, como
+					entradas de <code>getRulesCatalog</code>. Los calcula con el mismo paso de agregación que
+					el análisis, así que ambos coinciden; <code>getChecksForRunOnly</code> enumera las
+					reglas. <code>getRulesCatalog(engineOptions)</code> enumera todos los resultados
+					agregados que las opciones ponen a disposición, sea cual sea la selección. Una
+					herramienta puede registrar qué comprueba un análisis antes de ejecutarlo; los
+					constructores de las integraciones de navegador dan las mismas listas como{" "}
+					<code>plannedChecks()</code> y <code>plannedCriteria()</code>.
+				</li>
+			</ul>
+
+			<h3 id="giving-the-level-of-a-scan-that-names-checks-wcaglevel">
+				Indicar el nivel de un análisis que nombra comprobaciones (<code>wcagLevel</code>)
+			</h3>
+			<p>
+				Un análisis pensado como WCAG 2.2 AA que ejecuta solo algunas comprobaciones las nombra, e
+				indica la versión en <code>engineOptions.wcagVersion</code>. Eso no dice ningún nivel, así
+				que los criterios de esas comprobaciones se informan en todos los niveles:{" "}
+				<code>contrast-computable</code> comprueba el 1.4.3 (AA) y el 1.4.6 (AAA), y se informan
+				ambos. <code>engineOptions.wcagLevel</code> indica el nivel:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Only the contrast checks of a WCAG 2.2 AA scan: 1.4.3 is reported, 1.4.6 is not.",
+					"runDomRulesInPage(url, null,",
+					"  { wcagVersion: '2.2', wcagLevel: 'AA' },",
+					"  { includeRuleIds: ['contrast-computable'] });",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>Valores.</strong> <code>'A'</code>, <code>'AA'</code> o <code>'AAA'</code>, en
+					mayúsculas o minúsculas. Cualquier otro valor se ignora con un <code>console.warn</code>{" "}
+					(<code>engineOptions.wcagLevel: ignoring "AA+"; use "A", "AA" or "AAA". ...</code>), y
+					lanza <code>INVALID_ENGINE_OPTIONS</code> con <code>strictOptions</code>. La ejecución
+					informa un nivel válido como <code>engine.wcagLevel</code>, escrito <code>'A'</code>,{" "}
+					<code>'AA'</code> o <code>'AAA'</code>; sin la opción, <code>engine.wcagLevel</code> es el
+					nivel que implica la selección, y no aparece cuando no implica ninguno.
+				</li>
+				<li>
+					<strong>Decide lo que se informa, nunca lo que se ejecuta.</strong> La selección decide
+					lo que se ejecuta, igual que sin la opción. Una comprobación por encima del nivel que la
+					selección nombra se sigue ejecutando e informa su propio resultado; solo sus criterios
+					por encima del nivel quedan fuera de <code>rulesResults</code>.
+				</li>
+				<li>
+					<strong>Se aplica a todos los resultados agregados de WCAG, no solo a los criterios
+					añadidos por comprobaciones nombradas.</strong> <code>wcagLevel: 'AA'</code> en un análisis
+					completo, un perfil o una selección por etiquetas deja los criterios AAA fuera de{" "}
+					<code>rulesResults</code>, mientras sus comprobaciones se siguen ejecutando e informando
+					en <code>checksResults</code>. En esto difiere de <code>wcagVersion</code>, que nunca
+					quita un resultado agregado que la selección selecciona: un análisis 2.2 sigue informando
+					del 4.1.1, con sus reglas convertidas a <code>cantTell</code>. Un análisis sin la opción
+					informa lo mismo que antes.
+				</li>
+				<li>
+					<strong>Gana al nivel que implica la selección</strong> (<code>runOnly.wcag.level</code>,
+					o el nivel más alto que nombran sus etiquetas de versión/nivel), igual que un{" "}
+					<code>wcagVersion</code> explícito gana a la versión que implican. Un conflicto entre
+					ambos no genera aviso, igual que no lo genera uno entre <code>wcagVersion</code> y la
+					versión de un objetivo; <code>engine.wcagLevel</code> muestra el nivel por el que se
+					filtraron los criterios.
+				</li>
+				<li>
+					<strong>Un resultado agregado nombrado por id se informa tal como se nombró.</strong>{" "}
+					<code>{"includeRuleIds: ['wcag-1.4.6-contrast-enhanced']"}</code> con{" "}
+					<code>wcagLevel: 'AA'</code> informa del 1.4.6: la opción dice qué criterios informar, no
+					que se quite uno que pidió quien llama. Un nivel que implican las propias etiquetas de la
+					selección sigue filtrando un resultado agregado nombrado, igual que sin la opción.
+				</li>
+				<li>
+					<strong>Los resultados agregados propios de un estándar</strong> no tienen nivel de WCAG
+					y no se filtran por él. El perfil de un pack no puede indicar un nivel (sus etiquetas
+					implican uno); quien lo llama puede pasar <code>wcagLevel</code>.
+				</li>
+				<li>
+					<code>getRulesForRunOnly(runOnly, engineOptions)</code> la respeta, así que enumera lo
+					que informa el análisis, y avisa de un valor no válido igual que el análisis, o lanza un
+					error con <code>strictOptions</code>.
+				</li>
+			</ul>
+			<p>
+				Sin la opción, las etiquetas de versión/nivel junto a los ids de regla también dan un
+				nivel, ya que el <code>includeMode: 'and'</code> predeterminado conserva las reglas
+				nombradas que llevan una de ellas:{" "}
+				<code>{"{ includeRuleIds: ['contrast-computable'], tags: wcagTags('2.2') }"}</code> ejecuta{" "}
+				<code>contrast-computable</code> e informa solo del 1.4.3. Pero las etiquetas también
+				deciden lo que se ejecuta: una regla nombrada sin etiqueta de WCAG (una regla de buenas
+				prácticas como <code>region</code>, una regla personalizada sin etiquetas de WCAG), o una
+				que comprueba solo criterios AAA, queda fuera de la ejecución, y una etiqueta de
+				versión/nivel que no lleva ninguna regla (<code>wcag22a</code>) se señala con un{" "}
+				<code>console.info</code>. <code>wcagLevel</code> indica el nivel sin cambiar lo que se
+				ejecuta. En una integración de navegador, lo define el <code>.wcagLevel('AA')</code> del
+				constructor.
 			</p>
 
 			<h3 id="filtering-by-wcag-version">Filtrado por versión de WCAG (2.0, 2.1, 2.2)</h3>
@@ -1095,6 +1340,13 @@ export function EngineOptionsContent() {
 				<li>
 					<code>engineOptions.wcagVersion</code>: <code>'2.0'</code>, <code>'2.1'</code> o{" "}
 					<code>'2.2'</code>, si lo configuras.
+				</li>
+				<li>
+					El <code>wcagVersion</code> del perfil de pack que aplica la ejecución, si nombra uno: un
+					estándar basado en WCAG 2.1 cuyo perfil ejecuta solo las reglas que asocia no selecciona
+					ninguna etiqueta de WCAG, así que indica la versión él mismo. Gana a la versión que
+					implican las propias etiquetas del perfil. Un perfil que no surte efecto (anulado por una
+					selección tuya) no aporta ninguna versión.
 				</li>
 				<li>La versión de un objetivo <code>runOnly.wcag</code>.</li>
 				<li>
@@ -1180,6 +1432,7 @@ export function EngineOptionsContent() {
 					"  strictOptions: false,            // default false — true throws on an unknown option or a value of the wrong type",
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
+					"  wcagLevel: 'AA',                 // optional — the level of the criteria reported",
 					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
 					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
 					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
@@ -1279,6 +1532,17 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
+				Las funciones de catálogo que aceptan <code>engineOptions</code> (
+				<code>getChecksCatalog</code>, <code>getRulesCatalog</code>, <code>getCheckDefById</code>,{" "}
+				<code>getCompositeRuleById</code>, <code>getChecksForRunOnly</code>,{" "}
+				<code>getRulesForRunOnly</code>, <code>getTestsForRunOnly</code>) las comprueban del mismo
+				modo, con las mismas palabras:{" "}
+				<code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code> avisa, lee el nivel como
+				no indicado y enumera lo que informa un análisis con esas opciones; con{" "}
+				<code>strictOptions: true</code> lanza <code>INVALID_ENGINE_OPTIONS</code>, igual que el
+				análisis.
+			</p>
+			<p>
 				No se comprueban: los ajustes propios de una regla (<code>rules[ruleId]</code>), las claves
 				de <code>messages</code> y <code>probes</code>, que el motor transmite sin leer; ni las
 				reglas personalizadas, que tienen sus propias comprobaciones (
@@ -1367,6 +1631,8 @@ export function EngineOptionsContent() {
 			<p>
 				Añade <code>bestPractices: true</code> junto a <code>wcag</code> para ejecutar también las
 				reglas de buenas prácticas, que una puerta de WCAG suele informar sin fallar por ellas.
+				Algunas pueden dar <code>fail</code> (<code>empty-heading</code>), así que una puerta que
+				falla ante cualquier <code>fail</code> también falla por ellas.
 			</p>
 			<p>
 				<strong>Auditor humano haciendo una pasada de contraste en profundidad en un navegador
@@ -1456,7 +1722,8 @@ export function EngineOptionsContent() {
 				cada sustitución en el lugar de su regla integrada,{" "}
 				<code>getCheckDefById(id, engineOptions)</code> las encuentra, y{" "}
 				<code>getChecksForRunOnly(runOnly, engineOptions)</code> las selecciona igual que el
-				análisis. Esto es deliberado, no
+				análisis, y <code>getRulesForRunOnly(runOnly, engineOptions)</code> enumera los resultados
+				agregados que añaden. Esto es deliberado, no
 				una limitación que sortear: surea11y ya toma <code>engineOptions</code> nuevas en cada
 				llamada sin configuración global mutable (a diferencia de otros motores, que necesitan
 				un paso de <code>configure()</code>/<code>reset()</code> sobre un runtime compartido), y
@@ -1551,7 +1818,11 @@ export function EngineOptionsContent() {
 					<code>meta.wcagSc</code> o una entrada de WCAG en <code>meta.normativeMappings</code>,
 					igual que una regla integrada: si falla, el resultado agregado falla. El resultado agregado
 					la marca con <code>custom: true</code> entre sus contribuyentes y la enumera en{" "}
-					<code>data.details.customChecksIds</code>. Una sustitución cuenta donde dice su propia
+					<code>data.details.customChecksIds</code>. Una regla personalizada que la selección nombra
+					por sí misma (por su id o por una de sus etiquetas) y que se ejecutó informa los
+					resultados agregados de sus criterios aunque la selección no nombre ninguno de ellos (
+					<a href="#which-criteria-a-scan-reports">"Qué criterios informa un análisis"</a>). Una
+					sustitución cuenta donde dice su propia
 					asociación: en el lugar de su regla integrada cuando se asocia a ese criterio, y en ningún
 					resultado agregado cuando no se asocia a ninguno, con un aviso que nombra los resultados
 					agregados que abandonó.
@@ -1565,8 +1836,11 @@ export function EngineOptionsContent() {
 					etiquetada como <code>best-practice</code>, o sin etiqueta de WCAG, no forma parte de la
 					ejecución: figura en <code>skippedCustomRules</code>, con un <code>console.warn</code>, y
 					se ejecuta cuando le das las etiquetas de los criterios que comprueba (
-					<code>'wcag111'</code>) o añades <code>runOnly.bestPractices: true</code>. Una sustitución
-					se ejecuta allí donde se habría ejecutado su regla integrada.
+					<code>'wcag111'</code>) o añades <code>runOnly.bestPractices: true</code>. Una regla
+					personalizada que la selección excluye (<code>{"excludeRuleIds: ['org-b']"}</code>,{" "}
+					<code>rules.exclude</code>...) también figura ahí, con el motivo{" "}
+					<code>excluded by the selection.</code> y <code>excluded: true</code>, y sin aviso. Una
+					sustitución se ejecuta allí donde se habría ejecutado su regla integrada.
 				</li>
 				<li>
 					Una regla personalizada puede informar un margen igual que una regla integrada: declara{" "}
@@ -1648,7 +1922,8 @@ export function EngineOptionsContent() {
 				regla sin el espacio de nombres, una clave de diccionario que core ya tiene) se omite con un{" "}
 				<code>console.warn</code>, figura en el <code>skippedPacks</code> del resultado como{" "}
 				<code>{"{ name, reason }"}</code>, y el análisis se ejecuta sin él; con{" "}
-				<code>strictOptions</code> lanza un error. Los packs que chocan entre sí lanzan un error. En
+				<code>strictOptions</code> lanza un error, con <code>code: 'INVALID_ENGINE_OPTIONS'</code>.
+				Los packs que chocan entre sí lanzan un error. En
 				una página, un pack se registra primero con <code>packScript(packs)</code> y se nombra en{" "}
 				<code>engineOptions.packs</code> como <code>name@version</code>. Qué contiene un pack, cómo
 				usar uno desde cada integración, los test matchers y la CLI, y cómo escribir uno, está en{" "}

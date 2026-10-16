@@ -1,5 +1,47 @@
 import React from "react";
 
+/** Opens each binding's internals-hook passage; the snippet and its binding-specific note follow. */
+const webComponents = (
+	<p>
+		<strong>Componentes web.</strong> Un componente que guarda su <code>ElementInternals</code> en
+		un campo privado, y se da un nombre, fija sus estados o se asigna un rol a través de él, no
+		puede leerse desde ningún script de la página. Por defecto, el análisis pregunta por ese
+		componente (<code>cantTell</code>) en lugar de juzgarlo, y un rol asignado solo de esa forma
+		no se comprueba en absoluto. Si construyes o pruebas una biblioteca de componentes, instala el
+		hook de internals opcional de la integración antes de que se ejecuten los scripts de la propia
+		página, y esos componentes se juzgan como cualquier otro control:
+	</p>
+);
+
+const hookCaveat = (repo) => (
+	<p>
+		El hook está pensado para ejecuciones de pruebas y auditorías: guarda lo que registra donde
+		cualquier script de la página puede leerlo, y por eso es opcional. Sin él, el análisis avisa
+		una vez cuando ha preguntado por esos componentes. La{" "}
+		<a href={`https://github.com/SureA11y/${repo}#web-components-the-internals-hook`}>sección del README sobre el hook de internals</a>{" "}
+		tiene los detalles.
+	</p>
+);
+
+/** A pointer to the builder methods this page leaves to the binding's README. */
+const alsoAvailable = (repo, { logger = true } = {}) => (
+	<p>
+		<code>A11yCoreBuilder</code> también tiene <code>.wcagLevel()</code>, que limita los criterios
+		del informe a un nivel de WCAG sin cambiar qué reglas se ejecutan;{" "}
+		<code>.includeMode('or')</code>, que ejecuta las reglas de una etiqueta más las reglas que
+		nombres; <code>.plannedChecks()</code> y <code>.plannedCriteria()</code>, que enumeran lo que
+		comprobará un análisis antes de ejecutarlo, para que una selección que no ejecuta nada no pase
+		por un análisis limpio;{" "}
+		{logger ? (
+			<>
+				<code>.logger()</code>, que envía los avisos de carencias del análisis a tu propio log;{" "}
+			</>
+		) : null}
+		y <code>getScanNotes(results)</code>, que dice cómo se analizó la página. El{" "}
+		<a href={`https://github.com/SureA11y/${repo}#readme`}>README de la integración</a> explica cada uno.
+	</p>
+);
+
 export const bindingUsage = {
 	cypress: {
 		intro: (
@@ -59,6 +101,27 @@ export const bindingUsage = {
 				se informa como una carencia del análisis de tipo <code>'pack-skipped'</code>.
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"// cypress/support/e2e.js",
+				"import { installInternalsHook } from '@surea11y/cypress';",
+				"",
+				"installInternalsHook();",
+			],
+			note: (
+				<p>
+					Llamado una vez en el archivo de soporte, se ejecuta en cada visita, a través del evento{" "}
+					<code>window:before:load</code> de Cypress. Para una sola visita, pásalo a{" "}
+					<code>cy.visit()</code> como <code>{"{ onBeforeLoad: installInternalsHook }"}</code>. Se
+					ejecuta con el <code>eval</code> de la ventana de la aplicación, lo que funciona porque Cypress
+					elimina por defecto la Content Security Policy de la aplicación, y los frames dentro de la
+					aplicación no lo reciben.
+				</p>
+			),
+			caveat: hookCaveat("cypress"),
+		},
+		more: alsoAvailable("cypress", { logger: false }),
 		exampleHref: "https://github.com/SureA11y/cypress/blob/main/examples/basic-scan.cy.js",
 	},
 
@@ -105,6 +168,26 @@ export const bindingUsage = {
 				reales en Firefox y WebKit.
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"const context = await browser.newContext();",
+				"await A11yCoreBuilder.installInternalsHook(context); // before any page navigates",
+				"const page = await context.newPage();",
+				"await page.goto('https://example.com/');",
+			],
+			note: (
+				<p>
+					Llámalo antes de <code>page.goto()</code>, sobre la página o sobre su contexto de
+					navegador. Se ejecuta mediante <code>addInitScript()</code>, así que una sola llamada cubre cada
+					frame y cada navegación de la página, o de cada página que abra el contexto, en Chromium,
+					Firefox y WebKit. Con <code>@playwright/test</code>, llámalo en un <code>beforeEach</code>{" "}
+					sobre el fixture <code>context</code>.
+				</p>
+			),
+			caveat: hookCaveat("playwright"),
+		},
+		more: alsoAvailable("playwright"),
 		exampleHref: "https://github.com/SureA11y/playwright/blob/main/examples/basic-scan.js",
 	},
 
@@ -145,6 +228,24 @@ export const bindingUsage = {
 			"await browser.close();",
 		],
 		note: null,
+		internals: {
+			intro: webComponents,
+			code: [
+				"const page = await browser.newPage();",
+				"await A11yCoreBuilder.installInternalsHook(page); // before goto",
+				"await page.goto('https://example.com/');",
+			],
+			note: (
+				<p>
+					Llámalo antes de <code>page.goto()</code>. Se ejecuta mediante{" "}
+					<code>page.evaluateOnNewDocument()</code>, así que una sola llamada cubre los frames y las
+					navegaciones de la página durante toda su vida, en Chrome y Firefox; una pestaña nueva que abra
+					la propia página no lo recibe.
+				</p>
+			),
+			caveat: hookCaveat("puppeteer"),
+		},
+		more: alsoAvailable("puppeteer"),
 		exampleHref: "https://github.com/SureA11y/puppeteer/blob/main/examples/basic-scan.js",
 	},
 
@@ -193,6 +294,27 @@ export const bindingUsage = {
 				diferencia de construcción. Todo lo demás es idéntico.
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"const options = new chrome.Options().enableBidi(); // the webSocketUrl: true capability",
+				"const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(options).build();",
+				"",
+				"await A11yCoreBuilder.installInternalsHook(driver); // 'bidi' (or 'cdp' without BiDi on Chrome)",
+				"await driver.get('https://example.com/');",
+			],
+			note: (
+				<p>
+					Llámalo antes de <code>driver.get()</code>. El WebDriver clásico no puede ejecutar un
+					script antes de los de la página, así que el hook usa WebDriver BiDi cuando la sesión lo tiene
+					(Chrome, Edge y Firefox, con BiDi activado al construir el driver, como arriba) y, si no, el
+					protocolo DevTools en Chrome y Edge; se resuelve con <code>'bidi'</code> o <code>'cdp'</code>.
+					En una sesión clásica en Safari, o en Firefox sin BiDi, la llamada se rechaza.
+				</p>
+			),
+			caveat: hookCaveat("selenium"),
+		},
+		more: alsoAvailable("selenium"),
 		exampleHref: "https://github.com/SureA11y/selenium/blob/main/examples/basic-scan.js",
 	},
 
@@ -247,6 +369,23 @@ export const bindingUsage = {
 				~150ms estable por análisis.
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"await A11yCoreBuilder.installInternalsHook(browser); // 'bidi' or 'cdp'",
+				"await browser.url('https://example.com/');",
+			],
+			note: (
+				<p>
+					Llámalo antes de <code>browser.url()</code>; en el testrunner de WDIO, en un hook{" "}
+					<code>before</code>. Usa <code>browser.addInitScript()</code> en una sesión BiDi y, si no, el
+					protocolo DevTools a través de chromedriver en Chrome y Edge, lo que cubre la sesión clásica
+					recomendada arriba. En una sesión clásica en Firefox o Safari, la llamada se rechaza.
+				</p>
+			),
+			caveat: hookCaveat("webdriverio"),
+		},
+		more: alsoAvailable("webdriverio"),
 		exampleHref: "https://github.com/SureA11y/webdriverio/blob/main/examples/basic-scan.js",
 	},
 };

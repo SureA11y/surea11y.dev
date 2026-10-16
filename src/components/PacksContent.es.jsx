@@ -88,8 +88,9 @@ const fileRows = [
 const profileFieldRows = [
 	{ id: "tags", field: <code>tags</code>, what: <>Las reglas que llevan cualquiera de estas etiquetas. <code>wcagTags(version, levels)</code> de <code>@surea11y/core/pack</code> da las etiquetas de WCAG de core (<code>wcagTags('2.1')</code> es 2.0 y 2.1, A y AA).</> },
 	{ id: "rules", field: <code>rules</code>, what: <>Reglas por id, de core o del pack: una regla de buenas prácticas que ninguna etiqueta de WCAG selecciona o, con <code>tags: []</code>, las reglas de core que el perfil ejecuta además de las propias del pack.</> },
-	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code> deja reglas fuera del análisis; <code>{"{ criteria: ['2.5.8'] }"}</code> deja fuera las comprobaciones y los resultados agregados de esos criterios. Esto reduce lo que comprueba el análisis: los requisitos de WCAG siguen siendo los mismos.</> },
+	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code> deja reglas fuera del análisis; <code>{"{ criteria: ['2.5.8'] }"}</code> exime de esos criterios: sus resultados agregados desaparecen, y también cada regla de la que se eximen todos los criterios; una regla que también comprueba un criterio que el perfil conserva se sigue ejecutando. Esto reduce lo que comprueba el análisis: los requisitos de WCAG siguen siendo los mismos.</> },
 	{ id: "severity", field: <code>severity</code>, what: <><code>{"{ ruleId: level }"}</code>: otra gravedad bajo el perfil. Los resultados la muestran y conservan la propia de la regla como <code>ruleSeverity</code>; las líneas base y los ids de los hallazgos no cambian.</> },
+	{ id: "wcagVersion", field: <code>wcagVersion</code>, what: <><code>'2.0'</code>, <code>'2.1'</code> o <code>'2.2'</code>: la versión de WCAG con la que se juzgan los análisis del perfil (<code>engine.wcagVersion</code>). Sin ella, las etiquetas de WCAG de <code>tags</code> implican la versión, y un perfil sin ninguna se juzga con 2.2. El <code>engineOptions.wcagVersion</code> propio de un análisis sigue ganando. Core 1.12.0 y posteriores.</> },
 	{ id: "version", field: <><code>version</code>, <code>mappedRules</code></>, what: <>Solo para el perfil de un estándar: la versión del estándar a la que apunta, y <code>mappedRules: true</code> para ejecutar todas las reglas que el estándar asocia para esa versión.</> },
 ];
 
@@ -296,7 +297,9 @@ export function PacksContent() {
 					un pack que se asocia a un criterio de WCAG cuenta para el resultado agregado de ese
 					criterio, salvo que lleve la etiqueta opcional del espacio de nombres del pack: esas
 					reglas comprueban lo que WCAG no exige, así que solo cuentan en los resultados agregados
-					propios del pack. Una sustitución cuenta en lugar de la regla de core a la que reemplaza,
+					propios del pack. El <code>wcagSc</code> de esas reglas sigue nombrando los criterios de WCAG que
+					comprueban, para los generadores de informes, y ningún otro estándar (EN 301 549, que
+					asocia cada regla por sus criterios de WCAG) las reclama. Una sustitución cuenta en lugar de la regla de core a la que reemplaza,
 					donde la sitúe su propio mapeo.
 				</li>
 				<li>
@@ -322,12 +325,16 @@ export function PacksContent() {
 				encaja con core (un id de regla fuera de su espacio de nombres, una clave de diccionario que
 				core ya tiene, una variante de una regla que no existe) se omite: el análisis se ejecuta sin
 				él, avisa, y lo enumera en <code>skippedPacks</code> como{" "}
-				<code>{"{ name, reason }"}</code>. Con <code>strictOptions</code> lanza un error. Dos packs
+				<code>{"{ name, reason }"}</code>. Con <code>strictOptions</code> lanza un error, con{" "}
+				<code>code: 'INVALID_ENGINE_OPTIONS'</code>, como todo error de{" "}
+				<code>engineOptions.packs</code>. Dos packs
 				que chocan entre sí (una clave de diccionario que definen ambos, dos estándares con una misma
 				clave) lanzan un error, ya que cualquier forma de elegir entre ellos dependería del orden en
 				que se pasaron. En una página, un pack nombrado en <code>engineOptions.packs</code> que
 				ninguna llamada a <code>packScript</code> registró, o que se registró con otra versión de
-				core, se enumera de la misma forma.
+				core, se enumera de la misma forma. Así, un análisis puede terminar sin las comprobaciones
+				para las que añadiste el pack: una herramienta que depende de un pack debería comprobar{" "}
+				<code>skippedPacks</code> antes de dar el análisis por completo.
 			</p>
 			<p>Cada herramienta convierte un pack omitido en un fallo visible:</p>
 			<ul>
@@ -380,8 +387,11 @@ export function PacksContent() {
 			/>
 			<p>
 				El pack funciona tal como se genera: sus pruebas pasan, sus reglas pasan el lint sin
-				errores, sus ejemplos concuerdan con sus reglas. A partir de ahí, cámbialo paso a paso,
-				ejecutando <code>npm test</code> sobre la marcha. Su README recorre cada archivo:
+				errores, sus ejemplos concuerdan con sus reglas. <code>surea11y-pack new</code> comprueba
+				el pack como lo haría un análisis antes de escribir nada, y rechaza un nombre, un espacio
+				de nombres o un título que lo harían no válido (un título <code>WCAG</code> nombra su
+				estándar como uno de los de core), explicando por qué. A partir de ahí, cámbialo paso a
+				paso, ejecutando <code>npm test</code> sobre la marcha. Su README recorre cada archivo:
 			</p>
 			<DataTable
 				label="Archivos de un pack generado"
@@ -467,6 +477,30 @@ export function PacksContent() {
 				rows={profileFieldRows}
 			/>
 			<p>
+				<strong>Un perfil que ejecuta solo lo que pide su estándar.</strong> El perfil de un
+				estándar con <code>{"tags: [<ns>]"}</code> y <code>mappedRules: true</code> ejecuta las
+				reglas propias del pack y las reglas de core que su mapa vincula a un requisito, y nada
+				más: ninguna regla comprueba lo que el estándar no pide, y los resultados no contienen
+				criterios de WCAG. Sin etiqueta de WCAG, sin embargo, nada dice en qué versión de WCAG se
+				basa el estándar, y la ejecución se juzga con 2.2. Para un estándar basado en 2.1 eso es
+				un error: el 4.1.1 <span lang="en">Parsing</span> desaparece en 2.2, así que{" "}
+				<code>duplicate-id</code> pregunta en lugar de fallar. Indica la versión. El{" "}
+				<code>index.js</code> generado la lee de <code>requirements.js</code>, donde cada versión
+				del estándar nombra la versión de WCAG en la que se basa (
+				<code>{"{ version: '1.0', wcagVersion: '2.2' }"}</code>):
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'city-1.0': {",
+					"  version: '1.0',",
+					"  tags: ['city'],                      // the pack's own rules",
+					"  mappedRules: true,                   // and the core rules its map links to a requirement",
+					"  wcagVersion: wcagVersionOf('1.0')    // judged by the WCAG version requirements.js gives for 1.0",
+					"}",
+				]}
+			/>
+			<p>
 				Las reglas de core, con sus ids y etiquetas, están en <a href="/rules/">Reglas</a>.
 			</p>
 
@@ -496,9 +530,14 @@ export function PacksContent() {
 				a veces, con el mismo <code>ctx</code>. <code>runInPage(ctx)</code> se ejecuta en la página,
 				así que solo usa <code>ctx</code>, nunca una variable o un módulo de fuera, y solo lee: las
 				reglas de un pack se ejecutan después de las de core, y los helpers y las opciones que
-				reciben son de solo lectura. Tres atajos necesitan poco o ningún código:{" "}
+				reciben son de solo lectura. Solo lectura es una norma, no un entorno aislado: nada impide
+				que el código de una regla haga más, así que carga solo packs de confianza (consulta la{" "}
+				<a href={`${core}/SECURITY.md`}>política de seguridad</a> de core en GitHub). Tres atajos
+				necesitan poco o ningún código:{" "}
 				<strong>una variante</strong> ejecuta una regla de core con otros ajustes (
-				<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>),{" "}
+				<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>;
+				cada ajuste es un umbral, un número finito mayor que 0, y <code>definePack</code> rechaza
+				cualquier otro valor),{" "}
 				<strong>una sustitución</strong> reemplaza una regla de core (enumerada en{" "}
 				<code>overrides</code>, y en el <code>overriddenBuiltinIds</code> de los resultados), y{" "}
 				<strong>una regla de core tal cual</strong> solo necesita su id en un perfil o en un
@@ -535,7 +574,8 @@ export function PacksContent() {
 				<li>
 					<strong>La documentación</strong> (<code>npm run docs</code>,{" "}
 					<code>surea11y-pack docs</code>) escribe el <code>docs/RULE_CATALOG.md</code> del pack y
-					ejecuta en Chromium todos los ejemplos de su <code>docs/RULE_EXAMPLES.md</code>;{" "}
+					ejecuta en Chromium todos los ejemplos de su <code>docs/RULE_EXAMPLES.md</code> (
+					<code>CHROMIUM_EXECUTABLE_PATH</code> nombra otra compilación de Chromium);{" "}
 					<code>--check</code> falla cuando alguno de los dos está desactualizado, para la CI del
 					pack.
 				</li>

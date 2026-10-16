@@ -123,7 +123,9 @@ export function LocalesContent() {
 				traduits. Si l’anglais change, l’entrée ne s’applique plus et la chaîne compte comme non
 				traduite jusqu’à ce que quelqu’un la vérifie de nouveau. Le décompte ne voit pas un mot
 				anglais resté dans une phrase par ailleurs traduite ; cela se repère en lisant le texte, et
-				il n’en reste aucun dans les langues ci-dessus.
+				il n’en reste aucun dans les langues ci-dessus. Il ne mesure pas non plus si une traduction
+				est exacte ou emploie les termes d’accessibilité habituels d’une langue ; cela demande une
+				personne qui lit cette langue.
 			</p>
 
 			<h3 id="reading-coverage-from-the-package">Lire la couverture depuis le paquet</h3>
@@ -270,8 +272,10 @@ export function LocalesContent() {
 			<p>
 				Le bundle est découpé parce qu’il transite par le réseau vers chaque page qui l’utilise, et
 				aucune page n’a besoin de toutes les langues. Garder l’anglais intégré et le reste optionnel
-				a retiré environ 280 Ko du téléchargement et l’empêche de grossir à mesure que des langues
-				sont ajoutées. Rien d’autre ne change : le paquet Node et les bindings ne sont pas
+				tient les autres langues hors du téléchargement, et l’empêche de grossir à mesure que des
+				langues sont ajoutées. Chaque fichier séparé, <code>surea11y.i18n.&lt;locale&gt;.js</code>,
+				a à peu près la taille du texte anglais qu’il remplace (130 à 160 Ko aujourd’hui), et une
+				page ne charge que ceux qu’elle utilise. Rien d’autre ne change : le paquet Node et les bindings ne sont pas
 				concernés.
 			</p>
 			<CodeBlock

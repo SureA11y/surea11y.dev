@@ -83,7 +83,7 @@ export function GettingStartedContent() {
 			<CodeBlock
 				lines={[
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.11.1",
+					"  engine: @surea11y/core 1.12.0",
 					"  pass: 13   fail: 3   cantTell: 3   notApplicable: 115",
 					"",
 					"  occurrences by tier: fail: 3   cantTell: 4",
@@ -113,6 +113,20 @@ export function GettingStartedContent() {
 					"",
 					"cantTell — needs human review (3 rule(s)): contrast-computable, link-name-quality,",
 					"manual-review",
+					"",
+					"criteria (WCAG 2.2):",
+					"  fail       1.4.3 Contrast: minimum; 1.4.6 Contrast: enhanced;",
+					"             2.4.2 Page titled",
+					"  cantTell   2.1.1 Keyboard; 2.4.3 Focus order;",
+					"             2.4.4 Link Purpose (In Context); 2.4.7 Focus visible;",
+					"             2.4.9 Link Purpose (Link Only)",
+					"  pass       1.3.1 Info and Relationships; 2.2.2 Pause, Stop, Hide;",
+					"             2.4.1 Bypass Blocks; 3.1.1 Language of page;",
+					"             4.1.2 Name, role, value: accessible name;",
+					"             4.1.2 Name, role, value: ARIA validity",
+					"  notApplicable: 20",
+					"  A criterion that passes here means the checks that ran found nothing in it,",
+					"  not that the page conforms.",
 				]}
 			/>
 			<p>
@@ -123,7 +137,15 @@ export function GettingStartedContent() {
 				enlace?, ¿ese mismo texto de bajo contraste pasa otra comprobación distinta?, ¿hay algo aquí
 				que necesite una revisión manual?) y, entre los 115 resultados{" "}
 				<code>notApplicable</code>, <code>target-size-minimum</code>: no puede ejecutarse sin un
-				layout CSS real, y un análisis de HTML estático no lo tiene. Consulta{" "}
+				layout CSS real, y un análisis de HTML estático no lo tiene.
+			</p>
+			<p>
+				El último bloque presenta el mismo resultado por criterio de WCAG 2.2: 1.4.3, 1.4.6 y 2.4.2
+				dan <code>fail</code>; 2.1.1, 2.4.3, 2.4.4, 2.4.7 y 2.4.9 son <code>cantTell</code> y quedan
+				para una persona; 1.3.1, 2.2.2, 2.4.1, 3.1.1 y las dos entradas de 4.1.2 dan{" "}
+				<code>pass</code>; y los 20 criterios sin nada que juzgar solo se cuentan. Su última línea
+				es la que conviene recordar: que un criterio pase significa que las comprobaciones que se
+				ejecutaron no encontraron nada en él, no que la página sea conforme. Consulta{" "}
 				<a href="/results-reports/output-schema/">Resultados e informes</a> para ver qué significa
 				cada campo de un resultado completo.
 			</p>

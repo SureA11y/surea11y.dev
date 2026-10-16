@@ -17,6 +17,11 @@ export function CiIntegrationContent() {
 				を参照してください。このページが扱うのは、パイプラインのステップとしてのCLIに限られます。
 			</p>
 			<p>
+				CLIは静的なHTMLをスキャンし、ページのJavaScriptは実行しません。ビルド済みのページやサーバーでレンダリングされたページには適していますが、クライアントサイドでレンダリングされるアプリや、レイアウトを必要とするルールには、代わりにいずれかの
+				<a href="/getting-started/">ブラウザーのバインディング</a>
+				でブラウザー内でスキャンしてください。
+			</p>
+			<p>
 				いずれのテンプレートも、パイプラインのゲートにはCLI自体の終了コードを使います（
 				<code>0</code>
 				は失敗となる判定結果なし、
@@ -30,7 +35,9 @@ export function CiIntegrationContent() {
 				<code>fail</code>
 				が1件以上、
 				<code>2</code>
-				は使い方の誤りまたはスキャンのエラー）。基本的な合否のゲートに、追加のスクリプトは必要ありません。
+				は使い方の誤りまたはスキャンのエラー）。基本的な合否のゲートに、追加のスクリプトは必要ありません。パイプラインが成功したということは、どのチェックも（または新しいチェックが1つも）不合格にならなかったということです。適合性を主張するものではなく、
+				<code>cantTell</code>
+				の検出結果でパイプラインが失敗することもありません。
 			</p>
 
 			<h2><span lang="en">GitHub Actions</span></h2>
@@ -74,7 +81,7 @@ export function CiIntegrationContent() {
 				]}
 			/>
 			<p>
-				何が「既知」で何が「新規」とみなされるか、違反の修正に合わせてファイルを再生成する方法については、
+				ベースラインは既知の違反でビルドが失敗しないようにするもので、それらを許容できるものにするわけではありません。違反を修正し、時間をかけてファイルを小さくしていってください。何が「既知」で何が「新規」とみなされるか、違反の修正に合わせてファイルを再生成する方法については、
 				<a href="/conformance/baseline/">ベースライン／許可リスト</a>
 				を参照してください。
 			</p>
@@ -170,13 +177,11 @@ export function CiIntegrationContent() {
 			<p>
 				GitLab、<span lang="en">Azure DevOps</span>、Jenkins、CircleCIは、<span lang="en">JUnit XML</span>をそれぞれのテストビューに表示します。WCAGの達成基準がスイートに、ルールがテストになります（
 				<a href="/results-reports/junit-report/">JUnitレポート</a>
-				を参照）。スキャン結果をJSONとして保存し、
-				<code>@surea11y/core/junit</code>
-				でレポートを生成し、ゲートにはCLIの終了コードを使います。生成のステップには、プロジェクト自身の
-				<code>devDependencies</code>
-				に
-				<code>@surea11y/core</code>
-				が必要です。
+				を参照）。CLIは
+				<code>--junit &lt;path&gt;</code>
+				（1.1.0以降の
+				<code>@surea11y/cli</code>
+				）で、ほかの出力と同じスキャンからそれを書き出します。レポートが終了コードを変えることはないため、このステップは引き続きビルドをゲートします。
 			</p>
 			<h3><span lang="en">GitLab CI</span></h3>
 			<CodeBlock
@@ -187,9 +192,7 @@ export function CiIntegrationContent() {
 					"  script:",
 					"    - npm ci",
 					"    - npm run build",
-					"    - npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
-					"    - node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
-					"    - exit ${scan_exit:-0}",
+					"    - npx @surea11y/cli scan ./dist/index.html --junit a11y.junit.xml",
 					"  artifacts:",
 					"    when: always",
 					"    reports:",
@@ -208,9 +211,7 @@ export function CiIntegrationContent() {
 					"  - script: |",
 					"      npm ci",
 					"      npm run build",
-					"      npx @surea11y/cli scan ./dist/index.html --json > a11y-scan.json || scan_exit=$?",
-					"      node -e \"const fs = require('fs'); const { renderJunitReport } = require('@surea11y/core/junit'); fs.writeFileSync('a11y.junit.xml', renderJunitReport(JSON.parse(fs.readFileSync('a11y-scan.json', 'utf8'))))\"",
-					"      exit ${scan_exit:-0}",
+					"      npx @surea11y/cli scan ./dist/index.html --junit a11y.junit.xml",
 					"    displayName: Accessibility scan",
 					"  - task: PublishTestResults@2",
 					"    condition: succeededOrFailed()",
@@ -221,11 +222,23 @@ export function CiIntegrationContent() {
 			/>
 			<p>
 				<code>cantTell</code>
-				のルールは、失敗ではなくスキップされたテストとして表示されます。これもゲートの対象にするには、
-				<code>renderJunitReport</code>
-				の2番目の引数に
-				<code>{"{ cantTellAs: 'failure' }"}</code>
-				を渡します。変わるのはレポートであり、CLIの終了コードではないことに注意してください。
+				のルールは、失敗ではなくスキップされたテストとして表示されます。
+				<code>--baseline</code>
+				を付けた場合は、ベースラインにある不合格もスキップされたテストになります。
+				<code>cantTell</code>
+				のルールを失敗として表示するCLIのフラグはありません。
+				<code>--json</code>
+				でスキャン結果を保存し、
+				<code>@surea11y/core/junit</code>
+				の
+				<code>{"renderJunitReport(result, { cantTellAs: 'failure' })"}</code>
+				でレポートを生成してください（
+				<a href="/results-reports/junit-report/">JUnitレポート</a>
+				を参照）。それにはプロジェクト自身の
+				<code>devDependencies</code>
+				に
+				<code>@surea11y/core</code>
+				が必要です。変わるのはレポートであり、CLIの終了コードではありません。
 			</p>
 
 			<h2>無料枠やプライベートリポジトリの実行時間制限</h2>

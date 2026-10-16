@@ -1,5 +1,52 @@
 import React from "react";
 
+/** Opens each binding's internals-hook passage; the snippet and its binding-specific note follow. */
+const webComponents = (
+	<p>
+		<strong>Webコンポーネント。</strong>
+		<code>ElementInternals</code>
+		をプライベートフィールドに保持し、それを通じて名前や状態、ロールを自分に設定するコンポーネントは、ページのどのスクリプトからも読み取れません。そのため既定では、スキャンはそのようなコンポーネントを判定せずに確認を求め（
+		<code>cantTell</code>
+		）、その方法だけで設定されたロールはまったくチェックされません。コンポーネントライブラリーを作ったりテストしたりしているなら、ページ自身のスクリプトが実行される前に、バインディングのオプトインのinternalsフックをインストールしてください。そうすれば、それらのコンポーネントもほかのコントロールと同じように判定されます。
+	</p>
+);
+
+const hookCaveat = (repo) => (
+	<p>
+		このフックはテストや監査の実行のためのものです。記録した内容をページのどのスクリプトからも読める場所に保持するため、オプトインになっています。フックがない場合、スキャンはそのようなコンポーネントについて確認を求めたときに、一度だけそのことを知らせます。詳しくは
+		<a href={`https://github.com/SureA11y/${repo}#web-components-the-internals-hook`}>READMEのinternalsフックの節</a>
+		を参照してください。
+	</p>
+);
+
+/** A pointer to the builder methods this page leaves to the binding's README. */
+const alsoAvailable = (repo, { logger = true } = {}) => (
+	<p>
+		<code>A11yCoreBuilder</code>
+		にはほかにも、実行するルールを変えずに報告する達成基準をWCAGのレベルまでに絞る
+		<code>.wcagLevel()</code>
+		、タグのルールに名前を挙げたルールを加えて実行する
+		<code>.includeMode('or')</code>
+		、スキャンが何をチェックするかを実行前に一覧にし、何も実行しない選択が問題のないスキャンに見えないようにする
+		<code>.plannedChecks()</code>
+		と
+		<code>.plannedCriteria()</code>
+		、
+		{logger ? (
+			<>
+				スキャンギャップの警告を自分のログに送る
+				<code>.logger()</code>
+				、
+			</>
+		) : null}
+		ページがどのようにスキャンされたかを示す
+		<code>getScanNotes(results)</code>
+		があります。それぞれの説明は
+		<a href={`https://github.com/SureA11y/${repo}#readme`}>バインディングのREADME</a>
+		にあります。
+	</p>
+);
+
 export const bindingUsage = {
 	cypress: {
 		intro: (
@@ -67,6 +114,30 @@ export const bindingUsage = {
 				<a href="/configuration/packs/">パック</a>はNodeで準備され、Cypressのテストはブラウザーで実行されます。そのため、Cypressの<code>.withPacks()</code>は各パックのモジュール名（パッケージ名、またはプロジェクトのルートからのパス）を受け取り、バインディングのプラグイン<code>@surea11y/cypress/plugin</code>がNodeでパックを準備します。<code>setupNodeEvents</code>で<code>surea11y(on, config)</code>として登録してください。<code>{".options({ profile })"}</code>でパックのプロファイルを選びます。実行されなかったパックは<code>'pack-skipped'</code>のスキャンギャップとして報告されます。
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"// cypress/support/e2e.js",
+				"import { installInternalsHook } from '@surea11y/cypress';",
+				"",
+				"installInternalsHook();",
+			],
+			note: (
+				<p>
+					サポートファイルで一度呼び出せば、Cypressの
+					<code>window:before:load</code>
+					を通じてすべての訪問で実行されます。1回の訪問だけなら、
+					<code>cy.visit()</code>
+					に
+					<code>{"{ onBeforeLoad: installInternalsHook }"}</code>
+					として渡します。アプリのウィンドウの
+					<code>eval</code>
+					で実行されます。Cypressは既定でアプリのContent Security Policyを取り除くので、これで動作します。アプリ内のフレームには適用されません。
+				</p>
+			),
+			caveat: hookCaveat("cypress"),
+		},
+		more: alsoAvailable("cypress", { logger: false }),
 		exampleHref: "https://github.com/SureA11y/cypress/blob/main/examples/basic-scan.cy.js",
 	},
 
@@ -113,6 +184,31 @@ export const bindingUsage = {
 				Chromiumだけでなく、Playwrightの3つのエンジンすべてで動作します。実際のFirefoxとWebKitでの実行で検証済みです。
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"const context = await browser.newContext();",
+				"await A11yCoreBuilder.installInternalsHook(context); // before any page navigates",
+				"const page = await context.newPage();",
+				"await page.goto('https://example.com/');",
+			],
+			note: (
+				<p>
+					<code>page.goto()</code>
+					の前に、ページかそのブラウザーコンテキストに対して呼び出してください。
+					<code>addInitScript()</code>
+					を通じて実行されるので、1回の呼び出しでページの、あるいはコンテキストが開くすべてのページの、すべてのフレームとナビゲーションがカバーされます。Chromium、Firefox、WebKitで動作します。
+					<code>@playwright/test</code>
+					では、
+					<code>context</code>
+					フィクスチャーに対する
+					<code>beforeEach</code>
+					で呼び出します。
+				</p>
+			),
+			caveat: hookCaveat("playwright"),
+		},
+		more: alsoAvailable("playwright"),
 		exampleHref: "https://github.com/SureA11y/playwright/blob/main/examples/basic-scan.js",
 	},
 
@@ -152,6 +248,24 @@ export const bindingUsage = {
 			"await browser.close();",
 		],
 		note: null,
+		internals: {
+			intro: webComponents,
+			code: [
+				"const page = await browser.newPage();",
+				"await A11yCoreBuilder.installInternalsHook(page); // before goto",
+				"await page.goto('https://example.com/');",
+			],
+			note: (
+				<p>
+					<code>page.goto()</code>
+					の前に呼び出してください。
+					<code>page.evaluateOnNewDocument()</code>
+					を通じて実行されるので、1回の呼び出しでページが存在する間のフレームとナビゲーションがすべてカバーされます。ChromeとFirefoxで動作します。ページ自身が開いた新しいタブには適用されません。
+				</p>
+			),
+			caveat: hookCaveat("puppeteer"),
+		},
+		more: alsoAvailable("puppeteer"),
 		exampleHref: "https://github.com/SureA11y/puppeteer/blob/main/examples/basic-scan.js",
 	},
 
@@ -203,6 +317,28 @@ export const bindingUsage = {
 				）を受け取ります。生成時の違いはこの1点だけで、それ以降はすべて同じです。
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"const options = new chrome.Options().enableBidi(); // the webSocketUrl: true capability",
+				"const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(options).build();",
+				"",
+				"await A11yCoreBuilder.installInternalsHook(driver); // 'bidi' (or 'cdp' without BiDi on Chrome)",
+				"await driver.get('https://example.com/');",
+			],
+			note: (
+				<p>
+					<code>driver.get()</code>
+					の前に呼び出してください。従来のWebDriverではページのスクリプトより前にスクリプトを実行できないため、フックはセッションがWebDriver BiDiに対応していればそれを使い（Chrome、Edge、Firefoxで、上の例のようにドライバーの作成時にBiDiを有効にした場合）、そうでなければChromeとEdgeでDevToolsプロトコルを使います。戻り値は
+					<code>'bidi'</code>
+					か
+					<code>'cdp'</code>
+					です。Safari、またはBiDiなしのFirefoxでの従来のセッションでは、呼び出しは拒否されます。
+				</p>
+			),
+			caveat: hookCaveat("selenium"),
+		},
+		more: alsoAvailable("selenium"),
 		exampleHref: "https://github.com/SureA11y/selenium/blob/main/examples/basic-scan.js",
 	},
 
@@ -256,6 +392,25 @@ export const bindingUsage = {
 				で従来のWebDriverを強制すると、1回のスキャンあたり約150msで安定しました。
 			</p>
 		),
+		internals: {
+			intro: webComponents,
+			code: [
+				"await A11yCoreBuilder.installInternalsHook(browser); // 'bidi' or 'cdp'",
+				"await browser.url('https://example.com/');",
+			],
+			note: (
+				<p>
+					<code>browser.url()</code>
+					の前に呼び出してください。WDIOのテストランナーでは
+					<code>before</code>
+					フックで呼び出します。BiDiセッションでは
+					<code>browser.addInitScript()</code>
+					を、そうでなければChromeとEdgeでchromedriver経由のDevToolsプロトコルを使います。上で推奨している従来のセッションもこれでカバーされます。FirefoxまたはSafariでの従来のセッションでは、呼び出しは拒否されます。
+				</p>
+			),
+			caveat: hookCaveat("webdriverio"),
+		},
+		more: alsoAvailable("webdriverio"),
 		exampleHref: "https://github.com/SureA11y/webdriverio/blob/main/examples/basic-scan.js",
 	},
 };

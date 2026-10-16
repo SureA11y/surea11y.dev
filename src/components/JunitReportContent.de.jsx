@@ -130,24 +130,41 @@ export function JunitReportContent() {
 				<a href="https://github.com/SureA11y/cli#readme">
 					<code>@surea11y/cli</code>
 				</a>
-				. Rezepte für GitLab und Azure DevOps finden Sie unter{" "}
+				. Auf der Kommandozeile müssen Sie sie nicht aufrufen:{" "}
+				<code>surea11y scan &lt;target&gt; --junit a11y.junit.xml</code> (CLI 1.1.0 oder neuer)
+				schreibt den Bericht selbst, mit den Standardoptionen und den{" "}
+				<code>baselineEntries</code> seiner <code>--baseline</code>-Datei. Rezepte für GitLab und
+				Azure DevOps finden Sie unter{" "}
 				<a href="/configuration/ci-integration/#junit-test-reports">CI-Integration</a>.
 			</p>
 
 			<h2>Aufbau</h2>
 			<p>
 				Ein <code>&lt;testsuite&gt;</code> pro WCAG-Erfolgskriterium, ein{" "}
-				<code>&lt;testcase&gt;</code> pro zugeordneter Regel:
+				<code>&lt;testcase&gt;</code> pro zugeordneter Regel. Ein Scan dieser Seite mit dem
+				Aufruf oben:
 			</p>
 			<CodeBlock
 				lang="html"
 				lines={[
-					'<testsuites name="surea11y" tests="14" failures="2" errors="0" skipped="4" time="0">',
-					'  <testsuite name="WCAG 1.1.1 Non-text content: text alternatives" tests="1" failures="1" errors="0" skipped="0" time="0">',
+					"<!doctype html>",
+					'<html lang="en">',
+					"<head><title>Home</title></head>",
+					'<body><main><h1>Welcome</h1><img src="a.png"></main></body>',
+					"</html>",
+				]}
+			/>
+			<p>ergibt:</p>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<?xml version="1.0" encoding="UTF-8"?>',
+					'<testsuites name="surea11y" tests="13" failures="1" errors="0" skipped="5" time="0">',
+					'  <testsuite name="WCAG 1.1.1" tests="1" failures="1" errors="0" skipped="0" time="0">',
 					"    <properties>",
 					'      <property name="wcagCriterion" value="1.1.1"/>',
+					'      <property name="title" value="Non-text content: text alternatives"/>',
 					'      <property name="wcagLevel" value="A"/>',
-					'      <property name="en301549" value="9.1.1.1"/>',
 					'      <property name="criterionOutcome" value="fail"/>',
 					'      <property name="engine" value="a11ycore"/>',
 					'      <property name="schemaVersion" value="1.0.0"/>',
@@ -158,32 +175,89 @@ export function JunitReportContent() {
 					'      <property name="url" value="https://example.test/"/>',
 					"    </properties>",
 					'    <testcase classname="wcag-1.1.1" name="img-alt-present" time="0">',
-					'      <failure type="fail" message="1 failing occurrence: Missing alt attribute on &lt;img&gt;.">- Missing alt attribute on &lt;img&gt;. Add an alt attribute (use alt=&quot;&quot; only for decorative images).',
+					'      <failure type="fail" message="1 failing occurrence: This &lt;img&gt; has no alt attribute.">- This &lt;img&gt; has no alt attribute. Add an alt attribute that says what the image shows, or alt=&quot;&quot; if the image is purely decorative.',
 					"  selector: html &gt; body &gt; main &gt; img",
-					"  html: &lt;img src=&quot;a.png&quot;&gt;</failure>",
+					"  html: &lt;img src=&quot;a.png&quot;&gt;",
+					"help: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html</failure>",
 					"    </testcase>",
 					"  </testsuite>",
+					"  <!-- 10 more suites trimmed: 12 tests, 5 of them skipped (manual review) -->",
 					"</testsuites>",
 				]}
 			/>
 			<ul>
+				<li>
+					<strong>Eine grüne Suite, die nach einem Kriterium benannt ist</strong>, bedeutet, dass
+					die Regeln, die dafür gelaufen sind, keinen Fehlschlag gemeldet haben. Sie bedeutet nicht,
+					dass das Kriterium vollständig geprüft oder erfüllt ist: Die meisten Kriterien haben
+					Teile, die keine Regel abdeckt (siehe{" "}
+					<a href="/conformance/wcag-mapping/">WCAG-Konformitätszuordnung</a>).
+				</li>
 				<li>
 					<strong>Suites folgen dem Kriterium</strong>, weil Menschen danach verfolgen, und{" "}
 					<strong>Testcases folgen der Regel</strong> statt dem Vorkommen, sodass ein Fehler, der
 					vierzigmal auf einer Seite auftritt, ein einziger fehlgeschlagener Test ist, dessen Inhalt
 					alle vierzig auflistet, und die Testzahlen zwischen Läufen stabil bleiben.
 				</li>
+				<li id="names-in-every-locale">
+					<strong>Die Namen sind in jeder Locale gleich.</strong> Eine Suite heißt{" "}
+					<code>WCAG &lt;criterion&gt;</code> (<code>WCAG 1.4.3</code>), die Suite der Regeln ohne
+					Kriterium <code>Other checks</code>, ein Testcase wie seine Regel-ID, und sein{" "}
+					<code>classname</code> ist <code>wcag-&lt;criterion&gt;</code> oder <code>other</code>,
+					gleich in welcher <code>engineOptions.locale</code> der Scan lief. Die Testhistorie der CI
+					(GitLab, Jenkins, Test-Reporter für GitHub) ist an diese Namen gebunden, daher ergibt ein
+					auf Französisch gelesener Scan dieselben Tests wie ein auf Englisch gelesener. Der Titel
+					des Kriteriums, der übersetzt wird, ist die Eigenschaft <code>title</code> der Suite (
+					<code>Contrast: minimum</code>, <code>Contraste (minimum)</code>). Der Text der Befunde
+					selbst (Meldung und Hinweis jedes Vorkommens) steht in der Locale des Scans; die Wörter, die
+					der Bericht darum herum hinzufügt, sind in jeder Locale Englisch: die Zählung am Anfang
+					einer <code>message</code> (
+					<code>1 failing occurrence: Cet élément &lt;img&gt; n’a pas d’attribut alt.</code>), die
+					Labels <code>selector:</code>, <code>html:</code> und <code>help:</code> und die
+					Meldungen in <code>&lt;skipped&gt;</code>.{" "}
+					<strong>Vor core 1.12 enthielt der Name einer Suite den Titel des Kriteriums</strong> (
+					<code>WCAG 1.1.1 Non-text content: text alternatives</code>). Ein Dashboard, das die alten
+					Namen verfolgt hat, zeigt daher im ersten Bericht nach dem Update jeden Test einmalig als
+					neu, und ihre Historie beginnt dort von vorn.
+				</li>
 				<li>
 					Suites entstehen aus den WCAG-Zuordnungen jeder Regel, nicht aus den zusammengesetzten
 					Regeln, daher wird jede gelaufene Regel gemeldet, auch wenn zusammengesetzte Regeln
-					ausgeschlossen wurden. Die zusammengesetzte Regel liefert, falls sie gelaufen ist, den Titel
-					der Suite und die Eigenschaft <code>criterionOutcome</code>, die die eigenen Regeln, die
+					ausgeschlossen wurden. Die zusammengesetzte Regel liefert, falls sie gelaufen ist, die
+					Eigenschaft <code>title</code> der Suite und die Eigenschaft{" "}
+					<code>criterionOutcome</code>, die die eigenen Regeln, die
 					dem Kriterium zugeordnet sind, genauso zählt wie die eingebauten. Ein Kriterium, das von
 					mehreren zusammengesetzten Regeln geprüft wird (4.1.2: sein zugänglicher Name und seine
-					ARIA-Gültigkeit), übernimmt das schlechteste ihrer Ergebnisse und den Namen, den ihre Titel
-					gemeinsam haben (<code>WCAG 4.1.2 Name, role, value</code>). Eine Regel mit zwei Kriterien
+					ARIA-Gültigkeit), übernimmt das schlechteste ihrer Ergebnisse, da ein fehlgeschlagener
+					Teil das Kriterium scheitern lässt, und den Titel, den ihre Titel gemeinsam haben (
+					<code>Name, role, value</code>). Eine Regel mit zwei Kriterien
 					erscheint in beiden Suites. Eine Regel ohne Kriterium kommt in eine abschließende Suite{" "}
 					<code>Other checks</code> mit <code>classname="other"</code>.
+				</li>
+				<li>
+					<strong>Suites folgen der WCAG-Stufe und -Version des Scans.</strong> Ein Kriterium, das
+					der Scan ihretwegen aus <code>rulesResults</code> ausgelassen hat, erhält keine Suite: ein
+					AAA-Kriterium unter <code>engineOptions.wcagLevel: 'AA'</code> (
+					<code>engine.wcagLevel</code>) oder 4.1.1 „Syntaxanalyse“, wenn{" "}
+					<code>{"includeRuleIds: ['duplicate-id']"}</code> unter WCAG 2.2 lief (
+					<code>engine.wcagVersion</code>), da WCAG 2.2 es gestrichen hat. Ein Kriterium, das der Scan
+					meldet, bleibt erhalten, etwa eine per ID genannte Zusammenfassung oberhalb der Stufe, ein{" "}
+					<a href="/results-reports/output-schema/#partly-checked">teilweise geprüftes</a>{" "}
+					Kriterium oder 4.1.1 in einem 2.2-Scan, der es ausgewählt hat. Eine Regel, die nur
+					ausgelassenen Kriterien zugeordnet ist, kommt in <code>Other checks</code>, und ihre
+					Fehlschläge sind{" "}
+					<code>
+						&lt;skipped message="Not counted: WCAG 1.4.6 is outside the scan's target, WCAG 2.2
+						AA; 1 failing occurrence"&gt;
+					</code>
+					, mit den Vorkommen in <code>&lt;system-out&gt;</code>: Die Regel ist gelaufen und hat{" "}
+					<code>fail</code> ergeben, was der Bericht zeigt, aber ein AA-Build scheitert nicht an
+					einem AAA-Kriterium. Eine Regel, die nicht abgeschlossen wurde, ist weiterhin ein{" "}
+					<code>&lt;error&gt;</code>. Eine Stufe, die sich aus der Auswahl ergibt (
+					<code>runOnly.wcag.level</code> oder Stufen-Tags), wird ebenfalls als{" "}
+					<code>engine.wcagLevel</code> festgehalten und begrenzt die Suites genauso. Ein Ergebnis,
+					das weder <code>engine.wcagLevel</code> noch <code>engine.wcagVersion</code> festhält, wie
+					das einer älteren Engine, behält jedes Kriterium.
 				</li>
 				<li>
 					<code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
@@ -192,7 +266,8 @@ export function JunitReportContent() {
 						<code>engine.environment</code>
 					</a>{" "}
 					(<code>layout</code> und in einem Browser <code>viewport</code> als <code>1280x720</code>,{" "}
-					<code>devicePixelRatio</code>, <code>colorScheme</code> und <code>fonts</code>),{" "}
+					<code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code> und{" "}
+					<code>fonts</code>),{" "}
 					<code>locale</code> und <code>url</code> des Laufs werden als Eigenschaften in jeder Suite
 					wiederholt, jeweils nur, wenn das Ergebnis sie enthält. Ein Fehlschlag, der je nach
 					Viewport-Breite auftaucht oder verschwindet, lässt sich so auf die Breite zurückführen, die
@@ -230,15 +305,17 @@ export function JunitReportContent() {
 				Ein Frame-übergreifendes Ergebnis (siehe{" "}
 				<a href="/results-reports/output-schema/#cross-frame-result">Ausgabeschema</a>) liefert
 				zuerst die Suites der Seite, dann die jedes Frames, benannt nach dem Pfad des Frames (
-				<code>Frame #checkout: WCAG 1.1.1 Non-text content: text alternatives</code>) und mit einer
-				Eigenschaft <code>frame</code>, die ihn enthält, sodass ein Fehlschlag in einem Frame nicht
-				mit denen der Seite zusammengeführt wird. Ein Frame, der nicht geantwortet hat, ist eine
+				<code>Frame #checkout: WCAG 1.1.1</code>, in jeder Locale gleich) und mit einer Eigenschaft{" "}
+				<code>frame</code>, die ihn enthält, und der <code>classname</code> ihrer Testcases beginnt
+				mit ihm (<code>frame #checkout wcag-1.1.1</code>), sodass eine CI, die Tests nach
+				Suite-Namen oder nach <code>classname</code> und <code>name</code> zuordnet, einen
+				Fehlschlag in einem Frame nicht mit denen der Seite zusammenführt. Ein Frame, der nicht geantwortet hat, ist eine
 				Suite <code>Frame &lt;path&gt;</code> mit einem übersprungenen Testcase,{" "}
 				<code>Not scanned: &lt;error&gt;</code>: Der Frame wurde nicht geprüft, und das ist kein
 				Bestehen. Die Summen auf <code>&lt;testsuites&gt;</code> zählen jeden Frame.
 			</p>
 
-			<h2>Ergebnisse</h2>
+			<h2 id="outcomes">Ergebnisse</h2>
 			<DataTable
 				label="Regelergebnisse in JUnit"
 				rowKey="id"
@@ -254,6 +331,13 @@ export function JunitReportContent() {
 				Fehlschläge in <code>&lt;failure&gt;</code> und die unentschiedenen in{" "}
 				<code>&lt;system-out&gt;</code>, wo Dashboards die Testausgabe zeigen. Eine übersprungene{" "}
 				<code>cantTell</code>-Regel macht es genauso.
+			</p>
+			<p>
+				Die <code>selector:</code>-Zeile eines Elements in einem Shadow Tree nennt zuerst die
+				Shadow Hosts, dann das Element, verbunden mit <code>{" >>> "}</code>:{" "}
+				<code>{"html > body > main > x-card >>> button"}</code>. Es ist derselbe Fundort, den{" "}
+				<a href="/results-reports/sarif-report/#field-mapping">SARIF</a> und der{" "}
+				<a href="/results-reports/html-report/">HTML-Bericht</a> angeben.
 			</p>
 
 			<h2>Optionen</h2>

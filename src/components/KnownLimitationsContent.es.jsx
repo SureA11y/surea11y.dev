@@ -1,23 +1,105 @@
 import React from "react";
+import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+
+const remedyRows = [
+	{
+		id: "interaction",
+		situation: "El contenido aparece solo tras un clic, un hover o una carga de datos",
+		remedy: "Lleva tú mismo la página a ese estado y luego analízala. Analiza cada estado que importe.",
+	},
+	{
+		id: "layout",
+		situation:
+			"Una comprobación necesita diseño: tamaño del objetivo, espaciado del texto, contraste frente a lo que se pinta bajo el texto",
+		remedy: (
+			<>
+				Analiza en un navegador real. jsdom no tiene diseño (el{" "}
+				<code>engine.environment.layout</code> del resultado es <code>false</code>), así que estas
+				reglas miden menos ahí o informan <code>notApplicable</code>, como indican las secciones
+				siguientes.
+			</>
+		),
+	},
+	{
+		id: "keyboard",
+		situation: "Un requisito trata del manejo con teclado, como una trampa de teclado",
+		remedy: "Pruébalo con un teclado. Ningún análisis lo cubre.",
+	},
+	{
+		id: "canttell",
+		situation: (
+			<>
+				Un resultado es <code>cantTell</code>
+			</>
+		),
+		remedy: (
+			<>
+				Lee el <code>uncertainty.code</code> y el <code>uncertainty.needed</code> de la ocurrencia,
+				y decídelo a mano.
+			</>
+		),
+	},
+	{
+		id: "responsive",
+		situation: "La página es adaptable",
+		remedy: "Analiza con cada ancho que te importe.",
+	},
+	{
+		id: "differ",
+		situation: "Dos ejecuciones de la misma página difieren",
+		remedy: (
+			<>
+				Compara <code>engine.version</code> y <code>engine.environment</code> (viewport, fuentes e
+				imágenes aún cargando), y recarga la página entre análisis.
+			</>
+		),
+	},
+	{
+		id: "no-failures",
+		situation: "Un análisis no informa de fallos",
+		remedy: (
+			<>
+				Eso no es una declaración de conformidad. Consulta{" "}
+				<a href="/conformance/wcag-mapping/">Mapeo de conformidad con WCAG</a>.
+			</>
+		),
+	},
+];
 
 export function KnownLimitationsContent() {
 	return (
 		<>
 			<p>
-				Qué no evalúa el motor, qué depende del entorno en el que se ejecuta y qué necesita la
-				revisión de una persona. Léelo antes de confiar en un resultado sin hallazgos.
+				Qué no evalúa el motor, qué depende de dónde se ejecuta un análisis (jsdom, un navegador
+				o los propios scripts de la página) y qué necesita la revisión de una persona. Algunos
+				puntos son decisiones de diseño, cada una con su razonamiento; cada uno indica qué no
+				puede establecer un análisis y, cuando lo hay, qué hacer al respecto. Léelo antes de
+				confiar en un resultado sin hallazgos.
 			</p>
 
-			<h2>Aspectos que el análisis no evalúa</h2>
+			<h2>Qué hacer al respecto</h2>
+			<DataTable
+				label="Qué hacer con cada limitación"
+				rowKey="id"
+				columns={[
+					{ key: "situation", label: "Si…", width: "40%" },
+					{ key: "remedy", label: "Entonces…" },
+				]}
+				rows={remedyRows}
+			/>
+			<p>Las secciones siguientes dan las razones.</p>
+
+			<h2 id="outside-what-one-scan-can-see">Fuera de lo que un análisis puede ver</h2>
 			<p>
-				surea11y comprueba la página en su estado actual. Algunas reglas cambian brevemente el
-				foco o los estilos para medir una condición concreta, y en un navegador real las reglas
-				pueden medir el diseño (en jsdom no lo hay), pero el análisis no explora de forma
-				sistemática las interacciones del usuario, los estados asíncronos ni distintos tamaños de
-				viewport. Por eso lo siguiente necesita pruebas aparte, con automatización de navegador y
-				revisión humana según corresponda:
+				Un análisis lee la página en un momento, en un estado y en un viewport: el DOM, sus
+				estilos calculados y, en un navegador real, su diseño. No usa la página como lo hace una
+				persona. No la recorre con un teclado, no abre sus menús, no espera a sus datos ni cambia
+				su tamaño. (En un navegador, algunas reglas enfocan un elemento o añaden una hoja de
+				estilo mientras dura su comprobación, y lo restablecen; consulta la sección siguiente.)
+				Los puntos de aquí necesitan ese tipo de interacción en el tiempo, así que otra regla no
+				puede cubrirlos. Necesitan una prueba de interacción o una persona:
 			</p>
 			<ul>
 				<li>
@@ -29,11 +111,9 @@ export function KnownLimitationsContent() {
 						<code>ACT_RULE_MAPPING.md</code>
 					</a>
 					), pero no está implementada: un análisis no explora las interacciones del usuario ni
-					los estados a los que llevan. Algunas comprobaciones modifican la página brevemente para
-					medirla (<code>aria-hidden-focus</code> intenta enfocar elementos,{" "}
-					<code>text-spacing-content-loss</code> aplica un espaciado de prueba), pero ninguna
-					mueve el foco por la página como lo haría la detección de trampas. Mientras tanto, nada
-					en el marcado estático la sustituye.
+					los estados a los que llevan, y ninguna de las comprobaciones que modifican la página
+					brevemente mueve el foco por ella como lo haría la detección de trampas. Mientras tanto,
+					nada en el marcado estático la sustituye.
 				</li>
 				<li>
 					<strong>Reflujo / recorte al aplicar zoom</strong> (WCAG 1.4.10): requiere una medición
@@ -50,7 +130,8 @@ export function KnownLimitationsContent() {
 					renderiza de forma anticipada (incluso fuera de pantalla u <code>hidden</code>), es
 					analizable; si solo existe tras la interacción, no lo es, a menos que produzcas esa
 					interacción tú mismo antes de analizar (por ejemplo, haz clic en el botón y{" "}
-					<em>luego</em> analiza).
+					<em>luego</em> analiza). Analizar el estado abierto comprueba lo que hay en él, no si una
+					persona que usa teclado o lector de pantalla puede abrirlo, usarlo y cerrarlo.
 				</li>
 			</ul>
 
@@ -97,10 +178,12 @@ export function KnownLimitationsContent() {
 					profundidad.</strong>{" "}
 					El recorrido se detiene ahí (Chrome no da ningún nombre a partir de contenido a 100 niveles
 					de profundidad), así que{" "}
-					<a href="/rules/button-name-present/"><code>button-name-present</code></a> y{" "}
-					<a href="/rules/link-name-present/"><code>link-name-present</code></a> preguntan (
-					<code>name_contentTooDeep</code>) por un botón o un enlace cuyo único nombre está más
-					abajo; otras reglas que obtienen el nombre del contenido leen ese contenido como vacío.
+					<a href="/rules/button-name-present/"><code>button-name-present</code></a>,{" "}
+					<a href="/rules/link-name-present/"><code>link-name-present</code></a>, las reglas de
+					nombre de elemento de menú, opción, summary, pestaña, tooltip y elemento de árbol, y{" "}
+					<a href="/rules/empty-heading/"><code>empty-heading</code></a> preguntan (
+					<code>name_contentTooDeep</code>) por un elemento cuyo único nombre está más abajo; otras
+					reglas que obtienen el nombre del contenido leen ese contenido como vacío.
 				</li>
 				<li>
 					<strong>El contenido de una raíz shadow cerrada no se puede leer.</strong> Ningún script
@@ -112,7 +195,37 @@ export function KnownLimitationsContent() {
 					podría venir de un elemento personalizado que se renderiza pero no muestra contenido
 					legible, en lugar de hacerlo fallar. Una raíz cerrada en un elemento incorporado (un{" "}
 					<code>&lt;span&gt;</code>) parece una vacía, como un icono dibujado con CSS, así que un
-					botón sobre una sigue fallando.
+					botón sobre una sigue fallando. Comprueba a mano lo que expone ese componente, por
+					ejemplo con un lector de pantalla.
+				</li>
+				<li>
+					<strong>
+						No se puede leer un nombre o un estado que un elemento personalizado define mediante{" "}
+						<code>ElementInternals</code>.
+					</strong>{" "}
+					<code>{"this.attachInternals().ariaLabel = 'Save'"}</code> da nombre al elemento en todos
+					los navegadores, pero ningún script puede volver a leerlo. Cuando un componente guarda
+					sus internals en una propiedad (<code>_internals</code>, <code>internals</code>,{" "}
+					<code>internals_</code>, <code>__internals</code>), el motor los lee a través de ella, y
+					aprueba o hace fallar el elemento según lo que digan. Para cualquier otro elemento
+					personalizado definido sin nombre (o sin un estado obligatorio), las reglas de nombre y{" "}
+					<a href="/rules/aria-required-attr/"><code>aria-required-attr</code></a> preguntan (
+					<code>name_internals</code>, <code>state_internals</code>) en lugar de hacerlo fallar.
+					Compruébalos en el árbol de accesibilidad del navegador, o instala el hook de internals
+					opcional antes de que se ejecuten los scripts de la página:{" "}
+					<code>installInternalsHook()</code> en cada integración (consulta{" "}
+					<a href="/getting-started/">Primeros pasos</a>) y en test-matchers, o{" "}
+					<code>internalsHookScript()</code> de core para una página propia (consulta{" "}
+					<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, que muestra dónde instalarlo). El hook registra los internals de cada elemento para
+					el análisis, así que también reconoce un elemento que nunca adjuntó ninguno. Un rol
+					definido solo mediante internals (<code>internals.role</code>) se lee donde se leen los
+					internals, a través de una propiedad o del hook, como el rol predeterminado del
+					elemento; guardado en un campo privado sin el hook, no se ve, y no se pregunta por el
+					elemento, ya que casi cualquier componente podría tener uno. Los elementos incorporados,
+					y los elementos personalizados que no están definidos, se juzgan como antes.
 				</li>
 				<li>
 					<strong>
@@ -144,7 +257,9 @@ export function KnownLimitationsContent() {
 					(sin atributo <code>open</code>, <code>display: none</code> según la especificación),
 					junto con cualquier otro subárbol oculto mediante <code>display:none</code>,{" "}
 					<code>visibility:hidden</code>, <code>[hidden]</code> o un <code>&lt;details&gt;</code>{" "}
-					cerrado, quedan <strong>excluidos de la evaluación de reglas por defecto</strong>:
+					cerrado, y un subárbol <code>[inert]</code> (que las reglas sobre el aspecto del
+					contenido, como el contraste y el espaciado del texto, siguen juzgando, ya que se
+					dibuja), quedan <strong>excluidos de la evaluación de reglas por defecto</strong>:
 					coincidiendo con el comportamiento sensible a la visibilidad de otros motores
 					consolidados. Este es un valor predeterminado deliberado (
 					<code>engineOptions.includeHiddenElements: false</code>), no un descuido: el contenido
@@ -155,6 +270,16 @@ export function KnownLimitationsContent() {
 					una referencia de ID ARIA rota) antes de que un diálogo llegue a abrirse. Consulta{" "}
 					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>{" "}
 					para conocer la opción y exactamente qué mecanismos de ocultación cubre.
+				</li>
+				<li>
+					<strong>jsdom no tiene popovers.</strong> Incluye la regla de HTML que oculta un{" "}
+					<code>[popover]</code> cerrado, pero no <code>showPopover()</code>, y lee{" "}
+					<code>:popover-open</code> de forma inconsistente. Cuando el DOM no tiene{" "}
+					<code>showPopover</code>, el motor trata todo <code>[popover]</code> que no sea un{" "}
+					<code>&lt;dialog&gt;</code> abierto como cerrado y oculto, así que su contenido no se
+					comprueba; un popover que el propio CSS de la página mantiene visible tampoco se
+					comprueba bajo jsdom. En un navegador, el motor lee lo que se muestra. Para comprobar el
+					contenido de un popover, analiza la página en un navegador con el popover abierto.
 				</li>
 				<li>
 					<strong>jsdom conserva el tamaño de fuente tal como está escrito.</strong> Un navegador
@@ -182,6 +307,22 @@ export function KnownLimitationsContent() {
 					único análisis no se ve afectado. Solo aparece si tú mismo lees{" "}
 					<code>getComputedStyle(el).textShadow</code> más de una vez sobre el mismo elemento
 					analizado por jsdom. Un navegador real no tiene este error.
+				</li>
+				<li>
+					<strong>
+						Un segundo análisis del mismo DOM de jsdom puede perder un estilo que sobrescribe una
+						propiedad abreviada.
+					</strong>{" "}
+					jsdom conserva el estilo calculado de un elemento una vez leído, hasta el siguiente
+					cambio del DOM, y la copia que devuelve de esa caché pierde una propiedad desarrollada
+					que sobrescribe una abreviada de una regla menos específica: con{" "}
+					<code>{"*{background:#888}"}</code> y <code>style="background-image:url(hero.png)"</code>,
+					la primera lectura da la imagen y todas las siguientes <code>none</code>. Un análisis
+					conserva el estilo que leyó primero, así que no se ve afectado, pero un segundo análisis
+					del mismo DOM sin cambios puede no ver la imagen y aprobar un texto por el que el
+					primero preguntó (<code>contrast-computable</code>). Analiza un parseo nuevo, o cambia el
+					DOM entre análisis, lo que vacía la caché de jsdom; <code>@surea11y/core/testing</code>{" "}
+					lo hace en su propio segundo análisis. Un navegador real no tiene este error.
 				</li>
 				<li>
 					<strong>
@@ -291,77 +432,79 @@ export function KnownLimitationsContent() {
 					<code>engine.environment</code> si las fuentes o las imágenes aún estaban cargando.
 				</li>
 				<li>
-					<strong>En un navegador, las reglas de contraste miden el texto frente a lo que se pinta
-					debajo de él, en el orden de pintado de CSS.</strong>{" "}
-					Un texto posicionado sobre un hermano, sobre una imagen <code>&lt;img&gt;</code> de
-					cabecera, sobre una superposición <code>::before</code>, o desplazado sobre otro bloque
-					con un margen negativo queda sobre una pintura que no pertenece a ninguno de sus
-					ancestros, y un texto que desborda la caja de un ancestro, o que tiene un{" "}
-					<code>z-index</code> negativo, no está sobre el fondo de ese ancestro. En un navegador, el
-					motor mide las cajas de línea del texto, encuentra los elementos que pintan ahí (un color o
-					una imagen de fondo, contenido reemplazado como <code>img</code>, <code>video</code>,{" "}
-					<code>canvas</code>, <code>iframe</code>, formas SVG) y los ordena junto con el texto y los
-					fondos de sus ancestros según el orden de pintado de CSS: contextos de apilamiento,{" "}
-					<code>z-index</code>, cajas posicionadas y flotantes, y después el orden del documento.
-					Cuando todo lo que hay entre el texto y la primera capa opaca es un color sólido que cubre
-					todo el texto, la relación de contraste se mide frente a eso; cuando interviene una imagen,
-					un degradado, una pintura que cubre solo parte del texto o una pintura dibujada sobre el
-					texto, <a href="/rules/contrast-computable/"><code>contrast-computable</code></a>{" "}
-					pregunta por el texto con el código de motivo <code>BACKGROUND_OVERLAP</code> y las reglas
-					que calculan la relación de contraste lo dejan fuera. El texto que una caja que recorta su
-					desbordamiento mantiene fuera de la vista, como las opciones más abajo en una lista con
-					desplazamiento, se mide tal como queda una vez desplazado dentro de esa caja. El texto que
-					una caja con <code>overflow: hidden</code> mantiene totalmente fuera de la vista, como una
-					diapositiva de carrusel fuera de su pista, no se mide en absoluto: solo por sus estilos,
-					esa caja no se puede distinguir de una que oculta ese texto definitivamente, así que el
-					texto se deja fuera en lugar de suponer. Analiza la página en ese estado (con la
-					diapositiva visible) para comprobarlo. Límites: una caja fija o sticky sobre el texto queda
-					fuera, ya que solo lo cubre en la posición de desplazamiento en la que se hizo el análisis;
-					un degradado bajo el texto no se muestrea, así que un texto tenue sobre un degradado tenue
-					se pregunta en lugar de fallar; y un efecto de grupo (<code>opacity</code>, un filtro, un
-					modo de fusión) en un ancestro deja la superposición a una comprobación más aproximada.
-					Bajo jsdom no hay diseño, así que el texto se mide solo frente a sus ancestros.
-				</li>
-				<li>
-					<strong>El texto de un campo de formulario se mide tal como lo dibuja el campo.</strong> El
-					valor de un <code>&lt;input&gt;</code> que muestra texto (text, search, email, url, tel,
-					password, number, los tipos de fecha y hora) y el valor actual de un{" "}
-					<code>&lt;textarea&gt;</code> se miden con el color del campo frente a su fondo; mientras
-					el valor está vacío, el texto provisional se mide con el color y la fuente de{" "}
-					<code>::placeholder</code>, atenuado por su <code>opacity</code>. No se mide: el texto que
-					dibuja el navegador cuando un campo de fecha u hora está vacío (<code>mm/dd/yyyy</code>),
-					el botón y el nombre de archivo de un input de archivo, y la opción mostrada de un{" "}
-					<code>&lt;select&gt;</code>. Bajo jsdom no hay estilo <code>::placeholder</code>, así que
-					ahí no se miden los textos provisionales; los valores sí. Un texto provisional por debajo
-					de su relación de contraste es <code>cantTell</code> en lugar de un fallo (
-					<code>PLACEHOLDER_BELOW_THRESHOLD</code>): WCAG somete el texto provisional a la relación
-					de contraste, pero considera que la cumplen los colores que la página dejó por completo al
-					navegador (técnica G148), y distinguir los colores del navegador de los de la página en
-					páginas reales aún no está resuelto, así que por ahora decide una persona.
+					<strong>
+						En un navegador, el contraste se mide frente a lo que se pinta bajo el texto, tal como
+						está la página en ese momento.
+					</strong>{" "}
+					Se pregunta por el texto sobre una imagen, un degradado o una pintura que solo lo cubre
+					en parte (<a href="/rules/contrast-computable/"><code>contrast-computable</code></a>,
+					código de motivo <code>BACKGROUND_OVERLAP</code>) en lugar de medirlo. El texto que una
+					caja con <code>overflow: hidden</code> mantiene totalmente fuera de la vista, como una
+					diapositiva de carrusel fuera de su pista, se deja fuera hasta que está a la vista, así
+					que analiza la página en ese estado para comprobarlo. Las cajas fijas y sticky sobre el
+					texto se ignoran. Bajo jsdom, el texto se mide solo frente a sus ancestros. Analizada en
+					colores forzados (alto contraste de Windows, o un{" "}
+					<code>forced-colors: active</code> emulado), la página se mantiene en sus propios colores
+					mientras se mide, así que los resultados son los de colores forzados desactivados; donde
+					no se puede (una Content Security Policy que bloquea el <code>&lt;style&gt;</code> del
+					motor en un navegador que no puede adoptar una hoja de estilo), los colores medidos son
+					en parte los del navegador, y cada ocurrencia de contraste lo indica (
+					<code>details.forcedColors</code>). Cómo funciona la medición, paso a paso:{" "}
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#contrast`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					, en GitHub.
 				</li>
 				<li>
 					<strong>
-						<code>target-size-minimum</code> mide la región que un puntero puede alcanzar,
-						calculada a partir del diseño.
+						El texto generado solo se mide en un navegador, y solo donde se puede leer.
 					</strong>{" "}
-					Un objetivo es su border box con sus esquinas redondeadas y sus transformaciones 2D,
-					recortado por <code>clip</code> y <code>clip-path: inset()</code> en su cadena de bloques
-					contenedores y no más grande que una caja de esa cadena que recorta su{" "}
-					<code>overflow</code>, con el contenido que sobresale de él, menos las cajas pintadas encima
-					que reciben eventos de puntero; es lo bastante grande cuando cabe dentro un cuadrado de 24
-					por 24 alineado con la página (<span lang="en">Understanding</span> 2.5.8). Como la región
-					sale del diseño y no de pruebas de impacto (hit-testing), los objetivos por debajo del
-					pliegue se miden igual que los visibles, y también los objetivos dentro de una caja que
-					recorta su desbordamiento, como si estuvieran desplazados dentro de ella. Las esquinas
-					redondeadas se miden tal como se dibujan. Las cajas fijas y sticky sobre un objetivo quedan
-					fuera; un objetivo antes del inicio de la página, adonde el desplazamiento no llega (un
-					enlace de salto en <code>left: -9999px</code>), no es un objetivo. Se dejan como su caja
-					delimitadora: las transformaciones 3D, otras formas de <code>clip-path</code> y el recorte
-					redondeado de un ancestro. Su excepción en línea cubre un enlace dentro de una frase, que
-					la regla interpreta como texto con una letra o un dígito fuera de cualquier objetivo en el
-					tramo del bloque del enlace entre saltos de línea; los enlaces separados solo por
-					separadores ("Edit | Delete") que se amontonan entre sí se preguntan en lugar de quedar
-					exentos. Bajo jsdom, que no tiene diseño, la regla es <code>notApplicable</code>.
+					El texto que escribe el <code>content</code> de un <code>::before</code> o un{" "}
+					<code>::after</code> y el <code>::marker</code> de un elemento de lista se miden con el
+					color y la fuente del pseudoelemento; se pregunta en su lugar (
+					<code>contrast-computable</code>) por el contenido que no se puede leer (un contador en
+					un <code>@counter-style</code> propio de la página) y por un <code>::before</code> o{" "}
+					<code>::after</code> posicionado fuera del flujo sin fondo propio. Los marcadores solo se
+					buscan en <code>&lt;li&gt;</code>. Bajo jsdom, que no calcula estilos de
+					pseudoelementos, el texto generado se deja fuera.
+				</li>
+				<li>
+					<strong>
+						El texto y el texto provisional de un campo de formulario se miden tal como los dibuja
+						el campo, con huecos.
+					</strong>{" "}
+					No se mide el texto que dibuja un navegador en un campo de fecha u hora vacío, ni el
+					botón y el nombre de archivo de un input de archivo. Un <code>&lt;select&gt;</code>{" "}
+					desplegable se mide tal como lo dibuja el control cerrado, con su opción mostrada en los
+					colores del propio select; otra de sus opciones con colores propios solo se muestra en
+					la lista que dibuja la plataforma al abrirse, y es <code>cantTell</code> (
+					<code>SELECT_OPTION_COLOR</code>). Un texto provisional por debajo de su relación de
+					contraste es <code>cantTell</code> (<code>PLACEHOLDER_BELOW_THRESHOLD</code>) en lugar
+					de un fallo: WCAG somete el texto provisional a la relación de contraste, pero considera
+					que la cumplen los colores que la página dejó por completo al navegador (técnica G148),
+					y distinguir unos de otros en páginas reales aún no está resuelto. Bajo jsdom, los
+					textos provisionales no se miden en absoluto. Detalles:{" "}
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#form-fields`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					.
+				</li>
+				<li>
+					<strong>
+						<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a> calcula la
+						región de impacto a partir del diseño, no mediante pruebas de impacto (hit-testing).
+					</strong>{" "}
+					Los objetivos por debajo del pliegue o dentro de una caja con desplazamiento se miden
+					enteros, como si estuvieran desplazados a la vista; las cajas fijas y sticky sobre un
+					objetivo se ignoran; las transformaciones 3D, la mayoría de las formas de{" "}
+					<code>clip-path</code> y el recorte redondeado de un ancestro se miden como una caja
+					delimitadora; y los enlaces separados solo por separadores ("Edit | Delete") que se
+					amontonan entre sí se preguntan en lugar de quedar exentos. Bajo jsdom, la regla es{" "}
+					<code>notApplicable</code>. Detalles:{" "}
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#target-size`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					.
 				</li>
 				<li>
 					<strong>El contraste se calcula en sRGB.</strong> Los colores dados en{" "}
@@ -408,7 +551,11 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>Subcomprobaciones detalladas de medios basados en tiempo</strong> (WCAG 1.2.x
-					tiene unos 8 casos distintos a nivel de regla ACT más allá de lo que está implementado):
+					tiene 13 reglas ACT sin regla equivalente aquí; consulta la sección de carencias de{" "}
+					<a href={`${core}/docs/ACT_RULE_MAPPING.md#gaps-no-corresponding-rule`}>
+						<code>ACT_RULE_MAPPING.md</code>
+					</a>
+					):
 					el propio contenido de audio/vídeo es fundamentalmente imposible de verificar a partir de
 					marcado estático; los dos casos más amplios y seguros están cubiertos (
 					<code>media-alternative-transcript-evidence</code>, <code>video-caption</code>), los más
@@ -438,9 +585,12 @@ export function KnownLimitationsContent() {
 
 			<h2>Qué significa esto en la práctica</h2>
 			<p>
-				Nada de lo anterior es exclusivo de surea11y: toda herramienta de accesibilidad basada en
-				análisis estático (incluidos otros motores consolidados) comparte las limitaciones
-				estructurales, y la mayoría comparte también las de criterio. La razón para exponerlo
+				Casi nada de lo anterior es exclusivo de surea11y. Cualquier herramienta que juzga un
+				único estado del DOM comparte los límites de{" "}
+				<a href="#outside-what-one-scan-can-see">Fuera de lo que un análisis puede ver</a>, y la
+				mayoría de las herramientas automatizadas también dejan las decisiones de criterio a una
+				persona, aunque difieren en cómo se ejecutan, qué comprueban y cómo informan de lo que no
+				pueden decidir. La razón para exponerlo
 				explícitamente aquí: <strong>un <code>pass</code> de este motor (o de cualquier herramienta
 				automatizada) nunca sustituye la revisión manual que el propio WCAG exige para los criterios
 				anteriores.</strong> Consulta{" "}

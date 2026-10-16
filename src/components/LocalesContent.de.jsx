@@ -124,7 +124,10 @@ export function LocalesContent() {
 				Text, gegen den sie geprüft wurden, und zählen als übersetzt. Ändert sich das Englische,
 				gilt der Eintrag nicht mehr, und der String zählt als unübersetzt, bis ihn jemand erneut
 				prüft. Ein englisches Wort in einem sonst übersetzten Satz sieht die Zählung nicht; das
-				findet man beim Lesen des Textes, und in den Locales oben ist keines mehr übrig.
+				findet man beim Lesen des Textes, und in den Locales oben ist keines mehr übrig. Ebenso
+				wenig misst sie, ob eine Übersetzung korrekt ist oder die in einer Sprache üblichen
+				Begriffe der Barrierefreiheit verwendet; das kann nur jemand beurteilen, der die Sprache
+				liest.
 			</p>
 
 			<h3 id="reading-coverage-from-the-package">Abdeckung aus dem Paket lesen</h3>
@@ -269,9 +272,11 @@ export function LocalesContent() {
 			/>
 			<p>
 				Das Bundle ist aufgeteilt, weil es über das Netzwerk an jede Seite geht, die es nutzt, und
-				keine Seite alle Sprachen braucht. Englisch inline und den Rest optional zu halten,
-				hat den Download um etwa 280 KB verkleinert und verhindert, dass er mit jeder neuen
-				Sprache wächst. Sonst ändert sich nichts: Das Node-Paket und die Bindings sind nicht
+				keine Seite alle Sprachen braucht. Englisch inline und den Rest optional zu halten, hält
+				die anderen Sprachen aus dem Download heraus und verhindert, dass er mit jeder neuen
+				Sprache wächst. Jede Zusatzdatei, <code>surea11y.i18n.&lt;locale&gt;.js</code>, ist etwa so
+				groß wie der englische Text, den sie ersetzt (derzeit 130 bis 160 KB), und eine Seite lädt
+				nur die, die sie nutzt. Sonst ändert sich nichts: Das Node-Paket und die Bindings sind nicht
 				betroffen.
 			</p>
 			<CodeBlock

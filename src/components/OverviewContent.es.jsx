@@ -11,9 +11,10 @@ const packageRows = [
 	{ id: "selenium", want: "…Selenium", install: <code>@surea11y/selenium</code> },
 	{ id: "cypress", want: "…Cypress", install: <code>@surea11y/cypress</code> },
 	{ id: "webdriverio", want: "…WebdriverIO", install: <code>@surea11y/webdriverio</code> },
-	{ id: "cli", want: "Analizar HTML estático desde una terminal o una canalización de CI", install: <code>@surea11y/cli</code> },
 	{ id: "test-matchers", want: "Verificar la accesibilidad en pruebas de componentes o unitarias con Jest/Vitest", install: <code>@surea11y/test-matchers</code> },
+	{ id: "cli", want: "Analizar HTML estático desde una terminal o una canalización de CI", install: <code>@surea11y/cli</code> },
 	{ id: "core", want: "Ejecutar el motor sobre un DOM que ya tengas", install: <code>@surea11y/core</code> },
+	{ id: "core-build", want: "Crear tu propia herramienta sobre el motor: una CLI, una extensión, un panel, un generador de informes", install: <code>@surea11y/core</code> },
 ];
 
 export function OverviewLead() {
@@ -48,7 +49,8 @@ export function OverviewContent() {
 			<p>
 				surea11y es una familia de paquetes que comparten un mismo motor, no una única herramienta con un
 				único comando de instalación. Instala el que coincida con cómo ya pruebas. Cada uno incorpora{" "}
-				<code>@surea11y/core</code> por ti:
+				<code>@surea11y/core</code> por ti. Instala core directamente para ejecutar el motor sobre un
+				DOM que ya tengas, o para crear tu propia herramienta sobre él:
 			</p>
 			<DataTable
 				label="Qué paquete instalar"
@@ -60,7 +62,10 @@ export function OverviewContent() {
 				rows={packageRows}
 			/>
 			<p>
-				Consulta <a href="/getting-started/">Primeros pasos</a> para ver la instalación y el uso de cada integración (<code>binding</code>).
+				Consulta <a href="/getting-started/">Primeros pasos</a> para ver la instalación y el uso de cada integración (<code>binding</code>). Si estás creando
+				una herramienta, <a href={`${core}/docs/BUILDING_ON_CORE.md`}><code>BUILDING_ON_CORE.md</code></a>{" "}
+				(en GitHub, en inglés) explica el contrato estable, cómo ejecutar análisis, cómo elegir
+				comprobaciones y cómo presentar los resultados sin afirmar más de lo que dicen.
 			</p>
 
 			<h2>En qué se diferencian sus resultados</h2>
@@ -115,26 +120,69 @@ export function OverviewContent() {
 				<a href="/configuration/engine-options/#selecting-which-rules-run">Opciones del motor</a> y{" "}
 				<a href="/configuration/packs/">Packs</a>.
 			</p>
+			<p>
+				Si nombras comprobaciones en lugar de un estándar, el resultado sigue indicando a qué
+				criterios de WCAG afectan. Un análisis que ejecuta solo <code>link-name-present</code> informa
+				también de 2.4.4 y 4.1.2, más el AAA 2.4.9 si el análisis no fija un nivel, y un criterio cuyas otras comprobaciones el análisis dejó fuera
+				resulta <code>cantTell</code> («Comprobado en parte» en el informe HTML), no <code>pass</code>.{" "}
+				<code>wcagLevel: 'AA'</code> fija el nivel de los criterios que informa un análisis, y los
+				informes JUnit, SARIF y EARL lo siguen, así que una compilación AA no falla por un criterio AAA.
+			</p>
+			<p>
+				Los componentes web se juzgan por lo que exponen. Un elemento personalizado que se da un
+				nombre, estados o un rol mediante <code>ElementInternals</code> se comprueba con ellos cuando
+				el motor puede leerlos, y se pregunta por él cuando no puede. Para ejecuciones de prueba y de
+				auditoría, <code>internalsHookScript()</code> es un script opcional que permite al análisis
+				leer los <code>internals</code> que un componente guarda en privado, de modo que esos
+				elementos se aprueban o fallan en lugar de quedar en <code>cantTell</code>.{" "}
+				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>{" "}
+				(en GitHub) muestra cómo instalarlo antes de los scripts de la propia página.
+			</p>
+			<p>
+				En un navegador, el contraste se mide tal como se dibuja la página: el texto de una página
+				sin fondo propio, sobre el lienzo que pinta el navegador, claro u oscuro; el texto generado
+				con <code>::before</code>, <code>::after</code> y los marcadores de lista; un{" "}
+				<code>&lt;select&gt;</code> cerrado; y el texto dibujado solo con un contorno. Antes se
+				omitían o se preguntaba por ellos. Un único carácter que hace las veces del nombre de un
+				control, como la «X» de un botón llamado «Cerrar», se pregunta en lugar de fallar: saber si
+				es un icono o una letra requiere a una persona.
+			</p>
 
 			<h3 id="checked-against-the-act-corpus">Verificado contra el corpus de ACT</h3>
 			<p>
 				El motor incluye {rules.length} reglas. Cincuenta y nueve de ellas tienen una contraparte en{" "}
-				<a href="https://act-rules.github.io/"><span lang="en">W3C ACT Rules</span></a> y se ejecutan contra los propios
-				casos de prueba publicados por ACT: 821 ejemplos en esas 59 reglas. El motor no falla en ninguno de los ejemplos
-				que ACT marca como aprobados o no aplicables, por lo que no informa falsos positivos frente a ese
-				corpus. Treinta ejemplos que ACT marca como fallidos quedan sin señalar (en su mayoría son
-				juicios de valor, como si un encabezado describe el contenido que tiene debajo). Consulta{" "}
+				<a href="https://www.w3.org/WAI/standards-guidelines/act/rules/"><span lang="en">W3C ACT Rules</span></a>{" "}
+				y se ejecutan contra los casos de prueba que el W3C publica para ellas, el conjunto que puntúa
+				el propio listado de implementaciones del W3C: 942 ejemplos en esas 59 reglas. El motor no
+				falla en ninguno de los ejemplos que ACT marca como aprobados o no aplicables, por lo que no
+				informa falsos positivos frente a ese corpus. Es un resultado sobre esos ejemplos, no una
+				garantía para cualquier página; cuando el motor no puede decidir un caso, devuelve{" "}
+				<code>cantTell</code>, algo que ACT permite a una implementación automatizada.
+			</p>
+			<p>
+				Se cumple en los dos lugares donde se ejecuta el motor: en jsdom, como lo ejecutan
+				test-matchers y la CLI, y en Chromium, como lo hacen las integraciones de navegador, con cada
+				caso de prueba cargado como una página real, incluidos sus scripts y hojas de estilo
+				enlazadas. Veinticinco ejemplos que ACT marca como fallidos quedan sin señalar en jsdom, y 21
+				en Chromium. En su mayoría son juicios de valor, como si un encabezado describe el contenido
+				que tiene debajo; los cuatro que detecta el navegador necesitan los scripts o las hojas de
+				estilo de la propia página, que jsdom no ejecuta. Consulta{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a> para ver cada
 				uno, con el razonamiento.
 			</p>
 			<p>
-				El{" "}
-				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
-					informe de implementación EARL
-				</a>{" "}
-				registra el resultado de cada uno de esos casos, incluidos los resultados aprobados y no aplicables,
-				de modo que una regla que permaneció en silencio porque nada le era aplicable se distingue de una
-				que directamente no está implementada. Consulta{" "}
+				Dos informes de implementación EARL registran el resultado de cada uno de esos casos,
+				incluidos los resultados aprobados y no aplicables, de modo que una regla que permaneció en
+				silencio porque nada le era aplicable se distingue de una que directamente no está
+				implementada:{" "}
+				<a href="https://surea11y.github.io/act-report/act-report.jsonld" lang="en">SureA11y</a>,
+				ejecutado en jsdom, y{" "}
+				<a href="https://surea11y.github.io/act-report/act-report-browser.jsonld" lang="en">
+					SureA11y in a browser
+				</a>
+				, ejecutado en Chromium. Consulta{" "}
 				<a href="/results-reports/earl-report/">Informe EARL</a> para conocer el formato.
 			</p>
 

@@ -7,6 +7,74 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
+				<h2 id="results-changed-1-12">"My CI results changed after upgrading to core 1.12"</h2>
+				<p>
+					What the engine finds is mostly the same; where it lands, and a few rules, changed. The
+					changes most likely to show in a pipeline:
+				</p>
+				<ul>
+					<li>
+						<strong>An empty heading fails.</strong>{" "}
+						<a href="/rules/empty-heading/"><code>empty-heading</code></a> fails a heading with no
+						accessible name, where it asked about one. It is a best practice, so it runs in a scan
+						with no selection or with the best practices added, not under a WCAG target, tags or a
+						profile. Fix the heading, or scan a WCAG target.
+					</li>
+					<li>
+						<strong>
+							<a href="/rules/label-in-name/"><code>label-in-name</code></a> counts text hidden
+							only with <code>aria-hidden</code>
+						</strong>
+						, since it is still painted:{" "}
+						<code>{'Download <span aria-hidden="true">gizmo</span> specification'}</code> named
+						"Download specification" now fails 2.5.3.
+					</li>
+					<li>
+						<strong>Scans that name checks report their criteria.</strong> Rule ids, a tag that
+						names no WCAG level, or the best practices now fill <code>rulesResults</code> with the
+						criteria those rules belong to, where it was empty; a criterion whose other rules
+						weren't selected is <code>cantTell</code>, partly checked. Set{" "}
+						<code>engineOptions.wcagLevel</code> (<code>.wcagLevel()</code> in the bindings,{" "}
+						<code>--wcag-level</code> in the CLI) to keep them to a level. See{" "}
+						<a href="/conformance/wcag-mapping/">WCAG conformance mapping</a>.
+					</li>
+					<li>
+						<strong>Five rules count toward more criteria</strong>, as W3C's ACT rules map them:{" "}
+						<code>input-image-alt-present</code> adds 4.1.2, <code>aria-roles-valid</code> 1.3.1,{" "}
+						<code>link-name-present</code> and <code>link-name-quality</code> 2.4.9 (AAA), and{" "}
+						<code>meta-refresh-timing-absent</code> 2.2.4 and 3.2.5 (AAA). The findings don't
+						change, but the 1.3.1 and 4.1.2 rollups can now fail where they passed.
+					</li>
+					<li>
+						<strong>JUnit suite names are the same in every locale</strong> (
+						<code>WCAG 4.1.2</code>), and the title moves to the suite's <code>title</code>{" "}
+						property. A dashboard that tracks tests by suite name shows them once as new. See{" "}
+						<a href="/results-reports/junit-report/">JUnit report</a>.
+					</li>
+					<li>
+						<strong>Contrast is measured as the page is drawn.</strong> In a browser, text on a
+						page with no background, generated text (<code>::before</code>, <code>::after</code>,{" "}
+						<code>::marker</code>) and a closed <code>&lt;select&gt;</code> are measured, where
+						they were left out or <code>cantTell</code>, so new contrast failures can appear. A
+						lone character standing in for its control's name, such as "X" in a button named
+						"Close", is asked about rather than failed below the ratio.
+					</li>
+					<li>
+						<strong>Unnamed web components are questions.</strong> A defined custom element with no
+						readable name is <code>cantTell</code> where it failed; see{" "}
+						<a href="#web-component-canttell">the entry on web components</a>.
+					</li>
+				</ul>
+				<p>
+					The full list is in core's{" "}
+					<a href={`${core}/CHANGELOG.md`}>
+						<code>CHANGELOG.md</code>
+					</a>
+					.
+				</p>
+			</article>
+
+			<article>
 				<h2 id="runonly-threw">
 					"<code>runOnly</code> threw: no rule or tag named …, or either rule ids or tags"
 				</h2>
@@ -20,7 +88,8 @@ export function FaqContent() {
 					<li>
 						<strong>A value that names no rule and no tag</strong>, usually a typo:{" "}
 						<code>runOnly: ['img-alt-presnt']</code>. Check the id against{" "}
-						<code>getChecksCatalog()</code>.
+						<code>getChecksCatalog()</code>. Case is not the cause: rule ids and tags are matched
+						in any case, so <code>IMG-ALT-PRESENT</code> selects <code>img-alt-present</code>.
 					</li>
 					<li>
 						<strong>Rule ids and tags in one array</strong>:{" "}
@@ -47,6 +116,45 @@ export function FaqContent() {
 					<code>runOnly.tags: no tag named "wcag2.2aa".</code>). They used to run no rule at all,
 					which reads as a clean pass. A single unknown value beside known ones, or in an exclude
 					list, only logs a <code>console.warn</code>.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="tags-and-rules-run-nothing">
+					"I selected tags and rule ids, and the scan ran no rule but looks clean"
+				</h2>
+				<p>
+					Under the default <code>includeMode: 'and'</code>, a selection with both tags and rule ids
+					runs only the rules that match both. <code>.withTags('wcag2a').withRules('region')</code>{" "}
+					runs nothing, since <code>region</code> is a best practice with no <code>wcag2a</code>{" "}
+					tag, and a scan of no rules has no failures. The engine warns in the page's console,
+					which a test run doesn't show, and throws <code>INVALID_RUN_ONLY</code> only under{" "}
+					<code>strictOptions</code>. To run either, ask for it: <code>.includeMode('or')</code> in
+					the bindings, <code>includeMode: 'or'</code> in <code>runOnly</code> (above), or{" "}
+					<code>--include-mode or</code> in the <a href="/getting-started/cli/">CLI</a>. From version
+					1.3.0, the CLI exits <code>2</code> with that hint when the two have no rule in common.
+				</p>
+				<p>
+					To catch a selection that picks nothing before it runs, check the builder's{" "}
+					<code>plannedChecks()</code>, the rules the scan will run, worked out without a page (a
+					chainable in Cypress):
+				</p>
+				<CodeBlock
+					lang="js"
+					lines={[
+						"const builder = new A11yCoreBuilder({ page })",
+						"  .withTags('wcag2a')",
+						"  .withRules('region')",
+						"  .includeMode('or'); // the wcag2a rules, plus region",
+						"",
+						"if (builder.plannedChecks().length === 0) {",
+						"  throw new Error('This selection runs no rule.');",
+						"}",
+					]}
+				/>
+				<p>
+					See <a href="/configuration/engine-options/#via-runonly-4th-argument">Engine options</a>{" "}
+					for how the parts of a selection combine.
 				</p>
 			</article>
 
@@ -137,7 +245,8 @@ export function FaqContent() {
 					<li>
 						<strong>Everything is <code>notApplicable</code></strong>: look at{" "}
 						<code>result.contextMatch</code>. <code>elementCount: 0</code> means the selector
-						matched nothing, and <code>unmatchedSelectors</code> names it. Check it for a typo, or
+						matched nothing, so nothing was scanned: that is not a clean result.{" "}
+						<code>unmatchedSelectors</code> names the selector. Check it for a typo, or
 						whether the element is on the page yet when you scan (content rendered by a script
 						after load, say).
 					</li>
@@ -232,6 +341,35 @@ export function FaqContent() {
 			</article>
 
 			<article>
+				<h2 id="web-component-canttell">
+					"A web component comes back <code>cantTell</code> (<code>name_internals</code>)"
+				</h2>
+				<p>
+					A custom element that names itself, sets its states or gives itself a role through an{" "}
+					<code>ElementInternals</code> kept in a private field (<code>#internals</code>) is
+					exposed by the browser, but no page script can read that back. Since 1.12 the engine
+					reads internals kept on a property (<code>_internals</code>, <code>internals</code>, …),
+					and asks about any other defined custom element with no readable name or required state
+					(<code>name_internals</code>, <code>state_internals</code>) instead of failing it.
+				</p>
+				<p>
+					To let the scan judge such elements, install the internals hook before the page's
+					scripts run: <code>installInternalsHook()</code> in each binding (on the page or context
+					in <a href="/getting-started/playwright/">Playwright</a>, the page in{" "}
+					<a href="/getting-started/puppeteer/">Puppeteer</a>, the driver in{" "}
+					<a href="/getting-started/selenium/">Selenium</a>, the browser in{" "}
+					<a href="/getting-started/webdriverio/">WebdriverIO</a>, the support file or{" "}
+					<code>onBeforeLoad</code> in <a href="/getting-started/cypress/">Cypress</a>) and in{" "}
+					<a href="/getting-started/test-matchers/">test-matchers</a>' setup file, or core's{" "}
+					<code>internalsHookScript()</code> for a page of your own. The result's{" "}
+					<code>engine.environment.internalsHook</code> says whether it ran (<code>'early'</code>{" "}
+					or <code>'late'</code>). The hook lets any script on the page read every component's
+					internals, so it is meant for test and audit runs. See{" "}
+					<a href="/help/known-limitations/">Known limitations</a>.
+				</p>
+			</article>
+
+			<article>
 				<h2>
 					"I only see <code>fail</code>/<code>cantTell</code> occurrences — where's the list of
 					elements that passed?"
@@ -239,8 +377,10 @@ export function FaqContent() {
 				<p>
 					<strong>By design, this engine never enumerates the elements a rule <em>passed</em> — only the
 					ones it flagged.</strong> A rule's overall <code>outcome: 'pass'</code> means "applicable
-					target(s) existed and none were flagged," but <code>occurrences</code> is{" "}
-					<code>[]</code> either way. If you need to know which specific elements were checked and
+					target(s) existed and none were flagged," and <code>occurrences</code> is{" "}
+					<code>[]</code>. The contrast rules are the exception: their <code>pass</code> carries
+					one occurrence with an empty <code>selector</code> that describes the scan (how much
+					text was eligible and computable), not an element. If you need to know which specific elements were checked and
 					considered fine, that's not currently exposed — see{" "}
 					<a href="/results-reports/output-schema/"><code>OUTPUT_SCHEMA.md</code></a>.
 				</p>
@@ -281,7 +421,12 @@ export function FaqContent() {
 				<h2>"Does a clean scan (<code>pass</code> everywhere) mean the page is WCAG conformant?"</h2>
 				<p>
 					No — see <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
-					<strong>A <code>pass</code> means every <em>automatable</em> check came back clean.</strong> A meaningful
+					<strong>
+						A <code>pass</code> means the checks that ran came back clean on the part of the page
+						they scanned.
+					</strong>{" "}
+					A scan scoped to part of a page, limited to some rules, or run under jsdom checks less
+					than it could. A meaningful
 					fraction of WCAG requires human judgment (accurate alt text, understandable error
 					messages) or dynamic testing this engine's architecture can't do at all (keyboard traps,
 					reflow at zoom) — see <a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a> for
@@ -292,10 +437,11 @@ export function FaqContent() {
 			<article>
 				<h2>"Should I treat <code>cantTell</code> as a failure?"</h2>
 				<p>
-					<strong>Treat it as "needs a human to look" — it's neither pass nor fail by design.</strong> Most teams
-					log <code>cantTell</code> findings without failing CI on them, since failing a build on
-					something the engine explicitly couldn't determine tends to train people to ignore the
-					gate. See <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> if you want to
+					<strong>Treat it as "needs a human to look" — it's neither pass nor fail by design.</strong> A
+					common choice is to log <code>cantTell</code> findings without failing CI on them, since
+					failing a build on something the engine explicitly couldn't determine tends to train
+					people to ignore the gate. A team that wants every one reviewed before a merge can gate
+					on them instead; either way, keep them apart from failures. See <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> if you want to
 					reshape this behavior (e.g. via a custom policy contract), and{" "}
 					<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
 						<code>INTEGRATION.md</code>

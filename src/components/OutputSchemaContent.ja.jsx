@@ -47,7 +47,16 @@ const topLevelRows = [
 		field: <code>engine.wcagVersion</code>,
 		meaning: (
 			<>
-				このスキャンがどのバージョンのWCAGへの適合を検証したかを示します。<code>engineOptions.wcagVersion</code>の値、導入バージョンタグから推定された値、またはデフォルトの<code>"2.2"</code>のいずれかです。現在影響するのは1点だけで、<strong>SC 4.1.1（構文解析）だけに対応するルールは、2.2を対象にすると<code>fail</code>になりません</strong>（後述の<code>checksResults[i].wcagVersionScope</code>を参照）。1回のスキャンでは全体を通して対象は1つなので、結果ごとに1回だけ報告されます。
+このスキャンがどのバージョンのWCAGに照らしてチェックしたかを示します。<code>engineOptions.wcagVersion</code>の値、実行に適用されたパックのプロファイルの<code>wcagVersion</code>、導入バージョンタグから推定された値、またはデフォルトの<code>"2.2"</code>のいずれかです。現在影響するのは1点だけで、<strong>SC 4.1.1（構文解析）だけに対応するルールは、2.2を対象にすると<code>fail</code>になりません</strong>（後述の<code>checksResults[i].wcagVersionScope</code>を参照）。1回のスキャンでは全体を通して対象は1つなので、結果ごとに1回だけ報告されます。
+			</>
+		),
+	},
+	{
+		id: "engine.wcagLevel",
+		field: <code>engine.wcagLevel</code>,
+		meaning: (
+			<>
+				報告される達成基準を絞り込んだWCAGのレベルで、<code>"A"</code>、<code>"AA"</code>、<code>"AAA"</code>のいずれかです。指定されていて有効なら<code>engineOptions.wcagLevel</code>、そうでなければ選択が示すレベル（<code>runOnly.wcag.level</code>、またはプロファイルのタグも含め、選択のバージョン／レベルのタグが示す最も高いレベル）です。それより上のWCAGの集約は<code>rulesResults</code>に含まれませんが、そのルールは実行されており、<code>checksResults</code>に含まれます。選択がIDで指定した集約は、<code>engineOptions.wcagLevel</code>にかかわらず報告されます。全体のスキャンやルールだけを指定したスキャンのようにレベルがない場合は含まれず、その場合はすべてのレベルが報告されます。レポーターは、示す達成基準をこれで絞り込みます。<a href="/configuration/engine-options/#giving-the-level-of-a-scan-that-names-checks-wcaglevel">チェックを指定するスキャンのレベルを示す</a>を参照してください。
 			</>
 		),
 	},
@@ -65,7 +74,7 @@ const topLevelRows = [
 		field: <code>engine.profileExcludes</code>,
 		meaning: (
 			<>
-				適用されたプロファイルがルールを除外する場合にだけ含まれます。<code>{"{ rules, criteria }"}</code>で、指定されたルールと、除外されるWCAGの達成基準です。それらのルールとWCAGの集約は実行されていません。これはスキャンの範囲を狭めるもので、WCAGが求めることは変わりません。組み込みのプロファイルで何かを除外するものはありません。
+				適用されたプロファイルがルールを除外する場合にだけ含まれます。<code>{"{ rules, criteria }"}</code>で、指定されたルールと、除外されるWCAGの達成基準です。指定されたルール、すべての達成基準が除外されるルール、除外される達成基準のWCAGの集約は実行されていません。プロファイルが残す達成基準もチェックするルールは実行され、その達成基準に数えられます。これはスキャンの範囲を狭めるもので、WCAGが求めることは変わりません。組み込みのプロファイルで何かを除外するものはありません。
 			</>
 		),
 	},
@@ -110,7 +119,7 @@ const topLevelRows = [
 		field: <code>engine.environment</code>,
 		meaning: (
 			<>
-				ページがレンダリングされた条件です。スキャンの開始時、どのルールも実行される前にページから読み取ります。<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>のようにレイアウトを計測するルールは、同じマークアップでも、ビューポートの幅が違ったり、Webフォントがまだ読み込み中だったりすると別の判定結果になることがあるため、実行を再現するにはこの情報が必要です。<code>layout</code>はページにレイアウトがあったかどうかです。jsdomなどのDOMエミュレーターでは<code>false</code>になり、その場合はこれが唯一のフィールドです。ブラウザーでは、<code>viewport</code>はCSSピクセル単位の<code>innerWidth</code>／<code>innerHeight</code>、<code>devicePixelRatio</code>はページのデバイスピクセル比（ブラウザーのズームもここに表れます）、<code>colorScheme</code>は<code>prefers-color-scheme</code>が一致する値、<code>fonts</code>はページのフォントフェイスのいずれかがまだ読み込み中なら<code>"loading"</code>、それ以外は<code>"loaded"</code>です。ページが報告できないフィールドは省略されます。これらを読み取っても非決定性は加わりません。DOMと同じく、入力だからです。実行間で比較できる結果が必要なら、スキャンの前に<code>document.fonts.ready</code>を待ってください。<code>images</code>は、いずれかの画像がまだ読み込み中なら<code>"loading"</code>、それ以外は<code>"loaded"</code>です。後から届いた画像は、レイアウトのルールが計測したものを動かすことがあるため、比較できる結果が必要なら、ページの<code>load</code>イベントの後にスキャンしてください。<code>loading="lazy"</code>の画像は、読む人がスクロールするまで読み込まれないため除外されます。<code>animationsSettled</code>は、スキャンが静止させた実行中のアニメーションとトランジションの数です。スキャンの間、有限のもの（フェードインなど）は終了時点の状態で、無限に繰り返すもの（マーキーやスピナーなど）は開始時点の状態で読み取り、その後それぞれを元の位置に正確に戻します。そのため、フェードインの途中でスキャンしたページも、その後にスキャンしたページと同じ結果になります。スキャンは1つの同期タスクなので、静止させた状態がブラウザーに描画されることはありません。<a href="#cross-frame-result">フレームをまたぐ結果</a>では、各フレームがそれぞれ独自の値を持ちます。
+				ページがレンダリングされた条件です。スキャンの開始時、どのルールも実行される前にページから読み取ります。<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>のようにレイアウトを計測するルールは、同じマークアップでも、ビューポートの幅が違ったり、Webフォントがまだ読み込み中だったりすると別の判定結果になることがあるため、実行を再現するにはこの情報が必要です。<code>layout</code>はページにレイアウトがあったかどうかです。jsdomなどのDOMエミュレーターでは<code>false</code>になり、その場合、ビューポートなどのレンダリングのフィールドは、計測されたものを何も表さないため省略されます。並びうるのは、ページがフックを実行している場合の<code>internalsHook</code>だけです。ブラウザーでは、<code>viewport</code>はCSSピクセル単位の<code>innerWidth</code>／<code>innerHeight</code>、<code>devicePixelRatio</code>はページのデバイスピクセル比（ブラウザーのズームもここに表れます）、<code>colorScheme</code>は<code>prefers-color-scheme</code>が一致する値、<code>forcedColors</code>は<code>forced-colors: active</code>が一致するかどうか（Windowsのハイコントラストや、Chromiumでエミュレートした強制カラーのもとでは<code>"active"</code>、それ以外は<code>"none"</code>。どちらの場合もルールはページ自身の色を計測します。<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}><code>LAYOUT_MEASUREMENT.md</code></a>を参照）、<code>fonts</code>はページのフォントフェイスのいずれかがまだ読み込み中なら<code>"loading"</code>、それ以外は<code>"loaded"</code>です。ページが報告できないフィールドは省略されます。これらを読み取っても非決定性は加わりません。DOMと同じく、入力だからです。実行間で比較できる結果が必要なら、スキャンの前に<code>document.fonts.ready</code>を待ってください。<code>images</code>は、いずれかの画像がまだ読み込み中なら<code>"loading"</code>、それ以外は<code>"loaded"</code>です。後から届いた画像は、レイアウトのルールが計測したものを動かすことがあるため、比較できる結果が必要なら、ページの<code>load</code>イベントの後にスキャンしてください。<code>loading="lazy"</code>の画像は、読む人がスクロールするまで読み込まれないため除外されます。<code>animationsSettled</code>は、スキャンが静止させた実行中のアニメーションとトランジションの数です。スキャンの間、有限のもの（フェードインなど）は終了時点の状態で、無限に繰り返すもの（マーキーやスピナーなど）は開始時点の状態で読み取り、その後それぞれを元の位置に正確に戻します。そのため、フェードインの途中でスキャンしたページも、その後にスキャンしたページと同じ結果になります。スキャンは1つの同期タスクなので、静止させた状態がブラウザーに描画されることはありません。<code>internalsHook</code>は、スキャンしたドキュメントでページがオプトインの内部フック（<code>internalsHookScript()</code>。<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}><code>INTEGRATION.md</code></a>を参照）を実行している場合にだけ、レイアウトの有無にかかわらず含まれます。ページのスクリプトより前にインストールされ、今もページの<code>attachInternals</code>であれば<code>"early"</code>で、スキャンはすべてのカスタム要素の<code>ElementInternals</code>を読み取っており、それを持たない要素について問いは生じません。ページのスクリプトより後にインストールされた場合、またはその後でページが<code>attachInternals</code>を置き換えた場合は<code>"late"</code>で、フックより後に関連付けられた内部状態だけが読み取られています。フックがなければこのフィールドはなく、結果はこれまでと同じです。<a href="#cross-frame-result">フレームをまたぐ結果</a>では、各フレームがそれぞれ独自の値を持ちます。
 			</>
 		),
 	},
@@ -162,7 +171,7 @@ const topLevelRows = [
 		field: <code>rulesResults</code>,
 		meaning: (
 			<>
-				実行された<strong>複合ルール（集約ルール）</strong>ごとに1件のエントリです。<a href="#composite-result">複合ルールの結果</a>と<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。通常はWCAGの達成基準ごとに1件ですが、独自の集約を持つ規格のプロファイルで実行した場合は、それらも含まれます（<code>meta.standard</code>が設定されます）。現在の<code>runOnly</code>やタグのフィルターに一致する複合ルールがなければ空の配列です。
+				実行された<strong>複合ルール（集約ルール）</strong>ごとに1件のエントリです。<a href="#composite-result">複合ルールの結果</a>と<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。通常はWCAGの達成基準ごとに1件ですが、独自の集約を持つ規格のプロファイルで実行した場合は、それらも含まれます（<code>meta.standard</code>が設定されます）。選択が選んだ集約と、選択が単独で（IDなどで）指定したルールがチェックする達成基準の集約を含み、後者は<a href="#partly-checked">一部だけチェックされた</a>ものでありえます（<a href="/configuration/engine-options/#which-criteria-a-scan-reports">スキャンが報告する達成基準</a>を参照）。どちらもなければ空の配列です。
 			</>
 		),
 	},
@@ -198,7 +207,7 @@ const topLevelRows = [
 		field: <code>skippedCustomRules</code>,
 		meaning: (
 			<>
-				実行されなかった<code>engineOptions.customRules</code>のエントリで、それぞれ<code>{"{ id, reason }"}</code>の形です（エントリにIDがなければ<code>id</code>は<code>null</code>）。理由は、IDがない、<code>runInPage</code>が関数でないかソースから再構築できない、<code>meta</code>が検証に通らない、別のカスタムルールがすでにそのIDを持っている、複合ルールのIDである、のいずれかです。あるいは、妥当なルールでも実行の選択に含まれない場合（プロファイルやWCAGの目標のもとで、<code>best-practice</code>のタグを持つか、WCAGのタグを持たないルール）で、その場合の<code>reason</code>はルールを選択する方法を示します。常に配列で、すべてのカスタムルールが実行されれば空です。それぞれ<code>console.warn</code>でも記録されます。ここに挙がったルールはどの結果にも含まれないため、ルールを除外したスキャンと、そのルールが<code>pass</code>になったスキャンを区別できます。
+				実行されなかった<code>engineOptions.customRules</code>のエントリで、それぞれ<code>{"{ id, reason }"}</code>の形です（エントリにIDがなければ<code>id</code>は<code>null</code>）。理由は、IDがない、<code>runInPage</code>が関数でないかソースから再構築できない、<code>meta</code>が検証に通らない、別のカスタムルールがすでにそのIDを持っている、複合ルールのIDである、のいずれかです。あるいは、妥当なルールでも実行の選択に含まれない場合（プロファイルやWCAGの目標のもとで、<code>best-practice</code>のタグを持つか、WCAGのタグを持たないルール）で、その場合の<code>reason</code>はルールを選択する方法を示します。あるいは、選択の除外（<code>excludeRuleIds</code>、<code>excludeTestIds</code>、<code>excludeTags</code>、<code>rules.exclude</code>など）が外したルールで、その場合の<code>reason</code>は<code>excluded by the selection.</code>になり、<code>excluded: true</code>も付きます。そのため、ツールは理由を読まなくても、呼び出し側の選択と抜けを区別できます。常に配列で、すべてのカスタムルールが実行されれば空です。それぞれ<code>console.warn</code>でも記録されますが、呼び出し側が外すよう求めた除外ルールは記録されません。ここに挙がったルールはどの結果にも含まれないため、ルールを除外したスキャンと、そのルールが<code>pass</code>になったスキャンを区別できます。
 			</>
 		),
 	},
@@ -219,7 +228,7 @@ const occurrenceRows = [
 		field: <code>shadowHostSelectors</code>,
 		meaning: (
 			<>
-				シャドウツリー内の要素にだけ含まれます。その要素に至るシャドウホストのセレクターを外側から順に並べたもので、それぞれ自分を含むツリーの中で解決されます。そのため、<code>document.querySelector(s[0]).shadowRoot.querySelector(s[1])…shadowRoot.querySelector(selector)</code>で要素が見つかります。同じ内容を持つ2つのコンポーネントは<code>selector</code>が同じになり、ここで区別されます。<code>selector</code>と同じく、検出結果の識別には含まれません。
+				シャドウツリー内の要素にだけ含まれます。その要素に至るシャドウホストのセレクターを外側から順に並べたもので、それぞれ自分を含むツリーの中で解決されます。そのため、<code>document.querySelector(s[0]).shadowRoot.querySelector(s[1])…shadowRoot.querySelector(selector)</code>で要素が見つかります。同じ内容を持つ2つのコンポーネントは<code>selector</code>が同じになり、ここで区別されます。<code>selector</code>と同じく、検出結果の識別には含まれません。<a href="/results-reports/html-report/">HTMLレポート</a>、<a href="/results-reports/sarif-report/">SARIF</a>（<code>logicalLocations</code>）、<a href="/results-reports/junit-report/">JUnit</a>、ベースラインのエントリーは、この2つを1つの位置として、ホスト、続いてセレクターを<code>{" >>> "}</code>でつないで示します（<code>{"#card >>> img"}</code>）。
 			</>
 		),
 	},
@@ -275,8 +284,8 @@ const occurrenceRows = [
 		field: <code>occurrenceOutcome</code>,
 		meaning: (
 			<>
-				検出結果を確実な<code>fail</code>の層と、レビューが必要な<code>cantTell</code>の層に分けて評価するルールで、この検出箇所がどちらの層に属するかを示します。1つの層しか報告しないルールでは省略され、その場合は結果自体の<code>outcome</code>が検出箇所の層になります。判定結果は常に層と一致します。<code>fail</code>の層の検出箇所が1つでもあれば<code>fail</code>になり、検出箇所がすべて<code>cantTell</code>の層である<code>fail</code>は<code>cantTell</code>になるため、SARIF、JUnit、EARL、ベースラインは同じ答えを返します。カスタムルールやパックのルールが食い違うものを返した場合はエンジンが整合させます。デフォルトのポリシーでは、手動ルールが<code>fail</code>になることはありません。
-			</>
+				検出結果を確実な<code>fail</code>の層と、レビューが必要な<code>cantTell</code>の層に分けて評価するルールで、この検出箇所がどちらの層に属するかを示します。1つの層しか報告しないルールでは省略され、その場合は結果自体の<code>outcome</code>が検出箇所の層になります。判定結果は常に層と一致します。<code>fail</code>の層の検出箇所が1つでもあれば<code>fail</code>になり、検出箇所がすべて<code>cantTell</code>の層である<code>fail</code>は<code>cantTell</code>になるため、SARIF、JUnit、EARL、ベースラインは同じ答えを返します。カスタムルールやパックのルールが食い違うものを返した場合はエンジンが整合させます。デフォルトのポリシーでは、手動ルールが<code>fail</code>になることはありません。レポーターは、エンジンがこれを行う前に保存された結果も、その<code>engineOptions</code>が記録するポリシーのもとで同じ規則で読み、読んだものからWCAGの集約をまとめ直します。
+</>
 		),
 	},
 	{ id: "uncertainty", field: <code>uncertainty</code>, meaning: <>この検出結果を判定できなかった理由です。後述の<a href="#uncertainty-codes">不確実性コード</a>を参照してください。</> },
@@ -289,6 +298,16 @@ const uncertaintyRows = [
 	{ id: "equivalence-unknown", code: <code>equivalence-unknown</code>, meaning: "2つのものが同じ目的を果たしているかどうかが、マークアップからも内容からも判断できません。", shape: "アクセシブルな名前は同じなのに、異なるリソースを埋め込んでいる2つのフレーム。" },
 	{ id: "judgement-required", code: <code>judgement-required</code>, meaning: "問いそのものが、本質的に人間の判断を必要とします。", shape: "サイズの小さいターゲットが必須かどうか。type: \"manual\"のルールはすべてこれに当たります。" },
 	{ id: "out-of-scope", code: <code>out-of-scope</code>, meaning: "検出結果自体は本物ですが、このスキャンが対象とする規格の範囲外です。", shape: "対象のWCAGバージョンで削除された達成基準だけに対応するルール。" },
+];
+
+const rollupReasonRows = [
+	{ id: "anyFail", code: <code>composite.rollup.fail.anyFail</code>, outcome: <code>fail</code>, when: <>構成ルールのいずれかが<code>fail</code>です。</> },
+	{ id: "anyCantTell", code: <code>composite.rollup.cantTell.anyCantTell</code>, outcome: <code>cantTell</code>, when: <><code>fail</code>のものはなく、<code>cantTell</code>のものがあります。</> },
+	{ id: "notSelectedChild", code: <code>composite.rollup.cantTell.notSelectedChild</code>, outcome: <code>cantTell</code>, when: <><code>fail</code>や<code>cantTell</code>のものはなく、スキャンが選ばなかったために実行されなかったものがあります。一部だけチェックされた状態です。</> },
+	{ id: "missingChild", code: <code>composite.rollup.cantTell.missingChild</code>, outcome: <code>cantTell</code>, when: <><code>fail</code>や<code>cantTell</code>のものはなく、別の理由で実行されなかったものがあります。</> },
+	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>すべての構成ルールが<code>notApplicable</code>です。</> },
+	{ id: "emptyComposite", code: <code>composite.rollup.cantTell.emptyComposite</code>, outcome: <code>cantTell</code>, when: "集約にルールがありません。" },
+	{ id: "otherwise", code: <code>composite.rollup.pass.otherwise</code>, outcome: <code>pass</code>, when: "上記以外の場合。" },
 ];
 
 const outcomeRows = [
@@ -315,7 +334,8 @@ export function OutputSchemaContent() {
 					"    schemaVersion: string,",
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
-					'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+					'    wcagLevel?: "A" | "AA" | "AAA",',
+'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
 					"    optInRules?: string[],",
@@ -326,9 +346,11 @@ export function OutputSchemaContent() {
 					"      viewport?: { width: number, height: number },  // CSS px",
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
+					'      forcedColors?: "active" | "none",',
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
-					"      animationsSettled?: number",
+					"      animationsSettled?: number,",
+					'      internalsHook?: "early" | "late"  // only where the page runs the internals hook',
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -341,7 +363,7 @@ export function OutputSchemaContent() {
 					"  rulesResults: CompositeResult[],",
 					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
-					"  skippedCustomRules: Array<{ id: string | null, reason: string }>,",
+"  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
 					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
 					"}",
 				]}
@@ -467,7 +489,7 @@ export function OutputSchemaContent() {
 					<strong><code>meta.normativeMappings</code></strong>は、チェック結果をWCAGの達成基準に結び付けるものです。空のリストは、この結果ではそのルールに正式な対応がないことを意味します。それはルールが自動か手動かを示すものではありません。それには<code>type</code>を読んでください（例えば<code>aria-allowed-role</code>は自動ルールで、WCAGとの対応がありません）。これらがどう集約されるかは<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。<strong>このリストはWCAGだけのものではありません。</strong>スキャンが別の規格を要求した場合（<code>engineOptions.mappings</code>、または規格のプロファイル）、WCAGの各達成基準の後に、その規格で対応する要件が続きます。例えば、その達成基準を再掲するEN 301 549の条項です（<code>{'{ standard: "EN 301 549", version: "V3.2.1" | "V4.1.1", requirement: "9.1.1.1", title, wcagSc: ["1.1.1"] }'}</code>。その達成基準を含むバージョンごとに1件）。また、ルールがWCAGのUnderstanding文書を引用することもあります（<code>type: "Understanding"</code>）。<code>requirement</code>を達成基準として読む前に、<code>standard</code>（と<code>type</code>がないこと）で絞り込んでください。複合ルールのWCAGのエントリーは常に先頭です。<a href="/conformance/wcag-mapping/#en-301-549">EN 301 549</a>を参照してください。
 				</li>
 				<li>
-					<strong><code>rollupIds</code></strong>は、この実行でこのルールをまとめている<code>rulesResults</code>内の複合ルールを列挙します。空のリストは、そのルールの検出結果がどの集約にも現れないことを意味するため、<code>rulesResults</code>だけを読む利用者には決して見えません。例えば<code>heading-order</code>はどのWCAGの集約にも属していません。
+					<strong><code>rollupIds</code></strong>は、この実行でこのルールをまとめている<code>rulesResults</code>内の複合ルールを列挙します。選択がそのルールを単独で指定したために報告された複合ルールも含みます。空のリストは、そのルールの検出結果がどの集約にも現れないことを意味するため、<code>rulesResults</code>だけを読む利用者には決して見えません。例えば<code>heading-order</code>はどのWCAGの集約にも属していません。
 				</li>
 				<li>
 					<strong><code>wcagVersionScope</code></strong>：スキャンの対象WCAGバージョンによって、このルールの<code>fail</code>が<code>cantTell</code>に変わった場合にだけ含まれます。現時点では、デフォルトの2.2を対象としたときの、SC 4.1.1（構文解析）に対応するルール（<code>duplicate-id</code>）がこれに当たります。2.2でその達成基準が削除されたためです。<code>removedSc</code>は存在しなくなった達成基準、<code>target</code>はそれを削除したバージョン、<code>coercedFrom</code>はルール自身が報告した判定結果です。検出箇所はルール自身のもので、手を加えていません。捨てられたものは何もなく、変わったのは適合の判定だけです。それ以外の結果には含まれず、<code>error</code>で報告されることも<strong>ありません</strong>。何も問題は起きていないからです。<a href="/configuration/engine-options/#filtering-by-wcag-version">WCAGバージョンによる絞り込み</a>を参照してください。
@@ -572,7 +594,7 @@ export function OutputSchemaContent() {
 					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
 					"      customChecksIds?: string[], // the custom rules among them; absent when none",
-					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true }>,",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -585,6 +607,19 @@ export function OutputSchemaContent() {
 			<p>
 				WCAGの集約のルールは、それ自身のリストに加えて、実行されて（<code>meta.wcagSc</code>または<code>meta.normativeMappings</code>のWCAGのエントリーを通じて）その達成基準のいずれかに対応する<code>engineOptions.customRules</code>のすべてのルールです。それらは貢献したルールの中で<code>custom: true</code>が付き、<code>customChecksIds</code>に列挙されるため、カスタムルールが判定結果を決めたことが読み手に分かります。規格独自の集約は、それ自身のリストを保ちます。
 			</p>
+			<p id="partly-checked">
+				<strong>一部だけチェックされた達成基準。</strong>達成基準ではなくルールを指定するスキャン（<code>{"includeRuleIds: ['link-name-present']"}</code>）は、選択がその達成基準自体を選んでいない場合でも、それらのルールがチェックする達成基準の集約を受け取ります（<a href="/configuration/engine-options/#which-criteria-a-scan-reports">スキャンが報告する達成基準</a>を参照）。上の優先順位はほかと同じようにこれを決めるため、<code>fail</code>のルールがあれば達成基準も<code>fail</code>になり、スキャンが選ばなかったルールがあると<code>pass</code>にはなりません。そうしたルールはそれぞれ<code>outcome: "missing"</code>と<code>notSelected: true</code>を持つ構成ルールで、これまでどおり<code>missingCount</code>に数えられます。それらが原因で集約が<code>cantTell</code>になる場合、その<code>reasonCode</code>は<code>composite.rollup.cantTell.notSelectedChild</code>で、<a href="/results-reports/html-report/">HTMLレポート</a>には「一部のみ確認」と、選択されなかったチェックの数が表示されます。<code>composite.rollup.cantTell.missingChild</code>は引き続き、プロファイルが除外したルール（<code>engine.profileExcludes</code>）のように、別の理由で実行されなかったルールを意味し、それに<code>notSelected</code>が付くことはありません。
+			</p>
+			<DataTable
+				label="集約の理由コード"
+				rowKey="id"
+				columns={[
+					{ key: "code", label: "reasonCode", width: "40%" },
+					{ key: "outcome", label: "判定結果", width: "16%" },
+					{ key: "when", label: "条件", wrap: true },
+				]}
+				rows={rollupReasonRows}
+			/>
 
 			<h2>判定結果の値</h2>
 			<DataTable
@@ -682,14 +717,48 @@ export function OutputSchemaContent() {
 					"      ]",
 					"    }",
 					"  ],",
-					'  "rulesResults": [],',
-					'  "overriddenBuiltinIds": [],',
+					'  "rulesResults": [',
+					"    {",
+					'      "ruleId": "wcag-1.1.1-non-text-content",',
+					'      "outcome": "fail",',
+					'      "severity": "serious",',
+					'      "title": "Non-text content: text alternatives",',
+					'      "occurrences": [],',
+					'      "data": {',
+					'        "details": {',
+					'          "reasonCode": "composite.rollup.fail.anyFail",',
+					'          "checksIds": ["area-alt-present", "img-alt-decorative", "img-alt-quality", "..."],',
+					'          "contributors": [',
+					'            { "testId": "area-alt-present", "outcome": "missing", "notSelected": true },',
+					'            "...",',
+					'            { "testId": "img-alt-present", "outcome": "fail", "severity": "serious" },',
+					'            "..."',
+					"          ],",
+					'          "metrics": { "failCount": 1, "cantTellCount": 0, "notApplicableCount": 0, "passCount": 0, "missingCount": 20 }',
+					"        }",
+					"      }",
+					"    },",
+					"    {",
+					'      "ruleId": "wcag-4.1.2-name",',
+					'      "outcome": "fail",',
+					'      "severity": "serious",',
+					'      "title": "Name, role, value: accessible name",',
+					'      "occurrences": [],',
+					'      "data": {',
+					'        "details": {',
+					'          "reasonCode": "composite.rollup.fail.anyFail",',
+					'          "metrics": { "failCount": 1, "cantTellCount": 0, "notApplicableCount": 0, "passCount": 0, "missingCount": 23 }',
+					"        }",
+					"      }",
+					"    }",
+					"  ],",
+'  "overriddenBuiltinIds": [],',
 					'  "skippedCustomRules": []',
 					"}",
 				]}
 			/>
 			<p>
-				（読みやすさのために省略しています。実際の結果では、上に示した完全な形のとおり、すべてのエントリに<code>title</code>/<code>description</code>/<code>i18n</code>/<code>meta</code>/<code>engineOptions</code>/<code>schemaVersion</code>も含まれます。<code>runOnly.includeRuleIds</code>でスキャンを2つのアトミックルールに絞り、複合ルール自体のIDは含めていないため、ここでは<code>rulesResults</code>が空になっています。）
+				（読みやすさのために省略しています。実際の結果では、上に示した完全な形のとおり、すべてのエントリに<code>title</code>/<code>description</code>/<code>i18n</code>/<code>meta</code>/<code>engineOptions</code>/<code>schemaVersion</code>も含まれ、各集約のすべての構成ルールも含まれます。<code>rulesResults</code>には、指定した2つのルールがチェックする達成基準が入ります。<code>img-alt-present</code>の1.1.1と<code>button-name-present</code>の4.1.2で、どちらもそのルールが<code>fail</code>なので<code>fail</code>です。それらの達成基準のほかのルールは選ばれていないため、<code>notSelected: true</code>付きの<code>missing</code>になります。<code>fail</code>のルールがなければ、その達成基準は<code>cantTell</code>（<code>notSelectedChild</code>）、つまり<a href="#partly-checked">一部だけチェックされた</a>状態になります。各チェック結果の<code>rollupIds</code>は、その集約を示します。）
 			</p>
 		</>
 	);

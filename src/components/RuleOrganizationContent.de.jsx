@@ -30,18 +30,21 @@ export function RuleOrganizationContent() {
 					diesen Situationen: Es gibt einen echten Verstoß, der aber für sich allein nicht belegt,
 					dass das zugeordnete WCAG-Kriterium verletzt ist (eine ARIA-Anforderung an Autoren,
 					bei der der bereitgestellte Name, die Rolle bzw. der Wert trotzdem erhalten bleibt); die Regel entscheidet
-					deterministisch, beansprucht aber gar kein Erfolgskriterium (<code>aria-allowed-role</code>,
-					als Best Practice getaggt); oder die Regel kann nur bestätigen, dass ein Mechanismus{" "}
+					deterministisch, dass eine Best Practice verletzt ist, beansprucht kein Erfolgskriterium,
+					und das Gefundene muss niemandem schaden, da die Rolle oder das Element assistive
+					Technologien so erreicht, wie es ist (<code>aria-allowed-role</code>,{" "}
+					<code>landmark-role-name-present</code>, als Best Practice getaggt); oder die Regel kann nur bestätigen, dass ein Mechanismus{" "}
 					<em>vorhanden</em> ist, während die Frage, ob das Vorhandene tatsächlich gültig ist,
 					einer Schwesterregel gehört (<code>aria-required-children</code>, gepaart mit{" "}
 					<code>aria-prohibited-children</code>); oder die Regel kann nicht ohne Raten entscheiden und
-					fragt deshalb, statt fehlzuschlagen: ein Name, der aus einem geschlossenen Shadow Root oder
-					aus zu tief verschachteltem Inhalt stammen kann (die <code>*-name-present</code>-Regeln),
+					fragt deshalb, statt fehlzuschlagen: ein Name, der aus einem geschlossenen Shadow Root, aus{" "}
+					<code>ElementInternals</code>, die die Engine nicht lesen kann, oder aus zu tief
+					verschachteltem Inhalt stammen kann (die <code>*-name-present</code>-Regeln),
 					Text, der nach dem Erhöhen der Abstände abgeschnitten werden oder sich überlappen kann (
 					<code>text-spacing-content-loss</code>), ein Orientierungs-Media-Block, der ein anderes
 					Element als den Inhalt der Seite dreht (
-					<code>css-orientation-lock</code>), ein Platzhalter unter seinem Verhältnis (
-					<code>contrast-minimum</code>) oder eine Farbe oder Größe, die sich nicht berechnen lässt
+					<code>css-orientation-lock</code>), ein Platzhalter oder ein einzelnes Zeichen, das für den
+					Namen seines Bedienelements steht, unter seinem Verhältnis (<code>contrast-minimum</code>) oder eine Farbe oder Größe, die sich nicht berechnen lässt
 					(die Kontrastregeln, <code>target-size-minimum</code>). Eine Regel, die eine Ausnahme wirft,
 					wird zur Absicherung ebenfalls als <code>cantTell</code> gemeldet.
 				</li>
@@ -58,6 +61,15 @@ export function RuleOrganizationContent() {
 					zutrifft, meldet nie <code>pass</code>.
 				</li>
 			</ul>
+			<p>
+				Eine als Best Practice getaggte Regel beansprucht kein Erfolgskriterium und meldet trotzdem{" "}
+				<code>fail</code>, wenn das, was sie entscheidet, selbst eine Barriere ist: Eine leere
+				Überschrift wird als Überschrift ohne Inhalt angesagt (
+				<a href="/rules/empty-heading/"><code>empty-heading</code></a>, wie die ACT-Regel des W3C
+				dafür es meldet). Ihr <code>fail</code> sagt, dass die eigene Erwartung der Regel nicht
+				erfüllt ist, nicht die eines Kriteriums: Keine zusammengesetzte WCAG-Regel zählt es mit. Wo
+				der Befund niemandem schaden muss, meldet sie stattdessen <code>cantTell</code>, wie oben.
+			</p>
 			<p>
 				<strong>Ein <code>cantTell</code> einer manuellen Regel ist nicht dasselbe Ereignis wie ein{" "}
 				<code>cantTell</code> einer automatischen Regel, auch wenn der Wert identisch ist</strong>:

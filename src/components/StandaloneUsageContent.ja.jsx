@@ -36,8 +36,25 @@ export function StandaloneUsageContent() {
 				<code>require</code>
 				やモジュールシステムなしで関数を
 				<em>読み込む</em>
-				ためだけにあり、別のAPIを追加するものではありません。
+				ためだけにあり、別のAPIを追加するものではありません。引数もほかの場所と同じです。次の例は、1つの領域に絞り、WCAG 2.2のAとAAに限定し、ノイズの多い2つのウィジェットを除外したスキャンです。
 			</p>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(",
+					"    location.href,",
+					"    '#main', // contextSelector: scan only this region",
+					"    {",
+					"      excludeSelectors: ['#cookie-banner', '.intercom-launcher'],",
+					"      contrast: { mode: 'auditorAssist' } // trade some false-positive protection for more findings",
+					"    },",
+					"    { wcag: { version: '2.2', level: 'AA' } } // runOnly",
+					"  );",
+					"</script>",
+				]}
+			/>
 			<p>
 				<strong>バンドルに含まれるのは英語だけです。</strong>
 				ほかのロケールはそれぞれ別ファイルとしてバンドルの横に同梱しています。バンドルの後に読み込むと、その言語が使えるようになります。
@@ -83,7 +100,13 @@ export function StandaloneUsageContent() {
 				<code>require('@surea11y/core')</code>
 				を直接呼び出すのが、もう1つのスタンドアロンな方法です。
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
-				の<span lang="en">Pattern 1</span>/<span lang="en">Pattern 2</span>にあたります。実際のブラウザーなしでNode上のjsdomを使う方法と、バインディングを経由せずにPuppeteer/Playwrightを自分で操作する方法です。
+				の<span lang="en">Pattern 1</span>/<span lang="en">Pattern 2</span>にあたります。実際のブラウザーなしでNode上のjsdomを使う方法と、バインディングを経由せずにPuppeteer/Playwrightを自分で操作する方法です。テストでは、
+				<code>@surea11y/core/testing</code>
+				の
+				<code>runa11yCoreOnHtml(html, options)</code>
+				が、ドキュメントを用意したうえでHTML文字列をjsdomでスキャンします。core 1.12からは、その
+				<code>contentType</code>
+				オプションで、SVGやXHTMLのドキュメントをその形式どおりに解析できます。
 			</p>
 
 			<h2 id="packs-in-a-page">ページ内でのパック</h2>
@@ -161,7 +184,7 @@ export function StandaloneUsageContent() {
 				<code>5000</code>
 				）まで待ちます。rejectすることはありません。時間切れになってもresolveし、
 				<code>ready: false</code>
-				とともに、まだ完了していなかったものを示します。
+				とともに、まだ完了していなかったものを示します。それでもスキャンするか、もっと待つか、やめるかは、あなたが決めることです。スキャンする場合は、未完了だったものを結果と一緒に残してください。
 			</p>
 			<CodeBlock
 				lang="js"
@@ -188,7 +211,7 @@ export function StandaloneUsageContent() {
 
 			<h2 id="a-time-limit-on-a-scan">スキャンの制限時間</h2>
 			<p>
-				スキャンはページ内で一度に実行され、いったん始まるとページ内のどれもそれを止められません。戻らないページのゲッターやルールは、そのタブを止めたままにします。スキャンを開始する側で時間を制限し、制限を過ぎたらそのタブを諦めてください。60秒は通常のページにかかる時間をはるかに上回るので、引っかかるのは壊れたページだけです。
+				スキャンはページ内で一度に実行され、いったん始まるとページ内のどれもそれを止められません。戻らないページのゲッターやルールは、そのタブを止めたままにします。スキャンを開始する側で時間を制限し、制限を過ぎたらそのタブを諦めてください。時間制限で止まるのは待機であり、ページ内で実行中のスクリプトではありません。60秒は通常のページにかかる時間をはるかに上回るので、引っかかるのは壊れたページだけです。
 			</p>
 			<CodeBlock
 				lang="js"
@@ -219,6 +242,89 @@ export function StandaloneUsageContent() {
 			/>
 			<p>
 				jsdomではスキャンがNode自身のスレッドで実行されるため、そこでのタイマーはスキャンが終わるまで発火できません。スキャンをワーカースレッドか子プロセスで実行し、制限を過ぎたらそれを終了してください。どちらの場合も、最後の手段はCIジョブ自体の制限時間です。
+			</p>
+
+			<h2 id="internals-hook">非公開のinternalsを持つWebコンポーネント</h2>
+			<p>
+				カスタム要素は、
+				<code>ElementInternals</code>
+				を通じて名前を付けたり、状態を設定したり、ロールを与えたりできます。多くのコンポーネントはそれをプライベートフィールドに保持しており、スクリプトからは読み返せません。そのためスキャンはそうした要素を判定せずに問いかけ（
+				<code>cantTell</code>
+				）、このように設定されたロールはまったく認識しません。
+			</p>
+			<p>
+				<code>@surea11y/core</code>
+				の
+				<code>internalsHookScript()</code>
+				（バンドルには含まれません）は、ページが取り付ける各要素のinternalsを記録するスクリプトを返し、スキャンがそれを読めるようにします。オプトインで、coreが自動でインストールすることはありません。スキャンするすべてのフレームで、ページ自身のスクリプトより前にインストールしてください。ドライバーの初期化スクリプト用APIを使うか、自分で作るページなら
+				<code>&lt;head&gt;</code>
+				の最初の
+				<code>&lt;script&gt;</code>
+				として置きます。jsdomのセットアップファイルは、ドキュメントの読み込み後、どのコンポーネントも定義される前に実行されるので、
+				<code>{"{ early: true }"}</code>
+				を渡してください。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { internalsHookScript } = require('@surea11y/core');",
+					"",
+					"// Playwright",
+					"await page.addInitScript({ content: internalsHookScript() });",
+					"",
+					"// Puppeteer",
+					"await page.evaluateOnNewDocument(internalsHookScript());",
+					"",
+					"// jest.setup.js or vitest.setup.js, before any component is imported",
+					"window.eval(internalsHookScript({ early: true }));",
+				]}
+			/>
+			<p>
+				フックがあったかどうかは、結果の
+				<code>engine.environment.internalsHook</code>
+				でわかります。ページのスクリプトより前にインストールされた場合は
+				<code>'early'</code>
+				、後からインストールされ、それ以降にページが取り付けたものしか見ていない場合は
+				<code>'late'</code>
+				です。フックが記録したものはページ内のどのスクリプトからも読めるため、コンポーネントの非公開のinternalsは非公開でなくなります。テストや監査のための実行でだけインストールし、利用者に配信するページでは使わないでください。そのほかのインストール方法や、ページから何が見えるかは、
+				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				にあります。
+			</p>
+
+			<h2 id="what-a-scan-covers">スキャンの対象を事前に知る</h2>
+			<p>
+				WCAGの達成基準ごとに報告し、利用者にチェックを選ばせるツールでは、スキャンの目標を指定できます。
+				<code>wcagVersion</code>
+				と並べて指定する
+				<code>engineOptions.wcagLevel</code>
+				は、実行するチェックを変えずに、そのレベルを超える達成基準を報告から外します。
+				<code>getRulesForRunOnly(runOnly, engineOptions)</code>
+				は、その選択でスキャンが報告する達成基準を、実行する前に、スキャン自身のロジックで一覧にします。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { getRulesForRunOnly, runDomRulesInPage } = require('@surea11y/core');",
+					"",
+					"const engineOptions = { wcagVersion: '2.2', wcagLevel: 'AA' };",
+					"const runOnly = { includeRuleIds: ['contrast-computable'] };",
+					"",
+					"getRulesForRunOnly(runOnly, engineOptions).map((r) => r.id); // before the scan",
+					"const result = runDomRulesInPage(url, null, engineOptions, runOnly);",
+				]}
+			/>
+			<p>
+				チェックの一部しか実行されなかった達成基準は
+				<code>cantTell</code>
+				として返り、実行されなかった各チェックには
+				<code>notSelected: true</code>
+				が付きます。こうした達成基準は「一部だけチェック済み」として示し、合格とは決して表示しないでください。core上に自分のツール（CLI、CI連携、ダッシュボード、適合性レポートの生成ツールなど）を作る方法は、GitHubの
+				<a href={`${core}/docs/BUILDING_ON_CORE.md`}>
+					<code>BUILDING_ON_CORE.md</code>
+				</a>
+				にあります。頼れる契約、スキャンの実行、チェックの選び方、結果を誠実に示す方法、実行結果の比較を扱っています。
 			</p>
 		</>
 	);

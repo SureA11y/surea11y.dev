@@ -29,17 +29,20 @@ export function RuleOrganizationContent() {
 					guessing. Can report <code>fail</code>. <code>cantTell</code> still shows up here, in
 					these situations: a real violation exists but doesn't on its own establish that the
 					mapped WCAG criterion fails (an ARIA author requirement whose exposed name/role/value
-					still survives); the rule decides deterministically but claims no Success Criterion at
-					all (<code>aria-allowed-role</code>, tagged best-practice); or the rule can only confirm
+					still survives); the rule decides deterministically that a best practice is broken, claims
+					no Success Criterion, and what it found need not harm anyone, since the role or element
+					still reaches assistive technology as it is (<code>aria-allowed-role</code>,{" "}
+					<code>landmark-role-name-present</code>, tagged best-practice); or the rule can only confirm
 					a mechanism is <em>present</em>, while whether what's present is actually valid belongs
 					to a sibling rule (<code>aria-required-children</code>, paired with{" "}
 					<code>aria-prohibited-children</code>); or the rule cannot decide without a guess, so it
-					asks instead of failing: a name that may come from a closed shadow root or from content
-					nested too deep to read (the <code>*-name-present</code> rules), text that may be clipped
+					asks instead of failing: a name that may come from a closed shadow root, from{" "}
+					<code>ElementInternals</code> the engine can't read, or from content nested too deep to
+					read (the <code>*-name-present</code> rules), text that may be clipped
 					or overlap once spaced (<code>text-spacing-content-loss</code>), an orientation media
 					block that turns an element other than the page's content (
-					<code>css-orientation-lock</code>), a placeholder below its ratio (
-					<code>contrast-minimum</code>), or a colour or size that cannot be computed (the contrast
+					<code>css-orientation-lock</code>), a placeholder, or a lone character standing in for its control's name, below
+					its ratio (<code>contrast-minimum</code>), or a colour or size that cannot be computed (the contrast
 					rules, <code>target-size-minimum</code>). A rule that throws is reported as{" "}
 					<code>cantTell</code> too, as a safety net.
 				</li>
@@ -55,6 +58,15 @@ export function RuleOrganizationContent() {
 					whether an image's text alternative is accurate, never reports <code>pass</code>.
 				</li>
 			</ul>
+			<p>
+				A rule tagged best-practice claims no Success Criterion, and still reports{" "}
+				<code>fail</code> when what it decides is itself a barrier: an empty heading is announced
+				as a heading with nothing in it (
+				<a href="/rules/empty-heading/"><code>empty-heading</code></a>, as W3C's ACT rule for it
+				reports it). Its <code>fail</code> says the rule's own expectation is not met, not that a
+				criterion is: no WCAG rollup counts it. Where the finding may harm no one, it reports{" "}
+				<code>cantTell</code> instead, as above.
+			</p>
 			<p>
 				<strong>A manual rule reporting <code>cantTell</code> is not the same event as an automatic
 				rule reporting <code>cantTell</code>, even though the value is identical</strong>: the

@@ -136,9 +136,11 @@ export function BaselineContent() {
 			</p>
 			<p>
 				Las entradas de baseline que no coinciden con nada en un análisis nuevo se indican como{" "}
-				<strong>obsoletas</strong> (la violación presumiblemente se corrigió); esto es solo
-				informativo y nunca bloquea la compilación; regenera el baseline con <code>--write-baseline</code>{" "}
-				periódicamente para limpiarlas.
+				<strong>obsoletas</strong>: puede que la violación se haya corregido, que el marcado del
+				elemento haya cambiado o que el análisis no llegara a él (otro viewport, otro ámbito u
+				otro conjunto de reglas). Esto es solo informativo y nunca bloquea la compilación;
+				revísalas y luego regenera el baseline con <code>--write-baseline</code> periódicamente
+				para limpiarlas.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</h2>
@@ -164,7 +166,7 @@ export function BaselineContent() {
 				de obsoletos deja de decirte qué se corrigió.
 			</p>
 
-			<h2>Formato del archivo</h2>
+			<h2 id="file-format">Formato del archivo</h2>
 			<CodeBlock
 				lang="json"
 				lines={[
