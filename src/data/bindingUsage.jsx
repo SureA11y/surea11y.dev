@@ -50,7 +50,7 @@ export const bindingUsage = {
 				<a href="https://github.com/SureA11y/cypress"><code>@surea11y/cypress</code></a> binding.
 			</p>
 		),
-		install: ["npm install @surea11y/cypress cypress"],
+		install: ["npm install @surea11y/core @surea11y/cypress cypress"],
 		installNote: (
 			<p>
 				<code>cypress</code> is a <code>peerDependencies</code> entry — you need your own Cypress
@@ -130,7 +130,7 @@ export const bindingUsage = {
 			</p>
 		),
 		install: [
-			"npm install @surea11y/playwright playwright",
+			"npm install @surea11y/core @surea11y/playwright playwright",
 			"npx playwright install chromium",
 		],
 		installNote: (
@@ -196,7 +196,7 @@ export const bindingUsage = {
 				binding.
 			</p>
 		),
-		install: ["npm install @surea11y/puppeteer puppeteer"],
+		install: ["npm install @surea11y/core @surea11y/puppeteer puppeteer"],
 		installNote: (
 			<p>
 				Puppeteer downloads its own bundled Chrome as part of <code>npm install</code> — unlike
@@ -253,7 +253,7 @@ export const bindingUsage = {
 				binding.
 			</p>
 		),
-		install: ["npm install @surea11y/selenium selenium-webdriver"],
+		install: ["npm install @surea11y/core @surea11y/selenium selenium-webdriver"],
 		installNote: (
 			<p>
 				<code>selenium-webdriver</code> bundles Selenium Manager, which auto-downloads and
@@ -322,7 +322,7 @@ export const bindingUsage = {
 				binding.
 			</p>
 		),
-		install: ["npm install @surea11y/webdriverio webdriverio"],
+		install: ["npm install @surea11y/core @surea11y/webdriverio webdriverio"],
 		installNote: (
 			<p>
 				WebdriverIO v9 auto-manages a local <code>chromedriver</code> the first time it launches

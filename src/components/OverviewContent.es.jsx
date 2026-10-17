@@ -6,12 +6,12 @@ import rules from "../data/rules.generated.json";
 const core = "https://github.com/SureA11y/core/blob/main";
 
 const packageRows = [
-	{ id: "playwright", want: "Agregar comprobaciones de accesibilidad a las pruebas de Playwright", install: <code>@surea11y/playwright</code> },
-	{ id: "puppeteer", want: "…Puppeteer", install: <code>@surea11y/puppeteer</code> },
-	{ id: "selenium", want: "…Selenium", install: <code>@surea11y/selenium</code> },
-	{ id: "cypress", want: "…Cypress", install: <code>@surea11y/cypress</code> },
-	{ id: "webdriverio", want: "…WebdriverIO", install: <code>@surea11y/webdriverio</code> },
-	{ id: "test-matchers", want: "Verificar la accesibilidad en pruebas de componentes o unitarias con Jest/Vitest", install: <code>@surea11y/test-matchers</code> },
+	{ id: "playwright", want: "Agregar comprobaciones de accesibilidad a las pruebas de Playwright", install: <><code>@surea11y/playwright</code> + <code>@surea11y/core</code></> },
+	{ id: "puppeteer", want: "…Puppeteer", install: <><code>@surea11y/puppeteer</code> + <code>@surea11y/core</code></> },
+	{ id: "selenium", want: "…Selenium", install: <><code>@surea11y/selenium</code> + <code>@surea11y/core</code></> },
+	{ id: "cypress", want: "…Cypress", install: <><code>@surea11y/cypress</code> + <code>@surea11y/core</code></> },
+	{ id: "webdriverio", want: "…WebdriverIO", install: <><code>@surea11y/webdriverio</code> + <code>@surea11y/core</code></> },
+	{ id: "test-matchers", want: "Verificar la accesibilidad en pruebas de componentes o unitarias con Jest/Vitest", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "Analizar HTML estático desde una terminal o una canalización de CI", install: <code>@surea11y/cli</code> },
 	{ id: "core", want: "Ejecutar el motor sobre un DOM que ya tengas", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "Crear tu propia herramienta sobre el motor: una CLI, una extensión, un panel, un generador de informes", install: <code>@surea11y/core</code> },
@@ -48,9 +48,9 @@ export function OverviewContent() {
 			<h2>No es un único producto</h2>
 			<p>
 				surea11y es una familia de paquetes que comparten un mismo motor, no una única herramienta con un
-				único comando de instalación. Instala el que coincida con cómo ya pruebas. Cada uno incorpora{" "}
-				<code>@surea11y/core</code> por ti. Instala core directamente para ejecutar el motor sobre un
-				DOM que ya tengas, o para crear tu propia herramienta sobre él:
+				único comando de instalación. Instala el que coincida con cómo ya pruebas, junto con{" "}
+				<code>@surea11y/core</code>, el motor que ejecuta. Instala core por sí solo para ejecutar el
+				motor sobre un DOM que ya tengas, o para crear tu propia herramienta sobre él:
 			</p>
 			<DataTable
 				label="Qué paquete instalar"

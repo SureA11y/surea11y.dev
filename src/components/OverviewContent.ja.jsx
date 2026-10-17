@@ -6,12 +6,12 @@ import rules from "../data/rules.generated.json";
 const core = "https://github.com/SureA11y/core/blob/main";
 
 const packageRows = [
-	{ id: "playwright", want: "Playwrightのテストにアクセシビリティチェックを追加する", install: <code>@surea11y/playwright</code> },
-	{ id: "puppeteer", want: "Puppeteerのテストに追加する", install: <code>@surea11y/puppeteer</code> },
-	{ id: "selenium", want: "Seleniumのテストに追加する", install: <code>@surea11y/selenium</code> },
-	{ id: "cypress", want: "Cypressのテストに追加する", install: <code>@surea11y/cypress</code> },
-	{ id: "webdriverio", want: "WebdriverIOのテストに追加する", install: <code>@surea11y/webdriverio</code> },
-	{ id: "test-matchers", want: "Jest／Vitestのコンポーネントテストやユニットテストでアクセシビリティをアサーションする", install: <code>@surea11y/test-matchers</code> },
+	{ id: "playwright", want: "Playwrightのテストにアクセシビリティチェックを追加する", install: <><code>@surea11y/playwright</code> + <code>@surea11y/core</code></> },
+	{ id: "puppeteer", want: "Puppeteerのテストに追加する", install: <><code>@surea11y/puppeteer</code> + <code>@surea11y/core</code></> },
+	{ id: "selenium", want: "Seleniumのテストに追加する", install: <><code>@surea11y/selenium</code> + <code>@surea11y/core</code></> },
+	{ id: "cypress", want: "Cypressのテストに追加する", install: <><code>@surea11y/cypress</code> + <code>@surea11y/core</code></> },
+	{ id: "webdriverio", want: "WebdriverIOのテストに追加する", install: <><code>@surea11y/webdriverio</code> + <code>@surea11y/core</code></> },
+	{ id: "test-matchers", want: "Jest／Vitestのコンポーネントテストやユニットテストでアクセシビリティをアサーションする", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "ターミナルやCIパイプラインから静的なHTMLをスキャンする", install: <code>@surea11y/cli</code> },
 	{ id: "core", want: "手元にあるDOMに対してエンジンを実行する", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "エンジンの上に独自のツール（CLI、拡張機能、ダッシュボード、レポート生成ツールなど）を作る", install: <code>@surea11y/core</code> },
@@ -46,9 +46,9 @@ export function OverviewContent() {
 		<>
 			<h2>単体の製品ではありません</h2>
 			<p>
-				surea11yは、1つのコマンドでインストールする1つのツールではなく、1つのエンジンを共有するパッケージ群です。今のテストのやり方に合うものをインストールしてください。どれも
+				surea11yは、1つのコマンドでインストールする1つのツールではなく、1つのエンジンを共有するパッケージ群です。今のテストのやり方に合うものを、それが実行するエンジンである
 				<code>@surea11y/core</code>
-				を自動的に取り込みます。手元にあるDOMに対してエンジンを実行する場合や、その上に独自のツールを作る場合は、コアそのものをインストールしてください。
+				と一緒にインストールしてください。手元にあるDOMに対してエンジンを実行する場合や、その上に独自のツールを作る場合は、コアだけをインストールしてください。
 			</p>
 			<DataTable
 				label="インストールするパッケージ"

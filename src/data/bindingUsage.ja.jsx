@@ -57,7 +57,7 @@ export const bindingUsage = {
 				バインディングで連携します。
 			</p>
 		),
-		install: ["npm install @surea11y/cypress cypress"],
+		install: ["npm install @surea11y/core @surea11y/cypress cypress"],
 		installNote: (
 			<p>
 				<code>cypress</code>
@@ -151,7 +151,7 @@ export const bindingUsage = {
 			</p>
 		),
 		install: [
-			"npm install @surea11y/playwright playwright",
+			"npm install @surea11y/core @surea11y/playwright playwright",
 			"npx playwright install chromium",
 		],
 		installNote: (
@@ -221,7 +221,7 @@ export const bindingUsage = {
 				バインディングで連携します。
 			</p>
 		),
-		install: ["npm install @surea11y/puppeteer puppeteer"],
+		install: ["npm install @surea11y/core @surea11y/puppeteer puppeteer"],
 		installNote: (
 			<p>
 				Puppeteerは
@@ -278,7 +278,7 @@ export const bindingUsage = {
 				バインディングで連携します。
 			</p>
 		),
-		install: ["npm install @surea11y/selenium selenium-webdriver"],
+		install: ["npm install @surea11y/core @surea11y/selenium selenium-webdriver"],
 		installNote: (
 			<p>
 				<code>selenium-webdriver</code>
@@ -351,7 +351,7 @@ export const bindingUsage = {
 				バインディングで連携します。
 			</p>
 		),
-		install: ["npm install @surea11y/webdriverio webdriverio"],
+		install: ["npm install @surea11y/core @surea11y/webdriverio webdriverio"],
 		installNote: (
 			<p>
 				WebdriverIO v9は、初めてChromeを起動するときにローカルの

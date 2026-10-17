@@ -316,8 +316,8 @@ export function FaqContent() {
 					<code>packScript</code> call registered, or registered with another core version, is
 					listed the same way. The bindings report it as a <code>'pack-skipped'</code> gap, the
 					test matchers fail the assertion, and the CLI exits <code>2</code>. Install the pack
-					beside the package that runs it, so npm resolves one <code>@surea11y/core</code> for
-					both. See <a href="/configuration/packs/#when-a-pack-doesnt-run">Packs</a>.
+					beside <code>@surea11y/core</code> and the package that runs it, so all three share one
+					copy of core. See <a href="/configuration/packs/#when-a-pack-doesnt-run">Packs</a>.
 				</p>
 			</article>
 
