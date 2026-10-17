@@ -312,6 +312,22 @@ export function FaqContent() {
 			</article>
 
 			<article>
+				<h2 id="scan-time">„Ein Scan dauert nach einem Update länger“</h2>
+				<p>
+					Den Großteil eines Scans machen Style- und Layout-Berechnungen im Browser aus; seine Dauer
+					hängt deshalb ebenso von der Seite, dem Rechner und dem Browser ab wie von der Engine. Ein
+					Release kann sie trotzdem ändern: Eine Regel, die jetzt mehr von der Seite prüft, kostet
+					mehr, und das <a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a> von core sagt,
+					wann ein Release ändert, was eine Regel kostet. <a href={`${core}/docs/PERFORMANCE.md`}><code>PERFORMANCE.md</code></a>{" "}
+					auf GitHub hält fest, wie lange ein Scan von Release zu Release dauert, als Verhältnis zu
+					einem früheren Release auf denselben Seiten, und wie das gemessen wird. Eine Regel, die
+					langsamer ist und mehr findet, zahlt womöglich für das, was sie jetzt findet; eine, die bei
+					gleichen Ergebnissen langsamer ist, ist eine Regression, die es wert ist, <a href="https://github.com/SureA11y/core/issues">gemeldet</a>{" "}
+					zu werden.
+				</p>
+			</article>
+
+			<article>
 				<h2 id="pack-did-not-run">„Ein Pack ist nicht gelaufen“, oder <code>skippedPacks</code> ist nicht leer</h2>
 				<p>
 					Ein Pack, dessen <code>core</code>-Bereich das installierte core ausschließt, das nicht

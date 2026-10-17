@@ -293,6 +293,19 @@ export function FaqContent() {
 			</article>
 
 			<article>
+				<h2 id="scan-time">"A scan takes longer after upgrading"</h2>
+				<p>
+					Most of a scan's time is style and layout work in the browser, so it depends on the page,
+					the machine and the browser as much as on the engine. A release can still change it: a rule
+					that now checks more of the page costs more, and core's <a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>{" "}
+					says when a release changes what a rule costs. <a href={`${core}/docs/PERFORMANCE.md`}><code>PERFORMANCE.md</code></a>, on GitHub, records how long a scan
+					takes release by release, as a ratio to an earlier release on the same pages, and how that
+					is measured. A rule that is slower and finds more may be paying for what it now finds; one
+					that is slower with the same results is a regression worth <a href="https://github.com/SureA11y/core/issues">reporting</a>.
+				</p>
+			</article>
+
+			<article>
 				<h2 id="pack-did-not-run">"A pack did not run", or <code>skippedPacks</code> is not empty</h2>
 				<p>
 					A pack whose <code>core</code> range leaves out the installed core, that isn't valid, or
