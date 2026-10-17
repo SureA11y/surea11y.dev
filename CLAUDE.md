@@ -900,3 +900,18 @@ site presents only this way: it doesn't say core also comes with the
 binding as a dependency, and it doesn't mention the bindings' planned
 2.0 peer change. Keep it that way. The CLI (`npm install -g
 @surea11y/cli`) is unchanged.
+
+## Core 1.13.0 update (2026-10-17)
+
+Pinned `@surea11y/core` 1.13.0. No rule text, locale or doc content the
+site adapts changed except the EN 301 549 deprecation (built-in profiles,
+`mappings: 'en301549'` and `@surea11y/core/en301549` move to
+`@surea11y/pack-en301549`, removed in 2.0.0). **Deliberately not on the
+site yet**: the pack isn't on npm until its first release (planned
+2026-10-19). Once it is, add in every language: deprecation notes on
+Engine options (profiles, `mappings`) and WCAG mapping's `#en-301-549`
+(entry point → `@surea11y/pack-en301549/public`), following core's
+`ENGINE_OPTIONS.md`/`WCAG_CONFORMANCE.md`, and link
+`API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`
+(GitHub-only). PERFORMANCE.md's 1.13.0 row needs no site change; the FAQ
+`#scan-time` only links it.
