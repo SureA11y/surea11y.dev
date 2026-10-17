@@ -342,8 +342,8 @@ export function FaqContent() {
 					llamada a <code>packScript</code> registró, o que se registró con otra versión de core, se
 					enumera de la misma forma. Las integraciones lo informan como una carencia{" "}
 					<code>'pack-skipped'</code>, los test matchers hacen fallar la aserción, y la CLI sale con{" "}
-					<code>2</code>. Instala el pack junto al paquete que lo ejecuta, para que npm resuelva un
-					solo <code>@surea11y/core</code> para ambos. Consulta{" "}
+					<code>2</code>. Instala el pack junto a <code>@surea11y/core</code> y al paquete que lo
+					ejecuta, para que los tres compartan una sola copia de core. Consulta{" "}
 					<a href="/configuration/packs/#when-a-pack-doesnt-run">Packs</a>.
 				</p>
 			</article>

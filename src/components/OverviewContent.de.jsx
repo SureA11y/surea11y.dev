@@ -6,12 +6,12 @@ import rules from "../data/rules.generated.json";
 const core = "https://github.com/SureA11y/core/blob/main";
 
 const packageRows = [
-	{ id: "playwright", want: "Barrierefreiheit in Playwright-Tests prüfen", install: <code>@surea11y/playwright</code> },
-	{ id: "puppeteer", want: "…in Puppeteer-Tests", install: <code>@surea11y/puppeteer</code> },
-	{ id: "selenium", want: "…in Selenium-Tests", install: <code>@surea11y/selenium</code> },
-	{ id: "cypress", want: "…in Cypress-Tests", install: <code>@surea11y/cypress</code> },
-	{ id: "webdriverio", want: "…in WebdriverIO-Tests", install: <code>@surea11y/webdriverio</code> },
-	{ id: "test-matchers", want: "Barrierefreiheit in Komponenten- oder Unit-Tests mit Jest/Vitest prüfen", install: <code>@surea11y/test-matchers</code> },
+	{ id: "playwright", want: "Barrierefreiheit in Playwright-Tests prüfen", install: <><code>@surea11y/playwright</code> + <code>@surea11y/core</code></> },
+	{ id: "puppeteer", want: "…in Puppeteer-Tests", install: <><code>@surea11y/puppeteer</code> + <code>@surea11y/core</code></> },
+	{ id: "selenium", want: "…in Selenium-Tests", install: <><code>@surea11y/selenium</code> + <code>@surea11y/core</code></> },
+	{ id: "cypress", want: "…in Cypress-Tests", install: <><code>@surea11y/cypress</code> + <code>@surea11y/core</code></> },
+	{ id: "webdriverio", want: "…in WebdriverIO-Tests", install: <><code>@surea11y/webdriverio</code> + <code>@surea11y/core</code></> },
+	{ id: "test-matchers", want: "Barrierefreiheit in Komponenten- oder Unit-Tests mit Jest/Vitest prüfen", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "Statisches HTML im Terminal oder in einer CI-Pipeline scannen", install: <code>@surea11y/cli</code> },
 	{ id: "core", want: "Die Engine auf ein DOM anwenden, das Sie bereits haben", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "Ein eigenes Tool auf der Engine aufbauen: eine CLI, eine Erweiterung, ein Dashboard, einen Berichtsgenerator", install: <code>@surea11y/core</code> },
@@ -49,8 +49,8 @@ export function OverviewContent() {
 			<p>
 				surea11y ist eine Familie von Paketen mit einer gemeinsamen Engine, kein Tool mit
 				nur einem Installationsbefehl. Installieren Sie das Paket, das zu Ihrer bisherigen Art zu
-				testen passt; jedes bringt <code>@surea11y/core</code> automatisch mit. core selbst
-				installieren Sie, um die Engine auf ein DOM anzuwenden, das Sie bereits haben, oder um ein
+				testen passt, zusammen mit <code>@surea11y/core</code>, der Engine, die es ausführt. core
+				allein installieren Sie, um die Engine auf ein DOM anzuwenden, das Sie bereits haben, oder um ein
 				eigenes Tool darauf aufzubauen:
 			</p>
 			<DataTable

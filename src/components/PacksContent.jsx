@@ -339,8 +339,8 @@ export function PacksContent() {
 				</li>
 			</ul>
 			<p>
-				Install the pack beside the package that runs it, so npm resolves one{" "}
-				<code>@surea11y/core</code> for both.
+				Install the pack beside <code>@surea11y/core</code> and the package that runs it, so all
+				three share one copy of core.
 			</p>
 
 			<h2 id="writing-a-pack">Writing a pack</h2>

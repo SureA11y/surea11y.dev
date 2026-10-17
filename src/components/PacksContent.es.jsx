@@ -352,8 +352,8 @@ export function PacksContent() {
 				</li>
 			</ul>
 			<p>
-				Instala el pack junto al paquete que lo ejecuta, para que npm resuelva un solo{" "}
-				<code>@surea11y/core</code> para ambos.
+				Instala el pack junto a <code>@surea11y/core</code> y al paquete que lo ejecuta, para que
+				los tres compartan una sola copia de core.
 			</p>
 
 			<h2 id="writing-a-pack">Escribir un pack</h2>

@@ -814,11 +814,8 @@ a role); every overlay follows it. Content pages, every language:
   linked, the browser one checked live); new paragraphs on criteria
   reported for named checks + `wcagLevel`, web components, contrast in a
   browser; "Which package" table gains "build your own tool" (core).
-- Getting Started: install is still just the binding. Bindings 1.4.0
-  made core a peer (binding-base#6); that broke Yarn / npm 6 /
-  `legacy-peer-deps` installs and pinned-older-core installs in a minor
-  release, so 1.4.1 (2026-10-16) made it a regular dependency again, and
-  the site never documents the peer. Each binding page gained a "Web components"
+- Getting Started: see "Installing core beside a binding" below for the
+  install line. Each binding page gained a "Web components"
   block (`installInternalsHook`, per-binding call) and an "also available"
   line (`.wcagLevel()`, `.includeMode()`, `plannedChecks()`, `logger()`,
   `getScanNotes()`), via new optional props on `UsageBindingSection`.
@@ -891,3 +888,15 @@ language, linking core's `PERFORMANCE.md` as GitHub-only (scan time per
 release, as ratios; measurement method). `RELEASING.md` is maintainer-only
 and not linked. `check:lang` flags "Web Animations API" in the Japanese
 rule text; it's a standard's name, left unmarked.
+
+## Installing core beside a binding (2026-10-17)
+
+Since the bindings' 1.4.2 and test-matchers 1.3.1, every install line on
+the site names `@surea11y/core` beside the binding
+(`npm install @surea11y/core @surea11y/playwright playwright`), in
+`bindingUsage*.jsx`, `TestMatchersUsageContent*`, the Overview package
+table, and the pack install sentences (Packs, FAQ), every language. The
+site presents only this way: it doesn't say core also comes with the
+binding as a dependency, and it doesn't mention the bindings' planned
+2.0 peer change. Keep it that way. The CLI (`npm install -g
+@surea11y/cli`) is unchanged.

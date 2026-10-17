@@ -6,12 +6,12 @@ import rules from "../data/rules.generated.json";
 const core = "https://github.com/SureA11y/core/blob/main";
 
 const packageRows = [
-	{ id: "playwright", want: "Add accessibility checks to Playwright tests", install: <code>@surea11y/playwright</code> },
-	{ id: "puppeteer", want: "…Puppeteer", install: <code>@surea11y/puppeteer</code> },
-	{ id: "selenium", want: "…Selenium", install: <code>@surea11y/selenium</code> },
-	{ id: "cypress", want: "…Cypress", install: <code>@surea11y/cypress</code> },
-	{ id: "webdriverio", want: "…WebdriverIO", install: <code>@surea11y/webdriverio</code> },
-	{ id: "test-matchers", want: "Assert accessibility in Jest/Vitest component or unit tests", install: <code>@surea11y/test-matchers</code> },
+	{ id: "playwright", want: "Add accessibility checks to Playwright tests", install: <><code>@surea11y/playwright</code> + <code>@surea11y/core</code></> },
+	{ id: "puppeteer", want: "…Puppeteer", install: <><code>@surea11y/puppeteer</code> + <code>@surea11y/core</code></> },
+	{ id: "selenium", want: "…Selenium", install: <><code>@surea11y/selenium</code> + <code>@surea11y/core</code></> },
+	{ id: "cypress", want: "…Cypress", install: <><code>@surea11y/cypress</code> + <code>@surea11y/core</code></> },
+	{ id: "webdriverio", want: "…WebdriverIO", install: <><code>@surea11y/webdriverio</code> + <code>@surea11y/core</code></> },
+	{ id: "test-matchers", want: "Assert accessibility in Jest/Vitest component or unit tests", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "Scan static HTML from a terminal or CI pipeline", install: <code>@surea11y/cli</code> },
 	{ id: "core", want: "Run the engine against a DOM you already have", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "Build your own tool on the engine: a CLI, an extension, a dashboard, a report generator", install: <code>@surea11y/core</code> },
@@ -48,9 +48,9 @@ export function OverviewContent() {
 			<h2>Not a single product</h2>
 			<p>
 				surea11y is a family of packages sharing one engine, not one tool with one install
-				command. Install the one that matches how you already test — each pulls in{" "}
-				<code>@surea11y/core</code> for you. Install core itself to run the engine on a DOM you
-				already have, or to build a tool of your own on it:
+				command. Install the one that matches how you already test, together with{" "}
+				<code>@surea11y/core</code>, the engine it runs. Install core on its own to run the engine
+				on a DOM you already have, or to build a tool of your own on it:
 			</p>
 			<DataTable
 				label="Which package to install"

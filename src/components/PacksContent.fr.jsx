@@ -355,8 +355,8 @@ export function PacksContent() {
 				</li>
 			</ul>
 			<p>
-				Installez le pack à côté du paquet qui l’exécute, pour que npm résolve un seul{" "}
-				<code>@surea11y/core</code> pour les deux.
+				Installez le pack à côté de <code>@surea11y/core</code> et du paquet qui l’exécute, pour
+				que les trois partagent une seule copie de core.
 			</p>
 
 			<h2 id="writing-a-pack">Écrire un pack</h2>
