@@ -340,8 +340,8 @@ export function FaqContent() {
 					qu’aucun appel à <code>packScript</code> n’a enregistré, ou qui a été enregistré avec une
 					autre version de core, est listé de la même façon. Les bindings le signalent comme une
 					lacune <code>'pack-skipped'</code>, test-matchers fait échouer l’assertion, et la CLI
-					se termine avec le code <code>2</code>. Installez le pack à côté du paquet qui l’exécute,
-					pour que npm résolve un seul <code>@surea11y/core</code> pour les deux. Voir{" "}
+					se termine avec le code <code>2</code>. Installez le pack à côté de <code>@surea11y/core</code> et du
+					paquet qui l’exécute, pour que les trois partagent une seule copie de core. Voir{" "}
 					<a href="/configuration/packs/#when-a-pack-doesnt-run">Packs</a>.
 				</p>
 			</article>

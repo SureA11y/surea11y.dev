@@ -69,9 +69,10 @@ export function TestMatchersUsageContent() {
 				<code>await</code>, und damit auch kein vergessenes <code>await</code>, bei dem ein Test
 				über ein aufgelöstes Promise stillschweigend besteht.
 			</p>
-			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/test-matchers", command: true }]} />
+			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/core @surea11y/test-matchers", command: true }]} />
 			<p>
-				<code>@surea11y/core</code> wird mit installiert; mehr ist nicht nötig. Um
+				<code>@surea11y/core</code> ist die Engine, die der Matcher ausführt; installieren Sie
+				sie wie oben zusammen mit dem Matcher. Um
 				gebautes HTML stattdessen vom Terminal oder in einem CI-Schritt zu prüfen,
 				außerhalb eines Test-Runners, siehe <a href="/getting-started/cli/">CLI</a>.
 			</p>

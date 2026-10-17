@@ -52,7 +52,7 @@ export const bindingUsage = {
 				<a href="https://github.com/SureA11y/cypress"><code>@surea11y/cypress</code></a>.
 			</p>
 		),
-		install: ["npm install @surea11y/cypress cypress"],
+		install: ["npm install @surea11y/core @surea11y/cypress cypress"],
 		installNote: (
 			<p>
 				<code>cypress</code> es una entrada de <code>peerDependencies</code>: necesitas tu propia
@@ -135,7 +135,7 @@ export const bindingUsage = {
 			</p>
 		),
 		install: [
-			"npm install @surea11y/playwright playwright",
+			"npm install @surea11y/core @surea11y/playwright playwright",
 			"npx playwright install chromium",
 		],
 		installNote: (
@@ -202,7 +202,7 @@ export const bindingUsage = {
 				<a href="https://github.com/SureA11y/puppeteer"><code>@surea11y/puppeteer</code></a>.
 			</p>
 		),
-		install: ["npm install @surea11y/puppeteer puppeteer"],
+		install: ["npm install @surea11y/core @surea11y/puppeteer puppeteer"],
 		installNote: (
 			<p>
 				Puppeteer descarga su propio Chrome incluido como parte de <code>npm install</code>: a
@@ -259,7 +259,7 @@ export const bindingUsage = {
 				<a href="https://github.com/SureA11y/selenium"><code>@surea11y/selenium</code></a>.
 			</p>
 		),
-		install: ["npm install @surea11y/selenium selenium-webdriver"],
+		install: ["npm install @surea11y/core @surea11y/selenium selenium-webdriver"],
 		installNote: (
 			<p>
 				<code>selenium-webdriver</code> incluye Selenium Manager, que descarga y gestiona
@@ -327,7 +327,7 @@ export const bindingUsage = {
 				<a href="https://github.com/SureA11y/webdriverio"><code>@surea11y/webdriverio</code></a>.
 			</p>
 		),
-		install: ["npm install @surea11y/webdriverio webdriverio"],
+		install: ["npm install @surea11y/core @surea11y/webdriverio webdriverio"],
 		installNote: (
 			<p>
 				WebdriverIO v9 gestiona automáticamente un <code>chromedriver</code> local la primera vez

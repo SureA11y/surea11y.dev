@@ -189,7 +189,7 @@ export function FaqContent() {
 			<article>
 				<h2 id="pack-did-not-run">「パックが実行されなかった」、または<code>skippedPacks</code>が空でない</h2>
 				<p>
-					<code>core</code>の範囲がインストールされているコアを含まないパック、妥当でないパック、コアと両立しないパック（名前空間の外にあるルールID、コアが持つ辞書のキー）はスキップされます。スキャンはそのパックなしで実行され、警告を出し、理由とともに<code>result.skippedPacks</code>に列挙します。<code>strictOptions</code>のもとではエラーを投げます。ページ内では、<code>engineOptions.packs</code>で指定されたのに、どの<code>packScript</code>の呼び出しも登録していないパックや、別のバージョンのコアで登録されたパックが、同じように列挙されます。バインディングはこれを<code>'pack-skipped'</code>のスキャンギャップとして報告し、test-matchersはアサーションを失敗させ、CLIは終了コード<code>2</code>で終了します。パックはそれを実行するパッケージと並べてインストールし、npmが両者に対して1つの<code>@surea11y/core</code>を解決するようにしてください。<a href="/configuration/packs/#when-a-pack-doesnt-run">パック</a>を参照してください。
+					<code>core</code>の範囲がインストールされているコアを含まないパック、妥当でないパック、コアと両立しないパック（名前空間の外にあるルールID、コアが持つ辞書のキー）はスキップされます。スキャンはそのパックなしで実行され、警告を出し、理由とともに<code>result.skippedPacks</code>に列挙します。<code>strictOptions</code>のもとではエラーを投げます。ページ内では、<code>engineOptions.packs</code>で指定されたのに、どの<code>packScript</code>の呼び出しも登録していないパックや、別のバージョンのコアで登録されたパックが、同じように列挙されます。バインディングはこれを<code>'pack-skipped'</code>のスキャンギャップとして報告し、test-matchersはアサーションを失敗させ、CLIは終了コード<code>2</code>で終了します。パックは<code>@surea11y/core</code>およびそれを実行するパッケージと並べてインストールし、3つが同じコアを共有するようにしてください。<a href="/configuration/packs/#when-a-pack-doesnt-run">パック</a>を参照してください。
 				</p>
 			</article>
 

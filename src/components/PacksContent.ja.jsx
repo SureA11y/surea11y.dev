@@ -262,7 +262,7 @@ export function PacksContent() {
 				</li>
 			</ul>
 			<p>
-				パックはそれを実行するパッケージと並べてインストールし、npmが両者に対して1つの<code>@surea11y/core</code>を解決するようにしてください。
+				パックは<code>@surea11y/core</code>およびそれを実行するパッケージと並べてインストールし、3つが同じコアを共有するようにしてください。
 			</p>
 
 			<h2 id="writing-a-pack">パックを書く</h2>
