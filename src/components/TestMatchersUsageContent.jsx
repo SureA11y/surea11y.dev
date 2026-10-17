@@ -66,9 +66,10 @@ export function TestMatchersUsageContent() {
 				surea11y's engine is synchronous, so this matcher is too — no <code>await</code>, no
 				forgetting one and silently passing on a resolved promise.
 			</p>
-			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/test-matchers", command: true }]} />
+			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/core @surea11y/test-matchers", command: true }]} />
 			<p>
-				<code>@surea11y/core</code> is installed with it; there is nothing else to add. To check
+				<code>@surea11y/core</code> is the engine the matcher runs; install it with the matcher, as
+				above. To check
 				built HTML from the terminal or a CI step instead, outside a test runner, see the{" "}
 				<a href="/getting-started/cli/">CLI</a>.
 			</p>

@@ -70,9 +70,10 @@ export function TestMatchersUsageContent() {
 				lo es: sin <code>await</code>, sin el riesgo de olvidarlo y que la prueba se dé por superada
 				sin esperar a que se resuelva la promesa.
 			</p>
-			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/test-matchers", command: true }]} />
+			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/core @surea11y/test-matchers", command: true }]} />
 			<p>
-				<code>@surea11y/core</code> se instala con él; no hay que añadir nada más. Para
+				<code>@surea11y/core</code> es el motor que ejecuta el matcher; instálalo con el matcher,
+				como arriba. Para
 				comprobar HTML compilado desde la terminal o un paso de CI, fuera de un ejecutor
 				de pruebas, consulta la <a href="/getting-started/cli/">CLI</a>.
 			</p>

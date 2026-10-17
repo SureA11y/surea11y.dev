@@ -87,10 +87,10 @@ export function TestMatchersUsageContent() {
 				<code>await</code>
 				は不要で、書き忘れて解決済みのPromiseに対して黙って成功してしまうこともありません。
 			</p>
-			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/test-matchers", command: true }]} />
+			<CodeBlock lines={[{ text: "npm install --save-dev @surea11y/core @surea11y/test-matchers", command: true }]} />
 			<p>
 				<code>@surea11y/core</code>
-				も一緒にインストールされるので、ほかに追加するものはありません。テストランナーの外で、ビルドしたHTMLをターミナルやCIのステップからチェックしたい場合は
+				はマッチャーが実行するエンジンです。上のとおり、マッチャーと一緒にインストールしてください。テストランナーの外で、ビルドしたHTMLをターミナルやCIのステップからチェックしたい場合は
 				<a href="/getting-started/cli/">CLI</a>
 				を参照してください。
 			</p>

@@ -339,8 +339,8 @@ export function FaqContent() {
 					<code>packScript</code> registriert hat oder das mit einer anderen core-Version registriert
 					wurde, genauso aufgeführt. Die Bindings melden es als Lücke{" "}
 					<code>'pack-skipped'</code>, die Test-Matcher lassen die Assertion scheitern, und die CLI
-					endet mit Exit-Code <code>2</code>. Installieren Sie das Pack neben dem Paket, das es
-					ausführt, damit npm ein einziges <code>@surea11y/core</code> für beide auflöst. Siehe{" "}
+					endet mit Exit-Code <code>2</code>. Installieren Sie das Pack neben <code>@surea11y/core</code> und dem
+					Paket, das es ausführt, damit alle drei dieselbe Kopie von core nutzen. Siehe{" "}
 					<a href="/configuration/packs/#when-a-pack-doesnt-run">Packs</a>.
 				</p>
 			</article>
