@@ -314,6 +314,21 @@ export function FaqContent() {
 			</article>
 
 			<article>
+				<h2 id="scan-time">« Une analyse prend plus de temps après une mise à jour »</h2>
+				<p>
+					L’essentiel du temps d’une analyse est consacré au calcul des styles et de la mise en page
+					dans le navigateur : il dépend donc de la page, de la machine et du navigateur autant que du
+					moteur. Une version peut tout de même le modifier : une règle qui vérifie désormais une plus
+					grande partie de la page coûte davantage, et le <a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a> de core
+					indique quand une version change le coût d’une règle. <a href={`${core}/docs/PERFORMANCE.md`}><code>PERFORMANCE.md</code></a>,
+					sur GitHub, consigne la durée d’une analyse version après version, en proportion d’une
+					version antérieure sur les mêmes pages, ainsi que la façon dont elle est mesurée. Une règle
+					plus lente qui trouve davantage paie peut-être ce qu’elle trouve désormais ; une règle plus
+					lente avec les mêmes résultats est une régression qui mérite d’être <a href="https://github.com/SureA11y/core/issues">signalée</a>.
+				</p>
+			</article>
+
+			<article>
 				<h2 id="pack-did-not-run">« Un pack ne s’est pas exécuté », ou <code>skippedPacks</code> n’est pas vide</h2>
 				<p>
 					Un pack dont la plage <code>core</code> exclut la version de core installée, qui n’est

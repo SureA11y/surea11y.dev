@@ -879,3 +879,15 @@ canonical-source principle formalized above.
 - Audience-specific tracks (separate onboarding paths for QA, a11y
   specialists, leadership, platform teams): the review itself says only
   build these on demonstrated demand. No design work done.
+
+## Core 1.12.1 update (2026-10-17)
+
+Pinned `@surea11y/core` 1.12.1 (bindings unchanged; their `.screenshots()`
+release is a separate update). One rule's text changed:
+`text-spacing-content-loss` leaves out text inside a `<marquee>`, and its
+"(a marquee)" examples now read "(a ticker)"; every overlay follows it. New
+FAQ entry `#scan-time` ("A scan takes longer after upgrading"), every
+language, linking core's `PERFORMANCE.md` as GitHub-only (scan time per
+release, as ratios; measurement method). `RELEASING.md` is maintainer-only
+and not linked. `check:lang` flags "Web Animations API" in the Japanese
+rule text; it's a standard's name, left unmarked.
