@@ -25,7 +25,13 @@ const rule = localizeRule(Astro.props.rule, locale);
 const available = localeCodes.filter((l) => isRuleTranslated(ruleId, l));
 ---
 
-<BaseLayout title={plainRuleText(rule.title)} breadcrumbLabel={rule.ruleId} contentLocale={locale} translatedLocales={available}>
+<BaseLayout
+	title={plainRuleText(rule.title)}
+	description={plainRuleText(rule.description)}
+	breadcrumbLabel={rule.ruleId}
+	contentLocale={locale}
+	translatedLocales={available}
+>
 	<RulePage rule={rule} locale={locale} />
 </BaseLayout>
 
