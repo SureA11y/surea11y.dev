@@ -43,6 +43,8 @@ jobs:
       - run: npm run build
       - name: Links and anchors
         run: npm run check:links
+      - name: Page descriptions
+        run: npm run check:meta
       - name: Translations (complete and current)
         run: npm run i18n:check -- --strict
       - name: Japanese typography
