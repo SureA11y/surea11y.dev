@@ -35,6 +35,7 @@ npm run dev      # localhost:4321
 npm run build    # outputs to ./dist/
 npm run preview  # preview a production build locally
 npm run check:links  # after a build: broken internal links/anchors
+npm run check:meta   # after a build: every page has its own meta description
 npm run i18n:check   # translation coverage and outdated translations per language
 npm run check:typography  # after a build: stray spaces in Japanese pages
 ```
