@@ -454,6 +454,12 @@ fallback for anything not yet translated.
 - `npm run check:links` — the post-build link/anchor audit described
   above, now a script; also flags a localized page linking out of its own
   locale (links carrying `hreflang`, i.e. the switcher, are exempt).
+- `npm run check:meta` — post-build: every page (except `/from/`
+  redirects) has a meta description of its own, matching its `og:` and
+  `twitter:` descriptions, unique within its locale, and never the sitewide
+  `layout.defaultDescription`. A new page in `pages.ts` needs a
+  `description` (and `page:<href>:description` in each locale), or the
+  check fails.
 
 **Adding a language** (`fr` as the example):
 
@@ -610,9 +616,9 @@ Open English-source issues found in that review, not yet decided:
 
 `.github/workflows/ci.yml`, on every PR, push to `main` and manual run:
 
-- **check**: `npm ci`, build, `check:links`, `i18n:check --strict`,
-  `check:typography`, and `check:lang` (advisory, never fails). Uploads
-  `dist/` so the scan and the deploy use this one build.
+- **check**: `npm ci`, build, `check:links`, `check:meta`, `i18n:check
+  --strict`, `check:typography`, and `check:lang` (advisory, never fails).
+  Uploads `dist/` so the scan and the deploy use this one build.
 - **a11y**: `npm run check:a11y` (`scripts/check-a11y.mjs`) scans every
   built page except `/from/` redirects in Chromium with
   `@surea11y/playwright` and the pinned `@surea11y/core`, profile
@@ -714,9 +720,10 @@ Done after an external review of the live site flagged gaps:
   `description` prop (sitewide default otherwise) and now emits
   `meta[name=description]`, `link[rel=canonical]`, `og:*`, and
   `twitter:card` (`summary`, not `summary_large_image` — no OG image exists
-  yet, see below). Per-page descriptions set so far: the homepage and the
-  six other top-level section indexes, reusing `sections.ts`'s existing
-  one-line descriptions where one already existed. `sitemap-index.xml`
+  yet, see below). Every page has its own description: the homepage and
+  section indexes from `sections.ts`, each subpage from `description` in
+  `pages.ts` (since 2026-10-18), and each rule page from the rule's own
+  description; `check:meta` enforces it. `sitemap-index.xml`
   was submitted to Google Search Console on 2026-09-28 (Domain property,
   already verified; Bing Webmaster Tools not done yet — it can import from
   Search Console). Still open: a real Open Graph image (1200×630) — no such
