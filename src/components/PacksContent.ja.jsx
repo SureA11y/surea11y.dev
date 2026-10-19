@@ -3,6 +3,7 @@ import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "https://github.com/SureA11y/pack-en301549#readme";
 
 // The example pack each binding ships as examples/acme-policy-pack.js.
 const examplePack = [
@@ -114,6 +115,27 @@ export function PacksContent() {
 			/>
 			<p>
 				パックのルールとプロファイルは、コアのどのルールでも使えます。チェックリストや規格の大部分は、選んでまとめたコアのルールに、コアにない少数のルールを加えたものです。このページの例では、すべてのバインディングが<code>examples/</code>フォルダーに同梱している小さなパック<code>acme-policy-pack.js</code>を使います。独自ルール1つ、チェックリストのプロファイル（WCAG 2.2のAとAA、<code>region</code>、独自ルール）、チェックリストの項目2つを持ちます。<a href="#start-from-the-example">そのソース</a>は後述します。
+			</p>
+
+			<h2 id="en-301-549-pack">EN 301 549のパック</h2>
+			<p>
+				<a href={pack}><code>@surea11y/pack-en301549</code></a>は、SureA11yファミリーの、すぐにインストールできる規格パックです。EN 301 549の第9章（Web）を、V3.2.1とV4.1.1で扱います。バージョンごとのプロファイル<code>en301549-v4.1.1</code>と<code>en301549-v3.2.1</code>は条項ごとに結果を1つ報告し、<code>mappings: ['en301549']</code>は、WCAGのスキャンを含むあらゆるスキャンの結果に条項を示します。<code>@surea11y/core</code> 1.13.0以降が必要です。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// npm install @surea11y/core @surea11y/pack-en301549",
+					"const en301549 = require('@surea11y/pack-en301549');",
+					"",
+					"runDomRulesInPage(url, null, { packs: [en301549], profile: 'en301549-v4.1.1' });",
+					"runDomRulesInPage(url, null, { packs: [en301549], profile: 'wcag22-aa', mappings: ['en301549:V4.1.1'] });",
+				]}
+			/>
+			<p>
+				独自の規格を作るときの実例でもあります。ルールは持ちません。第9章はWCAGを再掲したものなので、各条項はその達成基準に対するコアのルールで確認します。プロファイルはそれらのルールを選び（<code>tags</code>、<code>mappedRules: true</code>）、規格の各バージョンを判定するWCAGのバージョンを示します（<code>wcagVersion</code>）。ルールの対応表はインストールされたコアのカタログから導くため、コアが追加したルールもパックを変えずに対象になります。WCAGにない要件を持つ規格も同じ形で、独自のルールを加えます。ソースは短いので、後述の<a href="#writing-a-pack">パックを書く</a>と合わせて読む価値があります。
+			</p>
+			<p>
+				コアは1.13.0までEN 301 549を内蔵していましたが、1.13.0でこのパックに置き換える形で非推奨にしました（<a href="/conformance/wcag-mapping/#en-301-549">WCAG適合性との対応</a>を参照）。ほかのプロファイルと同じく、パックのプロファイルが決めるのは何を実行するかです。適合を表明するには、引き続き人がすべての条項を確認する必要があります。
 			</p>
 
 			<h2 id="using-a-pack">パックを使う</h2>
@@ -274,6 +296,10 @@ export function PacksContent() {
 			<CodeBlock lang="js" lines={examplePack} />
 			<p>
 				そのプロファイル<code>acme-web-2026</code>は、コアのWCAG 2.2のAとAAのルール、どのWCAGのタグでも選択されないベストプラクティスのルール<code>region</code>、そして独自ルールを実行します。2つの集約はチェックリストの項目で、それぞれがコアまたはパックのルールを1つの結果にまとめます。
+			</p>
+
+			<p>
+				規格の場合は、<a href="#en-301-549-pack">EN 301 549のパック</a>が、公開済みの完全な例です。
 			</p>
 
 			<h3 id="create-one"><code>surea11y-pack new</code>で作る</h3>
