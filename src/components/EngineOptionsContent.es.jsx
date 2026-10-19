@@ -1,8 +1,10 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "/configuration/packs/#en-301-549-pack";
 
 const optionRows = [
 	{
@@ -737,6 +739,16 @@ export function EngineOptionsContent() {
 				lo deja fuera.
 			</p>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<Callout tone="note" title="Obsoleto">
+				<p>
+					<code>en301549-v4.1.1</code> y <code>en301549-v3.2.1</code> pasan al pack de EN 301 549,{" "}
+					<a href={pack}><code>@surea11y/pack-en301549</code></a>, y salen de core en la 2.0.0. Funcionan como antes, con un{" "}
+					<code>console.warn</code> por proceso. Con el pack (<code>{"packs: [en301549]"}</code>), un
+					análisis toma de él los mismos nombres y no muestra el aviso; los perfiles del pack informan
+					un resultado por cláusula en lugar de los resultados agregados de WCAG. Ver{" "}
+					<a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>cómo core declara obsoleto un estándar</a>.
+				</p>
+			</Callout>
 			<p>
 				El estándar o la lista de comprobación de un <a href="/configuration/packs/">pack</a> añade
 				sus propios perfiles a esta lista.
@@ -900,6 +912,14 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
+			<Callout tone="note" title="Obsoleto">
+				<p>
+					Los mapeos <code>en301549</code> pasan al pack de EN 301 549, <a href={pack}><code>@surea11y/pack-en301549</code></a>, y salen de core en
+					la 2.0.0. Funcionan como antes, con un <code>console.warn</code> por proceso. Con el pack,{" "}
+					<code>mappings: ['en301549']</code> toma el mismo nombre y da a cada resultado las mismas
+					entradas, sin aviso.
+				</p>
+			</Callout>
 			<p>
 				Acepta un array o una cadena separada por comas, con nombres y versiones sin distinguir
 				mayúsculas y minúsculas. Con <code>profile: 'en301549-v4.1.1'</code> las cláusulas de V4.1.1

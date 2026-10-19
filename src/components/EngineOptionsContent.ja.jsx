@@ -1,8 +1,10 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "/configuration/packs/#en-301-549-pack";
 
 const optionRows = [
 	{
@@ -428,6 +430,11 @@ export function EngineOptionsContent() {
 				<code>getProfileWcagTarget(profile)</code>は、プロファイルのタグセットが相当する<code>runOnly.wcag</code>の目標を返し、プロファイルでない名前には<code>null</code>を返します。プロファイルは引き続き表のとおりタグで選択します。<code>wcag22-aa</code>では<code>duplicate-id</code>（4.1.1）が実行されて<code>fail</code>にはならず、<code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code>ではそれが除かれます。
 			</p>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<Callout tone="note" title="非推奨">
+				<p>
+					<code>en301549-v4.1.1</code>と<code>en301549-v3.2.1</code>はEN 301 549のパック<a href={pack}><code>@surea11y/pack-en301549</code></a>に移り、core 2.0.0で削除されます。それまでは従来どおり動作し、プロセスごとに1回<code>console.warn</code>を出します。パックを渡すと（<code>{"packs: [en301549]"}</code>）、スキャンは同じ名前をパックから取り、通知は出しません。パックのプロファイルは、WCAGの集約の代わりに条項ごとに結果を1つ報告します。<a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>coreが規格を非推奨にする手順</a>を参照してください。
+				</p>
+			</Callout>
 			<p>
 				<a href="/configuration/packs/">パック</a>の規格やチェックリストは、独自のプロファイルをこの一覧に加えます。
 			</p>
@@ -509,6 +516,11 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
+			<Callout tone="note" title="非推奨">
+				<p>
+					<code>en301549</code>の対応付けはEN 301 549のパック<a href={pack}><code>@surea11y/pack-en301549</code></a>に移り、core 2.0.0で削除されます。それまでは従来どおり動作し、プロセスごとに1回<code>console.warn</code>を出します。パックを渡すと、<code>mappings: ['en301549']</code>は同じ名前で、すべての結果に同じエントリーを付け、通知は出しません。
+				</p>
+			</Callout>
 			<p>
 				配列またはカンマ区切りの文字列を受け付け、名前とバージョンの大文字と小文字は区別しません。<code>profile: 'en301549-v4.1.1'</code>の下ではV4.1.1の条項は指定しなくても含まれ、<code>mappings</code>でさらに追加できます。エンジンに表がない名前やバージョンは<code>console.warn</code>を出して無視します。ほかの規格を含む実行は、それを正規の表記で<code>engine.mappings</code>に示します（<code>["en301549:V3.2.1"]</code>、すべてのバージョンなら<code>["en301549"]</code>）。
 			</p>

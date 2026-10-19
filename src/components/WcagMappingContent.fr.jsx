@@ -1,8 +1,10 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "/configuration/packs/#en-301-549-pack";
 
 const precedenceRows = [
 	{
@@ -229,6 +231,16 @@ export function WcagMappingContent() {
 			</p>
 
 			<h2 id="en-301-549">EN 301 549</h2>
+			<Callout tone="note" title="Obsolète">
+				<p>
+					EN 301 549 passe dans son propre pack, <a href={pack}><code>@surea11y/pack-en301549</code></a>, et quitte core en 2.0.0, avec ses
+					profils, sa clé <code>mappings</code> et <code>@surea11y/core/en301549</code>. Tout
+					fonctionne comme avant, avec un <code>console.warn</code> par processus. Pour changer,
+					passez le pack dans <code>engineOptions.packs</code> : l’analyse prend chez lui les mêmes
+					noms, et <code>@surea11y/pack-en301549/public</code> a les exports de la table. Voir{" "}
+					<a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>comment core rend une norme obsolète</a>.
+				</p>
+			</Callout>
 			<p>
 				Le chapitre 9 d’EN 301 549 reprend les critères de succès WCAG de niveau A et AA sous forme
 				de clauses numérotées <code>9.</code> suivi du numéro du critère : WCAG 1.4.3 est la clause

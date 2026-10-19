@@ -3,6 +3,7 @@ import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "https://github.com/SureA11y/pack-en301549#readme";
 
 // The example pack each binding ships as examples/acme-policy-pack.js.
 const examplePack = [
@@ -126,6 +127,41 @@ export function PacksContent() {
 				ships in its <code>examples/</code> folder: one house rule, a checklist profile (WCAG 2.2 A
 				and AA, <code>region</code>, and the house rule) and two checklist items.{" "}
 				<a href="#start-from-the-example">Its source</a> is below.
+			</p>
+
+			<h2 id="en-301-549-pack">The EN 301 549 pack</h2>
+			<p>
+				<a href={pack}><code>@surea11y/pack-en301549</code></a> is a standard pack of the
+				SureA11y family, ready to install: EN 301 549 chapter 9 (Web), in V3.2.1 and V4.1.1. It has
+				a profile per version, <code>en301549-v4.1.1</code> and <code>en301549-v3.2.1</code>, that
+				reports one result per clause, and <code>mappings: ['en301549']</code> to name the clauses
+				on the results of any scan, a WCAG one included. It needs <code>@surea11y/core</code> 1.13.0
+				or later.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// npm install @surea11y/core @surea11y/pack-en301549",
+					"const en301549 = require('@surea11y/pack-en301549');",
+					"",
+					"runDomRulesInPage(url, null, { packs: [en301549], profile: 'en301549-v4.1.1' });",
+					"runDomRulesInPage(url, null, { packs: [en301549], profile: 'wcag22-aa', mappings: ['en301549:V4.1.1'] });",
+				]}
+			/>
+			<p>
+				It is also a worked example of a standard of your own. It has no rules: chapter 9 restates
+				WCAG, so each clause is checked by core's rules for its criterion. Its profiles choose
+				those rules (<code>tags</code>, <code>mappedRules: true</code>) and name the WCAG version
+				each version of the standard is judged by (<code>wcagVersion</code>), and its rule map is
+				derived from the installed core's catalog, so a rule core adds is covered with no change to
+				the pack. A standard with requirements WCAG doesn't have uses the same shape and adds its
+				own rules. Its source is short and worth reading beside{" "}
+				<a href="#writing-a-pack">Writing a pack</a> below.
+			</p>
+			<p>
+				Core had EN 301 549 built in until 1.13.0, which deprecates it in favour of this pack (see{" "}
+				<a href="/conformance/wcag-mapping/#en-301-549">WCAG mapping</a>). Like any profile, the
+				pack's profiles choose what runs: a conformance claim still needs a person to check every clause.
 			</p>
 
 			<h2 id="using-a-pack">Using a pack</h2>
@@ -356,6 +392,11 @@ export function PacksContent() {
 				best-practice rule <code>region</code>, which no WCAG tag selects, and the house rule. Its
 				two rollups are the checklist's items: each groups rules, core's or the pack's, into one
 				result.
+			</p>
+
+			<p>
+				For a standard, the{" "}
+				<a href="#en-301-549-pack">EN 301 549 pack</a> is a complete, published example.
 			</p>
 
 			<h3 id="create-one">Create one with <code>surea11y-pack new</code></h3>

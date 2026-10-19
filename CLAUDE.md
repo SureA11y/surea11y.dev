@@ -913,12 +913,21 @@ binding as a dependency, and it doesn't mention the bindings' planned
 Pinned `@surea11y/core` 1.13.0. No rule text, locale or doc content the
 site adapts changed except the EN 301 549 deprecation (built-in profiles,
 `mappings: 'en301549'` and `@surea11y/core/en301549` move to
-`@surea11y/pack-en301549`, removed in 2.0.0). **Deliberately not on the
-site yet**: the pack isn't on npm until its first release (planned
-2026-10-19). Once it is, add in every language: deprecation notes on
-Engine options (profiles, `mappings`) and WCAG mapping's `#en-301-549`
-(entry point → `@surea11y/pack-en301549/public`), following core's
-`ENGINE_OPTIONS.md`/`WCAG_CONFORMANCE.md`, and link
+`@surea11y/pack-en301549`, removed in 2.0.0). That went on the site with
+core 1.13.1 (2026-10-19, once the pack's 1.0.0 was on npm): a "Deprecated"
+`Callout` after the profiles and the `mappings` code samples on Engine
+options and at the top of WCAG mapping's `#en-301-549` (that one names
+`@surea11y/pack-en301549/public` as the table's new entry point), every
+language, linking Packs' `#en-301-549-pack` and
 `API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`
-(GitHub-only). PERFORMANCE.md's 1.13.0 row needs no site change; the FAQ
-`#scan-time` only links it.
+(GitHub-only). The Packs page presents the pack in its own section
+(`#en-301-549-pack`, before "Using a pack"), per the user: first as a
+pack of the family worth installing and as a worked example of a standard
+pack (no rules, profiles over core's rules, rule map derived from core's
+catalog), with the deprecation as a closing note, not as "the replacement
+for the built-in". "Start from the example" points to it too. The homepage's "Which package" table
+(`OverviewContent`) has two rows for packs, after the CLI: EN 301 549
+(linking `#en-301-549-pack`) and "your own rules, profiles or standard,
+public or internal" (linking `#writing-a-pack`). Wording follows core's `ENGINE_OPTIONS.md`/
+`WCAG_CONFORMANCE.md`. 1.13.1 itself is a browser-only fix (a `window`
+property left behind) with no rule or doc change.

@@ -1,8 +1,10 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "/configuration/packs/#en-301-549-pack";
 
 const optionRows = [
 	{
@@ -695,6 +697,15 @@ export function EngineOptionsContent() {
 				<code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code> leaves it out.
 			</p>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<Callout tone="note" title="Deprecated">
+				<p>
+					<code>en301549-v4.1.1</code> and <code>en301549-v3.2.1</code> move to EN 301 549's pack,{" "}
+					<a href={pack}><code>@surea11y/pack-en301549</code></a>, and leave core in 2.0.0. They work as before, with one{" "}
+					<code>console.warn</code> per process. Given the pack (<code>{"packs: [en301549]"}</code>), a scan
+					takes the same names from it and shows no notice; the pack's profiles report a result per
+					clause in place of the WCAG rollups. See <a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>how core deprecates a standard</a>.
+				</p>
+			</Callout>
 			<p>
 				A <a href="/configuration/packs/">pack</a>'s standard or checklist brings its own profiles
 				to this list.
@@ -852,6 +863,14 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
+			<Callout tone="note" title="Deprecated">
+				<p>
+					The <code>en301549</code> mappings move to EN 301 549's pack, <a href={pack}><code>@surea11y/pack-en301549</code></a>, and leave core in
+					2.0.0. They work as before, with one <code>console.warn</code> per process. Given the pack,{" "}
+					<code>mappings: ['en301549']</code> takes the same name and gives every result the same
+					entries, with no notice.
+				</p>
+			</Callout>
 			<p>
 				It takes an array or a comma-separated string, names and versions matched
 				case-insensitively. Under <code>profile: 'en301549-v4.1.1'</code> the V4.1.1 clauses are

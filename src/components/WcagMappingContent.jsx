@@ -1,8 +1,10 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "/configuration/packs/#en-301-549-pack";
 
 const precedenceRows = [
 	{
@@ -214,6 +216,16 @@ export function WcagMappingContent() {
 			</p>
 
 			<h2 id="en-301-549">EN 301 549</h2>
+			<Callout tone="note" title="Deprecated">
+				<p>
+					EN 301 549 moves to its own pack, <a href={pack}><code>@surea11y/pack-en301549</code></a>, and leaves core in 2.0.0, with its
+					profiles, its <code>mappings</code> key and <code>@surea11y/core/en301549</code>. All of it
+					works as before, with one <code>console.warn</code> per process. Pass the pack in{" "}
+					<code>engineOptions.packs</code> to switch: the scan takes the same names from the pack, and{" "}
+					<code>@surea11y/pack-en301549/public</code> has the table's exports. See{" "}
+					<a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>how core deprecates a standard</a>.
+				</p>
+			</Callout>
 			<p>
 				Chapter 9 of EN 301 549 restates the WCAG Level A and AA Success Criteria as clauses
 				numbered <code>9.</code> plus the criterion's own number: WCAG 1.4.3 is clause 9.1.4.3.
