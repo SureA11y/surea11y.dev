@@ -1,8 +1,10 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "/configuration/packs/#en-301-549-pack";
 
 const precedenceRows = [
 	{
@@ -283,6 +285,11 @@ export function WcagMappingContent() {
 			</p>
 
 			<h2 id="en-301-549">EN 301 549</h2>
+			<Callout tone="note" title="非推奨">
+				<p>
+					EN 301 549は、プロファイル、<code>mappings</code>のキー、<code>@surea11y/core/en301549</code>とともに専用のパック<a href={pack}><code>@surea11y/pack-en301549</code></a>に移り、core 2.0.0で削除されます。それまではすべて従来どおり動作し、プロセスごとに1回<code>console.warn</code>を出します。移行するには、パックを<code>engineOptions.packs</code>に渡します。スキャンは同じ名前をパックから取り、表のエクスポートは<code>@surea11y/pack-en301549/public</code>にあります。<a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>coreが規格を非推奨にする手順</a>を参照してください。
+				</p>
+			</Callout>
 			<p>
 				EN 301 549の第9章は、WCAGのレベルAとAAの達成基準を、<code>9.</code>に達成基準の番号を続けた条項として再掲しています。WCAG 1.4.3は条項9.1.4.3です。スキャンが要求した場合、アトミックルールと複合ルールのすべての結果は、<code>meta.normativeMappings</code>のWCAGのエントリーの後に、各達成基準の条項を、その達成基準を含む規格のバージョンごとに1つずつ持ちます。スキャンは<code>engineOptions.mappings: ['en301549']</code>（両方のバージョン）や<code>['en301549:V3.2.1']</code>（1つ）で要求するか、EN 301 549のプロファイルを対象にして要求します。プロファイルはその名前のバージョンを追加します。デフォルトでは、結果はWCAGだけを示します（<a href="/configuration/engine-options/#other-standards-mappings">ほかの規格</a>を参照）。
 			</p>

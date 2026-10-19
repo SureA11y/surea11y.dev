@@ -1,8 +1,10 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "/configuration/packs/#en-301-549-pack";
 
 const precedenceRows = [
 	{
@@ -229,6 +231,17 @@ export function WcagMappingContent() {
 			</p>
 
 			<h2 id="en-301-549">EN 301 549</h2>
+			<Callout tone="note" title="Veraltet">
+				<p>
+					EN 301 549 zieht in ein eigenes Pack um, <a href={pack}><code>@surea11y/pack-en301549</code></a>, und entfällt in core 2.0.0, mit
+					seinen Profilen, seinem <code>mappings</code>-Schlüssel und{" "}
+					<code>@surea11y/core/en301549</code>. Alles funktioniert wie bisher, mit einem{" "}
+					<code>console.warn</code> pro Prozess. Zum Umstieg übergeben Sie das Pack in{" "}
+					<code>engineOptions.packs</code>: Der Scan übernimmt dieselben Namen aus dem Pack, und{" "}
+					<code>@surea11y/pack-en301549/public</code> hat die Exporte der Tabelle. Siehe{" "}
+					<a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>wie core eine Norm abkündigt</a>.
+				</p>
+			</Callout>
 			<p>
 				Kapitel 9 der EN 301 549 gibt die WCAG-Erfolgskriterien der Stufen A und AA als Klauseln
 				wieder, nummeriert mit <code>9.</code> plus der Nummer des Kriteriums: WCAG 1.4.3 ist Klausel

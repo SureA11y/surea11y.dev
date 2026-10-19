@@ -1,8 +1,10 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "/configuration/packs/#en-301-549-pack";
 
 const optionRows = [
 	{
@@ -729,6 +731,15 @@ export function EngineOptionsContent() {
 				<code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code> die Regel weglässt.
 			</p>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<Callout tone="note" title="Veraltet">
+				<p>
+					<code>en301549-v4.1.1</code> und <code>en301549-v3.2.1</code> ziehen in das Pack der
+					EN 301 549 um, <a href={pack}><code>@surea11y/pack-en301549</code></a>, und entfallen in core 2.0.0. Sie funktionieren wie bisher, mit
+					einem <code>console.warn</code> pro Prozess. Mit dem Pack (<code>{"packs: [en301549]"}</code>) übernimmt ein Scan dieselben Namen daraus und zeigt
+					keinen Hinweis; die Profile des Packs melden ein Ergebnis pro Klausel anstelle der
+					WCAG-Zusammenfassungen. Siehe <a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>wie core eine Norm abkündigt</a>.
+				</p>
+			</Callout>
 			<p>
 				Die Norm oder Checkliste eines <a href="/configuration/packs/">Packs</a> bringt eigene
 				Profile in diese Liste ein.
@@ -894,6 +905,14 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
+			<Callout tone="note" title="Veraltet">
+				<p>
+					Die <code>en301549</code>-Zuordnungen ziehen in das Pack der EN 301 549 um, <a href={pack}><code>@surea11y/pack-en301549</code></a>, und
+					entfallen in core 2.0.0. Sie funktionieren wie bisher, mit einem <code>console.warn</code>{" "}
+					pro Prozess. Mit dem Pack übernimmt <code>mappings: ['en301549']</code> denselben Namen und
+					gibt jedem Ergebnis dieselben Einträge, ohne Hinweis.
+				</p>
+			</Callout>
 			<p>
 				Die Option nimmt ein Array oder einen kommagetrennten String; bei Namen und Versionen spielt
 				Groß- und Kleinschreibung keine Rolle. Unter <code>profile: 'en301549-v4.1.1'</code> sind die
