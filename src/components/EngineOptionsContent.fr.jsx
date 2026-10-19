@@ -1,8 +1,10 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
+import { Callout } from "./design-system/feedback/Callout.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "/configuration/packs/#en-301-549-pack";
 
 const optionRows = [
 	{
@@ -728,6 +730,16 @@ export function EngineOptionsContent() {
 				l’écarte.
 			</p>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<Callout tone="note" title="Obsolète">
+				<p>
+					<code>en301549-v4.1.1</code> et <code>en301549-v3.2.1</code> passent dans le pack
+					d’EN 301 549, <a href={pack}><code>@surea11y/pack-en301549</code></a>, et quittent core en 2.0.0. Ils fonctionnent comme avant, avec un{" "}
+					<code>console.warn</code> par processus. Avec le pack (<code>{"packs: [en301549]"}</code>),
+					une analyse prend chez lui les mêmes noms et n’affiche aucun avertissement ; les profils du
+					pack rapportent un résultat par clause à la place des agrégations WCAG. Voir{" "}
+					<a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>comment core rend une norme obsolète</a>.
+				</p>
+			</Callout>
 			<p>
 				La norme ou la liste de contrôle d’un <a href="/configuration/packs/">pack</a> ajoute ses
 				propres profils à cette liste.
@@ -893,6 +905,14 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { mappings: ['en301549:V3.2.1'] }, null);"]} />
+			<Callout tone="note" title="Obsolète">
+				<p>
+					Les correspondances <code>en301549</code> passent dans le pack d’EN 301 549, <a href={pack}><code>@surea11y/pack-en301549</code></a>, et
+					quittent core en 2.0.0. Elles fonctionnent comme avant, avec un <code>console.warn</code>{" "}
+					par processus. Avec le pack, <code>mappings: ['en301549']</code> prend le même nom et donne
+					à chaque résultat les mêmes entrées, sans avertissement.
+				</p>
+			</Callout>
 			<p>
 				L’option accepte un tableau ou une chaîne séparée par des virgules, noms et versions sans
 				tenir compte de la casse. Sous <code>profile: 'en301549-v4.1.1'</code>, les clauses V4.1.1

@@ -3,6 +3,7 @@ import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+const pack = "https://github.com/SureA11y/pack-en301549#readme";
 
 // The example pack each binding ships as examples/acme-policy-pack.js.
 const examplePack = [
@@ -128,6 +129,42 @@ export function PacksContent() {
 				<code>examples/</code> : une règle maison, un profil de liste de contrôle (WCAG 2.2 A et
 				AA, <code>region</code> et la règle maison) et deux points de liste de contrôle.{" "}
 				<a href="#start-from-the-example">Son code source</a> figure plus bas.
+			</p>
+
+			<h2 id="en-301-549-pack">Le pack EN 301 549</h2>
+			<p>
+				<a href={pack}><code>@surea11y/pack-en301549</code></a> est un pack de norme de la
+				famille SureA11y, prêt à installer : le chapitre 9 (Web) d’EN 301 549, en V3.2.1 et V4.1.1.
+				Il a un profil par version, <code>en301549-v4.1.1</code> et <code>en301549-v3.2.1</code>,
+				qui rapporte un résultat par clause, et <code>mappings: ['en301549']</code> pour nommer les
+				clauses dans les résultats de n’importe quelle analyse, WCAG compris. Il demande{" "}
+				<code>@surea11y/core</code> 1.13.0 ou ultérieur.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// npm install @surea11y/core @surea11y/pack-en301549",
+					"const en301549 = require('@surea11y/pack-en301549');",
+					"",
+					"runDomRulesInPage(url, null, { packs: [en301549], profile: 'en301549-v4.1.1' });",
+					"runDomRulesInPage(url, null, { packs: [en301549], profile: 'wcag22-aa', mappings: ['en301549:V4.1.1'] });",
+				]}
+			/>
+			<p>
+				C’est aussi un exemple complet de norme à vous. Il n’a pas de règles : le chapitre 9 reprend
+				WCAG, donc chaque clause est vérifiée par les règles de core pour son critère. Ses profils
+				choisissent ces règles (<code>tags</code>, <code>mappedRules: true</code>) et nomment la
+				version de WCAG selon laquelle chaque version de la norme est jugée
+				(<code>wcagVersion</code>), et sa table de règles est dérivée du catalogue du core installé :
+				une règle que core ajoute est couverte sans changer le pack. Une norme avec des exigences
+				que WCAG n’a pas suit la même forme et ajoute ses propres règles. Son code est court et
+				mérite d’être lu à côté de <a href="#writing-a-pack">Écrire un pack</a>, plus bas.
+			</p>
+			<p>
+				Core intégrait EN 301 549 jusqu’à la 1.13.0, qui la rend obsolète au profit de ce pack (voir{" "}
+				<a href="/conformance/wcag-mapping/#en-301-549">la correspondance WCAG</a>). Comme tout
+				profil, ceux du pack choisissent ce qui s’exécute : une déclaration de conformité demande
+				toujours qu’une personne vérifie chaque clause.
 			</p>
 
 			<h2 id="using-a-pack">Utiliser un pack</h2>
@@ -372,6 +409,11 @@ export function PacksContent() {
 				règle de bonnes pratiques <code>region</code>, qu’aucun tag WCAG ne sélectionne, et la
 				règle maison. Ses deux agrégations sont les points de la liste de contrôle : chacune
 				regroupe des règles, de core ou du pack, en un seul résultat.
+			</p>
+
+			<p>
+				Pour une norme, le <a href="#en-301-549-pack">pack EN 301 549</a> est un exemple complet
+				et publié.
 			</p>
 
 			<h3 id="create-one">En créer un avec <code>surea11y-pack new</code></h3>

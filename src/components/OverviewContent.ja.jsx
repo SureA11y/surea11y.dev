@@ -13,6 +13,8 @@ const packageRows = [
 	{ id: "webdriverio", want: "WebdriverIOのテストに追加する", install: <><code>@surea11y/webdriverio</code> + <code>@surea11y/core</code></> },
 	{ id: "test-matchers", want: "Jest／Vitestのコンポーネントテストやユニットテストでアクセシビリティをアサーションする", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "ターミナルやCIパイプラインから静的なHTMLをスキャンする", install: <code>@surea11y/cli</code> },
+	{ id: "pack-en301549", want: "上記のいずれかで、欧州の規格EN 301 549に照らして確認する", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
+	{ id: "pack-own", want: "独自のルール、プロファイル、規格（公開・社内を問わず）に照らして確認する", install: <>独自のパック：<a href="/configuration/packs/#writing-a-pack">パックを書く</a>を参照</> },
 	{ id: "core", want: "手元にあるDOMに対してエンジンを実行する", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "エンジンの上に独自のツール（CLI、拡張機能、ダッシュボード、レポート生成ツールなど）を作る", install: <code>@surea11y/core</code> },
 ];

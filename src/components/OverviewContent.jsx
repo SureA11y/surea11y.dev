@@ -13,6 +13,8 @@ const packageRows = [
 	{ id: "webdriverio", want: "…WebdriverIO", install: <><code>@surea11y/webdriverio</code> + <code>@surea11y/core</code></> },
 	{ id: "test-matchers", want: "Assert accessibility in Jest/Vitest component or unit tests", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "Scan static HTML from a terminal or CI pipeline", install: <code>@surea11y/cli</code> },
+	{ id: "pack-en301549", want: "Check against EN 301 549, the European standard, with any of the above", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
+	{ id: "pack-own", want: "Check against your own rules, profiles or standard, public or internal", install: <>A pack of your own: see <a href="/configuration/packs/#writing-a-pack">Writing a pack</a></> },
 	{ id: "core", want: "Run the engine against a DOM you already have", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "Build your own tool on the engine: a CLI, an extension, a dashboard, a report generator", install: <code>@surea11y/core</code> },
 ];
