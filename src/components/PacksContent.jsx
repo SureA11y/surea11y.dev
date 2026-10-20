@@ -311,7 +311,8 @@ export function PacksContent() {
 				browser bundle, or ship one file built with{" "}
 				<code>buildBrowserBundle({"{ packs: [acmePolicy] }"})</code>, and name the pack as{" "}
 				<code>name@version</code>. See{" "}
-				<a href="/getting-started/standalone/#packs-in-a-page">Standalone</a>.
+				<a href="/getting-started/standalone/#packs-in-a-page">Standalone</a>. A page that loads its scripts as files is best served by the one file from{" "}
+				<code>buildBrowserBundle</code>: the pack's script runs only with the core that wrote it.
 			</p>
 
 			<h2 id="what-a-scan-reports">What a scan reports</h2>
