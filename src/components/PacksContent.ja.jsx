@@ -250,7 +250,7 @@ export function PacksContent() {
 
 			<h3 id="in-a-page-of-your-own">独自のページで</h3>
 			<p>
-				ブラウザー拡張機能や独自の<code>page.evaluate</code>では、コアのブラウザー用バンドルの後に<code>@surea11y/core/pack</code>の<code>packScript([acmePolicy])</code>を注入するか、<code>buildBrowserBundle({"{ packs: [acmePolicy] }"})</code>で作った1つのファイルを配布し、パックを<code>name@version</code>として指定してください。<a href="/getting-started/standalone/#packs-in-a-page">スタンドアロン</a>を参照してください。
+				ブラウザー拡張機能や独自の<code>page.evaluate</code>では、コアのブラウザー用バンドルの後に<code>@surea11y/core/pack</code>の<code>packScript([acmePolicy])</code>を注入するか、<code>buildBrowserBundle({"{ packs: [acmePolicy] }"})</code>で作った1つのファイルを配布し、パックを<code>name@version</code>として指定してください。<a href="/getting-started/standalone/#packs-in-a-page">スタンドアロン</a>を参照してください。スクリプトをファイルとして読み込むページには、<code>buildBrowserBundle</code>で作る1つのファイルが最適です。パックのスクリプトは、それを書き出したコアでしか動作しません。
 			</p>
 
 			<h2 id="what-a-scan-reports">スキャンが報告するもの</h2>
