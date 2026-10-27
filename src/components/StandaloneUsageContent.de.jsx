@@ -100,6 +100,53 @@ export function StandaloneUsageContent() {
 				ein SVG- oder XHTML-Dokument als das, was es ist.
 			</p>
 
+			<h2 id="from-the-browser-console">Aus der Browser-Konsole</h2>
+			<p>
+				Für einen Scan von Hand hat das Bundle einige Helfer. Laden Sie es über die Konsole des
+				Browsers (den Tab „Console“ der Entwicklertools) in eine beliebige geöffnete Seite, und
+				scannen Sie dann, listen Sie die Befunde auf, markieren Sie sie auf der Seite oder öffnen
+				Sie den HTML-Bericht:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Pasted into the console of the page to check.",
+					"const s = document.createElement('script');",
+					"s.src = 'https://cdn.jsdelivr.net/npm/@surea11y/core/surea11y.browser.js';",
+					"document.head.append(s);",
+					"",
+					"// Once it has loaded:",
+					"a11ycore.version; // the engine's version",
+					"const result = await a11ycore.run(); // scan the page",
+					"a11ycore.table(result); // the findings, worst first",
+					"a11ycore.highlight(result); // box each one on the page",
+					"await a11ycore.openReport(result); // the HTML report, in a new tab",
+					"await a11ycore.inspect('headings'); // what a person checks by hand",
+				]}
+			/>
+			<p>
+				<code>run(options)</code> nimmt die Engine-Optionen und zwei eigene,{" "}
+				<code>context</code> (ein Selektor, um nur einen Teil der Seite zu scannen) und{" "}
+				<code>runOnly</code>, und ruft vor dem Scan die Stylesheets ab, die die Seite selbst nicht
+				lesen kann. <code>table()</code> gibt eine Zeile pro Befund aus: zuerst die Fehlschläge,
+				dann die Fragen, die zu <code>fail</code> tendieren, die, die zu <code>pass</code>{" "}
+				tendieren, und die, die nur eine Person beurteilen kann. <code>highlight()</code> zeichnet
+				einen Rahmen um jedes Element, das ein <code>fail</code> (durchgehend rot) oder ein{" "}
+				<code>cantTell</code> (gestrichelt bernsteinfarben) nennt, in einer eigenen Ebene, die die
+				Elemente der Seite unverändert lässt; <code>clearHighlights()</code> entfernt sie.{" "}
+				<code>inspect()</code> zeichnet, was eine prüfende Person von Hand kontrolliert, und
+				beurteilt nichts: <code>'headings'</code>, <code>'landmarks'</code>, <code>'names'</code>{" "}
+				oder <code>'focus-order'</code>. <code>openReport()</code> lädt beim ersten Mal{" "}
+				<code>surea11y.report.js</code> von neben dem Bundle, und der Bericht zeigt, wie sich jede
+				Frage prüfen lässt. Die Content Security Policy einer Seite kann ein Skript von einem CDN
+				blockieren: Laden Sie die Dateien dann vom eigenen Origin der Seite, oder scannen Sie mit
+				einem Driver. Alle Optionen stehen im{" "}
+				<a href={`${core}/docs/INTEGRATION.md#from-the-browser-console`}>
+					Abschnitt zur Browser-Konsole in <code>INTEGRATION.md</code>
+				</a>
+				, dem Integrationsleitfaden auf GitHub.
+			</p>
+
 			<h2 id="packs-in-a-page">Packs in einer Seite</h2>
 			<p>
 				Ein <a href="/configuration/packs/">Pack</a> wird in Node vorbereitet und gelangt daher als
@@ -180,6 +227,31 @@ export function StandaloneUsageContent() {
 					<code>INTEGRATION.md</code>
 				</a>
 				, der Integrationsanleitung auf GitHub.
+			</p>
+
+			<h2 id="style-sheets-from-another-origin">Stylesheets von einem anderen Origin</h2>
+			<p>
+				Das Skript einer Seite kann die Regeln eines Stylesheets, das von einem anderen Origin
+				kommt (einem CDN, einem Schriftdienst), nicht lesen. Eine Regel, die im CSS nach etwas
+				sucht, etwa <code>css-orientation-lock</code>, kann daher nicht sagen, ob es da ist, und
+				stellt eine Frage. Geben Sie dem Scan ihren Text in{" "}
+				<code>engineOptions.styleSheetTexts</code> (<code>{"[{ href, text }]"}</code>), und{" "}
+				<code>css-orientation-lock</code>, <code>css-hidden-focus</code> und{" "}
+				<code>css-focus-indicator-suppressed</code> lesen ihn. Im Bundle nimmt{" "}
+				<code>runa11yCoreInPageAsync</code> dieselben vier Argumente wie{" "}
+				<code>runa11yCoreInPage</code>, ruft mit <code>preloadStyleSheets()</code> die Stylesheets
+				ab, die ihr Server freigibt (CORS), und scannt dann:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = await a11ycore.runa11yCoreInPageAsync(location.href, null, {}, null);",
+				]}
+			/>
+			<p>
+				Ein Stylesheet, das sein Server nicht freigibt, lässt sich aus der Seite gar nicht lesen.
+				Ein Werkzeug, das den Browser steuert, kann es außerhalb der Seite abrufen, wo kein CORS
+				gilt, und in derselben Option übergeben; die Bindings tun das.
 			</p>
 
 			<h2 id="a-time-limit-on-a-scan">Ein Zeitlimit für einen Scan</h2>
@@ -270,6 +342,84 @@ export function StandaloneUsageContent() {
 				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}><code>INTEGRATION.md</code></a>.
 			</p>
 
+			<h2 id="listener-and-live-region-hooks">Klick-Handler und Live-Regionen</h2>
+			<p>
+				Zwei weitere optionale Hooks, seit core 1.14, werden wie der Internals-Hook installiert,
+				vor den eigenen Skripten der Seite. <code>listenerHookScript()</code> zeichnet die Klick-,
+				Tastatur-, Fokus-, Maus- und Einfüge-Listener auf, die eine Seite per Skript hinzufügt,
+				damit die Tastaturregeln sie beurteilen: Ein <code>&lt;div role="button"&gt;</code> mit
+				einem Klick-Listener und ohne Tastatur-Listener überall dort, wohin ein Tastaturereignis von
+				ihm gelangt, ergibt <code>fail</code> (<code>CLICK_HANDLER_NO_KEY_LISTENER</code>).{" "}
+				<code>liveRegionHookScript()</code> zeichnet auf, was Live-Regionen erhalten:{" "}
+				<code>live-region-announcements</code> stellt dann eine Frage zu einer Region, die schon mit
+				ihrem Text eingefügt oder auf einmal eingeblendet und gefüllt wurde und die Screenreader oft
+				nicht ansagen, und <code>getAnnouncements()</code> gibt zurück, was die Seite zur Ansage
+				bereitgestellt hat:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { listenerHookScript, liveRegionHookScript, getAnnouncements } = require('@surea11y/core');",
+					"",
+					"// Playwright: before the page's own scripts",
+					"await page.addInitScript({ content: listenerHookScript() });",
+					"await page.addInitScript({ content: liveRegionHookScript() });",
+					"await page.goto('https://example.com/settings');",
+					"",
+					"await page.click('text=Save');",
+					"const said = await page.evaluate(getAnnouncements, { selectors: true });",
+					"// [{ text: 'Saved', politeness: 'polite', time: 1234.5, order: 7, behindModal: false, selector: '#status' }]",
+				]}
+			/>
+			<p>
+				<code>engine.environment.listenerHook</code> und <code>.liveRegionHook</code> zeigen, ob ein
+				Scan sie gesehen hat. Nur ein Listener-Hook, der vor den Skripten der Seite installiert
+				wurde (<code>'early'</code>), belegt, dass ein Listener fehlt; später installiert, stellen
+				die Regeln nur eine Frage. Im Bundle liest <code>a11ycore.getAnnouncements()</code> sie in
+				der Seite. Wie der Internals-Hook legen beide das, was sie aufzeichnen, dort ab, wo jedes
+				Skript der Seite es lesen kann: Installieren Sie sie für Test- und Audit-Läufe. In einer
+				jsdom-Setup-Datei übergeben Sie <code>{"{ early: true }"}</code> und führen für den
+				Listener-Hook vorher einen Selektor aus (<code>document.querySelector('*')</code>), weil
+				jsdom beim ersten Selektor eigene Tastatur-Listener hinzufügt. Die Abschnitte zum{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+					Listener-Hook
+				</a>{" "}
+				und zum{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}>
+					Live-Region-Hook
+				</a>{" "}
+				in <code>INTEGRATION.md</code>, dem Integrationsleitfaden auf GitHub, enthalten den Rest.
+			</p>
+
+			<h2 id="questions-and-steps">Tendenzen und Prüfschritte für Fragen</h2>
+			<p>
+				Seit core 1.14 kann ein <code>cantTell</code>-Vorkommen einen <code>lean</code> enthalten:
+				in welche Richtung die Hinweise auf der Seite zeigen (<code>toward: 'fail'</code> oder{" "}
+				<code>'pass'</code>), warum, und was dagegen sprechen könnte. Das Ergebnis bleibt{" "}
+				<code>cantTell</code>. Jede Frage einer core-Regel enthält außerdem{" "}
+				<code>howToCheck</code>, die Schritte, mit denen eine Person sie beantwortet, in der Locale
+				des Scans. Sie werden in Node hinzugefügt, nicht von der Engine in der Seite:{" "}
+				<code>runDomRulesInPage</code> fügt sie hinzu, und für ein Ergebnis, das aus einer Seite
+				zurückkommt, gibt <code>addHowToCheck(result)</code> eine Kopie mit ihnen zurück.{" "}
+				<code>leaningFailures(result)</code> listet die Befunde, die zu <code>fail</code> tendieren,
+				für eine eigene Schwelle:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { runa11yCoreInPage, addHowToCheck, leaningFailures } = require('@surea11y/core');",
+					"",
+					"const raw = await page.evaluate(runa11yCoreInPage, page.url(), null, {}, null);",
+					"const result = addHowToCheck(raw); // a copy, with each question's steps",
+					"const likelyFailures = leaningFailures(result);",
+				]}
+			/>
+			<p>
+				Ob ein Befund tendiert, und seine Texte, können sich in einer Minor-Version von core
+				ändern; die Form von <code>lean</code> ist stabil. Beide Felder beschreibt{" "}
+				<a href="/results-reports/output-schema/#leans">das Ausgabeschema</a>.
+			</p>
+
 			<h2 id="what-a-scan-covers">Wissen, was ein Scan abdeckt</h2>
 			<p>
 				Ein Werkzeug, das nach WCAG-Kriterium berichtet und seine Nutzenden Prüfungen
@@ -296,7 +446,9 @@ export function StandaloneUsageContent() {
 				Ein Kriterium, von dessen Prüfungen nur einige liefen, kommt als{" "}
 				<code>cantTell</code> zurück, und jede Prüfung, die nicht lief, ist mit{" "}
 				<code>notSelected: true</code> markiert: Zeigen Sie es als teilweise geprüft,
-				nie als bestanden. Wie Sie ein eigenes Werkzeug auf core aufbauen (eine CLI,
+				nie als bestanden. Seit core 1.14 wird überhaupt kein Kriterium als bestanden gemeldet: Ein
+				Kriterium gilt nur dann als bestanden, wenn seine Regeln alles prüfen, was es verlangt, und
+				noch keines ist als vollständig geprüft erfasst. Wie Sie ein eigenes Werkzeug auf core aufbauen (eine CLI,
 				eine CI-Integration, ein Dashboard, einen Generator für Konformitätsberichte),
 				beschreibt{" "}
 				<a href={`${core}/docs/BUILDING_ON_CORE.md`}><code>BUILDING_ON_CORE.md</code></a>{" "}

@@ -23,7 +23,8 @@ export function ConfigurationContent() {
 				o para una sola regla sin perder cobertura en el resto, ajusta cuán agresivas son las
 				comprobaciones de contraste para un auditor humano frente a una puerta de CI desatendida, e
 				incorpora una regla propia de tu organización junto a las incorporadas cuando el catálogo no
-				cubre algo que te importa. Ver{" "}
+				cubre algo que te importa, y pasa a las reglas el CSS de una hoja de estilo de otro origen
+				que la página no puede leer. Ver{" "}
 				<a href="/configuration/engine-options/">Opciones del motor</a> para la referencia completa.
 			</p>
 
@@ -36,7 +37,9 @@ export function ConfigurationContent() {
 				todos los informes los muestran junto a los criterios de WCAG. El mismo pack funciona desde
 				Node, cada integración, los test matchers y la CLI, y{" "}
 				<code>npx surea11y-pack new</code> genera uno que pasa sus propias pruebas tal como sale.
-				Ver <a href="/configuration/packs/">Packs</a> para usar uno o escribir uno.
+				Un estándar puede archivar los hallazgos de una regla en los requisitos a los que
+				pertenecen, y una regla de un pack puede explicar a una persona cómo responder lo que deja
+				sin decidir. Ver <a href="/configuration/packs/">Packs</a> para usar uno o escribir uno.
 			</p>
 
 			<h2>Integración con CI</h2>
@@ -46,7 +49,9 @@ export function ConfigurationContent() {
 				compilación al propio código de salida de la CLI, establecen una línea base de las violaciones
 				preexistentes de un sitio ya existente para que solo falles en las genuinamente nuevas, y
 				suben resultados SARIF directamente a <span lang="en">GitHub Code Scanning</span> donde tu equipo ya mira. Las recetas para GitLab CI y Azure DevOps llevan los resultados a
-				sus propias vistas de pruebas como JUnit, escrito por la CLI en el mismo paso. Ver{" "}
+				sus propias vistas de pruebas como JUnit, escrito por la CLI en el mismo paso, y un informe
+				JUnit puede convertir en fallos los hallazgos sin decidir con tendencia a fallo, para que un
+				fallo probable no pase como prueba omitida. Ver{" "}
 				<a href="/configuration/ci-integration/">Integración con CI</a> para las plantillas
 				completas.
 			</p>
@@ -59,7 +64,9 @@ export function ConfigurationContent() {
 				lugar de un vacío o un error. Hoy se incluyen cinco configuraciones regionales (inglés,
 				francés, alemán, español, japonés), y un resultado siempre te dice exactamente qué configuración
 				regional usó, así que nada se degrada
-				en silencio sin que lo sepas. Ver <a href="/configuration/locales/">Locales</a> para la
+				en silencio sin que lo sepas. Los pasos para responder un hallazgo sin decidir («Cómo
+				comprobarlo») llegan en los mismos cinco idiomas. Ver{" "}
+				<a href="/configuration/locales/">Locales</a> para la
 				cobertura y cómo aportar tu propio diccionario.
 			</p>
 		</>

@@ -22,22 +22,85 @@ const hookCaveat = (repo) => (
 	</p>
 );
 
-/** A pointer to the builder methods this page leaves to the binding's README. */
-const alsoAvailable = (repo, { logger = true } = {}) => (
+/** Opens each binding's listener- and live-region-hook passage; the snippet and its note follow. */
+const moreHooks = (
 	<p>
-		The builder also has <code>.wcagLevel()</code>, which keeps the reported criteria to a WCAG
-		level without changing which rules run; <code>.includeMode('or')</code>, which runs a tag's
-		rules plus rules you name; <code>.plannedChecks()</code> and <code>.plannedCriteria()</code>,
-		which list what a scan will check before it runs, so a selection that runs nothing can't pass
-		as a clean scan;{" "}
-		{logger ? (
-			<>
-				<code>.logger()</code>, which sends scan-gap warnings to your own log;{" "}
-			</>
-		) : null}
-		and <code>getScanNotes(results)</code>, which says how the page was scanned. The{" "}
-		<a href={`https://github.com/SureA11y/${repo}#readme`}>binding's README</a> covers each.
+		<strong>Click handlers and live regions.</strong> Since core 1.14 there are two more opt-in
+		hooks. Most pages add their click handlers from script, where no page script can list them
+		afterwards, so the scan can't see that a <code>&lt;div role="button"&gt;</code> with a click
+		listener does nothing from the keyboard; with the listener hook, such a button fails
+		(<code>CLICK_HANDLER_NO_KEY_LISTENER</code>). The live-region hook records what the page's
+		live regions are given: the scan then asks about a status message added with its text already
+		in it, which screen readers commonly don't announce, and <code>announcements()</code> returns
+		what the page made available to announce, so a test can check that an action told the user
+		something. Install them before the page's own scripts run, like the internals hook:
 	</p>
+);
+
+const moreHooksCaveat = (repo) => (
+	<p>
+		Like the internals hook, both are for test and audit runs: any script on the page can read
+		what they record. <code>announcements()</code> is what the page made available to announce,
+		not what a screen reader said, and <code>null</code> without the live-region hook. Without
+		either hook, <code>getScanNotes()</code> says when findings it would have decided were judged
+		without it. The README's sections on the{" "}
+		<a href={`https://github.com/SureA11y/${repo}#click-handlers-added-from-script-the-listener-hook`}>listener hook</a>{" "}
+		and the{" "}
+		<a href={`https://github.com/SureA11y/${repo}#live-regions-the-live-region-hook-and-announcements`}>live-region hook</a>{" "}
+		have the details.
+	</p>
+);
+
+/**
+ * Conditions, the severity gate and leaning questions (binding 1.5.0), then a pointer to the
+ * builder methods this page leaves to the binding's README.
+ */
+const alsoAvailable = (repo, { logger = true, conditions = null, cypress = false } = {}) => (
+	<>
+		<p>
+			<strong>Dark mode, phone widths and a severity gate.</strong>{" "}
+			<code>{".conditions([{ colorScheme: 'dark' }, { width: 320 }])"}</code> scans the page as it
+			is, then again under each condition, and returns one result: a rule's outcome is its worst
+			across the scans, and each finding lists the conditions it was seen under. Each condition is
+			a full scan, and <code>.frames(true)</code> can't be combined with it yet. {conditions}{" "}
+			<code>{"getGatingFailures(results, { failOnSeverity: 'serious' })"}</code> returns the
+			failing rules at that severity or above, so a test can block on serious and critical
+			problems first while the rest are still reported; <code>formatFailures()</code> takes the
+			same option.
+		</p>
+		<p>
+			<strong>Questions that lean, with steps.</strong> Since core 1.14, a <code>cantTell</code>{" "}
+			finding can lean toward <code>fail</code> or <code>pass</code>, saying why, and carries{" "}
+			<code>howToCheck</code>, the steps a person follows to answer it.{" "}
+			<code>formatFailures()</code> lists the questions that likely fail right after the
+			failures, and prints the steps with <code>{"{ howToCheck: true }"}</code>. To fail a test on
+			the likely failures too, add core's <code>leaningFailures(results)</code> to the gate.
+			{cypress ? (
+				<>
+					{" "}
+					In Cypress the steps come from the plugin: <code>setupNodeEvents</code> has to return
+					what <code>surea11y(on, config)</code> returns. Without that, the result has no steps,
+					and nothing fails.
+				</>
+			) : null}
+		</p>
+		<p>
+			The builder also has <code>.wcagLevel()</code>, which keeps the reported criteria to a WCAG
+			level without changing which rules run; <code>.includeMode('or')</code>, which runs a tag's
+			rules plus rules you name; <code>.plannedChecks()</code> and <code>.plannedCriteria()</code>,
+			which list what a scan will check before it runs, so a selection that runs nothing can't pass
+			as a clean scan;{" "}
+			{logger ? (
+				<>
+					<code>.logger()</code>, which sends scan-gap warnings to your own log;{" "}
+				</>
+			) : null}
+			<code>.fetchStyleSheets(false)</code>, which stops <code>.analyze()</code> fetching the style
+			sheets from other origins that the page can't read itself, for the rules that read CSS; and{" "}
+			<code>getScanNotes(results)</code>, which says how the page was scanned. The{" "}
+			<a href={`https://github.com/SureA11y/${repo}#readme`}>binding's README</a> covers each.
+		</p>
+	</>
 );
 
 export const bindingUsage = {
@@ -90,8 +153,8 @@ export const bindingUsage = {
 				A <a href="/configuration/packs/">pack</a> is prepared in Node, and a Cypress spec runs in
 				the browser, so in Cypress <code>.withPacks()</code> takes each pack's module name (a
 				package name, or a path from the project root), and the binding's plugin,{" "}
-				<code>@surea11y/cypress/plugin</code>, prepares it in Node: register it in{" "}
-				<code>setupNodeEvents</code> with <code>surea11y(on, config)</code>.{" "}
+				<code>@surea11y/cypress/plugin</code>, prepares it in Node: register it by returning{" "}
+				<code>surea11y(on, config)</code> from <code>setupNodeEvents</code>.{" "}
 				<code>{".options({ profile })"}</code> chooses the pack's profile. A pack that doesn't run
 				is reported as a <code>'pack-skipped'</code> scan gap.
 			</p>
@@ -115,7 +178,40 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("cypress"),
 		},
-		more: alsoAvailable("cypress", { logger: false }),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"// cypress/support/e2e.js",
+				"import { installListenerHook, installLiveRegionHook } from '@surea11y/cypress';",
+				"",
+				"installListenerHook();",
+				"installLiveRegionHook();",
+				"",
+				"// in a spec",
+				"cy.get('#save').click();",
+				"A11yCoreBuilder.announcements().then((said) => {",
+				"  expect(said.map((a) => a.text)).to.include('Saved');",
+				"});",
+			],
+			note: (
+				<p>
+					As with the internals hook, the support file covers every visit, and only the app's own
+					window gets them, not the frames inside it. <code>announcements()</code> reads the app's
+					window and returns a chainable, like <code>.analyze()</code>.
+				</p>
+			),
+			caveat: moreHooksCaveat("cypress"),
+		},
+		more: alsoAvailable("cypress", {
+			logger: false,
+			cypress: true,
+			conditions: (
+				<>
+					A width goes through <code>cy.viewport()</code>; a color scheme needs a Chromium-family
+					browser (Chrome, Edge, Electron), and in Firefox <code>.analyze()</code> fails before any scan.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/cypress/blob/main/examples/basic-scan.cy.js",
 	},
 
@@ -182,7 +278,35 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("playwright"),
 		},
-		more: alsoAvailable("playwright"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"const context = await browser.newContext();",
+				"await A11yCoreBuilder.installListenerHook(context); // before any page navigates",
+				"await A11yCoreBuilder.installLiveRegionHook(context);",
+				"const page = await context.newPage();",
+				"await page.goto('https://example.com/settings');",
+				"await page.getByRole('button', { name: 'Save' }).click();",
+				"",
+				"const said = await A11yCoreBuilder.announcements(page);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					Both install as the internals hook does, on the page or on its browser context, before it
+					navigates. With <code>@playwright/test</code>, install them in a <code>beforeEach</code> on
+					the <code>context</code> fixture.
+				</p>
+			),
+			caveat: moreHooksCaveat("playwright"),
+		},
+		more: alsoAvailable("playwright", {
+			conditions: (
+				<>
+					It works in Chromium, Firefox and WebKit.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/playwright/blob/main/examples/basic-scan.js",
 	},
 
@@ -239,7 +363,34 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("puppeteer"),
 		},
-		more: alsoAvailable("puppeteer"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"const page = await browser.newPage();",
+				"await A11yCoreBuilder.installListenerHook(page); // before goto",
+				"await A11yCoreBuilder.installLiveRegionHook(page);",
+				"await page.goto('https://example.com/settings');",
+				"await page.click('#save');",
+				"",
+				"const said = await A11yCoreBuilder.announcements(page);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					Both install as the internals hook does, through <code>page.evaluateOnNewDocument()</code>,
+					before <code>page.goto()</code>.
+				</p>
+			),
+			caveat: moreHooksCaveat("puppeteer"),
+		},
+		more: alsoAvailable("puppeteer", {
+			conditions: (
+				<>
+					In Firefox, widths work, but a color scheme needs the DevTools protocol, which Puppeteer
+					has only in Chrome, so <code>.analyze()</code> rejects there before any scan.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/puppeteer/blob/main/examples/basic-scan.js",
 	},
 
@@ -308,7 +459,35 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("selenium"),
 		},
-		more: alsoAvailable("selenium"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"await A11yCoreBuilder.installListenerHook(driver); // before driver.get()",
+				"await A11yCoreBuilder.installLiveRegionHook(driver);",
+				"await driver.get('https://example.com/settings');",
+				"await driver.findElement(By.css('#save')).click();",
+				"",
+				"const said = await A11yCoreBuilder.announcements(driver);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					Both install as the internals hook does, before <code>driver.get()</code>: through WebDriver
+					BiDi when the session has it, otherwise the DevTools protocol on Chrome and Edge. Each
+					resolves to <code>'bidi'</code> or <code>'cdp'</code>. <code>By</code> comes from{" "}
+					<code>selenium-webdriver</code>.
+				</p>
+			),
+			caveat: moreHooksCaveat("selenium"),
+		},
+		more: alsoAvailable("selenium", {
+			conditions: (
+				<>
+					On Chrome and Edge both go through the DevTools protocol; in other browsers a width resizes
+					the window, and a color scheme makes <code>.analyze()</code> reject before any scan.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/selenium/blob/main/examples/basic-scan.js",
 	},
 
@@ -379,7 +558,35 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("webdriverio"),
 		},
-		more: alsoAvailable("webdriverio"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"await A11yCoreBuilder.installListenerHook(browser); // before browser.url()",
+				"await A11yCoreBuilder.installLiveRegionHook(browser);",
+				"await browser.url('https://example.com/settings');",
+				"await $('#save').click();",
+				"",
+				"const said = await A11yCoreBuilder.announcements(browser);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					Both install as the internals hook does, in the same sessions, before{" "}
+					<code>browser.url()</code> (in the WDIO testrunner, in a <code>before</code> hook), and
+					resolve to <code>'bidi'</code> or <code>'cdp'</code>.
+				</p>
+			),
+			caveat: moreHooksCaveat("webdriverio"),
+		},
+		more: alsoAvailable("webdriverio", {
+			conditions: (
+				<>
+					On Chrome and Edge both go through the DevTools protocol, in classic and BiDi sessions; in
+					other browsers a width resizes the window, and a color scheme makes <code>.analyze()</code>{" "}
+					reject before any scan.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/webdriverio/blob/main/examples/basic-scan.js",
 	},
 };

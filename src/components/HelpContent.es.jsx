@@ -13,7 +13,8 @@ export function HelpContent() {
 				Las preguntas que surgen más a menudo, respondidas sin rodeos: por qué una selección de
 				etiquetas e ids de regla puede no ejecutar ninguna regla y aun así parecer limpia, por qué
 				un componente web devuelve <code>cantTell</code>, qué cambia en tus resultados al
-				actualizar a core 1.12, por qué una regla dependiente de geometría indica <code>notApplicable</code> bajo jsdom, y qué significa
+				actualizar a core 1.14, por qué cada criterio de WCAG queda en <code>cantTell</code> aunque
+				todas las comprobaciones se cumplan, por qué una regla dependiente de geometría indica <code>notApplicable</code> bajo jsdom, y qué significa
 				realmente un análisis limpio y qué no. Revisar primero estas preguntas frecuentes evita
 				buena parte de la depuración innecesaria. Ver{" "}
 				<a href="/help/faq/">Preguntas frecuentes</a>.

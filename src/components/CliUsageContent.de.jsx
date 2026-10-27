@@ -29,10 +29,11 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.12.0",
-					"  pass: 15   fail: 4   cantTell: 4   notApplicable: 111",
+					"  engine: @surea11y/core 1.14.0",
+					"  pass: 16   fail: 4   cantTell: 4   notApplicable: 121",
 					"",
-					"  occurrences by tier: fail: 4   cantTell: 5",
+					"  occurrences by tier: fail: 4   cantTell: 4",
+					"  needs review: likely fail: 1   likely pass: 0   needs a person: 3",
 					"",
 					"FAIL (4 rule(s)):",
 					"",
@@ -42,29 +43,127 @@ export function CliUsageContent() {
 					"      hint: Add an alt attribute that says what the image shows, or alt=\"\" if",
 					"      the image is purely decorative.",
 					"",
-					"cantTell — needs human review (4 rule(s)): contrast-computable, link-name-quality,",
+					"LIKELY FAIL — confirm (1 occurrence(s)):",
+					"  - heading-order (minor): html > body > main > h3",
+					"    This heading jumps from level 1 to level 3, skipping a level.",
+					"    why: The heading skips a level after the one before it.",
+					"",
+					"cantTell — needs human review (4 rule(s)): heading-order, link-name-quality,",
 					"manual-review, page-title-patterns",
 					"",
 					"criteria (WCAG 2.2):",
 					"  fail       1.1.1 Non-text content: text alternatives; 1.4.3 Contrast: minimum;",
 					"             1.4.6 Contrast: enhanced; 4.1.2 Name, role, value: accessible name",
-					"  cantTell   2.1.1 Keyboard; 2.4.2 Page titled; 2.4.3 Focus order; 2.4.4 Link",
-					"             Purpose (In Context); 2.4.7 Focus visible; 2.4.9 Link Purpose (Link Only)",
-					"  pass       1.3.1 Info and Relationships; 2.2.2 Pause, Stop, Hide; 2.4.1 Bypass",
-					"             Blocks; 3.1.1 Language of page; 4.1.2 Name, role, value: ARIA validity",
-					"  notApplicable: 19",
-					"  A criterion that passes here means the checks that ran found nothing in it, not",
-					"  that the page conforms.",
+					"  cantTell   1.2.1 Audio-only and video-only (prerecorded): transcript; 1.2.2",
+					"             Captions (Prerecorded); 1.3.1 Info and Relationships; 1.3.4",
+					"             Orientation; 1.3.5 Identify Input Purpose; 1.4.1 Use of Color;",
+					"             1.4.2 Audio Control; 1.4.4 Resize Text; 1.4.5 Images of Text;",
+					"             1.4.12 Text Spacing; 2.1.1 Keyboard; 2.1.3 Keyboard (No Exception);",
+					"             2.2.1 Timing Adjustable; 2.2.2 Pause, Stop, Hide; 2.2.4",
+					"             Interruptions; 2.4.1 Bypass Blocks; 2.4.2 Page titled; 2.4.3 Focus",
+					"             order; 2.4.4 Link Purpose (In Context); 2.4.6 Headings and Labels;",
+					"             2.4.7 Focus visible; 2.4.9 Link Purpose (Link Only); 2.5.8 Target",
+					"             size: minimum; 3.1.1 Language of page; 3.1.2 Language of Parts;",
+					"             3.2.5 Change on Request; 3.3.1 Error Identification; 3.3.2 Labels",
+					"             or Instructions; 3.3.8 Accessible Authentication (Minimum); 4.1.2",
+					"             Name, role, value: ARIA validity; 4.1.3 Status Messages",
+					"  notApplicable: 2",
+					"  A criterion that passes here means the checks that ran found nothing in it,",
+					"  not that the page conforms.",
 				]}
 			/>
 			<p>
-				Der Block <code>criteria</code> liest denselben Scan nach WCAG-Kriterium, so wie
-				man meist fragt („scheitert sie an 1.4.3?“): zuerst <code>fail</code>, dann{" "}
-				<code>cantTell</code> und <code>pass</code>, und die Anzahl der Kriterien mit{" "}
-				<code>notApplicable</code>. Ein bestandenes Kriterium heißt, dass die
-				ausgeführten Prüfungen darin nichts gefunden haben, nicht, dass die Seite es
-				erfüllt: Die meisten Kriterien muss eine Person prüfen. Der Block ändert nie den
-				Exit-Code, und <code>--compact</code> zeigt ihn als Anzahlen.
+				Die Zeile <code>needs review</code> ordnet die Fragen danach, was die prüfende Person mit
+				ihnen tut: <em lang="en">likely fail</em> (die Hinweise auf der Seite deuten auf einen
+				Fehlschlag, wie die übersprungene Überschriftenebene hier), <em lang="en">likely pass</em>{" "}
+				und <em lang="en">needs a person</em>. Die wahrscheinlichen Fehlschläge werden mit dem Grund
+				aufgelistet, aus dem sie in diese Richtung tendieren, und jede Frage in <code>--json</code>{" "}
+				und in den Berichten enthält die Schritte, mit denen sie sich beantworten lässt (
+				<code>howToCheck</code>).
+			</p>
+			<p>
+				Der Block <code>criteria</code> liest denselben Scan nach WCAG-Erfolgskriterium, so wie man
+				meist fragt („scheitert sie an 1.4.3?“): zuerst <code>fail</code>, dann{" "}
+				<code>cantTell</code> und eine Anzahl für <code>notApplicable</code>. Seit{" "}
+				<code>@surea11y/core</code> 1.14 steht kein Kriterium mehr unter <code>pass</code>: Ein
+				Kriterium gilt nur dann als bestanden, wenn seine Regeln alles prüfen, was es verlangt, und
+				noch keines ist als vollständig geprüft erfasst. Ergeben alle seine Regeln{" "}
+				<code>pass</code>, bleibt es daher <code>cantTell</code>, damit eine Person den Rest prüft.
+				Der Block ändert den Exit-Code nie, und <code>--compact</code> zeigt ihn als Anzahlen.
+				Schlägt keine Regel fehl, endet die Zusammenfassung mit dem Hinweis, dass das keine Aussage
+				über Konformität ist, und nennt, was eine Person noch prüft.
+			</p>
+
+			<h2 id="several-pages">Mehrere Seiten oder eine Sitemap</h2>
+			<p>
+				Nennen Sie mehrere Seiten, listen Sie sie in einer Datei auf (ein Pfad oder eine URL pro
+				Zeile, mit <code>#</code>-Kommentaren), oder richten Sie den Scan auf eine Sitemap:
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan ./dist/index.html ./dist/pricing.html", command: true },
+					{ text: "surea11y scan --urls pages.txt", command: true },
+					{ text: "surea11y scan --sitemap https://example.com/sitemap.xml   # up to 50 pages; --max-pages to change it", command: true },
+				]}
+			/>
+			<p>
+				Jede Seite erhält einen eigenen Abschnitt in der Zusammenfassung, eine letzte Zeile zählt
+				die Seiten mit Fehlschlägen, und der Lauf schlägt fehl, sobald eine Seite fehlschlägt.{" "}
+				<code>--json</code> gibt ein Array aus, <code>--sarif</code> und <code>--junit</code>{" "}
+				schreiben eine Datei für alle Seiten, <code>--html</code> schreibt einen Bericht pro Seite
+				(<code>report.html</code>, <code>report-2.html</code> …), und eine Baseline merkt sich, auf
+				welcher Seite jeder bekannte Fehlschlag war. Eine Sitemap kann eine URL oder eine lokale
+				Datei sein, unkomprimiert oder mit gzip, und einem Sitemap-Index wird eine Ebene tief
+				gefolgt. Eine Seite, die sich nicht scannen lässt, beendet den Lauf mit Exit-Code{" "}
+				<code>2</code> und wird genannt, bevor etwas geschrieben wird.
+			</p>
+
+			<h2 id="in-a-real-browser">In einem echten Browser</h2>
+			<p>
+				Standardmäßig liest die CLI statisches HTML. Für Seiten, deren Inhalt ihr JavaScript
+				rendert, installieren Sie Playwright in Ihrem Projekt und ergänzen <code>--browser</code>:
+				Jede Seite wird in Headless-Chromium geöffnet, ihre Skripte laufen, und der Scan sieht, was
+				gerendert wird, mit echtem Layout für die Regeln, die es messen. Die Engine ist dasselbe{" "}
+				<code>@surea11y/core</code>, und jede Option funktioniert damit, auch Berichte, Baselines,
+				Packs und eigene Regeln.
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "npm install --save-dev playwright", command: true },
+					{ text: "npx playwright install chromium", command: true },
+					{ text: "surea11y scan https://app.example.com/ https://app.example.com/settings --browser", command: true },
+				]}
+			/>
+			<p>
+				Eine Anwendung, die ihre Daten nach dem Laden abruft, kann den Scan darauf warten lassen,
+				und eine Seite lässt sich in Smartphone-Breite, im dunklen Modus oder in jeder Kombination
+				mehrerer Werte scannen:
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan https://app.example.com/orders --browser --wait-for \"#orders-table\"", command: true },
+					{ text: "surea11y scan https://example.com/ --browser --width 320 --color-scheme dark", command: true },
+					{ text: "surea11y scan https://example.com/ --browser --width 1280,320 --color-scheme light,dark", command: true },
+				]}
+			/>
+			<p>
+				<code>--wait-for</code> wartet bis zu 30 Sekunden (<code>--wait-timeout</code> ändert das)
+				und beendet den Lauf mit Exit-Code <code>2</code>, wenn das Element nie erscheint. Mehrere
+				Breiten oder Farbschemata laden die Seite einmal und führen die Scans zu einem Ergebnis pro
+				Seite zusammen: das schlechteste Ergebnis jeder Regel, und jeder Befund einmal, mit den
+				Kombinationen, in denen er auftrat (<code>seen in:</code>).
+			</p>
+			<p>
+				Bevor jede Seite lädt, installiert die CLI den Internals- und den Listener-Hook von core.
+				Der Scan beurteilt daher Namen, die Web Components über <code>ElementInternals</code>{" "}
+				setzen, und Klick-Handler, die per Skript hinzugefügt wurden: Ein{" "}
+				<code>role="button"</code>, den Enter und Leertaste nie erreichen, ergibt{" "}
+				<code>fail</code>. <code>--live-regions</code> ergänzt den Live-Region-Hook, sodass der
+				Scan zu einer Statusmeldung, die schon mit ihrem Text eingefügt wurde und die Screenreader
+				oft nicht ansagen, eine Frage stellt; <code>--no-hooks</code> lässt die ersten beiden weg.
+				Die Zusammenfassung nennt Viewport, Farbschema und Hooks jedes Scans. Die CLI klickt,
+				tippt und meldet sich nicht an: Für Inhalte, die erst danach erscheinen, steuern Sie den
+				Browser mit einem der Bindings. Frames innerhalb der Seite werden noch nicht gescannt.
 			</p>
 
 			<h2 id="choosing-what-runs">Auswählen, was läuft</h2>
@@ -122,24 +221,27 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.12.0",
+					"  engine: @surea11y/core 1.14.0",
 					"  WCAG level reported: AA",
-					"  pass: 0   fail: 0   cantTell: 1   notApplicable: 0",
+					"  pass: 1   fail: 0   cantTell: 0   notApplicable: 0",
 					"",
-					"  occurrences by tier: fail: 0   cantTell: 2",
-					"",
-					"cantTell — needs human review (1 rule(s)): contrast-computable",
+					"  occurrences by tier: fail: 0   cantTell: 0",
 					"",
 					"criteria (WCAG 2.2 AA):",
 					"  cantTell   1.4.3 Contrast: minimum (partly checked: 1 of 2 checks not selected)",
-					"  A criterion that passes here means the checks that ran found nothing in it, not",
-					"  that the page conforms.",
+					"  A criterion that passes here means the checks that ran found nothing in it,",
+					"  not that the page conforms.",
+					"",
+					"No rule failed, which is not a claim that the page conforms: the automated rules",
+					"found nothing definite. A person still checks the cantTell findings, keyboard",
+					"use, how a screen reader reads the page, and the content itself.",
 				]}
 			/>
 			<p>
 				1.4.3 ist <em>teilweise geprüft</em>: Seine andere Prüfung,{" "}
 				<code>contrast-minimum</code>, wurde nicht ausgewählt, daher deckt sein Ergebnis
-				nur die ausgeführte Prüfung ab. Regel-IDs und Stufen werden ohne Rücksicht auf
+				nur die ausgeführte Prüfung ab, und da keine Regel fehlgeschlagen ist, endet die
+				Zusammenfassung mit dem Hinweis, dass das keine Aussage über Konformität ist. Regel-IDs und Stufen werden ohne Rücksicht auf
 				Groß- und Kleinschreibung gelesen (<code>--rules IMG-ALT-PRESENT</code>,{" "}
 				<code>--wcag-level aa</code>). <code>--include-mode</code> entspricht{" "}
 				<code>engineOptions.includeMode</code>, und <code>--wcag-level</code> ohne{" "}
@@ -167,6 +269,38 @@ export function CliUsageContent() {
 				wird, sodass ein Scan nie besteht, während die Prüfungen des Packs nicht gelaufen sind.
 			</p>
 
+			<h2 id="failing-only-on-serious-problems">Nur bei schwerwiegenden Problemen fehlschlagen</h2>
+			<p>
+				<code>--fail-on-severity</code> (<code>critical</code>, <code>serious</code>,{" "}
+				<code>moderate</code> oder <code>minor</code>) lässt den Lauf nur bei fehlschlagenden
+				Regeln ab diesem Schweregrad fehlschlagen; mit <code>--baseline</code> nur bei neuen. Jeder
+				Fehlschlag wird weiter gemeldet, und die Zusammenfassung markiert die unterhalb der Stufe.
+				So kann ein Team zuerst bei schwerwiegenden Problemen blockieren und die Schwelle
+				verschärfen, während der Rückstand schrumpft.
+			</p>
+			<CodeBlock lines={[{ text: "surea11y scan --urls pages.txt --fail-on-severity serious", command: true }]} />
+
+			<h2 id="questions-that-likely-fail">Fragen, die wahrscheinlich nicht erfüllt sind</h2>
+			<p>
+				<code>--fail-on-lean</code> lässt den Lauf auch bei den Fragen fehlschlagen, die
+				wahrscheinlich nicht erfüllt sind (<code>leaningFailures()</code> aus core), ab dem
+				Schweregrad von <code>--fail-on-severity</code>, wenn Sie einen angeben;{" "}
+				<code>--lean-fail-wcag-only</code> zählt nur die von Regeln, die einem WCAG-Kriterium
+				zugeordnet sind, ohne die Best Practices. Damit meldet <code>--junit</code> eine solche
+				Regel als fehlgeschlagenen Test und <code>--sarif</code> einen solchen Befund als{" "}
+				<code>error</code>, und <code>--write-baseline</code> zeichnet auch die heutigen
+				wahrscheinlichen Fehlschläge auf, sodass <code>--baseline</code> nur bei neuen blockiert.
+				Das ist optional, weil eine Tendenz ein Hinweis ist, kein Beweis: Ob ein Befund tendiert,
+				und in welche Richtung, kann sich in einer Minor-Version von core ändern.
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan ./dist/index.html --fail-on-lean --lean-fail-wcag-only", command: true },
+					{ text: "surea11y scan ./dist/index.html --fail-on-lean --write-baseline baseline.json   # once, commit it", command: true },
+					{ text: "surea11y scan ./dist/index.html --fail-on-lean --baseline baseline.json         # in CI, from then on", command: true },
+				]}
+			/>
+
 			<h2 id="compact-results">Kompakte Ergebnisse</h2>
 			<p>
 				<code>--compact</code> reduziert jedes <code>pass</code>- und{" "}
@@ -179,20 +313,28 @@ export function CliUsageContent() {
 
 			<h2>Exit-Codes und Einschränkungen</h2>
 			<p>
-				<code>cantTell</code> beeinflusst den Exit-Code nie: <code>0</code> bestanden,{" "}
-				<code>1</code> mindestens ein — bzw. beim Scannen mit <code>--baseline</code> mindestens
-				ein <em>neues</em> — <code>fail</code> (der Fall für CI-Gating; unter{" "}
-				<a href="/conformance/baseline/">Baseline / Allowlist</a> steht, was als „bekannt“ und was
-				als „neu“ gilt), <code>2</code> ein Aufruf- oder Scan-Fehler oder ein Scan, der nichts oder
-				weniger als verlangt geprüft hätte: eine <code>--rules</code>-/<code>--tags</code>-Liste,
-				die keine bekannte Regel und kein bekanntes Tag nennt, ein <code>--context</code>-Selektor,
-				der auf nichts passt, eine eigene Regel oder ein Pack, die nicht gelaufen sind, ein{" "}
-				<code>--profile</code>, das nicht angewendet wurde. Die CLI liest{" "}
-				<strong>nur statisches HTML</strong> — eine lokale Datei oder den rohen Body eines
-				HTTP(S)-GET — und führt nie JavaScript der Seite aus. Für clientseitig gerenderte Seiten
-				verwenden Sie stattdessen eines der Bindings oder rufen die Engine direkt in einem
-				echten, gesteuerten Browser auf (siehe{" "}
-				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> <span lang="en">Pattern 2</span>).
+				<code>cantTell</code> beeinflusst den Exit-Code nicht, außer mit{" "}
+				<code>--fail-on-lean</code>: <code>0</code> bestanden, <code>1</code> mindestens ein — bzw.
+				beim Scannen mit <code>--baseline</code> mindestens ein <em>neues</em> — <code>fail</code>{" "}
+				auf einer Seite (der Fall für CI-Gating; <code>--fail-on-severity</code> zählt nur die ab
+				seiner Stufe; unter <a href="/conformance/baseline/">Baseline / Allowlist</a> steht, was als
+				„bekannt“ und was als „neu“ gilt), <code>2</code> ein Aufruf- oder Scan-Fehler oder ein
+				Scan, der nichts oder weniger als verlangt geprüft hätte: eine{" "}
+				<code>--rules</code>-/<code>--tags</code>-Liste, die keine bekannte Regel und kein
+				bekanntes Tag nennt, ein <code>--context</code>-Selektor, der auf nichts passt, eine eigene
+				Regel oder ein Pack, die nicht gelaufen sind, ein <code>--profile</code>, das nicht
+				angewendet wurde. Eine mit core 1.13 geschriebene Baseline passt weiterhin zu den Befunden,
+				deren Reason Codes 1.14 nach Ursache aufgeteilt hat;{" "}
+				<code>--migrate-baseline baseline.json</code> schreibt sie mit den neuen Codes neu.
+			</p>
+			<p>
+				Ohne <code>--browser</code> liest die CLI <strong>nur statisches HTML</strong> — eine
+				lokale Datei oder den rohen Body eines HTTP(S)-GET — und führt nie JavaScript der Seite
+				aus. Keiner der beiden Modi klickt, tippt oder meldet sich an: Für Inhalte, die erst danach
+				erscheinen, verwenden Sie eines der Bindings oder rufen die Engine direkt in einem Browser
+				auf, den Sie selbst steuern (<span lang="en">Pattern 2</span> in{" "}
+				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>, dem
+				Integrationsleitfaden auf GitHub).
 			</p>
 			<p>
 				Vollständige Referenz der Flags, Vertrag für eigene Regeln, Packs und CI-Rezepte:{" "}

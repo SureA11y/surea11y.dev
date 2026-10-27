@@ -14,7 +14,7 @@ const packageRows = [
 	{ id: "test-matchers", want: "Vérifier l’accessibilité dans des tests unitaires ou de composants Jest/Vitest", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "Analyser du HTML statique depuis un terminal ou un pipeline de CI", install: <code>@surea11y/cli</code> },
 	{ id: "pack-en301549", want: "Vérifier EN 301 549, la norme européenne, avec n’importe lequel des précédents", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
-	{ id: "pack-own", want: "Vérifier mes propres règles, profils ou norme, publics ou internes", install: <>Un pack à moi : voir <a href="/configuration/packs/#writing-a-pack">Écrire un pack</a></> },
+	{ id: "pack-own", want: "Vérifier mes propres règles, profils ou norme, publics ou internes", install: <>Un pack à moi : voir <a href="/configuration/packs/#writing-a-pack">Écrire un pack</a></> },
 	{ id: "core", want: "Exécuter le moteur sur un DOM dont je dispose déjà", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "Créer mon propre outil sur le moteur : une CLI, une extension, un tableau de bord, un générateur de rapports", install: <code>@surea11y/core</code> },
 ];
@@ -73,6 +73,20 @@ export function OverviewContent() {
 				vérifications et la façon de présenter les résultats sans leur faire dire plus qu’ils ne
 				disent.
 			</p>
+			<p>
+				Pour un premier aperçu sans suite de tests, chargez le{" "}
+				<a href="/getting-started/standalone/">bundle autonome</a> dans une page et analysez-la
+				depuis la console du navigateur : <code>await a11ycore.run()</code> analyse la page,{" "}
+				<code>a11ycore.table(result)</code> liste les résultats, <code>a11ycore.highlight(result)</code>{" "}
+				les encadre dans la page et <code>await a11ycore.openReport(result)</code> ouvre le rapport
+				HTML.{" "}
+				<a href={`${core}/docs/INTEGRATION.md#from-the-browser-console`}>
+					<code>INTEGRATION.md</code>
+				</a>{" "}
+				(sur GitHub, en anglais) liste les autres fonctions, comme{" "}
+				<code>a11ycore.inspect('headings')</code> pour les titres, les landmarks, les noms ou l’ordre
+				de focus d’une page.
+			</p>
 
 			<h2>En quoi ses résultats diffèrent</h2>
 			<p>
@@ -109,6 +123,32 @@ export function OverviewContent() {
 				version WCAG cible (2.0/2.1/2.2) est déterminée et appliquée.
 			</p>
 			<p>
+				Un <code>cantTell</code> ne vous laisse pas seul face à une question. Chacun de ceux que
+				renvoie une règle de core indique comment y répondre : quelques étapes à partir de
+				l’élément qu’il désigne, et ce que vous verrez s’il réussit et s’il échoue, dans la langue
+				de l’analyse. Quand la page fournit des indices, le résultat penche en plus vers{" "}
+				<code>pass</code> ou <code>fail</code>, avec les faits qu’il a lus, sa raison et ce qui
+				pourrait le rendre faux. Chaque penchant est compté sur les cas de test ACT du W3C et, une
+				fois compté sur au moins cinq cas, il indique combien de fois il a vu juste ; d’ici là, il
+				ne porte aucun chiffre, jamais une estimation. Le résultat reste <code>cantTell</code> : un
+				penchant ordonne les questions, et c’est toujours une personne qui y répond. Voir{" "}
+				<a href="/results-reports/output-schema/#how-to-check">Comment vérifier</a> et{" "}
+				<a href="/results-reports/output-schema/#leans">Penchants</a> dans le Schéma de sortie, et{" "}
+				<a href={`${core}/docs/LEANS.md`}><code>LEANS.md</code></a> (sur GitHub, en anglais) pour
+				ce qui vaut un penchant à un résultat et la confiance à lui accorder.
+			</p>
+			<p>
+				Le rapport HTML présente les questions dans l’ordre où une personne les examine :
+				« Échec probable : à confirmer », « Réussite probable : à confirmer » et « À examiner
+				par une personne », chaque carte avec sa raison et ses étapes « Comment vérifier ». En CI,
+				les rapports JUnit et SARIF peuvent aussi bloquer le build sur les résultats qui penchent
+				vers l’échec, option désactivée par défaut, et une baseline peut accepter ceux qu’une page
+				a déjà, si bien que seuls les nouveaux font échouer le build. Voir{" "}
+				<a href="/results-reports/html-report/">Rapport HTML</a> et{" "}
+				<a href="/conformance/baseline/">Baseline / allowlist</a>, ou <a href="/sample-report.html">ouvrez un exemple de rapport</a> sur
+				une petite page de paiement.
+			</p>
+			<p>
 				Un <code>pass</code> indique aussi de combien il passe. Les règles qui mesurent une valeur
 				par rapport à un seuil (contraste, taille de cible, espacement du texte) signalent une{" "}
 				<code>margin</code> : l’élément qui s’est le plus approché de la limite tout en la
@@ -137,6 +177,17 @@ export function OverviewContent() {
 				n’échoue pas sur un critère AAA.
 			</p>
 			<p>
+				Aucun critère WCAG n’est déclaré réussi sur la foi de règles qui n’en vérifient qu’une
+				partie. Un critère ne réussit que si ses règles vérifient tout ce qu’il demande, et aucun
+				n’est encore vérifié aussi complètement : quand toutes les règles d’un critère réussissent,
+				le critère ressort en <code>cantTell</code>. Les parties que vérifient les règles sont
+				respectées, et une personne vérifie le reste. Un rapport sans échec le dit aussi sous son
+				titre : aucune règle n’a échoué, ce qui ne signifie pas que la page est conforme. Déclarer
+				ces critères réussis, ce serait donner la fausse impression de couverture que ce moteur est
+				conçu pour éviter. Voir{" "}
+				<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>.
+			</p>
+			<p>
 				Les composants web sont jugés sur ce qu’ils exposent. Un élément personnalisé qui se donne
 				un nom, des états ou un rôle par <code>ElementInternals</code> est vérifié sur ces valeurs
 				quand le moteur peut les lire, et fait l’objet d’une question quand il ne le peut pas. Pour
@@ -148,6 +199,24 @@ export function OverviewContent() {
 					<code>INTEGRATION.md</code>
 				</a>{" "}
 				(sur GitHub) montre comment l’installer avant les scripts de la page.
+			</p>
+			<p>
+				Les règles atteignent trois critères qu’aucune règle ne couvrait : 3.3.1 « Identification
+				des erreurs » (un champ marqué invalide dont le message d’erreur manque, est masqué ou ne
+				lui est pas associé), 4.1.3 « Messages d’état » (une région live que les technologies
+				d’assistance ne peuvent pas atteindre) et 1.4.5 « Texte sous forme d’image » (du texte
+				dessiné dans une image qui pourrait être du vrai texte). Les trois posent une question au
+				lieu d’échouer. Les règles du clavier lisent les gestionnaires d’événements dans le
+				balisage ; avec <code>listenerHookScript()</code>, un autre script facultatif installé
+				avant ceux de la page, elles jugent aussi les écouteurs ajoutés par script : un{" "}
+				<code>role="button"</code> dans l’ordre de tabulation avec un écouteur de clic et aucun
+				écouteur de touche là où il pourrait en entendre un (sur lui, ses ancêtres, le document ou la
+				fenêtre) échoue, car Entrée et Espace ne font rien.{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>{" "}
+				(sur GitHub) montre comment l’installer, ainsi que son équivalent pour les messages d’état,
+				le hook des régions live.
 			</p>
 			<p>
 				Dans un navigateur, le contraste est mesuré tel que la page est dessinée : le texte d’une
@@ -162,10 +231,10 @@ export function OverviewContent() {
 
 			<h3 id="checked-against-the-act-corpus">Vérifié sur le corpus ACT</h3>
 			<p>
-				Le moteur comprend {rules.length} règles. Cinquante-neuf d’entre elles ont un équivalent
+				Le moteur comprend {rules.length} règles. Soixante d’entre elles ont un équivalent
 				dans les <a href="https://www.w3.org/WAI/standards-guidelines/act/rules/"><span lang="en">W3C ACT Rules</span></a>{" "}
 				et sont exécutées sur les cas de test que le W3C publie pour elles, ceux que note la liste
-				des implémentations du W3C : 942 exemples répartis sur ces 59 règles. Le moteur ne renvoie{" "}
+				des implémentations du W3C : 957 exemples répartis sur ces 60 règles. Le moteur ne renvoie{" "}
 				<code>fail</code> sur aucun des exemples qu’ACT marque comme réussis ou inapplicables ; il ne
 				produit donc aucun faux positif sur ce corpus. C’est un résultat sur ces exemples, pas une
 				garantie pour toute page ; quand le moteur ne peut pas trancher un cas, il renvoie{" "}
@@ -175,7 +244,7 @@ export function OverviewContent() {
 				Cela vaut dans les deux environnements où le moteur s’exécute : dans jsdom, comme avec
 				test-matchers et la CLI, et dans Chromium, comme avec les bindings de navigateur, chaque cas
 				de test étant chargé comme une vraie page, scripts et feuilles de style liées compris.
-				Vingt-cinq exemples qu’ACT marque en échec ne sont pas signalés dans jsdom, et 21 dans
+				Vingt-deux exemples qu’ACT marque en échec ne sont pas signalés dans jsdom, et 18 dans
 				Chromium. Ce sont pour la plupart des questions de jugement, comme savoir si un titre décrit
 				le contenu qui le suit ; les quatre que le navigateur détecte demandent les scripts ou les
 				feuilles de style de la page, que jsdom n’exécute pas. Voir{" "}
@@ -221,7 +290,7 @@ export function OverviewContent() {
 			<h3>Ce que surea11y ne détectera pas</h3>
 			<p>Être explicite sur les limites de l’automatisation fait partie de la même philosophie. Par exemple, surea11y ne pourra pas :</p>
 			<ul>
-				<li>confirmer qu’un texte alternatif a du <em>sens</em>, seulement qu’il est présent (un attribut alt valant <code>"image123.png"</code> passe la vérification objective) ;</li>
+				<li>confirmer qu’un texte alternatif a du <em>sens</em>, seulement qu’il est présent (un attribut alt valant <code>"image123.png"</code> passe la vérification objective, et fait l’objet d’une question, penchant vers l’échec, en tant que nom de fichier) ;</li>
 				<li>juger si un choix de contraste de couleurs est esthétiquement approprié, seulement s’il atteint le rapport de contraste applicable ;</li>
 				<li>déterminer si un message d’erreur <em>explique</em> réellement le problème, car cela dépend d’une logique de validation qu’une analyse statique ne voit pas ;</li>
 				<li>détecter un piège au clavier ou un contenu rogné à un zoom de 400 %, car les deux exigent de simuler une véritable interaction utilisateur dans le temps, et pas seulement de lire le DOM à un instant donné.</li>

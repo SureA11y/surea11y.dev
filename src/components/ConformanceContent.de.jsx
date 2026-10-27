@@ -15,8 +15,10 @@ export function ConformanceContent() {
 			<h2>WCAG-Konformitätszuordnung</h2>
 			<p>
 				Sehen Sie genau, wie atomare Regeln, Abdeckungsfacetten und zusammengesetzte Regeln pro
-				WCAG-Erfolgskriterium zusammenspielen, sodass ein zusammengesetztes <code>pass</code> etwas
-				Bestimmtes bedeutet statt eines vagen „sieht gut aus“. Ein Scan, der einige Prüfungen statt
+				WCAG-Erfolgskriterium zusammenspielen, und warum ein Kriterium, dessen Prüfungen alle ohne
+				Befund blieben, <code>cantTell</code> ergibt, teilweise geprüft, statt eines vagen „sieht gut
+				aus“: Eine zusammengesetzte Regel sagt, welche Teile geprüft wurden, und überlässt den Rest
+				einer Person. Ein Scan, der einige Prüfungen statt
 				eines Ziels nennt, meldet trotzdem die Kriterien, zu denen sie gehören, und sagt, welche er
 				nur teilweise geprüft hat. Zielen Sie mit einem einzigen Tag-Set auf
 				eine Konformitätsstufe (A, AA oder AAA) über jede WCAG-Version hinweg oder nutzen Sie ein
@@ -33,7 +35,9 @@ export function ConformanceContent() {
 				künftigen Build blockiert — erfassen Sie einmal, was bereits bekannt ist, und lassen Sie die CI
 				nur an tatsächlich neuen Verstößen scheitern. Das ist der Unterschied zwischen „Wir können nichts
 				ausliefern, bis alles perfekt ist“ und „Wir erkennen Regressionen ab heute“, und genau das bringt
-				ein Team dazu, das Gate tatsächlich einzuschalten. Siehe{" "}
+				ein Team dazu, das Gate tatsächlich einzuschalten. Sie kann auch Befunde akzeptieren, die zu{" "}
+				<code>fail</code> tendieren, und eine vor einem Upgrade geschriebene Baseline passt weiter,
+				wenn der Reason-Code eines Befunds geteilt oder umbenannt wird. Siehe{" "}
 				<a href="/conformance/baseline/">Baseline / Allowlist</a>.
 			</p>
 		</>

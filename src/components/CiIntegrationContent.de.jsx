@@ -48,7 +48,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build   # produce whatever static HTML you're scanning",
 					"      - run: npx @surea11y/cli scan ./dist/index.html",
 				]}
@@ -106,7 +106,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build",
 					"      - name: Scan (report, don't fail the job here)",
 					"        run: npx @surea11y/cli scan ./dist/index.html --baseline a11y-baseline.json --sarif results.sarif",
@@ -144,7 +144,7 @@ export function CiIntegrationContent() {
 					"    '**':",
 					"      - step:",
 					"          name: Accessibility scan",
-					"          image: node:20",
+					"          image: node:22",
 					"          script:",
 					"            - npm ci",
 					"            - npm run build",
@@ -175,7 +175,7 @@ export function CiIntegrationContent() {
 				lang="yaml"
 				lines={[
 					"a11y:",
-					"  image: node:20",
+					"  image: node:22",
 					"  script:",
 					"    - npm ci",
 					"    - npm run build",
@@ -216,7 +216,11 @@ export function CiIntegrationContent() {
 				<code>{"renderJunitReport(result, { cantTellAs: 'failure' })"}</code> aus{" "}
 				<code>@surea11y/core/junit</code> (siehe{" "}
 				<a href="/results-reports/junit-report/">JUnit-Bericht</a>); dafür braucht das Projekt{" "}
-				<code>@surea11y/core</code> in seinen eigenen <code>devDependencies</code>. Das ändert den
+				<code>@surea11y/core</code> in seinen eigenen <code>devDependencies</code>.{" "}
+				<code>{"{ leanFailAs: 'failure' }"}</code> ist die engere Wahl: Nur die{" "}
+				<code>cantTell</code>-Befunde, die{" "}
+				<a href="/results-reports/output-schema/#leans">zu fail tendieren</a>, werden zu
+				Fehlschlägen, jeweils mit Begründung und den Schritten, um sie zu bestätigen. Beides ändert den
 				Bericht, nicht den Exit-Code der CLI.
 			</p>
 

@@ -41,8 +41,9 @@ export function RuleOrganizationContent() {
 					read (the <code>*-name-present</code> rules), text that may be clipped
 					or overlap once spaced (<code>text-spacing-content-loss</code>), an orientation media
 					block that turns an element other than the page's content (
-					<code>css-orientation-lock</code>), a placeholder, or a lone character standing in for its control's name, below
-					its ratio (<code>contrast-minimum</code>), or a colour or size that cannot be computed (the contrast
+					<code>css-orientation-lock</code>), a placeholder below its ratio whose colors can't be
+					told to be the page's or the browser's, or a lone character standing in for its control's
+					name below its ratio (<code>contrast-minimum</code>), or a colour or size that cannot be computed (the contrast
 					rules, <code>target-size-minimum</code>). A rule that throws is reported as{" "}
 					<code>cantTell</code> too, as a safety net.
 				</li>
@@ -55,7 +56,14 @@ export function RuleOrganizationContent() {
 					two landmarks sharing a name are a problem (the APG allows it when their content is
 					identical), so that is <code>cantTell</code>; but "every name differs" is a fact, so that
 					is <code>pass</code>. A rule that asks a person to judge every target it finds, such as
-					whether an image's text alternative is accurate, never reports <code>pass</code>.
+					whether an image's text alternative is accurate, never reports <code>pass</code>. A manual
+					rule that asks only where a heuristic finds a sign, and finds none, reports{" "}
+					<code>notApplicable</code>, not <code>pass</code>: it applies only to what its heuristic
+					flags, and finding nothing there doesn't show that all is well.{" "}
+					<a href="/rules/image-redundant-alt/"><code>image-redundant-alt</code></a> looks for alt text that repeats the text next to the
+					image; finding none says nothing about whether the alt text is right.{" "}
+					<a href="/rules/form-control-label-quality/"><code>form-control-label-quality</code></a>, <a href="/rules/password-paste-enabled/"><code>password-paste-enabled</code></a>,{" "}
+					<a href="/rules/scrollable-region-focusable/"><code>scrollable-region-focusable</code></a> and <a href="/rules/image-of-text/"><code>image-of-text</code></a> do the same.
 				</li>
 			</ul>
 			<p>
@@ -71,7 +79,10 @@ export function RuleOrganizationContent() {
 				<strong>A manual rule reporting <code>cantTell</code> is not the same event as an automatic
 				rule reporting <code>cantTell</code>, even though the value is identical</strong>: the
 				automatic rule has decided and is telling you what it found; the manual rule is telling you
-				the question isn't decidable from markup at all. See <a href="/results-reports/output-schema/">Results &amp; Reports</a> for
+				the question isn't decidable from markup at all. Either way, a core rule's{" "}
+				<code>cantTell</code> says how to answer it (<code>howToCheck</code>), and some say which
+				way the page's evidence points (<code>lean</code>, see{" "}
+				<a href="/results-reports/output-schema/#leans">Leans</a>). See <a href="/results-reports/output-schema/">Results &amp; Reports</a> for
 				the full outcome/severity/confidence reference.
 			</p>
 

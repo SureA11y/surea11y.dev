@@ -45,7 +45,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build   # produce whatever static HTML you're scanning",
 					"      - run: npx @surea11y/cli scan ./dist/index.html",
 				]}
@@ -102,7 +102,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build",
 					"      - name: Scan (report, don't fail the job here)",
 					"        run: npx @surea11y/cli scan ./dist/index.html --baseline a11y-baseline.json --sarif results.sarif",
@@ -138,7 +138,7 @@ export function CiIntegrationContent() {
 					"    '**':",
 					"      - step:",
 					"          name: Accessibility scan",
-					"          image: node:20",
+					"          image: node:22",
 					"          script:",
 					"            - npm ci",
 					"            - npm run build",
@@ -168,7 +168,7 @@ export function CiIntegrationContent() {
 				lang="yaml"
 				lines={[
 					"a11y:",
-					"  image: node:20",
+					"  image: node:22",
 					"  script:",
 					"    - npm ci",
 					"    - npm run build",
@@ -208,7 +208,11 @@ export function CiIntegrationContent() {
 				<code>{"renderJunitReport(result, { cantTellAs: 'failure' })"}</code> from{" "}
 				<code>@surea11y/core/junit</code> (see{" "}
 				<a href="/results-reports/junit-report/">the JUnit report</a>), which needs{" "}
-				<code>@surea11y/core</code> in the project's own <code>devDependencies</code>. That changes
+				<code>@surea11y/core</code> in the project's own <code>devDependencies</code>.{" "}
+				<code>{"{ leanFailAs: 'failure' }"}</code> is the narrower choice: only the{" "}
+				<code>cantTell</code> findings that{" "}
+				<a href="/results-reports/output-schema/#leans">lean fail</a> become failures, each with
+				why and the steps to confirm it. Either changes
 				the report, not the CLI's exit code.
 			</p>
 

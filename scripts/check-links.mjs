@@ -56,6 +56,9 @@ for (const [route, page] of pages) {
 		const [rawPath, fragment] = href.split("#");
 		const targetRoute = rawPath === "" ? route : rawPath.endsWith("/") ? rawPath : `${rawPath}/`;
 		const target = pages.get(targetRoute);
+		// A static file from public/ (a sample report) isn't a route; it only
+		// has to exist, and has no ids to check.
+		if (!target && /\.[a-z]+$/.test(rawPath) && fs.existsSync(path.join(DIST, rawPath))) continue;
 		if (!target) {
 			problems.push(`${route}: link to missing page ${href}`);
 			continue;

@@ -1,7 +1,33 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
+import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+
+const codes = (list) =>
+	list.map((c, i) => (
+		<React.Fragment key={c}>
+			{i > 0 && ", "}
+			<code>{c}</code>
+		</React.Fragment>
+	));
+
+const baselineMoves = [
+	{ id: "text-missing", rules: ["img-alt-present", "embed-text-alternative-present", "object-text-alternative-present", "svg-image-text-alternative-present", "svg-text-alternative-present", "video-poster-text-alternative-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING"] },
+	{ id: "area-alt", rules: ["area-alt-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING", "TEXT_ALTERNATIVE_EMPTY"] },
+	{ id: "canvas", rules: ["canvas-text-alternative-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING", "ROLE_IMG_NAME_MISSING"] },
+	{ id: "text-review", rules: ["area-alt-quality", "canvas-text-alternative-quality", "embed-text-alternative-quality", "input-image-alt-quality", "object-text-alternative-quality"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_REVIEW"] },
+	{ id: "img-quality", rules: ["img-alt-quality", "svg-text-alternative-quality"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_REVIEW", "IMAGE_ONLY_CONTROL_CONTENT"] },
+	{ id: "img-decorative", rules: ["img-alt-decorative"], from: ["EXCLUDED_ELEMENT_REVIEW"], to: ["IMAGE_ONLY_CONTROL_CONTENT"] },
+	{ id: "input-image", rules: ["input-image-alt-decorative"], from: ["DEFAULT"], to: ["NAME_FROM_ELSEWHERE_REVIEW"] },
+	{ id: "manual-review", rules: ["manual-review"], from: ["DEFAULT"], to: ["KEYBOARD_REVIEW"] },
+	{ id: "list-children", rules: ["list-children-valid"], from: ["LIST_INVALID_CHILD"], to: ["LIST_ITEM_ROLE_OVERRIDDEN"] },
+	{ id: "listitem-parent", rules: ["listitem-parent-valid"], from: ["LISTITEM_INVALID_PARENT"], to: ["LIST_ROLE_OVERRIDDEN"] },
+	{ id: "prohibited-children", rules: ["aria-prohibited-children"], from: ["ARIA_PROHIBITED_CHILD_ROLELESS"], to: ["ARIA_PROHIBITED_CHILD"] },
+	{ id: "duplicate-id", rules: ["duplicate-id"], from: ["DUPLICATE_ID"], to: ["DUPLICATE_ID_IN_SHADOW_TREE"] },
+	{ id: "valid-lang", rules: ["valid-lang"], from: ["ELEMENT_LANG_INVALID"], to: ["DEFAULT_LANG_INVALID"] },
+	{ id: "p-as-heading", rules: ["p-as-heading"], from: ["BOLD_LARGE_PARAGRAPH", "BOLD_LARGE_DIV"], to: ["HEADING_LIKE_NUMBER", "HEADING_LIKE_LINK"] },
+].map((row) => ({ ...row, rules: codes(row.rules), from: codes(row.from), to: codes(row.to) }));
 
 export function BaselineContent() {
 	return (
@@ -143,6 +169,119 @@ export function BaselineContent() {
 				para limpiarlas.
 			</p>
 
+			<h2 id="findings-that-lean-fail">Hallazgos que probablemente fallan</h2>
+			<p>
+				Un baseline registra fallos. Un hallazgo sin decidir no lo es, pero desde la 1.14 algunos
+				apuntan a un fallo: la evidencia de la página indica un fallo sin demostrarlo (su{" "}
+				<code>lean</code>, ver el <a href="/results-reports/output-schema/#leans">esquema de
+				salida</a>). Una compilación que se bloquea por ellos (<code>leanFailAs</code>{" "}
+				en los generadores de informes <a href="/results-reports/junit-report/#options">JUnit</a> y{" "}
+				<a href="/results-reports/sarif-report/#options">SARIF</a>) necesita una forma de aceptar
+				los que una página ya tiene, igual que acepta sus fallos. Pídelos al crear el baseline:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { buildBaselineEntries } = require('@surea11y/core/baseline');",
+					"",
+					"const entries = buildBaselineEntries(result, { leanFail: true });",
+				]}
+			/>
+			<p>
+				Cada hallazgo que apunta a un fallo y bloquea con <code>leanFailAs</code> (
+				<code>leaningFailures(result)</code> de <code>@surea11y/core</code>) recibe una entrada
+				marcada con <code>"lean": "fail"</code>, después de los fallos:
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={[
+					'{ "ruleId": "heading-order", "reasonCode": "HEADING_ORDER_SKIPPED_LEVEL", "selector": "html > body > main > h3", "html": "<h3>Details</h3>", "lean": "fail" }',
+				]}
+			/>
+			<p>
+				Una entrada así solo coincide con un hallazgo que apunta a un fallo, con la misma
+				identidad, y una entrada normal solo con un fallo. Con <code>leanFailAs</code>, JUnit no
+				bloquea por un hallazgo con el que coincide (su mensaje <code>&lt;skipped&gt;</code> lo
+				cuenta entre los probables fallos conocidos) y SARIF lo deja como <code>warning</code>. Sin{" "}
+				<code>leanFailAs</code> las entradas no cambian nada, y <code>matchBaseline</code> las deja
+				fuera de sus cuentas, obsoletas incluidas, salvo que reciba{" "}
+				<code>{"{ leanFail: true }"}</code>, en cuyo caso las compara en <code>leanFail</code> (
+				<code>{"{ total, knownCount, newCount, newOccurrences, staleCount }"}</code>).{" "}
+				<code>--write-baseline</code> solo escribe fallos.
+			</p>
+			<p>
+				Los <code>lean</code> llegan en versiones menores, así que una actualización puede traer
+				probables fallos que el baseline no tiene: vuelve a crearlo con <code>leanFail: true</code>{" "}
+				tras actualizar y revisa el diff. Cómo se eligen y se miden está en{" "}
+				<a href={`${core}/docs/LEANS.md`}>
+					<code>LEANS.md</code>
+				</a>
+				, en GitHub.
+			</p>
+
+			<h2 id="upgrading">Actualizar de versión</h2>
+			<p>
+				La identidad de un hallazgo incluye su código de motivo, y una versión menor puede darle uno
+				nuevo: una regla que no daba ninguno (<code>DEFAULT</code>) ahora da uno, o un código se
+				divide en dos según la causa (ver la{" "}
+				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>identidad de un hallazgo</a> en{" "}
+				<code>API_STABILITY.md</code>, en GitHub). El hallazgo es el mismo, y un baseline escrito
+				antes de actualizar sigue coincidiendo con él: cada cambio figura en{" "}
+				<code>src/baseline-moves.json</code> (regla, código antiguo, códigos nuevos), y una entrada
+				con el código antiguo coincide con el hallazgo con uno nuevo cuando el resto de su
+				identidad (la regla, el marcado y el frame) es el mismo. <code>matchBaseline</code> y la
+				opción <code>baselineEntries</code> de los generadores de informes SARIF y JUnit lo leen.
+				Una entrada se busca primero con el propio código del hallazgo, así que nunca va a un
+				hallazgo movido cuando otro hallazgo tiene exactamente esa identidad.
+			</p>
+			<p>La 1.14 mueve estos, desde la 1.13:</p>
+			<DataTable
+				label="Códigos de motivo movidos en la 1.14"
+				rowKey="id"
+				columns={[
+					{ key: "rules", label: "Regla", wrap: true, width: "45%" },
+					{ key: "from", label: "Código antiguo", wrap: true },
+					{ key: "to", label: "Código nuevo", wrap: true },
+				]}
+				rows={baselineMoves}
+			/>
+			<p>
+				La tabla cubre una versión menor: un cambio figura desde la versión en que llegó hasta la
+				siguiente versión menor, que lo quita. Así, un baseline escrito por la 1.13 sigue
+				coincidiendo con la 1.14.x, y hay que regenerarlo antes de la 1.15.
+			</p>
+			<p>
+				Regenerar el baseline con <code>--write-baseline</code> (o{" "}
+				<code>buildBaselineEntries</code>) tras actualizar escribe cada hallazgo con su código
+				actual y hace innecesaria la tabla. También acepta cualquier hallazgo nuevo que traiga la
+				actualización, así que revisa su diff. Para poner al día los códigos sin aceptar nada nuevo,
+				reescribe el archivo con <code>migrateBaselineEntries</code> de{" "}
+				<code>@surea11y/core/baseline</code>:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { migrateBaselineEntries } = require('@surea11y/core/baseline');",
+					"",
+					"const file = JSON.parse(fs.readFileSync('baseline.json', 'utf8'));",
+					"// With the scan's result, an entry for a split code takes the code its finding has now.",
+					"file.entries = migrateBaselineEntries(file, result);",
+					"fs.writeFileSync('baseline.json', JSON.stringify(file, null, 2) + '\\n');",
+				]}
+			/>
+			<p>
+				Devuelve una copia de las entradas con cada una movida a su código nuevo, y todas las demás
+				como estaban. Sin un resultado, solo reescribe los cambios que puede deducir sin el
+				hallazgo: un código que la regla ya no da y que pasó a uno solo nuevo (el{" "}
+				<code>DEFAULT</code> de <code>img-alt-present</code>), no una división.
+			</p>
+			<p>
+				Otra cosa es un hallazgo cuyo resultado cambió con la actualización: una regla que ahora
+				hace fallar lo que antes preguntaba, o pregunta por lo que antes hacía fallar, da un
+				hallazgo que el baseline no tenía, o deja de dar uno que tenía, y el{" "}
+				<a href={`${core}/CHANGELOG.md`}>registro de cambios</a> explica por qué.
+			</p>
+
 			<h2 id="scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</h2>
 			<p>
 				Una entrada del baseline no registra el viewport, y la comparación no lo usa: el mismo
@@ -174,7 +313,7 @@ export function BaselineContent() {
 					'  "version": 1,',
 					'  "generatedAt": "2026-07-30T12:00:00.000Z",',
 					'  "entries": [',
-					'    { "ruleId": "img-alt-present", "reasonCode": "DEFAULT", "selector": "html > body > img", "html": "<img src=\\"logo.png\\">" }',
+					'    { "ruleId": "img-alt-present", "reasonCode": "TEXT_ALTERNATIVE_MISSING", "selector": "html > body > img", "html": "<img src=\\"logo.png\\">" }',
 					"  ]",
 					"}",
 				]}

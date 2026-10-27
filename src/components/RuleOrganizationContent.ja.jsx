@@ -50,7 +50,7 @@ export function RuleOrganizationContent() {
 					<code>text-spacing-content-loss</code>
 					）、ページのコンテンツ以外の要素を回転させる画面の向きのメディアブロック（
 					<code>css-orientation-lock</code>
-					）、比率を下回るプレースホルダーや、コントロールの名前の代わりになっている1文字（
+					）、比率を下回るプレースホルダーのうち色がページのものかブラウザーのものか判断できないものや、比率を下回る、コントロールの名前の代わりになっている1文字（
 					<code>contrast-minimum</code>
 					）、計算できない色やサイズ（コントラストのルール、
 					<code>target-size-minimum</code>
@@ -76,7 +76,7 @@ export function RuleOrganizationContent() {
 					<code>pass</code>
 					です。画像のテキスト代替が正確かどうかのように、見つけた対象のすべてについて人に判断を求めるルールが
 					<code>pass</code>
-					を報告することはありません。
+					を報告することはありません。ヒューリスティックが手がかりを見つけた場合にだけ確認を求める手動ルールは、手がかりが見つからなければ<code>pass</code>ではなく<code>notApplicable</code>を報告します。そのルールが適用されるのはヒューリスティックが指摘するものだけで、そこで何も見つからなくても、すべて問題ないことにはならないからです。<a href="/rules/image-redundant-alt/"><code>image-redundant-alt</code></a>は画像の隣のテキストを繰り返す代替テキストを探しますが、見つからなくても代替テキストが正しいかどうかについては何もわかりません。<a href="/rules/form-control-label-quality/"><code>form-control-label-quality</code></a>、<a href="/rules/password-paste-enabled/"><code>password-paste-enabled</code></a>、<a href="/rules/scrollable-region-focusable/"><code>scrollable-region-focusable</code></a>、<a href="/rules/image-of-text/"><code>image-of-text</code></a>も同じです。
 				</li>
 			</ul>
 			<p>
@@ -100,7 +100,7 @@ export function RuleOrganizationContent() {
 				</strong>
 				。自動ルールは判定を終えたうえで、見つけたものを伝えています。手動ルールは、その問いがそもそもマークアップからは判定できないことを伝えています。判定結果、重大度、確度の完全なリファレンスは
 				<a href="/results-reports/output-schema/">結果とレポート</a>
-				を参照してください。
+				を参照してください。どちらの場合も、coreのルールの<code>cantTell</code>は答え方を示し（<code>howToCheck</code>）、一部はページの手がかりがどちらを示しているかも示します（<code>lean</code>。<a href="/results-reports/output-schema/#leans">出力スキーマ</a>を参照）。
 			</p>
 
 			<h2>ルールIDの構成</h2>

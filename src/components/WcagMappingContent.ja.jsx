@@ -1,4 +1,5 @@
 import React from "react";
+import engine from "../data/engine.generated.json";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { Callout } from "./design-system/feedback/Callout.jsx";
@@ -33,16 +34,37 @@ const precedenceRows = [
 		id: "na",
 		condition: (
 			<>
-				すべての構成ルールが
-				<code>notApplicable</code>
+				すべての構成ルールが<code>notApplicable</code>で、その達成基準が適用されるすべてのケースをルールが見つけられる場合
 			</>
 		),
 		outcome: <code>notApplicable</code>,
 	},
 	{
+		id: "na-partial",
+		condition: (
+			<>
+				すべての構成ルールが<code>notApplicable</code>で、それ以外の達成基準の場合
+			</>
+		),
+		outcome: (
+			<>
+				<code>cantTell</code>（<code>composite.rollup.cantTell.partialCoverage</code>）
+			</>
+		),
+	},
+	{
 		id: "pass",
-		condition: "それ以外（すべて実行され、failもcantTellもなく、すべてがN/Aではない）",
+		condition: "それ以外（すべて実行され、failもcantTellもなく、すべてがN/Aではない）で、その達成基準が求めることをすべてルールがチェックする場合",
 		outcome: <code>pass</code>,
+	},
+	{
+		id: "pass-partial",
+		condition: "それ以外で、ほかの達成基準の場合",
+		outcome: (
+			<>
+				<code>cantTell</code>（<code>composite.rollup.cantTell.partialCheck</code>）
+			</>
+		),
 	},
 ];
 
@@ -96,7 +118,7 @@ export function WcagMappingContent() {
 					（
 					<code>rulesResults[]</code>
 					）：1つの達成基準に対応するすべてのアトミックルールを自動生成で集約したものです。何十ものアトミックな結果を自分でまとめなくても、達成基準ごとにpass／fail／cantTell／notApplicableの判定が1つ得られます。
-					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-34`}>
+					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-${engine.composites}`}>
 						全一覧
 					</a>
 					を参照してください（たとえば
@@ -116,20 +138,16 @@ export function WcagMappingContent() {
 				]}
 				rows={precedenceRows}
 			/>
+			<h3 id="when-a-criterion-passes">達成基準が<code>pass</code>になるとき、適用されないとき</h3>
 			<p>
-				つまり、
-				<strong>
-					複合ルールの
-					<code>pass</code>
-					は、「この達成基準について適用される自動チェックはすべて問題なかった」という本物の決定論的な結果です。ただし、それだけでWCAGへの適合を主張するものではありません。
-				</strong>
-				その達成基準のいずれかのファセットにまったく自動カバレッジがない場合（
-				<code>coverage-report.md</code>
-				を参照）、複合ルールの
-				<code>pass</code>
-				はそのファセットについて問題ないと主張しているのではなく、何も言っていないのです。複合ルールの
-				<code>pass</code>
-				を「達成基準を完全に検証済み」とみなす前に、ファセットの表と照らし合わせてください。
+				1.14からは、達成基準が<code>pass</code>になるのは、その達成基準が求めることをすべてルールがチェックする場合だけです。WCAGでも、達成基準はそのすべてが満たされたときにだけ満たされたとみなされます。ルールがすべて<code>pass</code>でも、わかるのはルールがチェックする部分が満たされていることだけです。<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>は<code>{'<html lang="fr">'}</code>が言語を示していることを確かめますが、ページがフランス語で書かれていることは確かめません（3.1.1）。<a href="/rules/page-title-present/"><code>page-title-present</code></a>はページにタイトルがあることを確かめますが、それがページを説明していることは確かめません（2.4.2）。そうした達成基準は<code>cantTell</code>になり、理由コードは<code>composite.rollup.cantTell.partialCheck</code>です。<a href="/results-reports/html-report/">HTMLレポート</a>では「一部のみ確認」と表示され、残りは人が確認します。ルールがすべてをチェックする達成基準は<code>src/coverage/complete-applicability.js</code>（<code>COMPLETE_CHECK</code>）にそれぞれの理由とともに列挙されますが、まだ1つもありません。どの達成基準にも、ルールからは見えないことが含まれています。代替テキスト、ラベル、見出し、リンクのテキストが正しい内容を伝えているか、スクリプトが描画・変更するコンテンツがそれを満たしているか、といったことです。
+				<strong>そのため、1.14ではWCAGの複合ルールが<code>pass</code>になることはありません。</strong>
+			</p>
+			<p>
+				同じように、達成基準が<code>notApplicable</code>になるのは、その達成基準が適用されるすべてのケースをルールが見つけられる場合だけです。2.4.4と2.4.9ではリンク、2.4.3と2.4.7ではフォーカス可能な要素、2.5.3ではラベルの付いたコンポーネント、4.1.1ではマークアップがそれに当たります。フォームのフィールド（1.3.5、3.3.2）とポインターのターゲット（2.5.8）はこの一覧にありません。ARIAのロールで作ったフィールド、<code>autocomplete</code>のないフィールド、スクリプトによってだけターゲットになる要素は、それらのルールが何も見つけなかったページにもありえるからです。それ以外の達成基準では、ルールがすべて何も見つけなくても、わかるのはルールが探すケースがないことだけです。遅延の後にリダイレクトするスクリプトは<code>{'<meta http-equiv="refresh">'}</code>のない制限時間（2.2.1）ですし、ほかの言語の一節（3.1.2）に<code>lang</code>が付いているとは限りません。WCAG-EMの用語では、「存在しない」と言うにはコンテンツがありうる場所をすべて確認している必要があります。そのため、そうした達成基準は<code>cantTell</code>になり、理由コードは<code>composite.rollup.cantTell.partialCoverage</code>です。
+			</p>
+			<p>
+				つまり、<strong>複合ルールの<code>fail</code>は本物の決定論的な違反であり、構成ルールがすべて<code>pass</code>だった複合ルールの<code>cantTell</code>（<code>partialCheck</code>）は、その達成基準についての自動チェックがすべて問題なく、残りは人が確認するものだということを示します。</strong>それだけでは適合を主張するものではありません。ファセットの表（<code>coverage-report.md</code>）は、各達成基準のどの部分が自動でカバーされ、どの部分を人が確認するかを示します。これらは「チェックは問題なし、確認が必要」「チェックする対象が見つからない」として表示し、<code>pass</code>として表示しないでください。
 			</p>
 			<p>
 				複合ルールの
@@ -223,7 +241,7 @@ export function WcagMappingContent() {
 				<em>付きません</em>
 				。そのため
 				<code>{"{ tags: ['wcag2aa'] }"}</code>
-				だけを指定すると、A＋AAを対象にする約100件のルールではなく、2.0のAAの達成基準に対応する9件のルールだけが実行されます。対象にするレベルはすべて列挙するか、この問題がない
+				だけを指定すると、2.0のA＋AAを対象にする105件のルールではなく、2.0のAAの達成基準に対応する11件のルールだけが実行されます。対象にするレベルはすべて列挙するか、この問題がない
 				<code>runOnly.wcag</code>
 				を使ってください。
 				<code>engineOptions.profile</code>
@@ -256,7 +274,7 @@ export function WcagMappingContent() {
 				<code>cantTell</code>
 				になり、その読み替えを説明する
 				<code>wcagVersionScope</code>
-				フィールドが付きます。そのため、デフォルトのスキャンがWCAG 2.2に含まれない達成基準で失敗することはなく、2.0／2.1のスキャンでは引き続き4.1.1の本当の判定が得られます。
+				フィールドが付きます。1.14からは、2.0や2.1を対象にした場合も同じで、<code>wcagVersionScope.by: "errata"</code>が付きます。W3Cによるこれらのバージョンの2023年の正誤表は、HTMLやXMLのコンテンツについて4.1.1を常に満たされているものとみなしているからです。そのため、WCAGのスキャンが4.1.1で失敗することはありません。4.1.1で不合格になるのは、その文言を残している規格のプロファイル、つまり<code>en301549-v3.2.1</code>のように<code>keepsParsing: true</code>を宣言したプロファイルだけです。
 			</p>
 			<p>
 				アトミックルールとは違い、複合ルールは累積的に
@@ -376,15 +394,14 @@ export function WcagMappingContent() {
 					は、不確かさを握りつぶしたものではなく、人間によるレビューが必要だという明示的なフラグです。
 				</li>
 				<li>
-					ファセットのカバレッジ表を見れば、どの達成基準のどの部分に自動カバレッジがまったくないかが正確にわかります。つまり、
-					<code>pass</code>
-					が網羅的なのではなく何も言っていないのはどこかがわかります。
+					ルールが一部しかチェックしない達成基準を、複合ルールが<code>pass</code>にすることはありません。ルールがすべて<code>pass</code>でも<code>cantTell</code>（<code>composite.rollup.cantTell.partialCheck</code>）になるので、どのルールもチェックしない部分について<code>pass</code>が黙っていることはありません。
+				</li>
+				<li>
+					ファセットのカバレッジ表を見れば、どの達成基準のどの部分に自動カバレッジがまったくないか、つまり人に残されているのは何かが正確にわかります。
 				</li>
 			</ul>
 			<p>
-				対象レベルのすべての達成基準で複合ルールが
-				<code>pass</code>
-				なら、それは
+				対象レベルのすべての達成基準で複合ルールに<code>fail</code>がなければ、それは
 				<em>そのレベルで自動化できるチェックがすべて問題なかった</em>
 				という意味です。適合性のうち自動化できる部分を正確に述べたものであって、WCAG自体が求める手動レビューの代わりではありません。
 			</p>

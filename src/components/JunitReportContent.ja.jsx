@@ -60,6 +60,26 @@ const optionRows = [
 		),
 	},
 	{
+		id: "leanFailAs",
+		option: <code>leanFailAs</code>,
+		default: <code>'skipped'</code>,
+		effect: (
+			<>
+				<code>'failure'</code>を指定すると、未判定の検出結果に不適合に傾くもの（その<a href="/results-reports/output-schema/#leans"><code>lean</code></a>）を含むルールを<code>&lt;failure type="leanFail"&gt;</code>として報告し、それらの検出結果を列挙します。それぞれに、不適合の可能性が高い理由（<code>likely fails:</code>）、傾きの注意事項（ある場合）、人が確かめる方法（<code>how to check:</code>、検出結果の<a href="/results-reports/output-schema/#how-to-check"><code>howToCheck</code></a>の手順、続いて<code>fails when:</code>）が付きます。手順を持たない結果には、レポートがNodeで追加します。そのルールのほかの未判定の検出結果は<code>cantTellAs</code>の指定どおりになります。すべての問いではなく、不適合の可能性が高いものでゲートするパイプライン向けです。ベストプラクティスのルールも対象です。そうしたルールはどのWCAG達成基準にも対応せず、<code>fail</code>になることはありませんが、示す事実は無条件で不適合に傾くため、見出しレベルの飛び（<code>heading-order</code>で<code>&lt;h1&gt;</code>の次に<code>&lt;h3&gt;</code>）は<code>Other checks</code>の<code>&lt;failure type="leanFail"&gt;</code>になります。対応するすべての達成基準がスキャンの目標の外にあるルールは、不合格の場合と同じくゲートしません。値は大文字小文字を区別せずに読みます。それ以外の値は<code>TypeError</code>を投げます。<code>@surea11y/core</code>の<code>leaningFailures(result, {"{ wcagOnly }"})</code>は、これがゲートする検出結果を、ベースラインを適用する前の状態で列挙します。
+			</>
+		),
+	},
+	{
+		id: "leanFailWcagOnly",
+		option: <code>leanFailWcagOnly</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				<code>leanFailAs: 'failure'</code>と組み合わせて<code>true</code>にすると、スキャンの目標内のWCAG達成基準に対応するルールの検出結果だけでゲートし、ベストプラクティスのルールの傾きは除きます。<code>true</code>と<code>false</code>以外の値は<code>TypeError</code>を投げます。
+			</>
+		),
+	},
+	{
 		id: "includeNotApplicable",
 		option: <code>includeNotApplicable</code>,
 		default: <code>false</code>,
@@ -72,7 +92,17 @@ const optionRows = [
 		effect: (
 			<>
 				<a href="/conformance/baseline/">ベースライン</a>
-				の<code>buildBaselineEntries()</code>で作るエントリーです。そこに記録された不合格の検出箇所は、SARIFとまったく同じように除外されます。保存したままのベースラインファイル（それを<code>JSON.parse</code>したもの）か、その<code>entries</code>リストを受け取ります。不合格がすべて既知のルールは、合格ではなく<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>になります。合格したわけではないからです。
+				の<code>buildBaselineEntries()</code>で作るエントリーです。そこに記録された不合格の検出箇所は、SARIFとまったく同じように除外されます。保存したままのベースラインファイル（それを<code>JSON.parse</code>したもの）か、その<code>entries</code>リストを受け取ります。不合格がすべて既知のルールは、合格ではなく<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>になります。合格したわけではないからです。1.13が書いたエントリーのうち、1.14で変わった理由コードのものも、<a href="/conformance/baseline/#upgrading">新しいコードの検出結果に一致します</a>。<code>leanFailAs: 'failure'</code>のもとでは、不適合に傾き、<code>lean: 'fail'</code>と示したエントリー（<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>）がある検出結果もゲートせず、<code>&lt;skipped&gt;</code>のメッセージはそれを<code>known likely failures recorded in the baseline</code>に数えます。
+			</>
+		),
+	},
+	{
+		id: "packs",
+		option: <code>packs</code>,
+		default: "なし",
+		effect: (
+			<>
+				スキャンが実行したパック（<code>engineOptions.packs</code>）です。<code>leanFailAs: 'failure'</code>のもとでは、<a href="/results-reports/html-report/">HTMLレポート</a>と同じく、パックのルールの不適合の可能性が高いものに、そのルール自身の<code>meta.review</code>の手順が付きます。
 			</>
 		),
 	},
@@ -133,7 +163,7 @@ export function JunitReportContent() {
 				lang="html"
 				lines={[
 					'<?xml version="1.0" encoding="UTF-8"?>',
-					'<testsuites name="surea11y" tests="13" failures="1" errors="0" skipped="5" time="0">',
+					'<testsuites name="surea11y" tests="14" failures="1" errors="0" skipped="4" time="0">',
 					'  <testsuite name="WCAG 1.1.1" tests="1" failures="1" errors="0" skipped="0" time="0">',
 					"    <properties>",
 					'      <property name="wcagCriterion" value="1.1.1"/>',
@@ -155,13 +185,13 @@ export function JunitReportContent() {
 					"help: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html</failure>",
 					"    </testcase>",
 					"  </testsuite>",
-					"  <!-- 10 more suites trimmed: 12 tests, 5 of them skipped (manual review) -->",
+					"  <!-- 10 more suites trimmed: 13 tests, 4 of them skipped (manual review) -->",
 					"</testsuites>",
 				]}
 			/>
 			<ul>
 				<li>
-					<strong>達成基準の名前を持つ緑のスイート</strong>は、その達成基準について実行されたルールが失敗を報告しなかったことを意味します。達成基準が完全にチェックされた、あるいは満たされたという意味ではありません。ほとんどの達成基準には、どのルールも扱わない部分があります（<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照）。
+					<strong>達成基準の名前を持つ緑のスイート</strong>は、その達成基準について実行されたルールが失敗を報告しなかったことを意味します。達成基準が完全にチェックされた、あるいは満たされたという意味ではありません。ほとんどの達成基準には、どのルールも扱わない部分があります（<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照）。<code>criterionOutcome</code>プロパティがそれを示します。ルールが合格しても達成基準の一部しかチェックしない場合は<code>cantTell</code>で、現時点ではすべての達成基準がそうです。
 				</li>
 				<li>
 					<strong>スイートは達成基準に従います。</strong>人が追跡するのは達成基準だからです。<strong>テストケースは検出箇所ではなくルールに従います。</strong>そのため、ページ内で40回繰り返される不具合も、本文に40件すべてを列挙した1つの失敗したテストになり、テスト数は実行ごとに安定します。
@@ -215,7 +245,7 @@ export function JunitReportContent() {
 				シャドウツリー内の要素の<code>selector:</code>行は、シャドウホストを先に、続いて要素を示し、<code>{" >>> "}</code>でつなぎます：<code>{"html > body > main > x-card >>> button"}</code>。<a href="/results-reports/sarif-report/#field-mapping">SARIF</a>と<a href="/results-reports/html-report/">HTMLレポート</a>が示すのと同じ位置です。
 			</p>
 
-			<h2>オプション</h2>
+			<h2 id="options">オプション</h2>
 			<DataTable
 				label="JUnitレポートのオプション"
 				rowKey="id"

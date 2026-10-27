@@ -37,7 +37,10 @@ export function ResultsReportsContent() {
 				informe: un objeto de resultado de nivel superior, una entrada por regla (incluyendo
 				cada <code>pass</code> y <code>notApplicable</code>, nunca una lista de solo violaciones),
 				detalle por ocurrencia hasta el elemento marcado, códigos explícitos de incertidumbre para
-				todo lo que una regla no pudo decidir, y resultados agregados por criterio de conformidad de WCAG. Vale la pena
+				todo lo que una regla no pudo decidir, y resultados agregados por criterio de conformidad de WCAG. Cada hallazgo sin decidir dice cómo
+				lo responde una persona, y algunos dicen hacia dónde apuntan los indicios de la página (una{" "}
+				<em>tendencia</em>), para que una revisión empiece por los fallos probables en lugar de por
+				una lista plana. Vale la pena
 				leerlo una vez si estás construyendo algo sobre un resultado sin procesar. Ver{" "}
 				<a href="/results-reports/output-schema/">Esquema de salida</a> para la estructura completa.
 			</p>
@@ -45,7 +48,9 @@ export function ResultsReportsContent() {
 			<h2>Informe HTML</h2>
 			<p>
 				Un único archivo HTML que se abre en cualquier navegador, sin servidor ni paso de
-				compilación. Un resumen en lenguaje llano arriba, un resumen por WCAG agrupado por nivel
+				compilación. Un resumen en lenguaje llano arriba, los fallos, después los hallazgos que
+				necesitan revisión ordenados en fallos probables, probables cumplimientos y los que solo una
+				persona puede juzgar, cada uno con los pasos para comprobarlo, un resumen por WCAG agrupado por nivel
 				de conformidad obtenido de los resultados compuestos propios del motor, y una tabla completa
 				con función de búsqueda debajo para quien quiera profundizar. Este es el informe para entregar a un
 				revisor que no quiere leer la salida sin procesar. Ver{" "}
@@ -61,7 +66,8 @@ export function ResultsReportsContent() {
 				limpieza y un panel puede seguir un hallazgo a través de commits en lugar de perderlo cada
 				vez que cambia un número de línea. Un registro sin resultados significa que nada falló ni
 				necesita revisión entre las comprobaciones que se ejecutaron; no es una declaración de
-				conformidad. Ver <a href="/results-reports/sarif-report/">Informe SARIF</a>.
+				conformidad. Una opción eleva a errores los hallazgos que probablemente fallan, para una
+				compilación que se condiciona a ellos sin condicionarse a cada pregunta. Ver <a href="/results-reports/sarif-report/">Informe SARIF</a>.
 			</p>
 
 			<h2>Informe JUnit</h2>
@@ -71,7 +77,8 @@ export function ResultsReportsContent() {
 				tus pruebas unitarias. Cada criterio de WCAG es una suite y cada regla una prueba, así que
 				un defecto repetido en una página es una sola prueba fallida y los recuentos se mantienen
 				estables entre ejecuciones. <code>cantTell</code> llega como prueba omitida, visible sin
-				poner la compilación en rojo. Los nombres de las suites son los mismos en todos los
+				poner la compilación en rojo, salvo que decidas hacer fallar la compilación con los que
+				probablemente fallan. Los nombres de las suites son los mismos en todos los
 				idiomas, así que el historial de pruebas no se reinicia cuando cambia el idioma del
 				análisis. Una suite en verde significa que las reglas que se ejecutaron para un criterio
 				no encontraron nada, no que el criterio se cumpla. Ver{" "}

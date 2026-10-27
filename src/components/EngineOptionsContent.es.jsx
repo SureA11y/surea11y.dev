@@ -45,10 +45,11 @@ const optionRows = [
 				probando la conformidad de la ejecución. El valor predeterminado es la versión que nombra
 				el perfil de pack de la ejecución (su <code>wcagVersion</code>); si no, la que implican tus
 				etiquetas de origen de versión, y <code>'2.2'</code> cuando no implican ninguna.{" "}
-				<strong>Lo único que cambia actualmente es el criterio de éxito 4.1.1 <span lang="en">Parsing</span>, eliminado en 2.2</strong>:
-				bajo un objetivo 2.2, una regla etiquetada{" "}
-				<code>wcag22-removed</code> sigue ejecutándose y sigue informando sus ocurrencias, pero
-				no puede <code>fail</code>. Consulta{" "}
+				Lo que cambia es qué criterios informa un análisis y, para el criterio de éxito 4.1.1{" "}
+				<span lang="en">Parsing</span>, por qué una regla etiquetada <code>wcag22-removed</code> no
+				puede dar <code>fail</code>: se eliminó en 2.2, y las erratas de 2.0 y 2.1 lo dan siempre
+				por cumplido, salvo con un perfil cuyo estándar lo mantiene, como{" "}
+				<code>en301549-v3.2.1</code>. Consulta{" "}
 				<a href="#filtering-by-wcag-version">"Filtrado por versión de WCAG"</a> más arriba.
 				Cualquier otro valor, de cualquier tipo (el número <code>2.1</code>, <code>'3.0'</code>), se
 				ignora con un <code>console.warn</code> que nombra la versión a la que apunta la ejecución
@@ -233,6 +234,27 @@ const optionRows = [
 		),
 	},
 	{
+		id: "styleSheetTexts",
+		option: <code>styleSheetTexts</code>,
+		meaning: (
+			<>
+				El texto de hojas de estilo que la página no puede leer, <code>{"[{ href, text }]"}</code>:
+				una hoja de otro origen, por su URL, y su CSS. Las reglas que leen el CSS (
+				<code>css-orientation-lock</code>, <code>css-hidden-focus</code>,{" "}
+				<code>css-focus-indicator-suppressed</code>) lo leen en lugar de la hoja. El{" "}
+				<code>engineOptions</code> de cada resultado lo repite como los href de las hojas,{" "}
+				<code>{"[{ href }]"}</code>, sin su texto. <code>preloadStyleSheets()</code> obtiene desde
+				dentro de la página las que el servidor comparte, y <code>runa11yCoreInPageAsync</code> las
+				obtiene antes de analizar; una herramienta que controla el navegador puede obtener las demás
+				desde fuera. Consulta{" "}
+				<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}>
+					«Style sheets from another origin»
+				</a>{" "}
+				en la guía de integración de core en GitHub. Core 1.14.0 y posteriores.
+			</>
+		),
+	},
+	{
 		id: "timestamp",
 		option: <code>timestamp</code>,
 		meaning: (
@@ -255,7 +277,12 @@ const optionRows = [
 				calcular con confianza, para proteger contra falsos <code>fail</code>.{" "}
 				<code>auditorAssist</code>: sacrifica parte de ese margen de seguridad a cambio de más
 				hallazgos, pensado para un auditor humano que revisará los casos marcados, no para una
-				puerta de CI sin supervisión.
+				puerta de CI sin supervisión. Una página que no pinta ningún fondo opaco no es
+				uno de esos casos: el lienzo que hay detrás se deduce del propio esquema de color de la
+				página, así que su texto se mide en cualquiera de los dos modos sin suponer nada. Donde no
+				se puede conocer el lienzo de la página (en un frame, con colores forzados),{" "}
+				<code>auditorAssist</code> mide el texto sobre <code>contrast.rootCanvasFallback</code>, y
+				lo registra como <code>ROOT_CANVAS_FALLBACK</code>.
 			</>
 		),
 	},
@@ -264,14 +291,39 @@ const optionRows = [
 		option: <code>contrast.rootCanvasFallback</code>,
 		meaning: (
 			<>
-				El color de fondo de página que se asume cuando no se puede calcular en absoluto: solo
-				importa en el modo <code>auditorAssist</code>. En un navegador, una página sin un fondo
-				opaco propio se mide sobre el lienzo que el navegador pinta detrás de ella, en cualquiera
-				de los dos modos: blanco, o el lienzo oscuro para una página que pide un esquema de color
-				oscuro (<code>color-scheme: dark</code> en la raíz, o la forma <code>&lt;meta&gt;</code>).
-				El valor de reserva se aplica donde no se lee el lienzo: con jsdom, y en un frame, cuyo
-				lienzo puede dejar ver la página padre (un frame que pide oscuro se mide sobre el lienzo
-				oscuro). Debe ser un color opaco: cualquier otro valor se mide como blanco, con un aviso.
+				Un color de lienzo para una página que no pinta ningún fondo opaco. Sin indicarlo, las
+				reglas de contraste miden el texto de esa página sobre el lienzo que el navegador pinta
+				detrás, en cualquiera de los dos modos: el lienzo del esquema de color en que se dibuja la
+				página, que decide su propio <code>color-scheme</code> (en la raíz, o la forma{" "}
+				<code>&lt;meta&gt;</code>). Una página que no declara ninguno se dibuja en claro, sobre
+				blanco, prefiera lo que prefiera el usuario; <code>light dark</code> se dibuja sobre blanco
+				para un usuario en modo claro y sobre el lienzo oscuro para uno en modo oscuro, y su texto se
+				mide en los dos esquemas, y falla donde falla en cualquiera de ellos (
+				<code>data.details.colorScheme</code> nombra cuál). Con jsdom, que no resuelve colores del
+				sistema, el motor usa los de Chromium, y pregunta por el texto cuyos colores no puede
+				deducir allí (<code>COLOR_SCHEME_NOT_RENDERED</code>). Si se indica, blanco incluido, el
+				color sustituye al lienzo de la página en todos los esquemas: el texto se mide sobre él una
+				vez, registrado como una suposición (<code>ROOT_CANVAS_FALLBACK</code>). El lienzo de la
+				página no se puede conocer en un frame, cuyo lienzo puede dejar ver la página padre, ni con
+				colores forzados: ahí <code>contrast-computable</code> pregunta y las reglas de ratio dejan
+				fuera el texto, salvo que <code>auditorAssist</code> lo mida sobre este color. El{" "}
+				<code>engineOptions.contrast</code> de cada resultado repite el color usado, blanco si no
+				se indicó ninguno.
+			</>
+		),
+	},
+	{
+		id: "contrast-fallback-set",
+		option: <code>contrast.rootCanvasFallbackSet</code>,
+		meaning: (
+			<>
+				Se repite en cada resultado: <code>true</code> cuando{" "}
+				<code>contrast.rootCanvasFallback</code> es del llamador, <code>false</code> para el blanco
+				predeterminado (también cuando el valor indicado no era un color utilizable). No hace falta
+				como entrada: las opciones que se pasan de nuevo desde la copia de un resultado se leen tal
+				como estaban, así que <code>false</code> mantiene el blanco repetido como predeterminado. Un
+				valor que no es <code>true</code> ni <code>false</code> produce un aviso y se lee como no
+				indicado. Core 1.14.0 y posteriores.
 			</>
 		),
 	},
@@ -302,7 +354,9 @@ const optionRows = [
 				la página. En ambos modos se excluye el texto con un
 				tamaño de fuente de 0 o un color totalmente transparente, ya que no se dibuja nada; el
 				texto transparente que deja ver un fondo a través de sus glifos (
-				<code>background-clip: text</code>) no se excluye, y se pregunta por él. Configura{" "}
+				<code>background-clip: text</code>, en él o en un antecesor) no se excluye: se mide en el
+				color de ese fondo cuando es sólido, y se pregunta por él cuando es un degradado o una
+				imagen. Configura{" "}
 				<code>'styleOnly'</code> en un navegador para comprobar el texto solo a partir de los
 				estilos calculados, como hacían las versiones anteriores; bajo jsdom puro (
 				<code>runDomRulesInPage</code>
@@ -757,7 +811,8 @@ export function EngineOptionsContent() {
 				El objetivo de WCAG se deduce de las etiquetas igual que con un conjunto escrito a mano (ver{" "}
 				<a href="#filtering-by-wcag-version">"Filtrado por versión de WCAG"</a> más abajo), así que
 				con <code>en301549-v3.2.1</code> un id duplicado todavía puede dar <code>fail</code>, y con{" "}
-				<code>en301549-v4.1.1</code> no. El perfil de un pack puede nombrar su versión en su lugar,
+				<code>en301549-v4.1.1</code> no: el perfil de V3.2.1 mantiene el 4.1.1 (
+				<a href="#parsing-errata">ver más abajo</a>). El perfil de un pack puede nombrar su versión en su lugar,
 				con <code>wcagVersion</code> (<a href="/configuration/packs/#profiles">Packs</a>): un
 				perfil que ejecuta solo las reglas que asocia su estándar no tiene etiquetas de WCAG que
 				impliquen una. Los nombres no distinguen mayúsculas y minúsculas. Una ejecución que usó un
@@ -949,7 +1004,7 @@ export function EngineOptionsContent() {
 				Los campos siguientes seleccionan por las etiquetas que llevan las reglas y por ids de regla.
 				Recurre a ellos para lo que no dicen un objetivo de WCAG y <code>bestPractices</code>: un
 				criterio (<code>tags: ['wcag1412']</code>), una lista de reglas, una exclusión o un conjunto
-				de etiquetas heredado de otra herramienta. Se combinan con <code>wcag</code> y{" "}
+				de etiquetas propio. Se combinan con <code>wcag</code> y{" "}
 				<code>bestPractices</code>: lo que incluyen se añade a lo que estos seleccionan, y lo que
 				excluyen se quita después.
 			</p>
@@ -1155,7 +1210,11 @@ export function EngineOptionsContent() {
 					dejó fuera las demás reglas del criterio: es <code>cantTell</code>, con{" "}
 					<code>reasonCode</code> <code>composite.rollup.cantTell.notSelectedChild</code>, y cada
 					regla que el análisis no seleccionó figura entre los contribuyentes como{" "}
-					<code>missing</code> con <code>notSelected: true</code>. El informe HTML muestra
+					<code>missing</code> con <code>notSelected: true</code>. Con todas ellas seleccionadas y
+					aprobadas, un criterio de WCAG sigue siendo <code>cantTell</code> (
+					<code>composite.rollup.cantTell.partialCheck</code>), ya que las reglas de ningún
+					criterio comprueban todavía todo lo que pide (consulta{" "}
+					<a href="/conformance/wcag-mapping/">Mapeo de conformidad con WCAG</a>). El informe HTML muestra
 					«Comprobado en parte: 1 de 2 comprobaciones no se seleccionó para este análisis» debajo. Consulta{" "}
 					<a href="/results-reports/output-schema/#partly-checked">el esquema de salida</a>.
 				</li>
@@ -1355,6 +1414,16 @@ export function EngineOptionsContent() {
 				silenciosamente, y una ejecución 2.2 no queda bloqueada por un criterio que 2.2 no
 				contiene.
 			</p>
+			<p id="parsing-errata">
+				Con un objetivo 2.0 o 2.1 ocurre lo mismo: las erratas de 2023 a WCAG 2.0 y 2.1 dan el
+				4.1.1 por cumplido siempre para el contenido en HTML o XML, así que la regla pregunta en
+				lugar de fallar, y <code>wcagVersionScope.by</code> es <code>"errata"</code>. La única
+				excepción es un perfil cuyo estándar mantiene el texto del 4.1.1, como{" "}
+				<code>en301549-v3.2.1</code> (<code>keepsParsing</code> en el perfil del estándar, ver{" "}
+				<a href="/configuration/packs/#profiles">Packs</a>): ahí un id duplicado todavía puede dar{" "}
+				<code>fail</code>. Core 1.14.0 y posteriores; antes, un objetivo 2.0 o 2.1 dejaba que
+				fallara.
+			</p>
 			<p>La versión objetivo se resuelve en este orden:</p>
 			<ol>
 				<li>
@@ -1453,7 +1522,7 @@ export function EngineOptionsContent() {
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
 					"  wcagLevel: 'AA',                 // optional — the level of the criteria reported",
-					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
+					"  profile: 'wcag22-aa',            // optional — a named conformance target",
 					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
 					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
 					"  messages: { de: { /* key: text */ } },  // optional caller-supplied dictionaries; win over built-in ones",
@@ -1461,13 +1530,15 @@ export function EngineOptionsContent() {
 					"  includeShadowDom: true,          // default true — opt OUT with false to skip open shadow roots",
 					"  fragment: false,                 // default false — set true when the scan target isn't a real page",
 					"  excludeSelectors: ['#cookie-banner', '.third-party-widget'],  // array or comma-separated string",
+					"  styleSheetTexts: [{ href: 'https://cdn.example/site.css', text: '/* its CSS */' }],  // sheets the page can't read",
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
 					"  perfStats: false,                // default false — internal timing counters, debug-only shape",
 					"  profileRules: false,             // default false — per-rule timings; needs perfStats",
 					"",
 					"  contrast: {",
 					"    mode: 'strictConformance',     // 'strictConformance' (default) | 'auditorAssist'",
-					"    rootCanvasFallback: '#ffffff'  // background assumed when the true root background isn't computable",
+					"    rootCanvasFallback: '#ffffff', // a canvas to measure on in place of the page's own; unset, the page's color scheme gives it",
+					"    rootCanvasFallbackSet: true    // echoed on each result: whether rootCanvasFallback was given; read back, false means the default",
 					"  },",
 					"  visibilityMode: undefined,       // 'styleOnly' | 'styleAndGeometry'; unset: geometry with a layout, else styles",
 					"",
@@ -1560,7 +1631,9 @@ export function EngineOptionsContent() {
 				<code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code> avisa, lee el nivel como
 				no indicado y enumera lo que informa un análisis con esas opciones; con{" "}
 				<code>strictOptions: true</code> lanza <code>INVALID_ENGINE_OPTIONS</code>, igual que el
-				análisis.
+				análisis. Una selección que se anula a sí misma (una regla incluida y excluida a la vez,
+				partes sin ninguna regla en común) se señala como la señala el análisis: un aviso, y{" "}
+				<code>INVALID_RUN_ONLY</code> con <code>strictOptions</code>.
 			</p>
 			<p>
 				No se comprueban: los ajustes propios de una regla (<code>rules[ruleId]</code>), las claves
@@ -1745,8 +1818,7 @@ export function EngineOptionsContent() {
 				análisis, y <code>getRulesForRunOnly(runOnly, engineOptions)</code> enumera los resultados
 				agregados que añaden. Esto es deliberado, no
 				una limitación que sortear: surea11y ya toma <code>engineOptions</code> nuevas en cada
-				llamada sin configuración global mutable (a diferencia de otros motores, que necesitan
-				un paso de <code>configure()</code>/<code>reset()</code> sobre un runtime compartido), y
+				llamada sin configuración global mutable, y
 				las reglas personalizadas siguen ese mismo modelo por llamada.
 			</p>
 			<p>

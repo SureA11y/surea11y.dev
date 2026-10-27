@@ -7,11 +7,13 @@ const core = "https://github.com/SureA11y/core/blob/main";
 const sarifLevelRows = [
 	{ id: "fail", outcome: <code>fail</code>, level: <code>error</code>, meaning: "Violación determinista: el caso de bloqueo en CI." },
 	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "Requiere revisión humana: se muestra, pero no debería bloquear una compilación por sí sola." },
+	{ id: "leanFail", outcome: <><code>cantTell</code> con tendencia a <code>fail</code>, con <code>leanFailAs: 'error'</code></>, level: <code>error</code>, meaning: <>Sin decidir, pero los indicios de la página apuntan a un fallo (<a href="/results-reports/output-schema/#leans"><code>lean</code></a>); lo cuenta una puerta sobre errores.</> },
 ];
 
 const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
-	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code>. Una ocurrencia sin resumen (la de una regla personalizada, por ejemplo) usa el título de la regla, o su id, ya que GitHub rechaza un resultado con el texto vacío.</> },
+	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code>. Una ocurrencia sin resumen (la de una regla personalizada, por ejemplo) usa el título de la regla, o su id, ya que GitHub rechaza un resultado con el texto vacío. Detrás, tras una línea en blanco, van los pasos de un hallazgo sin decidir: <code>How to check:</code>, los pasos numerados, y luego <code>Passes when:</code> y <code>Fails when:</code>, para que una alerta diga cómo responderla.</> },
+	{ id: "howToCheck", field: <code>results[].properties.howToCheck</code>, source: <>Los pasos de un hallazgo sin decidir, <code>{"{ steps, passWhen, failWhen }"}</code>, tal como los da <a href="/results-reports/output-schema/#how-to-check"><code>occurrence.howToCheck</code></a>. Un resultado que llega sin ellos, como el de un binding, los recibe en Node; <code>packs</code> (los packs que ejecutó el análisis) añade los propios de una regla de un pack. Como la tendencia, no forma parte de la identidad del hallazgo.</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>El objetivo analizado (ver <a href="#sarif-locations">Ubicaciones</a> más abajo).</> },
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>,source: <>La ubicación del elemento, con <code>kind: "element"</code>, cuando <code>occurrence.selector</code> es una cadena no vacía. Fuera de un árbol shadow es el selector. Para un elemento dentro de un árbol shadow son los selectores de los hosts shadow y luego el del propio elemento, unidos con <code>{" >>> "}</code>: <code>{"html > body > main > x-card >>> button"}</code>. La línea <code>selector:</code> de JUnit y el informe HTML muestran el mismo texto.</> },
 	{
@@ -25,7 +27,12 @@ const sarifFieldRows = [
 				una huella basada en el contenido y estable, no basada en la posición, para los consumidores
 				que la leen: el mismo hallazgo recibe el mismo resumen en todos los informes. Antes de la
 				1.11, <code>surea11y/violation/v1</code> contenía la propia clave, así que una herramienta que
-				leía <code>v1</code> ve cada hallazgo como nuevo una vez.
+				leía <code>v1</code> ve cada hallazgo como nuevo una vez.{" "}
+				<strong>Un hallazgo cuyo código de motivo cambia recibe otro resumen</strong>: en la 1.14,
+				los hallazgos de las diecisiete reglas que ahora dan un código, y los de los códigos
+				divididos según su causa, así que sus alertas de <span lang="en">Code Scanning</span> se
+				cierran una vez y los hallazgos vuelven como nuevos (ver{" "}
+				<a href="/conformance/baseline/">Baseline / allowlist</a>).
 			</>
 		),
 	},
@@ -52,14 +59,17 @@ const sarifFieldRows = [
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, el enlace de ayuda de la regla, cuando es una URL <code>http(s)</code> absoluta; si no, el documento Understanding del primer criterio de WCAG al que se asocia; ausente en una regla sin ninguno de los dos, lo que no ocurre con ninguna regla incorporada: una sin criterio asociado enlaza su sección del catálogo de reglas.</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>La opción <code>toolVersion</code>, si se indica (una herramienta que envuelve el motor pasa la suya); si no, <code>engine.version</code>, la versión del motor que produjo el resultado.<code>"0.0.0"</code> solo para un resultado que no lo tiene, de una versión anterior a la 1.10.0, o cuyo <code>engine.version</code> no es una cadena.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>La opción <code>category</code>, con una <code>/</code> final añadida si no la tiene (GitHub lee todo lo que hay hasta la última barra como la categoría). Ausente cuando no se indica ninguna categoría. Ver <a href="#scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</a>.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>,source: <><code>wcagVersion</code>, <code>wcagLevel</code> (cuando el análisis tenía un nivel: <code>engineOptions.wcagLevel</code>, o el que da su selección), <code>profile</code>, <code>optInRules</code> y <code>environment</code> del <code>engine</code> del resultado: el objetivo de conformidad que usó la ejecución, para que un panel distinga una ejecución de WCAG 2.1 de una de 2.2, y una ejecución AA de una de todos los niveles, las etiquetas de reglas opcionales que añadió más allá de ese objetivo, cuando añadió alguna, y las condiciones en que se renderizó la página (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>,<code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code>; ver <a href="/results-reports/output-schema/">Esquema de salida</a>). Se omiten en resultados de motores anteriores a esos campos.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>,source: <><code>wcagVersion</code>, <code>wcagLevel</code> (cuando el análisis tenía un nivel: <code>engineOptions.wcagLevel</code>, o el que da su selección), <code>profile</code>, <code>optInRules</code> y <code>environment</code> (una copia de <code>engine.environment</code>) del <code>engine</code> del resultado: el objetivo de conformidad que usó la ejecución, para que un panel distinga una ejecución de WCAG 2.1 de una de 2.2, y una ejecución AA de una de todos los niveles, las etiquetas de reglas opcionales que añadió más allá de ese objetivo, cuando añadió alguna, y las condiciones en que se renderizó la página (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code> y cualquier otro campo que tenga, incluidos los de los hooks; ver <a href="/results-reports/output-schema/#top-level-result">Esquema de salida</a>). Se omiten en resultados de versiones anteriores a esos campos.</> },
 ];
 
 const sarifOptionRows = [
 	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>, para una herramienta que envuelve el motor.</> },
 	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>, la página principal de la herramienta.</> },
-	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "ninguno", effect: <>El archivo de baseline tal como se guardó (su <code>JSON.parse</code>) o su lista <code>entries</code>, ver <a href="/conformance/baseline/#file-format">Formato del archivo</a>. Las ocurrencias de fallo registradas ahí se omiten, como hace <code>--baseline</code> (ver más abajo).</> },
+	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "ninguno", effect: <>El archivo de baseline tal como se guardó (su <code>JSON.parse</code>) o su lista <code>entries</code>, ver <a href="/conformance/baseline/#file-format">Formato del archivo</a>. Las ocurrencias de fallo registradas ahí se omiten, como hace <code>--baseline</code> (ver más abajo). Una entrada escrita por la 1.13 con un código de motivo que cambió en la 1.14 sigue coincidiendo con el hallazgo con su código nuevo.</> },
 	{ id: "category", option: <code>category</code>, def: "ninguno", effect: <><code>runs[0].automationDetails.id</code>, ver <a href="#scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</a>.</> },
+	{ id: "leanFailAs", option: <code>leanFailAs</code>, def: <code>'warning'</code>, effect: <><code>'error'</code> informa con nivel <code>error</code> de un hallazgo <code>cantTell</code> cuya tendencia apunta a fallo, para que una compilación bloqueada por errores falle también con los fallos probables. Se lee sin distinguir mayúsculas y minúsculas; cualquier otro valor lanza un <code>TypeError</code>. También el de una regla de buenas prácticas: una regla así, sin criterio de WCAG asociado, nunca falla, y los hechos que constata tienden a fallo sin condiciones, así que un nivel de encabezado saltado (<code>heading-order</code>) es un <code>error</code>. Un hallazgo de una regla cuyos criterios quedan todos fuera del objetivo del análisis sigue siendo una <code>note</code>. Un hallazgo que tiende a fallo y tiene una entrada marcada con <code>lean: 'fail'</code> en <code>baselineEntries</code> sigue siendo un <code>warning</code>.</> },
+	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <>Con <code>leanFailAs: 'error'</code>, <code>true</code> eleva solo los hallazgos de reglas asociadas a un criterio de WCAG dentro del objetivo del análisis, y deja las tendencias de las reglas de buenas prácticas en <code>warning</code>. Un valor distinto de <code>true</code> o <code>false</code> lanza un <code>TypeError</code>. <code>leaningFailures(result, {"{ wcagOnly }"})</code>, de <code>@surea11y/core</code>, enumera los hallazgos que elevan estas dos opciones, antes del baseline.</> },
+	{ id: "packs", option: <code>packs</code>, def: "ninguno", effect: <>Los packs que ejecutó el análisis (<code>engineOptions.packs</code>): en Node, los hallazgos sin decidir de una regla de un pack llevan los pasos de su propio <code>meta.review</code> (<code>properties.howToCheck</code>).</> },
 ];
 
 export function SarifReportContent() {
@@ -160,6 +170,18 @@ export function SarifReportContent() {
 				]}
 				rows={sarifLevelRows}
 			/>
+			<p>
+				Un hallazgo sin decidir con tendencia la lleva en <code>properties.lean</code>:{" "}
+				<code>{'{ "toward": "fail", "why": "The heading skips a level after the one before it." }'}</code>,
+				sea cual sea el nivel con el que se informe. Cuando la tendencia los tiene, también lleva{" "}
+				<code>caution</code>, qué podría hacer que se equivoque (
+				<code>"A layout table can also hold numbers."</code>), y <code>measured</code>, cuántas
+				veces ha acertado (<code>{'{ "agreed": 47, "cases": 50, "corpus": "…", "coreVersion": "…" }'}</code>,
+				cuando una tendencia se ha contado en cinco casos, lo que aún no ha ocurrido con ninguna),
+				para que una alerta muestre lo que el <a href="/results-reports/html-report/">informe HTML</a>{" "}
+				muestra junto a la tendencia. Sus claves <code>signals</code> e <code>i18n</code> se quedan
+				en el resultado del análisis.
+			</p>
 			<p id="outside-the-target">
 				Una regla cuyos criterios de WCAG quedan todos fuera del objetivo del análisis (una regla
 				AAA con <code>engineOptions.wcagLevel: 'AA'</code>, o <code>duplicate-id</code> con WCAG
@@ -304,7 +326,7 @@ export function SarifReportContent() {
 				usó cada ejecución.
 			</p>
 
-			<h2>Opciones</h2>
+			<h2 id="options">Opciones</h2>
 			<p>
 				<code>renderSarifReport(result, options)</code> de <code>@surea11y/core/sarif</code>{" "}
 				devuelve el registro como texto JSON. Acepta:
@@ -334,10 +356,14 @@ export function SarifReportContent() {
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --baseline baseline.json --sarif results.sarif", command: true }]} />
 			<p>
-				Las ocurrencias <code>cantTell</code> nunca se filtran mediante un baseline: el mecanismo
-				de baseline solo rastrea ocurrencias <code>fail</code> (igual que{" "}
-				<code>--write-baseline</code>, ver{" "}
-				<a href="/conformance/baseline/">Baseline / allowlist</a>).
+				Un baseline nunca deja fuera las ocurrencias <code>cantTell</code>. Un baseline escrito con{" "}
+				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code> registra también los
+				hallazgos que tienden a fallo, como entradas marcadas con <code>lean: 'fail'</code> (ver{" "}
+				<a href="/conformance/baseline/#findings-that-lean-fail">Baseline / allowlist</a>); con{" "}
+				<code>leanFailAs: 'error'</code> un hallazgo así se queda en <code>warning</code> en lugar
+				de elevarse a <code>error</code>, para que un equipo pueda aceptar los fallos probables que
+				ya tiene y seguir bloqueando los nuevos. <code>--write-baseline</code> solo registra
+				ocurrencias <code>fail</code>.
 			</p>
 
 			<h2>

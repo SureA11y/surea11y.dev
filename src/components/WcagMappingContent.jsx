@@ -1,4 +1,5 @@
 import React from "react";
+import engine from "../data/engine.generated.json";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { Callout } from "./design-system/feedback/Callout.jsx";
@@ -30,15 +31,38 @@ const precedenceRows = [
 		id: "na",
 		condition: (
 			<>
-				Every contributor <code>notApplicable</code>
+				Every contributor <code>notApplicable</code>, for a criterion whose rules find every case it
+				applies to
 			</>
 		),
 		outcome: <code>notApplicable</code>,
 	},
 	{
+		id: "na-partial",
+		condition: (
+			<>
+				Every contributor <code>notApplicable</code>, for any other criterion
+			</>
+		),
+		outcome: (
+			<>
+				<code>cantTell</code> (<code>composite.rollup.cantTell.partialCoverage</code>)
+			</>
+		),
+	},
+	{
 		id: "pass",
-		condition: "Otherwise (all ran, none failed/cantTell, not all N/A)",
+		condition: "Otherwise (all ran, none failed/cantTell, not all N/A), for a criterion whose rules check all it asks",
 		outcome: <code>pass</code>,
+	},
+	{
+		id: "pass-partial",
+		condition: "Otherwise, for any other criterion",
+		outcome: (
+			<>
+				<code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>)
+			</>
+		),
 	},
 ];
 
@@ -73,7 +97,7 @@ export function WcagMappingContent() {
 					generated aggregate of every atomic rule mapped to one SC, giving you one
 					pass/fail/cantTell/notApplicable verdict per SC instead of having to roll up dozens of
 					atomic results yourself. See{" "}
-					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-34`}>
+					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-${engine.composites}`}>
 						the full list
 					</a>{" "}
 					(e.g. <code>wcag-1.1.1-non-text-content</code> rolls up 21 atomic rules).
@@ -91,13 +115,45 @@ export function WcagMappingContent() {
 				]}
 				rows={precedenceRows}
 			/>
+			<h3 id="when-a-criterion-passes">When a criterion passes, and when it is not applicable</h3>
 			<p>
-				This means: <strong>a composite <code>pass</code> is a real, deterministic "every
-				applicable automated check for this SC came back clean" — but it is not a WCAG
-				conformance claim on its own.</strong> If any facet of that SC has no automated coverage
-				at all (see <code>coverage-report.md</code>), a composite <code>pass</code> is silent
-				about that facet, not asserting it's fine. Cross-check the facet table before treating a
-				composite <code>pass</code> as "SC fully verified."
+				Since 1.14, a criterion passes only when its rules check all it asks, as WCAG has it
+				satisfied only when all of it is. Rules that all passed say only that the parts they check
+				are met: <a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>{" "}
+				finds that <code>{'<html lang="fr">'}</code> names a language, not that the page is in French
+				(3.1.1), and <a href="/rules/page-title-present/"><code>page-title-present</code></a> that
+				the page has a title, not that it describes the page (2.4.2). Such a criterion is{" "}
+				<code>cantTell</code>, with the reason code{" "}
+				<code>composite.rollup.cantTell.partialCheck</code>, and the{" "}
+				<a href="/results-reports/html-report/">HTML report</a> says it was partly checked: a person
+				checks the rest. The criteria whose rules check all of them are listed in{" "}
+				<code>src/coverage/complete-applicability.js</code> (<code>COMPLETE_CHECK</code>), each with
+				the reason, and none is yet: each asks something the rules can't see, whether a text
+				alternative, a label, a heading or a link's text says the right thing, or how content a
+				script draws or changes meets it. <strong>So no WCAG composite passes in 1.14.</strong>
+			</p>
+			<p>
+				Likewise, a criterion is <code>notApplicable</code> only when its rules find every case it
+				applies to: links for 2.4.4 and 2.4.9, focusable elements for 2.4.3 and 2.4.7, labelled
+				components for 2.5.3, markup for 4.1.1. Form fields (1.3.5, 3.3.2) and pointer targets
+				(2.5.8) are not on that list: a field made from an ARIA role, a field with no{" "}
+				<code>autocomplete</code>, or an element that is a target only through a script can be on a
+				page where those rules found nothing. For any other criterion, rules that all found nothing
+				only say the cases they look for are absent: a script that redirects after a delay is a time
+				limit (2.2.1) with no <code>{'<meta http-equiv="refresh">'}</code>, and a passage in another
+				language (3.1.2) need not carry a <code>lang</code>. In WCAG-EM's terms, "not present" needs
+				every place the content could be to have been looked at, so such a criterion is{" "}
+				<code>cantTell</code>, with the reason code{" "}
+				<code>composite.rollup.cantTell.partialCoverage</code>.
+			</p>
+			<p>
+				This means: <strong>a composite <code>fail</code> is a real, deterministic violation, and a
+				composite <code>cantTell</code> whose contributors all passed (<code>partialCheck</code>)
+				says every automated check for that criterion came back clean, and what is left is a
+				person's to check.</strong> It is not a conformance claim on its own. The facet table (
+				<code>coverage-report.md</code>) shows which parts of each criterion have automated
+				coverage, and which a person checks. Show these as "checks passed, needs review" and
+				"nothing found to check", never as passed.
 			</p>
 			<p>
 				A composite's <code>data.details.contributors</code> array (see{" "}
@@ -173,8 +229,8 @@ export function WcagMappingContent() {
 				A rule carries one level tag per Success Criterion it maps to, and nothing more: a rule
 				mapped only to an AA criterion is tagged <code>wcag2aa</code> and <em>not</em>{" "}
 				<code>wcag2a</code>. Asking for <code>{"{ tags: ['wcag2aa'] }"}</code> on its own
-				therefore runs the 9 rules mapped to a 2.0 AA criterion, not the ~100 that make up an A
-				+ AA target. List every level you mean, or use <code>runOnly.wcag</code>, which does not
+				therefore runs the 11 rules mapped to a 2.0 AA criterion, not the 105 that make up a 2.0
+				A + AA target. List every level you mean, or use <code>runOnly.wcag</code>, which does not
 				have the problem. <code>engineOptions.profile</code> (<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>,{" "}
 				<code>en301549-v3.2.1</code>, <code>section508</code>) does it for you too; see{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Conformance profiles</a>.
@@ -192,9 +248,11 @@ export function WcagMappingContent() {
 				of <code>runOnly.wcag</code>, else whatever your version tags imply, else <code>2.2</code>) and reports it back as <code>engine.wcagVersion</code>.
 				Under a 2.2 target, a rule mapped only to SC 4.1.1 Parsing cannot report <code>fail</code>{" "}
 				— it runs, reports its occurrences, and comes back <code>cantTell</code> with a{" "}
-				<code>wcagVersionScope</code> field explaining the coercion. So a default scan never
-				gates on a criterion WCAG 2.2 does not contain, and a 2.0/2.1 scan still gets a real
-				4.1.1 verdict.
+				<code>wcagVersionScope</code> field explaining the coercion. Since 1.14, under a 2.0 or
+				2.1 target it does the same, with <code>wcagVersionScope.by: "errata"</code>: W3C's 2023
+				errata to those versions count 4.1.1 as always satisfied for content in HTML or XML. So no
+				WCAG scan gates on 4.1.1; only a profile whose standard keeps its text, one that says{" "}
+				<code>keepsParsing: true</code> as <code>en301549-v3.2.1</code> does, still fails it.
 			</p>
 			<p>
 				Composites, unlike atomic rules, <em>are</em> filtered cumulatively. The runner reads{" "}
@@ -343,12 +401,17 @@ export function WcagMappingContent() {
 					uncertainty.
 				</li>
 				<li>
+					A composite never passes a criterion its rules check only in part: where they all pass,
+					it is <code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>), so a{" "}
+					<code>pass</code> is never silent about a part no rule checks.
+				</li>
+				<li>
 					The facet coverage table tells you exactly which parts of which SCs have zero automated
-					coverage, so you know where a <code>pass</code> is silent rather than exhaustive.
+					coverage, and so what is left to a person.
 				</li>
 			</ul>
 			<p>
-				A composite <code>pass</code> across every SC at your target level means: <em>every
+				Composites with no <code>fail</code> across every SC at your target level mean: <em>every
 				automatable check for that level came back clean.</em> It is the automatable subset of
 				conformance, stated precisely — not a substitute for the manual review WCAG itself
 				requires.

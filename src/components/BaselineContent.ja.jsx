@@ -1,7 +1,33 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
+import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+
+const codes = (list) =>
+	list.map((c, i) => (
+		<React.Fragment key={c}>
+			{i > 0 && ", "}
+			<code>{c}</code>
+		</React.Fragment>
+	));
+
+const baselineMoves = [
+	{ id: "text-missing", rules: ["img-alt-present", "embed-text-alternative-present", "object-text-alternative-present", "svg-image-text-alternative-present", "svg-text-alternative-present", "video-poster-text-alternative-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING"] },
+	{ id: "area-alt", rules: ["area-alt-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING", "TEXT_ALTERNATIVE_EMPTY"] },
+	{ id: "canvas", rules: ["canvas-text-alternative-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING", "ROLE_IMG_NAME_MISSING"] },
+	{ id: "text-review", rules: ["area-alt-quality", "canvas-text-alternative-quality", "embed-text-alternative-quality", "input-image-alt-quality", "object-text-alternative-quality"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_REVIEW"] },
+	{ id: "img-quality", rules: ["img-alt-quality", "svg-text-alternative-quality"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_REVIEW", "IMAGE_ONLY_CONTROL_CONTENT"] },
+	{ id: "img-decorative", rules: ["img-alt-decorative"], from: ["EXCLUDED_ELEMENT_REVIEW"], to: ["IMAGE_ONLY_CONTROL_CONTENT"] },
+	{ id: "input-image", rules: ["input-image-alt-decorative"], from: ["DEFAULT"], to: ["NAME_FROM_ELSEWHERE_REVIEW"] },
+	{ id: "manual-review", rules: ["manual-review"], from: ["DEFAULT"], to: ["KEYBOARD_REVIEW"] },
+	{ id: "list-children", rules: ["list-children-valid"], from: ["LIST_INVALID_CHILD"], to: ["LIST_ITEM_ROLE_OVERRIDDEN"] },
+	{ id: "listitem-parent", rules: ["listitem-parent-valid"], from: ["LISTITEM_INVALID_PARENT"], to: ["LIST_ROLE_OVERRIDDEN"] },
+	{ id: "prohibited-children", rules: ["aria-prohibited-children"], from: ["ARIA_PROHIBITED_CHILD_ROLELESS"], to: ["ARIA_PROHIBITED_CHILD"] },
+	{ id: "duplicate-id", rules: ["duplicate-id"], from: ["DUPLICATE_ID"], to: ["DUPLICATE_ID_IN_SHADOW_TREE"] },
+	{ id: "valid-lang", rules: ["valid-lang"], from: ["ELEMENT_LANG_INVALID"], to: ["DEFAULT_LANG_INVALID"] },
+	{ id: "p-as-heading", rules: ["p-as-heading"], from: ["BOLD_LARGE_PARAGRAPH", "BOLD_LARGE_DIV"], to: ["HEADING_LIKE_NUMBER", "HEADING_LIKE_LINK"] },
+].map((row) => ({ ...row, rules: codes(row.rules), from: codes(row.from), to: codes(row.to) }));
 
 export function BaselineContent() {
 	return (
@@ -132,6 +158,73 @@ export function BaselineContent() {
 				でベースラインを再生成して整理してください。
 			</p>
 
+			<h2 id="findings-that-lean-fail">不適合の可能性が高い検出結果</h2>
+			<p>
+				ベースラインが記録するのは不合格です。判定のつかない検出結果は不合格ではありませんが、1.14からは、そのうちのいくつかが不合格の方向に傾きます。ページの手がかりが、証明はできないものの不合格を示しているということです（その<code>lean</code>。<a href="/results-reports/output-schema/#leans">出力スキーマ</a>を参照）。それらでビルドを止める場合（<a href="/results-reports/junit-report/#options">JUnit</a>と<a href="/results-reports/sarif-report/#options">SARIF</a>のレポートの<code>leanFailAs</code>）、不合格と同じように、ページにすでにあるものを受け入れる方法が必要です。ベースラインを作るときに指定してください。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { buildBaselineEntries } = require('@surea11y/core/baseline');",
+					"",
+					"const entries = buildBaselineEntries(result, { leanFail: true });",
+				]}
+			/>
+			<p>
+				不合格の方向に傾き、<code>leanFailAs</code>のもとでビルドを止める検出結果（<code>@surea11y/core</code>の<code>leaningFailures(result)</code>）には、それぞれ不合格の後に<code>"lean": "fail"</code>の付いたエントリーが作られます。
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={[
+					'{ "ruleId": "heading-order", "reasonCode": "HEADING_ORDER_SKIPPED_LEVEL", "selector": "html > body > main > h3", "html": "<h3>Details</h3>", "lean": "fail" }',
+				]}
+			/>
+			<p>
+				このエントリーは、同じ識別子を持つ、不合格の方向に傾く検出結果とだけ一致します。通常のエントリーは不合格とだけ一致します。<code>leanFailAs</code>のもとでは、JUnitは一致した検出結果でビルドを止めず（その<code>&lt;skipped&gt;</code>のメッセージは、既知の不合格の可能性が高いものとして数えます）、SARIFはそれを<code>warning</code>のままにします。<code>leanFailAs</code>がなければ、これらのエントリーは何も変えません。<code>matchBaseline</code>は、staleのものも含めてこれらを集計から外します。ただし<code>{"{ leanFail: true }"}</code>を渡した場合は、<code>leanFail</code>（<code>{"{ total, knownCount, newCount, newOccurrences, staleCount }"}</code>）で照合します。<code>--write-baseline</code>が書き込むのは不合格だけです。
+			</p>
+			<p>
+				<code>lean</code>はマイナーリリースで追加されるので、アップグレードによって、ベースラインにない不合格の可能性が高いものが現れることがあります。アップグレードの後は<code>leanFail: true</code>でベースラインを作り直し、差分を確認してください。<code>lean</code>をどう選び、どう計測しているかは、GitHub上の<a href={`${core}/docs/LEANS.md`}><code>LEANS.md</code></a>に書かれています。
+			</p>
+
+			<h2 id="upgrading">アップグレード</h2>
+			<p>
+				検出結果の識別子には理由コードが含まれ、マイナーリリースで検出結果に新しい理由コードが付くことがあります。理由コードを付けていなかったルール（<code>DEFAULT</code>）が付けるようになる場合や、1つのコードが原因ごとに2つに分かれる場合です（GitHub上の<code>API_STABILITY.md</code>の<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>検出結果の識別子</a>を参照）。検出結果は同じで、アップグレード前に書いたベースラインも引き続き一致します。移動はそれぞれ<code>src/baseline-moves.json</code>（ルール、古いコード、新しいコード）に記録され、古いコードのエントリーは、識別子の残りの部分（ルール、マークアップ、フレーム）が同じなら、新しいコードの検出結果と一致します。<code>matchBaseline</code>も、SARIFとJUnitのレポートの<code>baselineEntries</code>オプションも、これを読み取ります。エントリーはまず検出結果自身のコードで探されるので、まったく同じ識別子を持つ別の検出結果があるときに、移動した検出結果に割り当てられることはありません。
+			</p>
+			<p>1.14では、1.13から次のコードが移動します。</p>
+			<DataTable
+				label="1.14で移動した理由コード"
+				rowKey="id"
+				columns={[
+					{ key: "rules", label: "ルール", wrap: true, width: "45%" },
+					{ key: "from", label: "古いコード", wrap: true },
+					{ key: "to", label: "新しいコード", wrap: true },
+				]}
+				rows={baselineMoves}
+			/>
+			<p>
+				この表が対象にするのは1つのマイナーリリースです。移動は、それが入ったリリースから次のマイナーリリースまで記録され、次のマイナーリリースで削除されます。そのため、1.13で書いたベースラインは1.14.xでは引き続き一致しますが、1.15より前に再生成する必要があります。
+			</p>
+			<p>
+				アップグレードの後に<code>--write-baseline</code>（または<code>buildBaselineEntries</code>）でベースラインを再生成すると、すべての検出結果が現在のコードで書き込まれ、表は不要になります。ただし、アップグレードで新たに報告されるようになった検出結果もすべて受け入れてしまうので、差分を確認してください。新しいものを受け入れずにコードだけを更新するには、<code>@surea11y/core/baseline</code>の<code>migrateBaselineEntries</code>でファイルを書き換えます。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { migrateBaselineEntries } = require('@surea11y/core/baseline');",
+					"",
+					"const file = JSON.parse(fs.readFileSync('baseline.json', 'utf8'));",
+					"// With the scan's result, an entry for a split code takes the code its finding has now.",
+					"file.entries = migrateBaselineEntries(file, result);",
+					"fs.writeFileSync('baseline.json', JSON.stringify(file, null, 2) + '\\n');",
+				]}
+			/>
+			<p>
+				この関数は、移動したエントリーを新しいコードにし、それ以外のエントリーはそのままにしたコピーを返します。結果を渡さない場合は、検出結果がなくてもわかる移動だけを書き換えます。ルールがもう出さず、1つの新しいコードに移ったもの（<code>img-alt-present</code>の<code>DEFAULT</code>）がそれに当たり、分割は対象外です。
+			</p>
+			<p>
+				アップグレードで判定結果が変わった検出結果は別の話です。それまで確認を求めていたものを不合格にするようになったルールや、それまで不合格にしていたものについて確認を求めるようになったルールは、ベースラインになかった検出結果を出したり、あった検出結果を出さなくなったりします。その理由は<a href={`${core}/CHANGELOG.md`}>変更履歴</a>に書かれています。
+			</p>
+
 			<h2 id="scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</h2>
 			<p>
 				ベースラインのエントリーはビューポートを記録せず、照合にも使いません。同じ要素の同じ欠陥は、どの幅でも一致します。これは、検出結果がレイアウトに左右されないページに適しています。<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>や<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>のようにレイアウトに依存するルールは、ある幅では<code>fail</code>になり、別の幅ではならないことがあります。そのため、複数の幅でスキャンするページでは、<strong>幅ごとに1つのベースライン</strong>を用意してください（<code>a11y-baseline-390.json</code>、<code>a11y-baseline-1280.json</code>）。
@@ -148,7 +241,7 @@ export function BaselineContent() {
 					'  "version": 1,',
 					'  "generatedAt": "2026-07-30T12:00:00.000Z",',
 					'  "entries": [',
-					'    { "ruleId": "img-alt-present", "reasonCode": "DEFAULT", "selector": "html > body > img", "html": "<img src=\\"logo.png\\">" }',
+					'    { "ruleId": "img-alt-present", "reasonCode": "TEXT_ALTERNATIVE_MISSING", "selector": "html > body > img", "html": "<img src=\\"logo.png\\">" }',
 					"  ]",
 					"}",
 				]}
