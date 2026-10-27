@@ -37,7 +37,7 @@ export function ResultsReportsContent() {
 				informe: un objeto de resultado de nivel superior, una entrada por regla (incluyendo
 				cada <code>pass</code> y <code>notApplicable</code>, nunca una lista de solo violaciones),
 				detalle por ocurrencia hasta el elemento marcado, códigos explícitos de incertidumbre para
-				todo lo que una regla no pudo decidir, y resultados agregados por criterio de conformidad de WCAG. Cada hallazgo sin decidir dice cómo
+				todo lo que una regla no pudo decidir, y resultados agregados por criterio de conformidad de WCAG. Cada hallazgo sin decidir de una regla de core dice cómo
 				lo responde una persona, y algunos dicen hacia dónde apuntan los indicios de la página (una{" "}
 				<em>tendencia</em>), para que una revisión empiece por los fallos probables en lugar de por
 				una lista plana. Vale la pena
@@ -50,7 +50,7 @@ export function ResultsReportsContent() {
 				Un único archivo HTML que se abre en cualquier navegador, sin servidor ni paso de
 				compilación. Un resumen en lenguaje llano arriba, los fallos, después los hallazgos que
 				necesitan revisión ordenados en fallos probables, probables cumplimientos y los que solo una
-				persona puede juzgar, cada uno con los pasos para comprobarlo, un resumen por WCAG agrupado por nivel
+				persona puede juzgar, los de cada regla de core con los pasos para comprobarlo, un resumen por WCAG agrupado por nivel
 				de conformidad obtenido de los resultados compuestos propios del motor, y una tabla completa
 				con función de búsqueda debajo para quien quiera profundizar. Este es el informe para entregar a un
 				revisor que no quiere leer la salida sin procesar. Ver{" "}

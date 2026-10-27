@@ -22,7 +22,7 @@ export function HelpContent() {
 
 			<h2>Limitaciones conocidas</h2>
 			<p>
-				Cada límite de este motor está documentado de forma explícita para que no lo descubras
+				Los límites conocidos de este motor están documentados de forma explícita para que no los descubras
 				inesperadamente en producción: qué no puede ver un análisis de un único estado de la
 				página, qué depende de dónde lo ejecutes (jsdom, un navegador, los propios scripts de la
 				página), y qué se niega deliberadamente a adivinar porque una suposición incorrecta sería

@@ -625,7 +625,8 @@ export function KnownLimitationsContent() {
 					<code>color-scheme: dark</code> sur la racine ou dans{" "}
 					<code>&lt;meta name="color-scheme"&gt;</code>), le texte que colore le schéma prend les
 					couleurs du schéma sombre (celles de Chromium), et une couleur de texte donnée en{" "}
-					<code>light-dark()</code> ou en couleur système est calculée pour le sombre. Le texte
+					<code>light-dark()</code>, <code>CanvasText</code>, <code>LinkText</code> ou{" "}
+					<code>Canvas</code> est calculée pour le sombre. Le texte
 					dont les couleurs dans ce schéma ne peuvent pas être calculées fait l’objet d’une
 					question (<code>contrast-computable</code>, <code>COLOR_SCHEME_NOT_RENDERED</code> ;{" "}
 					<code>link-in-text-block</code>, <code>COLOR_NOT_COMPUTABLE</code>) au lieu d’être mesuré
@@ -640,7 +641,9 @@ export function KnownLimitationsContent() {
 					canevas est aussi mesuré dans l’autre schéma, sauf là où une règle{" "}
 					<code>prefers-color-scheme</code>, une valeur <code>light-dark()</code> ou une couleur
 					système que définit la page atteint la couleur du texte ou un arrière-plan derrière lui,
-					ou là où une feuille de style est illisible. <code>data.details.colorSchemesChecked</code>{" "}
+					ou là où une feuille de style est illisible ; ni le texte dessiné par un contour, une
+					ombre, <code>::first-line</code> ou un pseudo-élément, ni le texte mesuré sur une autre
+					peinture. <code>data.details.colorSchemesChecked</code>{" "}
 					liste les schémas mesurés ; analysez à nouveau avec le navigateur dans l’autre schéma
 					pour le vérifier.
 				</li>
