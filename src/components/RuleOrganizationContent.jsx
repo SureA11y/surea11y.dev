@@ -43,7 +43,7 @@ export function RuleOrganizationContent() {
 					block that turns an element other than the page's content (
 					<code>css-orientation-lock</code>), a placeholder below its ratio whose colors can't be
 					told to be the page's or the browser's, or a lone character standing in for its control's
-					name below its ratio (<code>contrast-minimum</code>), or a colour or size that cannot be computed (the contrast
+					name below its ratio (<code>contrast-minimum</code>), or a color or size that cannot be computed (the contrast
 					rules, <code>target-size-minimum</code>). A rule that throws is reported as{" "}
 					<code>cantTell</code> too, as a safety net.
 				</li>

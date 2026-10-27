@@ -75,6 +75,19 @@ export function FaqContent() {
 						revisar una persona. Consulta el{" "}
 						<a href="/results-reports/output-schema/#leans">esquema de salida</a>.
 					</li>
+					<li>
+						<strong>La 1.14.1 falla menos en el espaciado del texto.</strong>{" "}
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
+						ya no falla texto que la página no pierde. Una página con el desplazamiento bloqueado
+						con <code>{"body { position: fixed }"}</code>, como muchas detrás de un banner de
+						consentimiento, y una caja fija más alta que el viewport se preguntan como{" "}
+						<code>VIEWPORT_SCROLL_LOCKED</code>; el texto cortado por una caja que el script de la
+						página ajusta a él, como la etiqueta flotante de un campo de Angular Material, como{" "}
+						<code>TEXT_CLIPPED_SCRIPT_SIZED</code>. Una entrada de baseline o una alerta de Code
+						Scanning de uno de ellos se cierra como lo hace un error corregido. Los pasos de 36
+						preguntas también piden comprobar si otra vía de la página hace lo mismo antes de
+						llevar a un fallo.
+					</li>
 				</ul>
 				<p>
 					La lista completa está en el{" "}
@@ -538,13 +551,11 @@ export function FaqContent() {
 					o roto), de modo que una configuración regional parcial recurre de forma gradual al inglés
 					sin dejar textos vacíos, en lugar de fallar por completo.</strong> Consulta{" "}
 					<a href="/configuration/locales/"><code>I18N.md</code></a> para
-					ver el mecanismo y la cobertura actual. La paridad de claves se hace cumplir en lugar de
-					darse por hecha: <code>npm run i18n:sync</code>{" "}
-					traslada cualquier clave nueva o renombrada de <code>en.json</code> a los demás archivos de
-					configuración regional, y la compilación falla si alguno queda desincronizado. Una clave
-					que agrega conserva el texto en inglés hasta que alguien la traduce, de modo que una
-					configuración regional puede ir atrasada en la redacción sin ir nunca atrasada en las
-					claves.
+					ver el mecanismo y la cobertura actual. La paridad de claves se hace cumplir en la propia
+					compilación de core en lugar de darse por hecha: toda clave inglesa nueva o renombrada
+					se traslada a los demás archivos de configuración regional, con el texto en inglés hasta
+					que alguien la traduce, de modo que una configuración regional puede ir atrasada en la
+					redacción sin ir nunca atrasada en las claves.
 				</p>
 			</article>
 

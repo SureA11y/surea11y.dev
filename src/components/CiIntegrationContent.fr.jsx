@@ -87,6 +87,17 @@ export function CiIntegrationContent() {
 				distincte (ou à <code>continue-on-error</code> et votre propre vérification) si vous voulez
 				aussi que le build échoue sur les nouvelles violations.
 			</p>
+			<p>
+				Les constats qui penchent vers l’échec sont par défaut des alertes <code>warning</code>.
+				Rendus avec <code>{"renderSarifReport(result, { leanFailAs: 'error' })"}</code> depuis{" "}
+				<code>@surea11y/core/sarif</code>, ce sont des <code>error</code>, si bien qu’un contrôle
+				sur les erreurs s’arrête aussi sur les échecs probables (
+				<a href="/results-reports/sarif-report/#options">options SARIF</a>) ; une baseline écrite
+				avec <code>{"buildBaselineEntries(result, { leanFail: true })"}</code> accepte ceux
+				qu’une page a déjà (
+				<a href="/conformance/baseline/#findings-that-lean-fail">constats qui penchent vers
+				l’échec</a>).
+			</p>
 			<CodeBlock
 				lang="yaml"
 				lines={[

@@ -36,6 +36,11 @@ export function FaqContent() {
 						<strong>すべての<code>cantTell</code>に、答え方が示されます。</strong>
 						coreのルールの検出結果には<code>howToCheck</code>の手順が付き、一部にはページの手がかりがどちらを示しているかを表す<code>lean</code>が付きます。判定結果は<code>cantTell</code>のままで、指定しない限り（<code>leanFailAs</code>）<code>lean</code>でビルドが止まることはありません。<a href="/results-reports/html-report/">HTMLレポート</a>は、これらの検出結果を、不適合の可能性が高いもの、適合の可能性が高いもの、人による確認が必要なものに分けて表示します。<a href="/results-reports/output-schema/#leans">出力スキーマ</a>を参照してください。
 					</li>
+					<li>
+						<strong>1.14.1では、テキストの間隔による不合格が減ります。</strong>
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>
+						は、ページが失っていないテキストを不合格にしなくなりました。同意バナーの裏でよくあるように<code>{"body { position: fixed }"}</code>でスクロールを固定したページと、ビューポートより高い固定ボックスは、<code>VIEWPORT_SCROLL_LOCKED</code>として確認を求めます。Angular Materialのフィールドのフローティングラベルのように、ページのスクリプトがテキストに合わせて大きさを決めるボックスで切れたテキストは、<code>TEXT_CLIPPED_SCRIPT_SIZED</code>として確認を求めます。それらのベースラインの項目やCode Scanningのアラートは、修正されたバグと同じように閉じます。また、36の質問の手順は、不合格につながる前に、ページ上の別の方法で同じことができるかどうかも確認するようになりました。
+					</li>
 				</ul>
 				<p>
 					変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
@@ -374,11 +379,7 @@ export function FaqContent() {
 					<strong>欠けているキーは文字列ごとに英語へフォールバックします（空欄や壊れた結果にはなりません）。そのため、部分的なロケールでも完全に失敗することはなく、品質が段階的に下がるだけです。</strong>
 					仕組みと現在の対応範囲は
 					<a href="/configuration/locales/"><code>I18N.md</code></a>
-					を参照してください。キーの一致は期待任せではなく、強制しています。
-					<code>npm run i18n:sync</code>
-					は
-					<code>en.json</code>
-					に追加された、または名前が変わったキーをほかのすべてのロケールファイルに反映し、どれかが揃っていなければビルドが失敗します。追加されたキーは誰かが翻訳するまで英語のテキストを保持するので、ロケールの文言が遅れることはあっても、キーが遅れることはありません。
+					を参照してください。キーの一致は期待任せではなく、core自身のビルドで強制しています。英語に追加された、または名前が変わったキーはすべて、ほかのすべてのロケールファイルに反映され、誰かが翻訳するまで英語のテキストを保持します。そのため、ロケールの文言が遅れることはあっても、キーが遅れることはありません。
 				</p>
 			</article>
 

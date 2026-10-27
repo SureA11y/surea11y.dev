@@ -760,10 +760,11 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				The WCAG target follows from the tags the same way it does for a hand-written set (see{" "}
-				<a href="#filtering-by-wcag-version">"Filtering by WCAG version"</a> below), so under{" "}
-				<code>en301549-v3.2.1</code> a duplicate id can still <code>fail</code>, and under{" "}
-				<code>en301549-v4.1.1</code> it cannot: V3.2.1's profile keeps 4.1.1 (
-				<a href="#parsing-errata">see below</a>). A pack's profile can name its version instead, with{" "}
+				<a href="#filtering-by-wcag-version">"Filtering by WCAG version"</a> below), so{" "}
+				<code>en301549-v3.2.1</code> targets WCAG 2.1 and <code>en301549-v4.1.1</code> WCAG 2.2.
+				A duplicate id can still <code>fail</code> under <code>en301549-v3.2.1</code> because its
+				profile keeps 4.1.1's text (<code>keepsParsing</code>,{" "}
+				<a href="#parsing-errata">see below</a>); under <code>en301549-v4.1.1</code> it cannot. A pack's profile can name its version instead, with{" "}
 				<code>wcagVersion</code> (<a href="/configuration/packs/#profiles">Packs</a>): a profile
 				that runs only the rules its standard maps has no WCAG tags to imply one. Names are matched
 				case-insensitively. A run that used a profile reports it back as{" "}

@@ -799,10 +799,11 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				Das WCAG-Ziel ergibt sich aus den Tags wie bei einem von Hand geschriebenen Set (siehe{" "}
-				<a href="#filtering-by-wcag-version">„Filtern nach WCAG-Version“</a> unten), daher kann eine
-				doppelte id unter <code>en301549-v3.2.1</code> noch <code>fail</code> ergeben, unter{" "}
-				<code>en301549-v4.1.1</code> nicht: Das Profil von V3.2.1 behält 4.1.1 bei (
-				<a href="#parsing-errata">siehe unten</a>). Das Profil eines Packs kann seine Version stattdessen
+				<a href="#filtering-by-wcag-version">„Filtern nach WCAG-Version“</a> unten), daher zielt{" "}
+				<code>en301549-v3.2.1</code> auf WCAG 2.1 und <code>en301549-v4.1.1</code> auf WCAG 2.2.
+				Eine doppelte id kann unter <code>en301549-v3.2.1</code> noch <code>fail</code> ergeben,
+				weil sein Profil den Text von 4.1.1 beibehält (<code>keepsParsing</code>,{" "}
+				<a href="#parsing-errata">siehe unten</a>); unter <code>en301549-v4.1.1</code> nicht. Das Profil eines Packs kann seine Version stattdessen
 				mit <code>wcagVersion</code> nennen (<a href="/configuration/packs/#profiles">Packs</a>):
 				Ein Profil, das nur die Regeln ausführt, die seine Norm zuordnet, hat keine WCAG-Tags, aus
 				denen sich eine ergäbe. Bei Namen spielt Groß- und Kleinschreibung keine Rolle.
