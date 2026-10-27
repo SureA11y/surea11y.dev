@@ -1040,3 +1040,38 @@ Output schema, How rules are organized). Sample HTML reports
 re-generated. The local Chromium differs from the one the pinned
 `playwright` expects; `docs:sample-report` ran from a temporary copy
 launching `/opt/pw-browsers/chromium`.
+
+`@surea11y/core` 1.14.1 reached npm the same day; its package is identical
+to the tag the data was first generated from.
+
+A full content audit followed, every English page against core 1.14.1's
+docs and the bindings' (1.5.0), CLI's (1.4.0) and test-matchers' (1.4.0)
+READMEs, and every fix went into all five languages:
+
+- Accessibility statement: the site's scan is Chromium at WCAG 2.2 AA, 375
+  and 1280 px, gating the deploy, not a static-DOM scan.
+- Homepage stats and Overview: 60 is the number of W3C ACT rules, not of
+  core's (they map to more core rules); `margin` only near the limit; the
+  click-handler fail condition (descendants, shadow root, focus listener);
+  only the two "likely" groups explain a lean; outline/shadow text fails
+  only where every color is below; the CLI scans in Chromium too.
+- How rules are organized: no WCAG rollup passes since 1.14 (all-pass is
+  `cantTell`, partly checked), badge `unknown`.
+- Configuration index: core's EN 301 549 profiles are deprecated, linking
+  the pack (per the user: valid but not preferred, so say so).
+- Conformance (baseline moves last one minor release), Help ("known"
+  boundaries), WCAG mapping (a criterion tag reports its own criterion),
+  Known limitations (two color-scheme omissions), Results & Reports (only
+  core rules carry how-to-check steps), section descriptions (packs,
+  JUnit, no "conformance verdict").
+- Packs: `surea11y-pack new` writes `^<core version>` (core's PACKS.md
+  still says `^1.14.0`).
+- test-matchers ships `toHaveAnnounced()` too; the CLI sample lists all
+  four failing rules (from the CLI README); samples say core 1.14.1 (a
+  1.14.1 re-run gave the same output).
+
+Left as they are, deliberately: the Locales page's `i18n:sync` paragraph
+(core keeps it in I18N.md's coverage section); the Rules description's
+"a pass/fail example" (still an open question above). Not verifiable from
+core: the EN 301 549 pack's own claims, the bindings' `examples/`, the
+CLI's `--pack` resolution.

@@ -310,11 +310,11 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>jsdomでは、テキストは、求められる場合はページが描画される配色の色で計測され、求められない場合は確認が求められます。</strong>
-					jsdomはライトの配色の色を計算し、<code>prefers-color-scheme</code>のルールを適用しません。ダークで描画されるページ（ルートや<code>&lt;meta name="color-scheme"&gt;</code>で<code>color-scheme: dark</code>）では、配色が色を付けるテキストはダークの配色の色（Chromiumのもの）になり、<code>light-dark()</code>やシステムカラーで指定したテキストの色はダーク用に求めます。その配色での色を求められないテキストは、ライトの色で計測せずに確認を求めます（<code>contrast-computable</code>の<code>COLOR_SCHEME_NOT_RENDERED</code>、<code>link-in-text-block</code>の<code>COLOR_NOT_COMPUTABLE</code>）。ブラウザーでは、色はブラウザーが描画するものです。
+					jsdomはライトの配色の色を計算し、<code>prefers-color-scheme</code>のルールを適用しません。ダークで描画されるページ（ルートや<code>&lt;meta name="color-scheme"&gt;</code>で<code>color-scheme: dark</code>）では、配色が色を付けるテキストはダークの配色の色（Chromiumのもの）になり、<code>light-dark()</code>、<code>CanvasText</code>、<code>LinkText</code>、<code>Canvas</code>で指定したテキストの色はダーク用に求めます。その配色での色を求められないテキストは、ライトの色で計測せずに確認を求めます（<code>contrast-computable</code>の<code>COLOR_SCHEME_NOT_RENDERED</code>、<code>link-in-text-block</code>の<code>COLOR_NOT_COMPUTABLE</code>）。ブラウザーでは、色はブラウザーが描画するものです。
 				</li>
 				<li>
 					<strong>ライトとダークの両方に対応するページでは、スキャンが見ていない配色は、テキストの色がそれによって変わりえない場合にだけ計測されます。</strong>
-					スキャンが見るのはブラウザーが優先する配色です（jsdomではライト）。キャンバス上のテキストはもう一方の配色でも計測しますが、ページが指定した<code>prefers-color-scheme</code>のルール、<code>light-dark()</code>の値、システムカラーがテキストの色やその背後の背景に及ぶ場合と、スタイルシートを読み取れない場合は除きます。<code>data.details.colorSchemesChecked</code>は計測した配色を列挙します。もう一方の配色を確認するには、ブラウザーをその配色にしてもう一度スキャンしてください。
+					スキャンが見るのはブラウザーが優先する配色です（jsdomではライト）。キャンバス上のテキストはもう一方の配色でも計測しますが、ページが指定した<code>prefers-color-scheme</code>のルール、<code>light-dark()</code>の値、システムカラーがテキストの色やその背後の背景に及ぶ場合と、スタイルシートを読み取れない場合は除きます。アウトライン、影、<code>::first-line</code>、疑似要素で描かれたテキストや、ほかの描画の上で計測されるテキストも、もう一方の配色では計測しません。<code>data.details.colorSchemesChecked</code>は計測した配色を列挙します。もう一方の配色を確認するには、ブラウザーをその配色にしてもう一度スキャンしてください。
 				</li>
 				<li>
 					<strong>生成されたテキストは、ブラウザーでだけ、しかも読み取れる場合にだけ計測されます。</strong>

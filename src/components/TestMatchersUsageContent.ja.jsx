@@ -96,7 +96,9 @@ export function TestMatchersUsageContent() {
 				<a href="https://github.com/SureA11y/test-matchers"><code>@surea11y/test-matchers</code></a>
 				は
 				<code>toHaveNoA11yViolations()</code>
-				という1つのマッチャーで、手を加えずにそのまま、どちらのフレームワークの
+				と、ライブリージョン向けの
+				<code>toHaveAnnounced()</code>
+				を提供します。2つとも、手を加えずにそのまま、どちらのフレームワークの
 				<code>expect.extend()</code>
 				にも組み込めます。フレームワーク固有のコードは持っていません。テストがすでに動いているjsdomベースの環境をスキャンするもので、
 				<code>jsdom</code>
