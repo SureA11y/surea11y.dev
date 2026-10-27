@@ -7,38 +7,34 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-12">「core 1.12にアップグレードしたら、CIの結果が変わった」</h2>
+				<h2 id="results-changed-1-14">「core 1.14にアップグレードしたら、結果が変わった」</h2>
 				<p>
-					エンジンが見つけるものはほとんど変わっていません。変わったのは、それがどこに表れるかと、いくつかのルールです。パイプラインに表れやすい変更は次のとおりです。
+					1.14は、意図して<code>cantTell</code>を多く報告し、主張することを減らしています。パイプラインに表れやすい変更は次のとおりです。
 				</p>
 				<ul>
 					<li>
-						<strong>空の見出しが不合格になります。</strong>
-						<a href="/rules/empty-heading/"><code>empty-heading</code></a>は、アクセシブルな名前のない見出しについて、確認を求める代わりに不合格にします。ベストプラクティスなので、何も選択しないスキャンや、ベストプラクティスを追加したスキャンで実行され、WCAGの目標、タグ、プロファイルのもとでは実行されません。見出しを直すか、WCAGの目標でスキャンしてください。
+						<strong>WCAGの集約は<code>pass</code>になりません。</strong>
+						達成基準が<code>pass</code>になるのは、その達成基準が求めることをすべてルールがチェックする場合だけで、完全にチェックできるものとして挙げられた達成基準はまだありません。そのため、ルールがすべて<code>pass</code>の達成基準は<code>cantTell</code>（<code>composite.rollup.cantTell.partialCheck</code>）になります。ルールが何も見つけなかった達成基準が<code>notApplicable</code>になるのは2.4.3、2.4.4、2.4.7、2.4.9、2.5.3、4.1.1だけで、それ以外は<code>cantTell</code>（<code>composite.rollup.cantTell.partialCoverage</code>）です。不合格のルールがあれば、その達成基準は引き続き不合格になります。満たされた達成基準を数えるダッシュボードやゲートには、1つも表示されません。<a href="#why-criterion-canttell">後述の項目</a>と<a href="/conformance/wcag-mapping/#when-a-criterion-passes">WCAG適合性との対応</a>を参照してください。
 					</li>
 					<li>
-						<strong><a href="/rules/label-in-name/"><code>label-in-name</code></a>は、<code>aria-hidden</code>だけで隠したテキストも数えます。</strong>
-						そうしたテキストも描画はされているからです。「<span lang="en">Download specification</span>」という名前の<code>{'Download <span aria-hidden="true">gizmo</span> specification'}</code>は、2.5.3で不合格になるようになりました。
+						<strong>2つのルールが確認を求める範囲が広がります。</strong>
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a>は、汎用的なタイトルやテンプレートのタイトルだけでなく、すべてのページタイトルについて確認を求めます。タイトルがページを説明しているかどうかは人が判断することだからです（G88）。<a href="/rules/duplicate-id/"><code>duplicate-id</code></a>は、WCAG 2.0と2.1でも4.1.1について確認を求めます。2023年の正誤表が4.1.1を満たされているものとみなしているからです。ただし、<code>en301549-v3.2.1</code>のように<code>keepsParsing: true</code>を宣言したプロファイルは例外です。
 					</li>
 					<li>
-						<strong>チェックを指定したスキャンも、その達成基準を報告します。</strong>
-						ルールID、WCAGのレベルを示さないタグ、ベストプラクティスを指定したスキャンは、これまで空だった<code>rulesResults</code>に、それらのルールが属する達成基準を入れるようになりました。ほかのルールが選ばれていない達成基準は<code>cantTell</code>、つまり一部だけチェックしたものになります。それらをあるレベルまでに絞るには、<code>engineOptions.wcagLevel</code>（バインディングでは<code>.wcagLevel()</code>、CLIでは<code>--wcag-level</code>）を設定してください。<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照してください。
+						<strong>11の新しいルール</strong>
+						が追加され、その中には3.3.1（<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>）、4.1.3（<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>）、1.4.5（<a href="/rules/image-of-text/"><code>image-of-text</code></a>）の最初のルールがあります。ほとんどは確認を求めるものですが、<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>、<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>、<a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a>は不合格を報告することがあります。属性間の制約（<code>aria-valuemax</code>を上回る<code>aria-valuemin</code>など）をチェックするようになった<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>も同様です。<a href="/rules/">ルールカタログ</a>を参照してください。
 					</li>
 					<li>
-						<strong>5つのルールが、より多くの達成基準に算入されます。</strong>
-						W3CのACTルールの対応付けに合わせたものです。<code>input-image-alt-present</code>は4.1.2、<code>aria-roles-valid</code>は1.3.1、<code>link-name-present</code>と<code>link-name-quality</code>は2.4.9（AAA）、<code>meta-refresh-timing-absent</code>は2.2.4と3.2.5（AAA）が加わります。検出結果は変わりませんが、1.3.1と4.1.2の集約が、これまで合格だったところで不合格になることがあります。
+						<strong>一部の不合格は確認に変わり、新しい不合格も出ます。</strong>
+						<code>td-has-header</code>は、見出しセルのない大きな表について、すべてのセルを不合格にする代わりに一度だけ確認を求めます。<code>form-control-single-label</code>は、ラベルが2つあるフィールドについて確認を求めます。コントラストは、ページが描画するもののより多くの部分で計測されるようになった（各配色でのページのキャンバス上のテキスト、<code>::first-line</code>、<code>font-size-adjust</code>、ページが色を選んだプレースホルダー）ため、新たにコントラストの不合格が出ることがあります。
 					</li>
 					<li>
-						<strong>JUnitのスイート名がどのロケールでも同じになります</strong>
-						（<code>WCAG 4.1.2</code>）。タイトルはスイートの<code>title</code>プロパティに移ります。スイート名でテストを追跡しているダッシュボードでは、それらが一度だけ新しいテストとして表示されます。<a href="/results-reports/junit-report/">JUnitレポート</a>を参照してください。
+						<strong>一部の検出結果に新しい理由コードが付きます。</strong>
+						理由コードを付けていなかった17のルールが付けるようになり、いくつかのコードは原因ごとに分割されました。1.13で書いたベースラインは1.15まで引き続き一致します。<code>migrateBaselineEntries</code>で書き換えてください（<a href="#baseline-after-upgrade">後述の項目</a>を参照）。そうした検出結果のCode Scanningのアラートは、いったん閉じて新しいものとして再び表示されます。
 					</li>
 					<li>
-						<strong>コントラストは、ページが描画されるとおりに計測されます。</strong>
-						ブラウザーでは、背景のないページ上のテキスト、生成されたテキスト（<code>::before</code>、<code>::after</code>、<code>::marker</code>）、閉じた<code>&lt;select&gt;</code>が、これまで対象外か<code>cantTell</code>だったところで計測されるため、新たにコントラストの不合格が出ることがあります。コントロールの名前の代わりになっている1文字（「<span lang="en">Close</span>」という名前のボタンの「X」など）は、比率を下回っても不合格にせず、確認を求めます。
-					</li>
-					<li>
-						<strong>名前のないWebコンポーネントは確認の対象になります。</strong>
-						読み取れる名前のない定義済みのカスタム要素は、これまで不合格だったところで<code>cantTell</code>になります。<a href="#web-component-canttell">Webコンポーネントの項目</a>を参照してください。
+						<strong>すべての<code>cantTell</code>に、答え方が示されます。</strong>
+						coreのルールの検出結果には<code>howToCheck</code>の手順が付き、一部にはページの手がかりがどちらを示しているかを表す<code>lean</code>が付きます。判定結果は<code>cantTell</code>のままで、指定しない限り（<code>leanFailAs</code>）<code>lean</code>でビルドが止まることはありません。<a href="/results-reports/html-report/">HTMLレポート</a>は、これらの検出結果を、不適合の可能性が高いもの、適合の可能性が高いもの、人による確認が必要なものに分けて表示します。<a href="/results-reports/output-schema/#leans">出力スキーマ</a>を参照してください。
 					</li>
 				</ul>
 				<p>
@@ -335,14 +331,20 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2>「スキャン結果に問題がない（すべて<code>pass</code>）なら、そのページはWCAGに適合しているのか」</h2>
+				<h2 id="why-criterion-canttell">「チェックはすべて<code>pass</code>なのに、なぜWCAGの各達成基準が<code>cantTell</code>なのか」</h2>
+				<p>
+					1.14からは、<code>rulesResults</code>のWCAGの集約が<code>pass</code>になるのは、その達成基準が求めることをすべてルールがチェックする場合だけで、そうした達成基準はまだ1つも挙げられていません（<code>src/coverage/complete-applicability.js</code>の<code>COMPLETE_CHECK</code>）。達成基準のルールがすべて<code>pass</code>のとき、その集約は<code>reasonCode</code>が<code>composite.rollup.cantTell.partialCheck</code>の<code>cantTell</code>になります。ルールがチェックする部分は満たされていて、残りは人が確認するということです。<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>は<code>{'<html lang="fr">'}</code>が言語を示していることを確かめますが、ページがフランス語で書かれていることは確かめません。同じように、ルールが何も見つけなかった達成基準が<code>notApplicable</code>になるのは、その達成基準が適用されるすべてのケースをルールが見つけられる場合だけで、それ以外は<code>composite.rollup.cantTell.partialCoverage</code>の<code>cantTell</code>です。不合格のルールがあれば、その達成基準は引き続き不合格になります。これらは「チェックは問題なし、確認が必要」「チェックする対象が見つからない」として表示し、<code>pass</code>として表示しないでください。<a href="/conformance/wcag-mapping/#when-a-criterion-passes">WCAG適合性との対応</a>を参照してください。
+				</p>
+			</article>
+
+			<article>
+				<h2>「スキャン結果に不合格がないなら、そのページはWCAGに適合しているのか」</h2>
 				<p>
 					いいえ。
 					<a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>
 					を参照してください。
 					<strong>
-						<code>pass</code>
-						が意味するのは、実行されたチェックが、スキャンしたページの範囲で問題なしだったということです。
+						ルールの<code>pass</code>が意味するのは、実行されたチェックが、スキャンしたページの範囲で問題なしだったということです。
 					</strong>
 					ページの一部に絞ったスキャン、一部のルールに限ったスキャン、jsdomで実行したスキャンは、チェックできる範囲が狭くなります。WCAGのかなりの部分は、人の判断（正確な代替テキスト、理解しやすいエラーメッセージ）や、このエンジンの設計ではまったく行えない動的なテスト（キーボードトラップ、ズーム時のリフロー）を必要とします。明示的な、意図的に網羅を目指していない一覧は
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>
@@ -356,7 +358,7 @@ export function FaqContent() {
 					<strong>「人が確認する必要がある」として扱ってください。設計上、合格でも不合格でもありません。</strong>
 					よくある選択は、
 					<code>cantTell</code>
-					の検出結果を記録するだけで、CIを失敗させないことです。エンジンが判定できないと明言したものでビルドを失敗させると、みんながゲートを無視するようになりがちだからです。マージ前にすべてをレビューしたいチームは、それでゲートを設けることもできます。どちらの場合も、不合格とは分けて扱ってください。この動作を変えたい場合（カスタムポリシーの契約を使うなど）は
+					の検出結果を記録するだけで、CIを失敗させないことです。エンジンが判定できないと明言したものでビルドを失敗させると、みんながゲートを無視するようになりがちだからです。マージ前にすべてをレビューしたいチームは、それでゲートを設けることもできます。どちらの場合も、不合格とは分けて扱ってください。その中間として、ページの手がかりが不合格を示している、不合格の方向に傾く検出結果だけでビルドを止めることもできます。<a href="/results-reports/junit-report/#options">JUnit</a>と<a href="/results-reports/sarif-report/#options">SARIF</a>のレポートの<code>leanFailAs</code>、または<code>leaningFailures(result)</code>を使います（<a href="/results-reports/output-schema/#leans">出力スキーマ</a>を参照）。coreのルールの<code>cantTell</code>の検出結果は、それぞれ<code>howToCheck</code>で答え方を示します。この動作を変えたい場合（カスタムポリシーの契約を使うなど）は
 					<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>
 					を、CIゲートの具体例は
 					<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
@@ -400,6 +402,20 @@ export function FaqContent() {
 					のケースで、これは関数をソースコードの文字列にシリアライズし、ブラウザーのタブ内で再実行します（タブからはNodeのモジュールスコープにアクセスできません）。両方のパターンの完全な例は
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
 					を参照してください。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="baseline-after-upgrade">「アップグレード後、ベースラインが既知の検出結果を新規として、そのエントリーをstaleとして報告する」</h2>
+				<p>
+					検出結果の識別子には理由コードが含まれます。1.14では、理由コードを付けていなかった17のルールにコードが付き、いくつかのコードが原因ごとに分割されました。1.13で書いたベースラインは、<code>src/baseline-moves.json</code>によって、1.14.xでも引き続きそれらの検出結果と一致します。アップグレードで判定結果が変わった検出結果は、それでも新規になったり消えたりします。その理由は変更履歴に書かれています。1.15より前に、<code>@surea11y/core/baseline</code>の<code>migrateBaselineEntries</code>でファイルのコードを書き換えるか、ベースラインを再生成して差分を確認してください。<a href="/conformance/baseline/#upgrading">ベースライン／許可リスト</a>を参照してください。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="stylesheets-not-readable">「<code>css-orientation-lock</code>が<code>STYLESHEETS_NOT_READABLE</code>で確認を求める」</h2>
+				<p>
+					ページのスクリプトは、別のオリジン（CDN、フォントサービス）が配信するスタイルシートを読めないため、CSSを読むルールはその内容がわかりません。そのテキストを<code>engineOptions.styleSheetTexts</code>でスキャンに渡してください。<code>preloadStyleSheets()</code>、またはブラウザーバンドルの<code>runa11yCoreInPageAsync</code>は、サーバーが共有しているものを取得します。ブラウザーを操作するツールなら、それ以外のものもページの外から取得できます。GitHub上の統合ガイド<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}><code>INTEGRATION.md</code></a>の「<span lang="en">Style sheets from another origin</span>」を参照してください。
 				</p>
 			</article>
 		</>

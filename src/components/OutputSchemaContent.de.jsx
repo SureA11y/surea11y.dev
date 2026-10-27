@@ -77,10 +77,11 @@ const topLevelRows = [
 				Gegen welche WCAG-Version dieser Lauf geprüft hat: Ihr{" "}
 				<code>engineOptions.wcagVersion</code>, die <code>wcagVersion</code> des Pack-Profils,
 				das der Lauf angewendet hat, die Version, die sich aus Ihren Versionsursprungs-Tags ergab,
-				oder der Standard <code>"2.2"</code>. Derzeit wirkt sich
-				das auf genau eine Sache aus:{" "}
-				<strong>Eine Regel, die nur auf Erfolgskriterium 4.1.1 „Syntaxanalyse“ abgebildet ist, kann bei
-				einem 2.2-Ziel nicht <code>fail</code> ergeben</strong> (siehe{" "}
+				oder der Standard <code>"2.2"</code>. Für Erfolgskriterium 4.1.1 „Syntaxanalyse“ gibt
+				sie an, warum{" "}
+				<strong>eine Regel, die nur darauf abgebildet ist, nicht <code>fail</code>
+				ergeben kann</strong>: 2.2 hat es entfernt, und die Errata von 2023 zu 2.0 und 2.1 werten
+				es als immer erfüllt (siehe{" "}
 				<code>checksResults[i].wcagVersionScope</code> unten). Wird einmal pro Ergebnis
 				gemeldet: Ein Lauf hat durchgehend ein Ziel.
 			</>
@@ -193,7 +194,7 @@ const topLevelRows = [
 				ergänzen es aus dem Katalog von core. Ein Ergebnis, das dieser Katalog nicht ergänzen
 				könnte, bleibt vollständig: jedes Prüfergebnis eines Scans mit <code>packs</code>, das einer
 				eigenen Regel und eines, dessen Titel oder Beschreibung die <code>messages</code> des Scans
-				geändert haben. Das Ergebnis einer leeren Seite schrumpft von etwa 236 KB auf 80 KB.
+				geändert haben. Das Ergebnis einer leeren Seite schrumpft von etwa 263 KB auf 90 KB.
 			</>
 		),
 	},
@@ -212,7 +213,8 @@ const topLevelRows = [
 				reproduzieren. <code>layout</code> gibt an, ob die Seite ein Layout hatte:{" "}
 				<code>false</code> in jsdom und anderen DOM-Emulatoren, und dann fehlen der Viewport und die
 				übrigen Darstellungsfelder, da sie nichts Gemessenes beschreiben; nur{" "}
-				<code>internalsHook</code> kann daneben stehen, wo die Seite den Hook ausführt. In einem
+				<code>internalsHook</code>, <code>listenerHook</code> und <code>liveRegionHook</code>{" "}
+				können daneben stehen, wo die Seite die Hooks ausführt. In einem
 				Browser ist <code>viewport</code> <code>innerWidth</code>/<code>innerHeight</code> in
 				CSS-Pixeln, <code>devicePixelRatio</code> der Wert der Seite (auch der Browser-Zoom zeigt
 				sich hier), <code>colorScheme</code> das, worauf <code>prefers-color-scheme</code> passt,{" "}
@@ -220,7 +222,12 @@ const topLevelRows = [
 				<code>"active"</code> unter dem Windows-Kontrastmodus oder den emulierten Forced Colors von
 				Chromium, sonst <code>"none"</code>; die Regeln messen in beiden Fällen die eigenen Farben
 				der Seite, siehe{" "}
-				<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}>Forced colors</a>), und{" "}
+				<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}>Forced colors</a>),{" "}
+				<code>forcedColorsCss</code> ist unter Forced Colors <code>true</code>, wenn das eigene
+				CSS der Seite auf sie reagiert, und zwar so, dass der Scan es nicht zurückhalten kann
+				(eine <code>forced-colors</code>-Media-Query, die weiterhin zutrifft, oder eine
+				Systemfarbe wie <code>GrayText</code>, die weiterhin die der erzwungenen Palette annimmt),
+				sodass die Kontrastergebnisse von einem Scan ohne Forced Colors abweichen können, und{" "}
 				<code>fonts</code> ist <code>"loading"</code>, solange noch eine der Schriften der Seite
 				lädt, sonst <code>"loaded"</code>. Ein Feld, das die Seite nicht liefern kann, fehlt. Das
 				Auslesen bringt keinen Nichtdeterminismus mit sich: Wie das DOM sind diese Werte Eingabe.
@@ -247,7 +254,24 @@ const topLevelRows = [
 				hat und ein Element ohne welche keine offene Frage ist; <code>"late"</code>, wenn er nach
 				ihnen installiert wurde oder die Seite <code>attachInternals</code> danach ersetzt hat,
 				sodass nur danach angehängte Internals gelesen wurden. Ohne Hook fehlt das Feld, und das
-				Ergebnis ist wie bisher. Jeder Frame in einem{" "}
+				Ergebnis ist wie bisher. <code>listenerHook</code> gilt entsprechend für den optionalen
+				Listener-Hook (<code>listenerHookScript()</code>, siehe{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				): <code>"early"</code>, wenn er vor den Skripten der Seite installiert wurde und noch das{" "}
+				<code>addEventListener</code> der Seite ist, sodass die Tastaturregeln jeden Listener
+				gesehen haben, den die Seite per Skript hinzugefügt hat, und ein fehlender beweist, dass es
+				keinen gibt; <code>"late"</code>, wenn er nach ihnen installiert wurde oder die Seite{" "}
+				<code>addEventListener</code> danach ersetzt hat. <code>liveRegionHook</code> ist nur
+				vorhanden, wo die Seite den optionalen Live-Region-Hook ausführt (
+				<code>liveRegionHookScript()</code>, siehe{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				): <code>"early"</code>, wenn er installiert wurde, bevor das Dokument fertig geladen war,
+				sodass er seitdem jede Änderung an den Live-Regionen der Seite gesehen hat; sonst{" "}
+				<code>"late"</code>. Jeder Frame in einem{" "}
 				<a href="#cross-frame-result">Frame-übergreifenden Ergebnis</a> trägt sein eigenes.
 			</>
 		),
@@ -534,11 +558,20 @@ const occurrenceRows = [
 				stabilen Vertrag. Die einzige Ausnahme ist <code>data.details.reasonCode</code>, das{" "}
 				<strong>sehr wohl</strong> stabil ist: Es gibt an, <em>welcher</em> der Befunde einer
 				Regel das ist, und bildet zusammen mit <code>ruleId</code> und <code>html</code> den
-				Fingerprint, an dem Baselines und SARIF festgemacht sind. Siehe{" "}
+				Fingerprint, an dem Baselines und SARIF festgemacht sind. Eine Regel kann in einem
+				Minor-Release einen neuen Reason-Code erhalten oder einen nach Ursache aufteilen; siehe{" "}
 				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>
 					<code>API_STABILITY.md</code>
 				</a>
-				. Die Seite jeder Regel listet unter „Was ein Befund meldet“ die Felder auf, die ihre
+				. Die Größen- und Verhältnisfelder eines Kontrastfehlers (<code>metrics.ratio</code>,{" "}
+				<code>metrics.threshold</code> und in <code>typography</code> <code>fontSizePx</code>,{" "}
+				<code>fontSizePt</code>, <code>fontWeight</code>, <code>isBold</code> und{" "}
+				<code>isLargeText</code>) sind ebenfalls stabil, damit ein Bericht oder ein Pack erkennen
+				kann, welche Art von Text die Anforderung nicht erfüllt hat, ebenso <code>element</code> in
+				Befunden von <code>list-children-valid</code>, <code>parentElement</code> in Befunden von{" "}
+				<code>listitem-parent-valid</code> und <code>role</code> in Befunden von{" "}
+				<code>aria-role-name-present</code>, die angeben, um welche Art von Liste oder Widget es
+				geht. Die Seite jeder Regel listet unter „Was ein Befund meldet“ die Felder auf, die ihre
 				Befunde mitführen.
 			</>
 		),
@@ -551,7 +584,9 @@ const occurrenceRows = [
 				Zu welcher Stufe dieses Vorkommen gehört, bei einer Regel, die ihre Befunde in eine
 				sichere <code>fail</code>-Stufe und eine prüfbedürftige <code>cantTell</code>-Stufe
 				eingeteilt hat. Eine Regel, die nur eine Stufe meldet, lässt das Feld weg; dann ist das{" "}
-				<code>outcome</code> des Ergebnisses selbst die Stufe des Vorkommens. Das Ergebnis stimmt
+				<code>outcome</code> des Ergebnisses selbst die Stufe des Vorkommens.{" "}
+				<code>occurrenceOutcome(check, occurrence)</code> aus <code>@surea11y/core</code> liefert
+				die Stufe so, wie jeder Reporter sie liest, in beiden Fällen. Das Ergebnis stimmt
 				immer mit den Stufen überein: Jedes Vorkommen der <code>fail</code>-Stufe macht es zu{" "}
 				<code>fail</code>, und ein <code>fail</code>, dessen Vorkommen alle zur{" "}
 				<code>cantTell</code>-Stufe gehören, ist <code>cantTell</code>, sodass SARIF, JUnit, EARL
@@ -565,6 +600,8 @@ const occurrenceRows = [
 		),
 	},
 	{ id: "uncertainty", field: <code>uncertainty</code>, meaning: <>Warum sich dieser Befund nicht entscheiden ließ, siehe <a href="#uncertainty-codes">Unsicherheitscodes</a> unten.</> },
+	{ id: "lean", field: <code>lean</code>, meaning: <>In welche Richtung dieser offene Befund weist, wenn die Seite Anhaltspunkte dafür liefert, siehe <a href="#leans">Tendenzen</a> unten.</> },
+	{ id: "howToCheck", field: <code>howToCheck</code>, meaning: <>Wie eine Person diesen offenen Befund beantwortet, siehe <a href="#how-to-check">So prüfen Sie es</a> unten.</> },
 ];
 
 const uncertaintyRows = [
@@ -581,8 +618,10 @@ const rollupReasonRows = [
 	{ id: "anyCantTell", code: <code>composite.rollup.cantTell.anyCantTell</code>, outcome: <code>cantTell</code>, when: <>Keine ergab <code>fail</code>, und eine ist <code>cantTell</code>.</> },
 	{ id: "notSelectedChild", code: <code>composite.rollup.cantTell.notSelectedChild</code>, outcome: <code>cantTell</code>, when: <>Keine ergab <code>fail</code> oder ist <code>cantTell</code>, und einige sind nicht gelaufen, weil der Scan sie nicht ausgewählt hat: teilweise geprüft.</> },
 	{ id: "missingChild", code: <code>composite.rollup.cantTell.missingChild</code>, outcome: <code>cantTell</code>, when: <>Keine ergab <code>fail</code> oder ist <code>cantTell</code>, und einige sind aus einem anderen Grund nicht gelaufen.</> },
-	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>Jede beitragende Regel ist <code>notApplicable</code>.</> },
+	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>Jede beitragende Regel ist <code>notApplicable</code>, und sie finden jeden Fall, für den das Kriterium gilt.</> },
+	{ id: "partialCoverage", code: <code>composite.rollup.cantTell.partialCoverage</code>, outcome: <code>cantTell</code>, when: <>Jede beitragende Regel ist <code>notApplicable</code>, aber das Kriterium (oder eine mit <code>partial</code> gekennzeichnete Anforderung einer Norm) kann für Inhalte gelten, nach denen sie nicht suchen; es ist also nicht gezeigt, dass die Seite keine hat.</> },
 	{ id: "emptyComposite", code: <code>composite.rollup.cantTell.emptyComposite</code>, outcome: <code>cantTell</code>, when: "Die Zusammenfassung hat keine Regeln." },
+	{ id: "partialCheck", code: <code>composite.rollup.cantTell.partialCheck</code>, outcome: <code>cantTell</code>, when: <>Keine ergab <code>fail</code> oder ist <code>cantTell</code>, und nicht alle sind <code>notApplicable</code>, aber die Regeln prüfen nur einen Teil dessen, was das Kriterium (oder eine mit <code>partial</code> gekennzeichnete Anforderung einer Norm) verlangt: Den Rest prüft eine Person.</> },
 	{ id: "otherwise", code: <code>composite.rollup.pass.otherwise</code>, outcome: <code>pass</code>, when: "Sonst." },
 ];
 
@@ -630,10 +669,13 @@ export function OutputSchemaContent() {
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
 					'      forcedColors?: "active" | "none",',
+					"      forcedColorsCss?: true,          // under forced colors, when the page's own CSS reacts to them",
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
 					"      animationsSettled?: number,",
-					'      internalsHook?: "early" | "late"  // only where the page runs the internals hook',
+					'      internalsHook?: "early" | "late",  // only where the page runs the internals hook',
+					'      listenerHook?: "early" | "late",   // only where the page runs the listener hook',
+					'      liveRegionHook?: "early" | "late"  // only where the page runs the live-region hook',
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -766,7 +808,7 @@ export function OutputSchemaContent() {
 					"  occurrences: Occurrence[],",
 					"  title: string,",
 					"  description: string,",
-					"  i18n: { titleKey: string, descriptionKey: string } | null,",
+					"  i18n: { titleKey: string, descriptionKey: string, variantOfTitleKey?: string } | null,",
 					"  meta: {",
 					"    ruleId: string,",
 					"    ruleInterfaceVersion: string,",
@@ -790,6 +832,7 @@ export function OutputSchemaContent() {
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  variantOf?: string,      // a pack's variant only: the id of the rule it runs at other settings; i18n.variantOfTitleKey is that rule's titleKey",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
 					'    measure: string,       // "contrast-ratio" | "overflow-px" | "target-size-px" | ... (open set)',
@@ -807,7 +850,8 @@ export function OutputSchemaContent() {
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
-					'    coercedFrom: "fail"',
+					'    coercedFrom: "fail",',
+					'    by?: "errata"         // 2.0 or 2.1: their errata count the criterion as always satisfied',
 					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
@@ -864,9 +908,12 @@ export function OutputSchemaContent() {
 					<strong><code>wcagVersionScope</code></strong>: nur vorhanden, wenn die WCAG-Zielversion
 					des Laufs das <code>fail</code> dieser Regel in ein <code>cantTell</code> verwandelt
 					hat. Derzeit betrifft das eine auf Erfolgskriterium 4.1.1 „Syntaxanalyse“ abgebildete Regel (
-					<code>duplicate-id</code>) beim Standardziel 2.2, da 2.2 dieses Kriterium entfernt hat.{" "}
-					<code>removedSc</code> listet die Kriterien, die weggefallen sind, <code>target</code>{" "}
-					ist die Version, die sie entfernt hat, und <code>coercedFrom</code> ist das Ergebnis, das
+					<code>duplicate-id</code>): unter 2.2, das dieses Kriterium entfernt hat, und unter 2.0
+					und 2.1, deren Errata von 2023 es für HTML und XML als immer erfüllt werten (
+					<code>by: "errata"</code>). Ein Profil, dessen Norm den Text von 4.1.1 beibehält (
+					<code>en301549-v3.2.1</code> oder das Profil eines Packs mit <code>keepsParsing</code>),
+					wird nicht umgewandelt. <code>removedSc</code> listet die betroffenen Kriterien,{" "}
+					<code>target</code> ist die Version des Laufs, und <code>coercedFrom</code> ist das Ergebnis, das
 					die Regel selbst gemeldet hat. Die Vorkommen sind die der Regel, unverändert: Nichts
 					wurde verworfen, nur das Konformitätsurteil. Fehlt bei jedem anderen Ergebnis und wird{" "}
 					<strong>nie</strong> über <code>error</code> gemeldet: Es ist nichts schiefgegangen.
@@ -881,8 +928,17 @@ export function OutputSchemaContent() {
 					<li id="margin">
 						<strong><code>margin</code></strong>: nur bei einer Regel vorhanden, die im Katalog eine
 						deklariert (<code>getChecksCatalog()[i].margin</code>,{" "}
-						<code>{"{ measure, unit, limit }"}</code>), und nur, wenn mindestens ein Element den
-						Schwellenwert der Regel erfüllt hat. Es nennt das Element, das dem Schwellenwert am
+						<code>{"{ measure, unit, limit, band? }"}</code>), und nur, wenn mindestens ein Element
+						den Schwellenwert der Regel erfüllt hat und, falls die Deklaration ein{" "}
+						<code>band</code> hat, innerhalb davon lag. <code>band.relative</code> ist ein Bruchteil
+						des Schwellenwerts: <code>contrast-minimum</code>, <code>contrast-enhanced</code> und{" "}
+						<code>link-in-text-block</code> melden mit <code>0.1</code> eine Marge nur für ein
+						Verhältnis innerhalb von 10 % des geforderten (4,5 bis 4,95 bei 4,5:1, 3 bis 3,3 bei
+						3:1). <code>band.absolute</code> ist ein Betrag in <code>unit</code>:{" "}
+						<code>target-size-minimum</code> meldet mit <code>6</code> ein Ziel nur bis 30 px, und{" "}
+						<code>text-spacing-content-loss</code> mit <code>8</code> eine Zeile nur ab 6 px
+						innerhalb des Rands ihrer Box. Text mit 21:1 oder ein 48-px-Button ist nirgends knapp,
+						und keine Marge sagt etwas anderes. Es nennt das Element, das dem Schwellenwert am
 						nächsten kam und ihn dabei erfüllte. So lässt sich ein <code>pass</code> mit 4,52:1 bei
 						geforderten 4,5:1 oder 0,4 px vor abgeschnittenem Text von einem mit reichlich Abstand
 						unterscheiden. Es steht neben dem Ergebnis und ist kein Befund: Es fügt nie ein Vorkommen
@@ -939,16 +995,23 @@ export function OutputSchemaContent() {
 					Kontrast), nicht wörtlich das, was Sie übergeben haben. Nützlich, um zu prüfen, was eine
 					bestimmte Regel tatsächlich gesehen hat, insbesondere die aufgelöste{" "}
 					<code>locale</code> und <code>contrast.mode</code>/
-					<code>contrast.rootCanvasFallback</code>. Es lässt <code>messages</code> weg, die
+					<code>contrast.rootCanvasFallback</code>. <code>contrast.rootCanvasFallback</code> ist
+					Weiß, wenn der Aufruf keine Farbe angegeben hat, und{" "}
+					<code>contrast.rootCanvasFallbackSet</code> sagt, welcher Fall vorliegt:{" "}
+					<code>true</code> für eine angegebene Farbe, <code>false</code> für den Standardwert. Es
+					lässt <code>messages</code> weg, die
 					Wörterbücher, mit denen der Lauf übersetzt hat (eine separate Locale-Datei im Browser-Bundle
 					oder Ihre eigenen Strings): Sie sind Daten, keine Einstellung, und eine Kopie in jedem
 					Ergebnis machte einen Scan zig Megabyte groß. <code>engine.locale</code> gibt an, welches
-					Wörterbuch verwendet wurde. Zwei weitere Optionen werden so wiedergegeben, wie die Regeln
+					Wörterbuch verwendet wurde. Drei weitere Optionen werden so wiedergegeben, wie die Regeln
 					sie gesehen haben, damit das Ergebnis einfache Daten bleibt, die{" "}
 					<code>JSON.stringify</code> und <code>structuredClone</code> (<code>postMessage</code>)
-					transportieren können: <code>probes</code> als die gekappte Kopie, die die Regeln lesen, und{" "}
-					<code>customRules</code> als <code>{"[{ id }]"}</code>, ein Eintrag je eigener Regel mit ID,
-					ohne ihre Funktionen.
+					transportieren können: <code>probes</code> als die gekappte Kopie, die die Regeln lesen,{" "}
+					<code>customRules</code> als <code>{"[{ id }]"}</code>, ein Eintrag je eigener Regel mit
+					ID, ohne ihre Funktionen, und <code>styleSheetTexts</code> als{" "}
+					<code>{"[{ href }]"}</code>, ein Eintrag je übergebenem Stylesheet, ohne seinen Text, da
+					das CSS einer Seite, in jedem Ergebnis wiederholt, mit der Zahl der Regeln multipliziert
+					wurde.
 					</li>
 			</ul>
 
@@ -991,6 +1054,19 @@ export function OutputSchemaContent() {
 					'        | "equivalence-unknown" | "judgement-required" | "out-of-scope",',
 					"    needed?: string,       // what would settle the question",
 					"    evidence?: object      // what the rule did establish, rule-specific",
+					"  },",
+					"  lean?: {                 // present only on a cantTell-tier occurrence, and only with evidence",
+					'    toward: "pass" | "fail",',
+					"    why: string,           // localized: what in the page points that way",
+					"    signals: { signal: string, value: string | number | boolean | null }[],",
+					"    caution?: string,      // localized: what could make it wrong",
+					"    measured?: { agreed: number, cases: number, corpus?: string, coreVersion?: string },",
+					"    i18n?: { whyKey?: string, cautionKey?: string, params?: object }",
+					"  },",
+					"  howToCheck?: {           // present only on a cantTell-tier occurrence, when the rule says",
+					"    steps: string[],       // localized: what a person does, in order",
+					"    passWhen: string,      // localized: what they see if it passes",
+					"    failWhen: string       // localized: what they see if it fails",
 					"  },",
 					"  data?: {               // absent on manual-review's page-level finding",
 					"    visibilityFilter?: { eligible?: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
@@ -1051,6 +1127,116 @@ export function OutputSchemaContent() {
 				nichts sagen, was das Ergebnis nicht schon sagt.
 			</p>
 
+			<h3 id="leans">Tendenzen</h3>
+			<p>
+				Ein <code>cantTell</code> kann trotzdem in eine Richtung weisen. <code>lean</code> gibt an,
+				in welche, wenn die Seite Anhaltspunkte dafür liefert: <code>toward</code> ist die Antwort,
+				die diese Anhaltspunkte wahrscheinlich machen, <code>why</code> sagt, worin sie bestehen,
+				und <code>signals</code> listet die Fakten, die die Regel gelesen hat, jeweils ein Name in
+				Kebab-Case und ein einfacher Wert, damit ein Tool sie anzeigen oder gewichten kann.{" "}
+				<code>caution</code> sagt, was die Tendenz falsch machen könnte, wenn das nicht schon aus{" "}
+				<code>uncertainty.needed</code> hervorgeht.{" "}
+				<strong>Das Ergebnis bleibt <code>cantTell</code></strong>: Eine Tendenz ist ein Hinweis,
+				kein Urteil, und nichts, was Ergebnisse oder Stufen liest, ändert sich durch sie.{" "}
+				<a href={`${core}/docs/LEANS.md`}><code>LEANS.md</code></a> ist der Leitfaden für alle,
+				die Berichte lesen oder Tools bauen: welche Befunde eine Tendenz haben und warum, wie eine
+				Tendenz gemessen wird und wie weit man ihr trauen kann.
+			</p>
+			<p>
+				<code>lean</code> ist nur vorhanden, wo die Regel Anhaltspunkte hat.{" "}
+				<strong>Auch das Fehlen ist eine Information</strong>: Diesen Befund kann nur eine Person
+				beurteilen. Es ist nur bei einem Vorkommen der <code>cantTell</code>-Stufe vorhanden, wie{" "}
+				<code>uncertainty</code>; die Engine entfernt es bei einem entschiedenen Vorkommen und
+				entfernt ein fehlerhaftes (ein <code>toward</code> außer <code>pass</code> oder{" "}
+				<code>fail</code>, oder kein <code>why</code>), ohne den Befund anzutasten.{" "}
+				<code>measured</code> erscheint, sobald eine Tendenz an mindestens fünf Fällen mit
+				bekannter Antwort gezählt wurde: wie oft sie richtig lag (<code>agreed</code>), von wie
+				vielen (<code>cases</code>), aus welchem Korpus die Fälle stammen (<code>corpus</code>, mit
+				dem Datum, an dem er gelesen wurde) und welche core-Version sie gezählt hat (
+				<code>coreVersion</code>). Gezählt wird je Regel, Reason-Code und Richtung, anhand der
+				Testfälle der W3C ACT Rules, und die Engine führt die Zahlen mit, sodass ein Ergebnis aus
+				jedem Einstiegspunkt sie hat. Eine nie oder an weniger Fällen gezählte Tendenz hat keine;
+				eine Konfidenzzahl gibt es nicht. Bisher hat noch keine eine: Die erste Zählung, in jsdom,
+				sah 9 Tendenzen, keine an fünf Fällen.
+			</p>
+			<p>
+				<code>why</code> und <code>caution</code> stehen in der Locale des Scans; <code>i18n</code>{" "}
+				enthält ihre Schlüssel und Parameter, wie das <code>i18n</code> eines Vorkommens für{" "}
+				<code>summary</code> und <code>hint</code>. Die Engine selbst gibt einem Befund eine
+				Tendenz: Eine Regel, die nur auf ein Kriterium abgebildet ist, das die WCAG-Zielversion
+				entfernt hat oder das die Errata von 2023 als erfüllt werten, tendiert zu{" "}
+				<code>pass</code>, neben ihrer Unsicherheit <code>out-of-scope</code>.
+			</p>
+			<p>
+				<code>reviewGroupOf(check, occurrence)</code> aus <code>@surea11y/core</code> gibt an,
+				wohin ein Vorkommen in einer Prüfung gehört: <code>'fail'</code>, <code>'leanFail'</code>,{" "}
+				<code>'leanPass'</code> oder <code>'open'</code> (nur eine Person kann es beurteilen), die
+				Gruppen des <a href="/results-reports/html-report/">HTML-Berichts</a>.{" "}
+				<code>leaningFailures(result, {"{ wcagOnly }"})</code> listet die Befunde, die zu{" "}
+				<code>fail</code> tendieren, also die, die eine Schranke mit <code>leanFailAs</code>{" "}
+				zählt (<a href="/results-reports/junit-report/#options">JUnit</a>,{" "}
+				<a href="/results-reports/sarif-report/#options">SARIF</a>).
+			</p>
+			<p>
+				Neue Tendenzen kommen in Minor-Releases hinzu, Regel für Regel, und eine Tendenz kann
+				entfernt werden, wenn die Messung zeigt, dass sie zu oft falsch liegt: Behandeln Sie eine
+				Tendenz als Hinweis, der da sein kann oder nicht,{" "}
+				<strong>nie als Teil der Identität eines Befunds</strong>. Sie geht nicht in den
+				Fingerprint ein.
+			</p>
+
+			<h3 id="how-to-check">So prüfen Sie es</h3>
+			<p>
+				Ein <code>cantTell</code> übergibt eine Frage an eine Person. <code>howToCheck</code> sagt
+				ihr, wie sie sie beantwortet: <code>steps</code>, einige Handlungen der Reihe nach,
+				beginnend bei dem Element, das der Befund nennt („Gehen Sie mit der Tabulatortaste zum
+				Element.“, „Achten Sie darauf, ob der Fokusindikator darauf bleibt.“), dann <code>passWhen</code> und <code>failWhen</code>, was
+				sie sieht, wenn die Anforderung erfüllt ist und wenn nicht, mit dem Kriterium, das dann
+				nicht erfüllt ist. Jede Core-Regel, die <code>cantTell</code> melden kann, schreibt diese
+				Texte für jeden ihrer Reason-Codes (ihr <code>meta.review</code>), und jedes Vorkommen der{" "}
+				<code>cantTell</code>-Stufe erhält den Eintrag seines Codes, in der Locale des Scans. Der
+				Befund einer Variante (<code>variantOf</code>) erhält den ihrer Basisregel, wo sie keinen
+				eigenen hat. Eine Regel eines Packs kann sie ebenfalls schreiben, auf Englisch (siehe{" "}
+				<a href="/configuration/packs/#rules">Packs</a>); ihre Befunde erhalten sie, wenn die Packs
+				bekannt sind, wie sie <code>runDomRulesInPage</code> mit <code>engineOptions.packs</code>{" "}
+				und <code>addHowToCheck(result, {"{ packs }"})</code> kennen. Es fehlt bei einem
+				entschiedenen Vorkommen, beim Befund einer eigenen Regel, bei dem einer Überschreibung
+				(einer eigenen Regel oder Regel eines Packs in <code>overriddenBuiltinIds</code>) und bei
+				dem einer Pack-Regel, die keine schreibt.
+			</p>
+			<p>
+				<strong>Die Schritte werden nach dem Scan in Node hinzugefügt, nicht von der Engine in der
+				Seite</strong>: Die Engine wird in jede Seite und jeden Frame eingefügt, die ein Scan
+				öffnet, und hat keine Verwendung für tausend Sätze, die keine Regel liest.{" "}
+				<code>runDomRulesInPage</code> fügt sie seinem Ergebnis hinzu. Ein Ergebnis von{" "}
+				<code>runa11yCoreInPage</code>, in einer Seite ausgeführt (das eines Bindings, einer
+				Erweiterung), kommt ohne sie zurück; <code>addHowToCheck(result)</code> gibt eine Kopie mit
+				ihnen zurück, und <code>howToCheckFor(ruleId, reasonCode, locale)</code> liefert die eines
+				einzelnen Befunds. Beide lesen die Prüf-Wörterbücher von core von der Festplatte und
+				brauchen daher Node; ein Binding, dessen Code im Browser läuft (Cypress), ruft{" "}
+				<code>applyHowToCheck(result, {"{ en, fr }"})</code> aus{" "}
+				<code>@surea11y/core/how-to-check</code> mit den Wörterbüchern auf, die es aus{" "}
+				<code>{"@surea11y/core/review/<locale>"}</code> importiert, und erhält dieselben Schritte (
+				<a href={`${core}/docs/BINDING_AUTHORS_GUIDE.md`}><code>BINDING_AUTHORS_GUIDE.md</code></a>{" "}
+				zeigt, wie ein Binding das macht). Der{" "}
+				<a href="/results-reports/html-report/">HTML-Bericht</a> (<code>renderHtmlReport</code>)
+				fügt sie in Node einem Ergebnis hinzu, das ohne sie kommt; im Browser (
+				<code>surea11y.report.js</code>) zeigt er die, die das Ergebnis mitführt. Ein Tool, das ein
+				Ergebnis in einer anderen Sprache als der des Scans anzeigt, übergibt{" "}
+				<code>{"{ locale }"}</code> an <code>addHowToCheck</code> oder{" "}
+				<code>applyHowToCheck</code> (<code>{"addHowToCheck(result, { locale: 'de' })"}</code> oder
+				eine Liste von Locales, die gewünschteste zuerst; <code>renderHtmlReport</code> nimmt
+				keine): Die Schritte kommen in dieser Sprache, auch die bereits vorhandenen, mit Englisch
+				für jeden Schritt, der in der Locale fehlt.
+			</p>
+			<p>
+				Die Schritte setzen einen Browser voraus, seine Entwicklerwerkzeuge (den Accessibility
+				Tree), eine Tastatur und für manche einen Screenreader. Anders als{" "}
+				<code>uncertainty.needed</code>, das in einem Satz sagt, was die Frage klären würde, sagen
+				sie, wie man sie klärt. Wie eine Tendenz sind sie eine Anleitung, nicht Teil der Identität
+				eines Befunds, und ihr Wortlaut kann sich in jedem Release verbessern.
+			</p>
+
 			<h2 id="composite-result">Ein zusammengesetztes Ergebnis (<code>rulesResults[i]</code>)</h2>
 			<p>
 				Zusammengesetzte Regeln fassen mehrere atomare Regeln zu einem WCAG-Erfolgskriterium
@@ -1077,7 +1263,10 @@ export function OutputSchemaContent() {
 					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
 					"      customChecksIds?: string[], // the custom rules among them; absent when none",
-					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true }>,",
+					"      restatesWcag?: string[],  // a standard's rollup that restates WCAG criteria (applicability: 'wcag'): those criteria",
+					"      partial?: true,           // a standard's requirement its rules don't check in full (partial: true)",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true,",
+					"                            byReasonCode?: true, checkOutcome?: string, requirements?: string[] }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -1091,9 +1280,24 @@ export function OutputSchemaContent() {
 				gelaufen ist, <code>missingCount &gt; 0</code>) → zusammengesetzt{" "}
 				<code>cantTell</code></strong>; sonst{" "}
 				<strong>alle Beiträge <code>notApplicable</code> → zusammengesetzt{" "}
-				<code>notApplicable</code></strong>; sonst <strong><code>pass</code></strong>. Was das für
-				eine Gesamtaussage zur Konformität bedeutet, steht unter{" "}
-				<a href="/conformance/wcag-mapping/">Konformität</a>.
+				<code>notApplicable</code></strong>, wo die Regeln jeden Fall finden, für den das
+				Kriterium gilt, und sonst <code>cantTell</code> (<code>partialCoverage</code>); sonst{" "}
+				<strong><code>pass</code></strong>, wo die Regeln alles prüfen, was das Kriterium
+				verlangt, und sonst <code>cantTell</code> (<code>partialCheck</code>).{" "}
+				<strong>Noch ist kein WCAG-Kriterium als vollständig geprüft geführt, daher ergibt derzeit
+				keine WCAG-Zusammenfassung <code>pass</code>.</strong> Was das für eine Gesamtaussage zur
+				Konformität bedeutet, steht unter <a href="/conformance/wcag-mapping/">Konformität</a>.
+			</p>
+			<p>
+				Die eigene Zusammenfassung einer Norm kann eine Regel nach ihren Befunden statt als Ganzes
+				beurteilen (siehe <a href="/configuration/packs/">Packs</a>): Ihre beitragende Regel gibt
+				dann <code>byReasonCode: true</code> an, <code>outcome</code> ist das Ergebnis der Regel in
+				dieser Zusammenfassung (ein <code>fail</code>, dessen Befunde alle woandershin gehören, ist
+				hier ein <code>pass</code>) und <code>checkOutcome</code> das eigene Ergebnis der Regel.
+				Nennen die Befunde, die für die Zusammenfassung zählen, zu welcher ihrer Anforderungen sie
+				gehören, listet <code>requirements</code> diese auf, und die{" "}
+				<code>meta.normativeMappings</code> der Zusammenfassung nennen für diese Regel genau diese,
+				nicht jede Anforderung, die die Regel prüft.
 			</p>
 			<p>
 				Die Regeln einer WCAG-Zusammenfassung sind ihre eigene Liste und jede Regel aus{" "}
@@ -1216,8 +1420,11 @@ export function OutputSchemaContent() {
 					"{",
 					'  "engine": {',
 					'    "tag": "a11ycore",',
+					'    "version": "1.14.0",',
 					'    "schemaVersion": "1.0.0",',
-					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" }',
+					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" },',
+					'    "wcagVersion": "2.2",',
+					'    "environment": { "layout": false }',
 					"  },",
 					'  "url": "https://example.test/",',
 					'  "title": "Example",',
@@ -1258,7 +1465,11 @@ export function OutputSchemaContent() {
 					'          "html": "<img src=\\"logo.png\\">",',
 					'          "structuralPath": [1, 0],',
 					'          "summary": "This <img> has no alt attribute.",',
-					'          "hint": "Add an alt attribute (use alt=\\"\\" only for decorative images)."',
+					'          "hint": "Add an alt attribute that says what the image shows, or alt=\\"\\" if the image is purely decorative.",',
+					'          "data": {',
+					'            "details": { "reasonCode": "TEXT_ALTERNATIVE_MISSING" },',
+					'            "visibilityFilter": { "eligible": true, "reasons": [], "targetSet": "acc", "accEligible": true }',
+					"          }",
 					"        }",
 					"      ]",
 					"    }",

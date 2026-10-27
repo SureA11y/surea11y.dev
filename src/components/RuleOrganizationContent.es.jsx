@@ -42,8 +42,9 @@ export function RuleOrganizationContent() {
 					leer o de contenido anidado a demasiada profundidad para leerlo (las reglas <code>*-name-present</code>), texto que puede recortarse o solaparse al
 					aumentar el espaciado (<code>text-spacing-content-loss</code>), un bloque de consulta de
 					medios de orientación que gira un elemento distinto del contenido de la página (
-					<code>css-orientation-lock</code>), un texto provisional, o un carácter suelto que hace
-					de nombre de su control, por debajo de su relación de contraste (
+					<code>css-orientation-lock</code>), un texto provisional por debajo de su relación de
+					contraste cuyos colores no se puede saber si son de la página o del navegador, o un
+					carácter suelto que hace de nombre de su control por debajo de su relación de contraste (
 					<code>contrast-minimum</code>), o un color o tamaño que no se puede calcular (las
 					reglas de contraste, <code>target-size-minimum</code>). Una regla que lanza una excepción
 					también se informa como <code>cantTell</code>, como red de seguridad.
@@ -58,7 +59,14 @@ export function RuleOrganizationContent() {
 					su contenido es idéntico), así que eso es <code>cantTell</code>; pero «todos los nombres son
 					distintos» es un hecho, así que eso es <code>pass</code>. Una regla que pide a una persona
 					juzgar cada elemento que encuentra, como si el texto alternativo de una imagen es
-					preciso, nunca informa <code>pass</code>.
+					preciso, nunca informa <code>pass</code>. Una regla manual que solo pregunta donde una
+					heurística encuentra una señal, y no encuentra ninguna, informa{" "}
+					<code>notApplicable</code>, no <code>pass</code>: solo se aplica a lo que señala su
+					heurística, y no encontrar nada ahí no demuestra que todo esté bien.{" "}
+					<a href="/rules/image-redundant-alt/"><code>image-redundant-alt</code></a> busca texto alternativo que repite el texto junto a la
+					imagen; no encontrar ninguno no dice nada sobre si el texto alternativo es correcto.{" "}
+					<a href="/rules/form-control-label-quality/"><code>form-control-label-quality</code></a>, <a href="/rules/password-paste-enabled/"><code>password-paste-enabled</code></a>,{" "}
+					<a href="/rules/scrollable-region-focusable/"><code>scrollable-region-focusable</code></a> e <a href="/rules/image-of-text/"><code>image-of-text</code></a> hacen lo mismo.
 				</li>
 			</ul>
 			<p>
@@ -75,7 +83,10 @@ export function RuleOrganizationContent() {
 				<strong>Que una regla manual informe <code>cantTell</code> no es el mismo evento que una regla
 				automática informe <code>cantTell</code>, aunque el valor sea idéntico</strong>: la regla
 				automática ya decidió y te está diciendo lo que encontró; la regla manual te está diciendo que
-				la cuestión no es decidible a partir del marcado en absoluto. Consulta{" "}
+				la cuestión no es decidible a partir del marcado en absoluto. En ambos casos, el{" "}
+				<code>cantTell</code> de una regla de core dice cómo responderlo (<code>howToCheck</code>),
+				y algunos dicen hacia dónde apunta la evidencia de la página (<code>lean</code>, consulta
+				el <a href="/results-reports/output-schema/#leans">esquema de salida</a>). Consulta{" "}
 				<a href="/results-reports/output-schema/">Resultados e informes</a> para ver la referencia
 				completa de resultado/gravedad/confianza.
 			</p>

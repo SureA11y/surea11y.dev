@@ -14,8 +14,9 @@ export function ConformanceContent() {
 			<h2>WCAG conformance mapping</h2>
 			<p>
 				See exactly how atomic rules, coverage facets, and composite WCAG-SC rollup rules fit
-				together, so a composite <code>pass</code> means something specific rather than a vague
-				"looks fine." A scan that names a few checks rather than a target still reports the
+				together, and why a criterion whose checks all came back clean reads{" "}
+				<code>cantTell</code>, partly checked, rather than a vague "looks fine": a composite says
+				which parts were checked and leaves the rest to a person. A scan that names a few checks rather than a target still reports the
 				criteria they belong to, and says which ones it only partly checked. Target a conformance level (A, AA, or AAA) across any WCAG version with one
 				tag set or a named profile, map every result to the EN 301 549 clause that restates its
 				criterion when that's the standard you report against, and get a straight answer to the question that actually matters: what can this
@@ -28,7 +29,9 @@ export function ConformanceContent() {
 				Don't let a first scan of an imperfect, existing site block every future build — record
 				what's already known once, and gate CI only on violations that are genuinely new. It's the
 				difference between "we can't ship anything until this is perfect" and "we can catch
-				regressions starting today," and it's what actually gets a team to turn the gate on. See{" "}
+				regressions starting today," and it's what actually gets a team to turn the gate on. It can
+				accept the findings that likely fail too, and a baseline written before an upgrade keeps
+				matching when a finding's reason code is split or renamed. See{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
 		</>

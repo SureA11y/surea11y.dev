@@ -36,6 +36,24 @@ const coverageSampleLines = [
 	"// }",
 ];
 
+const reviewDictionaryRows = [
+	{
+		id: "node",
+		who: <><code>runDomRulesInPage</code>, <code>addHowToCheck</code>, <code>howToCheckFor</code>, <code>renderHtmlReport</code></>,
+		how: <>Aus dem installierten Paket, gesucht nach der Locale in Kleinbuchstaben (<code>fr-ca</code>, dann <code>fr</code>), Englisch zuletzt.</>,
+	},
+	{
+		id: "browser",
+		who: "Code, der im Browser läuft (eine Cypress-Spec)",
+		how: <><code>{"applyHowToCheck(result, { en, fr })"}</code> aus <code>@surea11y/core/how-to-check</code>, mit den Wörterbüchern, die er als <code>@surea11y/core/review/&lt;locale&gt;</code> importiert.</>,
+	},
+	{
+		id: "bundle",
+		who: <><code>a11ycore.openReport(result)</code> im Browser-Bundle</>,
+		how: <>Neben dem Bundle abgerufen oder als <code>{"{ reviewDictionaries }"}</code> übergeben.</>,
+	},
+];
+
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "Sie haben genau das bekommen, was Sie angefordert haben, und dieses Wörterbuch enthält jeden Schlüssel." },
 	{
@@ -275,7 +293,7 @@ export function LocalesContent() {
 				keine Seite alle Sprachen braucht. Englisch inline und den Rest optional zu halten, hält
 				die anderen Sprachen aus dem Download heraus und verhindert, dass er mit jeder neuen
 				Sprache wächst. Jede Zusatzdatei, <code>surea11y.i18n.&lt;locale&gt;.js</code>, ist etwa so
-				groß wie der englische Text, den sie ersetzt (derzeit 130 bis 160 KB), und eine Seite lädt
+				groß wie der englische Text, den sie ersetzt (derzeit 200 bis 250 KB), und eine Seite lädt
 				nur die, die sie nutzt. Sonst ändert sich nichts: Das Node-Paket und die Bindings sind nicht
 				betroffen.
 			</p>
@@ -306,6 +324,40 @@ export function LocalesContent() {
 				Wörterbüchern, die das Pack pro Locale auflistet; in einer Locale, für die das Pack kein
 				Wörterbuch hat, erscheinen seine Meldungen auf Englisch.
 			</p>
+
+			<h3 id="review-dictionaries">Die Prüf-Wörterbücher</h3>
+			<p>
+				Die Schritte, die einer Person sagen, wie sie einen offenen Befund beantwortet (
+				<code>howToCheck</code>, siehe <a href="/results-reports/output-schema/#how-to-check">das
+				Ausgabeschema</a>), stehen in eigenen Wörterbüchern, in denselben fünf Locales. Sie sind
+				von den Wörterbüchern der Engine getrennt, damit die Schritte nie ins Bundle oder in eine
+				Seite gelangen: Sie werden nach dem Scan hinzugefügt, in Node oder durch Code, der sie
+				importiert. Ab core 1.14.0.
+			</p>
+			<DataTable
+				label="Wer die Prüf-Wörterbücher liest"
+				rowKey="id"
+				columns={[
+					{ key: "who", label: "Wer sie liest", width: "40%", wrap: true },
+					{ key: "how", label: "Wie", wrap: true },
+				]}
+				rows={reviewDictionaryRows}
+			/>
+			<p>
+				Ein Schritt, der einer Locale fehlt, erscheint auf Englisch, wie eine Meldung. Die{" "}
+				<a href="/configuration/packs/#review-steps">eigenen Schritte einer Pack-Regel</a> sind in
+				jeder Locale englisch. <code>getLocaleCoverage()</code> zählt diese Wörterbücher nicht. Die
+				Schritte tragen keine Schlüssel; um sie in einer anderen Locale zu zeigen, fügen Sie sie
+				erneut hinzu:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { addHowToCheck } = require('@surea11y/core');",
+					"",
+					"const inFrench = addHowToCheck(result, { locale: 'fr' });",
+				]}
+			/>
 
 			<h3>Ein eigenes Wörterbuch übergeben</h3>
 			<p>
@@ -342,7 +394,9 @@ export function LocalesContent() {
 			<p>
 				Englisch wird immer geprüft. Die Liste der eigenen Sprache des Elements, aus dem nächsten{" "}
 				<code>lang</code>-Attribut (bei einem Seitentitel dem des <code>&lt;html&gt;</code>-Elements),
-				kommt hinzu. Alle Listen überall zu prüfen, würde Wörter melden, die in einer Sprache
+				kommt hinzu. <code>link-name-quality</code> prüft die Listen aller Sprachen, wo im Baum
+				über dem Link nirgends ein <code>lang</code> angegeben ist, da der Link in jeder davon sein
+				kann. Alle Listen überall zu prüfen, würde Wörter melden, die in einer Sprache
 				generisch und in einer anderen ein echter Name sind, etwa „<span lang="fr">Suite</span>“ oder
 				„Plus“ auf einer englischen Seite. Transkript-Wörter sind die Ausnahme: Sie sind in jeder
 				Sprache eindeutig, und eine Seite kann ein Transkript in einer anderen Sprache verlinken,
@@ -378,8 +432,16 @@ export function LocalesContent() {
 				<li>
 					<strong>Vorkommensebene</strong>: <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,
 					mit <code>i18n.params</code> für die Interpolation von <code>{"{{placeholder}}"}</code>,
-					lösen <code>summary</code>/<code>hint</code> eines Vorkommens auf. Siehe{" "}
+					lösen <code>summary</code>/<code>hint</code> eines Vorkommens auf.{" "}
+					<code>i18n.whyKey</code> / <code>i18n.cautionKey</code> einer Tendenz lösen deren{" "}
+					<code>why</code> und <code>caution</code> auf dieselbe Weise auf. Siehe{" "}
 					<a href="/results-reports/output-schema/">das Ausgabeschema</a>.
+				</li>
+				<li>
+					<strong>Prüfung</strong>: <code>{"<prefix>_review_<CODE>_step<n>"}</code>,{" "}
+					<code>_pass</code> und <code>_fail</code>, in{" "}
+					<a href="#review-dictionaries">den Prüf-Wörterbüchern</a>: das{" "}
+					<code>howToCheck</code> eines offenen Vorkommens.
 				</li>
 			</ul>
 			<p>

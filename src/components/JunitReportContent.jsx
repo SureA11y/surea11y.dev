@@ -66,6 +66,45 @@ const optionRows = [
 		),
 	},
 	{
+		id: "leanFailAs",
+		option: <code>leanFailAs</code>,
+		default: <code>'skipped'</code>,
+		effect: (
+			<>
+				<code>'failure'</code> reports a rule whose undecided findings include one that leans to
+				fail (its <a href="/results-reports/output-schema/#leans"><code>lean</code></a>) as{" "}
+				<code>&lt;failure type="leanFail"&gt;</code>, listing those findings, each with why it
+				likely fails (<code>likely fails:</code>), the lean's caution where it has one, and how a
+				person confirms it (<code>how to check:</code>, the finding's{" "}
+				<a href="/results-reports/output-schema/#how-to-check"><code>howToCheck</code></a> steps,
+				then <code>fails when:</code>), which the report adds in Node to a result that comes
+				without them; its other undecided findings stay as <code>cantTellAs</code> says. For a
+				pipeline that gates on likely failures without gating on every question. A best-practice
+				rule's too: such a rule, mapped to no WCAG criterion, never fails, and the facts it states
+				lean fail without condition, so a skipped heading level (<code>heading-order</code>, an{" "}
+				<code>&lt;h1&gt;</code> then an <code>&lt;h3&gt;</code>) is a{" "}
+				<code>&lt;failure type="leanFail"&gt;</code> in <code>Other checks</code>. A rule whose
+				every criterion is outside the scan's target does not gate, as for a failure. Read in any
+				case; another value throws a <code>TypeError</code>.{" "}
+				<code>leaningFailures(result, {"{ wcagOnly }"})</code>, from <code>@surea11y/core</code>,
+				lists the findings it gates on, before the baseline.
+			</>
+		),
+	},
+	{
+		id: "leanFailWcagOnly",
+		option: <code>leanFailWcagOnly</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				With <code>leanFailAs: 'failure'</code>, <code>true</code> gates only on the findings of
+				rules mapped to a WCAG criterion in the scan's target, leaving out the best-practice rules'
+				leans. A value other than <code>true</code> or <code>false</code> throws a{" "}
+				<code>TypeError</code>.
+			</>
+		),
+	},
+	{
 		id: "includeNotApplicable",
 		option: <code>includeNotApplicable</code>,
 		default: <code>false</code>,
@@ -82,7 +121,24 @@ const optionRows = [
 				as in SARIF. It takes the baseline file as saved (<code>JSON.parse</code> of it) or its{" "}
 				<code>entries</code> list. A rule whose every failure is already known is{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, not
-				passing: it did not pass.
+				passing: it did not pass. An entry written by 1.13 under a reason code that changed in 1.14
+				still <a href="/conformance/baseline/#upgrading">matches the finding under its new one</a>. Under <code>leanFailAs: 'failure'</code>, a
+				finding that leans fail and has an entry marked <code>lean: 'fail'</code> (
+				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>) does not gate either, and
+				the <code>&lt;skipped&gt;</code> message counts it among the{" "}
+				<code>known likely failures recorded in the baseline</code>.
+			</>
+		),
+	},
+	{
+		id: "packs",
+		option: <code>packs</code>,
+		default: "none",
+		effect: (
+			<>
+				The packs the scan ran (<code>engineOptions.packs</code>): with{" "}
+				<code>leanFailAs: 'failure'</code>, a pack rule's likely failures give the steps of its own{" "}
+				<code>meta.review</code>, as in the <a href="/results-reports/html-report/">HTML report</a>.
 			</>
 		),
 	},
@@ -153,7 +209,7 @@ export function JunitReportContent() {
 				lang="html"
 				lines={[
 					'<?xml version="1.0" encoding="UTF-8"?>',
-					'<testsuites name="surea11y" tests="13" failures="1" errors="0" skipped="5" time="0">',
+					'<testsuites name="surea11y" tests="14" failures="1" errors="0" skipped="4" time="0">',
 					'  <testsuite name="WCAG 1.1.1" tests="1" failures="1" errors="0" skipped="0" time="0">',
 					"    <properties>",
 					'      <property name="wcagCriterion" value="1.1.1"/>',
@@ -175,7 +231,7 @@ export function JunitReportContent() {
 					"help: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html</failure>",
 					"    </testcase>",
 					"  </testsuite>",
-					"  <!-- 10 more suites trimmed: 12 tests, 5 of them skipped (manual review) -->",
+					"  <!-- 10 more suites trimmed: 13 tests, 4 of them skipped (manual review) -->",
 					"</testsuites>",
 				]}
 			/>
@@ -184,7 +240,9 @@ export function JunitReportContent() {
 					<strong>A green suite named for a criterion</strong> means the rules that ran for it
 					reported no failure. It doesn't mean the criterion was fully checked, or met: most
 					criteria have parts no rule covers (see{" "}
-					<a href="/conformance/wcag-mapping/">WCAG mapping</a>).
+					<a href="/conformance/wcag-mapping/">WCAG mapping</a>). Its{" "}
+					<code>criterionOutcome</code> property says so: <code>cantTell</code> where the rules
+					passed but check only part of the criterion, which today is every criterion.
 				</li>
 				<li>
 					<strong>Suites follow the criterion</strong>, because that is what people track, and{" "}
@@ -325,7 +383,7 @@ export function JunitReportContent() {
 				<a href="/results-reports/html-report/">HTML report</a> give.
 			</p>
 
-			<h2>Options</h2>
+			<h2 id="options">Options</h2>
 			<DataTable
 				label="JUnit report options"
 				rowKey="id"

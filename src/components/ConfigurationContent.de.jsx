@@ -24,7 +24,9 @@ export function ConfigurationContent() {
 				aus, ohne überall sonst Abdeckung zu verlieren, stellen Sie ein, wie streng die Kontrastprüfungen für einen
 				menschlichen Auditor im Vergleich zu einem unbeaufsichtigten CI-Gate sein sollen, und
 				ergänzen Sie eine organisationsspezifische Regel neben den eingebauten, wenn der Katalog
-				etwas nicht abdeckt, das Ihnen wichtig ist. Die vollständige Referenz finden Sie unter{" "}
+				etwas nicht abdeckt, das Ihnen wichtig ist, und geben Sie den Regeln das CSS eines
+				Stylesheets von einem anderen Origin, das die Seite nicht lesen kann. Die vollständige
+				Referenz finden Sie unter{" "}
 				<a href="/configuration/engine-options/">Engine-Optionen</a>.
 			</p>
 
@@ -37,7 +39,9 @@ export function ConfigurationContent() {
 				zurück, und jeder Bericht zeigt sie neben den WCAG-Kriterien. Dasselbe Pack funktioniert aus
 				Node, in jedem Binding, mit den Test-Matchern und in der CLI, und{" "}
 				<code>npx surea11y-pack new</code> erzeugt eines, das seine eigenen Tests direkt nach dem
-				Erzeugen besteht. Unter <a href="/configuration/packs/">Packs</a> erfahren Sie, wie Sie
+				Erzeugen besteht. Eine Norm kann die Befunde einer Regel den Anforderungen zuordnen, zu
+				denen sie gehören, und eine Pack-Regel kann einer Person sagen, wie sie beantwortet, was die
+				Regel offen lässt. Unter <a href="/configuration/packs/">Packs</a> erfahren Sie, wie Sie
 				eines verwenden oder schreiben.
 			</p>
 
@@ -49,7 +53,10 @@ export function ConfigurationContent() {
 				Verstöße einer bestehenden Website in eine Baseline auf, sodass nur tatsächlich neue zum
 				Fehlschlag führen, und laden SARIF-Ergebnisse direkt in <span lang="en">GitHub Code Scanning</span> hoch, wo Ihr
 				Team ohnehin hinschaut. Rezepte für GitLab CI und Azure DevOps bringen die Ergebnisse als
-				JUnit in deren eigene Testansichten, von der CLI im selben Schritt geschrieben. Die vollständigen Vorlagen finden Sie unter{" "}
+				JUnit in deren eigene Testansichten, von der CLI im selben Schritt geschrieben, und ein
+				JUnit-Bericht kann offene Befunde, die zu fail tendieren, zu Fehlschlägen machen, damit ein
+				wahrscheinlicher Fehlschlag nicht als übersprungener Test durchgeht. Die vollständigen
+				Vorlagen finden Sie unter{" "}
 				<a href="/configuration/ci-integration/">CI-Integration</a>.
 			</p>
 
@@ -61,6 +68,8 @@ export function ConfigurationContent() {
 				auf Englisch pro String statt einer Leerstelle oder eines Fehlers. Heute sind
 				fünf Sprachen verfügbar (Englisch, Französisch, Deutsch, Spanisch, Japanisch), und ein Ergebnis gibt
 				immer genau an, welche Locale verwendet wurde, sodass nichts unbemerkt schlechter wird.
+				Die Schritte, mit denen sich ein offener Befund beantworten lässt („So prüfen Sie es“), gibt
+				es in denselben fünf Sprachen.
 				Abdeckung und wie Sie ein eigenes Wörterbuch bereitstellen, finden Sie unter{" "}
 				<a href="/configuration/locales/">Locales</a>.
 			</p>

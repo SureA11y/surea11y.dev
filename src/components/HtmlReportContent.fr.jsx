@@ -8,7 +8,8 @@ export function HtmlReportContent() {
 				Un rapport HTML autonome à ouvrir dans un navigateur après une analyse : pas de serveur,
 				pas de ressources externes, pas de requêtes réseau. Pensé pour les testeurs QA et manuels
 				qui veulent parcourir les résultats d’une analyse plutôt que du JSON brut ou un résumé dans
-				le terminal.
+				le terminal. <a href="/sample-report.html">Ouvrez un exemple de rapport</a> : une petite page de paiement
+				analysée avec les hooks d’écouteurs et de régions live, avec un constat dans chaque groupe.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
 			<p>
@@ -24,14 +25,32 @@ export function HtmlReportContent() {
 					ainsi qu’une barre empilée et sa légende (icône + libellé + nombre :
 					l’état n’est jamais indiqué par la seule couleur), ventilées par résultat{" "}
 					(<code>fail</code>/<code>cantTell</code>/<code>pass</code>/
-					<code>notApplicable</code>).
+					<code>notApplicable</code>). Lorsqu’aucune règle n’a échoué et que certaines
+					s’appliquaient, une note sous le titre précise que ce n’est pas une déclaration de
+					conformité de la page, et nomme ce qu’une personne vérifie encore : les résultats à
+					vérifier, l’utilisation au clavier, la lecture de la page par un lecteur d’écran et le
+					contenu lui-même.
 				</li>
 				<li>
 					<strong>À examiner</strong> : une carte par règle ayant des occurrences{" "}
 					<code>fail</code>/<code>cantTell</code> (et non une par occurrence : une règle avec de
 					nombreuses occurrences identiques est un seul point d’attention, pas plusieurs), chacune
 					indiquant la sévérité, le ou les critères de succès WCAG, une occurrence représentative
-					et le nombre total d’occurrences. Limité aux 24 règles les plus prioritaires, avec une
+					et le nombre total d’occurrences. Les règles en échec viennent en premier. Les constats à
+					vérifier suivent, en trois groupes : ceux dont les indices pointent vers un échec
+					(« Échec probable : à confirmer »), ceux dont les indices pointent vers une réussite
+					(« Réussite probable : à confirmer ») et ceux que seule une personne peut juger
+					(« À examiner par une personne »), tels que les classe{" "}
+					<code>reviewGroupOf(check, occurrence)</code> de <code>@surea11y/core</code>, si bien
+					qu’un outil qui trie une file de revue la trie de la même façon. Chaque carte des deux
+					premiers groupes dit pourquoi elle penche de ce côté (le{" "}
+					<a href="/results-reports/output-schema/#leans"><code>lean</code></a> de l’occurrence).
+					Chacune de ces cartes a une section « Comment vérifier », repliée par défaut, avec les
+					étapes pour répondre à la question et ce qui réussit et ce qui échoue (le{" "}
+					<a href="/results-reports/output-schema/#how-to-check"><code>howToCheck</code></a> de
+					l’occurrence). Une règle dont les constats penchent de côtés différents a une carte dans
+					chaque groupe. Dans chaque groupe, la plus grave d’abord (de critique à mineure) et, à
+					gravité égale, celle qui a le plus d’occurrences. Limité aux 24 règles les plus prioritaires, avec une
 					note de dépassement au-delà. Une règle qui ne s’est pas terminée (elle a levé une
 					exception) a aussi sa carte, qui l’indique avec son erreur, puisque la page n’a pas été
 					vérifiée au regard de cette règle. Une règle dotée d’un lien d’aide <code>http(s)</code>{" "}
@@ -51,8 +70,10 @@ export function HtmlReportContent() {
 					<li>
 						<strong>Au plus près de la limite</strong> : affiché lorsque l’analyse comporte des marges
 						(<a href="/results-reports/output-schema/#margin"><code>margin</code> sur un résultat de vérification</a>).
-						Une ligne par règle qui mesure par rapport à un seuil : sa valeur conforme la plus proche,
-						la limite, la marge restante et l’élément. Les pixels sont arrondis à l’entier, avec
+						Une ligne par règle dont l’élément conforme le plus proche s’est approché de son seuil
+						(dans la bande de la règle, par exemple 10 % d’un ratio de contraste), comme le dit la
+						note au-dessus du tableau : sa valeur conforme la plus proche, la limite, la marge
+						restante et l’élément. Les pixels sont arrondis à l’entier, avec
 						« moins de 1 px » en dessous de un ; les rapports affichent deux décimales. Une règle qui
 						est passée avec peu de marge est une règle qu’un petit changement peut faire échouer.
 					</li>
@@ -64,8 +85,11 @@ export function HtmlReportContent() {
 					<code>standards</code> du résultat auxquelles ses règles sont associées, comme la clause
 					d’EN 301 549 qui le reprend, quand il y en a une et que l’analyse a demandé les clauses
 					d’EN 301 549), avec son résultat, une ventilation réussite/échec/à examiner/non
-					applicable (avec une ligne « Vérifié en partie » quand l’analyse n’a sélectionné qu’une
-					partie des règles du critère, comme « Vérifié en partie : 1 contrôle sur 2 n’a pas été sélectionné pour cette analyse », voir{" "}
+					applicable (avec une ligne « Vérifié en partie » quand les règles du critère ne vérifient
+					qu’une partie de ce qu’il demande, si bien qu’une personne vérifie le reste, comme
+					« Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une
+					personne vérifie le reste », ou quand l’analyse n’a sélectionné qu’une partie de ses
+					règles, comme « Vérifié en partie : 1 contrôle sur 2 n’a pas été sélectionné pour cette analyse », voir{" "}
 					<a href="/results-reports/output-schema/#partly-checked">Un critère partiellement
 					vérifié</a>), et les règles atomiques qui y ont contribué, y compris une règle
 					personnalisée associée au critère. Ce sont de vraies
@@ -87,7 +111,9 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Données techniques complètes</strong> (repliées par défaut) : un tableau de
 					scores (une tuile par résultat) et un tableau paginé, consultable et filtrable (par
-					résultat), de chaque occurrence de toute l’analyse. Quand il n’affiche aucune
+					résultat), de chaque occurrence de toute l’analyse ; un constat à vérifier qui a une
+					tendance l’affiche sous son résumé (« Échec probable : … »), et la recherche la trouve.
+					Quand il n’affiche aucune
 					occurrence, il contient une ligne qui le dit : l’analyse n’en a enregistré aucune, ou
 					les filtres les masquent toutes.
 				</li>
@@ -170,7 +196,15 @@ export function HtmlReportContent() {
 				<code>timestamp</code> du résultat (à définir avec <code>engineOptions.timestamp</code>),
 				affiché en UTC, si bien que le même résultat produit toujours la même page ; un résultat qui
 				n’en a pas est daté du moment du rendu.{" "}
-				<code>options.title</code> est facultatif (par défaut <code>"surea11y scan report"</code>).
+				<code>options.title</code> est facultatif (par défaut, le titre propre à la langue du
+				rapport : <code>"Rapport d’analyse surea11y"</code> en français).{" "}
+				<code>options.packs</code> est la liste des packs que l’analyse a exécutés (
+				<code>engineOptions.packs</code>), s’il y en a : dans Node, le rapport ajoute les étapes
+				« Comment vérifier » aux constats non tranchés qui arrivent sans elles, toujours pour une
+				règle de core et pour la règle de base d’une variante, et les étapes propres d’une règle
+				de pack (son <code>meta.review</code>, en anglais) seulement quand il reçoit les packs
+				(voir <a href="/configuration/packs/#rules">Packs</a>). Dans le navigateur (
+				<code>surea11y.report.js</code>), il affiche les étapes que porte déjà le résultat.
 			</p>
 
 			<h2>Périmètre</h2>

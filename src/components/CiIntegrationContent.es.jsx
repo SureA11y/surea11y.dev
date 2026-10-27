@@ -49,7 +49,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build   # produce whatever static HTML you're scanning",
 					"      - run: npx @surea11y/cli scan ./dist/index.html",
 				]}
@@ -106,7 +106,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build",
 					"      - name: Scan (report, don't fail the job here)",
 					"        run: npx @surea11y/cli scan ./dist/index.html --baseline a11y-baseline.json --sarif results.sarif",
@@ -144,7 +144,7 @@ export function CiIntegrationContent() {
 					"    '**':",
 					"      - step:",
 					"          name: Accessibility scan",
-					"          image: node:20",
+					"          image: node:22",
 					"          script:",
 					"            - npm ci",
 					"            - npm run build",
@@ -175,7 +175,7 @@ export function CiIntegrationContent() {
 				lang="yaml"
 				lines={[
 					"a11y:",
-					"  image: node:20",
+					"  image: node:22",
 					"  script:",
 					"    - npm ci",
 					"    - npm run build",
@@ -216,7 +216,11 @@ export function CiIntegrationContent() {
 				<code>{"renderJunitReport(result, { cantTellAs: 'failure' })"}</code> de{" "}
 				<code>@surea11y/core/junit</code> (ver{" "}
 				<a href="/results-reports/junit-report/">el informe JUnit</a>), que necesita{" "}
-				<code>@surea11y/core</code> en las <code>devDependencies</code> del propio proyecto. Eso
+				<code>@surea11y/core</code> en las <code>devDependencies</code> del propio proyecto.{" "}
+				<code>{"{ leanFailAs: 'failure' }"}</code> es la opción más estrecha: solo los hallazgos{" "}
+				<code>cantTell</code> que{" "}
+				<a href="/results-reports/output-schema/#leans">tienden a fallo</a> pasan a ser
+				fallos, cada uno con el porqué y los pasos para confirmarlo. Cualquiera de las dos
 				cambia el informe, no el código de salida de la CLI.
 			</p>
 

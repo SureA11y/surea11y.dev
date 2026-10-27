@@ -96,6 +96,51 @@ export function StandaloneUsageContent() {
 				document as what it is.
 			</p>
 
+			<h2 id="from-the-browser-console">From the browser console</h2>
+			<p>
+				For a scan by hand, the bundle has a few helpers. Load it into any open page from the
+				browser's console (the Console tab of the developer tools), then scan, list the findings,
+				box them on the page, or open the HTML report:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Pasted into the console of the page to check.",
+					"const s = document.createElement('script');",
+					"s.src = 'https://cdn.jsdelivr.net/npm/@surea11y/core/surea11y.browser.js';",
+					"document.head.append(s);",
+					"",
+					"// Once it has loaded:",
+					"a11ycore.version; // the engine's version",
+					"const result = await a11ycore.run(); // scan the page",
+					"a11ycore.table(result); // the findings, worst first",
+					"a11ycore.highlight(result); // box each one on the page",
+					"await a11ycore.openReport(result); // the HTML report, in a new tab",
+					"await a11ycore.inspect('headings'); // what a person checks by hand",
+				]}
+			/>
+			<p>
+				<code>run(options)</code> takes the engine options plus two of its own,{" "}
+				<code>context</code> (a selector, to scan only part of the page) and <code>runOnly</code>,
+				and fetches the style sheets the page can't read itself before it scans.{" "}
+				<code>table()</code> prints one row per finding: failures first, then the questions that
+				lean fail, those that lean pass, and those only a person can judge.{" "}
+				<code>highlight()</code> draws a box over each element a <code>fail</code> (solid red) or{" "}
+				<code>cantTell</code> (dashed amber) names, in a layer of its own that leaves the page's
+				elements untouched; <code>clearHighlights()</code> removes it. <code>inspect()</code> draws
+				what a person reviewing the page checks by hand, and judges nothing:{" "}
+				<code>'headings'</code>, <code>'landmarks'</code>, <code>'names'</code> or{" "}
+				<code>'focus-order'</code>. <code>openReport()</code> fetches{" "}
+				<code>surea11y.report.js</code> from beside the bundle the first time, and the report
+				shows how to check each question. A page's Content Security Policy can block a script from
+				a CDN: load the files from the page's own origin then, or scan with a driver. Every option
+				is in the{" "}
+				<a href={`${core}/docs/INTEGRATION.md#from-the-browser-console`}>
+					browser console section of <code>INTEGRATION.md</code>
+				</a>
+				, the integration guide on GitHub.
+			</p>
+
 			<h2 id="packs-in-a-page">Packs in a page</h2>
 			<p>
 				A <a href="/configuration/packs/">pack</a> is prepared in Node, so it reaches a page as a
@@ -202,6 +247,30 @@ export function StandaloneUsageContent() {
 				, the integration guide on GitHub.
 			</p>
 
+			<h2 id="style-sheets-from-another-origin">Style sheets from another origin</h2>
+			<p>
+				A page's script can't read the rules of a style sheet served from another origin (a CDN, a
+				fonts service), so a rule that looks for something in the CSS, such as{" "}
+				<code>css-orientation-lock</code>, can't tell whether it's there, and asks. Give the scan
+				their text in <code>engineOptions.styleSheetTexts</code> (<code>{"[{ href, text }]"}</code>)
+				and <code>css-orientation-lock</code>, <code>css-hidden-focus</code> and{" "}
+				<code>css-focus-indicator-suppressed</code> read it. On the bundle,{" "}
+				<code>runa11yCoreInPageAsync</code> takes the same four arguments as{" "}
+				<code>runa11yCoreInPage</code>, fetches the sheets whose server shares them (CORS) with{" "}
+				<code>preloadStyleSheets()</code>, then scans:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = await a11ycore.runa11yCoreInPageAsync(location.href, null, {}, null);",
+				]}
+			/>
+			<p>
+				A sheet whose server doesn't share it can't be read from the page at all. A tool driving
+				the browser can fetch it from outside the page, where no CORS applies, and pass it in the
+				same option; the bindings do.
+			</p>
+
 			<h2 id="a-time-limit-on-a-scan">A time limit on a scan</h2>
 			<p>
 				A scan runs in one go inside the page, and nothing in the page can stop it once it has
@@ -287,6 +356,80 @@ export function StandaloneUsageContent() {
 				.
 			</p>
 
+			<h2 id="listener-and-live-region-hooks">Click handlers and live regions</h2>
+			<p>
+				Two more opt-in hooks, from core 1.14, install the same way as the internals hook, before
+				the page's own scripts. <code>listenerHookScript()</code> records the click, key, focus,
+				mouse and paste listeners a page adds from script, so the keyboard rules judge them: a{" "}
+				<code>&lt;div role="button"&gt;</code> with a click listener and no key listener anywhere a
+				key event from it goes fails (<code>CLICK_HANDLER_NO_KEY_LISTENER</code>).{" "}
+				<code>liveRegionHookScript()</code> records what live regions are given:{" "}
+				<code>live-region-announcements</code> then asks about a region added with its text already
+				in it, or shown and filled at once, which screen readers commonly don't announce, and{" "}
+				<code>getAnnouncements()</code> returns what the page made available to announce:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { listenerHookScript, liveRegionHookScript, getAnnouncements } = require('@surea11y/core');",
+					"",
+					"// Playwright: before the page's own scripts",
+					"await page.addInitScript({ content: listenerHookScript() });",
+					"await page.addInitScript({ content: liveRegionHookScript() });",
+					"await page.goto('https://example.com/settings');",
+					"",
+					"await page.click('text=Save');",
+					"const said = await page.evaluate(getAnnouncements, { selectors: true });",
+					"// [{ text: 'Saved', politeness: 'polite', time: 1234.5, order: 7, behindModal: false, selector: '#status' }]",
+				]}
+			/>
+			<p>
+				<code>engine.environment.listenerHook</code> and <code>.liveRegionHook</code> say whether a
+				scan saw them. Only a listener hook installed before the page's scripts (
+				<code>'early'</code>) proves a listener is missing; installed later, the rules only ask. On
+				the bundle, <code>a11ycore.getAnnouncements()</code> reads them in the page. Like the
+				internals hook, both keep what they record where any script on the page can read it:
+				install them for test and audit runs. In a jsdom setup file, pass{" "}
+				<code>{"{ early: true }"}</code>, and for the listener hook run one selector first (
+				<code>document.querySelector('*')</code>), since jsdom adds key listeners of its own the
+				first time a selector runs. The{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+					listener hook
+				</a>{" "}
+				and{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}>
+					live-region hook
+				</a>{" "}
+				sections of <code>INTEGRATION.md</code>, the integration guide on GitHub, have the rest.
+			</p>
+
+			<h2 id="questions-and-steps">Leans and steps for questions</h2>
+			<p>
+				Since core 1.14, a <code>cantTell</code> occurrence can carry a <code>lean</code>: which way
+				the page's evidence points (<code>toward: 'fail'</code> or <code>'pass'</code>), why, and
+				what could make it wrong. The outcome stays <code>cantTell</code>. Each question of a core
+				rule also carries <code>howToCheck</code>, the steps a person follows to answer it, in the
+				scan's locale. They're added in Node, not by the engine in the page:{" "}
+				<code>runDomRulesInPage</code> adds them, and for a result that comes back from a page,{" "}
+				<code>addHowToCheck(result)</code> returns a copy with them. <code>leaningFailures(result)</code>{" "}
+				lists the findings that lean fail, for a gate of your own:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { runa11yCoreInPage, addHowToCheck, leaningFailures } = require('@surea11y/core');",
+					"",
+					"const raw = await page.evaluate(runa11yCoreInPage, page.url(), null, {}, null);",
+					"const result = addHowToCheck(raw); // a copy, with each question's steps",
+					"const likelyFailures = leaningFailures(result);",
+				]}
+			/>
+			<p>
+				Whether a finding leans, and its texts, may change in a minor release of core; the shape of{" "}
+				<code>lean</code> is stable. See{" "}
+				<a href="/results-reports/output-schema/#leans">the output schema</a> for both fields.
+			</p>
+
 			<h2 id="what-a-scan-covers">Knowing what a scan covers</h2>
 			<p>
 				A tool that reports by WCAG criterion and lets its users pick checks can say which target
@@ -310,7 +453,8 @@ export function StandaloneUsageContent() {
 			<p>
 				A criterion only some of whose checks ran comes back <code>cantTell</code>, with each
 				check that didn't run marked <code>notSelected: true</code>: show it as partly checked,
-				never as passed. Building a tool of your own on core (a CLI, a CI integration, a dashboard,
+				never as passed. Since core 1.14 no criterion is reported as passing at all: one passes
+				only when its rules check everything it asks, and none is listed as checked in full yet. Building a tool of your own on core (a CLI, a CI integration, a dashboard,
 				a conformance-report generator) is covered in{" "}
 				<a href={`${core}/docs/BUILDING_ON_CORE.md`}>
 					<code>BUILDING_ON_CORE.md</code>

@@ -36,6 +36,7 @@ export function UsageBindingSection({
 	note,
 	packs,
 	internals,
+	hooks,
 	more,
 	exampleHref,
 	locale = "en",
@@ -79,6 +80,14 @@ export function UsageBindingSection({
 					<CodeBlock lang="js" lines={internals.code} />
 					{internals.note}
 					{internals.caveat}
+				</>
+			) : null}
+			{hooks ? (
+				<>
+					{hooks.intro}
+					<CodeBlock lang="js" lines={hooks.code} />
+					{hooks.note}
+					{hooks.caveat}
 				</>
 			) : null}
 			{more}

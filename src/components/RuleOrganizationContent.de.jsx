@@ -43,8 +43,10 @@ export function RuleOrganizationContent() {
 					Text, der nach dem Erhöhen der Abstände abgeschnitten werden oder sich überlappen kann (
 					<code>text-spacing-content-loss</code>), ein Orientierungs-Media-Block, der ein anderes
 					Element als den Inhalt der Seite dreht (
-					<code>css-orientation-lock</code>), ein Platzhalter oder ein einzelnes Zeichen, das für den
-					Namen seines Bedienelements steht, unter seinem Verhältnis (<code>contrast-minimum</code>) oder eine Farbe oder Größe, die sich nicht berechnen lässt
+					<code>css-orientation-lock</code>), ein Platzhalter unter seinem Verhältnis, bei dem sich
+					nicht erkennen lässt, ob seine Farben die der Seite oder des Browsers sind, oder ein
+					einzelnes Zeichen, das für den Namen seines Bedienelements steht, unter seinem Verhältnis
+					(<code>contrast-minimum</code>) oder eine Farbe oder Größe, die sich nicht berechnen lässt
 					(die Kontrastregeln, <code>target-size-minimum</code>). Eine Regel, die eine Ausnahme wirft,
 					wird zur Absicherung ebenfalls als <code>cantTell</code> gemeldet.
 				</li>
@@ -58,7 +60,14 @@ export function RuleOrganizationContent() {
 					Inhalt identisch ist), also ergibt das <code>cantTell</code>; „alle Namen unterscheiden
 					sich“ ist dagegen eine Tatsache, also ergibt das <code>pass</code>. Eine Regel, die eine
 					Person jedes gefundene Ziel beurteilen lässt, etwa ob die Textalternative eines Bildes
-					zutrifft, meldet nie <code>pass</code>.
+					zutrifft, meldet nie <code>pass</code>. Eine manuelle Regel, die nur dort fragt, wo eine
+					Heuristik ein Anzeichen findet, und keines findet, meldet <code>notApplicable</code>,
+					nicht <code>pass</code>: Sie gilt nur für das, was ihre Heuristik markiert, und dort nichts
+					zu finden, zeigt nicht, dass alles in Ordnung ist.{" "}
+					<a href="/rules/image-redundant-alt/"><code>image-redundant-alt</code></a> sucht Alternativtext, der den Text neben dem Bild
+					wiederholt; keinen zu finden, sagt nichts darüber, ob der Alternativtext stimmt.{" "}
+					<a href="/rules/form-control-label-quality/"><code>form-control-label-quality</code></a>, <a href="/rules/password-paste-enabled/"><code>password-paste-enabled</code></a>,{" "}
+					<a href="/rules/scrollable-region-focusable/"><code>scrollable-region-focusable</code></a> und <a href="/rules/image-of-text/"><code>image-of-text</code></a> tun dasselbe.
 				</li>
 			</ul>
 			<p>
@@ -76,7 +85,11 @@ export function RuleOrganizationContent() {
 				Die automatische Regel hat entschieden und teilt Ihnen mit, was sie gefunden hat; die
 				manuelle Regel teilt Ihnen mit, dass sich die Frage anhand des Markups überhaupt nicht
 				entscheiden lässt. Die vollständige Referenz zu Ergebnis, Schweregrad und Konfidenz finden
-				Sie unter <a href="/results-reports/output-schema/">Ergebnisse und Berichte</a>.
+				Sie unter <a href="/results-reports/output-schema/">Ergebnisse und Berichte</a>. In beiden
+				Fällen sagt das <code>cantTell</code> einer Core-Regel, wie es zu beantworten ist (
+				<code>howToCheck</code>), und manche sagen, wohin die Hinweise der Seite deuten (
+				<code>lean</code>, siehe{" "}
+				<a href="/results-reports/output-schema/#leans">Ausgabeschema</a>).
 			</p>
 
 			<h2>Wie Regel-IDs aufgebaut sind</h2>

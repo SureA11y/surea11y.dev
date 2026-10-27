@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Rapport d’analyse surea11y — 27 oct. 2026, 09:00:00 UTC</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; margin: 0; padding: 0 0 48px; background: #fafafa; color: #1a1a1a; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #16181c; color: #e6e6e6; }
+    .wcag-table, .findings-table, .hero, .card, details { background: #1f2227 !important; border-color: #3a3d44 !important; }
+    main h2 { color: #b0b4ba; }
+    input::placeholder { color: #9aa0a6; }
+    .wcag-table th, .findings-table th { background: #262a30 !important; color: #e6e6e6 !important; }
+    a { color: #7db6ff; }
+    input, select { background: #1f2227; color: #e6e6e6; border-color: #3a3d44; }
+    .meta-bar { background: #1f2227 !important; border-color: #3a3d44 !important; }
+    .hero-bar { background: #2a2d33; }
+    summary { color: #e6e6e6 !important; }
+    .table-scroll:focus-visible { outline-color: #7db6ff; }
+  }
+  header { padding: 24px 32px; background: #202531; color: #fff; }
+  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header .sub { opacity: 0.8; font-size: 13px; overflow-wrap: anywhere; }
+  .meta-bar { display: flex; flex-wrap: wrap; gap: 24px; padding: 12px 32px; background: #fff; border-bottom: 1px solid #ddd; font-size: 13px; }
+  .meta-bar b { display: block; font-size: 15px; }
+  main { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+  h2 { font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em; color: #555; margin: 32px 0 12px; }
+  h3.wcag-level-heading { font-size: 14px; margin: 20px 0 8px; }
+  h3.frame-heading { font-size: 14px; margin: 20px 0 4px; font-family: ui-monospace, monospace; }
+
+  .hero { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px 24px; margin-bottom: 28px; }
+  .hero-headline { font-size: 17px; margin: 0 0 16px; line-height: 1.5; }
+  .hero-note { margin: -8px 0 16px; line-height: 1.5; }
+  .hero-bar { display: flex; height: 22px; border-radius: 6px; overflow: hidden; background: #eee; }
+  .hero-bar-seg { height: 100%; }
+  .hero-bar-seg:not(:last-child) { border-right: 2px solid #fff; }
+  @media (prefers-color-scheme: dark) { .hero-bar-seg:not(:last-child) { border-right-color: #16181c; } }
+  .hero-legend { display: flex; flex-wrap: wrap; gap: 14px 24px; margin-top: 16px; }
+  .hero-legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+  .hero-legend-swatch { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 5px; color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .hero-legend-count { opacity: 0.65; font-variant-numeric: tabular-nums; }
+
+  .cards { display: grid; gap: 10px; margin-bottom: 8px; }
+  .card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px; background: #fff; }
+  .card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .card-title { font-size: 13.5px; }
+  .card-count { font-weight: 700; opacity: 0.65; font-variant-numeric: tabular-nums; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+  .card-selector { font-size: 12px; margin-bottom: 6px; word-break: break-all; }
+  .card-selector-label { opacity: 0.65; margin-right: 4px; }
+  .card-selector code { font-family: ui-monospace, monospace; background: #f0f0f2; border-radius: 4px; padding: 1px 5px; user-select: all; }
+  @media (prefers-color-scheme: dark) { .card-selector code { background: #2a2d33 !important; } }
+  .card-snippet { font-family: ui-monospace, monospace; font-size: 11.5px; background: #f7f7f8; border-radius: 5px; padding: 6px 8px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+  @media (prefers-color-scheme: dark) { .card-snippet { background: #262a30 !important; } }
+  .card-note { font-size: 11px; opacity: 0.6; margin: 6px 0 0; }
+  .card-lean { font-size: 12px; margin: 6px 0 0; }
+  .cards-group { font-size: 14px; margin: 16px 0 8px; }
+  .row-lean { display: block; font-size: 11px; margin-top: 4px; }
+  .card-how { font-size: 12px; margin: 6px 0 0; }
+  .card-how ol { margin: 4px 0 4px 18px; padding: 0; }
+  .card-how p { margin: 2px 0; }
+  .card-help { font-size: 12.5px; margin: 6px 0 0; }
+
+  details.tech-details { border: 1px solid #e0e0e0; border-radius: 8px; margin-top: 8px; }
+  details.tech-details summary { padding: 14px 18px; cursor: pointer; font-weight: 600; font-size: 14px; color: #333; list-style: none; }
+  details.tech-details summary::-webkit-details-marker { display: none; }
+  details.tech-details summary::before { content: '▶'; display: inline-block; margin-right: 8px; font-size: 11px; transition: transform 0.15s; }
+  details.tech-details[open] summary::before { transform: rotate(90deg); }
+  details.tech-details > .tech-body { padding: 0 18px 20px; }
+
+  .scorecard { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .tile { border: 1.5px solid; border-radius: 8px; padding: 12px 14px; color: #1a1a1a; }
+  .tile-num { font-size: 24px; font-weight: 700; line-height: 1.1; }
+  .tile-pct { font-size: 12px; opacity: 0.75; }
+  .tile-label { font-size: 12.5px; margin-top: 4px; font-weight: 600; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  .wcag-table, .findings-table { background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+  .wcag-table th, .wcag-table td, .findings-table th, .findings-table td { padding: 5px 8px; border-bottom: 1px solid #eee; text-align: left; }
+  .wcag-table th, .findings-table th { background: #f2f2f4; position: sticky; top: 0; font-size: 11px; }
+  .table-scroll { overflow-x: auto; margin-bottom: 8px; }
+  .table-scroll > table { margin-bottom: 0; }
+  .table-scroll:focus-visible { outline: 2px solid #1a5fb4; outline-offset: 2px; }
+  .sc-cell { font-family: ui-monospace, monospace; font-size: 11.5px; white-space: nowrap; }
+  .filters { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 12px; }
+  .filters label { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; cursor: pointer; user-select: none; }
+  .chip { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+  .findings-table td.empty-row { font-style: italic; }
+  .findings-table td.snippet { font-family: ui-monospace, monospace; font-size: 11px; max-width: 320px; overflow-x: auto; white-space: pre; }
+  .pager { display: flex; gap: 10px; align-items: center; margin-top: 10px; font-size: 13px; }
+  .pager button { padding: 5px 12px; border: 1px solid #ccc; background: #fff; border-radius: 5px; cursor: pointer; }
+  .pager button:disabled { opacity: 0.4; cursor: default; }
+  .note { font-size: 12.5px; opacity: 0.75; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Rapport d’analyse surea11y</h1>
+  <div class="sub">https://shop.example/checkout — généré le 27 oct. 2026, 09:00:00 UTC</div>
+</header>
+
+<div class="meta-bar">
+  <div><b>145</b>règles exécutées</div>
+  <div><b>13</b>occurrences au total</div>
+  <div><b>a11ycore</b>moteur</div>
+  <div><b>1.0.0</b>version du schéma</div>
+  <div><b>WCAG 2.2</b>cible</div>
+  <div><b>1280×900</b>zone d’affichage</div>
+  <div><b>light</b>schéma de couleurs</div>
+  <div><b>fr</b>langue</div>
+</div>
+
+<main>
+  <div class="hero">
+    <p class="hero-headline"><strong>39</strong> contrôles applicables réussis sur <strong>48</strong>. <strong>4</strong> échecs demandent votre attention ci-dessous.</p>
+    <div class="hero-bar"><div class="hero-bar-seg" style="width:2.7586206896551726%; background:#b0441f" title="Échec: 4 (2,8 %)"></div><div class="hero-bar-seg" style="width:3.4482758620689653%; background:#8a6400" title="À vérifier: 5 (3,4 %)"></div><div class="hero-bar-seg" style="width:26.89655172413793%; background:#0b7d0b" title="Réussite: 39 (26,9 %)"></div><div class="hero-bar-seg" style="width:66.89655172413794%; background:#5f6368" title="Non applicable: 97 (66,9 %)"></div></div>
+    <div class="hero-legend"><div class="hero-legend-item">
+        <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
+        <span class="hero-legend-label">Échec</span>
+        <span class="hero-legend-count">4 (2,8 %)</span>
+      </div>
+<div class="hero-legend-item">
+        <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
+        <span class="hero-legend-label">À vérifier</span>
+        <span class="hero-legend-count">5 (3,4 %)</span>
+      </div>
+<div class="hero-legend-item">
+        <span class="hero-legend-swatch" style="background:#0b7d0b">✓</span>
+        <span class="hero-legend-label">Réussite</span>
+        <span class="hero-legend-count">39 (26,9 %)</span>
+      </div>
+<div class="hero-legend-item">
+        <span class="hero-legend-swatch" style="background:#5f6368">–</span>
+        <span class="hero-legend-label">Non applicable</span>
+        <span class="hero-legend-count">97 (66,9 %)</span>
+      </div></div>
+  </div>
+
+  <h2>À examiner</h2>
+  <div class="cards"><div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
+        <span class="card-title"><strong>contrast-enhanced</strong> (Échec, gravité grave) <span class="card-count">× 2</span></span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.4.6</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html &gt; body &gt; main &gt; p:nth-of-type(1)</code></div>
+        <div class="card-snippet">L’élément présente un contraste de couleur insuffisant renforcé (AAA) de 2.61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de … — Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 7:1.</div>
+        
+        
+        <p class="card-note">Le sélecteur et le résumé ci-dessus proviennent d’une occurrence représentative ; 2 au total pour cette règle.</p>
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html">Comprendre 1.4.6 Contrast (Enhanced)</a></p>
+      </div>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
+        <span class="card-title"><strong>contrast-minimum</strong> (Échec, gravité grave) <span class="card-count">× 2</span></span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.4.3</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html &gt; body &gt; main &gt; p:nth-of-type(1)</code></div>
+        <div class="card-snippet">L’élément présente un contraste de couleur insuffisant de 2.61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 4.5:1 (texte no… — Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 4.5:1.</div>
+        
+        
+        <p class="card-note">Le sélecteur et le résumé ci-dessus proviennent d’une occurrence représentative ; 2 au total pour cette règle.</p>
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">Comprendre 1.4.3 Contrast (Minimum)</a></p>
+      </div>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
+        <span class="card-title"><strong>click-handler-keyboard-operable</strong> (Échec, gravité grave)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.1.1</span><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.1.3</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>#pay</code></div>
+        <div class="card-snippet">Cet élément a role=&quot;button&quot; et un gestionnaire de clic, et reçoit le focus clavier, mais aucun écouteur de touches n’est posé sur lui, sur un ancêtre, sur le document ni sur la fenêtre : Entrée et Espace ne font rien. — Utilisez l’élément natif (&lt;button&gt;, &lt;a href&gt; ou &lt;input type=&quot;checkbox&quot;&gt;), ou gérez keydown pour que les touches auxquelles répond un button fassent ce que fait un clic.</div>
+        
+        
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprendre 2.1.1 Keyboard</a></p>
+      </div>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
+        <span class="card-title"><strong>img-alt-present</strong> (Échec, gravité grave)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.1.1</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html &gt; body &gt; main &gt; img:nth-of-type(1)</code></div>
+        <div class="card-snippet">Cet élément &lt;img&gt; n’a pas d’attribut alt. — Ajoutez un attribut alt qui dit ce que montre l’image, ou alt=&quot;&quot; si l’image est purement décorative.</div>
+        
+        
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprendre 1.1.1 Non-text Content</a></p>
+      </div>
+    </div></div>
+<h3 class="cards-group">Échec probable : à confirmer</h3><div class="cards"><div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
+        <span class="card-title"><strong>invalid-field-error-message</strong> (À vérifier, gravité grave)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 3.3.1</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>#email</code></div>
+        <div class="card-snippet">Ce champ est marqué comme invalide, mais le message d’erreur que nomme aria-errormessage est masqué. — Affichez le message d’erreur tant que le champ est invalide.</div>
+        <p class="card-lean">Échec probable : Le message d’erreur lié au champ est masqué : l’erreur n’est probablement pas signalée.</p>
+        <details class="card-how"><summary>Comment vérifier</summary><ol><li>Rendez le champ non valide comme le ferait un utilisateur (soumettez le formulaire vide, ou saisissez une valeur erronée).</li><li>Cherchez le message d’erreur vers lequel pointe le champ (son aria-errormessage), et vérifiez s’il apparaît à l’écran.</li><li>Sinon, cherchez tout texte qui indique ce qui ne va pas : dans le label, à côté du champ ou dans un récapitulatif en haut du formulaire.</li><li>Avec un lecteur d’écran, placez-vous sur le champ et écoutez si l’erreur est annoncée.</li></ol><p>Réussite : L’erreur est indiquée par un texte, et annoncée, à un endroit rattaché au champ, même si ce n’est pas dans le message que désigne aria-errormessage.</p><p>Échec : Aucun texte n’indique quel champ est erroné ni pourquoi, ou l’utilisateur de lecteur d’écran n’en est pas informé, ce qui ne respecte pas le critère WCAG 3.3.1.</p></details>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html">Comprendre 3.3.1 Error Identification</a></p>
+      </div>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
+        <span class="card-title"><strong>img-alt-quality</strong> (À vérifier, gravité mineure)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.1.1</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html &gt; body &gt; main &gt; img:nth-of-type(2)</code></div>
+        <div class="card-snippet">L’équivalent textuel de cet &lt;img&gt; ressemble à un nom de fichier. — Un nom de fichier n’apprend rien sur l’image à quelqu’un qui ne la voit pas (échec WCAG F30). Remplacez-le par un texte qui dit ce que montre l’image ou, sur un lien ou un bouton, où il mène ou ce qu’il fait. Ne le gardez que si le nom de fichier est lui-même ce que montre l’image, comme une capture d’écran d’une liste de fichiers.</div>
+        <p class="card-lean">Échec probable : Un nom de fichier, une adresse web ou un mot générique ne dit pas ce que montre l’image. Attention : Le mot est peut-être tout ce que montre l’image, par exemple une image de ce mot.</p>
+        <details class="card-how"><summary>Comment vérifier</summary><ol><li>Repérez l’image indiquée par le rapport et lisez son texte alt (le rapport donne la raison pour laquelle il semblait suspect, le cas échéant).</li><li>Regardez l’image et son contexte, et demandez-vous ce qu’elle montre d’important pour la page.</li><li>Déterminez si l’alt le dit ; un nom de fichier, une adresse web ou un mot générique comme « image » ne le dit pas.</li></ol><p>Réussite : Le texte alt transmet ce que montre l’image et dont l’utilisateur a besoin, avec des mots adaptés au contexte.</p><p>Échec : Le texte alt ne transmet pas le contenu de l’image, par exemple un nom de fichier, une adresse ou un mot générique, ce qui ne respecte pas le critère WCAG 1.1.1 (F30).</p></details>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprendre 1.1.1 Non-text Content</a></p>
+      </div>
+    </div></div>
+<h3 class="cards-group">Réussite probable : à confirmer</h3><div class="cards"><div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
+        <span class="card-title"><strong>duplicate-id</strong> (À vérifier, gravité modérée) <span class="card-count">× 2</span></span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 4.1.1</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html &gt; body &gt; main &gt; form &gt; input:nth-of-type(2)</code></div>
+        <div class="card-snippet">L’identifiant « code » est utilisé sur 2 éléments du même arbre. — Donnez à chaque élément son propre identifiant. Un doublon casse &lt;label for&gt;, les liens d’ancrage, getElementById et tout attribut de référence par identifiant : tous ne résolvent que la première correspondance.</div>
+        <p class="card-lean">Réussite probable : Les WCAG 2.2 ont supprimé le critère au regard duquel ce point a été relevé. Attention : Le défaut lui-même casse toujours ce qui en dépend, et une norme qui conserve le critère le considère comme un échec.</p>
+        <details class="card-how"><summary>Comment vérifier</summary><ol><li>Inspectez les éléments indiqués par le rapport et notez l’id qu’ils partagent.</li><li>Vérifiez si quelque chose fait référence à cet id : l’attribut for d’un label, un attribut aria-* comme aria-labelledby, ou un lien vers #the-id.</li><li>Si quelque chose y fait référence, suivez la référence (cliquez sur le label ou le lien, ou lisez le nom dans le panneau Accessibilité) et vérifiez qu’elle atteint l’élément voulu.</li><li>Vérifiez quelle version des WCAG et quelle norme l’audit applique ; selon WCAG 2.2, ou 2.0/2.1 avec l’errata de 2023, le critère 4.1.1 est satisfait pour le HTML.</li></ol><p>Réussite : Rien ne casse à cause du doublon (les références atteignent l’élément voulu) et l’audit utilise WCAG 2.2, ou 2.0/2.1 avec l’errata, selon lesquels le critère 4.1.1 est satisfait.</p><p>Échec : Un label, une référence ARIA ou un lien atteint le mauvais élément (WCAG 1.3.1 ou 4.1.2), ou l’audit suit une norme qui conserve le texte du critère 4.1.1, comme l’EN 301 549 V3.2.1, selon laquelle les id en double ne respectent pas le critère 4.1.1 (F77).</p></details>
+        <p class="card-note">Le sélecteur et le résumé ci-dessus proviennent d’une occurrence représentative ; 2 au total pour cette règle.</p>
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG21/Understanding/parsing.html">Comprendre 4.1.1 Parsing</a></p>
+      </div>
+    </div></div>
+<h3 class="cards-group">À examiner par une personne</h3><div class="cards"><div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
+        <span class="card-title"><strong>manual-review</strong> (À vérifier, gravité modérée)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.1.1</span><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.4.3</span><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.4.7</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html</code></div>
+        <div class="card-snippet">Vérifiez à la main la navigation au clavier et l’ordre du focus. — Parcourez la page avec la touche Tab et vérifiez que chaque élément interactif peut être atteint et utilisé au clavier, et que le focus peut toujours en sortir ; que l’ordre du focus suit l’ordre de lecture, y compris après qu’un script a ouvert ou ajouté du contenu ; et que le focus est toujours visible.</div>
+        
+        <details class="card-how"><summary>Comment vérifier</summary><ol><li>Cliquez dans la barre d’adresse du navigateur, puis appuyez plusieurs fois sur Tab pour parcourir chaque lien et chaque contrôle de la page.</li><li>À chaque arrêt, vérifiez que vous voyez où se trouve le focus, et que l’ordre suit l’ordre de lecture de la page.</li><li>Actionnez chaque contrôle au clavier (Entrée, Espace, touches fléchées), et ouvrez et fermez les menus et les boîtes de dialogue.</li><li>Vérifiez que le focus ne reste jamais bloqué dans un composant et que Échap ou Tab permet de continuer.</li></ol><p>Réussite : Tout fonctionne au clavier, le focus se déplace dans un ordre logique, reste toujours visible et n’est jamais bloqué.</p><p>Échec : Un élément ne peut pas être atteint ou utilisé au clavier, le focus piège l’utilisateur, l’ordre est déroutant ou le focus est invisible, ce qui ne respecte pas les critères WCAG 2.1.1, 2.1.2, 2.4.3 ou 2.4.7.</p></details>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprendre 2.1.1 Keyboard</a></p>
+      </div>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
+        <span class="card-title"><strong>page-title-patterns</strong> (À vérifier, gravité mineure)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.4.2</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>head &gt; title</code></div>
+        <div class="card-snippet">Vérifiez que le titre de la page, « Checkout », indique de quoi parle la page. — Vérifiez que le titre dit de quoi parle la page ou à quoi elle sert, et la distingue des autres pages du site.</div>
+        
+        <details class="card-how"><summary>Comment vérifier</summary><ol><li>Lisez le titre de la page donné par le rapport ; le navigateur l’affiche dans l’onglet.</li><li>Regardez le titre principal et le contenu de la page et notez de quoi elle parle.</li><li>Décidez si le titre dit ce sujet ou cette fonction.</li></ol><p>Réussite : Le titre dit de quoi parle la page ou à quoi elle sert.</p><p>Échec : Le titre ne dit pas de quoi parle la page ni à quoi elle sert, ce qui ne respecte pas le critère WCAG 2.4.2.</p></details>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">Comprendre 2.4.2 Page Titled</a></p>
+      </div>
+    </div></div>
+  
+  
+
+  <h2>Synthèse WCAG</h2>
+  
+  <h3 id="wcag-level-A" class="wcag-level-heading">Niveau A</h3>
+      <div class="table-scroll" role="region" tabindex="0" aria-labelledby="wcag-level-A">
+      <table class="wcag-table">
+        <thead><tr><th>CS</th><th>Exigence</th><th>Résultat</th><th>Répartition</th><th>Règles contributrices</th></tr></thead>
+        <tbody><tr>
+            <td class="sc-cell">WCAG 1.1.1</td>
+            <td>Contenu non textuel : équivalents textuels</td>
+            <td><span class="chip" style="background:#fdece5;color:#b0441f">Échec</span></td>
+            <td class="note">0 réussites / 1 échecs / 1 à vérifier / 19 non applicables</td>
+            <td class="note">area-alt-present, img-alt-decorative, img-alt-quality, area-alt-quality, canvas-text-alternative-quality, canvas-text-alternative-present, embed-text-alternative-present, img-alt-present, input-image-alt-present, object-text-alternative-present, role-img-text-alternative-present, svg-image-text-alternative-present, svg-text-alternative-present, video-poster-text-alternative-present, embed-text-alternative-quality, input-image-alt-decorative, input-image-alt-quality, object-text-alternative-quality, svg-text-alternative-quality, meter-name-present, progressbar-name-present</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.2.1</td>
+            <td>Contenus seulement audio et seulement vidéo (pré-enregistrés) : transcription</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">media-alternative-transcript-evidence</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.2.2</td>
+            <td>Sous-titres (pré-enregistrés)</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">video-caption</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.3.1</td>
+            <td>Information et relations</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">3 réussites / 0 échecs / 0 à vérifier / 13 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">table-headers-attr-valid, table-th-has-data-cells, aria-hidden-body, list-children-valid, listitem-parent-valid, definition-list-children-valid, dlitem-parent-valid, aria-required-children, aria-prohibited-children, aria-required-parent, form-control-programmatic-label-present, p-as-heading, table-fake-caption, td-has-header, aria-roles-valid, aria-owns-valid</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.4.1</td>
+            <td>Utilisation de la couleur</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 0 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">link-in-text-block</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.4.2</td>
+            <td>Contrôle du son</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">no-autoplay-audio</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.1.1</td>
+            <td>Clavier</td>
+            <td><span class="chip" style="background:#fdece5;color:#b0441f">Échec</span></td>
+            <td class="note">1 réussites / 1 échecs / 1 à vérifier / 5 non applicables</td>
+            <td class="note">manual-review, iframe-focusable-content, server-side-image-map-absent, scrollable-region-focusable, mouse-only-event-handlers, click-handler-keyboard-operable, focus-not-removed-by-script, widget-keyboard-focusable</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.2.1</td>
+            <td>Réglage du délai</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">meta-refresh-timing-absent</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.2.2</td>
+            <td>Mettre en pause, arrêter, masquer</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 1 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">deprecated-elements-not-used, moving-content-pausable</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.1</td>
+            <td>Contourner des blocs</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 0 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">bypass-blocks-present</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.2</td>
+            <td>Titre de page</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 1 à vérifier / 0 non applicables</td>
+            <td class="note">page-title-patterns, page-title-present</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.3</td>
+            <td>Parcours du focus</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 1 à vérifier / 0 non applicables</td>
+            <td class="note">manual-review</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.4</td>
+            <td>Fonction du lien (selon le contexte)</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 1 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">link-name-present, link-name-quality</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.5.3</td>
+            <td>Étiquette dans le nom</td>
+            <td><span class="chip" style="background:#f1f2f3;color:#5f6368">Non applicable</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">label-in-name</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 3.1.1</td>
+            <td>Langue de la page</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 1 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">html-lang-attr-present, html-xml-lang-mismatch</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 3.3.1</td>
+            <td>Identification des erreurs</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 1 à vérifier / 0 non applicables</td>
+            <td class="note">invalid-field-error-message</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 3.3.2</td>
+            <td>Étiquettes ou instructions</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">3 réussites / 0 échecs / 0 à vérifier / 0 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">form-control-single-label, form-control-programmatic-label-present, form-control-programmatic-label-quality</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 4.1.1</td>
+            <td>Analyse syntaxique</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 1 à vérifier / 0 non applicables</td>
+            <td class="note">duplicate-id</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 4.1.2</td>
+            <td>Nom, rôle et valeur : nom accessible</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">4 réussites / 0 échecs / 0 à vérifier / 20 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">aria-role-name-present, binary-control-name-present, button-name-present, input-image-alt-present, combobox-name-present, dialog-name-present, form-control-programmatic-label-present, iframe-name-present, iframe-title-unique, identical-iframes-same-purpose, link-name-present, listbox-name-present, menuitem-name-present, option-name-present, searchbox-name-present, slider-name-present, spinbutton-name-present, tab-name-present, textbox-name-present, treeitem-name-present, aria-hidden-focus, aria-hidden-body, summary-name-present, tooltip-name-present</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 4.1.2</td>
+            <td>Nom, rôle et valeur : validité ARIA</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">9 réussites / 0 échecs / 0 à vérifier / 6 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">aria-roles-valid, aria-deprecated-role, aria-valid-attr, aria-valid-attr-value, aria-allowed-attr, aria-prohibited-attr, aria-required-attr, duplicate-id-aria, nested-interactive-controls-absent, presentational-children-focusable-absent, aria-braille-equivalent, aria-conditional-attr, aria-checked-state-mismatch, aria-expanded-state-mismatch, aria-owns-valid</td>
+          </tr></tbody>
+      </table>
+      </div>
+<h3 id="wcag-level-AA" class="wcag-level-heading">Niveau AA</h3>
+      <div class="table-scroll" role="region" tabindex="0" aria-labelledby="wcag-level-AA">
+      <table class="wcag-table">
+        <thead><tr><th>CS</th><th>Exigence</th><th>Résultat</th><th>Répartition</th><th>Règles contributrices</th></tr></thead>
+        <tbody><tr>
+            <td class="sc-cell">WCAG 1.3.4</td>
+            <td>Orientation</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 0 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">css-orientation-lock</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.3.5</td>
+            <td>Identifier la finalité de la saisie</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">autocomplete-valid</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.4.3</td>
+            <td>Contraste (minimum)</td>
+            <td><span class="chip" style="background:#fdece5;color:#b0441f">Échec</span></td>
+            <td class="note">1 réussites / 1 échecs / 0 à vérifier / 0 non applicables</td>
+            <td class="note">contrast-computable, contrast-minimum</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.4.4</td>
+            <td>Redimensionnement du texte</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">meta-viewport-zoom-enabled</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.4.5</td>
+            <td>Texte sous forme d’image</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">image-of-text</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 1.4.12</td>
+            <td>Espacement du texte</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 1 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">avoid-inline-spacing, text-spacing-content-loss</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.6</td>
+            <td>En-têtes et étiquettes</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 2 non applicables</td>
+            <td class="note">heading-quality, form-control-label-quality</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.7</td>
+            <td>Visibilité du focus</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 1 à vérifier / 3 non applicables</td>
+            <td class="note">css-hidden-focus, css-focus-indicator-suppressed, focus-not-removed-by-script, manual-review</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.5.8</td>
+            <td>Taille de la cible (minimum)</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 0 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">target-size-minimum</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 3.1.2</td>
+            <td>Langue d’un passage</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">valid-lang</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 3.3.8</td>
+            <td>Authentification accessible (minimum)</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">password-paste-enabled</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 4.1.3</td>
+            <td>Messages d’état</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 0 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">live-region-announcements</td>
+          </tr></tbody>
+      </table>
+      </div>
+<h3 id="wcag-level-AAA" class="wcag-level-heading">Niveau AAA</h3>
+      <div class="table-scroll" role="region" tabindex="0" aria-labelledby="wcag-level-AAA">
+      <table class="wcag-table">
+        <thead><tr><th>CS</th><th>Exigence</th><th>Résultat</th><th>Répartition</th><th>Règles contributrices</th></tr></thead>
+        <tbody><tr>
+            <td class="sc-cell">WCAG 1.4.6</td>
+            <td>Contraste (amélioré)</td>
+            <td><span class="chip" style="background:#fdece5;color:#b0441f">Échec</span></td>
+            <td class="note">1 réussites / 1 échecs / 0 à vérifier / 0 non applicables</td>
+            <td class="note">contrast-computable, contrast-enhanced</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.1.3</td>
+            <td>Clavier (pas d’exception)</td>
+            <td><span class="chip" style="background:#fdece5;color:#b0441f">Échec</span></td>
+            <td class="note">0 réussites / 1 échecs / 0 à vérifier / 2 non applicables</td>
+            <td class="note">scrollable-region-focusable, mouse-only-event-handlers, click-handler-keyboard-operable</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.2.4</td>
+            <td>Interruptions</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 2 non applicables</td>
+            <td class="note">meta-refresh-no-exceptions, meta-refresh-timing-absent</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.9</td>
+            <td>Fonction du lien (lien uniquement)</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 2 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">identical-links-same-purpose, link-name-present, link-name-quality</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 3.2.5</td>
+            <td>Changement à la demande</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 2 non applicables</td>
+            <td class="note">meta-refresh-no-exceptions, meta-refresh-timing-absent</td>
+          </tr></tbody>
+      </table>
+      </div>
+
+  <details class="tech-details">
+    <summary>Données techniques complètes — tableau de bord, liste des occurrences avec recherche</summary>
+    <div class="tech-body">
+      <h2>Tableau de bord</h2>
+      <div class="scorecard"><div class="tile" style="border-color:#b0441f; background:#fdece5">
+      <div class="tile-num" style="color:#b0441f">4</div>
+      <div class="tile-pct">2,8 %</div>
+      <div class="tile-label">Échec</div>
+    </div>
+<div class="tile" style="border-color:#8a6400; background:#fdf3d9">
+      <div class="tile-num" style="color:#8a6400">5</div>
+      <div class="tile-pct">3,4 %</div>
+      <div class="tile-label">À vérifier</div>
+    </div>
+<div class="tile" style="border-color:#0b7d0b; background:#e9f7e9">
+      <div class="tile-num" style="color:#0b7d0b">39</div>
+      <div class="tile-pct">26,9 %</div>
+      <div class="tile-label">Réussite</div>
+    </div>
+<div class="tile" style="border-color:#5f6368; background:#f1f2f3">
+      <div class="tile-num" style="color:#5f6368">97</div>
+      <div class="tile-pct">66,9 %</div>
+      <div class="tile-label">Non applicable</div>
+    </div></div>
+
+      <h2 id="occurrences-heading">Occurrences</h2>
+      <div class="filters" id="filters"></div>
+      <input type="search" id="search" aria-label="Rechercher par id de règle / sélecteur / html…" placeholder="Rechercher par id de règle / sélecteur / html…" style="margin-bottom:10px; padding:6px 10px; border:1px solid #ccc; border-radius:5px; font-size:13px; width:100%; max-width:480px;">
+      <div class="table-scroll" role="region" tabindex="0" aria-labelledby="occurrences-heading">
+        <table class="findings-table" id="findings-table">
+          <thead>
+            <tr>
+              <th>Règle</th>
+              <th>Résultat</th>
+              <th>Gravité</th>
+              <th>Sélecteur</th>
+              <th>Résumé</th>
+            </tr>
+          </thead>
+          <tbody id="findings-body"></tbody>
+        </table>
+      </div>
+      <div class="pager">
+        <button id="prev-page">&larr; Précédent</button>
+        <span id="page-info"></span>
+        <button id="next-page">Suivant &rarr;</button>
+      </div>
+    </div>
+  </details>
+</main>
+
+<script type="application/json" id="report-data">[{"ruleId":"click-handler-keyboard-operable","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"Cet élément a role=\"button\" et un gestionnaire de clic, et reçoit le focus clavier, mais aucun écouteur de touches n’est posé sur lui, sur un ancêtre, sur le document ni sur la fenêtre : Entrée et Espace ne font rien.","summaryLang":"","hint":"Utilisez l’élément natif (\u003cbutton>, \u003ca href> ou \u003cinput type=\"checkbox\">), ou gérez keydown pour que les touches auxquelles répond un button fassent ce que fait un clic.","lean":""},{"ruleId":"contrast-computable","outcome":"pass","severity":"serious","severityLabel":"grave","selector":"","html":"","summary":"Le contraste est calculable pour tout le texte éligible (11 nœud(s) de texte).","summaryLang":"","hint":"","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"L’élément présente un contraste de couleur insuffisant renforcé (AAA) de 2.61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 7:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 7:1.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"L’élément présente un contraste de couleur insuffisant renforcé (AAA) de 2.55:1 (premier plan : #ffffff, arrière-plan : #00bb55, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 7:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 7:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"L’élément présente un contraste de couleur insuffisant de 2.61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 4.5:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 4.5:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"L’élément présente un contraste de couleur insuffisant de 2.55:1 (premier plan : #ffffff, arrière-plan : #00bb55, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 4.5:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 4.5:1.","lean":""},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"modérée","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"L’identifiant « code » est utilisé sur 2 éléments du même arbre.","summaryLang":"","hint":"Donnez à chaque élément son propre identifiant. Un doublon casse \u003clabel for>, les liens d’ancrage, getElementById et tout attribut de référence par identifiant : tous ne résolvent que la première correspondance.","lean":"Réussite probable : Les WCAG 2.2 ont supprimé le critère au regard duquel ce point a été relevé."},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"modérée","selector":"html > body > footer > p","html":"\u003cp id=\"code\">© Shop\u003c/p>","summary":"L’identifiant « code » est utilisé sur 2 éléments du même arbre.","summaryLang":"","hint":"Donnez à chaque élément son propre identifiant. Un doublon casse \u003clabel for>, les liens d’ancrage, getElementById et tout attribut de référence par identifiant : tous ne résolvent que la première correspondance.","lean":"Réussite probable : Les WCAG 2.2 ont supprimé le critère au regard duquel ce point a été relevé."},{"ruleId":"img-alt-present","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > img:nth-of-type(1)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\">","summary":"Cet élément \u003cimg> n’a pas d’attribut alt.","summaryLang":"","hint":"Ajoutez un attribut alt qui dit ce que montre l’image, ou alt=\"\" si l’image est purement décorative.","lean":""},{"ruleId":"img-alt-quality","outcome":"cantTell","severity":"minor","severityLabel":"mineure","selector":"html > body > main > img:nth-of-type(2)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\" alt=\"IMG_2041.jpg\">","summary":"L’équivalent textuel de cet \u003cimg> ressemble à un nom de fichier.","summaryLang":"","hint":"Un nom de fichier n’apprend rien sur l’image à quelqu’un qui ne la voit pas (échec WCAG F30). Remplacez-le par un texte qui dit ce que montre l’image ou, sur un lien ou un bouton, où il mène ou ce qu’il fait. Ne le gardez que si le nom de fichier est lui-même ce que montre l’image, comme une capture d’écran d’une liste de fichiers.","lean":"Échec probable : Un nom de fichier, une adresse web ou un mot générique ne dit pas ce que montre l’image."},{"ruleId":"invalid-field-error-message","outcome":"cantTell","severity":"serious","severityLabel":"grave","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"Ce champ est marqué comme invalide, mais le message d’erreur que nomme aria-errormessage est masqué.","summaryLang":"","hint":"Affichez le message d’erreur tant que le champ est invalide.","lean":"Échec probable : Le message d’erreur lié au champ est masqué : l’erreur n’est probablement pas signalée."},{"ruleId":"manual-review","outcome":"cantTell","severity":"moderate","severityLabel":"modérée","selector":"html","html":"","summary":"Vérifiez à la main la navigation au clavier et l’ordre du focus.","summaryLang":"","hint":"Parcourez la page avec la touche Tab et vérifiez que chaque élément interactif peut être atteint et utilisé au clavier, et que le focus peut toujours en sortir ; que l’ordre du focus suit l’ordre de lecture, y compris après qu’un script a ouvert ou ajouté du contenu ; et que le focus est toujours visible.","lean":""},{"ruleId":"page-title-patterns","outcome":"cantTell","severity":"minor","severityLabel":"mineure","selector":"head > title","html":"\u003ctitle>Checkout\u003c/title>","summary":"Vérifiez que le titre de la page, « Checkout », indique de quoi parle la page.","summaryLang":"","hint":"Vérifiez que le titre dit de quoi parle la page ou à quoi elle sert, et la distingue des autres pages du site.","lean":""}]</script>
+<script>
+(function () {
+  var OUTCOME_INFO = {"fail":{"label":"Échec","defaultOn":true,"color":"#b0441f","bg":"#fdece5","icon":"⚠"},"cantTell":{"label":"À vérifier","defaultOn":true,"color":"#8a6400","bg":"#fdf3d9","icon":"ℹ"},"pass":{"label":"Réussite","defaultOn":false,"color":"#0b7d0b","bg":"#e9f7e9","icon":"✓"},"notApplicable":{"label":"Non applicable","defaultOn":false,"color":"#5f6368","bg":"#f1f2f3","icon":"–"}};
+  var ORDER = ["fail","cantTell","pass","notApplicable"];
+  var DEFAULT_ON = ["fail","cantTell"];
+  var rows = JSON.parse(document.getElementById('report-data').textContent);
+
+  var PAGE_SIZE = 100;
+  var TEXT = {"none":"Aucune occurrence correspondante","empty":"Cette analyse n’a relevé aucune occurrence.","info":"Page {{page}} / {{pages}}  ({{matching}} correspondantes, {{total}} au total)"};
+  var COLUMNS = 5;
+  var numberFormat = new Intl.NumberFormat("fr");
+  function fill(template, values) {
+    return template.replace(/\{\{(\w+)\}\}/g, function (m, k) {
+      return Object.prototype.hasOwnProperty.call(values, k) ? String(values[k]) : m;
+    });
+  }
+  var page = 0;
+  var active = {};
+  DEFAULT_ON.forEach(function (c) { active[c] = true; });
+
+  var filtersEl = document.getElementById('filters');
+  ORDER.forEach(function (c) {
+    var info = OUTCOME_INFO[c];
+    var id = 'chk-' + c;
+    var label = document.createElement('label');
+    var checked = DEFAULT_ON.indexOf(c) !== -1;
+    label.innerHTML = '<input type="checkbox" id="' + id + '"' + (checked ? ' checked' : '') + '> ' +
+      '<span class="chip" style="background:' + info.bg + ';color:' + info.color + '">' + c + '</span>';
+    filtersEl.appendChild(label);
+    label.querySelector('input').addEventListener('change', function (e) {
+      active[c] = e.target.checked;
+      page = 0;
+      render();
+    });
+  });
+
+  var searchEl = document.getElementById('search');
+  var bodyEl = document.getElementById('findings-body');
+  var pageInfoEl = document.getElementById('page-info');
+  var prevBtn = document.getElementById('prev-page');
+  var nextBtn = document.getElementById('next-page');
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function matches(r, q) {
+    if (!active[r.outcome]) return false;
+    if (!q) return true;
+    var hay = (r.ruleId + ' ' + r.selector + ' ' + r.html + ' ' + r.summary + ' ' + (r.lean || '')).toLowerCase();
+    return hay.indexOf(q) !== -1;
+  }
+
+  function render() {
+    var q = searchEl.value.trim().toLowerCase();
+    var filtered = rows.filter(function (r) { return matches(r, q); });
+    var totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    if (page >= totalPages) page = totalPages - 1;
+    if (page < 0) page = 0;
+
+    var slice = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+    if (!slice.length) {
+      bodyEl.innerHTML = '<tr><td colspan="' + COLUMNS + '" class="empty-row">' +
+        esc(rows.length ? TEXT.none : TEXT.empty) + '</td></tr>';
+    } else bodyEl.innerHTML = slice.map(function (r) {
+      var info = OUTCOME_INFO[r.outcome];
+      var chip = '<span class="chip" style="background:' + info.bg + ';color:' + info.color + '">' + r.outcome + '</span>';
+      return '<tr>' +
+        '<td class="snippet">' + esc(r.ruleId) + '</td>' +
+        '<td>' + chip + '</td>' +
+        '<td>' + esc(r.severityLabel) + '</td>' +
+        '<td class="snippet" title="' + esc(r.html) + '">' + esc(r.selector) + '</td>' +
+        '<td class="snippet"' + (r.summaryLang ? ' lang="' + esc(r.summaryLang) + '"' : '') + '>' + esc(r.summary) + (r.lean ? '<span class="row-lean">' + esc(r.lean) + '</span>' : '') + '</td>' +
+        '</tr>';
+    }).join('');
+
+    pageInfoEl.textContent = filtered.length === 0
+      ? TEXT.none
+      : fill(TEXT.info, {
+          page: numberFormat.format(page + 1),
+          pages: numberFormat.format(totalPages),
+          matching: numberFormat.format(filtered.length),
+          total: numberFormat.format(rows.length)
+        });
+    prevBtn.disabled = page <= 0;
+    nextBtn.disabled = page >= totalPages - 1;
+  }
+
+  searchEl.addEventListener('input', function () { page = 0; render(); });
+  prevBtn.addEventListener('click', function () { page--; render(); });
+  nextBtn.addEventListener('click', function () { page++; render(); });
+
+  render();
+})();
+</script>
+</body>
+</html>

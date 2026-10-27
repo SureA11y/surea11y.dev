@@ -100,6 +100,52 @@ export function StandaloneUsageContent() {
 				<code>contentType</code> lit un document SVG ou XHTML comme ce qu’il est.
 			</p>
 
+			<h2 id="from-the-browser-console">Depuis la console du navigateur</h2>
+			<p>
+				Pour une analyse à la main, le bundle offre quelques outils. Chargez-le dans n’importe
+				quelle page ouverte depuis la console du navigateur (l’onglet Console des outils de
+				développement), puis analysez, listez les constats, encadrez-les sur la page ou ouvrez le
+				rapport HTML :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Pasted into the console of the page to check.",
+					"const s = document.createElement('script');",
+					"s.src = 'https://cdn.jsdelivr.net/npm/@surea11y/core/surea11y.browser.js';",
+					"document.head.append(s);",
+					"",
+					"// Once it has loaded:",
+					"a11ycore.version; // the engine's version",
+					"const result = await a11ycore.run(); // scan the page",
+					"a11ycore.table(result); // the findings, worst first",
+					"a11ycore.highlight(result); // box each one on the page",
+					"await a11ycore.openReport(result); // the HTML report, in a new tab",
+					"await a11ycore.inspect('headings'); // what a person checks by hand",
+				]}
+			/>
+			<p>
+				<code>run(options)</code> accepte les options du moteur et deux qui lui sont propres,{" "}
+				<code>context</code> (un sélecteur, pour n’analyser qu’une partie de la page) et{" "}
+				<code>runOnly</code>, et récupère avant l’analyse les feuilles de style que la page ne peut
+				pas lire elle-même. <code>table()</code> affiche une ligne par constat : d’abord les échecs,
+				puis les questions qui penchent vers l’échec, celles qui penchent vers la réussite, et
+				celles que seule une personne peut juger. <code>highlight()</code> encadre chaque élément
+				que nomme un <code>fail</code> (rouge plein) ou un <code>cantTell</code> (ambre en
+				pointillés), dans une couche à part qui ne touche pas aux éléments de la page ;{" "}
+				<code>clearHighlights()</code> la retire. <code>inspect()</code> dessine ce qu’une personne
+				vérifie à la main, et ne juge rien : <code>'headings'</code>, <code>'landmarks'</code>,{" "}
+				<code>'names'</code> ou <code>'focus-order'</code>. <code>openReport()</code> récupère{" "}
+				<code>surea11y.report.js</code> à côté du bundle la première fois, et le rapport montre
+				comment vérifier chaque question. La Content Security Policy d’une page peut bloquer un
+				script venant d’un CDN : chargez alors les fichiers depuis l’origine de la page, ou
+				analysez avec un driver. Toutes les options sont dans la{" "}
+				<a href={`${core}/docs/INTEGRATION.md#from-the-browser-console`}>
+					section sur la console du navigateur d’<code>INTEGRATION.md</code>
+				</a>
+				, le guide d’intégration sur GitHub.
+			</p>
+
 			<h2 id="packs-in-a-page">Packs dans une page</h2>
 			<p>
 				Un <a href="/configuration/packs/">pack</a> est préparé dans Node : il parvient donc à une
@@ -213,6 +259,31 @@ export function StandaloneUsageContent() {
 				, le guide d’intégration sur GitHub.
 			</p>
 
+			<h2 id="style-sheets-from-another-origin">Feuilles de style d’une autre origine</h2>
+			<p>
+				Le script d’une page ne peut pas lire les règles d’une feuille de style servie depuis une
+				autre origine (un CDN, un service de polices), si bien qu’une règle qui cherche quelque
+				chose dans le CSS, comme <code>css-orientation-lock</code>, ne peut pas savoir s’il y est, et
+				pose une question. Donnez leur texte à l’analyse dans{" "}
+				<code>engineOptions.styleSheetTexts</code> (<code>{"[{ href, text }]"}</code>) et{" "}
+				<code>css-orientation-lock</code>, <code>css-hidden-focus</code> et{" "}
+				<code>css-focus-indicator-suppressed</code> le lisent. Dans le bundle,{" "}
+				<code>runa11yCoreInPageAsync</code> prend les quatre mêmes arguments que{" "}
+				<code>runa11yCoreInPage</code>, récupère avec <code>preloadStyleSheets()</code> les feuilles
+				que leur serveur partage (CORS), puis analyse :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = await a11ycore.runa11yCoreInPageAsync(location.href, null, {}, null);",
+				]}
+			/>
+			<p>
+				Une feuille que son serveur ne partage pas ne peut pas du tout être lue depuis la page. Un
+				outil qui pilote le navigateur peut la récupérer hors de la page, où CORS ne s’applique pas,
+				et la passer dans la même option ; les bindings le font.
+			</p>
+
 			<h2 id="a-time-limit-on-a-scan">Une limite de temps pour une analyse</h2>
 			<p>
 				Une analyse s’exécute d’un seul tenant dans la page, et rien dans la page ne peut
@@ -303,6 +374,85 @@ export function StandaloneUsageContent() {
 				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}><code>INTEGRATION.md</code></a>.
 			</p>
 
+			<h2 id="listener-and-live-region-hooks">Gestionnaires de clic et régions live</h2>
+			<p>
+				Deux autres hooks facultatifs, depuis core 1.14, s’installent comme le hook d’internals,
+				avant les scripts de la page elle-même. <code>listenerHookScript()</code> enregistre les
+				écouteurs de clic, de clavier, de focus, de souris et de collage qu’une page ajoute depuis
+				un script, pour que les règles de clavier les jugent : un{" "}
+				<code>&lt;div role="button"&gt;</code> doté d’un écouteur de clic, sans écouteur de clavier
+				là où va un événement clavier venant de lui, échoue (
+				<code>CLICK_HANDLER_NO_KEY_LISTENER</code>). <code>liveRegionHookScript()</code> enregistre
+				ce que reçoivent les régions live : <code>live-region-announcements</code> pose alors une
+				question sur une région ajoutée avec son texte déjà dedans, ou affichée et remplie d’un
+				coup, que les lecteurs d’écran n’annoncent souvent pas, et <code>getAnnouncements()</code>{" "}
+				renvoie ce que la page a mis à disposition pour être annoncé :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { listenerHookScript, liveRegionHookScript, getAnnouncements } = require('@surea11y/core');",
+					"",
+					"// Playwright: before the page's own scripts",
+					"await page.addInitScript({ content: listenerHookScript() });",
+					"await page.addInitScript({ content: liveRegionHookScript() });",
+					"await page.goto('https://example.com/settings');",
+					"",
+					"await page.click('text=Save');",
+					"const said = await page.evaluate(getAnnouncements, { selectors: true });",
+					"// [{ text: 'Saved', politeness: 'polite', time: 1234.5, order: 7, behindModal: false, selector: '#status' }]",
+				]}
+			/>
+			<p>
+				<code>engine.environment.listenerHook</code> et <code>.liveRegionHook</code> indiquent si une
+				analyse les a vus. Seul un hook d’écouteurs installé avant les scripts de la page (
+				<code>'early'</code>) prouve qu’un écouteur manque ; installé plus tard, les règles ne font
+				que poser une question. Dans le bundle, <code>a11ycore.getAnnouncements()</code> les lit
+				dans la page. Comme le hook d’internals, tous deux gardent ce qu’ils enregistrent là où
+				n’importe quel script de la page peut le lire : installez-les pour les exécutions de test et
+				d’audit. Dans un fichier de configuration jsdom, passez <code>{"{ early: true }"}</code> et,
+				pour le hook d’écouteurs, exécutez d’abord un sélecteur (
+				<code>document.querySelector('*')</code>), car jsdom ajoute ses propres écouteurs de clavier
+				la première fois qu’un sélecteur s’exécute. Les sections du{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+					hook d’écouteurs
+				</a>{" "}
+				et du{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}>
+					hook de régions live
+				</a>{" "}
+				d’<code>INTEGRATION.md</code>, le guide d’intégration sur GitHub, donnent le reste.
+			</p>
+
+			<h2 id="questions-and-steps">Tendances et étapes des questions</h2>
+			<p>
+				Depuis core 1.14, une occurrence <code>cantTell</code> peut porter un <code>lean</code> :
+				le sens dans lequel vont les éléments de la page (<code>toward: 'fail'</code> ou{" "}
+				<code>'pass'</code>), pourquoi, et ce qui pourrait le contredire. Le résultat reste{" "}
+				<code>cantTell</code>. Chaque question d’une règle de core porte aussi{" "}
+				<code>howToCheck</code>, les étapes qu’une personne suit pour y répondre, dans la langue de
+				l’analyse. Elles sont ajoutées dans Node, pas par le moteur dans la page :{" "}
+				<code>runDomRulesInPage</code> les ajoute, et pour un résultat qui revient d’une page,{" "}
+				<code>addHowToCheck(result)</code> en renvoie une copie qui les contient.{" "}
+				<code>leaningFailures(result)</code> liste les constats qui penchent vers l’échec, pour un
+				seuil à vous :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { runa11yCoreInPage, addHowToCheck, leaningFailures } = require('@surea11y/core');",
+					"",
+					"const raw = await page.evaluate(runa11yCoreInPage, page.url(), null, {}, null);",
+					"const result = addHowToCheck(raw); // a copy, with each question's steps",
+					"const likelyFailures = leaningFailures(result);",
+				]}
+			/>
+			<p>
+				Qu’un constat penche, et ses textes, peuvent changer dans une version mineure de core ; la
+				forme de <code>lean</code> est stable. Voir{" "}
+				<a href="/results-reports/output-schema/#leans">le schéma de sortie</a> pour ces deux champs.
+			</p>
+
 			<h2 id="what-a-scan-covers">Savoir ce que couvre une analyse</h2>
 			<p>
 				Un outil qui rapporte par critère WCAG et laisse ses utilisateurs choisir des
@@ -329,7 +479,9 @@ export function StandaloneUsageContent() {
 				Un critère dont seules certaines vérifications ont été exécutées revient en{" "}
 				<code>cantTell</code>, chaque vérification non exécutée étant marquée{" "}
 				<code>notSelected: true</code> : affichez-le comme vérifié en partie, jamais
-				comme réussi. Construire votre propre outil sur core (une CLI, une intégration
+				comme réussi. Depuis core 1.14, aucun critère n’est rapporté comme réussi : un critère ne
+				réussit que si ses règles vérifient tout ce qu’il demande, et aucun n’est encore recensé
+				comme entièrement vérifié. Construire votre propre outil sur core (une CLI, une intégration
 				CI, un tableau de bord, un générateur de rapports de conformité) est traité dans{" "}
 				<a href={`${core}/docs/BUILDING_ON_CORE.md`}><code>BUILDING_ON_CORE.md</code></a>,
 				sur GitHub : ce sur quoi vous pouvez compter, lancer des analyses, choisir des

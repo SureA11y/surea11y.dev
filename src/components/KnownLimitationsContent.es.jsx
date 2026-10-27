@@ -36,8 +36,10 @@ const remedyRows = [
 		),
 		remedy: (
 			<>
-				Lee el <code>uncertainty.code</code> y el <code>uncertainty.needed</code> de la ocurrencia,
-				y decídelo a mano.
+				Sigue los pasos de <code>howToCheck</code> de la ocurrencia y decídelo a mano.{" "}
+				<code>uncertainty</code> dice qué faltaba, y <code>lean</code> hacia dónde apunta la
+				evidencia de la página (consulta el{" "}
+				<a href="/results-reports/output-schema/#how-to-check">esquema de salida</a>).
 			</>
 		),
 	},
@@ -228,26 +230,75 @@ export function KnownLimitationsContent() {
 					y los elementos personalizados que no están definidos, se juzgan como antes.
 				</li>
 				<li>
+					<strong>No se pueden enumerar los manejadores de eventos añadidos desde script.</strong>{" "}
+					Un manejador añadido con <code>addEventListener</code>, o asignado como propiedad (
+					<code>el.onclick = fn</code>), no deja nada en el marcado y ningún script puede leerlo,
+					así que las reglas de teclado (
+					<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>,{" "}
+					<a href="/rules/mouse-only-event-handlers/"><code>mouse-only-event-handlers</code></a>)
+					solo juzgan los atributos de manejador en línea: un <code>role="button"</code> enfocable
+					que recibe su manejador de clic desde script no se informa (por uno que no puede recibir
+					el foco pregunta igualmente{" "}
+					<a href="/rules/widget-keyboard-focusable/"><code>widget-keyboard-focusable</code></a>), un
+					manejador de teclado añadido desde script no puede justificar un <code>onclick</code> en
+					línea, y <code>password-paste-enabled</code> no puede saber si un manejador de pegado
+					añadido desde script devuelve el texto que cancela un <code>onpaste</code> en línea.
+					Instala el hook opcional de manejadores (<code>listenerHookScript()</code>) antes de que
+					se ejecuten los scripts de la página: las reglas juzgan entonces también los manejadores
+					que registra y, donde no vio ningún manejador de teclado, hacen fallar un control que
+					Intro y Espacio no pueden accionar. Un manejador de clic que un framework añade a su
+					elemento raíz sirve a elementos que nada nombra, así que incluso con el hook esos se
+					juzgan por su marcado. Dónde instalarlo:{" "}
+					<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, en GitHub.
+				</li>
+				<li>
+					<strong>No se puede ver después cómo se llenó una región viva.</strong> Un mensaje de
+					estado se anuncia cuando una región viva cambia mientras la tecnología de asistencia
+					puede alcanzarla (4.1.3), pero un análisis ve la página en un momento. Sin ayuda,{" "}
+					<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>{" "}
+					solo juzga lo que hay: una región viva oculta a la tecnología de asistencia con{" "}
+					<code>aria-hidden</code> o <code>inert</code>, o detrás de un{" "}
+					<code>&lt;dialog&gt;</code> modal abierto, o que se quedó en <code>aria-busy</code>. Con
+					el hook opcional de regiones vivas (<code>liveRegionHookScript()</code>), pregunta además
+					por una región que la página añadió ya con su texto, o que mostró y llenó a la vez, y{" "}
+					<code>getAnnouncements()</code> enumera lo que la página dejó disponible para anunciar.
+					Ninguno de los dos dice qué pronunció un lector de pantalla: eso depende del lector. El
+					hook no ve dentro de los shadow roots. Detalles:{" "}
+					<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, en GitHub.
+				</li>
+				<li>
 					<strong>
 						Un análisis hecho con un diálogo modal abierto ve el diálogo, no la página.
 					</strong>{" "}
-					Un <code>&lt;dialog&gt;</code> abierto con <code>showModal()</code> (o un{" "}
-					<code>&lt;dialog aria-modal="true"&gt;</code> abierto) vuelve inerte el resto del
-					documento, y los navegadores solo exponen el diálogo a la tecnología de asistencia. El
-					motor hace lo mismo: el contenido detrás del diálogo queda fuera de todas las reglas,
-					igual que el resto del contenido oculto, y las reglas sobre la estructura de la propia
-					página (<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
+					Un <code>&lt;dialog&gt;</code> abierto con <code>showModal()</code> vuelve inerte el resto
+					del documento, y los navegadores solo exponen el diálogo a la tecnología de asistencia. Un
+					diálogo abierto con el atributo <code>open</code> o con <code>show()</code> no es modal,
+					aunque tenga <code>aria-modal="true"</code>: la página de detrás sigue siendo alcanzable, y
+					el motor la juzga. Bajo jsdom, que no tiene capa superior, un{" "}
+					<code>&lt;dialog aria-modal="true"&gt;</code> abierto se toma en cambio como modal, lo más
+					cercano que el motor puede saber ahí. El motor hace lo mismo que el navegador: el
+					contenido detrás del diálogo queda fuera de todas las reglas, igual que el resto del
+					contenido oculto, y las reglas sobre la estructura de la propia página (
+					<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
 					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
 					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
 					<a href="/rules/region/"><code>region</code></a>) informan <code>notApplicable</code>,
 					porque el análisis no puede ver esa estructura. Vuelve a analizar la página con el
-					diálogo cerrado para juzgar lo que hay detrás. Dos límites: un{" "}
-					<code>&lt;dialog&gt;</code> modal dentro de un shadow root no se detecta, y un modal
-					propio construido con un elemento <code>role="dialog"</code> e <code>inert</code> o{" "}
-					<code>aria-hidden</code> en el resto de la página solo se trata a través de esos
-					atributos, que ocultan la página pero no indican a las reglas de estructura que hay un
-					diálogo abierto. Otros motores difieren aquí: algunos hacen lo mismo, otros juzgan la
-					página detrás del diálogo como si no hubiera nada abierto.
+					diálogo cerrado para juzgar lo que hay detrás. Un modal propio, un elemento mostrado con{" "}
+					<code>role="dialog"</code> o <code>role="alertdialog"</code> y{" "}
+					<code>aria-modal="true"</code>, también deja esas reglas de estructura en{" "}
+					<code>notApplicable</code>; <code>aria-modal</code> no vuelve nada inerte, así que todas
+					las demás reglas siguen juzgando la página de detrás. Un diálogo modal dentro de un shadow
+					root abierto cuenta como uno del documento; uno en un shadow root cerrado no se puede
+					encontrar. Un modal propio sin <code>aria-modal="true"</code> solo se trata a través del{" "}
+					<code>inert</code> o el <code>aria-hidden</code> que la página pone en el resto, que
+					ocultan la página pero no indican a las reglas de estructura que hay un diálogo abierto.
 				</li>
 				<li>
 					<strong>
@@ -259,9 +310,8 @@ export function KnownLimitationsContent() {
 					<code>visibility:hidden</code>, <code>[hidden]</code> o un <code>&lt;details&gt;</code>{" "}
 					cerrado, y un subárbol <code>[inert]</code> (que las reglas sobre el aspecto del
 					contenido, como el contraste y el espaciado del texto, siguen juzgando, ya que se
-					dibuja), quedan <strong>excluidos de la evaluación de reglas por defecto</strong>:
-					coincidiendo con el comportamiento sensible a la visibilidad de otros motores
-					consolidados. Este es un valor predeterminado deliberado (
+					dibuja), quedan <strong>excluidos de la evaluación de reglas por defecto</strong>. Este
+					es un valor predeterminado deliberado (
 					<code>engineOptions.includeHiddenElements: false</code>), no un descuido: el contenido
 					oculto no es accesible mediante tecnología de asistencia ni teclado hasta que se muestra,
 					así que marcar por defecto un defecto de marcado dentro de él a menudo sería ruido.
@@ -270,6 +320,17 @@ export function KnownLimitationsContent() {
 					una referencia de ID ARIA rota) antes de que un diálogo llegue a abrirse. Consulta{" "}
 					<a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>{" "}
 					para conocer la opción y exactamente qué mecanismos de ocultación cubre.
+				</li>
+				<li>
+					<strong>
+						No se informa de un <code>aria-details</code> que nombra contenido oculto.
+					</strong>{" "}
+					<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a> comprueba
+					que el id nombra un elemento, no que el elemento se muestre. Chromium deja la relación
+					fuera de su árbol de accesibilidad mientras el elemento está oculto y la recupera cuando
+					se muestra, así que unos detalles que se abren a petición se anuncian al abrirse, y WCAG
+					no pide más. Para comprobar la relación tal como la recibe la tecnología de asistencia,
+					analiza la página con los detalles visibles.
 				</li>
 				<li>
 					<strong>jsdom no tiene popovers.</strong> Incluye la regla de HTML que oculta un{" "}
@@ -282,6 +343,14 @@ export function KnownLimitationsContent() {
 					contenido de un popover, analiza la página en un navegador con el popover abierto.
 				</li>
 				<li>
+					<strong>Bajo jsdom, el texto de <code>content</code> de CSS no da nombre.</strong> jsdom no
+					calcula estilos para <code>::before</code> ni <code>::after</code>, así que un botón o un
+					enlace cuyo único texto es generado (<code>content: "Save"</code>,{" "}
+					<code>content: attr(data-label)</code>) tiene nombre en un navegador y no lo tiene bajo
+					jsdom, donde <code>button-name-present</code>, <code>link-name-present</code> y las demás
+					reglas de nombre lo hacen fallar. Analiza esas páginas en un navegador.
+				</li>
+				<li>
 					<strong>jsdom conserva el tamaño de fuente tal como está escrito.</strong> Un navegador
 					informa de un tamaño de fuente calculado en px; jsdom conserva una palabra clave o un{" "}
 					<code>calc()</code> tal como está escrito. El motor lee las palabras clave con los tamaños
@@ -290,6 +359,18 @@ export function KnownLimitationsContent() {
 					navegador. <code>larger</code> y <code>smaller</code>, que dependen del tamaño del padre, no
 					se resuelven bajo jsdom: ese texto se somete a la relación del texto normal, y su mensaje
 					indica su tamaño como 0px. Un navegador resuelve ambos.
+				</li>
+				<li>
+					<strong>jsdom ignora las hojas de estilo propias de un shadow root.</strong> Confirmado en
+					jsdom 29.1.1: ni un <code>&lt;style&gt;</code> dentro de un shadow root ni sus{" "}
+					<code>adoptedStyleSheets</code> llegan al estilo calculado de sus elementos, así que bajo
+					jsdom no se ven los colores, los tamaños ni el <code>display: none</code> o{" "}
+					<code>visibility: hidden</code> definidos ahí. Las reglas juzgan entonces el contenido de
+					un componente como si no tuviera estilos: el contraste se mide con los colores
+					predeterminados, y el contenido que su CSS oculta se juzga como visible. La única
+					excepción es el color de un enlace, que los helpers de contraste calculan a partir de las
+					propias hojas del shadow root. Analiza en un navegador las páginas hechas con componentes
+					web con estilos.
 				</li>
 				<li>
 					<strong>
@@ -354,6 +435,31 @@ export function KnownLimitationsContent() {
 					páginas grandes de producción.
 				</li>
 				<li>
+					<strong>Bajo jsdom, el color de un enlace se calcula a partir de las reglas de la propia
+					página.</strong> jsdom ordena su propio <code>{":link { color: #0000EE }"}</code> con las
+					reglas de la página solo por especificidad, así que el{" "}
+					<code>{"a { color: #fff }"}</code> de una página pierde frente a él, mientras que un
+					navegador aplica la regla de la página. Bajo jsdom, el motor calcula el color de un
+					enlace, y del texto que contiene, a partir de las reglas de la página como lo hace la
+					cascada de un navegador; un enlace que ninguna regla de la página colorea conserva el
+					color de enlace del navegador, y un enlace se considera no visitado. Donde eso no se
+					puede hacer (una hoja de estilo que no se puede leer, un <code>var()</code>, una regla
+					dentro de <code>@supports</code>, <code>@layer</code>, <code>@container</code> o anidada
+					en otra), se pregunta por el texto (<code>contrast-computable</code>,{" "}
+					<code>FOREGROUND_UNPARSABLE</code>) en lugar de medirlo en el azul de jsdom. En un
+					navegador se lee el color calculado tal cual.
+				</li>
+				<li>
+					<strong>Bajo jsdom, el texto se juzga por su <code>font-size</code> calculado.</strong> En
+					un navegador, las reglas de contraste y <code>p-as-heading</code> juzgan el texto por el
+					tamaño al que se dibuja, incluidos el <code>zoom</code> de CSS, una transformación SVG y{" "}
+					<code>font-size-adjust</code>, este último a partir de las métricas de la propia fuente (
+					<code>font-size: 24px; font-size-adjust: 0.3</code> dibuja Arial a unos 14px, que no es
+					texto grande). jsdom no maqueta nada ni lee ninguna fuente, así que ahí el{" "}
+					<code>font-size</code> se toma tal cual. Analiza en un navegador una página que escala
+					así su texto.
+				</li>
+				<li>
 					<strong>
 						En un navegador real, algunas reglas modifican la página mientras dura su comprobación, y
 						los propios scripts de la página pueden reaccionar.
@@ -363,8 +469,14 @@ export function KnownLimitationsContent() {
 					<code>aria-hidden-focus</code> enfoca un elemento dentro de un subárbol{" "}
 					<code>aria-hidden</code> para ver si la página retira el foco de inmediato (un centinela de
 					trampa de foco); <code>text-spacing-content-loss</code> añade una hoja de estilo con el espaciado de WCAG
-					1.4.12. Todo esto se restablece antes de que la regla termine: el foco, la posición de
-					desplazamiento, los atributos style y la hoja de estilo añadida. Lo que no se puede
+					1.4.12; las reglas de contraste añaden un frame vacío fuera de la pantalla para leer los
+					colores propios del navegador para un texto provisional o un{" "}
+					<code>&lt;select&gt;</code> desplegable. El análisis también lleva cada animación en
+					curso a un punto fijo mientras se ejecutan las reglas (una finita a su final, una
+					infinita a su inicio), así que un fundido de entrada se mide ya asentado. Todo esto se
+					restablece antes de que termine la regla o el análisis: el foco, la posición de
+					desplazamiento, los atributos style, las animaciones, la hoja de estilo añadida y el
+					frame. Lo que no se puede
 					restablecer es lo que hagan los scripts de la página en respuesta, ya que enfocar un
 					elemento dispara sus manejadores <code>focus</code> y <code>focusin</code>: un carrusel
 					puede pasar a la diapositiva enfocada, moviendo <code>aria-hidden</code> con ella, o
@@ -373,6 +485,20 @@ export function KnownLimitationsContent() {
 					antes de enfocar nada. Pero la página queda como la dejaron sus scripts, así que un segundo
 					análisis de la misma página puede encontrar otra cosa: si analizas una página que sigues
 					usando, o analizas una página dos veces, recárgala entre medias.
+				</li>
+				<li>
+					<strong>Una hoja de estilo de otro origen no se puede leer desde la página.</strong> El
+					script de una página no puede enumerar las reglas de una hoja que sirve otro origen (una
+					CDN, un servicio de fuentes), así que <code>css-orientation-lock</code> pregunta por ella (
+					<code>STYLESHEETS_NOT_READABLE</code>), y <code>css-hidden-focus</code> y{" "}
+					<code>css-focus-indicator-suppressed</code> no pueden ver una regla de foco en ella. Pasa
+					su texto en <code>engineOptions.styleSheetTexts</code>: <code>preloadStyleSheets()</code>{" "}
+					descarga las que el servidor comparte (CORS), y una herramienta que controla el navegador
+					puede descargar las demás desde fuera de la página (consulta{" "}
+					<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, en GitHub).
 				</li>
 				<li>
 					<strong>Marcado estático frente a estado del DOM en vivo o posterior a la hidratación.</strong>{" "}
@@ -445,8 +571,10 @@ export function KnownLimitationsContent() {
 					texto se ignoran. Bajo jsdom, el texto se mide solo frente a sus ancestros. Analizada en
 					colores forzados (alto contraste de Windows, o un{" "}
 					<code>forced-colors: active</code> emulado), la página se mantiene en sus propios colores
-					mientras se mide, así que los resultados son los de colores forzados desactivados; donde
-					no se puede (una Content Security Policy que bloquea el <code>&lt;style&gt;</code> del
+					mientras se mide, así que los resultados son los de colores forzados desactivados, salvo
+					que el propio CSS de la página reaccione a los colores forzados (una media query{" "}
+					<code>forced-colors</code>, o un color del sistema como <code>GrayText</code>), lo que el
+					análisis indica en <code>engine.environment.forcedColorsCss</code>; donde no se puede (una Content Security Policy que bloquea el <code>&lt;style&gt;</code> del
 					motor en un navegador que no puede adoptar una hoja de estilo), los colores medidos son
 					en parte los del navegador, y cada ocurrencia de contraste lo indica (
 					<code>details.forcedColors</code>). Cómo funciona la medición, paso a paso:{" "}
@@ -454,6 +582,50 @@ export function KnownLimitationsContent() {
 						<code>LAYOUT_MEASUREMENT.md</code>
 					</a>
 					, en GitHub.
+				</li>
+				<li>
+					<strong>
+						El texto de una página sin fondo se mide sobre el lienzo del esquema de color de la
+						página, donde ese lienzo se conoce.
+					</strong>{" "}
+					El navegador pinta su lienzo detrás de una página que no pinta ningún fondo opaco, con el
+					color <code>Canvas</code> del esquema de color en que se dibuja la página, que decide el{" "}
+					<code>color-scheme</code> de la propia página: blanco para una página que no declara
+					ninguno, prefiera lo que prefiera el usuario, y el lienzo oscuro para una que se dibuja en
+					oscuro. Las reglas de contraste miden ahí el texto en cualquiera de los dos modos. No se
+					mide, y <code>contrast-computable</code> pregunta por él (
+					<code>BACKGROUND_NOT_OPAQUE_AT_ROOT</code>): el texto dentro de un frame, cuyo lienzo
+					puede dejar ver la página que lo rodea, y el texto en colores forzados, donde el lienzo es
+					la paleta del usuario.
+				</li>
+				<li>
+					<strong>
+						Bajo jsdom, el texto se mide con los colores del esquema en que se dibuja la página
+						donde se pueden calcular, y se pregunta por él donde no.
+					</strong>{" "}
+					jsdom calcula los colores del esquema claro y no aplica ninguna regla{" "}
+					<code>prefers-color-scheme</code>. En una página que se dibuja en oscuro (
+					<code>color-scheme: dark</code> en la raíz o en{" "}
+					<code>&lt;meta name="color-scheme"&gt;</code>), el texto que colorea el esquema toma los
+					colores del esquema oscuro (los de Chromium), y un color de texto dado como{" "}
+					<code>light-dark()</code> o como color del sistema se calcula para el oscuro. Por el texto
+					cuyos colores en ese esquema no se pueden calcular se pregunta (
+					<code>contrast-computable</code>, <code>COLOR_SCHEME_NOT_RENDERED</code>;{" "}
+					<code>link-in-text-block</code>, <code>COLOR_NOT_COMPUTABLE</code>) en lugar de medirlo
+					con los colores claros. En un navegador, los colores son los que dibuja.
+				</li>
+				<li>
+					<strong>
+						En una página que admite claro y oscuro, el esquema que el análisis no ve solo se mide
+						donde los colores del texto no pueden cambiar con él.
+					</strong>{" "}
+					Un análisis ve el esquema que prefiere el navegador (jsdom: claro). El texto sobre el
+					lienzo se mide también en el otro esquema, salvo donde una regla{" "}
+					<code>prefers-color-scheme</code>, un valor <code>light-dark()</code> o un color del
+					sistema que define la página alcanza el color del texto o un fondo detrás de él, o donde
+					una hoja de estilo no se puede leer. <code>data.details.colorSchemesChecked</code> enumera
+					los esquemas medidos; vuelve a analizar con el navegador en el otro esquema para
+					comprobarlo.
 				</li>
 				<li>
 					<strong>
@@ -479,10 +651,9 @@ export function KnownLimitationsContent() {
 					colores del propio select; otra de sus opciones con colores propios solo se muestra en
 					la lista que dibuja la plataforma al abrirse, y es <code>cantTell</code> (
 					<code>SELECT_OPTION_COLOR</code>). Un texto provisional por debajo de su relación de
-					contraste es <code>cantTell</code> (<code>PLACEHOLDER_BELOW_THRESHOLD</code>) en lugar
-					de un fallo: WCAG somete el texto provisional a la relación de contraste, pero considera
-					que la cumplen los colores que la página dejó por completo al navegador (técnica G148),
-					y distinguir unos de otros en páginas reales aún no está resuelto. Bajo jsdom, los
+					contraste falla (<code>PLACEHOLDER_BELOW_THRESHOLD</code>) cuando la página eligió sus
+					colores, cumple la relación cuando todos son los del propio navegador (técnica G148), y
+					es <code>cantTell</code> cuando eso no se puede saber. Bajo jsdom, los
 					textos provisionales no se miden en absoluto. Detalles:{" "}
 					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#form-fields`}>
 						<code>LAYOUT_MEASUREMENT.md</code>
@@ -562,9 +733,14 @@ export function KnownLimitationsContent() {
 					específicos no lo están, de forma deliberada.
 				</li>
 				<li>
-					<strong>Análisis del contenido de imágenes de texto</strong> (WCAG 1.4.5/1.4.9):
-					requeriría una comprensión de imágenes equivalente a OCR; fuera del alcance de un motor
-					de marcado estático.
+					<strong>Análisis del contenido de imágenes de texto</strong> (WCAG 1.4.5/1.4.9): si una
+					imagen contiene texto está en sus píxeles, lo que requeriría una comprensión de imágenes
+					equivalente a OCR. <a href="/rules/image-of-text/"><code>image-of-text</code></a> solo
+					pregunta donde el marcado muestra una señal: un <code>&lt;input type="image"&gt;</code>, y
+					un <code>&lt;img&gt;</code> que muestra una data URL SVG cuyo marcado contiene{" "}
+					<code>&lt;text&gt;</code>. Una foto de una frase, un banner con el texto incrustado o una
+					imagen de fondo CSS con texto no dan ninguna señal, y no se pregunta por ellos. El 1.4.9,
+					que no admite excepciones, no tiene regla.
 				</li>
 				<li>
 					<strong>Controles activados por movimiento</strong> (WCAG 2.5.4): caso de nicho, baja
@@ -595,7 +771,8 @@ export function KnownLimitationsContent() {
 				automatizada) nunca sustituye la revisión manual que el propio WCAG exige para los criterios
 				anteriores.</strong> Consulta{" "}
 				<a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a> para saber
-				exactamente qué afirma y qué no afirma un <code>pass</code>/<code>pass</code> compuesto.
+				exactamente qué afirma y qué no afirma el <code>pass</code> de una regla, y por qué un
+				criterio de WCAG cuyas reglas se cumplen todas sigue en <code>cantTell</code>.
 			</p>
 		</>
 	);

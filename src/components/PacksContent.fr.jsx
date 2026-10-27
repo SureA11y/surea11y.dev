@@ -78,12 +78,14 @@ const fileRows = [
 	{ id: "index", file: <code>index.js</code>, what: <>Le pack, écrit avec <code>definePack()</code> de <code>@surea11y/core/pack</code>.</> },
 	{ id: "auto", file: <code>rules/automatic/&lt;ns&gt;-link-text-specific.js</code>, what: "Une règle qui tranche, à l’aide des helpers de core." },
 	{ id: "variant", file: <code>rules/automatic/&lt;ns&gt;-contrast-enhanced.js</code>, what: <>Une variante de <code>contrast-minimum</code> de core à 7:1.</> },
-	{ id: "manual", file: <code>rules/manual/&lt;ns&gt;-new-window-review.js</code>, what: "Une règle manuelle qui demande une revue humaine." },
+	{ id: "manual", file: <code>rules/manual/&lt;ns&gt;-new-window-review.js</code>, what: <>Une règle manuelle qui demande une revue humaine, avec ses codes de raison et les étapes qu’une personne suit pour y répondre (<code>meta.reasonCodes</code>, <code>meta.review</code>).</> },
 	{ id: "i18n", file: <code>i18n/en.json</code>, what: "Les messages." },
 	{ id: "tests", file: <><code>tests/rules/*.test.js</code>, <code>tests/profiles.test.js</code></>, what: "Un test par règle, et ce qu’exécute chaque profil." },
 	{ id: "examples", file: <code>docs/RULE_EXAMPLES.md</code>, what: "Des exemples des résultats de chaque règle." },
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Les règles de lint de core pour les règles." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Norme seulement : les exigences et les règles qui vérifient chacune d’elles." },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, avec <code>@surea11y/core</code> en dépendance peer à la version qui l’a écrit (<code>^1.14.0</code>), et eslint, jsdom et Playwright en dépendances de développement.</> },
+	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "Le guide du pack lui-même sur ces fichiers, et ce que git laisse de côté." },
 ];
 
 const profileFieldRows = [
@@ -92,6 +94,7 @@ const profileFieldRows = [
 	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code> écarte des règles de l’analyse ; <code>{"{ criteria: ['2.5.8'] }"}</code> dispense de ces critères : leurs agrégations disparaissent, ainsi que chaque règle dont tous les critères sont dispensés ; une règle qui vérifie aussi un critère que le profil conserve s’exécute toujours. Cela restreint ce que l’analyse vérifie : les exigences de WCAG restent les mêmes.</> },
 	{ id: "severity", field: <code>severity</code>, what: <><code>{"{ ruleId: level }"}</code> : une autre gravité sous le profil. Les résultats l’affichent et gardent celle de la règle dans <code>ruleSeverity</code> ; les baselines et les identifiants de constats ne changent pas.</> },
 	{ id: "wcagVersion", field: <code>wcagVersion</code>, what: <><code>'2.0'</code>, <code>'2.1'</code> ou <code>'2.2'</code> : la version de WCAG selon laquelle les analyses du profil sont jugées (<code>engine.wcagVersion</code>). Sans elle, les tags WCAG de <code>tags</code> impliquent la version, et un profil qui n’en a aucun est jugé selon 2.2. Le <code>engineOptions.wcagVersion</code> propre à une analyse l’emporte toujours. Core 1.12.0 et versions ultérieures.</> },
+	{ id: "keepsParsing", field: <code>keepsParsing</code>, what: <><code>true</code> quand la norme exige le 4.1.1 Analyse syntaxique tel qu’il est écrit, comme EN 301 549 V3.2.1 : un échec à ce critère reste alors un échec avec une cible 2.0 ou 2.1. Sous un profil sans ce champ, les errata de 2023 à WCAG 2.0 et 2.1 considèrent le 4.1.1 comme satisfait pour le HTML et le XML, et <code>duplicate-id</code> pose la question à la place (en 2.2, qui a retiré le 4.1.1, il la pose quoi que dise le profil). Seul compte le champ du profil lui-même : le profil d’un pack qui prend la place d’un profil de core n’en hérite pas. <code>engineOptions.mappings</code> ne change jamais un résultat : une analyse jugée selon une norme qui conserve le 4.1.1 exécute donc son profil. Core 1.14.0 et ultérieur.</> },
 	{ id: "version", field: <><code>version</code>, <code>mappedRules</code></>, what: <>Profil d’une norme seulement : la version de la norme qu’il vise, et <code>mappedRules: true</code> pour exécuter toutes les règles que la norme associe à cette version.</> },
 ];
 
@@ -140,6 +143,18 @@ export function PacksContent() {
 				clauses dans les résultats de n’importe quelle analyse, WCAG compris. Il demande{" "}
 				<code>@surea11y/core</code> 1.13.0 ou ultérieur.
 			</p>
+			<p>
+				Sa version 1.1.0, construite sur core 1.14.0, juge chaque clause comme core juge le
+				critère WCAG qu’elle reprend. Aucune clause ne réussit donc encore : là où toutes ses
+				règles réussissent, une clause est <code>cantTell</code>, pour qu’une personne vérifie le
+				reste, comme son critère (voir{" "}
+				<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>). Le profil{" "}
+				<code>en301549-v3.2.1</code> conserve le 4.1.1 Analyse syntaxique, si bien qu’un id dupliqué
+				y fait toujours échouer la clause 9.4.1.1, et les clauses 9.1.4.5, 9.3.3.1 et 9.4.1.3 ont
+				leurs premières règles (<code>image-of-text</code>, <code>invalid-field-error-message</code>,{" "}
+				<code>live-region-announcements</code>). Avec core 1.13, il se comporte comme ses
+				versions 1.0.
+			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -153,9 +168,11 @@ export function PacksContent() {
 			<p>
 				C’est aussi un exemple complet de norme à vous. Il n’a pas de règles : le chapitre 9 reprend
 				WCAG, donc chaque clause est vérifiée par les règles de core pour son critère. Ses profils
-				choisissent ces règles (<code>tags</code>, <code>mappedRules: true</code>) et nomment la
+				choisissent ces règles (<code>tags</code>, <code>mappedRules: true</code>), nomment la
 				version de WCAG selon laquelle chaque version de la norme est jugée
-				(<code>wcagVersion</code>), et sa table de règles est dérivée du catalogue du core installé :
+				(<code>wcagVersion</code>) et, pour V3.2.1, conservent le 4.1.1 Analyse syntaxique (
+				<code>keepsParsing</code>). Ses clauses reprennent des critères WCAG un pour un (
+				<code>applicability: 'wcag'</code>), et sa table de règles est dérivée du catalogue du core installé :
 				une règle que core ajoute est couverte sans changer le pack. Une norme avec des exigences
 				que WCAG n’a pas suit la même forme et ajoute ses propres règles. Son code est court et
 				mérite d’être lu à côté de <a href="#writing-a-pack">Écrire un pack</a>, plus bas.
@@ -322,6 +339,10 @@ export function PacksContent() {
 				<a href="/getting-started/standalone/#packs-in-a-page">Autonome</a>. Pour une page qui charge ses scripts sous forme de fichiers, préférez le fichier unique de{" "}
 				<code>buildBrowserBundle</code> : le script d’un pack ne s’exécute qu’avec la version de core qui l’a écrit.
 			</p>
+			<p>
+				Une page dotée du bundle d’un autre core ignore le pack, et <code>skippedPacks</code> nomme les
+				deux versions : reconstruisez donc ce fichier à chaque version de core ou du pack.
+			</p>
 
 			<h2 id="what-a-scan-reports">Ce que rapporte une analyse</h2>
 			<ul>
@@ -478,7 +499,11 @@ export function PacksContent() {
 					nouveaux packs de 1.11.1 : le paquet 1.11.0 omettait un fichier dont les packs ont besoin
 					dans Node. Une analyse avec
 					une version de core hors de cette plage ignore le pack, avec la raison dans{" "}
-					<code>skippedPacks</code>.
+					<code>skippedPacks</code>. <code>surea11y-pack new</code> écrit la version qui a généré
+					le pack (<code>^1.14.0</code>) ; gardez une plage qui commence à 1.14 si le pack utilise ce
+					qu’a ajouté la 1.14 : <code>meta.review</code>, des lignes <code>reasonCodes</code> et{" "}
+					<code>findings</code>, <code>meta.contributions</code>, <code>applicability</code>,{" "}
+					<code>partial</code> ou <code>keepsParsing</code>.
 				</li>
 				<li>
 					<strong><code>title</code></strong> est le nom que les résultats et les rapports donnent
@@ -529,8 +554,9 @@ export function PacksContent() {
 				aucune règle ne vérifie ce que la norme ne demande pas, et les résultats ne contiennent
 				aucun critère WCAG. Sans tag WCAG, en revanche, rien ne dit sur quelle version de WCAG la
 				norme est fondée, et l’exécution est jugée selon 2.2. Pour une norme fondée sur 2.1, c’est
-				faux : 4.1.1 Analyse syntaxique n’existe plus en 2.2, si bien que{" "}
-				<code>duplicate-id</code> renvoie <code>cantTell</code> au lieu d’échouer. Donnez la version. Le{" "}
+				faux : l’exécution rapporte des critères de 2.2, comme le 2.5.8, que la norme n’a pas.
+				Donnez la version, et <code>keepsParsing: true</code> si la norme exige toujours le 4.1.1
+				Analyse syntaxique. Le{" "}
 				<code>index.js</code> généré la lit dans <code>requirements.js</code>, où chaque version de
 				la norme nomme la version de WCAG sur laquelle elle est fondée (
 				<code>{"{ version: '1.0', wcagVersion: '2.2' }"}</code>) :
@@ -571,6 +597,70 @@ export function PacksContent() {
 				quand le pack est préparé.
 			</p>
 
+			<h3 id="sending-findings-to-requirements">Envoyer des constats vers des exigences</h3>
+			<p>
+				La ligne d’une règle dans <code>rule-map.js</code> peut envoyer ailleurs ses constats d’un
+				code de raison, avec <code>{"reasonCodes: { [code]: { requirements, outcome } }"}</code> :{" "}
+				<code>requirements</code> (par défaut, celles de la ligne) sont les exigences auxquelles ces
+				constats comptent, <code>[]</code> pour aucune, et <code>outcome: 'cantTell'</code> fait
+				d’un constat en échec une question à cet endroit. L’agrégation d’une exigence juge alors la
+				règle sur les constats qui comptent pour elle : une norme peut ainsi poser une question sur
+				une cause là où WCAG la fait échouer, ou classer deux causes sous deux tests :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'list-children-valid': {",
+					"  requirements: ['9.3.1'],",
+					"  reasonCodes: { LIST_ITEM_ROLE_OVERRIDDEN: { requirements: ['9.3.1', '9.3.2'], outcome: 'cantTell' } }",
+					"}",
+				]}
+			/>
+			<p>
+				Une ligne peut aussi envoyer des constats selon ce qu’ils consignent, avec{" "}
+				<code>{"findings: [{ when, requirements, outcome }]"}</code> : <code>when</code> donne des
+				valeurs que des champs du <code>data.details</code> d’un constat doivent avoir, nommés par
+				leur chemin à points. Un constat suit la première entrée à laquelle il correspond, sinon son
+				code de raison, sinon la ligne. Une norme peut ainsi classer les échecs d’une règle sous le
+				test de leur taille de texte, bien qu’ils partagent un code de raison :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'contrast-minimum': {",
+					"  requirements: ['3.1', '3.2'],",
+					"  findings: [",
+					"    { when: { 'typography.isLargeText': false }, requirements: ['3.1'] },",
+					"    { when: { 'typography.isLargeText': true }, requirements: ['3.2'] }",
+					"  ]",
+					"}",
+				]}
+			/>
+			<p>
+				Ne comparez que des champs qu’une règle garde stables : <code>reasonCode</code> sur toutes
+				les règles, et les quelques autres que nomme la{" "}
+				<a href={`${core}/docs/API_STABILITY.md`}>politique de stabilité de l’API</a> de core sur
+				GitHub (dont le rapport, le seuil et la typographie de <code>contrast-minimum</code>). Un
+				champ qui change ou disparaît ne correspond à rien, et le constat suit son code ou la ligne.
+				Les codes de raison de chaque règle sont listés sous « What a finding reports » dans le{" "}
+				<a href={`${core}/docs/RULE_CATALOG.md`}>catalogue des règles</a> de core sur GitHub.
+			</p>
+			<p>
+				Deux autres champs changent la façon dont une exigence est jugée. Une norme dont les
+				exigences reprennent des critères WCAG un pour un, comme le chapitre 9 d’EN 301 549, passe{" "}
+				<code>applicability: 'wcag'</code> à <code>ruleMappedStandard</code> : l’agrégation d’une
+				exigence n’est alors <code>notApplicable</code> ou <code>pass</code> que là où le serait
+				l’agrégation WCAG de ses critères, si bien que les deux concordent dans un même rapport. Une
+				exigence que les règles de core ne vérifient pas entièrement, sans reprendre un critère,
+				porte <code>partial: true</code> dans le tableau des exigences : son agrégation est alors{" "}
+				<code>cantTell</code> là où toutes ses règles réussissent ou ne trouvent rien, puisqu’elles
+				n’en ont vérifié qu’une partie. Une norme qui écrit ses propres agrégations indique les deux
+				dans le <code>meta</code> de chacune, et envoie les constats dans{" "}
+				<code>meta.contributions</code> ; <code>StandardRollup</code> dans <code>pack.d.ts</code>{" "}
+				en donne la forme, et le <a href={`${core}/docs/PACKS.md`}>guide des packs</a> de core sur
+				GitHub le détaille. Tout cela demande core 1.14.0.
+			</p>
+
 			<h3 id="rules">Règles</h3>
 			<p>
 				Une règle a la forme des modules de règle de core : <code>{"{ id, meta, runInPage }"}</code>,
@@ -585,14 +675,61 @@ export function PacksContent() {
 				raccourcis demandent peu ou pas de code :{" "}
 				<strong>une variante</strong> exécute une règle de core avec d’autres réglages (
 				<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code> ;
-				chaque réglage est un seuil, un nombre fini supérieur à 0, et <code>definePack</code>{" "}
-				refuse toute autre valeur),{" "}
+				un seuil prend un nombre fini supérieur à 0, un choix l’une de ses valeurs listées, et{" "}
+				<code>definePack</code> refuse tout le reste),{" "}
 				<strong>une surcharge</strong> remplace une règle de core (listée dans{" "}
 				<code>overrides</code>, et dans le <code>overriddenBuiltinIds</code> des résultats), et{" "}
 				<strong>une règle de core telle quelle</strong> ne demande que son identifiant dans un
 				profil ou une agrégation. L’écriture d’une règle est décrite dans le{" "}
 				<a href={`${core}/docs/RULE_AUTHORING.md`}>guide d’écriture de règles</a> de core sur
 				GitHub.
+			</p>
+			<p>
+				La <a href={`${core}/docs/RULE_SETTINGS.md`}>liste des réglages des règles</a> de core sur
+				GitHub donne chaque réglage que les règles de core offrent à une variante, avec sa valeur
+				par défaut, les valeurs qu’il prend et ce qu’il change ; <code>getChecksCatalog()</code>{" "}
+				donne la même chose dans le <code>variantSettings</code> de chaque règle. C’est ainsi que la
+				version d’une exigence d’une autre norme, ou un choix que WCAG laisse à la personne qui
+				évalue, s’exécute sur le code de core. Depuis core 1.14, <code>contrast-minimum</code>{" "}
+				propose des choix pour le texte qui ressemble à un logo (<code>logoText</code>), une page
+				dotée d’un bouton de passage à un contraste plus élevé (<code>contrastSwitch</code>) et le
+				texte demi-gras (<code>semiBold</code>), et <code>valid-lang</code> propose{" "}
+				<code>codes: 'iso639'</code> pour une norme, comme le RGAA, qui accepte tout code de langue
+				ISO 639.
+			</p>
+
+			<h3 id="review-steps">Comment une personne vérifie un <code>cantTell</code></h3>
+			<p>
+				Une règle qui peut laisser un constat non tranché peut dire, par code de raison, comment une
+				personne y répond, comme le font les règles de core (voir{" "}
+				<a href="/results-reports/output-schema/#how-to-check">« Comment vérifier »</a> dans le
+				schéma de sortie) : quelques étapes à partir de l’élément que nomme le constat, puis ce
+				qu’elle constate si cela réussit et si cela échoue.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"meta.review = {",
+					"  GENERIC_LINK_NAME: {",
+					"    steps: ['Find the link the report names.', 'Read the text around it.'],",
+					"    passWhen: 'The text around the link says where it goes.',",
+					"    failWhen: 'Nothing near the link says where it goes, which fails WCAG 2.4.4.'",
+					"  }",
+					"};",
+				]}
+			/>
+			<p>
+				<code>definePack</code> vérifie la forme : de 1 à 6 étapes et un <code>passWhen</code> et
+				un <code>failWhen</code> non vides par code de raison. Une règle qui déclare ses codes de
+				raison dans <code>meta.reasonCodes</code> (<code>['GENERIC_LINK_NAME']</code>) ne donne des
+				étapes que pour un code qu’elle y déclare ou qu’elle nomme dans son <code>runInPage</code>,
+				si bien qu’un code mal saisi est refusé : les déclarer vaut la peine pour cette
+				vérification. Les étapes sont en anglais, quelle que soit la langue de l’analyse, et
+				restent hors de la page : <code>runDomRulesInPage</code> avec{" "}
+				<code>engineOptions.packs</code> les ajoute au résultat, et pour un résultat issu d’une page,
+				c’est <code>{"addHowToCheck(result, { packs })"}</code>. Une variante a les étapes de sa
+				règle de core, traduites, et n’en a donc besoin d’aucune ; une surcharge, comme une règle
+				personnalisée, n’en a pas. Core 1.14.0 et ultérieur.
 			</p>
 
 			<h3 id="messages">Messages et langues</h3>
@@ -615,6 +752,16 @@ export function PacksContent() {
 					l’analyse les exécute à la fois depuis les objets pack et tels qu’une page les reçoit, si
 					bien qu’une règle qui lit une variable extérieure à sa fonction échoue à son test. jsdom
 					doit être installé comme dépendance de développement.
+				</li>
+				<li>
+					<strong>Les vérifications</strong> : <code>definePack</code> lève une erreur qui nomme
+					chaque problème, si bien que les tests du pack lui-même échouent ;{" "}
+					<code>checkPack(pack)</code> renvoie la même liste sans lever d’erreur, en vérifiant aussi
+					la version de core installée. Tous deux exécutent les vérifications propres d’une norme
+					sur ses tableaux (<code>validate</code>) contre les règles de core et celles du pack,
+					comme une analyse, si bien qu’une version sans son <code>wcagVersion</code>, ou un constat
+					envoyé vers une exigence absente du tableau, est refusé là plutôt que de faire ignorer le
+					pack par chaque analyse. Core 1.14.0 et ultérieur.
 				</li>
 				<li>
 					<strong>Le lint</strong> (<code>npm run lint</code>,{" "}

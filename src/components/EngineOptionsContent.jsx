@@ -43,11 +43,10 @@ const optionRows = [
 				<code>'2.0'</code>, <code>'2.1'</code> or <code>'2.2'</code> — which version of WCAG the
 				run is conformance-testing against. Defaults to the version the run's pack profile names
 				(its <code>wcagVersion</code>), else to whatever your version-origin tags imply, and to{" "}
-				<code>'2.2'</code> when they imply nothing.{" "}
-				<strong>The only thing it currently changes is SC 4.1.1 Parsing, removed in 2.2</strong>:
-				under a 2.2 target a rule tagged{" "}
-				<code>wcag22-removed</code> still runs and still reports its occurrences, but cannot{" "}
-				<code>fail</code> — see{" "}
+				<code>'2.2'</code> when they imply nothing. What it changes is which criteria a scan
+				reports and, for SC 4.1.1 Parsing, why a rule tagged <code>wcag22-removed</code> cannot{" "}
+				<code>fail</code>: removed in 2.2, and always satisfied in 2.0 and 2.1 by their errata,
+				except under a profile whose standard keeps it, such as <code>en301549-v3.2.1</code> — see{" "}
 				<a href="#filtering-by-wcag-version">"Filtering by WCAG version"</a> above. Any other
 				value, of any type (the number <code>2.1</code>, <code>'3.0'</code>), is ignored with a{" "}
 				<code>console.warn</code> naming the version the run targets instead.
@@ -219,6 +218,26 @@ const optionRows = [
 		),
 	},
 	{
+		id: "styleSheetTexts",
+		option: <code>styleSheetTexts</code>,
+		meaning: (
+			<>
+				The text of style sheets the page can't read, <code>{"[{ href, text }]"}</code>: a sheet
+				from another origin, by its URL, and its CSS. The rules that read the CSS (
+				<code>css-orientation-lock</code>, <code>css-hidden-focus</code>,{" "}
+				<code>css-focus-indicator-suppressed</code>) read it in place of the sheet. Each result's{" "}
+				<code>engineOptions</code> echoes it as the sheets' hrefs, <code>{"[{ href }]"}</code>,
+				without their text. <code>preloadStyleSheets()</code> fetches the ones a server shares
+				from inside the page, and <code>runa11yCoreInPageAsync</code> fetches them before
+				scanning; a tool driving the browser can fetch the others from outside it. See{" "}
+				<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}>
+					"Style sheets from another origin"
+				</a>{" "}
+				in core's integration guide on GitHub. Core 1.14.0 and later.
+			</>
+		),
+	},
+	{
 		id: "timestamp",
 		option: <code>timestamp</code>,
 		meaning: (
@@ -239,7 +258,12 @@ const optionRows = [
 				<code>notApplicable</code>/skip) whenever the true rendered background isn't confidently
 				computable, to protect against false <code>fail</code>s. <code>auditorAssist</code>:
 				trades some of that safety margin for more findings, intended for a human auditor who
-				will double-check flagged cases, not for unattended CI gating.
+				will double-check flagged cases, not for unattended CI gating. A page that paints no
+				opaque background is not such a case: the canvas behind it follows from the page's own
+				color scheme, so its text is measured in either mode without a guess. Where the page's
+				canvas can't be known (in a frame, under forced colors), <code>auditorAssist</code>{" "}
+				measures text on <code>contrast.rootCanvasFallback</code>, recorded as{" "}
+				<code>ROOT_CANVAS_FALLBACK</code>.
 			</>
 		),
 	},
@@ -248,14 +272,36 @@ const optionRows = [
 		option: <code>contrast.rootCanvasFallback</code>,
 		meaning: (
 			<>
-				The assumed page background color when it's not computable at all — only matters in{" "}
-				<code>auditorAssist</code> mode. In a browser, a page with no opaque background of its own
-				is measured on the canvas the browser paints behind it, in either mode: white, or the dark
-				canvas for a page that asks for a dark color scheme (<code>color-scheme: dark</code> on
-				the root, or the <code>&lt;meta&gt;</code> form). The fallback applies where the canvas
-				isn't read: under jsdom, and in a frame, whose canvas can let the parent page show
-				through (a frame that asks for dark is measured on the dark canvas). It must be an opaque
-				color: another value is measured as white, with a warning.
+				A canvas color for a page that paints no opaque background. Unset, the contrast rules
+				measure such a page's text on the canvas the browser paints behind it, in either mode: the
+				canvas of the color scheme the page is drawn in, which its own <code>color-scheme</code>{" "}
+				(on the root, or the <code>&lt;meta&gt;</code> form) decides. A page that declares none is
+				drawn in light, on white, whatever the user prefers; <code>light dark</code> is drawn on
+				white for a user in light and on the dark canvas for one in dark, and its text is measured
+				in both schemes, failing where it fails in either (<code>data.details.colorScheme</code>{" "}
+				names the one). Under jsdom, which resolves no system color, the engine uses Chromium's
+				colors, and text whose colors it can't work out there is asked about (
+				<code>COLOR_SCHEME_NOT_RENDERED</code>). Set, white included, the color stands for the
+				page's canvas in every scheme: the text is measured on it once, recorded as an assumption (
+				<code>ROOT_CANVAS_FALLBACK</code>). The page's canvas can't be known in a frame, whose
+				canvas can let the parent page show through, or under forced colors: there{" "}
+				<code>contrast-computable</code> asks and the ratio rules leave the text out, unless{" "}
+				<code>auditorAssist</code> measures it on this color. Each result's{" "}
+				<code>engineOptions.contrast</code> echoes the color used, white when none was given.
+			</>
+		),
+	},
+	{
+		id: "contrast-fallback-set",
+		option: <code>contrast.rootCanvasFallbackSet</code>,
+		meaning: (
+			<>
+				Echoed on each result: <code>true</code> when <code>contrast.rootCanvasFallback</code> is
+				the caller's, <code>false</code> for the default white (also when the given value wasn't a
+				usable color). It isn't needed as an input: options passed back from a result's echo are
+				read as they were, so <code>false</code> keeps the echoed white the default. A value that
+				isn't <code>true</code> or <code>false</code> is warned about and read as not given. Core
+				1.14.0 and later.
 			</>
 		),
 	},
@@ -284,7 +330,9 @@ const optionRows = [
 				the page. In both
 				modes, text with a font size of 0 or a fully transparent color is excluded, since nothing
 				is drawn; transparent text that lets a background show through its glyphs (
-				<code>background-clip: text</code>) is not, and is asked about instead. Set{" "}
+				<code>background-clip: text</code>, on it or an ancestor) is not: it is measured in that
+				background's color when it is solid, and asked about when it is a gradient or an
+				image. Set{" "}
 				<code>'styleOnly'</code> in a browser to check text from computed styles alone, as
 				earlier releases did; under plain jsdom (<code>runDomRulesInPage</code>) there's no real
 				layout engine, so <code>'styleAndGeometry'</code> mostly just adds{" "}
@@ -714,7 +762,8 @@ export function EngineOptionsContent() {
 				The WCAG target follows from the tags the same way it does for a hand-written set (see{" "}
 				<a href="#filtering-by-wcag-version">"Filtering by WCAG version"</a> below), so under{" "}
 				<code>en301549-v3.2.1</code> a duplicate id can still <code>fail</code>, and under{" "}
-				<code>en301549-v4.1.1</code> it cannot. A pack's profile can name its version instead, with{" "}
+				<code>en301549-v4.1.1</code> it cannot: V3.2.1's profile keeps 4.1.1 (
+				<a href="#parsing-errata">see below</a>). A pack's profile can name its version instead, with{" "}
 				<code>wcagVersion</code> (<a href="/configuration/packs/#profiles">Packs</a>): a profile
 				that runs only the rules its standard maps has no WCAG tags to imply one. Names are matched
 				case-insensitively. A run that used a profile reports it back as{" "}
@@ -898,8 +947,8 @@ export function EngineOptionsContent() {
 			<p>
 				The fields below select by the tags rules carry and by rule ids. Reach for them for what a
 				WCAG target and <code>bestPractices</code> don't say: one criterion (
-				<code>tags: ['wcag1412']</code>), a list of rules, an exclusion, or a tag set kept from
-				another tool. They combine with <code>wcag</code> and <code>bestPractices</code>: what they
+				<code>tags: ['wcag1412']</code>), a list of rules, an exclusion, or a tag set of your
+				own. They combine with <code>wcag</code> and <code>bestPractices</code>: what they
 				include is added to what those select, and what they exclude is taken away after.
 			</p>
 			<p>
@@ -1093,7 +1142,10 @@ export function EngineOptionsContent() {
 					it is <code>cantTell</code>, with <code>reasonCode</code>{" "}
 					<code>composite.rollup.cantTell.notSelectedChild</code>, and each rule the scan didn't
 					select is listed among the contributors as <code>missing</code> with{" "}
-					<code>notSelected: true</code>. The HTML report shows "Partly checked: 1 of 2 checks was
+					<code>notSelected: true</code>. With all of them selected and passing, a WCAG criterion
+					is still <code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>),
+					since no criterion's rules yet check all it asks (see{" "}
+					<a href="/conformance/wcag-mapping/">WCAG conformance mapping</a>). The HTML report shows "Partly checked: 1 of 2 checks was
 					not selected for this scan" under it. See{" "}
 					<a href="/results-reports/output-schema/#partly-checked">the output schema</a>.
 				</li>
@@ -1274,6 +1326,15 @@ export function EngineOptionsContent() {
 				<a href="/results-reports/output-schema/">the output schema</a>). Nothing is silently dropped, and a 2.2
 				run is not gated by a criterion 2.2 does not contain.
 			</p>
+			<p id="parsing-errata">
+				Under a 2.0 or 2.1 target it is the same: W3C's 2023 errata to WCAG 2.0 and 2.1 count
+				4.1.1 as always satisfied for content in HTML or XML, so the rule asks rather than fails,
+				and <code>wcagVersionScope.by</code> is <code>"errata"</code>. The one exception is a
+				profile whose standard keeps 4.1.1's text, such as <code>en301549-v3.2.1</code> (
+				<code>keepsParsing</code> in the standard's profile, see{" "}
+				<a href="/configuration/packs/#profiles">Packs</a>): a duplicate id can still{" "}
+				<code>fail</code> there. Core 1.14.0 and later; before, a 2.0 or 2.1 target let it fail.
+			</p>
 			<p>The target version is resolved in this order:</p>
 			<ol>
 				<li>
@@ -1368,7 +1429,7 @@ export function EngineOptionsContent() {
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
 					"  wcagLevel: 'AA',                 // optional — the level of the criteria reported",
-					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
+					"  profile: 'wcag22-aa',            // optional — a named conformance target",
 					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
 					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
 					"  messages: { de: { /* key: text */ } },  // optional caller-supplied dictionaries; win over built-in ones",
@@ -1376,13 +1437,15 @@ export function EngineOptionsContent() {
 					"  includeShadowDom: true,          // default true — opt OUT with false to skip open shadow roots",
 					"  fragment: false,                 // default false — set true when the scan target isn't a real page",
 					"  excludeSelectors: ['#cookie-banner', '.third-party-widget'],  // array or comma-separated string",
+					"  styleSheetTexts: [{ href: 'https://cdn.example/site.css', text: '/* its CSS */' }],  // sheets the page can't read",
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
 					"  perfStats: false,                // default false — internal timing counters, debug-only shape",
 					"  profileRules: false,             // default false — per-rule timings; needs perfStats",
 					"",
 					"  contrast: {",
 					"    mode: 'strictConformance',     // 'strictConformance' (default) | 'auditorAssist'",
-					"    rootCanvasFallback: '#ffffff'  // background assumed when the true root background isn't computable",
+					"    rootCanvasFallback: '#ffffff', // a canvas to measure on in place of the page's own; unset, the page's color scheme gives it",
+					"    rootCanvasFallbackSet: true    // echoed on each result: whether rootCanvasFallback was given; read back, false means the default",
 					"  },",
 					"  visibilityMode: undefined,       // 'styleOnly' | 'styleAndGeometry'; unset: geometry with a layout, else styles",
 					"",
@@ -1473,7 +1536,9 @@ export function EngineOptionsContent() {
 				in the same words: <code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code> warns,
 				reads the level as not given, and lists what a scan with those options reports; with{" "}
 				<code>strictOptions: true</code> it throws <code>INVALID_ENGINE_OPTIONS</code>, as the scan
-				does.
+				does. A selection that cancels itself (a rule both included and excluded, parts with no
+				rule in common) is said so as the scan says it: a warning, and{" "}
+				<code>INVALID_RUN_ONLY</code> under <code>strictOptions</code>.
 			</p>
 			<p>
 				Not checked: a rule's own settings (<code>rules[ruleId]</code>), the keys of{" "}
@@ -1648,8 +1713,7 @@ export function EngineOptionsContent() {
 				does, and <code>getRulesForRunOnly(runOnly, engineOptions)</code> lists the rollups they
 				add. This is deliberate, not a limitation to work around:
 				surea11y already takes fresh <code>engineOptions</code> per call with no mutable global
-				config (unlike some other engines, which need a <code>configure()</code>/<code>reset()</code>{" "}
-				step against a shared runtime), and custom rules follow that same per-call model.
+				config, and custom rules follow that same per-call model.
 			</p>
 			<p>
 				Calling the library directly is one way in; the CLI also exposes this via{" "}

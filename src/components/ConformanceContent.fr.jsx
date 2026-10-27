@@ -15,8 +15,10 @@ export function ConformanceContent() {
 			<h2>Correspondance de conformité WCAG</h2>
 			<p>
 				Voyez précisément comment s’articulent les règles atomiques, les facettes de couverture et
-				les règles composites d’agrégation par critère de succès WCAG, pour qu’un <code>pass</code>{" "}
-				composite signifie quelque chose de précis plutôt qu’un vague « ça a l’air correct ». Une analyse qui nomme quelques vérifications plutôt qu’une cible
+				les règles composites d’agrégation par critère de succès WCAG, et pourquoi un critère dont
+				toutes les vérifications sont revenues sans problème reste <code>cantTell</code>, vérifié en
+				partie, plutôt qu’un vague « ça a l’air correct » : une règle composite dit quelles parties
+				ont été vérifiées et laisse le reste à une personne. Une analyse qui nomme quelques vérifications plutôt qu’une cible
 				rend quand même compte des critères auxquels elles appartiennent, et indique ceux qu’elle
 				n’a vérifiés qu’en partie. Ciblez
 				un niveau de conformité (A, AA ou AAA) sur n’importe quelle version de WCAG avec un seul jeu
@@ -32,7 +34,9 @@ export function ConformanceContent() {
 				à venir : enregistrez une fois ce qui est déjà connu, et ne faites échouer la CI que sur les
 				violations réellement nouvelles. C’est la différence entre « on ne peut rien livrer tant que
 				ce n’est pas parfait » et « on peut détecter les régressions dès aujourd’hui », et c’est ce
-				qui amène concrètement une équipe à activer le contrôle. Voir{" "}
+				qui amène concrètement une équipe à activer le contrôle. Elle peut aussi accepter les
+				constats qui penchent vers l’échec, et une baseline écrite avant une mise à jour continue de
+				correspondre quand le code de raison d’un constat est scindé ou renommé. Voir{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
 		</>

@@ -1,7 +1,33 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
+import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+
+const codes = (list) =>
+	list.map((c, i) => (
+		<React.Fragment key={c}>
+			{i > 0 && ", "}
+			<code>{c}</code>
+		</React.Fragment>
+	));
+
+const baselineMoves = [
+	{ id: "text-missing", rules: ["img-alt-present", "embed-text-alternative-present", "object-text-alternative-present", "svg-image-text-alternative-present", "svg-text-alternative-present", "video-poster-text-alternative-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING"] },
+	{ id: "area-alt", rules: ["area-alt-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING", "TEXT_ALTERNATIVE_EMPTY"] },
+	{ id: "canvas", rules: ["canvas-text-alternative-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING", "ROLE_IMG_NAME_MISSING"] },
+	{ id: "text-review", rules: ["area-alt-quality", "canvas-text-alternative-quality", "embed-text-alternative-quality", "input-image-alt-quality", "object-text-alternative-quality"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_REVIEW"] },
+	{ id: "img-quality", rules: ["img-alt-quality", "svg-text-alternative-quality"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_REVIEW", "IMAGE_ONLY_CONTROL_CONTENT"] },
+	{ id: "img-decorative", rules: ["img-alt-decorative"], from: ["EXCLUDED_ELEMENT_REVIEW"], to: ["IMAGE_ONLY_CONTROL_CONTENT"] },
+	{ id: "input-image", rules: ["input-image-alt-decorative"], from: ["DEFAULT"], to: ["NAME_FROM_ELSEWHERE_REVIEW"] },
+	{ id: "manual-review", rules: ["manual-review"], from: ["DEFAULT"], to: ["KEYBOARD_REVIEW"] },
+	{ id: "list-children", rules: ["list-children-valid"], from: ["LIST_INVALID_CHILD"], to: ["LIST_ITEM_ROLE_OVERRIDDEN"] },
+	{ id: "listitem-parent", rules: ["listitem-parent-valid"], from: ["LISTITEM_INVALID_PARENT"], to: ["LIST_ROLE_OVERRIDDEN"] },
+	{ id: "prohibited-children", rules: ["aria-prohibited-children"], from: ["ARIA_PROHIBITED_CHILD_ROLELESS"], to: ["ARIA_PROHIBITED_CHILD"] },
+	{ id: "duplicate-id", rules: ["duplicate-id"], from: ["DUPLICATE_ID"], to: ["DUPLICATE_ID_IN_SHADOW_TREE"] },
+	{ id: "valid-lang", rules: ["valid-lang"], from: ["ELEMENT_LANG_INVALID"], to: ["DEFAULT_LANG_INVALID"] },
+	{ id: "p-as-heading", rules: ["p-as-heading"], from: ["BOLD_LARGE_PARAGRAPH", "BOLD_LARGE_DIV"], to: ["HEADING_LIKE_NUMBER", "HEADING_LIKE_LINK"] },
+].map((row) => ({ ...row, rules: codes(row.rules), from: codes(row.from), to: codes(row.to) }));
 
 export function BaselineContent() {
 	return (
@@ -143,6 +169,123 @@ export function BaselineContent() {
 				<code>--write-baseline</code> pour les nettoyer.
 			</p>
 
+			<h2 id="findings-that-lean-fail">Constats qui penchent vers l’échec</h2>
+			<p>
+				Une baseline enregistre des échecs. Un constat non tranché n’en est pas un, mais depuis la
+				1.14 certains penchent vers l’échec : les indices de la page pointent vers un échec sans le
+				prouver (leur <code>lean</code>, voir le{" "}
+				<a href="/results-reports/output-schema/#leans">schéma de sortie</a>). Un build qui bloque
+				sur eux (<code>leanFailAs</code> dans les rapports{" "}
+				<a href="/results-reports/junit-report/#options">JUnit</a> et{" "}
+				<a href="/results-reports/sarif-report/#options">SARIF</a>) doit pouvoir accepter ceux
+				qu’une page a déjà, comme il accepte ses échecs. Demandez-les en construisant la baseline :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { buildBaselineEntries } = require('@surea11y/core/baseline');",
+					"",
+					"const entries = buildBaselineEntries(result, { leanFail: true });",
+				]}
+			/>
+			<p>
+				Chaque constat qui penche vers l’échec et bloque avec <code>leanFailAs</code> (
+				<code>leaningFailures(result)</code> de <code>@surea11y/core</code>) reçoit une entrée
+				marquée <code>"lean": "fail"</code>, après les échecs :
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={[
+					'{ "ruleId": "heading-order", "reasonCode": "HEADING_ORDER_SKIPPED_LEVEL", "selector": "html > body > main > h3", "html": "<h3>Details</h3>", "lean": "fail" }',
+				]}
+			/>
+			<p>
+				Une telle entrée ne correspond qu’à un constat qui penche vers l’échec, de même identité,
+				et une entrée ordinaire qu’à un échec. Avec <code>leanFailAs</code>, JUnit ne bloque pas
+				sur un constat auquel elle correspond (son message <code>&lt;skipped&gt;</code> le compte
+				parmi les échecs probables connus) et SARIF le laisse en <code>warning</code>. Sans{" "}
+				<code>leanFailAs</code>, ces entrées ne changent rien, et <code>matchBaseline</code> les
+				laisse hors de ses comptes, obsolètes comprises, sauf avec{" "}
+				<code>{"{ leanFail: true }"}</code> : il les compare alors dans <code>leanFail</code> (
+				<code>{"{ total, knownCount, newCount, newOccurrences, staleCount }"}</code>).{" "}
+				<code>--write-baseline</code> n’écrit que les échecs.
+			</p>
+			<p>
+				Les <code>lean</code> arrivent dans des versions mineures : une mise à jour peut donc
+				apporter des échecs probables que la baseline ne contient pas. Reconstruisez-la avec{" "}
+				<code>leanFail: true</code> après une mise à jour, et examinez le diff. La façon dont ils
+				sont choisis et mesurés est décrite dans{" "}
+				<a href={`${core}/docs/LEANS.md`}>
+					<code>LEANS.md</code>
+				</a>
+				, sur GitHub.
+			</p>
+
+			<h2 id="upgrading">Mettre à jour</h2>
+			<p>
+				L’identité d’un constat comprend son code de raison, et une version mineure peut lui en
+				donner un nouveau : une règle qui n’en donnait pas (<code>DEFAULT</code>) en donne un, ou
+				un code est scindé en deux selon la cause (voir{" "}
+				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>l’identité d’un constat</a>{" "}
+				dans <code>API_STABILITY.md</code>, sur GitHub). Le constat est le même, et une baseline
+				écrite avant la mise à jour y correspond toujours : chaque déplacement figure dans{" "}
+				<code>src/baseline-moves.json</code> (règle, ancien code, nouveaux codes), et une entrée
+				sous l’ancien code correspond au constat sous un nouveau quand le reste de son identité,
+				la règle, le balisage et le frame, est le même. <code>matchBaseline</code> et l’option{" "}
+				<code>baselineEntries</code> des rapports SARIF et JUnit le lisent tous. Une entrée est
+				d’abord cherchée sous le code propre du constat : elle ne va donc jamais à un constat
+				déplacé quand un autre constat a exactement cette identité.
+			</p>
+			<p>La 1.14 déplace ceux-ci, depuis la 1.13 :</p>
+			<DataTable
+				label="Codes de raison déplacés en 1.14"
+				rowKey="id"
+				columns={[
+					{ key: "rules", label: "Règle", wrap: true, width: "45%" },
+					{ key: "from", label: "Ancien code", wrap: true },
+					{ key: "to", label: "Nouveau code", wrap: true },
+				]}
+				rows={baselineMoves}
+			/>
+			<p>
+				Le tableau couvre une version mineure : un déplacement y figure depuis la version qui l’a
+				apporté jusqu’à la version mineure suivante, qui le retire. Une baseline écrite par la 1.13
+				continue donc de correspondre avec la 1.14.x, et doit être régénérée avant la 1.15.
+			</p>
+			<p>
+				Régénérer la baseline avec <code>--write-baseline</code> (ou{" "}
+				<code>buildBaselineEntries</code>) après une mise à jour écrit chaque constat sous son code
+				actuel, et rend le tableau inutile. Cela accepte aussi tout constat que la mise à jour
+				signale pour la première fois : examinez donc son diff. Pour mettre les codes à jour sans
+				rien accepter de nouveau, réécrivez le fichier avec <code>migrateBaselineEntries</code> de{" "}
+				<code>@surea11y/core/baseline</code> :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { migrateBaselineEntries } = require('@surea11y/core/baseline');",
+					"",
+					"const file = JSON.parse(fs.readFileSync('baseline.json', 'utf8'));",
+					"// With the scan's result, an entry for a split code takes the code its finding has now.",
+					"file.entries = migrateBaselineEntries(file, result);",
+					"fs.writeFileSync('baseline.json', JSON.stringify(file, null, 2) + '\\n');",
+				]}
+			/>
+			<p>
+				Elle renvoie une copie des entrées où chaque entrée déplacée porte son nouveau code, et
+				toutes les autres telles quelles. Sans résultat, elle ne réécrit que les déplacements
+				qu’elle peut établir sans le constat : un code que la règle ne donne plus et qui est passé
+				à un seul nouveau (le <code>DEFAULT</code> de <code>img-alt-present</code>), pas une
+				scission.
+			</p>
+			<p>
+				Un constat dont le résultat a changé avec la mise à jour est une autre affaire : une règle
+				qui fait désormais échouer ce qu’elle demandait, ou demande ce qu’elle faisait échouer,
+				donne un constat que la baseline ne contenait pas, ou n’en donne plus un qu’elle
+				contenait, et le <a href={`${core}/CHANGELOG.md`}>journal des modifications</a> explique
+				pourquoi.
+			</p>
+
 			<h2 id="scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</h2>
 			<p>
 				Une entrée de baseline n’enregistre pas le viewport, et la correspondance ne s’en sert pas :
@@ -175,7 +318,7 @@ export function BaselineContent() {
 					'  "version": 1,',
 					'  "generatedAt": "2026-07-30T12:00:00.000Z",',
 					'  "entries": [',
-					'    { "ruleId": "img-alt-present", "reasonCode": "DEFAULT", "selector": "html > body > img", "html": "<img src=\\"logo.png\\">" }',
+					'    { "ruleId": "img-alt-present", "reasonCode": "TEXT_ALTERNATIVE_MISSING", "selector": "html > body > img", "html": "<img src=\\"logo.png\\">" }',
 					"  ]",
 					"}",
 				]}

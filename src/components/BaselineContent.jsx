@@ -1,7 +1,33 @@
 import React from "react";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
+import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
+
+const codes = (list) =>
+	list.map((c, i) => (
+		<React.Fragment key={c}>
+			{i > 0 && ", "}
+			<code>{c}</code>
+		</React.Fragment>
+	));
+
+const baselineMoves = [
+	{ id: "text-missing", rules: ["img-alt-present", "embed-text-alternative-present", "object-text-alternative-present", "svg-image-text-alternative-present", "svg-text-alternative-present", "video-poster-text-alternative-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING"] },
+	{ id: "area-alt", rules: ["area-alt-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING", "TEXT_ALTERNATIVE_EMPTY"] },
+	{ id: "canvas", rules: ["canvas-text-alternative-present"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_MISSING", "ROLE_IMG_NAME_MISSING"] },
+	{ id: "text-review", rules: ["area-alt-quality", "canvas-text-alternative-quality", "embed-text-alternative-quality", "input-image-alt-quality", "object-text-alternative-quality"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_REVIEW"] },
+	{ id: "img-quality", rules: ["img-alt-quality", "svg-text-alternative-quality"], from: ["DEFAULT"], to: ["TEXT_ALTERNATIVE_REVIEW", "IMAGE_ONLY_CONTROL_CONTENT"] },
+	{ id: "img-decorative", rules: ["img-alt-decorative"], from: ["EXCLUDED_ELEMENT_REVIEW"], to: ["IMAGE_ONLY_CONTROL_CONTENT"] },
+	{ id: "input-image", rules: ["input-image-alt-decorative"], from: ["DEFAULT"], to: ["NAME_FROM_ELSEWHERE_REVIEW"] },
+	{ id: "manual-review", rules: ["manual-review"], from: ["DEFAULT"], to: ["KEYBOARD_REVIEW"] },
+	{ id: "list-children", rules: ["list-children-valid"], from: ["LIST_INVALID_CHILD"], to: ["LIST_ITEM_ROLE_OVERRIDDEN"] },
+	{ id: "listitem-parent", rules: ["listitem-parent-valid"], from: ["LISTITEM_INVALID_PARENT"], to: ["LIST_ROLE_OVERRIDDEN"] },
+	{ id: "prohibited-children", rules: ["aria-prohibited-children"], from: ["ARIA_PROHIBITED_CHILD_ROLELESS"], to: ["ARIA_PROHIBITED_CHILD"] },
+	{ id: "duplicate-id", rules: ["duplicate-id"], from: ["DUPLICATE_ID"], to: ["DUPLICATE_ID_IN_SHADOW_TREE"] },
+	{ id: "valid-lang", rules: ["valid-lang"], from: ["ELEMENT_LANG_INVALID"], to: ["DEFAULT_LANG_INVALID"] },
+	{ id: "p-as-heading", rules: ["p-as-heading"], from: ["BOLD_LARGE_PARAGRAPH", "BOLD_LARGE_DIV"], to: ["HEADING_LIKE_NUMBER", "HEADING_LIKE_LINK"] },
+].map((row) => ({ ...row, rules: codes(row.rules), from: codes(row.from), to: codes(row.to) }));
 
 export function BaselineContent() {
 	return (
@@ -132,6 +158,119 @@ export function BaselineContent() {
 				with <code>--write-baseline</code> periodically to clean them up.
 			</p>
 
+			<h2 id="findings-that-lean-fail">Findings that lean fail</h2>
+			<p>
+				A baseline records failures. An undecided finding is not one, but since 1.14 some lean
+				fail: the page's evidence points to a failure without proving it (their <code>lean</code>,
+				see <a href="/results-reports/output-schema/#leans">Leans</a> in the output schema). A
+				build that gates on them (<code>leanFailAs</code> in the{" "}
+				<a href="/results-reports/junit-report/#options">JUnit</a> and{" "}
+				<a href="/results-reports/sarif-report/#options">SARIF</a> reporters) needs a way to accept
+				those a page already has, as it accepts its failures. Ask for them when building the
+				baseline:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { buildBaselineEntries } = require('@surea11y/core/baseline');",
+					"",
+					"const entries = buildBaselineEntries(result, { leanFail: true });",
+				]}
+			/>
+			<p>
+				Each finding that leans fail and gates under <code>leanFailAs</code> (
+				<code>leaningFailures(result)</code> from <code>@surea11y/core</code>) gets an entry marked{" "}
+				<code>"lean": "fail"</code>, after the failures:
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={[
+					'{ "ruleId": "heading-order", "reasonCode": "HEADING_ORDER_SKIPPED_LEVEL", "selector": "html > body > main > h3", "html": "<h3>Details</h3>", "lean": "fail" }',
+				]}
+			/>
+			<p>
+				Such an entry matches only a finding that leans fail, with the same identity, and a plain
+				entry only a failure. Under <code>leanFailAs</code>, JUnit doesn't gate on a finding it
+				matches (its <code>&lt;skipped&gt;</code> message counts it among the known likely
+				failures) and SARIF leaves it a <code>warning</code>. Without <code>leanFailAs</code> the
+				entries change nothing, and <code>matchBaseline</code> leaves them out of its counts, stale
+				ones included, unless given <code>{"{ leanFail: true }"}</code>, when it compares them in{" "}
+				<code>leanFail</code> (<code>{"{ total, knownCount, newCount, newOccurrences, staleCount }"}</code>).{" "}
+				<code>--write-baseline</code> writes failures only.
+			</p>
+			<p>
+				Leans arrive in minor releases, so an upgrade can bring likely failures a baseline doesn't
+				hold: rebuild it with <code>leanFail: true</code> after an upgrade, and review the diff. How
+				leans are chosen and measured is in{" "}
+				<a href={`${core}/docs/LEANS.md`}>
+					<code>LEANS.md</code>
+				</a>
+				, on GitHub.
+			</p>
+
+			<h2 id="upgrading">Upgrading</h2>
+			<p>
+				A finding's identity includes its reason code, and a minor release may give a finding a new
+				one: a rule that gave none (<code>DEFAULT</code>) now gives one, or one code is split in two
+				by cause (see{" "}
+				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>finding identity</a> in{" "}
+				<code>API_STABILITY.md</code>, on GitHub). The finding is the same, and a baseline written
+				before the upgrade still matches it: each move is listed in{" "}
+				<code>src/baseline-moves.json</code> (rule, old code, new codes), and an entry under the
+				old code matches the finding under a new one when the rest of its identity, the rule, the
+				markup and the frame, is the same. <code>matchBaseline</code>, and the{" "}
+				<code>baselineEntries</code> option of the SARIF and JUnit reporters, all read it. An entry
+				is looked up under the finding's own code first, so it never goes to a moved finding when
+				another finding has that exact identity.
+			</p>
+			<p>1.14 moves these, from 1.13:</p>
+			<DataTable
+				label="Reason codes moved in 1.14"
+				rowKey="id"
+				columns={[
+					{ key: "rules", label: "Rule", wrap: true, width: "45%" },
+					{ key: "from", label: "Old code", wrap: true },
+					{ key: "to", label: "New code", wrap: true },
+				]}
+				rows={baselineMoves}
+			/>
+			<p>
+				The table covers one minor release: a move is listed from the release it shipped in until
+				the next minor release, which drops it. So a baseline written by 1.13 keeps matching under
+				1.14.x, and needs regenerating before 1.15.
+			</p>
+			<p>
+				Regenerating the baseline with <code>--write-baseline</code> (or{" "}
+				<code>buildBaselineEntries</code>) after an upgrade writes every finding under its current
+				code, and removes the need for the table. It also accepts any finding the upgrade newly
+				reports, so look at its diff. To bring the codes up to date without accepting anything new,
+				rewrite the file with <code>migrateBaselineEntries</code> from{" "}
+				<code>@surea11y/core/baseline</code>:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { migrateBaselineEntries } = require('@surea11y/core/baseline');",
+					"",
+					"const file = JSON.parse(fs.readFileSync('baseline.json', 'utf8'));",
+					"// With the scan's result, an entry for a split code takes the code its finding has now.",
+					"file.entries = migrateBaselineEntries(file, result);",
+					"fs.writeFileSync('baseline.json', JSON.stringify(file, null, 2) + '\\n');",
+				]}
+			/>
+			<p>
+				It returns a copy of the entries with each moved one under its new code, and every other
+				entry as it was. Without a result, it rewrites only the moves it can tell without the
+				finding: a code the rule no longer gives that moved to a single new one (
+				<code>img-alt-present</code>'s <code>DEFAULT</code>), not a split.
+			</p>
+			<p>
+				A finding whose outcome changed with the upgrade is another matter: a rule that now fails
+				what it asked about, or asks about what it failed, gives a finding the baseline didn't hold,
+				or no longer gives one it held, and the{" "}
+				<a href={`${core}/CHANGELOG.md`}>changelog</a> says why.
+			</p>
+
 			<h2 id="scanning-at-several-viewport-widths">Scanning at several viewport widths</h2>
 			<p>
 				A baseline entry doesn't record the viewport, and matching doesn't use it: the same element
@@ -162,7 +301,7 @@ export function BaselineContent() {
 					'  "version": 1,',
 					'  "generatedAt": "2026-07-30T12:00:00.000Z",',
 					'  "entries": [',
-					'    { "ruleId": "img-alt-present", "reasonCode": "DEFAULT", "selector": "html > body > img", "html": "<img src=\\"logo.png\\">" }',
+					'    { "ruleId": "img-alt-present", "reasonCode": "TEXT_ALTERNATIVE_MISSING", "selector": "html > body > img", "html": "<img src=\\"logo.png\\">" }',
 					"  ]",
 					"}",
 				]}

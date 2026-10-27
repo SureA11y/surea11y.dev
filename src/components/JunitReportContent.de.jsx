@@ -69,6 +69,49 @@ const optionRows = [
 		),
 	},
 	{
+		id: "leanFailAs",
+		option: <code>leanFailAs</code>,
+		default: <code>'skipped'</code>,
+		effect: (
+			<>
+				<code>'failure'</code> meldet eine Regel, unter deren offenen Befunden einer zu{" "}
+				<code>fail</code> tendiert (sein{" "}
+				<a href="/results-reports/output-schema/#leans"><code>lean</code></a>), als{" "}
+				<code>&lt;failure type="leanFail"&gt;</code> und listet diese Befunde auf, jeweils mit dem
+				Grund, warum er wahrscheinlich nicht erfüllt ist (<code>likely fails:</code>), dem Hinweis
+				der Tendenz, falls vorhanden, und wie eine Person ihn bestätigt (
+				<code>how to check:</code>, die Schritte aus{" "}
+				<a href="/results-reports/output-schema/#how-to-check"><code>howToCheck</code></a> des
+				Befunds, dann <code>fails when:</code>), die der Bericht in Node einem Ergebnis hinzufügt,
+				das ohne sie kommt; die übrigen offenen Befunde der Regel folgen <code>cantTellAs</code>.
+				Für eine Pipeline, die bei wahrscheinlichen Fehlern scheitern soll, ohne bei jeder offenen
+				Frage zu scheitern. Das gilt auch für eine Best-Practice-Regel: Eine solche Regel, keinem
+				WCAG-Kriterium zugeordnet, ergibt nie <code>fail</code>, und die Fakten, die sie
+				feststellt, tendieren ohne Bedingung zu <code>fail</code>; eine übersprungene
+				Überschriftenebene (<code>heading-order</code>, ein <code>&lt;h1&gt;</code>, dann ein{" "}
+				<code>&lt;h3&gt;</code>) ist also ein <code>&lt;failure type="leanFail"&gt;</code> in{" "}
+				<code>Other checks</code>. Eine Regel, deren Kriterien alle außerhalb des Ziels des Scans
+				liegen, lässt den Build nicht scheitern, wie bei einem Fehlschlag. Groß- und
+				Kleinschreibung spielt keine Rolle; ein anderer Wert wirft einen <code>TypeError</code>.{" "}
+				<code>leaningFailures(result, {"{ wcagOnly }"})</code> aus <code>@surea11y/core</code>{" "}
+				listet die Befunde, nach denen die Option entscheidet, vor Anwendung der Baseline.
+			</>
+		),
+	},
+	{
+		id: "leanFailWcagOnly",
+		option: <code>leanFailWcagOnly</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				Mit <code>leanFailAs: 'failure'</code> lässt <code>true</code> den Build nur bei Befunden
+				von Regeln scheitern, die einem WCAG-Kriterium im Ziel des Scans zugeordnet sind, und lässt
+				die Tendenzen der Best-Practice-Regeln außen vor. Ein anderer Wert als <code>true</code>{" "}
+				oder <code>false</code> wirft einen <code>TypeError</code>.
+			</>
+		),
+	},
+	{
 		id: "includeNotApplicable",
 		option: <code>includeNotApplicable</code>,
 		default: <code>false</code>,
@@ -87,7 +130,26 @@ const optionRows = [
 				Regel, deren Fehlschläge alle bereits bekannt
 				sind, wird zu{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, nicht zu
-				einem bestandenen Test: Sie hat nicht bestanden.
+				einem bestandenen Test: Sie hat nicht bestanden. Ein Eintrag, den 1.13 unter einem
+				Reason-Code geschrieben hat, der sich in 1.14 geändert hat, <a href="/conformance/baseline/#upgrading">passt weiterhin zum Befund unter
+				seinem neuen Code</a>. Unter <code>leanFailAs: 'failure'</code> lässt auch ein Befund, der zu{" "}
+				<code>fail</code> tendiert und einen mit <code>lean: 'fail'</code> gekennzeichneten Eintrag
+				hat (<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>), den Build nicht
+				scheitern, und die <code>&lt;skipped&gt;</code>-Meldung zählt ihn zu den{" "}
+				<code>known likely failures recorded in the baseline</code>.
+			</>
+		),
+	},
+	{
+		id: "packs",
+		option: <code>packs</code>,
+		default: "keine",
+		effect: (
+			<>
+				Die Packs, die der Scan ausgeführt hat (<code>engineOptions.packs</code>): Mit{" "}
+				<code>leanFailAs: 'failure'</code> geben die wahrscheinlichen Fehler einer Pack-Regel die
+				Schritte ihres eigenen <code>meta.review</code> an, wie im{" "}
+				<a href="/results-reports/html-report/">HTML-Bericht</a>.
 			</>
 		),
 	},
@@ -159,7 +221,7 @@ export function JunitReportContent() {
 				lang="html"
 				lines={[
 					'<?xml version="1.0" encoding="UTF-8"?>',
-					'<testsuites name="surea11y" tests="13" failures="1" errors="0" skipped="5" time="0">',
+					'<testsuites name="surea11y" tests="14" failures="1" errors="0" skipped="4" time="0">',
 					'  <testsuite name="WCAG 1.1.1" tests="1" failures="1" errors="0" skipped="0" time="0">',
 					"    <properties>",
 					'      <property name="wcagCriterion" value="1.1.1"/>',
@@ -181,7 +243,7 @@ export function JunitReportContent() {
 					"help: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html</failure>",
 					"    </testcase>",
 					"  </testsuite>",
-					"  <!-- 10 more suites trimmed: 12 tests, 5 of them skipped (manual review) -->",
+					"  <!-- 10 more suites trimmed: 13 tests, 4 of them skipped (manual review) -->",
 					"</testsuites>",
 				]}
 			/>
@@ -191,7 +253,9 @@ export function JunitReportContent() {
 					die Regeln, die dafür gelaufen sind, keinen Fehlschlag gemeldet haben. Sie bedeutet nicht,
 					dass das Kriterium vollständig geprüft oder erfüllt ist: Die meisten Kriterien haben
 					Teile, die keine Regel abdeckt (siehe{" "}
-					<a href="/conformance/wcag-mapping/">WCAG-Konformitätszuordnung</a>).
+					<a href="/conformance/wcag-mapping/">WCAG-Konformitätszuordnung</a>). Das sagt auch ihre
+					Eigenschaft <code>criterionOutcome</code>: <code>cantTell</code>, wo die Regeln bestanden
+					haben, aber nur einen Teil des Kriteriums prüfen, was derzeit für jedes Kriterium gilt.
 				</li>
 				<li>
 					<strong>Suites folgen dem Kriterium</strong>, weil Menschen danach verfolgen, und{" "}
@@ -340,7 +404,7 @@ export function JunitReportContent() {
 				<a href="/results-reports/html-report/">HTML-Bericht</a> angeben.
 			</p>
 
-			<h2>Optionen</h2>
+			<h2 id="options">Optionen</h2>
 			<DataTable
 				label="Optionen des JUnit-Berichts"
 				rowKey="id"
