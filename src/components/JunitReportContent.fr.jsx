@@ -67,6 +67,49 @@ const optionRows = [
 		),
 	},
 	{
+		id: "leanFailAs",
+		option: <code>leanFailAs</code>,
+		default: <code>'skipped'</code>,
+		effect: (
+			<>
+				<code>'failure'</code> signale une règle dont les constats non tranchés en comptent un qui
+				penche vers l’échec (son{" "}
+				<a href="/results-reports/output-schema/#leans"><code>lean</code></a>) sous forme de{" "}
+				<code>&lt;failure type="leanFail"&gt;</code>, en listant ces constats, chacun avec la
+				raison pour laquelle il échoue probablement (<code>likely fails:</code>), la mise en garde
+				de la tendance quand elle en a une, et la façon dont une personne le confirme (
+				<code>how to check:</code>, les étapes{" "}
+				<a href="/results-reports/output-schema/#how-to-check"><code>howToCheck</code></a> du
+				constat, puis <code>fails when:</code>), que le rapport ajoute dans Node à un résultat qui
+				arrive sans elles ; ses autres constats non tranchés restent tels que le dit{" "}
+				<code>cantTellAs</code>. Pour un pipeline qui bloque sur les échecs probables sans
+				bloquer sur chaque question. Y compris pour une règle de bonne pratique : une telle
+				règle, associée à aucun critère WCAG, n’échoue jamais, et les faits qu’elle constate
+				penchent vers l’échec sans condition, si bien qu’un niveau de titre sauté (
+				<code>heading-order</code>, un <code>&lt;h1&gt;</code> puis un <code>&lt;h3&gt;</code>)
+				devient un <code>&lt;failure type="leanFail"&gt;</code> dans <code>Other checks</code>.
+				Une règle dont chaque critère est hors de la cible de l’analyse ne bloque pas, comme pour
+				un échec. Lue quelle que soit la casse ; toute autre valeur lève une{" "}
+				<code>TypeError</code>. <code>leaningFailures(result, {"{ wcagOnly }"})</code>, de{" "}
+				<code>@surea11y/core</code>, liste les constats sur lesquels elle bloque, avant la
+				baseline.
+			</>
+		),
+	},
+	{
+		id: "leanFailWcagOnly",
+		option: <code>leanFailWcagOnly</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				Avec <code>leanFailAs: 'failure'</code>, <code>true</code> ne bloque que sur les constats
+				des règles associées à un critère WCAG de la cible de l’analyse, en laissant de côté les
+				tendances des règles de bonne pratique. Une valeur autre que <code>true</code> ou{" "}
+				<code>false</code> lève une <code>TypeError</code>.
+			</>
+		),
+	},
+	{
 		id: "includeNotApplicable",
 		option: <code>includeNotApplicable</code>,
 		default: <code>false</code>,
@@ -85,7 +128,26 @@ const optionRows = [
 				<code>entries</code>. Une règle dont tous les échecs sont
 				déjà connus devient{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, et non un
-				test réussi : elle n’a pas réussi.
+				test réussi : elle n’a pas réussi. Une entrée écrite par 1.13 sous un code de raison qui
+				a changé en 1.14 <a href="/conformance/baseline/#upgrading">correspond toujours au constat sous son nouveau code</a>. Avec{" "}
+				<code>leanFailAs: 'failure'</code>, un constat qui penche vers l’échec et a une entrée
+				marquée <code>lean: 'fail'</code> (
+				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>) ne bloque pas non plus,
+				et le message <code>&lt;skipped&gt;</code> le compte parmi les{" "}
+				<code>known likely failures recorded in the baseline</code>.
+			</>
+		),
+	},
+	{
+		id: "packs",
+		option: <code>packs</code>,
+		default: "aucune",
+		effect: (
+			<>
+				Les packs que l’analyse a exécutés (<code>engineOptions.packs</code>) : avec{" "}
+				<code>leanFailAs: 'failure'</code>, les échecs probables d’une règle de pack donnent les
+				étapes de son propre <code>meta.review</code>, comme dans le{" "}
+				<a href="/results-reports/html-report/">rapport HTML</a>.
 			</>
 		),
 	},
@@ -157,7 +219,7 @@ export function JunitReportContent() {
 				lang="html"
 				lines={[
 					'<?xml version="1.0" encoding="UTF-8"?>',
-					'<testsuites name="surea11y" tests="13" failures="1" errors="0" skipped="5" time="0">',
+					'<testsuites name="surea11y" tests="14" failures="1" errors="0" skipped="4" time="0">',
 					'  <testsuite name="WCAG 1.1.1" tests="1" failures="1" errors="0" skipped="0" time="0">',
 					"    <properties>",
 					'      <property name="wcagCriterion" value="1.1.1"/>',
@@ -179,7 +241,7 @@ export function JunitReportContent() {
 					"help: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html</failure>",
 					"    </testcase>",
 					"  </testsuite>",
-					"  <!-- 10 more suites trimmed: 12 tests, 5 of them skipped (manual review) -->",
+					"  <!-- 10 more suites trimmed: 13 tests, 4 of them skipped (manual review) -->",
 					"</testsuites>",
 				]}
 			/>
@@ -189,7 +251,10 @@ export function JunitReportContent() {
 					exécutées pour lui n’ont signalé aucun échec. Cela ne signifie pas que le critère a été
 					entièrement vérifié, ni qu’il est satisfait : la plupart des critères ont des parties
 					qu’aucune règle ne couvre (voir{" "}
-					<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>).
+					<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>). Sa
+					propriété <code>criterionOutcome</code> le dit : <code>cantTell</code> lorsque les
+					règles ont réussi mais ne vérifient qu’une partie du critère, ce qui est aujourd’hui le
+					cas de chaque critère.
 				</li>
 				<li>
 					<strong>Les suites suivent le critère</strong>, parce que c’est ce que l’on suit, et{" "}
@@ -337,7 +402,7 @@ export function JunitReportContent() {
 				<a href="/results-reports/html-report/">rapport HTML</a>.
 			</p>
 
-			<h2>Options</h2>
+			<h2 id="options">Options</h2>
 			<DataTable
 				label="Options du rapport JUnit"
 				rowKey="id"

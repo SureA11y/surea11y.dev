@@ -63,6 +63,14 @@ export function RulesTable({ caption, rows, locale = "en" }) {
 			width: "4.5rem",
 			render: (value) => (value ? <Tag tone="accent2">{value}</Tag> : "—"),
 		},
+		// How many cantTell questions the rule can ask, each with "How to check"
+		// steps on its page; the column header names what the number counts.
+		{
+			key: "questions",
+			label: t("rulesTable.questions", locale),
+			width: "6rem",
+			render: (value, row) => (value ? <a href={`/rules/${row.ruleId}/#how-to-check`}>{value}</a> : "—"),
+		},
 		// Engine vocabulary, English in every language.
 		{
 			key: "confidence",
@@ -78,8 +86,8 @@ export function RulesTable({ caption, rows, locale = "en" }) {
 		},
 	];
 
-	// The fixed columns above add up to 38rem; a 54rem minimum keeps Title at
+	// The fixed columns above add up to 44rem; a 60rem minimum keeps Title at
 	// 16rem or more, and DataTable scrolls sideways (focusable, named by the
 	// caption) when there isn't room.
-	return <DataTable caption={caption} columns={columns} rows={rows} rowKey="ruleId" minWidth="54rem" />;
+	return <DataTable caption={caption} columns={columns} rows={rows} rowKey="ruleId" minWidth="60rem" />;
 }

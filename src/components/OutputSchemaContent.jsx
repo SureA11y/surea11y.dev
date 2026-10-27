@@ -73,8 +73,9 @@ const topLevelRows = [
 				Which version of WCAG this run checked against: your{" "}
 				<code>engineOptions.wcagVersion</code>, or the <code>wcagVersion</code> of the pack
 				profile the run applied, or what your version-origin tags implied, or the default{" "}
-				<code>"2.2"</code>. It affects one thing today — <strong>a rule mapped only to SC
-				4.1.1 Parsing cannot <code>fail</code> under a 2.2 target</strong> (see{" "}
+				<code>"2.2"</code>. For SC 4.1.1 Parsing it says why{" "}
+				<strong>a rule mapped only to it cannot <code>fail</code></strong>: 2.2 removed it, and the
+				2023 errata to 2.0 and 2.1 count it as always satisfied (see{" "}
 				<code>checksResults[i].wcagVersionScope</code> below). Reported once per result: a run has
 				one target throughout.
 				</>
@@ -182,7 +183,7 @@ const topLevelRows = [
 							filling in from core's catalog. A result that catalog couldn't fill in stays whole:
 							every check result of a scan with <code>packs</code>, a custom rule's, and one whose
 							title or description the scan's <code>messages</code> changed. An empty page's result
-							goes from about 236 KB to 80 KB.
+							goes from about 263 KB to 90 KB.
 						</>
 					),
 				},
@@ -200,16 +201,21 @@ const topLevelRows = [
 							fonts are still loading, so this is what you need to reproduce a run.{" "}
 							<code>layout</code> is whether the page had one: <code>false</code> in jsdom and other
 							DOM emulators, and then the viewport and the other rendering fields are left out, since
-							they describe nothing that was measured; only <code>internalsHook</code> can sit beside
-							it, where the page runs the hook. In a browser, <code>viewport</code> is{" "}
+							they describe nothing that was measured; only <code>internalsHook</code>,{" "}
+							<code>listenerHook</code> and <code>liveRegionHook</code> can sit beside it, where the
+							page runs them. In a browser, <code>viewport</code> is{" "}
 							<code>innerWidth</code>/<code>innerHeight</code> in CSS pixels,{" "}
 							<code>devicePixelRatio</code> the page's (browser zoom shows here too),{" "}
 							<code>colorScheme</code> what <code>prefers-color-scheme</code> matches,{" "}
 							<code>forcedColors</code> whether <code>forced-colors: active</code> matches (
 							<code>"active"</code> under Windows high contrast or Chromium's emulated forced colors,{" "}
 							<code>"none"</code> otherwise; the rules measure the page's own colors either way, see{" "}
-							<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}>Forced colors</a>), and{" "}
-							<code>fonts</code> is <code>"loading"</code> while any of the page's font faces is still
+							<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}>Forced colors</a>),{" "}
+							<code>forcedColorsCss</code> is <code>true</code> under forced colors when the page's own
+							CSS reacts to them in a way the scan can't hold off (a <code>forced-colors</code> media
+							query, which still matches, or a system color such as <code>GrayText</code>, which still
+							takes the forced palette's), so the contrast results can differ from a scan with forced
+							colors off, and <code>fonts</code> is <code>"loading"</code> while any of the page's font faces is still
 							loading, <code>"loaded"</code> otherwise. A field the page can't report is left out.
 							Reading these adds no nondeterminism: like the DOM, they are input. For results you can
 							compare between runs, wait for <code>document.fonts.ready</code> before scanning.{" "}
@@ -233,7 +239,24 @@ const topLevelRows = [
 							<code>ElementInternals</code> and an element with none is no question;{" "}
 							<code>"late"</code> when it was installed after them, or the page replaced{" "}
 							<code>attachInternals</code> after it, so only internals attached after it were read.
-							Without a hook the field is absent and the result is as before. Each frame in a{" "}
+							Without a hook the field is absent and the result is as before.{" "}
+							<code>listenerHook</code> is the same for the opt-in listener hook (
+							<code>listenerHookScript()</code>, see{" "}
+							<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+								<code>INTEGRATION.md</code>
+							</a>
+							): <code>"early"</code> when it was installed before the page's scripts and is still the
+							page's <code>addEventListener</code>, so the keyboard rules saw every listener the page
+							added from script and a missing one proves there is none; <code>"late"</code> when it
+							was installed after them, or the page replaced <code>addEventListener</code> after it.{" "}
+							<code>liveRegionHook</code> is there only where the page runs the opt-in live-region hook
+							(<code>liveRegionHookScript()</code>, see{" "}
+							<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}>
+								<code>INTEGRATION.md</code>
+							</a>
+							): <code>"early"</code> when it was installed before the document finished loading, so
+							it saw every change to the page's live regions since; <code>"late"</code> otherwise. Each
+							frame in a{" "}
 							<a href="#cross-frame-result">cross-frame result</a> carries its own.
 						</>
 					),
@@ -500,11 +523,19 @@ const occurrenceRows = [
 				as best-effort extra context, not a stable contract. The one exception is{" "}
 				<code>data.details.reasonCode</code>, which <strong>is</strong> stable: it identifies{" "}
 				<em>which</em> of a rule's findings this is, and together with <code>ruleId</code> and{" "}
-				<code>html</code> forms the fingerprint baselines and SARIF are keyed on. See{" "}
+				<code>html</code> forms the fingerprint baselines and SARIF are keyed on. A rule may gain
+				a new reason code in a minor release, or split one by cause; see{" "}
 				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>
 					<code>API_STABILITY.md</code>
 				</a>
-				. Each rule's page lists the fields its findings carry, under “What a finding reports”.
+				. The size and ratio fields of a contrast failure (<code>metrics.ratio</code>,{" "}
+				<code>metrics.threshold</code>, and <code>typography</code>'s <code>fontSizePx</code>,{" "}
+				<code>fontSizePt</code>, <code>fontWeight</code>, <code>isBold</code> and{" "}
+				<code>isLargeText</code>) are stable too, so a report or pack can tell which kind of text
+				failed, and so are <code>element</code> in <code>list-children-valid</code> findings,{" "}
+				<code>parentElement</code> in <code>listitem-parent-valid</code> findings and{" "}
+				<code>role</code> in <code>aria-role-name-present</code> findings, which say which kind of
+				list or widget failed. Each rule's page lists the fields its findings carry, under “What a finding reports”.
 			</>
 		),
 	},
@@ -516,7 +547,9 @@ const occurrenceRows = [
 				Which tier this occurrence belongs to, on a rule that graded its findings into a
 				confident <code>fail</code> tier and a needs-review <code>cantTell</code> tier. A rule
 				reporting one tier only omits it, in which case the result's own <code>outcome</code> is
-				the occurrence's tier. The outcome always agrees with the tiers: any{" "}
+				the occurrence's tier. <code>occurrenceOutcome(check, occurrence)</code>, from{" "}
+				<code>@surea11y/core</code>, gives the tier as every reporter reads it, either way. The
+				outcome always agrees with the tiers: any{" "}
 				<code>fail</code>-tier occurrence makes it <code>fail</code>, and a <code>fail</code> whose
 				occurrences are all <code>cantTell</code>-tier is <code>cantTell</code>, so SARIF, JUnit,
 				EARL and baselines give one answer. The engine settles a custom or pack rule that returns
@@ -528,6 +561,8 @@ const occurrenceRows = [
 		),
 	},
 	{ id: "uncertainty", field: <code>uncertainty</code>, meaning: <>Why this finding could not be decided — see <a href="#uncertainty-codes">Uncertainty codes</a> below.</> },
+	{ id: "lean", field: <code>lean</code>, meaning: <>Which way this undecided finding points, when the page gives evidence for one — see <a href="#leans">Leans</a> below.</> },
+	{ id: "howToCheck", field: <code>howToCheck</code>, meaning: <>How a person answers this undecided finding — see <a href="#how-to-check">How to check</a> below.</> },
 ];
 
 const uncertaintyRows = [
@@ -544,8 +579,10 @@ const rollupReasonRows = [
 	{ id: "anyCantTell", code: <code>composite.rollup.cantTell.anyCantTell</code>, outcome: <code>cantTell</code>, when: <>None failed, and one is <code>cantTell</code>.</> },
 	{ id: "notSelectedChild", code: <code>composite.rollup.cantTell.notSelectedChild</code>, outcome: <code>cantTell</code>, when: <>None failed or is <code>cantTell</code>, and some didn't run because the scan didn't select them: partly checked.</> },
 	{ id: "missingChild", code: <code>composite.rollup.cantTell.missingChild</code>, outcome: <code>cantTell</code>, when: <>None failed or is <code>cantTell</code>, and some didn't run for another reason.</> },
-	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>Every contributor is <code>notApplicable</code>.</> },
+	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>Every contributor is <code>notApplicable</code>, and they find every case the criterion applies to.</> },
+	{ id: "partialCoverage", code: <code>composite.rollup.cantTell.partialCoverage</code>, outcome: <code>cantTell</code>, when: <>Every contributor is <code>notApplicable</code>, but the criterion (or a standard's requirement marked <code>partial</code>) can apply to content they don't look for, so the page was not shown to have none.</> },
 	{ id: "emptyComposite", code: <code>composite.rollup.cantTell.emptyComposite</code>, outcome: <code>cantTell</code>, when: "The rollup has no rules." },
+	{ id: "partialCheck", code: <code>composite.rollup.cantTell.partialCheck</code>, outcome: <code>cantTell</code>, when: <>None failed or is <code>cantTell</code>, and not all are <code>notApplicable</code>, but the rules check only part of what the criterion (or a standard's requirement marked <code>partial</code>) asks: a person checks the rest.</> },
 	{ id: "otherwise", code: <code>composite.rollup.pass.otherwise</code>, outcome: <code>pass</code>, when: "Otherwise." },
 ];
 
@@ -592,10 +629,13 @@ export function OutputSchemaContent() {
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
 					'      forcedColors?: "active" | "none",',
+					"      forcedColorsCss?: true,          // under forced colors, when the page's own CSS reacts to them",
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
 					"      animationsSettled?: number,",
-					'      internalsHook?: "early" | "late"  // only where the page runs the internals hook',
+					'      internalsHook?: "early" | "late",  // only where the page runs the internals hook',
+					'      listenerHook?: "early" | "late",   // only where the page runs the listener hook',
+					'      liveRegionHook?: "early" | "late"  // only where the page runs the live-region hook',
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -718,7 +758,7 @@ export function OutputSchemaContent() {
 					"  occurrences: Occurrence[],",
 					"  title: string,",
 					"  description: string,",
-					"  i18n: { titleKey: string, descriptionKey: string } | null,",
+					"  i18n: { titleKey: string, descriptionKey: string, variantOfTitleKey?: string } | null,",
 					"  meta: {",
 					"    ruleId: string,",
 					"    ruleInterfaceVersion: string,",
@@ -742,6 +782,7 @@ export function OutputSchemaContent() {
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  variantOf?: string,      // a pack's variant only: the id of the rule it runs at other settings; i18n.variantOfTitleKey is that rule's titleKey",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
 					'    measure: string,       // "contrast-ratio" | "overflow-px" | "target-size-px" | ... (open set)',
@@ -759,7 +800,8 @@ export function OutputSchemaContent() {
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
-					'    coercedFrom: "fail"',
+					'    coercedFrom: "fail",',
+					'    by?: "errata"         // 2.0 or 2.1: their errata count the criterion as always satisfied',
 					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
@@ -813,9 +855,12 @@ export function OutputSchemaContent() {
 				<li>
 					<strong><code>wcagVersionScope</code></strong>: only present when the run's target WCAG
 					version turned this rule's <code>fail</code> into a <code>cantTell</code> — today that
-					means a rule mapped to SC 4.1.1 Parsing (<code>duplicate-id</code>) under the default
-					2.2 target, since 2.2 removed that criterion. <code>removedSc</code> lists the criteria
-					that stopped existing, <code>target</code> is the version that removed them, and{" "}
+					means a rule mapped to SC 4.1.1 Parsing (<code>duplicate-id</code>): under 2.2, which
+					removed that criterion, and under 2.0 and 2.1, whose 2023 errata count it as always
+					satisfied for HTML and XML (<code>by: "errata"</code>). A profile whose standard keeps
+					4.1.1's text (<code>en301549-v3.2.1</code>, or a pack's profile with{" "}
+					<code>keepsParsing</code>) is not coerced. <code>removedSc</code> lists the criteria
+					concerned, <code>target</code> is the run's version, and{" "}
 					<code>coercedFrom</code> is the outcome the rule itself reported. The occurrences are
 					the rule's own, unchanged — nothing was dropped, only the conformance verdict was.
 					Absent on every other result, and <strong>never</strong> reported through{" "}
@@ -830,8 +875,16 @@ export function OutputSchemaContent() {
 						<li id="margin">
 							<strong><code>margin</code></strong>: present only on a rule that declares one in the
 							catalog (<code>getChecksCatalog()[i].margin</code>,{" "}
-							<code>{"{ measure, unit, limit }"}</code>), when at least one element met the rule's
-							threshold. It names the element that came closest to the threshold while meeting it, so
+							<code>{"{ measure, unit, limit, band? }"}</code>), when at least one element met the
+							rule's threshold and, if the declaration has a <code>band</code>, came within it.{" "}
+							<code>band.relative</code> is a fraction of the threshold: <code>contrast-minimum</code>,{" "}
+							<code>contrast-enhanced</code> and <code>link-in-text-block</code>, with{" "}
+							<code>0.1</code>, report a margin only for a ratio within 10% of the one it needed (4.5
+							to 4.95 against 4.5:1, 3 to 3.3 against 3:1). <code>band.absolute</code> is an amount in{" "}
+							<code>unit</code>: <code>target-size-minimum</code>, with <code>6</code>, reports a
+							target only up to 30 px, and <code>text-spacing-content-loss</code>, with{" "}
+							<code>8</code>, a line only from 6 px inside its box's edge. Text at 21:1 or a 48 px
+							button is not close to anything, and no margin says so. It names the element that came closest to the threshold while meeting it, so
 							a pass at 4.52:1 against 4.5:1, or 0.4 px from cutting off text, can be told apart from
 							a comfortable one. It sits beside the outcome and is not a finding: it never adds,
 							removes or changes an occurrence, and baselines, SARIF, JUnit and EARL ignore it. It is
@@ -879,15 +932,20 @@ export function OutputSchemaContent() {
 					options object (after locale/contrast defaults were applied), not literally what you
 					passed in — useful for confirming what a given rule actually saw, especially the
 					resolved <code>locale</code> and <code>contrast.mode</code>/
-					<code>contrast.rootCanvasFallback</code>. It leaves out <code>messages</code>, the
+					<code>contrast.rootCanvasFallback</code>. <code>contrast.rootCanvasFallback</code> is
+						white when the caller gave none, and <code>contrast.rootCanvasFallbackSet</code> says
+						which: <code>true</code> for a colour the caller gave, <code>false</code> for the
+						default. It leaves out <code>messages</code>, the
 					dictionaries the run translated with (a locale side file in the browser bundle, or your
 					own strings): they are data, not a setting, and a copy on every result made a scan tens
-					of megabytes. <code>engine.locale</code> says which dictionary was used. Two more options
-					are echoed as the rules saw them, so the result stays plain data that{" "}
-					<code>JSON.stringify</code> and <code>structuredClone</code> (<code>postMessage</code>)
-					can carry: <code>probes</code> as the capped copy rules read, and{" "}
-					<code>customRules</code> as <code>{"[{ id }]"}</code>, one entry per custom rule with an
-					id, without its functions.
+					of megabytes. <code>engine.locale</code> says which dictionary was used. Three more
+						options are echoed as the rules saw them, so the result stays plain data that{" "}
+						<code>JSON.stringify</code> and <code>structuredClone</code> (<code>postMessage</code>)
+						can carry: <code>probes</code> as the capped copy rules read, <code>customRules</code>{" "}
+						as <code>{"[{ id }]"}</code>, one entry per custom rule with an id, without its
+						functions, and <code>styleSheetTexts</code> as <code>{"[{ href }]"}</code>, one entry
+						per sheet given, without its text, since a page's CSS repeated on every result
+						multiplied it by the number of rules.
 					</li>
 			</ul>
 
@@ -929,6 +987,19 @@ export function OutputSchemaContent() {
 					'        | "equivalence-unknown" | "judgement-required" | "out-of-scope",',
 					"    needed?: string,       // what would settle the question",
 					"    evidence?: object      // what the rule did establish, rule-specific",
+					"  },",
+					"  lean?: {                 // present only on a cantTell-tier occurrence, and only with evidence",
+					'    toward: "pass" | "fail",',
+					"    why: string,           // localized: what in the page points that way",
+					"    signals: { signal: string, value: string | number | boolean | null }[],",
+					"    caution?: string,      // localized: what could make it wrong",
+					"    measured?: { agreed: number, cases: number, corpus?: string, coreVersion?: string },",
+					"    i18n?: { whyKey?: string, cautionKey?: string, params?: object }",
+					"  },",
+					"  howToCheck?: {           // present only on a cantTell-tier occurrence, when the rule says",
+					"    steps: string[],       // localized: what a person does, in order",
+					"    passWhen: string,      // localized: what they see if it passes",
+					"    failWhen: string       // localized: what they see if it fails",
 					"  },",
 					"  data?: {               // absent on manual-review's page-level finding",
 					"    visibilityFilter?: { eligible?: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
@@ -984,6 +1055,103 @@ export function OutputSchemaContent() {
 				repeating it per occurrence would say nothing the result does not.
 			</p>
 
+			<h3 id="leans">Leans</h3>
+			<p>
+				A <code>cantTell</code> can still point one way. <code>lean</code> says which, when the
+				page gives evidence for it: <code>toward</code> is the answer that evidence makes likely,{" "}
+				<code>why</code> says what the evidence is, and <code>signals</code> lists the facts the
+				rule read, each a kebab-case name and a plain value, so a tool can show or weigh them.{" "}
+				<code>caution</code> says what could make the lean wrong, when that isn't plain from{" "}
+				<code>uncertainty.needed</code>. <strong>The outcome stays <code>cantTell</code></strong>:
+				a lean is advice, not a verdict, and nothing that reads outcomes or tiers changes because
+				of it. <a href={`${core}/docs/LEANS.md`}><code>LEANS.md</code></a> is the guide for
+				people who read reports and build tools: which findings lean and why, how a lean is
+				measured, and how far to trust one.
+			</p>
+			<p>
+				<code>lean</code> is present only where the rule has evidence.{" "}
+				<strong>Its absence is information too</strong>: only a person can judge this one. It is
+				present only on a <code>cantTell</code>-tier occurrence, as <code>uncertainty</code> is;
+				the engine drops one on a decided occurrence, and drops a malformed one (a{" "}
+				<code>toward</code> other than <code>pass</code> or <code>fail</code>, or no{" "}
+				<code>why</code>) without touching the finding. <code>measured</code> appears once a lean
+				has been counted against at least five cases with known answers: how many times it was
+				right (<code>agreed</code>) out of how many (<code>cases</code>), which corpus they came
+				from (<code>corpus</code>, with the date it was read) and which core counted them (
+				<code>coreVersion</code>). The counts are per rule, reason code and direction, from the
+				W3C ACT Rules test cases, and the engine carries them, so a result from any entry point
+				has them. A lean never counted, or counted on fewer cases, has none; there is no
+				confidence number. None has yet: the first count, in jsdom, saw 9 leans, none on five
+				cases.
+			</p>
+			<p>
+				<code>why</code> and <code>caution</code> are in the scan's locale; <code>i18n</code>{" "}
+				holds their keys and parameters, as an occurrence's <code>i18n</code> does for{" "}
+				<code>summary</code> and <code>hint</code>. The engine itself leans one finding: a rule
+				mapped only to a criterion the target WCAG version removed, or that the 2023 errata count
+				as satisfied, leans <code>pass</code> beside its <code>out-of-scope</code> uncertainty.
+			</p>
+			<p>
+				<code>reviewGroupOf(check, occurrence)</code>, from <code>@surea11y/core</code>, says where
+				an occurrence goes in a review: <code>'fail'</code>, <code>'leanFail'</code>,{" "}
+				<code>'leanPass'</code> or <code>'open'</code> (only a person can judge), the groups of
+				the <a href="/results-reports/html-report/">HTML report</a>.{" "}
+				<code>leaningFailures(result, {"{ wcagOnly }"})</code> lists the findings that lean fail,
+				those a gate with <code>leanFailAs</code> counts (
+				<a href="/results-reports/junit-report/#options">JUnit</a>,{" "}
+				<a href="/results-reports/sarif-report/#options">SARIF</a>).
+			</p>
+			<p>
+				New leans arrive in minor releases, rule by rule, and a lean may be removed if measuring
+				shows it is wrong too often: treat a lean as present-or-absent advice,{" "}
+				<strong>never as part of a finding's identity</strong>. It does not enter the fingerprint.
+			</p>
+
+			<h3 id="how-to-check">How to check</h3>
+			<p>
+				A <code>cantTell</code> hands a question to a person. <code>howToCheck</code> tells them
+				how to answer it: <code>steps</code>, a few actions in order, starting from the element the
+				finding names (“Tab to the element.”, “Watch whether the focus indicator stays on it.”),
+				then <code>passWhen</code> and <code>failWhen</code>, what they see if it passes and if it
+				fails, naming the criterion it fails. Every core rule that can report{" "}
+				<code>cantTell</code> writes these for each of its reason codes (its{" "}
+				<code>meta.review</code>), and each <code>cantTell</code>-tier occurrence gets its code's
+				entry, in the scan's locale. A variant's finding (<code>variantOf</code>) gets its base
+				rule's where it has none of its own. A pack rule may write them too, in English (see{" "}
+				<a href="/configuration/packs/#rules">Packs</a>); its findings get them when the packs are
+				known, as <code>runDomRulesInPage</code> with <code>engineOptions.packs</code> and{" "}
+				<code>addHowToCheck(result, {"{ packs }"})</code> know them. It is absent on a decided
+				occurrence, on a custom rule's finding, on an override's (a custom or pack rule in{" "}
+				<code>overriddenBuiltinIds</code>), and on a pack rule's that writes none.
+			</p>
+			<p>
+				<strong>The steps are added after the scan, in Node, not by the engine in the page</strong>:
+				the engine is injected into every page and frame a scan opens, and has no use for a
+				thousand sentences no rule reads. <code>runDomRulesInPage</code> adds them to its result. A
+				result from <code>runa11yCoreInPage</code> run in a page (a binding's, an extension's)
+				comes back without them; <code>addHowToCheck(result)</code> returns a copy with them, and{" "}
+				<code>howToCheckFor(ruleId, reasonCode, locale)</code> gives one finding's. Both read
+				core's review dictionaries from disk, so they need Node; a binding whose code runs in a
+				browser (Cypress) calls <code>applyHowToCheck(result, {"{ en, fr }"})</code> from{" "}
+				<code>@surea11y/core/how-to-check</code> with the dictionaries it imports from{" "}
+				<code>{"@surea11y/core/review/<locale>"}</code>, and gets the same steps (
+				<a href={`${core}/docs/BINDING_AUTHORS_GUIDE.md`}><code>BINDING_AUTHORS_GUIDE.md</code></a>{" "}
+				shows how a binding does it). The <a href="/results-reports/html-report/">HTML report</a>{" "}
+				(<code>renderHtmlReport</code>) adds them in Node to a result that comes without them; in
+				the browser (<code>surea11y.report.js</code>) it shows those the result carries. A tool
+				that shows a result in another language than the scan's passes <code>{"{ locale }"}</code>{" "}
+				to <code>addHowToCheck</code> or <code>applyHowToCheck</code> (
+				<code>{"addHowToCheck(result, { locale: 'de' })"}</code>, or a list of locales, most wanted
+				first; <code>renderHtmlReport</code> takes none): the steps are given in it, those already
+				there included, with English for any step the locale lacks.
+			</p>
+			<p>
+				The steps assume a browser, its developer tools (the accessibility tree), a keyboard and,
+				for some, a screen reader. Unlike <code>uncertainty.needed</code>, which says in one
+				sentence what would settle the question, they say how to settle it. Like a lean, they are
+				guidance, not part of a finding's identity, and their wording may improve in any release.
+			</p>
+
 			<h2 id="composite-result">A composite result (<code>rulesResults[i]</code>)</h2>
 			<p>
 				Composites roll multiple atomic rules up to one WCAG Success Criterion (e.g.{" "}
@@ -1009,7 +1177,10 @@ export function OutputSchemaContent() {
 					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
 					"      customChecksIds?: string[], // the custom rules among them; absent when none",
-					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true }>,",
+					"      restatesWcag?: string[],  // a standard's rollup that restates WCAG criteria (applicability: 'wcag'): those criteria",
+					"      partial?: true,           // a standard's requirement its rules don't check in full (partial: true)",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true,",
+					"                            byReasonCode?: true, checkOutcome?: string, requirements?: string[] }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -1022,9 +1193,23 @@ export function OutputSchemaContent() {
 				<strong>any <code>cantTell</code> (or a contributor rule that didn't run at all,{" "}
 				<code>missingCount &gt; 0</code>) → composite <code>cantTell</code></strong>; else{" "}
 				<strong>all contributors <code>notApplicable</code> → composite{" "}
-				<code>notApplicable</code></strong>; else <strong><code>pass</code></strong>. See{" "}
-				<a href="/conformance/wcag-mapping/">Conformance</a> for what this means for an overall conformance
-				claim.
+				<code>notApplicable</code></strong>, where the rules find every case the criterion applies
+				to, and <code>cantTell</code> (<code>partialCoverage</code>) otherwise; else{" "}
+				<strong><code>pass</code></strong>, where the rules check all the criterion asks, and{" "}
+				<code>cantTell</code> (<code>partialCheck</code>) otherwise.{" "}
+				<strong>No WCAG criterion is yet listed as checked in full, so no WCAG rollup passes
+				today.</strong> See <a href="/conformance/wcag-mapping/">Conformance</a> for what this
+				means for an overall conformance claim.
+			</p>
+			<p>
+				A standard's own rollup can judge a rule by its findings rather than whole (see{" "}
+				<a href="/configuration/packs/">Packs</a>): its contributor then says{" "}
+				<code>byReasonCode: true</code>, <code>outcome</code> is the rule's outcome in this rollup
+				(a <code>fail</code> whose findings all belong elsewhere is a <code>pass</code> here) and{" "}
+				<code>checkOutcome</code> the rule's own. When the findings that count toward the rollup
+				name which of its requirements they belong to, <code>requirements</code> lists them, and
+				the rollup's <code>meta.normativeMappings</code> names those for that rule, not every
+				requirement the rule checks.
 			</p>
 			<p>
 				A WCAG rollup's rules are its own list and every rule of <code>engineOptions.customRules</code>{" "}
@@ -1140,8 +1325,11 @@ export function OutputSchemaContent() {
 					"{",
 					'  "engine": {',
 					'    "tag": "a11ycore",',
+					'    "version": "1.14.0",',
 					'    "schemaVersion": "1.0.0",',
-					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" }',
+					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" },',
+					'    "wcagVersion": "2.2",',
+					'    "environment": { "layout": false }',
 					"  },",
 					'  "url": "https://example.test/",',
 					'  "title": "Example",',
@@ -1182,7 +1370,11 @@ export function OutputSchemaContent() {
 					'          "html": "<img src=\\"logo.png\\">",',
 					'          "structuralPath": [1, 0],',
 					'          "summary": "This <img> has no alt attribute.",',
-					'          "hint": "Add an alt attribute (use alt=\\"\\" only for decorative images)."',
+					'          "hint": "Add an alt attribute that says what the image shows, or alt=\\"\\" if the image is purely decorative.",',
+					'          "data": {',
+					'            "details": { "reasonCode": "TEXT_ALTERNATIVE_MISSING" },',
+					'            "visibilityFilter": { "eligible": true, "reasons": [], "targetSet": "acc", "accEligible": true }',
+					"          }",
 					"        }",
 					"      ]",
 					"    }",

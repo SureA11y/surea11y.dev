@@ -32,7 +32,7 @@ const remedyRows = [
 		),
 		remedy: (
 			<>
-				出現箇所の<code>uncertainty.code</code>と<code>uncertainty.needed</code>を読み、人が判断します。
+				出現箇所の<code>howToCheck</code>の手順に従って、人が判断します。<code>uncertainty</code>は何が足りなかったかを、<code>lean</code>はページの手がかりがどちらを示しているかを表します（<a href="/results-reports/output-schema/#how-to-check">出力スキーマ</a>を参照）。
 			</>
 		),
 	},
@@ -156,8 +156,16 @@ export function KnownLimitationsContent() {
 					<code>{"this.attachInternals().ariaLabel = 'Save'"}</code>はどのブラウザーでも要素に名前を付けますが、どのスクリプトもそれを読み戻せません。コンポーネントがinternalsをプロパティ（<code>_internals</code>、<code>internals</code>、<code>internals_</code>、<code>__internals</code>）に保持している場合、エンジンはそこから読み取り、その内容に従って要素を合格または不合格にします。名前（または必須の状態）のないほかの定義済みカスタム要素については、名前のルールと<a href="/rules/aria-required-attr/"><code>aria-required-attr</code></a>が、不合格にする代わりに確認を求めます（<code>name_internals</code>、<code>state_internals</code>）。それらはブラウザーのアクセシビリティツリーで確認するか、ページのスクリプトが動く前に、オプトインのinternalsフックをインストールしてください。各バインディング（<a href="/getting-started/">はじめに</a>を参照）とtest-matchersの<code>installInternalsHook()</code>、自分で用意したページならcoreの<code>internalsHookScript()</code>を使います（インストールする場所は<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}><code>INTEGRATION.md</code></a>を参照してください）。フックはスキャンのためにすべての要素のinternalsを記録するので、internalsを一度も付けていない要素も判別できます。internalsだけで設定したロール（<code>internals.role</code>）は、internalsを読める場所（プロパティかフック）であれば、要素のデフォルトのロールとして読み取ります。フックなしでプライベートフィールドに保持されている場合は見えず、その要素について確認も求めません。ほぼすべてのコンポーネントがそうしたロールを持ちうるからです。組み込み要素と、定義されていないカスタム要素は、これまでどおりに判定します。
 				</li>
 				<li>
+					<strong>スクリプトで追加したイベントリスナーは列挙できません。</strong>
+					<code>addEventListener</code>で追加したリスナーや、プロパティとして設定したリスナー（<code>el.onclick = fn</code>）はマークアップに何も残さず、どのスクリプトも読み戻せません。そのため、キーボードのルール（<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>、<a href="/rules/mouse-only-event-handlers/"><code>mouse-only-event-handlers</code></a>）はインラインのハンドラー属性だけを判定します。スクリプトでクリックリスナーを付けたフォーカス可能な<code>role="button"</code>は報告されません（フォーカスを受け取れないものについては、それでも<a href="/rules/widget-keyboard-focusable/"><code>widget-keyboard-focusable</code></a>が確認を求めます）。スクリプトで追加したキーリスナーは、インラインの<code>onclick</code>を正当化できません。<code>password-paste-enabled</code>は、インラインの<code>onpaste</code>が取り消したテキストを、スクリプトで追加した貼り付けリスナーが戻すかどうかを判断できません。ページのスクリプトが動く前に、オプトインのリスナーフック（<code>listenerHookScript()</code>）をインストールしてください。ルールはフックが記録したリスナーも判定するようになり、キーリスナーが1つも見られなかった場合は、EnterキーとSpaceキーで操作できないコントロールを不合格にします。フレームワークがルート要素に付けるクリックリスナーは、何も指定していない要素のためのものなので、フックがあってもそれらの要素はマークアップで判定されます。インストールする場所は、GitHub上の<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}><code>INTEGRATION.md</code></a>を参照してください。
+				</li>
+				<li>
+					<strong>ライブリージョンがどう埋められたかは、後からは見えません。</strong>
+					ステータスメッセージは、支援技術が届く状態でライブリージョンが変化したときに読み上げられます（4.1.3）が、スキャンが見るのはある時点のページです。何も追加しなければ、<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>が判定するのはそこにあるものだけです。<code>aria-hidden</code>や<code>inert</code>で支援技術から隠されたライブリージョン、開いているモーダルな<code>&lt;dialog&gt;</code>の背後にあるライブリージョン、<code>aria-busy</code>のまま残されたライブリージョンです。オプトインのライブリージョンフック（<code>liveRegionHookScript()</code>）をインストールすると、ページが最初からテキストを入れて追加したリージョンや、表示と同時に埋めたリージョンについても確認を求め、<code>getAnnouncements()</code>はページが読み上げ用に提供したものを列挙します。どちらも、スクリーンリーダーが実際に何を読み上げたかは示しません。それはスクリーンリーダーによって異なります。フックはシャドウルートの中は見ません。詳細は、GitHub上の<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}><code>INTEGRATION.md</code></a>を参照してください。
+				</li>
+				<li>
 					<strong>モーダルダイアログが開いている間に行ったスキャンは、ページではなくダイアログを見ます。</strong>
-					<code>showModal()</code>で開いた<code>&lt;dialog&gt;</code>（または開いている<code>&lt;dialog aria-modal="true"&gt;</code>）は文書の残りの部分を不活性にし、ブラウザーは支援技術にダイアログだけを渡します。エンジンもそれに従います。ダイアログの背後にあるコンテンツは、ほかの非表示のコンテンツと同じようにすべてのルールの対象外になり、ページ自体の構造に関するルール（<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>、<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>、<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>、<a href="/rules/region/"><code>region</code></a>）は、スキャンからその構造が見えないため<code>notApplicable</code>を報告します。背後にあるものを判断するには、ダイアログを閉じた状態でもう一度ページをスキャンしてください。制限が2つあります。シャドウルート内のモーダルな<code>&lt;dialog&gt;</code>は検出されません。また、<code>role="dialog"</code>の要素で作り、ページの残りの部分に<code>inert</code>や<code>aria-hidden</code>を付けた独自のモーダルは、それらの属性を通じてしか扱われません。これらの属性はページを隠しますが、ダイアログが開いていることを構造に関するルールに伝えません。この点はエンジンによって異なり、同じように扱うものもあれば、何も開いていないものとしてダイアログの背後のページを判定するものもあります。
+					<code>showModal()</code>で開いた<code>&lt;dialog&gt;</code>は文書の残りの部分を不活性にし、ブラウザーは支援技術にダイアログだけを渡します。<code>open</code>属性や<code>show()</code>で開いたダイアログは、<code>aria-modal="true"</code>があってもモーダルではありません。背後のページには引き続き到達でき、エンジンもそれを判定します。トップレイヤーのないjsdomでは、開いている<code>&lt;dialog aria-modal="true"&gt;</code>を代わりにモーダルとみなします。そこでエンジンが判断できる中では最も近いものだからです。エンジンはこれに従います。ダイアログの背後にあるコンテンツは、ほかの非表示のコンテンツと同じようにすべてのルールの対象外になり、ページ自体の構造に関するルール（<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>、<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>、<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>、<a href="/rules/region/"><code>region</code></a>）は、スキャンからその構造が見えないため<code>notApplicable</code>を報告します。背後にあるものを判断するには、ダイアログを閉じた状態でもう一度ページをスキャンしてください。独自のモーダル、つまり<code>role="dialog"</code>または<code>role="alertdialog"</code>と<code>aria-modal="true"</code>を持つ表示中の要素も、これらの構造に関するルールを<code>notApplicable</code>にします。<code>aria-modal</code>は何も不活性にしないので、ほかのすべてのルールは背後のページを引き続き判定します。開いたシャドウルート内のモーダルダイアログは、文書内のものと同じように扱います。閉じたシャドウルート内のものは見つけられません。<code>aria-modal="true"</code>のない独自のモーダルは、ページが残りの部分に付けた<code>inert</code>や<code>aria-hidden</code>を通じてしか扱われません。これらはページを隠しますが、ダイアログが開いていることを構造に関するルールに伝えません。
 				</li>
 				<li>
 					<strong>
@@ -180,7 +188,7 @@ export function KnownLimitationsContent() {
 					<code>[inert]</code>
 					のサブツリー（描画はされるので、コントラストやテキスト間隔など見た目に関するルールは引き続き判定します）は、
 					<strong>デフォルトでルールの評価対象から除外されます</strong>
-					。ほかの定評あるエンジンの、表示状態を考慮した動作に合わせています。これは見落としではなく意図的なデフォルトです（
+					。これは見落としではなく意図的なデフォルトです（
 					<code>engineOptions.includeHiddenElements: false</code>
 					）。非表示のコンテンツは表示されるまで支援技術からもキーボードからも到達できないので、その中のマークアップの欠陥をデフォルトで指摘すると、多くの場合ノイズになります。それでも非表示／折りたたまれたサブツリーを評価したい場合は、
 					<code>engineOptions.includeHiddenElements: true</code>
@@ -189,12 +197,24 @@ export function KnownLimitationsContent() {
 					を参照してください。
 				</li>
 				<li>
+					<strong>非表示のコンテンツを指す<code>aria-details</code>は報告されません。</strong>
+					<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>は、IDが要素を指していることは確認しますが、その要素が表示されていることは確認しません。Chromiumは、要素が非表示の間はその関係をアクセシビリティツリーから外し、表示されると戻します。そのため、必要に応じて開く詳細は開いたときに読み上げられ、WCAGもそれ以上は求めていません。支援技術が受け取るとおりに関係を確認するには、詳細を表示した状態でページをスキャンしてください。
+				</li>
+				<li>
 					<strong>jsdomにはポップオーバーがありません。</strong>
 					jsdomは閉じた<code>[popover]</code>を隠すHTMLの規則は備えていますが、<code>showPopover()</code>はなく、<code>:popover-open</code>の読み方も一定しません。DOMに<code>showPopover</code>がない場合、エンジンは開いた<code>&lt;dialog&gt;</code>以外のすべての<code>[popover]</code>を閉じていて非表示のものとして扱うため、その中身はチェックされません。ページ自身のCSSで表示し続けているポップオーバーも、jsdomではチェックされません。ブラウザーでは、エンジンは表示されているものを読みます。ポップオーバーの中身をチェックするには、ポップオーバーを開いた状態でブラウザーでページをスキャンしてください。
 				</li>
 				<li>
+					<strong>jsdomでは、CSSの<code>content</code>によるテキストは名前になりません。</strong>
+					jsdomは<code>::before</code>と<code>::after</code>のスタイルを計算しないため、生成されたテキストしか持たないボタンやリンク（<code>content: "Save"</code>、<code>content: attr(data-label)</code>）は、ブラウザーでは名前を持ちますが、jsdomでは名前がなく、<code>button-name-present</code>、<code>link-name-present</code>などの名前のルールで不合格になります。そうしたページはブラウザーでスキャンしてください。
+				</li>
+				<li>
 					<strong>jsdomはフォントサイズを書かれたとおりに保持します。</strong>
 					ブラウザーは計算済みのフォントサイズをpxで報告しますが、jsdomはキーワードや<code>calc()</code>を書かれたとおりに保持します。エンジンは、キーワードをデフォルトが16pxのときのブラウザーのサイズで読み（<code>xx-large</code>は32px）、長さと数値の<code>calc()</code>も読むので、大きな文字はブラウザーと同じように区別されます。親のサイズに依存する<code>larger</code>と<code>smaller</code>はjsdomでは解決されません。そうしたテキストは通常のテキストの比率で判定され、メッセージにはサイズが0pxと示されます。ブラウザーはどちらも解決します。
+				</li>
+				<li>
+					<strong>jsdomは、シャドウルート自身のスタイルシートを無視します。</strong>
+					jsdom 29.1.1で確認しています。シャドウルート内の<code>&lt;style&gt;</code>もその<code>adoptedStyleSheets</code>も、中の要素の計算済みスタイルに反映されないため、jsdomではそこで指定した色、サイズ、<code>display: none</code>や<code>visibility: hidden</code>が見えません。ルールはコンポーネントの中身をスタイルがないものとして判定します。コントラストはデフォルトの色で計測され、CSSで隠したコンテンツは表示されているものとして判定されます。唯一の例外はリンクの色で、コントラストのヘルパーがシャドウルートのスタイルシートから自分で求めます。スタイルを付けたWebコンポーネントで作ったページは、ブラウザーでスキャンしてください。
 				</li>
 				<li>
 					<strong>
@@ -239,8 +259,20 @@ export function KnownLimitationsContent() {
 					jsdomは、すべてのCSSルールを要素と照合してスタイルを計算します。エンジンはスキャン中にDOMを変更しないので、各要素の計算は1回だけですが、その1回にO(ルール数)のコストがかかります。保存したニュースサイトのページ（要素7,916個、CSSルール2,683個、jsdom 29.1.1）では、243秒のスキャンのうち約224秒が、5,735個の要素の最初の計算にかかりました。これはjsdomのコストで、本物のブラウザーは同じページを1秒もかからずに計算します。jsdomはカスタムプロパティも置換しないため、<code>var()</code>で指定した色はそこでは読み取れません。そのテキストや背景は計測されず、確認が求められます（<code>contrast-computable</code>）。大規模な本番のページには本物のブラウザーを使ってください。
 				</li>
 				<li>
+					<strong>jsdomでは、リンクの色をページ自身のルールから求めます。</strong>
+					jsdomは自身の<code>{":link { color: #0000EE }"}</code>をページのルールと詳細度だけで比べるため、ページの<code>{"a { color: #fff }"}</code>がそれに負けてしまいますが、ブラウザーはページのルールを適用します。jsdomでは、エンジンはリンクとその中のテキストの色を、ブラウザーのカスケードと同じようにページのルールから求めます。ページのどのルールも色を付けていないリンクはブラウザーのリンク色のままで、リンクは未訪問として扱います。それができない場合（読み取れないスタイルシート、<code>var()</code>、<code>@supports</code>、<code>@layer</code>、<code>@container</code>の中のルールやネストしたルール）は、jsdomの青で計測せずに、そのテキストについて確認を求めます（<code>contrast-computable</code>、<code>FOREGROUND_UNPARSABLE</code>）。ブラウザーでは、計算済みの色をそのまま読みます。
+				</li>
+				<li>
+					<strong>jsdomでは、テキストは計算済みの<code>font-size</code>で判定されます。</strong>
+					ブラウザーでは、コントラストのルールと<code>p-as-heading</code>は、テキストを描画されるサイズで判定します。CSSの<code>zoom</code>、SVGのtransform、<code>font-size-adjust</code>も含み、最後のものはフォント自身のメトリクスから求めます（<code>font-size: 24px; font-size-adjust: 0.3</code>はArialを約14pxで描画し、これは大きな文字ではありません）。jsdomはレイアウトを行わずフォントも読まないため、そこでは<code>font-size</code>をそのまま使います。そのようにテキストを拡大縮小するページは、ブラウザーでスキャンしてください。
+				</li>
+				<li>
 					<strong>実際のブラウザーでは、一部のルールが確認の間だけページを変更し、ページ自身のスクリプトがそれに反応することがあります。</strong>
-					ブラウザーが描画する内容を計測するため、<code>css-hidden-focus</code>はキーボードと同じように要素にフォーカスを当て、計測する要素のトランジションを無効にします。<code>aria-hidden-focus</code>は、ページがすぐにフォーカスを移すかどうか（フォーカストラップの番兵）を確かめるため、<code>aria-hidden</code>のサブツリー内の要素にフォーカスを当てます。<code>text-spacing-content-loss</code>はWCAG 1.4.12の間隔を指定したスタイルシートを追加します。これらはすべて、ルールが終わる前に元に戻します。フォーカス、スクロール位置、style属性、追加したスタイルシートです。元に戻せないのは、それに反応してページのスクリプトが行う処理です。要素にフォーカスを当てるとその<code>focus</code>と<code>focusin</code>のハンドラーが実行されるため、カルーセルがフォーカスされたスライドに移動して<code>aria-hidden</code>も一緒に移したり、ボタンが有効になったりすることがあります。そのスキャンの検出結果は、見つけた時点のページのものです。<code>aria-hidden-focus</code>は、どのサブツリーが非表示か、そして報告するマークアップを、何かにフォーカスを当てる前に読み取ります。ただし、ページはスクリプトが変えたままの状態で残るため、同じページを2回目にスキャンすると別のものが見つかることがあります。引き続き使うページをスキャンする場合や、1つのページを2回スキャンする場合は、その間に再読み込みしてください。
+					ブラウザーが描画する内容を計測するため、<code>css-hidden-focus</code>はキーボードと同じように要素にフォーカスを当て、計測する要素のトランジションを無効にします。<code>aria-hidden-focus</code>は、ページがすぐにフォーカスを移すかどうか（フォーカストラップの番兵）を確かめるため、<code>aria-hidden</code>のサブツリー内の要素にフォーカスを当てます。<code>text-spacing-content-loss</code>はWCAG 1.4.12の間隔を指定したスタイルシートを追加します。コントラストのルールは、プレースホルダーやドロップダウンの<code>&lt;select&gt;</code>についてブラウザー自身の色を読み取るため、画面外に空のフレームを追加します。スキャンは、ルールの実行中、実行中の各アニメーションを固定した時点に移します（有限のものは終わりに、無限のものは始まりに）。そのため、フェードインは落ち着いた状態で計測されます。これらはすべて、ルールやスキャンが終わる前に元に戻します。フォーカス、スクロール位置、style属性、アニメーション、追加したスタイルシート、フレームです。元に戻せないのは、それに反応してページのスクリプトが行う処理です。要素にフォーカスを当てるとその<code>focus</code>と<code>focusin</code>のハンドラーが実行されるため、カルーセルがフォーカスされたスライドに移動して<code>aria-hidden</code>も一緒に移したり、ボタンが有効になったりすることがあります。そのスキャンの検出結果は、見つけた時点のページのものです。<code>aria-hidden-focus</code>は、どのサブツリーが非表示か、そして報告するマークアップを、何かにフォーカスを当てる前に読み取ります。ただし、ページはスクリプトが変えたままの状態で残るため、同じページを2回目にスキャンすると別のものが見つかることがあります。引き続き使うページをスキャンする場合や、1つのページを2回スキャンする場合は、その間に再読み込みしてください。
+				</li>
+				<li>
+					<strong>別のオリジンのスタイルシートは、ページからは読み取れません。</strong>
+					ページのスクリプトは、別のオリジン（CDN、フォントサービス）が配信するスタイルシートのルールを列挙できないため、<code>css-orientation-lock</code>はそれについて確認を求め（<code>STYLESHEETS_NOT_READABLE</code>）、<code>css-hidden-focus</code>と<code>css-focus-indicator-suppressed</code>はその中のフォーカスのルールを見られません。そのテキストを<code>engineOptions.styleSheetTexts</code>で渡してください。<code>preloadStyleSheets()</code>はサーバーが共有しているもの（CORS）を取得し、ブラウザーを操作するツールならそれ以外のものもページの外から取得できます（GitHub上の<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}><code>INTEGRATION.md</code></a>を参照）。
 				</li>
 				<li>
 					<strong>静的なマークアップと、ライブ／ハイドレーション後のDOMの状態</strong>
@@ -270,7 +302,19 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>ブラウザーでは、コントラストは、その時点のページでテキストの下に描画されているものに対して計測されます。</strong>
-					画像、グラデーション、テキストの一部だけを覆う描画の上にあるテキストは、計測せずに確認を求めます（<a href="/rules/contrast-computable/"><code>contrast-computable</code></a>、理由コード<code>BACKGROUND_OVERLAP</code>）。<code>overflow: hidden</code>のボックスが完全に表示範囲外に置いているテキスト（トラックの外にあるカルーセルのスライドなど）は、表示されるまで対象外になるので、それを確認するにはその状態でページをスキャンしてください。テキストの上にある固定配置やstickyのボックスは無視されます。jsdomでは、テキストは祖先に対してだけ計測されます。強制カラー（Windowsのハイコントラストや、エミュレートした<code>forced-colors: active</code>）のもとでスキャンした場合、計測の間はページ自身の色に保たれるので、判定結果は強制カラーをオフにしたときと同じになります。それができない場合（スタイルシートを採用できないブラウザーで、Content Security Policyがエンジンの<code>&lt;style&gt;</code>をブロックしている場合）は、計測される色の一部がブラウザーの色になり、コントラストの各出現箇所がそのことを示します（<code>details.forcedColors</code>）。計測の仕組みの詳細は、GitHubの<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#contrast`}><code>LAYOUT_MEASUREMENT.md</code></a>にあります。
+					画像、グラデーション、テキストの一部だけを覆う描画の上にあるテキストは、計測せずに確認を求めます（<a href="/rules/contrast-computable/"><code>contrast-computable</code></a>、理由コード<code>BACKGROUND_OVERLAP</code>）。<code>overflow: hidden</code>のボックスが完全に表示範囲外に置いているテキスト（トラックの外にあるカルーセルのスライドなど）は、表示されるまで対象外になるので、それを確認するにはその状態でページをスキャンしてください。テキストの上にある固定配置やstickyのボックスは無視されます。jsdomでは、テキストは祖先に対してだけ計測されます。強制カラー（Windowsのハイコントラストや、エミュレートした<code>forced-colors: active</code>）のもとでスキャンした場合、計測の間はページ自身の色に保たれるので、判定結果は強制カラーをオフにしたときと同じになります。ただし、ページ自身のCSSが強制カラーに反応する場合（<code>forced-colors</code>のメディアクエリや、<code>GrayText</code>のようなシステムカラー）は別で、スキャンはそれを<code>engine.environment.forcedColorsCss</code>で報告します。ページ自身の色に保てない場合（スタイルシートを採用できないブラウザーで、Content Security Policyがエンジンの<code>&lt;style&gt;</code>をブロックしている場合）は、計測される色の一部がブラウザーの色になり、コントラストの各出現箇所がそのことを示します（<code>details.forcedColors</code>）。計測の仕組みの詳細は、GitHubの<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#contrast`}><code>LAYOUT_MEASUREMENT.md</code></a>にあります。
+				</li>
+				<li>
+					<strong>背景のないページのテキストは、キャンバスがわかる場合、ページの配色のキャンバス上で計測されます。</strong>
+					不透明な背景を描画しないページの背後には、ブラウザーがキャンバスを描画します。その色は、ページが描画される配色の<code>Canvas</code>の色で、配色はページ自身の<code>color-scheme</code>で決まります。何も宣言しないページでは、ユーザーの好みにかかわらず白、ダークで描画されるページではダークのキャンバスです。コントラストのルールは、どちらのモードでもそこでテキストを計測します。計測せず、<code>contrast-computable</code>が確認を求めるもの（<code>BACKGROUND_NOT_OPAQUE_AT_ROOT</code>）は、周りのページが透けて見えることがあるキャンバスを持つフレーム内のテキストと、キャンバスがユーザーのパレットになる強制カラーのもとでのテキストです。
+				</li>
+				<li>
+					<strong>jsdomでは、テキストは、求められる場合はページが描画される配色の色で計測され、求められない場合は確認が求められます。</strong>
+					jsdomはライトの配色の色を計算し、<code>prefers-color-scheme</code>のルールを適用しません。ダークで描画されるページ（ルートや<code>&lt;meta name="color-scheme"&gt;</code>で<code>color-scheme: dark</code>）では、配色が色を付けるテキストはダークの配色の色（Chromiumのもの）になり、<code>light-dark()</code>やシステムカラーで指定したテキストの色はダーク用に求めます。その配色での色を求められないテキストは、ライトの色で計測せずに確認を求めます（<code>contrast-computable</code>の<code>COLOR_SCHEME_NOT_RENDERED</code>、<code>link-in-text-block</code>の<code>COLOR_NOT_COMPUTABLE</code>）。ブラウザーでは、色はブラウザーが描画するものです。
+				</li>
+				<li>
+					<strong>ライトとダークの両方に対応するページでは、スキャンが見ていない配色は、テキストの色がそれによって変わりえない場合にだけ計測されます。</strong>
+					スキャンが見るのはブラウザーが優先する配色です（jsdomではライト）。キャンバス上のテキストはもう一方の配色でも計測しますが、ページが指定した<code>prefers-color-scheme</code>のルール、<code>light-dark()</code>の値、システムカラーがテキストの色やその背後の背景に及ぶ場合と、スタイルシートを読み取れない場合は除きます。<code>data.details.colorSchemesChecked</code>は計測した配色を列挙します。もう一方の配色を確認するには、ブラウザーをその配色にしてもう一度スキャンしてください。
 				</li>
 				<li>
 					<strong>生成されたテキストは、ブラウザーでだけ、しかも読み取れる場合にだけ計測されます。</strong>
@@ -278,7 +322,7 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>フォームフィールドのテキストとプレースホルダーは、フィールドが描画するとおりに計測されますが、計測しないものもあります。</strong>
-					日付や時刻のフィールドが空のときにブラウザーが描画するテキストと、ファイル入力のボタンとファイル名は計測しません。ドロップダウンの<code>&lt;select&gt;</code>は、閉じたコントロールが描画するとおりに、表示中の選択肢をselect自身の色で計測します。独自の色を持つほかの選択肢は、開いたときにプラットフォームが描画するリストにしか表示されないため、<code>cantTell</code>になります（<code>SELECT_OPTION_COLOR</code>）。比率を下回るプレースホルダーは、不合格ではなく<code>cantTell</code>になります（<code>PLACEHOLDER_BELOW_THRESHOLD</code>）。WCAGはプレースホルダーのテキストにも比率を求めますが、ページが完全にブラウザーに任せた色は満たしているものとみなします（達成方法G148）。実際のページでこの2つを見分ける方法はまだ確立していません。jsdomでは、プレースホルダーはまったく計測しません。詳細：<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#form-fields`}><code>LAYOUT_MEASUREMENT.md</code></a>。
+					日付や時刻のフィールドが空のときにブラウザーが描画するテキストと、ファイル入力のボタンとファイル名は計測しません。ドロップダウンの<code>&lt;select&gt;</code>は、閉じたコントロールが描画するとおりに、表示中の選択肢をselect自身の色で計測します。独自の色を持つほかの選択肢は、開いたときにプラットフォームが描画するリストにしか表示されないため、<code>cantTell</code>になります（<code>SELECT_OPTION_COLOR</code>）。比率を下回るプレースホルダーは、ページが色を選んだ場合は不合格（<code>PLACEHOLDER_BELOW_THRESHOLD</code>）、色がすべてブラウザー自身のものである場合は比率を満たすもの（達成方法G148）、それがわからない場合は<code>cantTell</code>になります。jsdomでは、プレースホルダーはまったく計測しません。詳細：<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#form-fields`}><code>LAYOUT_MEASUREMENT.md</code></a>。
 				</li>
 				<li>
 					<strong><a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>は、ポインターが当たる領域を、ヒットテストではなくレイアウトから求めます。</strong>
@@ -329,7 +373,7 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>文字画像の内容分析</strong>
-					（WCAG 1.4.5／1.4.9）：OCRに相当する画像理解が必要で、静的なマークアップを扱うエンジンの範囲外です。
+					（WCAG 1.4.5／1.4.9）：画像がテキストを含むかどうかはそのピクセルの中にあり、それにはOCRに相当する画像理解が必要です。<a href="/rules/image-of-text/"><code>image-of-text</code></a>が確認を求めるのは、マークアップに手がかりがある場合だけです。<code>&lt;input type="image"&gt;</code>と、マークアップに<code>&lt;text&gt;</code>を含むSVGのデータURLを表示する<code>&lt;img&gt;</code>がそれに当たります。文章を撮った写真、テキストを焼き込んだバナー、テキストのCSS背景画像には手がかりがなく、確認も求めません。例外を認めない1.4.9にはルールがありません。
 				</li>
 				<li>
 					<strong>動きによる起動の操作</strong>
@@ -358,11 +402,7 @@ export function KnownLimitationsContent() {
 					<code>pass</code>
 					も、上に挙げた達成基準についてWCAG自体が求めている手動レビューの代わりには決してならない
 				</strong>
-				からです。
-				<code>pass</code>
-				／複合ルールの
-				<code>pass</code>
-				が何を主張し、何を主張しないかについては
+				からです。ルールの<code>pass</code>が何を主張し、何を主張しないか、そしてルールがすべて<code>pass</code>でもWCAGの達成基準が<code>cantTell</code>のままなのはなぜかについては
 				<a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>
 				を参照してください。
 			</p>

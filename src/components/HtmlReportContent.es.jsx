@@ -8,7 +8,9 @@ export function HtmlReportContent() {
 				Un informe HTML autocontenido que puedes abrir en un navegador después de un análisis: sin
 				servidor, sin recursos externos, sin peticiones de red. Pensado para quienes hacen pruebas de
 				control de calidad (QA) o revisión manual y quieren una vista navegable de los resultados de
-				un análisis en lugar de JSON sin procesar o un resumen de terminal.
+				un análisis en lugar de JSON sin procesar o un resumen de terminal. <a href="/sample-report.html">Abre un informe de
+				ejemplo</a>: una pequeña página de pago analizada con los hooks de listeners y de regiones
+				vivas, con un hallazgo en cada grupo.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
 			<p>
@@ -23,14 +25,30 @@ export function HtmlReportContent() {
 					<strong>Cabecera</strong>: un titular en lenguaje llano ("N de M comprobaciones aplicables
 					pasaron") más una barra apilada y una leyenda (icono + etiqueta + recuento; el estado
 					nunca depende solo del color) desglosada por resultado (<code>fail</code>/
-					<code>cantTell</code>/<code>pass</code>/<code>notApplicable</code>).
+					<code>cantTell</code>/<code>pass</code>/<code>notApplicable</code>). Cuando ninguna regla
+					falló y alguna se aplicó, una nota bajo el titular dice que eso no afirma que la página sea
+					conforme, y nombra lo que una persona aún comprueba: los hallazgos que necesitan revisión,
+					el uso con teclado, cómo lee la página un lector de pantalla y el propio contenido.
 				</li>
 				<li>
 					<strong>Vale la pena revisar</strong>: una tarjeta por regla con ocurrencias{" "}
 					<code>fail</code>/<code>cantTell</code> (no una por ocurrencia: una regla con muchas
 					ocurrencias idénticas es una sola cosa que merece atención, no muchas), cada una mostrando
 					gravedad, chip(s) de SC de WCAG, una ocurrencia representativa y el recuento total de
-					ocurrencias. Limitado a las 24 reglas de mayor prioridad, con una nota de desbordamiento a
+					ocurrencias. Las reglas que fallan van primero. Les siguen los hallazgos que necesitan
+					revisión, en tres grupos: aquellos cuyos indicios apuntan a un fallo («Probable fallo:
+					confírmelo»), aquellos cuyos indicios apuntan a que cumple («Probablemente cumple:
+					confírmelo») y los que solo una persona puede juzgar («Lo debe revisar una persona»), tal
+					como los clasifica <code>reviewGroupOf(check, occurrence)</code> de{" "}
+					<code>@surea11y/core</code>, para que una herramienta que ordena una cola de revisión la
+					ordene igual. Cada tarjeta de los dos primeros dice por qué tiende hacia ese lado (el{" "}
+					<a href="/results-reports/output-schema/#leans"><code>lean</code></a> de la ocurrencia).
+					Cada una de estas tarjetas tiene una sección «Cómo comprobarlo», contraída por defecto,
+					con los pasos para responder la pregunta y qué cumple y qué falla (el{" "}
+					<a href="/results-reports/output-schema/#how-to-check"><code>howToCheck</code></a> de la
+					ocurrencia). Una regla cuyos hallazgos tienden hacia lados distintos tiene una tarjeta en
+					cada grupo. Dentro de cada grupo, primero la más grave (de crítica a menor) y, con la misma
+					gravedad, la que tiene más ocurrencias. Limitado a las 24 reglas de mayor prioridad, con una nota de desbordamiento a
 					partir de ahí. Una regla que no terminó (lanzó una excepción) también recibe una tarjeta,
 					que lo indica junto con su error, ya que la página no se comprobó con ella. Una regla con
 					un enlace de ayuda <code>http(s)</code> (<code>meta.helpUrl</code>, incluido el de una regla
@@ -49,8 +67,9 @@ export function HtmlReportContent() {
 					<li>
 						<strong>Lo más cerca del límite</strong>: se muestra cuando el análisis tiene márgenes (
 						<a href="/results-reports/output-schema/#margin"><code>margin</code> en un resultado de comprobación</a>).
-						Una fila por cada regla que mide contra un umbral: su valor aprobado más cercano, el
-						límite, el margen que queda y el elemento. Los píxeles se redondean a enteros, con «menos
+						Una fila por cada regla cuyo elemento aprobado más cercano quedó cerca de su umbral (dentro
+						de la banda de la regla, como el 10 % de una razón de contraste), como indica la nota sobre
+						la tabla: su valor aprobado más cercano, el límite, el margen que queda y el elemento. Los píxeles se redondean a enteros, con «menos
 						de 1 px» por debajo de uno; las razones muestran dos decimales. Una regla que pasó con poco
 						margen es una que un pequeño cambio puede convertir en un fallo.
 					</li>
@@ -61,8 +80,11 @@ export function HtmlReportContent() {
 					de Éxito (con los requisitos de cada otro estándar del <code>standards</code> del resultado
 					a los que se asocian sus reglas, como la cláusula de EN 301 549 que lo reformula, cuando la
 					hay y el análisis pidió cláusulas de EN 301 549), su resultado, un desglose de
-					aprobado/fallido/necesita revisión/n.a. (con una línea «Comprobado en parte» cuando el análisis
-					seleccionó solo algunas de las reglas del criterio, como «Comprobado en parte: 1 de 2 comprobaciones no se seleccionó para este análisis», ver{" "}
+					aprobado/fallido/necesita revisión/n.a. (con una línea «Comprobado en parte» cuando las reglas del
+					criterio solo comprueban parte de lo que pide, así que una persona comprueba el resto, como
+					«Comprobado en parte: sus comprobaciones cubren solo una parte de este criterio, y el resto
+					lo comprueba una persona», o cuando el análisis seleccionó solo algunas de sus reglas, como
+					«Comprobado en parte: 1 de 2 comprobaciones no se seleccionó para este análisis», ver{" "}
 					<a href="/results-reports/output-schema/#partly-checked">Un criterio comprobado en
 					parte</a>) y qué reglas atómicas contribuyeron, incluida una
 					regla personalizada asociada al criterio. Son datos reales del motor, no una agrupación inventada:
@@ -83,7 +105,9 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Datos técnicos completos</strong> (contraído por defecto): una tarjeta resumen
 					(mosaicos por resultado) y una tabla con función de búsqueda, filtrable (por resultado) y paginada de
-					cada ocurrencia individual de todo el análisis. Cuando no muestra ninguna ocurrencia,
+					cada ocurrencia individual de todo el análisis; un hallazgo que necesita revisión y tiene
+					tendencia la muestra bajo su resumen («Probable fallo: …»), y la búsqueda la encuentra.
+					Cuando no muestra ninguna ocurrencia,
 					contiene una fila que lo dice: el análisis no registró ninguna, o los filtros las ocultan
 					todas.
 				</li>
@@ -161,8 +185,15 @@ export function HtmlReportContent() {
 				de la CLI es el que escribe). La página se fecha con el <code>timestamp</code> del resultado
 				(se establece con <code>engineOptions.timestamp</code>), mostrado en UTC, así que el mismo
 				resultado siempre genera la misma página; un resultado sin él se fecha con el momento en que
-				se genera. <code>options.title</code> es opcional (por defecto{" "}
-				<code>"surea11y scan report"</code>).
+				se genera. <code>options.title</code> es opcional (por defecto, el título propio del idioma del
+				informe: <code>"Informe de análisis de surea11y"</code> en español).{" "}
+				<code>options.packs</code> es la lista de packs que ejecutó el análisis (
+				<code>engineOptions.packs</code>), cuando ejecutó alguno: en Node el informe añade los
+				pasos de «Cómo comprobarlo» a los hallazgos sin decidir que llegan sin ellos, siempre los
+				de una regla de core y los de la regla base de una variante, y los pasos propios de una
+				regla de un pack (su <code>meta.review</code>, en inglés) solo cuando recibe los packs (ver{" "}
+				<a href="/configuration/packs/#rules">Packs</a>). En el navegador (
+				<code>surea11y.report.js</code>) muestra los pasos que el resultado ya lleva.
 			</p>
 
 			<h2>Alcance</h2>

@@ -36,6 +36,24 @@ const coverageSampleLines = [
 	"// }",
 ];
 
+const reviewDictionaryRows = [
+	{
+		id: "node",
+		who: <><code>runDomRulesInPage</code>, <code>addHowToCheck</code>, <code>howToCheckFor</code>, <code>renderHtmlReport</code></>,
+		how: <>Depuis le paquet installé, cherchés d’après la langue en minuscules (<code>fr-ca</code>, puis <code>fr</code>), l’anglais en dernier.</>,
+	},
+	{
+		id: "browser",
+		who: "Du code qui s’exécute dans un navigateur (un spec Cypress)",
+		how: <><code>{"applyHowToCheck(result, { en, fr })"}</code> de <code>@surea11y/core/how-to-check</code>, avec les dictionnaires qu’il importe sous <code>@surea11y/core/review/&lt;locale&gt;</code>.</>,
+	},
+	{
+		id: "bundle",
+		who: <><code>a11ycore.openReport(result)</code> dans le bundle navigateur</>,
+		how: <>Récupérés à côté du bundle, ou donnés sous la forme <code>{"{ reviewDictionaries }"}</code>.</>,
+	},
+];
+
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "Vous avez obtenu exactement ce que vous avez demandé, et ce dictionnaire contient toutes les clés." },
 	{
@@ -274,7 +292,7 @@ export function LocalesContent() {
 				aucune page n’a besoin de toutes les langues. Garder l’anglais intégré et le reste optionnel
 				tient les autres langues hors du téléchargement, et l’empêche de grossir à mesure que des
 				langues sont ajoutées. Chaque fichier séparé, <code>surea11y.i18n.&lt;locale&gt;.js</code>,
-				a à peu près la taille du texte anglais qu’il remplace (130 à 160 Ko aujourd’hui), et une
+				a à peu près la taille du texte anglais qu’il remplace (200 à 250 Ko aujourd’hui), et une
 				page ne charge que ceux qu’elle utilise. Rien d’autre ne change : le paquet Node et les bindings ne sont pas
 				concernés.
 			</p>
@@ -305,6 +323,40 @@ export function LocalesContent() {
 				dictionnaires, que le pack liste par langue ; dans une langue pour laquelle le pack n’a pas
 				de dictionnaire, ses messages s’affichent en anglais.
 			</p>
+
+			<h3 id="review-dictionaries">Les dictionnaires de revue</h3>
+			<p>
+				Les étapes qui indiquent à une personne comment trancher un constat indécis (
+				<code>howToCheck</code>, voir <a href="/results-reports/output-schema/#how-to-check">le
+				schéma de sortie</a>) se trouvent dans des dictionnaires à part, dans les cinq mêmes
+				langues. Ils sont tenus à l’écart des dictionnaires du moteur pour que les étapes n’entrent
+				jamais dans le bundle ni dans une page : elles sont ajoutées après l’analyse, dans Node, ou
+				par du code qui les importe. Core 1.14.0 et ultérieur.
+			</p>
+			<DataTable
+				label="Qui lit les dictionnaires de revue"
+				rowKey="id"
+				columns={[
+					{ key: "who", label: "Qui les lit", width: "40%", wrap: true },
+					{ key: "how", label: "Comment", wrap: true },
+				]}
+				rows={reviewDictionaryRows}
+			/>
+			<p>
+				Une étape qui manque dans une langue s’affiche en anglais, comme un message. Les{" "}
+				<a href="/configuration/packs/#review-steps">étapes propres à une règle de pack</a> sont
+				en anglais dans toutes les langues. <code>getLocaleCoverage()</code> ne compte pas ces
+				dictionnaires. Les étapes ne portent pas de clés : pour les afficher dans une autre langue,
+				ajoutez-les de nouveau :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { addHowToCheck } = require('@surea11y/core');",
+					"",
+					"const inFrench = addHowToCheck(result, { locale: 'fr' });",
+				]}
+			/>
 
 			<h3>Fournir votre propre dictionnaire</h3>
 			<p>
@@ -340,7 +392,9 @@ export function LocalesContent() {
 			<p>
 				L’anglais est toujours vérifié. La liste de la langue de l’élément, tirée de l’attribut{" "}
 				<code>lang</code> le plus proche (celui de l’élément <code>&lt;html&gt;</code> pour un titre
-				de page), s’y ajoute. Vérifier toutes les listes partout signalerait des mots génériques
+				de page), s’y ajoute. <code>link-name-quality</code> vérifie les listes de toutes les
+				langues là où aucun <code>lang</code> n’est déclaré dans l’arbre au-dessus du lien, puisque
+				le lien peut être dans n’importe laquelle. Vérifier toutes les listes partout signalerait des mots génériques
 				dans une langue et de vrais noms dans une autre, comme « Suite » ou « Plus » sur une page en
 				anglais. Les mots de transcription font exception : ils sont distinctifs dans toutes les
 				langues et une page peut lier une transcription dans une autre langue, ils sont donc
@@ -375,8 +429,16 @@ export function LocalesContent() {
 				<li>
 					<strong>Au niveau de l’occurrence</strong> : <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,
 					avec <code>i18n.params</code> pour l’interpolation de <code>{"{{placeholder}}"}</code>,
-					résolvent le <code>summary</code>/<code>hint</code> d’une occurrence. Voir{" "}
+					résolvent le <code>summary</code>/<code>hint</code> d’une occurrence.{" "}
+					<code>i18n.whyKey</code> / <code>i18n.cautionKey</code> résolvent de la même façon le{" "}
+					<code>why</code> et le <code>caution</code> d’une tendance. Voir{" "}
 					<a href="/results-reports/output-schema/">le schéma de sortie</a>.
+				</li>
+				<li>
+					<strong>Revue</strong> : <code>{"<prefix>_review_<CODE>_step<n>"}</code>,{" "}
+					<code>_pass</code> et <code>_fail</code>, dans{" "}
+					<a href="#review-dictionaries">les dictionnaires de revue</a> : le{" "}
+					<code>howToCheck</code> d’une occurrence indécise.
 				</li>
 			</ul>
 			<p>

@@ -43,8 +43,9 @@ export function RuleOrganizationContent() {
 					<code>*-name-present</code>), un texte qui peut être tronqué ou se chevaucher une fois
 					espacé (<code>text-spacing-content-loss</code>), un bloc de media query d’orientation qui
 					fait pivoter un autre élément que le contenu de la page (
-					<code>css-orientation-lock</code>), un texte de placeholder, ou un caractère isolé qui tient
-					lieu de nom à son contrôle, sous son rapport (<code>contrast-minimum</code>), ou une couleur ou une taille impossible à calculer (les
+					<code>css-orientation-lock</code>), un texte de placeholder sous son rapport dont on ne
+					peut pas dire si les couleurs sont celles de la page ou du navigateur, ou un caractère
+					isolé qui tient lieu de nom à son contrôle sous son rapport (<code>contrast-minimum</code>), ou une couleur ou une taille impossible à calculer (les
 					règles de contraste, <code>target-size-minimum</code>). Une règle qui lève une exception
 					est également signalée comme <code>cantTell</code>, par sécurité.
 				</li>
@@ -58,7 +59,14 @@ export function RuleOrganizationContent() {
 					identique), c’est donc <code>cantTell</code> ; mais « tous les noms diffèrent » est un
 					fait, c’est donc <code>pass</code>. Une règle qui demande à une personne de juger chaque
 					cible qu’elle trouve, par exemple si l’alternative textuelle d’une image est exacte, ne
-					rapporte jamais <code>pass</code>.
+					rapporte jamais <code>pass</code>. Une règle manuelle qui ne pose la question que là où
+					une heuristique trouve un indice, et n’en trouve aucun, rapporte{" "}
+					<code>notApplicable</code>, pas <code>pass</code> : elle ne s’applique qu’à ce que son
+					heuristique signale, et ne rien y trouver ne montre pas que tout va bien.{" "}
+					<a href="/rules/image-redundant-alt/"><code>image-redundant-alt</code></a> cherche une alternative textuelle qui répète le texte
+					voisin de l’image ; n’en trouver aucune ne dit rien de la justesse de l’alternative.{" "}
+					<a href="/rules/form-control-label-quality/"><code>form-control-label-quality</code></a>, <a href="/rules/password-paste-enabled/"><code>password-paste-enabled</code></a>,{" "}
+					<a href="/rules/scrollable-region-focusable/"><code>scrollable-region-focusable</code></a> et <a href="/rules/image-of-text/"><code>image-of-text</code></a> font de même.
 				</li>
 			</ul>
 			<p>
@@ -76,7 +84,11 @@ export function RuleOrganizationContent() {
 				événement qu’une règle automatique qui rapporte <code>cantTell</code>, même si la valeur
 				est identique</strong> : la règle automatique a tranché et vous dit ce qu’elle a trouvé ;
 				la règle manuelle vous dit que la question ne peut pas du tout être tranchée à partir du
-				balisage. Voir <a href="/results-reports/output-schema/">Résultats et rapports</a> pour la
+				balisage. Dans les deux cas, le <code>cantTell</code> d’une règle de core dit comment y
+				répondre (<code>howToCheck</code>), et certains disent vers où pointent les indices de la
+				page (<code>lean</code>, voir le{" "}
+				<a href="/results-reports/output-schema/#leans">schéma de sortie</a>). Voir{" "}
+				<a href="/results-reports/output-schema/">Résultats et rapports</a> pour la
 				référence complète sur les résultats, la sévérité et la confiance.
 			</p>
 

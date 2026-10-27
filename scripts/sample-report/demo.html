@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; margin: 0; color: #1a1a1a; background: #fff; }
+  header, main, footer { padding: 1rem 2rem; }
+  .hint { color: #a0a0a0; }
+  .pay { display: inline-block; padding: .5rem 1rem; background: #0b5; color: #fff; cursor: pointer; }
+  .error { display: none; color: #b00020; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/">Shop</a>
+  <nav aria-label="Main"><a href="/cart">Cart</a> <a href="/account">Account</a></nav>
+</header>
+<main>
+  <h1>Checkout</h1>
+  <p class="hint">Delivery takes three to five working days.</p>
+  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="120" height="80">
+  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="120" height="80" alt="IMG_2041.jpg">
+  <form>
+    <label for="email">Email</label>
+    <input id="email" type="email" aria-invalid="true" aria-errormessage="email-error">
+    <p id="email-error" class="error">Enter an email address such as name@example.com.</p>
+    <label for="code">Discount code</label>
+    <input id="code" type="text">
+    <div class="pay" role="button" tabindex="0" id="pay">Pay now</div>
+  </form>
+  <p>Questions about your order? <a href="/help">Read more</a>.</p>
+  <div role="status" id="status"></div>
+</main>
+<footer><p id="code">© Shop</p></footer>
+<script>
+  document.getElementById('pay').addEventListener('click', function () {
+    document.getElementById('status').textContent = 'Payment sent.';
+  });
+</script>
+</body>
+</html>

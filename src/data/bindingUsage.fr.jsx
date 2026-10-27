@@ -23,25 +23,93 @@ const hookCaveat = (repo) => (
 	</p>
 );
 
-/** A pointer to the builder methods this page leaves to the binding's README. */
-const alsoAvailable = (repo, { logger = true } = {}) => (
+/** Opens each binding's listener- and live-region-hook passage; the snippet and its note follow. */
+const moreHooks = (
 	<p>
-		<code>A11yCoreBuilder</code> a aussi <code>.wcagLevel()</code>, qui limite les critères
-		rapportés à un niveau WCAG sans changer les règles exécutées ;{" "}
-		<code>.includeMode('or')</code>, qui exécute les règles d’une étiquette plus les règles que
-		vous nommez ; <code>.plannedChecks()</code> et <code>.plannedCriteria()</code>, qui listent
-		ce qu’une analyse vérifiera avant qu’elle ne s’exécute, pour qu’une sélection qui n’exécute
-		rien ne passe pas pour une analyse sans échec ;{" "}
-		{logger ? (
-			<>
-				<code>.logger()</code>, qui envoie les avertissements de lacunes d’analyse à votre propre
-				journal ;{" "}
-			</>
-		) : null}
-		et <code>getScanNotes(results)</code>, qui indique comment la page a été analysée. Le{" "}
-		<a href={`https://github.com/SureA11y/${repo}#readme`}>README du binding</a> les décrit
-		chacun.
+		<strong>Gestionnaires de clic et régions live.</strong> Depuis core 1.14, il existe deux autres
+		hooks facultatifs. La plupart des pages ajoutent leurs gestionnaires de clic depuis un script,
+		où aucun script de la page ne peut les lister ensuite, si bien que l’analyse ne voit pas qu’un{" "}
+		<code>&lt;div role="button"&gt;</code> doté d’un écouteur de clic ne fait rien au clavier ;
+		avec le hook d’écouteurs, ce bouton échoue (<code>CLICK_HANDLER_NO_KEY_LISTENER</code>). Le
+		hook de régions live enregistre ce que reçoivent les régions live de la page : l’analyse pose
+		alors une question sur un message d’état ajouté avec son texte déjà dedans, que les lecteurs
+		d’écran n’annoncent souvent pas, et <code>announcements()</code> renvoie ce que la page a mis à
+		disposition pour être annoncé, afin qu’un test vérifie qu’une action a bien informé
+		l’utilisateur. Installez-les avant que les scripts de la page elle-même ne s’exécutent, comme
+		le hook d’internals :
 	</p>
+);
+
+const moreHooksCaveat = (repo) => (
+	<p>
+		Comme le hook d’internals, tous deux sont destinés aux exécutions de test et d’audit :
+		n’importe quel script de la page peut lire ce qu’ils enregistrent.{" "}
+		<code>announcements()</code> est ce que la page a mis à disposition pour être annoncé, pas ce
+		qu’un lecteur d’écran a dit, et vaut <code>null</code> sans le hook de régions live. Sans l’un
+		ou l’autre hook, <code>getScanNotes()</code> signale quand des constats que ce hook aurait
+		tranchés ont été jugés sans lui. Les sections du README sur le{" "}
+		<a href={`https://github.com/SureA11y/${repo}#click-handlers-added-from-script-the-listener-hook`}>hook d’écouteurs</a>{" "}
+		et le{" "}
+		<a href={`https://github.com/SureA11y/${repo}#live-regions-the-live-region-hook-and-announcements`}>hook de régions live</a>{" "}
+		donnent les détails.
+	</p>
+);
+
+/**
+ * Conditions, the severity gate and leaning questions (binding 1.5.0), then a pointer to the
+ * builder methods this page leaves to the binding's README.
+ */
+const alsoAvailable = (repo, { logger = true, conditions = null, cypress = false } = {}) => (
+	<>
+		<p>
+			<strong>Mode sombre, largeurs de téléphone et seuil de gravité.</strong>{" "}
+			<code>{".conditions([{ colorScheme: 'dark' }, { width: 320 }])"}</code> analyse la page telle
+			qu’elle est, puis à nouveau sous chaque condition, et renvoie un seul résultat : le résultat
+			d’une règle est le pire de toutes les analyses, et chaque constat indique les conditions
+			sous lesquelles il a été vu. Chaque condition est une analyse complète, et{" "}
+			<code>.frames(true)</code> ne peut pas encore s’y combiner. {conditions}{" "}
+			<code>{"getGatingFailures(results, { failOnSeverity: 'serious' })"}</code> renvoie les règles
+			en échec à cette gravité ou au-dessus, pour qu’un test bloque d’abord les problèmes graves et
+			critiques pendant que les autres restent signalés ; <code>formatFailures()</code> accepte la
+			même option.
+		</p>
+		<p>
+			<strong>Des questions qui penchent, avec des étapes.</strong> Depuis core 1.14, un constat{" "}
+			<code>cantTell</code> peut pencher vers <code>fail</code> ou <code>pass</code>, en disant
+			pourquoi, et porte <code>howToCheck</code>, les étapes qu’une personne suit pour y répondre.{" "}
+			<code>formatFailures()</code> liste les échecs probables juste après les échecs, et affiche
+			les étapes avec <code>{"{ howToCheck: true }"}</code>. Pour qu’un test échoue aussi sur les
+			échecs probables, ajoutez <code>leaningFailures(results)</code> de core au seuil.
+			{cypress ? (
+				<>
+					{" "}
+					Dans Cypress, les étapes viennent du plugin : <code>setupNodeEvents</code> doit renvoyer
+					ce que renvoie <code>surea11y(on, config)</code>. Sans cela, le résultat n’a pas
+					d’étapes, et rien n’échoue.
+				</>
+			) : null}
+		</p>
+		<p>
+			<code>A11yCoreBuilder</code> a aussi <code>.wcagLevel()</code>, qui limite les critères
+			rapportés à un niveau WCAG sans changer les règles exécutées ;{" "}
+			<code>.includeMode('or')</code>, qui exécute les règles d’une étiquette plus les règles que
+			vous nommez ; <code>.plannedChecks()</code> et <code>.plannedCriteria()</code>, qui listent
+			ce qu’une analyse vérifiera avant qu’elle ne s’exécute, pour qu’une sélection qui n’exécute
+			rien ne passe pas pour une analyse sans échec ;{" "}
+			{logger ? (
+				<>
+					<code>.logger()</code>, qui envoie les avertissements de lacunes d’analyse à votre propre
+					journal ;{" "}
+				</>
+			) : null}
+			<code>.fetchStyleSheets(false)</code>, qui empêche <code>.analyze()</code> de récupérer les
+			feuilles de style d’autres origines que la page ne peut pas lire elle-même, pour les règles
+			qui lisent le CSS ; et <code>getScanNotes(results)</code>, qui indique comment la page a été
+			analysée. Le{" "}
+			<a href={`https://github.com/SureA11y/${repo}#readme`}>README du binding</a> les décrit
+			chacun.
+		</p>
+	</>
 );
 
 export const bindingUsage = {
@@ -97,7 +165,7 @@ export const bindingUsage = {
 				s’exécute dans le navigateur : dans Cypress, <code>.withPacks()</code> prend donc le
 				nom de module de chaque pack (un nom de paquet, ou un chemin depuis la racine du projet), et
 				le plugin du binding, <code>@surea11y/cypress/plugin</code>, le prépare dans Node :
-				enregistrez-le dans <code>setupNodeEvents</code> avec <code>surea11y(on, config)</code>.{" "}
+				enregistrez-le en renvoyant <code>surea11y(on, config)</code> depuis <code>setupNodeEvents</code>.{" "}
 				<code>{".options({ profile })"}</code> choisit le profil du pack. Un pack qui ne s’exécute
 				pas est signalé comme une lacune d’analyse <code>'pack-skipped'</code>.
 			</p>
@@ -122,7 +190,42 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("cypress"),
 		},
-		more: alsoAvailable("cypress", { logger: false }),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"// cypress/support/e2e.js",
+				"import { installListenerHook, installLiveRegionHook } from '@surea11y/cypress';",
+				"",
+				"installListenerHook();",
+				"installLiveRegionHook();",
+				"",
+				"// in a spec",
+				"cy.get('#save').click();",
+				"A11yCoreBuilder.announcements().then((said) => {",
+				"  expect(said.map((a) => a.text)).to.include('Saved');",
+				"});",
+			],
+			note: (
+				<p>
+					Comme pour le hook d’internals, le fichier de support couvre chaque visite, et seule la
+					fenêtre de l’application elle-même les reçoit, pas les frames qu’elle contient.{" "}
+					<code>announcements()</code> lit la fenêtre de l’application et renvoie un chainable, comme{" "}
+					<code>.analyze()</code>.
+				</p>
+			),
+			caveat: moreHooksCaveat("cypress"),
+		},
+		more: alsoAvailable("cypress", {
+			logger: false,
+			cypress: true,
+			conditions: (
+				<>
+					Une largeur passe par <code>cy.viewport()</code> ; un schéma de couleurs exige un
+					navigateur de la famille Chromium (Chrome, Edge, Electron), et dans Firefox{" "}
+					<code>.analyze()</code> échoue avant toute analyse.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/cypress/blob/main/examples/basic-scan.cy.js",
 	},
 
@@ -188,7 +291,35 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("playwright"),
 		},
-		more: alsoAvailable("playwright"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"const context = await browser.newContext();",
+				"await A11yCoreBuilder.installListenerHook(context); // before any page navigates",
+				"await A11yCoreBuilder.installLiveRegionHook(context);",
+				"const page = await context.newPage();",
+				"await page.goto('https://example.com/settings');",
+				"await page.getByRole('button', { name: 'Save' }).click();",
+				"",
+				"const said = await A11yCoreBuilder.announcements(page);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					Tous deux s’installent comme le hook d’internals, sur la page ou sur son contexte de
+					navigateur, avant qu’elle ne navigue. Avec <code>@playwright/test</code>, installez-les dans
+					un <code>beforeEach</code> sur la fixture <code>context</code>.
+				</p>
+			),
+			caveat: moreHooksCaveat("playwright"),
+		},
+		more: alsoAvailable("playwright", {
+			conditions: (
+				<>
+					Cela fonctionne dans Chromium, Firefox et WebKit.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/playwright/blob/main/examples/basic-scan.js",
 	},
 
@@ -245,7 +376,35 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("puppeteer"),
 		},
-		more: alsoAvailable("puppeteer"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"const page = await browser.newPage();",
+				"await A11yCoreBuilder.installListenerHook(page); // before goto",
+				"await A11yCoreBuilder.installLiveRegionHook(page);",
+				"await page.goto('https://example.com/settings');",
+				"await page.click('#save');",
+				"",
+				"const said = await A11yCoreBuilder.announcements(page);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					Tous deux s’installent comme le hook d’internals, via{" "}
+					<code>page.evaluateOnNewDocument()</code>, avant <code>page.goto()</code>.
+				</p>
+			),
+			caveat: moreHooksCaveat("puppeteer"),
+		},
+		more: alsoAvailable("puppeteer", {
+			conditions: (
+				<>
+					Dans Firefox, les largeurs fonctionnent, mais un schéma de couleurs exige le protocole
+					DevTools, que Puppeteer n’a que dans Chrome : <code>.analyze()</code> y est donc rejeté avant
+					toute analyse.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/puppeteer/blob/main/examples/basic-scan.js",
 	},
 
@@ -315,7 +474,36 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("selenium"),
 		},
-		more: alsoAvailable("selenium"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"await A11yCoreBuilder.installListenerHook(driver); // before driver.get()",
+				"await A11yCoreBuilder.installLiveRegionHook(driver);",
+				"await driver.get('https://example.com/settings');",
+				"await driver.findElement(By.css('#save')).click();",
+				"",
+				"const said = await A11yCoreBuilder.announcements(driver);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					Tous deux s’installent comme le hook d’internals, avant <code>driver.get()</code> : via
+					WebDriver BiDi quand la session l’a, sinon via le protocole DevTools dans Chrome et Edge.
+					Chacun se résout en <code>'bidi'</code> ou <code>'cdp'</code>. <code>By</code> vient de{" "}
+					<code>selenium-webdriver</code>.
+				</p>
+			),
+			caveat: moreHooksCaveat("selenium"),
+		},
+		more: alsoAvailable("selenium", {
+			conditions: (
+				<>
+					Dans Chrome et Edge, les deux passent par le protocole DevTools ; dans les autres
+					navigateurs, une largeur redimensionne la fenêtre, et un schéma de couleurs fait rejeter{" "}
+					<code>.analyze()</code> avant toute analyse.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/selenium/blob/main/examples/basic-scan.js",
 	},
 
@@ -387,7 +575,35 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("webdriverio"),
 		},
-		more: alsoAvailable("webdriverio"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"await A11yCoreBuilder.installListenerHook(browser); // before browser.url()",
+				"await A11yCoreBuilder.installLiveRegionHook(browser);",
+				"await browser.url('https://example.com/settings');",
+				"await $('#save').click();",
+				"",
+				"const said = await A11yCoreBuilder.announcements(browser);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					Tous deux s’installent comme le hook d’internals, dans les mêmes sessions, avant{" "}
+					<code>browser.url()</code> (dans le testrunner WDIO, dans un hook <code>before</code>), et se
+					résolvent en <code>'bidi'</code> ou <code>'cdp'</code>.
+				</p>
+			),
+			caveat: moreHooksCaveat("webdriverio"),
+		},
+		more: alsoAvailable("webdriverio", {
+			conditions: (
+				<>
+					Dans Chrome et Edge, les deux passent par le protocole DevTools, en session classique comme
+					BiDi ; dans les autres navigateurs, une largeur redimensionne la fenêtre, et un schéma de
+					couleurs fait rejeter <code>.analyze()</code> avant toute analyse.
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/webdriverio/blob/main/examples/basic-scan.js",
 	},
 };

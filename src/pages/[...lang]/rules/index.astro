@@ -2,6 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { RulesTable } from "../../../components/RulesTable.jsx";
 import rules from "../../../data/rules.generated.json";
+import reviews from "../../../data/rules.review.generated.json";
 import { sections } from "../../../data/sections";
 import { localize } from "../../../data/localize";
 import { isRuleTranslated, localizeRule } from "../../../data/localizeRule";
@@ -22,7 +23,10 @@ const { RulesIntroContent } = module;
 const rulesSection = sections.find((s) => s.href === "/rules/")!;
 const { label, description } = localize(rulesSection, locale);
 
-const localizedRules = rules.map((r) => localizeRule(r, locale));
+const localizedRules = rules.map((r) => ({
+	...localizeRule(r, locale),
+	questions: (reviews as Record<string, unknown[]>)[r.ruleId]?.length ?? 0,
+}));
 const automatic = localizedRules.filter((r) => r.type === "automatic");
 const manual = localizedRules.filter((r) => r.type === "manual");
 // "{outcome}" stays in the translated heading so each language places the

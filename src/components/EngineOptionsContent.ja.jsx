@@ -30,7 +30,7 @@ const optionRows = [
 		option: <code>wcagVersion</code>,
 		meaning: (
 			<>
-				<code>'2.0'</code>、<code>'2.1'</code>、<code>'2.2'</code>のいずれかで、そのスキャンがどのバージョンのWCAGへの適合を検証するかを指定します。省略すると、実行が適用するパックのプロファイルが示すバージョン（その<code>wcagVersion</code>）になり、それがなければ導入バージョンタグから推定されるバージョン、タグから何も推定できなければ<code>'2.2'</code>になります。<strong>現時点でこのオプションが影響するのは、2.2で削除されたSC 4.1.1（構文解析）だけです</strong>。2.2を対象にすると、<code>wcag22-removed</code>タグの付いたルールは引き続き実行され、検出箇所も報告しますが、<code>fail</code>にはなりません。前述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照してください。それ以外の値は、型を問わず（数値の<code>2.1</code>、<code>'3.0'</code>）、代わりに実行が対象とするバージョンを示す<code>console.warn</code>を出して無視されます。
+				<code>'2.0'</code>、<code>'2.1'</code>、<code>'2.2'</code>のいずれかで、そのスキャンがどのバージョンのWCAGへの適合を検証するかを指定します。省略すると、実行が適用するパックのプロファイルが示すバージョン（その<code>wcagVersion</code>）になり、それがなければ導入バージョンタグから推定されるバージョン、タグから何も推定できなければ<code>'2.2'</code>になります。このオプションが変えるのは、スキャンが報告する達成基準と、SC 4.1.1（構文解析）について<code>wcag22-removed</code>タグの付いたルールが<code>fail</code>にならない理由です。4.1.1は2.2で削除され、2.0と2.1ではそれぞれの正誤表により常に満たされているものとされます。ただし、<code>en301549-v3.2.1</code>のように、規格が4.1.1を維持しているプロファイルのもとでは例外です。前述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照してください。それ以外の値は、型を問わず（数値の<code>2.1</code>、<code>'3.0'</code>）、代わりに実行が対象とするバージョンを示す<code>console.warn</code>を出して無視されます。
 			</>
 		),
 	},
@@ -125,6 +125,15 @@ const optionRows = [
 		),
 	},
 	{
+		id: "styleSheetTexts",
+		option: <code>styleSheetTexts</code>,
+		meaning: (
+			<>
+				ページが読み取れないスタイルシートのテキストです。<code>{"[{ href, text }]"}</code>の形で、別オリジンのスタイルシートをURLで示し、そのCSSを渡します。CSSを読むルール（<code>css-orientation-lock</code>、<code>css-hidden-focus</code>、<code>css-focus-indicator-suppressed</code>）は、スタイルシートの代わりにこれを読みます。各結果の<code>engineOptions</code>は、テキストを除いたスタイルシートのhref（<code>{"[{ href }]"}</code>）としてこれを返します。<code>preloadStyleSheets()</code>はサーバーが共有しているものをページの中から取得し、<code>runa11yCoreInPageAsync</code>はスキャンの前にそれらを取得します。ブラウザーを操作するツールは、それ以外のものをページの外から取得できます。GitHubにあるcoreの統合ガイドの<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}>「Style sheets from another origin」</a>を参照してください。core 1.14.0以降です。
+			</>
+		),
+	},
+	{
 		id: "timestamp",
 		option: <code>timestamp</code>,
 		meaning: (
@@ -138,7 +147,7 @@ const optionRows = [
 		option: <code>contrast.mode</code>,
 		meaning: (
 			<>
-				<code>strictConformance</code>（デフォルト）：実際に描画される背景色を確実に計算できない場合、コントラストのルールは何も報告しません（<code>notApplicable</code>またはスキップ）。誤った<code>fail</code>を防ぐためです。<code>auditorAssist</code>：その安全マージンを一部手放して、より多くの検出結果を返します。フラグが立ったケースを人間の監査担当者が再確認することを前提としたモードで、無人で動かすCIのゲートには向きません。
+				<code>strictConformance</code>（デフォルト）：実際に描画される背景色を確実に計算できない場合、コントラストのルールは何も報告しません（<code>notApplicable</code>またはスキップ）。誤った<code>fail</code>を防ぐためです。<code>auditorAssist</code>：その安全マージンを一部手放して、より多くの検出結果を返します。フラグが立ったケースを人間の監査担当者が再確認することを前提としたモードで、無人で動かすCIのゲートには向きません。不透明な背景を描画しないページは、このケースには当たりません。その背後のキャンバスはページ自身のカラースキームから決まるため、そのテキストはどちらのモードでも推測なしに計測されます。ページのキャンバスが分からない場所（フレームの中、強制カラーのもと）では、<code>auditorAssist</code>はテキストを<code>contrast.rootCanvasFallback</code>の上で計測し、<code>ROOT_CANVAS_FALLBACK</code>として記録します。
 			</>
 		),
 	},
@@ -147,7 +156,16 @@ const optionRows = [
 		option: <code>contrast.rootCanvasFallback</code>,
 		meaning: (
 			<>
-				背景色がまったく計算できない場合に想定するページの背景色です。意味を持つのは<code>auditorAssist</code>モードのときだけです。ブラウザーでは、自身の不透明な背景を持たないページは、どちらのモードでも、ブラウザーがその背後に描画するキャンバスの上で計測されます。白か、ダークなカラースキームを求めるページ（ルートの<code>color-scheme: dark</code>、または<code>&lt;meta&gt;</code>の形式）ならダークなキャンバスです。このフォールバックが適用されるのは、キャンバスを読み取らない場合です。jsdomのもとと、親ページが透けて見えることがあるキャンバスを持つフレームの中がそうです（ダークを求めるフレームはダークなキャンバスの上で計測されます）。不透明な色でなければなりません。それ以外の値は、警告を出して白として計測されます。
+				不透明な背景を描画しないページのためのキャンバスの色です。指定しない場合、コントラストのルールはどちらのモードでも、そのようなページのテキストをブラウザーがその背後に描画するキャンバスの上で計測します。ページが描画されるカラースキームのキャンバスで、それはページ自身の<code>color-scheme</code>（ルート、または<code>&lt;meta&gt;</code>の形式）が決めます。何も宣言しないページは、ユーザーの好みにかかわらずライトで、白の上に描画されます。<code>light dark</code>はライトのユーザーには白の上、ダークのユーザーにはダークなキャンバスの上に描画され、そのテキストは両方のスキームで計測され、どちらかで不合格なら不合格になります（<code>data.details.colorScheme</code>がどちらかを示します）。システムカラーを解決しないjsdomのもとでは、エンジンはChromiumの色を使い、そこで色を割り出せないテキストは確認が必要なものとして扱います（<code>COLOR_SCHEME_NOT_RENDERED</code>）。指定すると、白を含め、その色がすべてのスキームでページのキャンバスの代わりになります。テキストはその上で1回計測され、想定として記録されます（<code>ROOT_CANVAS_FALLBACK</code>）。ページのキャンバスが分からないのは、親ページが透けて見えることがあるキャンバスを持つフレームの中と、強制カラーのもとです。そこでは<code>contrast-computable</code>が確認を求め、コントラスト比のルールはテキストを対象外にします。ただし<code>auditorAssist</code>はこの色の上で計測します。各結果の<code>engineOptions.contrast</code>は、使った色を返します。指定がなければ白です。
+			</>
+		),
+	},
+	{
+		id: "contrast-fallback-set",
+		option: <code>contrast.rootCanvasFallbackSet</code>,
+		meaning: (
+			<>
+				各結果に返される値です。<code>contrast.rootCanvasFallback</code>が呼び出し側の指定なら<code>true</code>、デフォルトの白なら<code>false</code>です（指定した値が使える色でなかった場合も<code>false</code>）。入力として指定する必要はありません。結果に返されたオプションをそのまま渡し直すと元のとおりに読まれるので、<code>false</code>なら返された白はデフォルトのままです。<code>true</code>でも<code>false</code>でもない値は警告を出し、指定がなかったものとして読まれます。core 1.14.0以降です。
 			</>
 		),
 	},
@@ -156,7 +174,7 @@ const optionRows = [
 		option: <code>visibilityMode</code>,
 		meaning: (
 			<>
-				3つのコントラストルール（<code>contrast-minimum</code>、<code>contrast-enhanced</code>、<code>contrast-computable</code>）が、テキストノードを実際にチェック対象とするかどうかをどれだけ厳密に判断するかを制御します。<strong>他のルールはこのオプションを読みません。</strong>指定しない場合（デフォルト）、ページにレイアウトがあれば（ブラウザーでのスキャンはすべてそうです）<code>'styleAndGeometry'</code>、ない場合（jsdom）は<code>'styleOnly'</code>になります。読み手に見えるのは見える場所に描画されたテキストだけで、それを判断できるのはレイアウトだけだからです。<code>'styleOnly'</code>：対象かどうかをCSSだけで判断します（<code>display</code>、<code>visibility</code>、<code>opacity</code>、祖先による非表示など）。<code>'styleAndGeometry'</code>：それに加えて実際のレイアウトをチェックします（<code>getClientRects()</code>/<code>getBoundingClientRect()</code>）。クライアント矩形を持たないテキストや、幅または高さがゼロのテキストも除外されます。ページの完全に上側や左側にあり、スクロールしても届かないテキスト（<code>left: -9999px</code>の手法）や、<code>overflow: hidden</code>または<code>clip</code>の祖先に完全に切り取られたテキスト（<code>height: 0; overflow: hidden</code>、表示範囲外のカルーセルのスライド）も同様です。スクロールするボックス（<code>auto</code>、<code>scroll</code>）は、読み手がそのテキストまでたどり着けるため、除外の理由になりません。<code>&lt;select&gt;</code>の選択肢は、その<code>&lt;select&gt;</code>がページ上にある位置で判断されます。どちらのモードでも、フォントサイズが0のテキストや完全に透明な色のテキストは、何も描画されないため除外されます。ただし、グリフを通して背景を見せる透明なテキスト（<code>background-clip: text</code>）は除外されず、確認が必要なものとして扱われます。ブラウザーで、以前のリリースと同じように計算済みスタイルだけからテキストをチェックするには<code>'styleOnly'</code>を指定してください。素のjsdom（<code>runDomRulesInPage</code>）には本物のレイアウトエンジンがないため、<code>'styleAndGeometry'</code>で加わるのは主に<code>getBoundingClientRect()</code>によるサイズゼロのチェックで、本当の意味でのクリッピングやオーバーフローの検出にはなりません。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
+				3つのコントラストルール（<code>contrast-minimum</code>、<code>contrast-enhanced</code>、<code>contrast-computable</code>）が、テキストノードを実際にチェック対象とするかどうかをどれだけ厳密に判断するかを制御します。<strong>他のルールはこのオプションを読みません。</strong>指定しない場合（デフォルト）、ページにレイアウトがあれば（ブラウザーでのスキャンはすべてそうです）<code>'styleAndGeometry'</code>、ない場合（jsdom）は<code>'styleOnly'</code>になります。読み手に見えるのは見える場所に描画されたテキストだけで、それを判断できるのはレイアウトだけだからです。<code>'styleOnly'</code>：対象かどうかをCSSだけで判断します（<code>display</code>、<code>visibility</code>、<code>opacity</code>、祖先による非表示など）。<code>'styleAndGeometry'</code>：それに加えて実際のレイアウトをチェックします（<code>getClientRects()</code>/<code>getBoundingClientRect()</code>）。クライアント矩形を持たないテキストや、幅または高さがゼロのテキストも除外されます。ページの完全に上側や左側にあり、スクロールしても届かないテキスト（<code>left: -9999px</code>の手法）や、<code>overflow: hidden</code>または<code>clip</code>の祖先に完全に切り取られたテキスト（<code>height: 0; overflow: hidden</code>、表示範囲外のカルーセルのスライド）も同様です。スクロールするボックス（<code>auto</code>、<code>scroll</code>）は、読み手がそのテキストまでたどり着けるため、除外の理由になりません。<code>&lt;select&gt;</code>の選択肢は、その<code>&lt;select&gt;</code>がページ上にある位置で判断されます。どちらのモードでも、フォントサイズが0のテキストや完全に透明な色のテキストは、何も描画されないため除外されます。ただし、グリフを通して背景を見せる透明なテキスト（そのテキストか祖先の<code>background-clip: text</code>）は除外されません。背景が単色ならその色で計測され、グラデーションや画像なら確認が必要なものとして扱われます。ブラウザーで、以前のリリースと同じように計算済みスタイルだけからテキストをチェックするには<code>'styleOnly'</code>を指定してください。素のjsdom（<code>runDomRulesInPage</code>）には本物のレイアウトエンジンがないため、<code>'styleAndGeometry'</code>で加わるのは主に<code>getBoundingClientRect()</code>によるサイズゼロのチェックで、本当の意味でのクリッピングやオーバーフローの検出にはなりません。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
 			</>
 		),
 	},
@@ -439,7 +457,7 @@ export function EngineOptionsContent() {
 				<a href="/configuration/packs/">パック</a>の規格やチェックリストは、独自のプロファイルをこの一覧に加えます。
 			</p>
 			<p>
-				WCAGの対象バージョンは、手書きのタグセットと同じようにタグから決まります（後述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照）。そのため<code>en301549-v3.2.1</code>では重複したidが<code>fail</code>になりえますが、<code>en301549-v4.1.1</code>ではなりません。パックのプロファイルは、代わりに<code>wcagVersion</code>で自身のバージョンを示せます（<a href="/configuration/packs/#profiles">パック</a>）。規格が対応付けたルールだけを実行するプロファイルには、バージョンを示すWCAGのタグがないためです。名前の大文字と小文字は区別しません。プロファイルを使った実行は、それを<code>engine.profile</code>として返します。
+				WCAGの対象バージョンは、手書きのタグセットと同じようにタグから決まります（後述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照）。そのため<code>en301549-v3.2.1</code>では重複したidが<code>fail</code>になりえますが、<code>en301549-v4.1.1</code>ではなりません。V3.2.1のプロファイルは4.1.1を維持するためです（<a href="#parsing-errata">後述</a>）。パックのプロファイルは、代わりに<code>wcagVersion</code>で自身のバージョンを示せます（<a href="/configuration/packs/#profiles">パック</a>）。規格が対応付けたルールだけを実行するプロファイルには、バージョンを示すWCAGのタグがないためです。名前の大文字と小文字は区別しません。プロファイルを使った実行は、それを<code>engine.profile</code>として返します。
 			</p>
 			<p>
 				優先順位：ルールを<em>含める</em>指定はすべて、プロファイルの代わりにルールを選びます。<code>wcag</code>、<code>tags</code>、<code>includeRuleIds</code>、<code>includeTestIds</code>を持つ<code>runOnly</code>、または<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>の<code>include</code>です。除外はプロファイルの上に引き続き適用されます。<code>runOnly</code>の除外（<code>excludeTags</code>、<code>excludeRuleIds</code>、<code>excludeTestIds</code>。そのためバインディングの<code>disableTags()</code>はプロファイルを置き換えるのではなく絞り込みます）でも、<code>runOnly</code>のフィルターがない場合の<code>engineOptions</code>の除外（<code>tags.exclude</code>、<code>rules.exclude</code>、<code>tests.exclude</code>）でも同じです。また、明示的な<code>engineOptions.wcagVersion</code>は、プロファイルが示す、または指定するバージョンより常に優先されます。効果のないプロファイル（不明な名前や、上記のように上書きされたもの）はエラーではありません。実行は指定がなかったものとして続き、理由を示す<code>console.warn</code>を出力し、<code>engine.profile</code>は含まれません。<code>runOnly.bestPractices: true</code>はこの種の「含める」指定ではありません。プロファイルのルールにベストプラクティスのルールを追加し、プロファイルは適用されます（<a href="#adding-the-best-practices-runonlybestpractices">「ベストプラクティスを追加する」</a>）。
@@ -530,7 +548,7 @@ export function EngineOptionsContent() {
 
 			<h2 id="advanced-selection-tags-and-rule-ids">高度な選択：タグとルールID</h2>
 			<p>
-				以下のフィールドは、ルールが持つタグとルールIDで選択します。1つの達成基準（<code>tags: ['wcag1412']</code>）、ルールのリスト、除外、ほかのツールから引き継いだタグセットなど、WCAGの目標と<code>bestPractices</code>では表せないものに使ってください。これらは<code>wcag</code>や<code>bestPractices</code>と組み合わせられます。含めるものはそれらが選択するものに追加され、除外するものはその後に取り除かれます。
+				以下のフィールドは、ルールが持つタグとルールIDで選択します。1つの達成基準（<code>tags: ['wcag1412']</code>）、ルールのリスト、除外、独自のタグセットなど、WCAGの目標と<code>bestPractices</code>では表せないものに使ってください。これらは<code>wcag</code>や<code>bestPractices</code>と組み合わせられます。含めるものはそれらが選択するものに追加され、除外するものはその後に取り除かれます。
 			</p>
 			<p>
 				指定する方法は<strong>互いに独立して2つ</strong>あります。第4引数（<code>runOnly</code>）と、<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>/<code>.includeMode</code>です。<code>runOnly</code>にフィルターが1つでも含まれていればそちらが無条件に優先され、そうでなければエンジンは<code>engineOptions</code>を使います。<strong>両方が適用されると期待して混在させないでください。どちらか一方を選びます。</strong><code>engineOptions.rules</code>、<code>.tags</code>、<code>.tests</code>は<code>{"{ include, exclude }"}</code>を受け取ります。リストや文字列をそのまま渡すと、含めるリストになります。
@@ -643,7 +661,7 @@ export function EngineOptionsContent() {
 			/>
 			<ul>
 				<li>
-					<strong>判定は集約自身のものです。</strong>不合格のルールは達成基準を不合格にします。スキャンがその達成基準のほかのルールを除いた場合、合格したルールがあっても達成基準は合格になりません。<code>reasonCode</code>が<code>composite.rollup.cantTell.notSelectedChild</code>の<code>cantTell</code>になり、スキャンが選択しなかった各ルールは、貢献したルールの中に<code>notSelected: true</code>付きの<code>missing</code>として列挙されます。HTMLレポートはその下に「一部のみ確認」と、選択されなかったチェックの件数を表示します。<a href="/results-reports/output-schema/#partly-checked">出力スキーマ</a>を参照してください。
+					<strong>判定は集約自身のものです。</strong>不合格のルールは達成基準を不合格にします。スキャンがその達成基準のほかのルールを除いた場合、合格したルールがあっても達成基準は合格になりません。<code>reasonCode</code>が<code>composite.rollup.cantTell.notSelectedChild</code>の<code>cantTell</code>になり、スキャンが選択しなかった各ルールは、貢献したルールの中に<code>notSelected: true</code>付きの<code>missing</code>として列挙されます。すべてが選択されて合格しても、WCAGの達成基準は<code>cantTell</code>（<code>composite.rollup.cantTell.partialCheck</code>）のままです。どの達成基準についても、そのルールはまだ求められることのすべてをチェックしていないためです（<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照）。HTMLレポートはその下に「一部のみ確認」と、選択されなかったチェックの件数を表示します。<a href="/results-reports/output-schema/#partly-checked">出力スキーマ</a>を参照してください。
 				</li>
 				<li>
 					<strong>達成基準のタグは、その達成基準自身を指定します。</strong><code>tags: ['wcag244']</code>は2.4.4を報告し、そのルールが検査するほかの達成基準（<code>link-name-present</code>なら4.1.2）は報告しません。集約のID、WCAGの目標、バージョンやレベルのタグ、WCAGのプロファイルによって加わったルールは、達成基準を追加しません。そこでは選択自体が達成基準を指定しているからです。そのため、達成基準を選択するスキャンの報告は以前と変わりません。
@@ -728,6 +746,9 @@ export function EngineOptionsContent() {
 			<p>
 				これについて何かする必要はありません。エンジンはスキャンごとに<strong>対象のWCAGバージョン</strong>を決定し、対象が2.2の場合、<code>wcag22-removed</code>のルールは<code>fail</code>を報告できません。ルールは実行され、見つけた検出箇所もすべて報告しますが、判定結果は<code>cantTell</code>に強制変換され、結果にはその理由を示す<code>wcagVersionScope</code>フィールドが付きます（<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）。黙って捨てられるものは何もなく、2.2のスキャンが2.2に存在しない達成基準によってゲートされることもありません。
 			</p>
+			<p id="parsing-errata">
+				2.0または2.1を対象にした場合も同じです。WCAG 2.0と2.1に対する2023年の正誤表は、HTMLやXMLのコンテンツについて4.1.1を常に満たされているものとするため、ルールは不合格にせず確認を求め、<code>wcagVersionScope.by</code>は<code>"errata"</code>になります。唯一の例外は、<code>en301549-v3.2.1</code>のように規格が4.1.1の文言を維持しているプロファイルです（規格のプロファイルの<code>keepsParsing</code>。<a href="/configuration/packs/#profiles">パック</a>を参照）。そこでは重複したidが今も<code>fail</code>になりえます。core 1.14.0以降の動作で、それ以前は2.0や2.1を対象にすると不合格になりました。
+			</p>
 			<p>対象バージョンは次の順で決まります。</p>
 			<ol>
 				<li>
@@ -792,7 +813,7 @@ export function EngineOptionsContent() {
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
 					"  wcagLevel: 'AA',                 // optional — the level of the criteria reported",
-					"  profile: 'en301549-v4.1.1',      // optional — a named conformance target",
+					"  profile: 'wcag22-aa',            // optional — a named conformance target",
 					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
 					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
 					"  messages: { de: { /* key: text */ } },  // optional caller-supplied dictionaries; win over built-in ones",
@@ -800,13 +821,15 @@ export function EngineOptionsContent() {
 					"  includeShadowDom: true,          // default true — opt OUT with false to skip open shadow roots",
 					"  fragment: false,                 // default false — set true when the scan target isn't a real page",
 					"  excludeSelectors: ['#cookie-banner', '.third-party-widget'],  // array or comma-separated string",
+					"  styleSheetTexts: [{ href: 'https://cdn.example/site.css', text: '/* its CSS */' }],  // sheets the page can't read",
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
 					"  perfStats: false,                // default false — internal timing counters, debug-only shape",
 					"  profileRules: false,             // default false — per-rule timings; needs perfStats",
 					"",
 					"  contrast: {",
 					"    mode: 'strictConformance',     // 'strictConformance' (default) | 'auditorAssist'",
-					"    rootCanvasFallback: '#ffffff'  // background assumed when the true root background isn't computable",
+					"    rootCanvasFallback: '#ffffff', // a canvas to measure on in place of the page's own; unset, the page's color scheme gives it",
+					"    rootCanvasFallbackSet: true    // echoed on each result: whether rootCanvasFallback was given; read back, false means the default",
 					"  },",
 					"  visibilityMode: undefined,       // 'styleOnly' | 'styleAndGeometry'; unset: geometry with a layout, else styles",
 					"",
@@ -867,7 +890,7 @@ export function EngineOptionsContent() {
 					"// Error: engineOptions: unknown option \"lcoale\" (did you mean \"locale\"?). (strictOptions)",
 				]} />
 			<p>
-				<code>engineOptions</code>を受け取るカタログ関数（<code>getChecksCatalog</code>、<code>getRulesCatalog</code>、<code>getCheckDefById</code>、<code>getCompositeRuleById</code>、<code>getChecksForRunOnly</code>、<code>getRulesForRunOnly</code>、<code>getTestsForRunOnly</code>）も、同じ方法、同じ文言でそれを確認します。<code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code>は警告を出し、レベルを指定がなかったものとして読み、そのオプションでのスキャンが報告するものを列挙します。<code>strictOptions: true</code>を指定すると、スキャンと同じように<code>INVALID_ENGINE_OPTIONS</code>を投げます。
+				<code>engineOptions</code>を受け取るカタログ関数（<code>getChecksCatalog</code>、<code>getRulesCatalog</code>、<code>getCheckDefById</code>、<code>getCompositeRuleById</code>、<code>getChecksForRunOnly</code>、<code>getRulesForRunOnly</code>、<code>getTestsForRunOnly</code>）も、同じ方法、同じ文言でそれを確認します。<code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code>は警告を出し、レベルを指定がなかったものとして読み、そのオプションでのスキャンが報告するものを列挙します。<code>strictOptions: true</code>を指定すると、スキャンと同じように<code>INVALID_ENGINE_OPTIONS</code>を投げます。自分自身を打ち消す選択（同じルールを含めると同時に除外する、共通するルールのない部分を組み合わせる）も、スキャンと同じように知らされます。警告が出て、<code>strictOptions</code>のもとでは<code>INVALID_RUN_ONLY</code>になります。
 			</p>
 			<p>
 				確認しないもの：ルール自身の設定（<code>rules[ruleId]</code>）、<code>messages</code>のキー、エンジンが読まずに受け渡す<code>probes</code>、そして独自の確認を持つカスタムルール（<code>skippedCustomRules</code>）です。TypeScriptでは、<code>StrictEngineOptions</code>は、任意のキーをコンパイルできるようにするインデックスシグネチャを持たない同じオプションの集合なので、綴りを誤ったオプションはそこでもエラーになります。
@@ -968,7 +991,7 @@ export function EngineOptionsContent() {
 
 			<h2><code>customRules</code>：実行時に登録するルール</h2>
 			<p>
-				同梱のルールはすべて、ビルド時に<code>src/core.js</code>に組み込まれます。<code>engineOptions.customRules</code>は実行時のための抜け道で、その呼び出しに限って登録されるルール記述子の配列です。静的なカタログには何も追加されず、呼び出しをまたいで残るものもありません。カタログ関数も同じ<code>engineOptions</code>を受け取り、それを使ったスキャンが持つものを列挙します。<code>getChecksCatalog(engineOptions)</code>は有効なカスタムルールを、各上書きを組み込みルールの位置に置いて列挙し、<code>getCheckDefById(id, engineOptions)</code>はそれらを見つけ、<code>getChecksForRunOnly(runOnly, engineOptions)</code>はスキャンと同じようにそれらを選択し、<code>getRulesForRunOnly(runOnly, engineOptions)</code>はそれらが追加する集約を列挙します。これは回避すべき制限ではなく、意図した設計です。surea11yはもともと呼び出しごとに新しい<code>engineOptions</code>を受け取り、変更可能なグローバル設定を持ちません（共有ランタイムに対して<code>configure()</code>/<code>reset()</code>の手順が必要な他のエンジンとは異なります）。カスタムルールもこの呼び出し単位のモデルに従います。
+				同梱のルールはすべて、ビルド時に<code>src/core.js</code>に組み込まれます。<code>engineOptions.customRules</code>は実行時のための抜け道で、その呼び出しに限って登録されるルール記述子の配列です。静的なカタログには何も追加されず、呼び出しをまたいで残るものもありません。カタログ関数も同じ<code>engineOptions</code>を受け取り、それを使ったスキャンが持つものを列挙します。<code>getChecksCatalog(engineOptions)</code>は有効なカスタムルールを、各上書きを組み込みルールの位置に置いて列挙し、<code>getCheckDefById(id, engineOptions)</code>はそれらを見つけ、<code>getChecksForRunOnly(runOnly, engineOptions)</code>はスキャンと同じようにそれらを選択し、<code>getRulesForRunOnly(runOnly, engineOptions)</code>はそれらが追加する集約を列挙します。これは回避すべき制限ではなく、意図した設計です。surea11yはもともと呼び出しごとに新しい<code>engineOptions</code>を受け取り、変更可能なグローバル設定を持ちません。カスタムルールもこの呼び出し単位のモデルに従います。
 			</p>
 			<p>
 				ライブラリーを直接呼び出すのが1つの方法ですが、CLIでも<code>--custom-rules &lt;path&gt;</code>（ローカルファイル。スキャンごとに1回読み込まれます）で利用できます。<a href="https://github.com/SureA11y/cli/blob/main/docs/CLI.md#custom-rules">CLIのドキュメント</a>を参照してください。

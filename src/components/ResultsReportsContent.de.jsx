@@ -38,15 +38,21 @@ export function ResultsReportsContent() {
 				(einschließlich jedes <code>pass</code> und <code>notApplicable</code> — nie eine Liste nur
 				mit Verstößen), Details pro Vorkommen bis hinunter zum gemeldeten Element, explizite
 				Unsicherheitscodes für alles, was eine Regel nicht entscheiden konnte, und
-				zusammengesetzte Zusammenfassungen pro WCAG-Erfolgskriterium. Es lohnt sich, das einmal zu
+				zusammengesetzte Zusammenfassungen pro WCAG-Erfolgskriterium. Jeder offene Befund sagt,
+				wie eine Person ihn beantwortet, und manche sagen, in welche Richtung die Anhaltspunkte der
+				Seite weisen (eine <em>Tendenz</em>), sodass eine Prüfung mit den wahrscheinlichen Fehlern
+				beginnt statt mit einer flachen Liste. Es lohnt sich, das einmal zu
 				lesen, wenn Sie irgendetwas auf einem rohen Ergebnis aufbauen. Die vollständige Form finden
 				Sie unter <a href="/results-reports/output-schema/">Ausgabeschema</a>.
 			</p>
 
 			<h2>HTML-Bericht</h2>
 			<p>
-				Eine HTML-Datei, die sich in jedem Browser öffnet, ohne Server oder Build-Schritt. Oben eine Zusammenfassung in einfacher Sprache, darunter eine
-				WCAG-Zusammenfassung nach Konformitätsstufe, die aus den zusammengesetzten Ergebnissen
+				Eine HTML-Datei, die sich in jedem Browser öffnet, ohne Server oder Build-Schritt. Oben eine Zusammenfassung in einfacher Sprache, dann die
+				Fehlschläge, danach die Befunde, die eine Prüfung brauchen, sortiert in wahrscheinlich
+				nicht erfüllt, wahrscheinlich erfüllt und solche, die nur eine Person beurteilen kann,
+				jeweils mit den Schritten zur Prüfung, darunter eine WCAG-Zusammenfassung nach
+				Konformitätsstufe, die aus den zusammengesetzten Ergebnissen
 				der Engine selbst stammt, und ganz unten eine vollständige, durchsuchbare Tabelle für
 				alle, die tiefer einsteigen wollen. Das ist der Bericht für Prüfende, die keine rohe
 				Ausgabe lesen möchten. Siehe <a href="/results-reports/html-report/">HTML-Bericht</a>.
@@ -61,7 +67,9 @@ export function ResultsReportsContent() {
 				Dashboard kann einen Befund über Commits hinweg verfolgen, statt ihn jedes Mal zu
 				verlieren, wenn sich eine Zeilennummer verschiebt. Ein Log ohne Ergebnisse bedeutet, dass
 				unter den gelaufenen Prüfungen nichts <code>fail</code> ergab oder eine Prüfung braucht;
-				es ist keine Konformitätsaussage. Siehe{" "}
+				es ist keine Konformitätsaussage. Eine Option hebt die Befunde, die wahrscheinlich nicht
+				erfüllt sind, zu Fehlern an, für einen Build, der an ihnen scheitern soll, ohne an jeder
+				offenen Frage zu scheitern. Siehe{" "}
 				<a href="/results-reports/sarif-report/">SARIF-Bericht</a>.
 			</p>
 
@@ -72,7 +80,8 @@ export function ResultsReportsContent() {
 				Ihre Unit-Tests. Jedes WCAG-Kriterium ist eine Suite und jede Regel ein Test, sodass ein auf
 				einer Seite wiederholter Fehler ein einziger fehlgeschlagener Test ist und die Zahlen
 				zwischen Läufen stabil bleiben. <code>cantTell</code> erscheint als übersprungener Test,
-				sichtbar, ohne den Build rot zu färben. Die Namen der Suites sind in jeder Locale gleich,
+				sichtbar, ohne den Build rot zu färben, es sei denn, Sie lassen den Build bei denen
+				scheitern, die wahrscheinlich nicht erfüllt sind. Die Namen der Suites sind in jeder Locale gleich,
 				daher beginnt die Testhistorie nicht von vorn, wenn sich die Sprache des Scans ändert.
 				Eine grüne Suite bedeutet, dass die für ein Kriterium gelaufenen Regeln nichts gefunden
 				haben, nicht, dass das Kriterium erfüllt ist. Siehe{" "}

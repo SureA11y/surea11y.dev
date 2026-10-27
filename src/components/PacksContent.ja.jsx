@@ -78,12 +78,14 @@ const fileRows = [
 	{ id: "index", file: <code>index.js</code>, what: <><code>@surea11y/core/pack</code>の<code>definePack()</code>で書いたパックです。</> },
 	{ id: "auto", file: <code>rules/automatic/&lt;ns&gt;-link-text-specific.js</code>, what: "コアのヘルパーを使って判定するルールです。" },
 	{ id: "variant", file: <code>rules/automatic/&lt;ns&gt;-contrast-enhanced.js</code>, what: <>7:1で判定する、コアの<code>contrast-minimum</code>のバリアントです。</> },
-	{ id: "manual", file: <code>rules/manual/&lt;ns&gt;-new-window-review.js</code>, what: "人によるレビューが必要な手動ルールです。" },
+	{ id: "manual", file: <code>rules/manual/&lt;ns&gt;-new-window-review.js</code>, what: <>人によるレビューが必要な手動ルールです。理由コードと、人がそれに答えるための手順を持ちます（<code>meta.reasonCodes</code>、<code>meta.review</code>）。</> },
 	{ id: "i18n", file: <code>i18n/en.json</code>, what: "メッセージです。" },
 	{ id: "tests", file: <><code>tests/rules/*.test.js</code>、<code>tests/profiles.test.js</code></>, what: "ルールごとのテストと、各プロファイルが実行するもののテストです。" },
 	{ id: "examples", file: <code>docs/RULE_EXAMPLES.md</code>, what: "各ルールの判定結果の例です。" },
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "ルールに対するコアのlintルールです。" },
 	{ id: "standard", file: <><code>requirements.js</code>、<code>rule-map.js</code></>, what: "規格の場合のみ：要件と、それぞれを検査するルールです。" },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>で、<code>@surea11y/core</code>を、それを書き出したバージョン（<code>^1.14.0</code>）でpeer依存関係に、eslint、jsdom、Playwrightを開発用の依存関係に持ちます。</> },
+	{ id: "readme", file: <><code>README.md</code>、<code>.gitignore</code></>, what: "これらのファイルについてのパック自身のガイドと、gitが対象外にするものです。" },
 ];
 
 const profileFieldRows = [
@@ -92,6 +94,7 @@ const profileFieldRows = [
 	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code>はルールをスキャンから除外します。<code>{"{ criteria: ['2.5.8'] }"}</code>はそれらの達成基準を免除します。その集約は除かれ、すべての達成基準が免除されたルールも除かれます。プロファイルが残す達成基準も検査するルールは引き続き実行されます。これはスキャンがチェックする範囲を狭めるもので、WCAGの要件は変わりません。</> },
 	{ id: "severity", field: <code>severity</code>, what: <><code>{"{ ruleId: level }"}</code>：そのプロファイルでの別の重大度です。結果にはそれが表示され、ルール自身の重大度は<code>ruleSeverity</code>として保持されます。ベースラインと検出結果のIDは変わりません。</> },
 	{ id: "wcagVersion", field: <code>wcagVersion</code>, what: <><code>'2.0'</code>、<code>'2.1'</code>、<code>'2.2'</code>のいずれかで、プロファイルのスキャンを判定するWCAGのバージョン（<code>engine.wcagVersion</code>）です。指定しない場合は<code>tags</code>のWCAGのタグがバージョンを示し、WCAGのタグがないプロファイルは2.2で判定されます。スキャン自身の<code>engineOptions.wcagVersion</code>が引き続き優先されます。コア1.12.0以降です。</> },
+	{ id: "keepsParsing", field: <code>keepsParsing</code>, what: <>EN 301 549 V3.2.1のように、規格が4.1.1「構文解析」を文言どおりに求める場合は<code>true</code>です。そのとき、2.0や2.1を対象にしても、その不合格は不合格のままです。これがないプロファイルでは、WCAG 2.0と2.1に対する2023年の正誤表がHTMLとXMLについて4.1.1を満たされているものとするため、<code>duplicate-id</code>は代わりに確認を求めます（4.1.1を削除した2.2では、プロファイルの指定にかかわらず確認を求めます）。数えるのはプロファイル自身のフィールドだけで、コアのプロファイルの代わりになるパックのプロファイルはそれを引き継ぎません。<code>engineOptions.mappings</code>は判定結果を変えないため、4.1.1を維持する規格で判定するスキャンは、その規格のプロファイルを実行します。core 1.14.0以降です。</> },
 	{ id: "version", field: <><code>version</code>、<code>mappedRules</code></>, what: <>規格のプロファイルの場合のみ：対象とする規格のバージョンと、そのバージョンで規格が対応付けるすべてのルールを実行するための<code>mappedRules: true</code>です。</> },
 ];
 
@@ -121,6 +124,9 @@ export function PacksContent() {
 			<p>
 				<a href={pack}><code>@surea11y/pack-en301549</code></a>は、SureA11yファミリーの、すぐにインストールできる規格パックです。EN 301 549の第9章（Web）を、V3.2.1とV4.1.1で扱います。バージョンごとのプロファイル<code>en301549-v4.1.1</code>と<code>en301549-v3.2.1</code>は条項ごとに結果を1つ報告し、<code>mappings: ['en301549']</code>は、WCAGのスキャンを含むあらゆるスキャンの結果に条項を示します。<code>@surea11y/core</code> 1.13.0以降が必要です。
 			</p>
+			<p>
+				core 1.14.0に合わせた1.1.0では、各条項を、それが再掲するWCAGの達成基準をコアが判定するのと同じように判定します。そのため、まだ合格する条項はありません。ルールがすべて合格した条項は、残りを人が確認するよう、その達成基準と同じく<code>cantTell</code>になります（<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照）。<code>en301549-v3.2.1</code>プロファイルは4.1.1「構文解析」を維持するため、そこでは重複したidは引き続き9.4.1.1を不合格にします。また、9.1.4.5、9.3.3.1、9.4.1.3に最初のルールが加わりました（<code>image-of-text</code>、<code>invalid-field-error-message</code>、<code>live-region-announcements</code>）。core 1.13では、1.0系と同じように動作します。
+			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -132,7 +138,7 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				独自の規格を作るときの実例でもあります。ルールは持ちません。第9章はWCAGを再掲したものなので、各条項はその達成基準に対するコアのルールで確認します。プロファイルはそれらのルールを選び（<code>tags</code>、<code>mappedRules: true</code>）、規格の各バージョンを判定するWCAGのバージョンを示します（<code>wcagVersion</code>）。ルールの対応表はインストールされたコアのカタログから導くため、コアが追加したルールもパックを変えずに対象になります。WCAGにない要件を持つ規格も同じ形で、独自のルールを加えます。ソースは短いので、後述の<a href="#writing-a-pack">パックを書く</a>と合わせて読む価値があります。
+				独自の規格を作るときの実例でもあります。ルールは持ちません。第9章はWCAGを再掲したものなので、各条項はその達成基準に対するコアのルールで確認します。プロファイルはそれらのルールを選び（<code>tags</code>、<code>mappedRules: true</code>）、規格の各バージョンを判定するWCAGのバージョンを示し（<code>wcagVersion</code>）、V3.2.1では4.1.1「構文解析」を維持します（<code>keepsParsing</code>）。条項はWCAGの達成基準を1対1で再掲しています（<code>applicability: 'wcag'</code>）。ルールの対応表はインストールされたコアのカタログから導くため、コアが追加したルールもパックを変えずに対象になります。WCAGにない要件を持つ規格も同じ形で、独自のルールを加えます。ソースは短いので、後述の<a href="#writing-a-pack">パックを書く</a>と合わせて読む価値があります。
 			</p>
 			<p>
 				コアは1.13.0までEN 301 549を内蔵していましたが、1.13.0でこのパックに置き換える形で非推奨にしました（<a href="/conformance/wcag-mapping/#en-301-549">WCAG適合性との対応</a>を参照）。ほかのプロファイルと同じく、パックのプロファイルが決めるのは何を実行するかです。適合を表明するには、引き続き人がすべての条項を確認する必要があります。
@@ -252,6 +258,9 @@ export function PacksContent() {
 			<p>
 				ブラウザー拡張機能や独自の<code>page.evaluate</code>では、コアのブラウザー用バンドルの後に<code>@surea11y/core/pack</code>の<code>packScript([acmePolicy])</code>を注入するか、<code>buildBrowserBundle({"{ packs: [acmePolicy] }"})</code>で作った1つのファイルを配布し、パックを<code>name@version</code>として指定してください。<a href="/getting-started/standalone/#packs-in-a-page">スタンドアロン</a>を参照してください。スクリプトをファイルとして読み込むページには、<code>buildBrowserBundle</code>で作る1つのファイルが最適です。パックのスクリプトは、それを書き出したコアでしか動作しません。
 			</p>
+			<p>
+				別のコアのバンドルを持つページはパックをスキップし、<code>skippedPacks</code>が2つのバージョンを示します。そのため、そのファイルはコアかパックのリリースごとに作り直してください。
+			</p>
 
 			<h2 id="what-a-scan-reports">スキャンが報告するもの</h2>
 			<ul>
@@ -338,7 +347,7 @@ export function PacksContent() {
 					<strong>名前空間</strong>（<code>namespace: 'acme'</code>）は、パックのIDをコアやほかのパックのIDと区別します。すべてのルール、集約、プロファイルのIDは、名前空間と<code>-</code>で始まります。コアのルールIDの接頭辞になる名前（<code>img-alt-present</code>に対する<code>img</code>のように、<code>img</code>、<code>aria</code>、<code>link</code>）や、<code>wcag</code>で始まる名前は使えず、1つのスキャンにある2つのパックが同じ名前空間を持つことはできません。名前空間は、パック自身のルールをオプトインにするタグでもあります。このタグを持つルールは、パックのいずれかのプロファイルのもとか、IDか、タグ（<code>optInRules: ['acme']</code>）で選択されたときだけ実行されます。そのため、デフォルトでは、WCAGを対象とするスキャンでは実行されません。<code>optInRules</code>でこのタグを有効にしても、スキャンのプロファイルやフィルターはなくなりません。WCAGのプロファイルのもとでは、有効にしたルールは、そのタグがプロファイルにも一致するときだけ実行されます。パックを使うすべてのスキャンで実行すべきルールには、このタグを付けないでください。そうすると、そのルールはコアのルールと同じように選択され、タグが一致すれば、WCAGを対象とするスキャンでも実行されて不合格を報告することがあります。
 				</li>
 				<li>
-					<strong><code>core</code></strong>は、パックが動作するコアのバージョンの範囲（<code>'^1.11.1'</code>）で、npmと同じように範囲として読まれます。新しいパックは1.11.1から始めてください。1.11.0のパッケージには、Nodeでパックに必要なファイルが含まれていませんでした。範囲外のコアでのスキャンはパックをスキップし、理由を<code>skippedPacks</code>に示します。
+					<strong><code>core</code></strong>は、パックが動作するコアのバージョンの範囲（<code>'^1.11.1'</code>）で、npmと同じように範囲として読まれます。新しいパックは1.11.1から始めてください。1.11.0のパッケージには、Nodeでパックに必要なファイルが含まれていませんでした。範囲外のコアでのスキャンはパックをスキップし、理由を<code>skippedPacks</code>に示します。<code>surea11y-pack new</code>は、パックを生成したバージョン（<code>^1.14.0</code>）を書き出します。1.14で追加されたもの（<code>meta.review</code>、<code>reasonCodes</code>や<code>findings</code>の行、<code>meta.contributions</code>、<code>applicability</code>、<code>partial</code>、<code>keepsParsing</code>）をパックが使う場合は、1.14から始まる範囲のままにしてください。
 				</li>
 				<li>
 					<strong><code>title</code></strong>は結果やレポートでのチェックリストの呼び名、<strong><code>description</code></strong>はパックが何をチェックするかを述べる1文で、利用者にパックを選ばせるツールのためのものです（<code>describePacks</code>がそれを返します）。
@@ -376,7 +385,7 @@ export function PacksContent() {
 				rows={profileFieldRows}
 			/>
 			<p>
-				<strong>規格が求めるものだけを実行するプロファイル。</strong><code>{"tags: [<ns>]"}</code>と<code>mappedRules: true</code>を持つ規格のプロファイルは、パック自身のルールと、その対応表が要件に結び付けるコアのルールだけを実行します。規格が求めないことを検査するルールはなく、結果にWCAGの達成基準は含まれません。ただし、WCAGのタグがないため、その規格がどのWCAGのバージョンに基づくかを示すものがなく、実行は2.2で判定されます。2.1に基づく規格ではこれは誤りです。4.1.1「構文解析」は2.2にはないため、<code>duplicate-id</code>は不合格にせず確認を求めます。バージョンを指定してください。生成された<code>index.js</code>は、それを<code>requirements.js</code>から読みます。そこでは規格の各バージョンが、基づくWCAGのバージョンを示しています（<code>{"{ version: '1.0', wcagVersion: '2.2' }"}</code>）。
+				<strong>規格が求めるものだけを実行するプロファイル。</strong><code>{"tags: [<ns>]"}</code>と<code>mappedRules: true</code>を持つ規格のプロファイルは、パック自身のルールと、その対応表が要件に結び付けるコアのルールだけを実行します。規格が求めないことを検査するルールはなく、結果にWCAGの達成基準は含まれません。ただし、WCAGのタグがないため、その規格がどのWCAGのバージョンに基づくかを示すものがなく、実行は2.2で判定されます。2.1に基づく規格ではこれは誤りです。実行は、2.5.8のように規格にない2.2の達成基準を報告します。バージョンを指定してください。規格が今も4.1.1「構文解析」を求める場合は、<code>keepsParsing: true</code>も指定してください。生成された<code>index.js</code>は、それを<code>requirements.js</code>から読みます。そこでは規格の各バージョンが、基づくWCAGのバージョンを示しています（<code>{"{ version: '1.0', wcagVersion: '2.2' }"}</code>）。
 			</p>
 			<CodeBlock
 				lang="js"
@@ -401,9 +410,67 @@ export function PacksContent() {
 				<strong>規格の要件</strong>は、ジェネレーターが書き出す2つの表から来ます。<code>requirements.js</code>（バージョンごとに、各要件の番号、文言、WCAGの達成基準）と<code>rule-map.js</code>（各ルールがどの要件を検査するか、そしてその理由）です。<code>@surea11y/core/pack</code>の<code>ruleMappedStandard()</code>は、それらを規格に変換します。要件ごとの集約、各ルールの結果が示す要件、そしてパックを準備するときの両方の表の確認です。
 			</p>
 
+			<h3 id="sending-findings-to-requirements">検出結果を要件に振り分ける</h3>
+			<p>
+				<code>rule-map.js</code>のルールの行は、<code>{"reasonCodes: { [code]: { requirements, outcome } }"}</code>で、ある理由コードの検出結果を別の要件に振り分けられます。<code>requirements</code>（デフォルトは行のもの）はその検出結果を数える要件で、<code>[]</code>ならどこにも数えません。<code>outcome: 'cantTell'</code>は、そこで不合格の検出結果を確認の問いにします。要件の集約は、その要件に数える検出結果でルールを判定するため、規格は、WCAGが不合格にする原因について確認を求めたり、2つの原因を2つのテストに振り分けたりできます。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'list-children-valid': {",
+					"  requirements: ['9.3.1'],",
+					"  reasonCodes: { LIST_ITEM_ROLE_OVERRIDDEN: { requirements: ['9.3.1', '9.3.2'], outcome: 'cantTell' } }",
+					"}",
+				]}
+			/>
+			<p>
+				行は、検出結果が記録している内容で振り分けることもできます。<code>{"findings: [{ when, requirements, outcome }]"}</code>の<code>when</code>は、検出結果の<code>data.details</code>のフィールドが等しくなければならない値を、ドット区切りのパスで示します。検出結果は、最初に一致したエントリーに従い、なければ理由コード、それもなければ行に従います。そのため、規格はあるルールの不合格を、理由コードが同じでも、テキストの大きさごとのテストに振り分けられます。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'contrast-minimum': {",
+					"  requirements: ['3.1', '3.2'],",
+					"  findings: [",
+					"    { when: { 'typography.isLargeText': false }, requirements: ['3.1'] },",
+					"    { when: { 'typography.isLargeText': true }, requirements: ['3.2'] }",
+					"  ]",
+					"}",
+				]}
+			/>
+			<p>
+				比べるのは、ルールが安定して保つフィールドだけにしてください。すべてのルールの<code>reasonCode</code>と、GitHub上のコアの<a href={`${core}/docs/API_STABILITY.md`}>APIの安定性ポリシー</a>が挙げる少数のフィールド（<code>contrast-minimum</code>のコントラスト比、しきい値、文字組みなど）です。変わったりなくなったりしたフィールドは何にも一致せず、検出結果は理由コードか行に従います。各ルールの理由コードは、GitHub上のコアの<a href={`${core}/docs/RULE_CATALOG.md`}>ルールカタログ</a>の「<span lang="en">What a finding reports</span>」に一覧があります。
+			</p>
+			<p>
+				要件の判定方法を変えるフィールドがさらに2つあります。EN 301 549の第9章のように、要件がWCAGの達成基準を1対1で再掲する規格は、<code>ruleMappedStandard</code>に<code>applicability: 'wcag'</code>を渡します。すると要件の集約は、その達成基準のWCAGの集約がそうなる場合にだけ<code>notApplicable</code>や<code>pass</code>になり、1つのレポートの中で両者が一致します。達成基準を再掲してはいないものの、コアのルールでは完全には検査できない要件は、要件の表で<code>partial: true</code>とします。すると、その集約は、ルールがすべて合格した場合も、すべて何も見つけなかった場合も<code>cantTell</code>になります。ルールが検査したのはその一部だけだからです。独自の集約を書く規格は、各集約の<code>meta</code>で両方を示し、<code>meta.contributions</code>で検出結果を振り分けます。形は<code>pack.d.ts</code>の<code>StandardRollup</code>が示し、GitHub上のコアの<a href={`${core}/docs/PACKS.md`}>パックのガイド</a>が順を追って説明しています。どれもcore 1.14.0が必要です。
+			</p>
+
 			<h3 id="rules">ルール</h3>
 			<p>
-				ルールはコアのルールモジュールと同じ形です。<code>{"{ id, meta, runInPage }"}</code>に、一部の場合にだけ適用されるときは<code>applicability</code>を加え、同じ<code>ctx</code>を受け取ります。<code>runInPage(ctx)</code>はページ内で実行されるため、<code>ctx</code>だけを使い、その外の変数やモジュールは決して使いません。また、読み取りしか行いません。パックのルールはコアのルールの後に実行され、渡されるヘルパーとオプションは読み取り専用です。読み取り専用は決まりであって、サンドボックスではありません。ルールのコードがそれ以上のことをするのを止めるものはないため、信頼できるパックだけを読み込んでください（GitHub上のコアの<a href={`${core}/SECURITY.md`}>セキュリティポリシー</a>を参照）。コードがほとんど、またはまったく要らない近道が3つあります。<strong>バリアント</strong>はコアのルールを別の設定で実行し（<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>。各設定はしきい値で、0より大きい有限の数です。<code>definePack</code>はそれ以外の値を拒否します）、<strong>上書き</strong>はコアのルールを置き換え（<code>overrides</code>に列挙し、結果の<code>overriddenBuiltinIds</code>にも示されます）、<strong>そのままのコアのルール</strong>はプロファイルや集約にIDを書くだけで済みます。ルールの書き方は、GitHub上のコアの<a href={`${core}/docs/RULE_AUTHORING.md`}>ルール作成ガイド</a>にあります。
+				ルールはコアのルールモジュールと同じ形です。<code>{"{ id, meta, runInPage }"}</code>に、一部の場合にだけ適用されるときは<code>applicability</code>を加え、同じ<code>ctx</code>を受け取ります。<code>runInPage(ctx)</code>はページ内で実行されるため、<code>ctx</code>だけを使い、その外の変数やモジュールは決して使いません。また、読み取りしか行いません。パックのルールはコアのルールの後に実行され、渡されるヘルパーとオプションは読み取り専用です。読み取り専用は決まりであって、サンドボックスではありません。ルールのコードがそれ以上のことをするのを止めるものはないため、信頼できるパックだけを読み込んでください（GitHub上のコアの<a href={`${core}/SECURITY.md`}>セキュリティポリシー</a>を参照）。コードがほとんど、またはまったく要らない近道が3つあります。<strong>バリアント</strong>はコアのルールを別の設定で実行し（<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>。しきい値は0より大きい有限の数、選択肢は列挙された値のいずれかを取り、<code>definePack</code>はそれ以外を拒否します）、<strong>上書き</strong>はコアのルールを置き換え（<code>overrides</code>に列挙し、結果の<code>overriddenBuiltinIds</code>にも示されます）、<strong>そのままのコアのルール</strong>はプロファイルや集約にIDを書くだけで済みます。ルールの書き方は、GitHub上のコアの<a href={`${core}/docs/RULE_AUTHORING.md`}>ルール作成ガイド</a>にあります。
+			</p>
+			<p>
+				GitHub上のコアの<a href={`${core}/docs/RULE_SETTINGS.md`}>ルール設定の一覧</a>は、コアのルールがバリアントに提供するすべての設定を、デフォルト値、取りうる値、変わる内容とともに示します。<code>getChecksCatalog()</code>は同じものを各ルールの<code>variantSettings</code>として返します。別の規格における要件の版や、WCAGが評価者に委ねる選択は、こうしてコアのコードの上で実行されます。core 1.14から、<code>contrast-minimum</code>はロゴのように見えるテキスト（<code>logoText</code>）、より高いコントラストに切り替えるスイッチがあるページ（<code>contrastSwitch</code>）、セミボールドのテキスト（<code>semiBold</code>）についての選択肢を、<code>valid-lang</code>は、RGAAのようにISO 639のあらゆる言語コードを認める規格のための<code>codes: 'iso639'</code>を提供します。
+			</p>
+
+			<h3 id="review-steps">人が<code>cantTell</code>を確認する方法</h3>
+			<p>
+				検出結果を未判定のまま残すことがあるルールは、コアのルールと同じように、人がそれにどう答えるかを理由コードごとに示せます（出力スキーマの<a href="/results-reports/output-schema/#how-to-check">「確認方法」</a>を参照）。検出結果が示す要素から始まるいくつかの手順と、合格の場合と不合格の場合にそれぞれ何が見えるかです。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"meta.review = {",
+					"  GENERIC_LINK_NAME: {",
+					"    steps: ['Find the link the report names.', 'Read the text around it.'],",
+					"    passWhen: 'The text around the link says where it goes.',",
+					"    failWhen: 'Nothing near the link says where it goes, which fails WCAG 2.4.4.'",
+					"  }",
+					"};",
+				]}
+			/>
+			<p>
+				<code>definePack</code>は形を確認します。理由コードごとに1〜6の手順と、空でない<code>passWhen</code>と<code>failWhen</code>が必要です。<code>meta.reasonCodes</code>で理由コードを宣言したルール（<code>['GENERIC_LINK_NAME']</code>）は、そこで宣言したか<code>runInPage</code>で使うコードにだけ手順を示せるため、書き間違えたコードは拒否されます。この確認のために宣言する価値があります。手順はスキャンのロケールにかかわらず英語で、ページには入りません。<code>engineOptions.packs</code>を指定した<code>runDomRulesInPage</code>は結果に手順を追加し、ページから得た結果には<code>{"addHowToCheck(result, { packs })"}</code>が追加します。バリアントはコアのルールの翻訳済みの手順を持つため、自分の手順は要りません。上書きは、カスタムルールと同じく手順を持ちません。core 1.14.0以降です。
 			</p>
 
 			<h3 id="messages">メッセージと言語</h3>
@@ -415,6 +482,9 @@ export function PacksContent() {
 			<ul>
 				<li>
 					<strong>テスト</strong>には、コア自身のルールのテストが使う<code>@surea11y/core/testing</code>を使います。<code>runa11yCoreOnHtml(html, {"{ engineOptions }"})</code>はHTMLをjsdomでスキャンし、<code>assertRule(result, ruleId, outcome)</code>はルールを確認します。パックがある場合、スキャンはパックのオブジェクトからと、ページが持つ形の両方でパックを実行するため、関数の外の変数を読むルールはテストで失敗します。開発用の依存関係としてjsdomが必要です。
+				</li>
+				<li>
+					<strong>確認</strong>：<code>definePack</code>は問題をそれぞれ示して例外を投げるため、パック自身のテストが失敗します。<code>checkPack(pack)</code>は例外を投げずに同じ一覧を返し、インストールされたコアのバージョンも確認します。どちらも、スキャンと同じように、規格が持つ表の確認（<code>validate</code>）をコアとパックのルールに対して実行するため、<code>wcagVersion</code>のないバージョンや、表にない要件に振り分けた検出結果は、すべてのスキャンでパックがスキップされる代わりに、そこで拒否されます。core 1.14.0以降です。
 				</li>
 				<li>
 					<strong>lint</strong>（<code>npm run lint</code>、<code>@surea11y/core/eslint-plugin</code>）は、パックのルールに、コアのルールと同じlintルールを適用します。

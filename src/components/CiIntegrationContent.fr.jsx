@@ -47,7 +47,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build   # produce whatever static HTML you're scanning",
 					"      - run: npx @surea11y/cli scan ./dist/index.html",
 				]}
@@ -104,7 +104,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build",
 					"      - name: Scan (report, don't fail the job here)",
 					"        run: npx @surea11y/cli scan ./dist/index.html --baseline a11y-baseline.json --sarif results.sarif",
@@ -142,7 +142,7 @@ export function CiIntegrationContent() {
 					"    '**':",
 					"      - step:",
 					"          name: Accessibility scan",
-					"          image: node:20",
+					"          image: node:22",
 					"          script:",
 					"            - npm ci",
 					"            - npm run build",
@@ -172,7 +172,7 @@ export function CiIntegrationContent() {
 				lang="yaml"
 				lines={[
 					"a11y:",
-					"  image: node:20",
+					"  image: node:22",
 					"  script:",
 					"    - npm ci",
 					"    - npm run build",
@@ -213,7 +213,11 @@ export function CiIntegrationContent() {
 				<code>{"renderJunitReport(result, { cantTellAs: 'failure' })"}</code> depuis{" "}
 				<code>@surea11y/core/junit</code> (voir{" "}
 				<a href="/results-reports/junit-report/">le rapport JUnit</a>), ce qui demande{" "}
-				<code>@surea11y/core</code> dans les <code>devDependencies</code> du projet lui-même. Cela
+				<code>@surea11y/core</code> dans les <code>devDependencies</code> du projet lui-même.{" "}
+				<code>{"{ leanFailAs: 'failure' }"}</code> est le choix le plus étroit : seuls les
+				constats <code>cantTell</code> qui{" "}
+				<a href="/results-reports/output-schema/#leans">penchent vers l’échec</a> deviennent des
+				échecs, chacun avec sa raison et les étapes pour le confirmer. L’un comme l’autre
 				modifie le rapport, pas le code de sortie de la CLI.
 			</p>
 

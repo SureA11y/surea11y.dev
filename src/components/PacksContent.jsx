@@ -78,12 +78,14 @@ const fileRows = [
 	{ id: "index", file: <code>index.js</code>, what: <>The pack, written with <code>definePack()</code> from <code>@surea11y/core/pack</code>.</> },
 	{ id: "auto", file: <code>rules/automatic/&lt;ns&gt;-link-text-specific.js</code>, what: "A rule that decides, using core's helpers." },
 	{ id: "variant", file: <code>rules/automatic/&lt;ns&gt;-contrast-enhanced.js</code>, what: <>A variant of core's <code>contrast-minimum</code> at 7:1.</> },
-	{ id: "manual", file: <code>rules/manual/&lt;ns&gt;-new-window-review.js</code>, what: "A manual rule that calls for human review." },
+	{ id: "manual", file: <code>rules/manual/&lt;ns&gt;-new-window-review.js</code>, what: <>A manual rule that calls for human review, with its reason codes and the steps a person follows to answer it (<code>meta.reasonCodes</code>, <code>meta.review</code>).</> },
 	{ id: "i18n", file: <code>i18n/en.json</code>, what: "The messages." },
 	{ id: "tests", file: <><code>tests/rules/*.test.js</code>, <code>tests/profiles.test.js</code></>, what: "A test per rule, and what each profile runs." },
 	{ id: "examples", file: <code>docs/RULE_EXAMPLES.md</code>, what: "Examples of each rule's outcomes." },
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Core's lint rules for rules." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Standard only: the requirements and the rules that check each." },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.14.0</code>), and eslint, jsdom and Playwright as development dependencies.</> },
+	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "The pack's own guide to these files, and what git leaves out." },
 ];
 
 const profileFieldRows = [
@@ -92,6 +94,7 @@ const profileFieldRows = [
 	{ id: "exclude", field: <code>exclude</code>, what: <><code>{"{ rules: [...] }"}</code> leaves rules out of the scan; <code>{"{ criteria: ['2.5.8'] }"}</code> waives those criteria: their rollups go, and so does each rule whose every criterion is waived; a rule that also checks a criterion the profile keeps still runs. This narrows what the scan checks: WCAG's requirements stay as they are.</> },
 	{ id: "severity", field: <code>severity</code>, what: <><code>{"{ ruleId: level }"}</code>: another severity under the profile. Results show it and keep the rule's own as <code>ruleSeverity</code>; baselines and finding ids don't change.</> },
 	{ id: "wcagVersion", field: <code>wcagVersion</code>, what: <><code>'2.0'</code>, <code>'2.1'</code> or <code>'2.2'</code>: the WCAG version the profile's scans are judged by (<code>engine.wcagVersion</code>). Without it, the WCAG tags in <code>tags</code> imply the version, and a profile with none is judged by 2.2. A scan's own <code>engineOptions.wcagVersion</code> still wins. Core 1.12.0 and later.</> },
+	{ id: "keepsParsing", field: <code>keepsParsing</code>, what: <><code>true</code> when the standard requires 4.1.1 Parsing as written, as EN 301 549 V3.2.1 does: a failure of it then stays a failure under a 2.0 or 2.1 target. Under a profile without it, the 2023 errata to WCAG 2.0 and 2.1 count 4.1.1 as satisfied for HTML and XML, and <code>duplicate-id</code> asks instead (under 2.2, which removed 4.1.1, it asks whatever the profile says). Only the profile's own field counts: a pack's profile that takes the place of one of core's doesn't inherit it. <code>engineOptions.mappings</code> never changes an outcome, so a scan judged by a standard that keeps 4.1.1 runs its profile. Core 1.14.0 and later.</> },
 	{ id: "version", field: <><code>version</code>, <code>mappedRules</code></>, what: <>A standard's profile only: the standard's version it targets, and <code>mappedRules: true</code> to run every rule the standard maps for that version.</> },
 ];
 
@@ -138,6 +141,16 @@ export function PacksContent() {
 				on the results of any scan, a WCAG one included. It needs <code>@surea11y/core</code> 1.13.0
 				or later.
 			</p>
+			<p>
+				Its 1.1.0 release, built on core 1.14.0, judges each clause as core judges the WCAG
+				criterion it restates. So no clause passes yet: where all its rules pass, a clause is{" "}
+				<code>cantTell</code>, for a person to check the rest, as its criterion is (see{" "}
+				<a href="/conformance/wcag-mapping/">WCAG conformance mapping</a>). The{" "}
+				<code>en301549-v3.2.1</code> profile keeps 4.1.1 Parsing, so a duplicate id still fails
+				9.4.1.1 there, and 9.1.4.5, 9.3.3.1 and 9.4.1.3 have their first rules (
+				<code>image-of-text</code>, <code>invalid-field-error-message</code>,{" "}
+				<code>live-region-announcements</code>). With core 1.13 it behaves as its 1.0 releases do.
+			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -151,8 +164,10 @@ export function PacksContent() {
 			<p>
 				It is also a worked example of a standard of your own. It has no rules: chapter 9 restates
 				WCAG, so each clause is checked by core's rules for its criterion. Its profiles choose
-				those rules (<code>tags</code>, <code>mappedRules: true</code>) and name the WCAG version
-				each version of the standard is judged by (<code>wcagVersion</code>), and its rule map is
+				those rules (<code>tags</code>, <code>mappedRules: true</code>), name the WCAG version
+				each version of the standard is judged by (<code>wcagVersion</code>) and, for V3.2.1, keep
+				4.1.1 Parsing (<code>keepsParsing</code>). Its clauses restate WCAG criteria one for one (
+				<code>applicability: 'wcag'</code>), and its rule map is
 				derived from the installed core's catalog, so a rule core adds is covered with no change to
 				the pack. A standard with requirements WCAG doesn't have uses the same shape and adds its
 				own rules. Its source is short and worth reading beside{" "}
@@ -314,6 +329,10 @@ export function PacksContent() {
 				<a href="/getting-started/standalone/#packs-in-a-page">Standalone</a>. A page that loads its scripts as files is best served by the one file from{" "}
 				<code>buildBrowserBundle</code>: the pack's script runs only with the core that wrote it.
 			</p>
+			<p>
+				A page with another core's bundle skips the pack, and <code>skippedPacks</code> names the two
+				versions, so build that file again for each release of core or of the pack.
+			</p>
 
 			<h2 id="what-a-scan-reports">What a scan reports</h2>
 			<ul>
@@ -455,7 +474,11 @@ export function PacksContent() {
 					<strong><code>core</code></strong> is the range of core versions the pack works with (
 					<code>'^1.11.1'</code>), read as npm reads ranges. Start new packs at 1.11.1: the 1.11.0
 					package left out a file packs need in Node. A scan with a core outside it skips the
-					pack, with the reason in <code>skippedPacks</code>.
+					pack, with the reason in <code>skippedPacks</code>. <code>surea11y-pack new</code> writes
+					the version that generated the pack (<code>^1.14.0</code>); keep a range that starts at
+					1.14 if the pack uses what 1.14 added: <code>meta.review</code>, <code>reasonCodes</code>{" "}
+					and <code>findings</code> rows, <code>meta.contributions</code>, <code>applicability</code>,{" "}
+					<code>partial</code> or <code>keepsParsing</code>.
 				</li>
 				<li>
 					<strong><code>title</code></strong> is what results and reports call a checklist, and{" "}
@@ -503,8 +526,9 @@ export function PacksContent() {
 				rules and the core rules its map links to a requirement, and nothing else: no rule checks
 				what the standard doesn't, and results hold no WCAG criteria. With no WCAG tag, though,
 				nothing says which WCAG version the standard is built on, and the run is judged by 2.2.
-				For a standard built on 2.1 that is wrong: 4.1.1 Parsing is gone in 2.2, so{" "}
-				<code>duplicate-id</code> asks instead of failing. Give the version. The generated{" "}
+				For a standard built on 2.1 that is wrong: the run reports 2.2's criteria, such as 2.5.8,
+				which the standard doesn't have. Give the version, and <code>keepsParsing: true</code> if
+				the standard still requires 4.1.1 Parsing. The generated{" "}
 				<code>index.js</code> reads it from <code>requirements.js</code>, where each version of
 				the standard names the WCAG version it is built on (
 				<code>{"{ version: '1.0', wcagVersion: '2.2' }"}</code>):
@@ -542,6 +566,68 @@ export function PacksContent() {
 				of both tables when the pack is prepared.
 			</p>
 
+			<h3 id="sending-findings-to-requirements">Sending findings to requirements</h3>
+			<p>
+				A rule's row in <code>rule-map.js</code> can send its findings of one reason code
+				elsewhere, with <code>{"reasonCodes: { [code]: { requirements, outcome } }"}</code>:{" "}
+				<code>requirements</code> (by default the row's) are the ones those findings count toward,{" "}
+				<code>[]</code> for none, and <code>outcome: 'cantTell'</code> makes a failing one a
+				question there. A requirement's rollup then judges the rule by the findings that count
+				toward it, so a standard can ask about one cause where WCAG fails it, or file two causes
+				under two tests:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'list-children-valid': {",
+					"  requirements: ['9.3.1'],",
+					"  reasonCodes: { LIST_ITEM_ROLE_OVERRIDDEN: { requirements: ['9.3.1', '9.3.2'], outcome: 'cantTell' } }",
+					"}",
+				]}
+			/>
+			<p>
+				A row can also send findings by what they record, with{" "}
+				<code>{"findings: [{ when, requirements, outcome }]"}</code>: <code>when</code> gives values
+				that fields of a finding's <code>data.details</code> must equal, named by dotted path. A
+				finding goes by the first entry it matches, else by its reason code, else by the row. So a
+				standard can file one rule's failures under the test for their text size, though they
+				share a reason code:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'contrast-minimum': {",
+					"  requirements: ['3.1', '3.2'],",
+					"  findings: [",
+					"    { when: { 'typography.isLargeText': false }, requirements: ['3.1'] },",
+					"    { when: { 'typography.isLargeText': true }, requirements: ['3.2'] }",
+					"  ]",
+					"}",
+				]}
+			/>
+			<p>
+				Match only fields a rule keeps stable: <code>reasonCode</code> on every rule, and the few
+				others core's <a href={`${core}/docs/API_STABILITY.md`}>API stability policy</a> on GitHub
+				names (<code>contrast-minimum</code>'s ratio, threshold and typography, among them). A
+				field that changes or disappears matches nothing, and the finding goes by its code or the
+				row. Each rule's reason codes are listed under "What a finding reports" in core's{" "}
+				<a href={`${core}/docs/RULE_CATALOG.md`}>rule catalog</a> on GitHub.
+			</p>
+			<p>
+				Two more fields change how a requirement is judged. A standard whose requirements restate
+				WCAG criteria one for one, as EN 301 549's chapter 9 does, passes{" "}
+				<code>applicability: 'wcag'</code> to <code>ruleMappedStandard</code>: a requirement's
+				rollup is then <code>notApplicable</code> or <code>pass</code> only where the WCAG rollup
+				of its criteria would be, so the two agree in one report. A requirement that core's rules
+				don't check in full, though it doesn't restate a criterion, says <code>partial: true</code>{" "}
+				in the requirements table: its rollup is then <code>cantTell</code> where its rules all
+				pass or all find nothing, since they checked only part of it. A standard that writes its
+				own rollups says both in each rollup's <code>meta</code>, and routes findings in{" "}
+				<code>meta.contributions</code>; <code>StandardRollup</code> in <code>pack.d.ts</code>{" "}
+				gives the shape, and core's <a href={`${core}/docs/PACKS.md`}>pack guide</a> on GitHub
+				walks through it. All of these need core 1.14.0.
+			</p>
+
 			<h3 id="rules">Rules</h3>
 			<p>
 				A rule has the shape of core's rule modules: <code>{"{ id, meta, runInPage }"}</code>, and{" "}
@@ -553,12 +639,57 @@ export function PacksContent() {
 				<a href={`${core}/SECURITY.md`}>security policy</a> on GitHub). Three shortcuts need little or no
 				code: <strong>a variant</strong> runs a core rule at other settings (
 				<code>{"{ id, from: 'contrast-minimum', config: { normalTextRatio: 7 }, meta }"}</code>;
-				each setting is a threshold, a finite number above 0, and <code>definePack</code> refuses
-				another value),{" "}
+				a threshold takes a finite number above 0, a choice one of its listed values, and{" "}
+				<code>definePack</code> refuses anything else),{" "}
 				<strong>an override</strong> replaces a core rule (listed in <code>overrides</code>, and
 				in results' <code>overriddenBuiltinIds</code>), and <strong>a core rule as it is</strong>{" "}
 				needs only its id in a profile or a rollup. Writing a rule is in core's{" "}
 				<a href={`${core}/docs/RULE_AUTHORING.md`}>rule-authoring guide</a> on GitHub.
+			</p>
+			<p>
+				Core's <a href={`${core}/docs/RULE_SETTINGS.md`}>rule settings list</a> on GitHub gives
+				every setting core's rules offer a variant, with its default, the values it takes and what
+				it changes; <code>getChecksCatalog()</code> gives the same as each rule's{" "}
+				<code>variantSettings</code>. That is how another standard's version of a requirement, or a
+				choice WCAG leaves to the evaluator, runs on core's code. Since core 1.14,{" "}
+				<code>contrast-minimum</code> offers choices for text that looks like a logo (
+				<code>logoText</code>), a page with a higher-contrast switch (<code>contrastSwitch</code>)
+				and semi-bold text (<code>semiBold</code>), and <code>valid-lang</code> offers{" "}
+				<code>codes: 'iso639'</code> for a standard, such as RGAA, that accepts any ISO 639
+				language code.
+			</p>
+
+			<h3 id="review-steps">How a person checks a <code>cantTell</code></h3>
+			<p>
+				A rule that can leave a finding undecided may say, per reason code, how a person answers
+				it, as core's rules do (see{" "}
+				<a href="/results-reports/output-schema/#how-to-check">"How to check"</a> in the output
+				schema): a few steps starting from the element the finding names, then what they see if
+				it passes and if it fails.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"meta.review = {",
+					"  GENERIC_LINK_NAME: {",
+					"    steps: ['Find the link the report names.', 'Read the text around it.'],",
+					"    passWhen: 'The text around the link says where it goes.',",
+					"    failWhen: 'Nothing near the link says where it goes, which fails WCAG 2.4.4.'",
+					"  }",
+					"};",
+				]}
+			/>
+			<p>
+				<code>definePack</code> checks the shape: 1 to 6 steps and a non-empty{" "}
+				<code>passWhen</code> and <code>failWhen</code> per reason code. A rule that declares its
+				reason codes in <code>meta.reasonCodes</code> (<code>['GENERIC_LINK_NAME']</code>) gives
+				steps only for a code it declares there or names in its <code>runInPage</code>, so a
+				mistyped code is refused: declaring them is worth it for that check. The steps are
+				English, whatever the scan's locale, and stay out of the page:{" "}
+				<code>runDomRulesInPage</code> with <code>engineOptions.packs</code> adds them to the
+				result, and for a result from a page <code>{"addHowToCheck(result, { packs })"}</code>{" "}
+				does. A variant has its core rule's steps, translated, so it needs none; an override,
+				like a custom rule, has none. Core 1.14.0 and later.
 			</p>
 
 			<h3 id="messages">Messages and languages</h3>
@@ -578,6 +709,15 @@ export function PacksContent() {
 					and <code>assertRule(result, ruleId, outcome)</code> checks a rule. With packs, the scan
 					runs them both from the pack objects and as a page has them, so a rule that reads a
 					variable from outside its function fails its test. It needs jsdom as a dev dependency.
+				</li>
+				<li>
+					<strong>Checks</strong>: <code>definePack</code> throws, naming each problem, so the
+					pack's own tests fail; <code>checkPack(pack)</code> returns the same list without
+					throwing, with the installed core's version checked too. Both run a standard's own
+					checks of its tables (<code>validate</code>) against core's rules and the pack's, as a
+					scan does, so a version without its <code>wcagVersion</code>, or a finding sent to a
+					requirement the table lacks, is refused there rather than making every scan skip the
+					pack. Core 1.14.0 and later.
 				</li>
 				<li>
 					<strong>Lint</strong> (<code>npm run lint</code>, <code>@surea11y/core/eslint-plugin</code>)

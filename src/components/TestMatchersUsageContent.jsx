@@ -46,6 +46,19 @@ const apiRows = [
 			</>
 		),
 	},
+	{
+		id: "options",
+		param: <code>options</code>,
+		type: "object (optional)",
+		meaning: (
+			<>
+				<code>{"{ failOnSeverity, leanFail, wcagOnly, howToCheck }"}</code>: see{" "}
+				<a href="#failing-only-on-serious-problems">Failing only on serious problems</a> and{" "}
+				<a href="#questions-that-likely-fail">Questions that likely fail</a>. Each overrides the
+				default <code>configureA11yMatchers()</code> set.
+			</>
+		),
+	},
 ];
 
 export function TestMatchersUsageContent() {
@@ -294,20 +307,33 @@ export function TestMatchersUsageContent() {
 				rows={apiRows}
 			/>
 			<p>
+				The second argument can instead be one object holding them all,{" "}
+				<code>{"{ engineOptions, runOnly, failOnSeverity, leanFail, wcagOnly, howToCheck }"}</code>:{" "}
+				<code>{"toHaveNoA11yViolations({ leanFail: true })"}</code>. It's read that way when it has
+				any of those keys, none of which is an engine option; an object that mixes them with engine
+				options throws a <code>TypeError</code>.
+			</p>
+			<p>
 				Returns the <code>{"{ pass, message }"}</code> shape both frameworks' <code>expect.extend()</code>{" "}
 				expect — you never call this directly; it's wired up once via <code>expect.extend()</code> as
-				shown in Setup above. The package also exports <code>installInternalsHook(win?)</code>, for{" "}
-				<a href="#web-components">web components</a>.
+				shown in Setup above. The package also exports <code>configureA11yMatchers(options)</code>,
+				for defaults across the suite; <code>installInternalsHook(win?)</code>, for{" "}
+				<a href="#web-components">web components</a>; and <code>installListenerHook(win?)</code>,{" "}
+				<code>installLiveRegionHook(win?)</code> and the <code>toHaveAnnounced()</code> matcher, for{" "}
+				<a href="#listener-and-live-region-hooks">click handlers and live regions</a>.
 			</p>
 
 			<h2>What it checks and doesn't</h2>
 			<p>
-				<strong>Only <code>fail</code> outcomes gate the assertion</strong> — matching every other surea11y binding's
-				convention that <code>cantTell</code> results are advisory, not failures. A vague link like{" "}
+				<strong>Only failures gate the assertion</strong> — matching every other surea11y binding's
+				convention that <code>cantTell</code> results are advisory, not failures. Each finding is
+				read by its own outcome, not its rule's: a rule that fails one element can ask about
+				another, and that question isn't counted as a failure. A vague link like{" "}
 				<code>&lt;a href="/pricing"&gt;Click here&lt;/a&gt;</code> is <code>cantTell</code>, not{" "}
-				<code>fail</code>, so it never breaks a passing test on its own — though when an assertion{" "}
-				<em>does</em> fail for other reasons, any <code>cantTell</code> results are appended to the
-				failure message as a separate note, so they stay visible. See{" "}
+				<code>fail</code>, so it doesn't break a passing test on its own unless you ask for that
+				with <code>leanFail</code> (<a href="#questions-that-likely-fail">below</a>) — though when an
+				assertion <em>does</em> fail for other reasons, the questions are listed after the failures,
+				so they stay visible. See{" "}
 				<a href="/help/known-limitations/">Known limitations</a> for what this engine
 				won't automate at all.
 			</p>
@@ -356,6 +382,67 @@ export function TestMatchersUsageContent() {
 				per test.
 			</p>
 
+			<h2 id="failing-only-on-serious-problems">Failing only on serious problems</h2>
+			<p>
+				Every rule result has a severity: <code>critical</code>, <code>serious</code>,{" "}
+				<code>moderate</code> or <code>minor</code>. To start by failing tests on serious problems
+				while the rest are still reported, set a level for the whole suite in the setup file with{" "}
+				<code>configureA11yMatchers()</code>, or for one assertion in its options, which override
+				the default (<code>failOnSeverity: null</code> turns it off there):
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// jest.setup.js (vitest.setup.js: the same, with import)",
+					"const { toHaveNoA11yViolations, configureA11yMatchers } = require('@surea11y/test-matchers');",
+					"",
+					"expect.extend({ toHaveNoA11yViolations });",
+					"configureA11yMatchers({ failOnSeverity: 'serious' });",
+					"",
+					"// one assertion",
+					"expect(container).toHaveNoA11yViolations({ failOnSeverity: 'critical' });",
+				]}
+			/>
+			<p>
+				The failing rules below the level don't fail the test, but when it does fail, the message
+				lists every failure and marks those below the level. It's the same gate as{" "}
+				<code>surea11y scan --fail-on-severity</code>. A scan that left something out (a scope that
+				matched nothing, a custom rule or pack that didn't run) fails the assertion whatever the
+				level.
+			</p>
+
+			<h2 id="questions-that-likely-fail">Questions that likely fail</h2>
+			<p>
+				A <code>cantTell</code> is a question for a person. Since <code>@surea11y/core</code> 1.14,
+				a question can lean: where the page's evidence points one way, it says which (
+				<code>fail</code> or <code>pass</code>) and why, and each question of a core rule carries
+				the steps to answer it (<code>howToCheck</code>). A failure message lists the questions
+				after the failures: those that likely fail, then those that likely pass, each with its
+				reason, then the open ones, by rule. <code>{"{ howToCheck: true }"}</code> lists every
+				question in full, with its steps.
+			</p>
+			<p>
+				By default a question never fails the test. <code>{"{ leanFail: true }"}</code> also fails
+				it on the questions that likely fail, and <code>wcagOnly: true</code> leaves out those of
+				best-practice rules:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"test('the settings page has no failures or likely failures', () => {",
+					"  const { container } = render(<Settings />); // an <h1>, then an <h3>",
+					"  expect(container).toHaveNoA11yViolations(); // passes: heading-order is a question",
+					"  expect(container).toHaveNoA11yViolations({ leanFail: true }); // fails: it leans fail",
+					"  expect(container).toHaveNoA11yViolations({ leanFail: true, wcagOnly: true }); // passes: heading-order is a best practice",
+					"});",
+				]}
+			/>
+			<p>
+				It's opt-in because a lean is evidence, not proof: whether a finding leans, and which way,
+				may change in a minor release of core. <code>{"configureA11yMatchers({ leanFail: true })"}</code>{" "}
+				turns it on for the whole suite.
+			</p>
+
 			<h2 id="web-components">Web components</h2>
 			<p>
 				Many web components keep their <code>ElementInternals</code> in a private field and name
@@ -402,12 +489,74 @@ export function TestMatchersUsageContent() {
 				<code>switch</code> only through its internals is checked as one. A scan result's{" "}
 				<code>engine.environment.internalsHook</code> says whether the hook was there. It wraps{" "}
 				<code>HTMLElement.prototype.attachInternals</code> in the test window, which is harmless in
-				a test and why it's opt-in. Two limits for now: <code>jest-environment-jsdom</code> 30 ships
-				jsdom 26, where a component that sets an ARIA property on its internals throws, hook or
-				not (Vitest with jsdom 29 handles it); and under Vitest, <code>@surea11y/core</code> 1.12.0
-				records the hook as <code>'late'</code>, so a component that never attached internals
-				stays a question there. The{" "}
+				a test and why it's opt-in. One limit: <code>jest-environment-jsdom</code> 30 ships jsdom
+				26, where a component that sets an ARIA property on its internals throws, hook or not
+				(Vitest with jsdom 29 handles it). Since <code>@surea11y/core</code> 1.14 the hook is
+				recorded as <code>'early'</code> under Vitest too, so a component that never attached
+				internals is no longer a question there. The{" "}
 				<a href="https://github.com/SureA11y/test-matchers#web-components-names-set-through-elementinternals">
+					package README
+				</a>{" "}
+				has the details.
+			</p>
+
+			<h2 id="listener-and-live-region-hooks">Click handlers and live regions</h2>
+			<p>
+				Two more opt-in hooks, from <code>@surea11y/core</code> 1.14, install the same way, in the
+				setup file before any of your code runs. <code>installListenerHook()</code> records the
+				click, key, focus and mouse listeners added from then on, so the keyboard rules judge them:
+				a <code>&lt;div role="button"&gt;</code> that only listens for <code>click</code> fails (
+				<code>CLICK_HANDLER_NO_KEY_LISTENER</code>), and passes once it also listens for{" "}
+				<code>keydown</code>. <code>installLiveRegionHook()</code> records what the page's live
+				regions are given: the scan asks about a region added with its text already in it, which
+				screen readers commonly don't announce, and <code>toHaveAnnounced()</code> checks that an
+				action told the user something. Install only the ones you want; each is independent:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// jest.setup.js (vitest.setup.js: the same, with import)",
+					"const {",
+					"  toHaveNoA11yViolations,",
+					"  toHaveAnnounced,",
+					"  installInternalsHook,",
+					"  installListenerHook,",
+					"  installLiveRegionHook",
+					"} = require('@surea11y/test-matchers');",
+					"",
+					"installInternalsHook();",
+					"installListenerHook();",
+					"installLiveRegionHook();",
+					"expect.extend({",
+					"  toHaveNoA11yViolations,",
+					"  toHaveAnnounced",
+					"});",
+				]}
+			/>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"test('saving says so', async () => {",
+					"  const user = userEvent.setup();",
+					"  const { container } = render(<SaveBar />);",
+					"  await user.click(screen.getByRole('button', { name: 'Save' }));",
+					"",
+					"  expect(container).toHaveAnnounced('Saved');",
+					"  expect(window).not.toHaveAnnounced(/error/i);",
+					"});",
+				]}
+			/>
+			<p>
+				A string must be the whole text; a RegExp may match part of it. On an element, only the
+				live regions it is or contains count; on <code>window</code> or <code>document</code>,
+				every announcement since the hook was installed. It's what the page made available to
+				announce, not what a screen reader said, and <code>toHaveAnnounced()</code> throws without
+				the hook. Two things to know: React adds its listeners to the root it renders into, not to
+				each element, so on a React component the scan sees the root's listeners and judges its
+				buttons by their markup, as without the hook; and the live-region hook reads changes in
+				batches, so render first and then act, with an <code>await</code> in between (
+				<code>await user.click()</code>), as a real user does. The{" "}
+				<a href="https://github.com/SureA11y/test-matchers#click-handlers-added-from-script-the-listener-hook">
 					package README
 				</a>{" "}
 				has the details.
@@ -415,32 +564,41 @@ export function TestMatchersUsageContent() {
 
 			<h2>Failure messages</h2>
 			<p>
-				Lists every occurrence, not just every rule — one rule can flag several elements — with the
-				rule ID, severity, a human-readable summary, the failing element's selector, and a fix hint
-				where available. It names the <code>@surea11y/core</code> release that produced the result,
-				to quote in a bug report:
+				Lists every failing occurrence, not just every rule — one rule can flag several elements —
+				with the rule ID, severity, a human-readable summary, the failing element's selector, and a
+				fix hint where available. It names the <code>@surea11y/core</code> release that produced the
+				result, to quote in a bug report, and then lists the questions, which don't count as
+				failures. With a skipped heading level beside the image:
 			</p>
 			<CodeBlock
 				lines={[
 					"expected no accessibility violations, but found 1:",
 					"",
 					"1) img-alt-present (serious): This <img> has no alt attribute.",
-					"   at body > img",
+					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.12.0.",
+					"Scanned with @surea11y/core 1.14.0.",
+					"",
+					"2 findings need manual review (cantTell, not counted as failures):",
+					"",
+					"1) heading-order (minor, likely fails): This heading jumps from level 1 to level 3, skipping a level.",
+					"   at body > main > h3",
+					"   Go down one level at a time, so an <h2> is followed by an <h3> rather than an <h4>, and the outline of the page stays easy to follow.",
+					"   Why it likely fails: The heading skips a level after the one before it.",
+					"",
+					"Open questions, which only a person can answer: manual-review.",
 				]}
 			/>
 			<p>
-				Before the version line, the message can carry a note on how the scan ran: when the scan
+				Before the version line, the message can carry notes on how the scan ran: when the scan
 				asked about custom elements it could have read with the{" "}
-				<a href="#web-components">internals hook</a>, a line says how many and to install it.
+				<a href="#web-components">internals hook</a>, or judged findings the{" "}
+				<a href="#listener-and-live-region-hooks">listener or live-region hook</a> would have
+				decided, a line says how many and to install it. With <code>{"{ leanFail: true }"}</code>,
+				the questions that likely fail move up into the failures, and the header counts both (
+				<code>found 1 failure and 1 likely failure:</code>).
 			</p>
-			<p>
-				Any <code>cantTell</code> results alongside the failures are appended as a separate note, so
-				they stay visible without affecting <code>pass</code>/<code>fail</code>:
-			</p>
-			<CodeBlock lines={["3 rule(s) need manual review (cantTell, not counted as failures): contrast-computable, link-name-quality, manual-review"]} />
 			<p>A pack that did not run is named with the reason:</p>
 			<CodeBlock
 				lines={[
@@ -448,9 +606,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.12.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.14.0.",
 					"",
-					"Scanned with @surea11y/core 1.12.0.",
+					"Scanned with @surea11y/core 1.14.0.",
 				]}
 			/>
 
@@ -465,6 +623,13 @@ export function TestMatchersUsageContent() {
 				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/pack.test.js">Jest</a>{" "}
 				and{" "}
 				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/pack.vitest.test.js">
+					Vitest
+				</a>
+				, and a small component checked with the listener and live-region hooks,{" "}
+				<code>toHaveAnnounced()</code> and <code>leanFail</code>:{" "}
+				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/hooks.test.js">Jest</a>{" "}
+				and{" "}
+				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/hooks.vitest.test.js">
 					Vitest
 				</a>
 				. For the complete <code>engineOptions</code> surface (locale, contrast modes, shadow DOM,

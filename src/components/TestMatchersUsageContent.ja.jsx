@@ -65,6 +65,23 @@ const apiRows = [
 			</>
 		),
 	},
+	{
+		id: "options",
+		param: <code>options</code>,
+		type: "オブジェクト（省略可）",
+		meaning: (
+			<>
+				<code>{"{ failOnSeverity, leanFail, wcagOnly, howToCheck }"}</code>
+				。
+				<a href="#failing-only-on-serious-problems">重大な問題でだけ失敗させる</a>
+				と
+				<a href="#questions-that-likely-fail">不適合の可能性が高い問い</a>
+				を参照してください。それぞれ
+				<code>configureA11yMatchers()</code>
+				で設定した既定値より優先されます。
+			</>
+		),
+	},
 ];
 
 export function TestMatchersUsageContent() {
@@ -358,39 +375,56 @@ export function TestMatchersUsageContent() {
 				rows={apiRows}
 			/>
 			<p>
+				2番目の引数には、代わりにすべてをまとめた1つのオブジェクト
+				<code>{"{ engineOptions, runOnly, failOnSeverity, leanFail, wcagOnly, howToCheck }"}</code>
+				を渡すこともできます（
+				<code>{"toHaveNoA11yViolations({ leanFail: true })"}</code>
+				）。これらのキーはどれもエンジンのオプションではなく、いずれかのキーがあればこの形として読まれます。これらとエンジンのオプションが混ざったオブジェクトは
+				<code>TypeError</code>
+				を投げます。
+			</p>
+			<p>
 				どちらのフレームワークの
 				<code>expect.extend()</code>
 				も期待する
 				<code>{"{ pass, message }"}</code>
 				の形を返します。これを直接呼ぶことはありません。上の「セットアップ」で示したとおり、
 				<code>expect.extend()</code>
-				で1度登録するだけです。このパッケージは、
+				で1度登録するだけです。このパッケージは、スイート全体の既定値を設定する
+				<code>configureA11yMatchers(options)</code>
+				、
 				<a href="#web-components">Webコンポーネント</a>
-				向けに
+				向けの
 				<code>installInternalsHook(win?)</code>
-				もエクスポートしています。
+				、
+				<a href="#listener-and-live-region-hooks">クリックハンドラーとライブリージョン</a>
+				向けの
+				<code>installListenerHook(win?)</code>
+				、
+				<code>installLiveRegionHook(win?)</code>
+				、
+				<code>toHaveAnnounced()</code>
+				マッチャーもエクスポートしています。
 			</p>
 
 			<h2>チェックすること、しないこと</h2>
 			<p>
-				<strong>
-					アサーションを失敗させるのは
-					<code>fail</code>
-					の判定結果だけです
-				</strong>
+				<strong>アサーションを失敗させるのは失敗の検出結果だけです</strong>
 				。これは、
 				<code>cantTell</code>
-				の結果は失敗ではなく参考情報とする、ほかのすべてのsurea11yバインディングの慣例に合わせています。
+				の結果は失敗ではなく参考情報とする、ほかのすべてのsurea11yバインディングの慣例に合わせています。各検出結果は、そのルールの判定結果ではなく、それ自身の判定結果で読まれます。ある要素で失敗したルールが別の要素について問いかけることがあり、その問いは失敗として数えられません。
 				<code>&lt;a href="/pricing"&gt;Click here&lt;/a&gt;</code>
 				のようなあいまいなリンクは
 				<code>fail</code>
 				ではなく
 				<code>cantTell</code>
-				なので、それだけで成功しているテストが壊れることはありません。ただし、ほかの理由でアサーションが
+				なので、
+				<code>leanFail</code>
+				（
+				<a href="#questions-that-likely-fail">後述</a>
+				）で求めない限り、それだけで成功しているテストが壊れることはありません。ただし、ほかの理由でアサーションが
 				<em>実際に</em>
-				失敗した場合は、
-				<code>cantTell</code>
-				の結果が失敗メッセージに別の注記として追加されるので、見落とすことはありません。このエンジンがまったく自動化しないことについては
+				失敗した場合は、失敗のあとに問いが一覧になるので、見落とすことはありません。このエンジンがまったく自動化しないことについては
 				<a href="/help/known-limitations/">既知の制限事項</a>
 				を参照してください。
 			</p>
@@ -470,6 +504,80 @@ export function TestMatchersUsageContent() {
 				を設定してください。
 			</p>
 
+			<h2 id="failing-only-on-serious-problems">重大な問題でだけ失敗させる</h2>
+			<p>
+				ルールの結果にはそれぞれ重大度があります（
+				<code>critical</code>
+				、
+				<code>serious</code>
+				、
+				<code>moderate</code>
+				、
+				<code>minor</code>
+				）。ほかの問題は報告し続けながら、まず重大な問題でだけテストを失敗させるには、セットアップファイルで
+				<code>configureA11yMatchers()</code>
+				を使ってスイート全体のレベルを設定するか、1つのアサーションのオプションで設定します。オプションは既定値より優先されます（
+				<code>failOnSeverity: null</code>
+				でそのアサーションだけ無効にできます）。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// jest.setup.js (vitest.setup.js: the same, with import)",
+					"const { toHaveNoA11yViolations, configureA11yMatchers } = require('@surea11y/test-matchers');",
+					"",
+					"expect.extend({ toHaveNoA11yViolations });",
+					"configureA11yMatchers({ failOnSeverity: 'serious' });",
+					"",
+					"// one assertion",
+					"expect(container).toHaveNoA11yViolations({ failOnSeverity: 'critical' });",
+				]}
+			/>
+			<p>
+				レベル未満で失敗したルールはテストを失敗させませんが、テストが失敗した場合、メッセージはすべての失敗を一覧にし、レベル未満のものに印を付けます。
+				<code>surea11y scan --fail-on-severity</code>
+				と同じゲートです。何かを取りこぼしたスキャン（何にも一致しなかった範囲、実行されなかったカスタムルールやパック）は、レベルにかかわらずアサーションを失敗させます。
+			</p>
+
+			<h2 id="questions-that-likely-fail">不適合の可能性が高い問い</h2>
+			<p>
+				<code>cantTell</code>
+				は人に向けた問いです。
+				<code>@surea11y/core</code>
+				1.14から、問いは傾くことがあります。ページの証拠が一方を示している場合、どちら（
+				<code>fail</code>
+				または
+				<code>pass</code>
+				）に傾くかとその理由を示し、coreのルールの各問いには答えるための手順（
+				<code>howToCheck</code>
+				）が含まれます。失敗メッセージは失敗のあとに問いを並べます。まず不適合の可能性が高いもの、次に適合の可能性が高いもの（それぞれ理由付き）、最後に未解決のものをルールごとに示します。
+				<code>{"{ howToCheck: true }"}</code>
+				を付けると、各問いを手順とともにすべて表示します。
+			</p>
+			<p>
+				既定では、問いがテストを失敗させることはありません。
+				<code>{"{ leanFail: true }"}</code>
+				を付けると不適合の可能性が高い問いでもテストが失敗し、
+				<code>wcagOnly: true</code>
+				でベストプラクティスのルールのものを除けます。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"test('the settings page has no failures or likely failures', () => {",
+					"  const { container } = render(<Settings />); // an <h1>, then an <h3>",
+					"  expect(container).toHaveNoA11yViolations(); // passes: heading-order is a question",
+					"  expect(container).toHaveNoA11yViolations({ leanFail: true }); // fails: it leans fail",
+					"  expect(container).toHaveNoA11yViolations({ leanFail: true, wcagOnly: true }); // passes: heading-order is a best practice",
+					"});",
+				]}
+			/>
+			<p>
+				傾きは証拠であって証明ではなく、検出結果が傾くかどうか、どちらに傾くかはcoreのマイナーリリースで変わることがあるため、オプトインになっています。
+				<code>{"configureA11yMatchers({ leanFail: true })"}</code>
+				でスイート全体に適用できます。
+			</p>
+
 			<h2 id="web-components">Webコンポーネント</h2>
 			<p>
 				多くのWebコンポーネントは、
@@ -524,18 +632,89 @@ export function TestMatchersUsageContent() {
 				<code>engine.environment.internalsHook</code>
 				でわかります。フックはテスト用ウィンドウの
 				<code>HTMLElement.prototype.attachInternals</code>
-				をラップします。テストでは無害ですが、オプトインになっているのはこのためです。現時点での制限は2つあります。
+				をラップします。テストでは無害ですが、オプトインになっているのはこのためです。制限が1つあります。
 				<code>jest-environment-jsdom</code>
 				30に含まれるjsdom 26では、
 				<code>ElementInternals</code>
-				にARIAプロパティを設定するコンポーネントは、フックの有無にかかわらず例外を投げます（jsdom 29を使うVitestでは問題ありません）。また、Vitestでは
+				にARIAプロパティを設定するコンポーネントは、フックの有無にかかわらず例外を投げます（jsdom 29を使うVitestでは問題ありません）。
 				<code>@surea11y/core</code>
-				1.12.0がフックを
-				<code>'late'</code>
-				として記録するため、
+				1.14からはVitestでもフックが
+				<code>'early'</code>
+				として記録されるので、
 				<code>ElementInternals</code>
-				を一度も取り付けていないコンポーネントは、そこでは問いかけのまま残ります。詳しくは
+				を一度も取り付けていないコンポーネントも、そこで問いかけになることはなくなりました。詳しくは
 				<a href="https://github.com/SureA11y/test-matchers#web-components-names-set-through-elementinternals">
+					パッケージのREADME
+				</a>
+				を参照してください。
+			</p>
+
+			<h2 id="listener-and-live-region-hooks">クリックハンドラーとライブリージョン</h2>
+			<p>
+				<code>@surea11y/core</code>
+				1.14からのオプトインのフックがさらに2つあり、同じようにセットアップファイルで、自分のコードが実行される前にインストールします。
+				<code>installListenerHook()</code>
+				は、それ以降に追加されるクリック、キー、フォーカス、マウスのリスナーを記録し、キーボードのルールがそれを判定できるようにします。
+				<code>click</code>
+				だけを待ち受ける
+				<code>&lt;div role="button"&gt;</code>
+				は失敗し（
+				<code>CLICK_HANDLER_NO_KEY_LISTENER</code>
+				）、
+				<code>keydown</code>
+				も待ち受ければ合格します。
+				<code>installLiveRegionHook()</code>
+				は、ページのライブリージョンに何が与えられたかを記録します。スキャンはテキストが入った状態で追加された、スクリーンリーダーが読み上げないことの多いリージョンについて確認を求め、
+				<code>toHaveAnnounced()</code>
+				は操作の結果がユーザーに伝えられたかを確かめます。必要なものだけをインストールしてください。それぞれ独立しています。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// jest.setup.js (vitest.setup.js: the same, with import)",
+					"const {",
+					"  toHaveNoA11yViolations,",
+					"  toHaveAnnounced,",
+					"  installInternalsHook,",
+					"  installListenerHook,",
+					"  installLiveRegionHook",
+					"} = require('@surea11y/test-matchers');",
+					"",
+					"installInternalsHook();",
+					"installListenerHook();",
+					"installLiveRegionHook();",
+					"expect.extend({",
+					"  toHaveNoA11yViolations,",
+					"  toHaveAnnounced",
+					"});",
+				]}
+			/>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"test('saving says so', async () => {",
+					"  const user = userEvent.setup();",
+					"  const { container } = render(<SaveBar />);",
+					"  await user.click(screen.getByRole('button', { name: 'Save' }));",
+					"",
+					"  expect(container).toHaveAnnounced('Saved');",
+					"  expect(window).not.toHaveAnnounced(/error/i);",
+					"});",
+				]}
+			/>
+			<p>
+				文字列はテキスト全体と一致する必要があり、正規表現は一部と一致すれば十分です。要素に対しては、その要素自身かその中にあるライブリージョンだけが対象です。
+				<code>window</code>
+				や
+				<code>document</code>
+				に対しては、フックをインストールしてからのすべての読み上げが対象です。これはページが読み上げ用に提供した内容で、スクリーンリーダーが実際に読み上げた内容ではありません。フックがなければ
+				<code>toHaveAnnounced()</code>
+				は例外を投げます。知っておくべきことが2つあります。Reactはリスナーを各要素ではなく描画先のルートに追加するので、Reactのコンポーネントでは、スキャンはルートのリスナーを見て、フックがない場合と同じくボタンをマークアップで判定します。また、ライブリージョンフックは変更をまとめて読むので、実際のユーザーと同じように、描画してから操作し、その間に
+				<code>await</code>
+				を挟んでください（
+				<code>await user.click()</code>
+				）。詳しくは
+				<a href="https://github.com/SureA11y/test-matchers#click-handlers-added-from-script-the-listener-hook">
 					パッケージのREADME
 				</a>
 				を参照してください。
@@ -543,36 +722,41 @@ export function TestMatchersUsageContent() {
 
 			<h2>失敗メッセージ</h2>
 			<p>
-				ルール単位ではなく検出箇所ごとにすべて列挙します（1つのルールが複数の要素を検出することがあるためです）。各項目には、ルールID、重大度、読みやすい要約、問題のある要素のセレクター、そして可能な場合は修正のヒントが含まれます。バグ報告で示せるよう、結果を生成した
+				ルールごとではなく、失敗した出現箇所をすべて一覧にします（1つのルールが複数の要素を指摘することがあります）。ルールID、重大度、読みやすい要約、失敗した要素のセレクター、あれば修正のヒントを示します。バグ報告に引用できるよう、結果を生成した
 				<code>@surea11y/core</code>
-				のリリースも示します。
+				のリリースを示し、そのあとに、失敗として数えない問いを一覧にします。画像の隣で見出しレベルが飛んでいる場合は次のとおりです。
 			</p>
 			<CodeBlock
 				lines={[
 					"expected no accessibility violations, but found 1:",
 					"",
 					"1) img-alt-present (serious): This <img> has no alt attribute.",
-					"   at body > img",
+					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.12.0.",
+					"Scanned with @surea11y/core 1.14.0.",
+					"",
+					"2 findings need manual review (cantTell, not counted as failures):",
+					"",
+					"1) heading-order (minor, likely fails): This heading jumps from level 1 to level 3, skipping a level.",
+					"   at body > main > h3",
+					"   Go down one level at a time, so an <h2> is followed by an <h3> rather than an <h4>, and the outline of the page stays easy to follow.",
+					"   Why it likely fails: The heading skips a level after the one before it.",
+					"",
+					"Open questions, which only a person can answer: manual-review.",
 				]}
 			/>
 			<p>
-				メッセージには、バージョンの行の前に、スキャンの実行状況についての注記が入ることがあります。
+				バージョンの行の前に、スキャンがどのように実行されたかの注記が入ることがあります。
 				<a href="#web-components">internalsフック</a>
-				があれば読めたカスタム要素についてスキャンが問いかけた場合、その数と、フックをインストールするよう伝える行が入ります。
+				があれば読めたカスタム要素についてスキャンが問いかけた場合や、
+				<a href="#listener-and-live-region-hooks">リスナーフックやライブリージョンフック</a>
+				なら判断できた検出結果を判定した場合に、その件数とフックのインストールを促す行が入ります。
+				<code>{"{ leanFail: true }"}</code>
+				を付けると、不適合の可能性が高い問いは失敗の側に移り、見出しの行は両方を数えます（
+				<code>found 1 failure and 1 likely failure:</code>
+				）。
 			</p>
-			<p>
-				失敗と一緒に
-				<code>cantTell</code>
-				の結果がある場合は別の注記として追加されるので、
-				<code>pass</code>
-				／
-				<code>fail</code>
-				に影響を与えずに目に入るようになっています。
-			</p>
-			<CodeBlock lines={["3 rule(s) need manual review (cantTell, not counted as failures): contrast-computable, link-name-quality, manual-review"]} />
 			<p>実行されなかったパックは、理由とともに示されます。</p>
 			<CodeBlock
 				lines={[
@@ -580,9 +764,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.12.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.14.0.",
 					"",
-					"Scanned with @surea11y/core 1.12.0.",
+					"Scanned with @surea11y/core 1.14.0.",
 				]}
 			/>
 
@@ -597,6 +781,16 @@ export function TestMatchersUsageContent() {
 				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/pack.test.js">Jest</a>
 				、
 				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/pack.vitest.test.js">
+					Vitest
+				</a>
+				、リスナーフックとライブリージョンフック、
+				<code>toHaveAnnounced()</code>
+				、
+				<code>leanFail</code>
+				で小さなコンポーネントをチェックする例：
+				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/hooks.test.js">Jest</a>
+				、
+				<a href="https://github.com/SureA11y/test-matchers/blob/main/examples/hooks.vitest.test.js">
 					Vitest
 				</a>
 				。

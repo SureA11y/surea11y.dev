@@ -4,7 +4,7 @@ The docs and rules site for `@surea11y/core`. Scaffold only as of 2026-09-16 —
 Astro + `@astrojs/react`, design tokens wired in. As of the same day it also
 has: a nav/page shell (`BaseLayout`/`SiteNav`, one stub page per IA section),
 Overview turned into a section-index landing (badges + a card grid linking
-the other six sections), a real Rules catalog + generated rule pages (134 as of core 1.12.0)
+the other six sections), a real Rules catalog + generated rule pages (145 as of core 1.14.0)
 (see `scripts/generate-rules-data.cjs` below), and `design_system` React
 components wired in where real content maps to them (copied into
 `src/components/design-system/` — see below). All seven IA sections have
@@ -63,6 +63,17 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   the catalog: `measure`, `unit`, `limit`), shown on the five rule pages
   that report one as a "Margin." line linking to the Output schema's
   `#margin`; unlike `@reports`, that is a stable contract.
+  Since core 1.14.0 it also writes `src/data/rules.review.generated.json`:
+  each rule's "How to check" steps per `cantTell` reason code (`meta.review`
+  keys, in order), in every locale core ships a review dictionary for,
+  read through core's own `howToCheckFor` — so no overlay translates them.
+  Rule pages render them as "How to check" (`#how-to-check`, one `<h3>`
+  per code, `#how-to-check-<code-in-kebab-case>`), after the examples. The
+  Japanese text is normalized at generation (no spaces next to Japanese,
+  full-width parentheses except in a call like `blur()`): core's `ja`
+  review dictionary is written spaced, which `check:typography` rejects.
+  Only the steps are shown, not the `@reason-codes` meanings (English-only
+  in core) — a deliberate scope choice.
   `scripts/generate-locale-data.cjs` reads core's `getLocaleCoverage()`
   (a supported export since 1.10.0) from the same package. Both
   `docs:rules:check` and `docs:locales:check` run in CI, so a core bump
@@ -487,7 +498,8 @@ Spanish. Conventions, so later edits stay consistent:
   prose (not in code); typographic apostrophes. Terms: règle, moteur,
   analyse, rapport, binding (m.), critère de succès, conformité, revue
   manuelle, Langues (page name; « langue » for the concept) / `locale`
-  (option, locale codes, resolution reasons), landmark, arbre
+  (option, locale codes, resolution reasons), tendance (a `cantTell`'s
+  lean), « Comment vérifier » (How to check), landmark, arbre
   d'accessibilité, nom accessible, technologies d'assistance, gravité
   (severity), libellé (a form label; « étiquette » only in 2.5.3 « Étiquette
   dans le nom »), atteignable (reachable, never « accessible »). Not
@@ -497,7 +509,8 @@ Spanish. Conventions, so later edits stay consistent:
   (das), Erfolgskriterium, Konformität, Barrierefreiheit, manuelle Prüfung,
   Locales, Accessibility Tree, zugänglicher Name, Landmark, assistive
   Technologien, Ergebnis (outcome; not "Outcome"), Schweregrad/Konfidenz
-  (severity/confidence), Befund (a finding), Vorkommen (an occurrence).
+  (severity/confidence), Befund (a finding), Vorkommen (an occurrence), Tendenz (a `cantTell`'s
+  lean), „So prüfen Sie es" (How to check).
   Gender-neutral wording where a person is described (Nutzende, Personen,
   die …, prüfende Person), not "Nutzer"/"Tester"/"Auditor". No "sauber" for
   outcomes: a clean scan is "ohne Befunde"; exit code `0` is "bestanden"
@@ -534,7 +547,8 @@ translation, and what to keep in mind when editing it:
 - Style: です・ます, full-width punctuation, 「」 quotes, official WAIC names
   for WCAG criteria. Terms: ルール, エンジン, スキャン, 判定結果, バインディング,
   達成基準, 適合性, 複合ルール, 構成ルール, ファセット, アクセシブルな名前,
-  アクセシビリティツリー, 支援技術, 誤検出. 2.5.3 is 「ラベルを含む名前
+  アクセシビリティツリー, 支援技術, 誤検出, 傾き (a `cantTell`'s lean),
+  確認方法 (How to check). Spanish uses «tendencia» and «Cómo comprobarlo». 2.5.3 is 「ラベルを含む名前
   ([[en:name]])」. The accessibility statement page is 「このサイトのアクセシビリティ」
   (title and footer link), not 「方針」 (that reads as a JIS X 8341-3 policy
   with targets) or 「声明」. Keep
@@ -719,16 +733,15 @@ Done after an external review of the live site flagged gaps:
   `public/robots.txt` points at it. `BaseLayout.astro` takes an optional
   `description` prop (sitewide default otherwise) and now emits
   `meta[name=description]`, `link[rel=canonical]`, `og:*`, and
-  `twitter:card` (`summary`, not `summary_large_image` — no OG image exists
-  yet, see below). Every page has its own description: the homepage and
+  `twitter:card` (`summary_large_image`, with the share image, see below).
+  Every page has its own description: the homepage and
   section indexes from `sections.ts`, each subpage from `description` in
   `pages.ts` (since 2026-10-18), and each rule page from the rule's own
   description; `check:meta` enforces it. `sitemap-index.xml`
   was submitted to Google Search Console on 2026-09-28 (Domain property,
   already verified; Bing Webmaster Tools not done yet — it can import from
-  Search Console). Still open: a real Open Graph image (1200×630) — no such
-  asset exists in `design_system` yet, so `og:image`/`twitter:image` are
-  omitted rather than pointing at nothing. Deployment to surea11y.dev is
+  Search Console). The Open Graph image (1200×630) came with the core 1.14.0
+  update, generated from the site's own tokens and `Logo`. Deployment to surea11y.dev is
   automatic from GitHub Actions: a push to `main` goes live only after the
   site checks and the accessibility scan pass (see "CI, accessibility scan
   and deploy"; `wrangler.jsonc` sets the target Worker, `surea11y-dev`).
@@ -931,3 +944,85 @@ for the built-in". "Start from the example" points to it too. The homepage's "Wh
 public or internal" (linking `#writing-a-pack`). Wording follows core's `ENGINE_OPTIONS.md`/
 `WCAG_CONFORMANCE.md`. 1.13.1 itself is a browser-only fix (a `window`
 property left behind) with no rule or doc change.
+
+## Core 1.14.0 update (2026-10-27)
+
+Pinned `@surea11y/core` 1.14.0 and `@surea11y/playwright` 1.5.0. Covers
+the bindings at 1.5.0, `@surea11y/cli` 1.4.0, `@surea11y/test-matchers`
+1.4.0 and `@surea11y/pack-en301549` 1.1.0, released with it. 145 rules (11
+new; 53 changed), every overlay follows them. New on rule pages: "How to
+check" (see "Where things come from"); the margin note says `margin` is
+reported only near the limit, and the reports note no longer says
+`reasonCode` is the only stable field (Output schema lists the others).
+Content pages, every language:
+
+- Homepage/Overview: how-to-check steps and leans, the HTML report's three
+  review groups and lean gating, the stricter rollup presented as
+  honesty, first rules for 3.3.1/4.1.3/1.4.5 and the listener hook, the
+  browser console helpers; ACT figures 957 test cases / 60 rules.
+- Output schema (`#leans`, `#how-to-check`), HTML/SARIF/JUnit (`#options`)/
+  EARL reports; WCAG mapping (`#when-a-criterion-passes`: no WCAG rollup
+  passes in 1.14, `partialCheck`/`partialCoverage`; 4.1.1 errata,
+  `keepsParsing`); Baseline (`#findings-that-lean-fail`, `#upgrading`:
+  reason-code moves, `migrateBaselineEntries`); FAQ
+  (`#results-changed-1-14` first, dated — move or drop later;
+  `#results-changed-1-12` moved to the end; `#why-criterion-canttell`,
+  `#baseline-after-upgrade`, `#stylesheets-not-readable`); Known
+  limitations; How rules are organized; Rules intro (37 composites).
+- Engine options (`#parsing-errata`, `styleSheetTexts`,
+  `rootCanvasFallbackSet`), Packs (`#sending-findings-to-requirements`,
+  `#review-steps`, the EN 301 549 pack 1.1.0), CI integration (lean
+  gating; `node:22`), Locales (`#review-dictionaries`).
+- Getting Started: binding pages gain a "Click handlers and live regions"
+  block (new optional `hooks` prop on `UsageBindingSection`) and
+  `.conditions()`/severity/lean notes; CLI (`#several-pages`,
+  `#in-a-real-browser`, `#failing-only-on-serious-problems`,
+  `#questions-that-likely-fail`), test-matchers, Standalone
+  (`#from-the-browser-console`, `#style-sheets-from-another-origin`,
+  `#listener-and-live-region-hooks`, `#questions-and-steps`). Quickstart
+  and CLI samples re-captured with CLI 1.4.0. LEANS.md, RULE_SETTINGS.md
+  and BINDING_AUTHORS_GUIDE.md are treated as GitHub-only.
+- The composite count is generated now (`engine.generated.json`'s
+  `composites`, from core's `getRulesCatalog()`): the Rules intro quotes
+  it and WCAG mapping builds RULE_CATALOG.md's heading anchor from it
+  (`#composite-wcag-sc-rollup-rules-<n>`).
+- The rules catalog has a "Questions" column: how many `cantTell` questions
+  a rule can ask, linking to its page's `#how-to-check` (from
+  `rules.review.generated.json`); the catalog intro explains it.
+- Sample HTML report: `npm run docs:sample-report`
+  (`scripts/generate-sample-report.mjs`) scans
+  `scripts/sample-report/demo.html` in Chromium, with no rule selection
+  and the listener and live-region hooks, once per locale, and writes
+  `public/sample-report.html` and `public/<locale>/sample-report.html`
+  (committed). The demo page gives a finding in every report group:
+  failures, likely fails, likely passes (`duplicate-id`'s 4.1.1 question,
+  which needs a scan that runs it, hence no WCAG 2.2 target), and open
+  questions. Linked from the homepage's report paragraph and the HTML
+  report page. Not checked in CI: re-run it on every core update and look
+  at it. `check:links` accepts a link to an existing static file.
+- Share image: `npm run docs:og-image` (`scripts/generate-og-image.mjs`)
+  renders `public/og-image.png` (1200×630) from the tokens, fonts and
+  `Logo`; it quotes the rule count, so re-run it when that changes.
+  `BaseLayout` emits `og:image` and `twitter:card` `summary_large_image`.
+- The 1.12 FAQ entry (`#results-changed-1-12`) was dropped; nothing
+  linked to it.
+
+Open English-source issues found in this update (rule text in `core`,
+translated as written): `form-control-single-label` and
+`invalid-field-error-message` have "must" titles but never fail;
+`focus-not-removed-by-script` and `moving-content-pausable` titles are
+statements, not must/should; `video-caption`'s title doesn't cover the
+new "are the captions complete" question; `contrast-minimum`'s
+expectation has a verbless clause ("declares only dark on the dark
+canvas") and "(`contrast.rootCanvasFallback`, given)"; rule `reports`
+cite `API_STABILITY.md`/`docs/*.md` paths; `click-handler-keyboard-operable`'s
+description is narrower than its expectation; "colour"/"color" still
+mixed. Docs: ENGINE_OPTIONS.md's profiles paragraph still credits the
+tags for V3.2.1's duplicate-id failure (it's `keepsParsing`);
+TROUBLESHOOTING.md still mentions `npm run i18n:sync`; the CHANGELOG's
+`migrateBaselineEntries(entries, result)` vs BASELINE.md's sample (the
+site follows BASELINE.md); core's `ja` review and report strings are
+spaced (see above); CHANGELOG and OUTPUT_SCHEMA.md list different stable
+contrast fields (the site follows OUTPUT_SCHEMA.md). Core's `es` review
+steps (shown on rule pages and in the sample report) say "usted"
+("Localice…", "Haga clic…") while the site says "tú"; left as core's text.

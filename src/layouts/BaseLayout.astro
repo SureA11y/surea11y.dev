@@ -46,6 +46,10 @@ const pageDescription = description ?? t("layout.defaultDescription", contentLoc
 const canonicalUrl = new URL(untranslated ? localizePath(path, contentLocale) : Astro.url.pathname, Astro.site);
 const alternates = translatedLocales.map((l) => ({ hreflang: l, href: new URL(localizePath(path, l), Astro.site) }));
 const defaultUrl = new URL(localizePath(path, DEFAULT_LOCALE), Astro.site);
+// One share image for every page and language (scripts/generate-og-image.mjs);
+// its text is English, and so is its description.
+const ogImage = new URL("/og-image.png", Astro.site);
+const ogImageAlt = "surea11y: Accessibility testing that tells you what it can’t tell you.";
 
 const rawHtml = await Astro.slots.render("default");
 const { html: headedHtml, headings } = processHeadings(rawHtml);
@@ -68,7 +72,13 @@ const html = markCodeNoTranslate(localizeLinks(headedHtml, locale));
 		<meta property="og:title" content={pageTitle} />
 		<meta property="og:description" content={pageDescription} />
 		<meta property="og:url" content={canonicalUrl} />
-		<meta name="twitter:card" content="summary" />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={ogImageAlt} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={ogImageAlt} />
 		<meta name="twitter:title" content={pageTitle} />
 		<meta name="twitter:description" content={pageDescription} />
 	</head>

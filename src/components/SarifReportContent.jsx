@@ -7,11 +7,13 @@ const core = "https://github.com/SureA11y/core/blob/main";
 const sarifLevelRows = [
 	{ id: "fail", outcome: <code>fail</code>, level: <code>error</code>, meaning: "Deterministic violation — the CI-gating case." },
 	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "Needs human review — surfaced, but shouldn't block a build on its own." },
+	{ id: "leanFail", outcome: <><code>cantTell</code> leaning <code>fail</code>, with <code>leanFailAs: 'error'</code></>, level: <code>error</code>, meaning: <>Undecided, but the page's evidence points to a failure (<a href="/results-reports/output-schema/#leans"><code>lean</code></a>); counted by a gate on errors.</> },
 ];
 
 const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
-	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code>. An occurrence with no summary (a custom rule's, say) uses the rule's title, or its id, since GitHub rejects a result with empty text.</> },
+	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code> + <code>occurrence.hint</code>. An occurrence with no summary (a custom rule's, say) uses the rule's title, or its id, since GitHub rejects a result with empty text. An undecided finding's steps follow, after a blank line: <code>How to check:</code>, the numbered steps, then <code>Passes when:</code> and <code>Fails when:</code>, so an alert says how to answer it.</> },
+	{ id: "howToCheck", field: <code>results[].properties.howToCheck</code>, source: <>An undecided finding's steps, <code>{"{ steps, passWhen, failWhen }"}</code>, as <a href="/results-reports/output-schema/#how-to-check"><code>occurrence.howToCheck</code></a> gives them. A result that comes without them, as a binding's does, gains them in Node; <code>packs</code> (the packs the scan ran) adds a pack rule's own. Like the lean, not part of the finding's identity.</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>The scanned target — see <a href="#sarif-locations">Locations</a> below.</> },
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <>The element's location, with <code>kind: "element"</code>, when <code>occurrence.selector</code> is a string that isn't empty. Outside a shadow tree it is the selector. For an element inside a shadow tree it is the shadow hosts' selectors, then the element's own, joined with <code>{" >>> "}</code>: <code>{"html > body > main > x-card >>> button"}</code>. JUnit's <code>selector:</code> line and the HTML report show the same text.</> },
 	{
@@ -24,7 +26,11 @@ const sarifFieldRows = [
 				<code>computeBaselineKey</code>) — a stable, content-based fingerprint rather than a
 				position-based one, for consumers that read it: the same finding gets the same digest in
 				every report. Before 1.11, <code>surea11y/violation/v1</code> held the key itself, so a
-				tool that read <code>v1</code> sees each finding as new once.
+				tool that read <code>v1</code> sees each finding as new once.{" "}
+				<strong>A finding whose reason code changes gets another digest</strong>: in 1.14, the
+				findings of the seventeen rules that now give a code, and those of the codes split by
+				cause, so their Code Scanning alerts close once and the findings come back as new (see{" "}
+				<a href="/conformance/baseline/">Baseline / allowlist</a>).
 			</>
 		),
 	},
@@ -49,14 +55,17 @@ const sarifFieldRows = [
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, the rule's help link, when it is an absolute <code>http(s)</code> URL; otherwise the Understanding document of the first WCAG criterion it maps to; absent for a rule with neither, which no built-in rule is: one mapped to no criterion links its section of the rule catalog.</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>The <code>toolVersion</code> option, if given (a tool wrapping the engine passes its own); otherwise <code>engine.version</code>, the engine release that produced the result.<code>"0.0.0"</code> only for a result without one, from a release before 1.10.0, or whose <code>engine.version</code> is not a string.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>The <code>category</code> option, with a trailing <code>/</code> added if it has none (GitHub reads everything up to the last slash as the category). Absent when no category is given. See <a href="#scanning-at-several-viewport-widths">Scanning at several viewport widths</a>.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>,source: <><code>wcagVersion</code>, <code>wcagLevel</code> (when the scan had a level: <code>engineOptions.wcagLevel</code>, or the one its selection gives), <code>profile</code>, <code>optInRules</code> and <code>environment</code> from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, and an AA run from one at every level, the opt-in rule tags it added beyond that target when it added any, and the conditions the page was rendered under (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>,<code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code>; see <a href="/results-reports/output-schema/">Output schema</a>). Omitted for results from engines that predate those fields.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>,source: <><code>wcagVersion</code>, <code>wcagLevel</code> (when the scan had a level: <code>engineOptions.wcagLevel</code>, or the one its selection gives), <code>profile</code>, <code>optInRules</code> and <code>environment</code> (a copy of <code>engine.environment</code>) from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, and an AA run from one at every level, the opt-in rule tags it added beyond that target when it added any, and the conditions the page was rendered under (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code> and every other field it has, the hooks' included; see <a href="/results-reports/output-schema/#top-level-result">Output schema</a>). Omitted for results from releases that predate those fields.</> },
 ];
 
 const sarifOptionRows = [
 	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>, for a tool wrapping the engine.</> },
 	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>, the tool's home page.</> },
-	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "none", effect: <>The baseline file as saved (<code>JSON.parse</code> of it) or its <code>entries</code> list, see <a href="/conformance/baseline/#file-format">File format</a>. Fail occurrences recorded there are left out, as <code>--baseline</code> does (see below).</> },
+	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "none", effect: <>The baseline file as saved (<code>JSON.parse</code> of it) or its <code>entries</code> list, see <a href="/conformance/baseline/#file-format">File format</a>. Fail occurrences recorded there are left out, as <code>--baseline</code> does (see below). An entry written by 1.13 under a reason code that changed in 1.14 still matches the finding under its new one.</> },
 	{ id: "category", option: <code>category</code>, def: "none", effect: <><code>runs[0].automationDetails.id</code>, see <a href="#scanning-at-several-viewport-widths">Scanning at several viewport widths</a>.</> },
+	{ id: "leanFailAs", option: <code>leanFailAs</code>, def: <code>'warning'</code>, effect: <><code>'error'</code> reports a <code>cantTell</code> finding whose lean points to fail at <code>error</code>, so a build gated on errors fails on likely failures too. Read in any case; another value throws a <code>TypeError</code>. A best-practice rule's too: such a rule, mapped to no WCAG criterion, never fails, and the facts it states lean fail without condition, so a skipped heading level (<code>heading-order</code>) is an <code>error</code>. A finding of a rule whose every criterion is outside the scan's target stays a <code>note</code>. A finding that leans fail and has an entry marked <code>lean: 'fail'</code> in <code>baselineEntries</code> stays a <code>warning</code>.</> },
+	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <>With <code>leanFailAs: 'error'</code>, <code>true</code> raises only the findings of rules mapped to a WCAG criterion in the scan's target, leaving the best-practice rules' leans at <code>warning</code>. A value other than <code>true</code> or <code>false</code> throws a <code>TypeError</code>. <code>leaningFailures(result, {"{ wcagOnly }"})</code>, from <code>@surea11y/core</code>, lists the findings these two options raise, before the baseline.</> },
+	{ id: "packs", option: <code>packs</code>, def: "none", effect: <>The packs the scan ran (<code>engineOptions.packs</code>): in Node, a pack rule's undecided findings carry the steps of its own <code>meta.review</code> (<code>properties.howToCheck</code>).</> },
 ];
 
 export function SarifReportContent() {
@@ -143,6 +152,17 @@ export function SarifReportContent() {
 				]}
 				rows={sarifLevelRows}
 			/>
+			<p>
+				An undecided finding with a lean carries it in <code>properties.lean</code>:{" "}
+				<code>{'{ "toward": "fail", "why": "The heading skips a level after the one before it." }'}</code>,
+				whichever level it is reported at. Where the lean has them, it also carries{" "}
+				<code>caution</code>, what could make it wrong (
+				<code>"A layout table can also hold numbers."</code>), and <code>measured</code>, how
+				often it has been right (<code>{'{ "agreed": 47, "cases": 50, "corpus": "…", "coreVersion": "…" }'}</code>,
+				once a lean has been counted on five cases, which none has yet), so an alert shows what
+				the <a href="/results-reports/html-report/">HTML report</a> shows beside the lean. Its{" "}
+				<code>signals</code> and <code>i18n</code> keys stay in the scan result.
+			</p>
 			<p id="outside-the-target">
 				A rule whose every WCAG criterion is outside the scan's target (an AAA rule under{" "}
 				<code>engineOptions.wcagLevel: 'AA'</code>, or <code>duplicate-id</code> under WCAG 2.2:
@@ -281,7 +301,7 @@ export function SarifReportContent() {
 				used.
 			</p>
 
-			<h2>Options</h2>
+			<h2 id="options">Options</h2>
 			<p>
 				<code>renderSarifReport(result, options)</code> from <code>@surea11y/core/sarif</code>{" "}
 				returns the log as JSON text. It takes:
@@ -306,9 +326,14 @@ export function SarifReportContent() {
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --baseline baseline.json --sarif results.sarif", command: true }]} />
 			<p>
-				<code>cantTell</code> occurrences are never filtered by a baseline — the baseline mechanism
-				only ever tracks <code>fail</code> occurrences (matching <code>--write-baseline</code>, see{" "}
-				<a href="/conformance/baseline/">Baseline / allowlist</a>).
+				<code>cantTell</code> occurrences are never left out by a baseline. A baseline written with{" "}
+				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code> also records the findings
+				that lean fail, as entries marked <code>lean: 'fail'</code> (see{" "}
+				<a href="/conformance/baseline/#findings-that-lean-fail">Baseline / allowlist</a>); under{" "}
+				<code>leanFailAs: 'error'</code> such a finding stays a <code>warning</code> instead of
+				being raised to <code>error</code>, so a team can accept the likely failures it already has
+				and still gate on new ones. <code>--write-baseline</code> records <code>fail</code>{" "}
+				occurrences only.
 			</p>
 
 			<h2>Combining with <code>--html</code>/<code>--json</code></h2>

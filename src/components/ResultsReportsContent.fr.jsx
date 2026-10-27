@@ -37,7 +37,10 @@ export function ResultsReportsContent() {
 				chaque <code>pass</code> et <code>notApplicable</code>, jamais une simple liste de
 				violations), le détail de chaque occurrence jusqu’à l’élément signalé, des codes
 				d’incertitude explicites pour tout ce qu’une règle n’a pas pu trancher, et les agrégations
-				composites par critère de succès WCAG. À lire une fois si vous construisez quoi que ce soit
+				composites par critère de succès WCAG. Chaque constat non tranché dit comment une
+				personne y répond, et certains indiquent de quel côté penchent les indices de la page (une{" "}
+				<em>tendance</em>), si bien qu’une revue commence par les échecs probables plutôt que
+				par une liste à plat. À lire une fois si vous construisez quoi que ce soit
 				sur un résultat brut. Voir <a href="/results-reports/output-schema/">Schéma de sortie</a>{" "}
 				pour la structure complète.
 			</p>
@@ -45,8 +48,10 @@ export function ResultsReportsContent() {
 			<h2>Rapport HTML</h2>
 			<p>
 				Un seul fichier HTML qui s’ouvre dans n’importe quel navigateur, sans serveur ni étape de
-				build. Un résumé en langage clair en haut, une agrégation WCAG regroupée par niveau de
-				conformité, issue des résultats composites du moteur lui-même, et un tableau complet
+				build. Un résumé en langage clair en haut, les échecs, puis les constats à vérifier,
+				répartis entre échecs probables, réussites probables et ceux que seule une personne peut
+				juger, chacun avec les étapes pour le vérifier, une agrégation WCAG regroupée par niveau
+				de conformité, issue des résultats composites du moteur lui-même, et un tableau complet
 				consultable en dessous pour qui veut creuser. C’est le rapport à remettre à un relecteur qui
 				ne veut pas lire la sortie brute. Voir{" "}
 				<a href="/results-reports/html-report/">Rapport HTML</a>.
@@ -61,8 +66,9 @@ export function ResultsReportsContent() {
 				filtre toujours de façon fiable et qu’un tableau de bord peut suivre un constat d’un commit à
 				l’autre au lieu de le perdre dès qu’un numéro de ligne change. Un journal sans résultat
 				signifie que rien n’a échoué ni ne demande de revue parmi les vérifications exécutées ;
-				ce n’est pas une déclaration de conformité. Voir{" "}
-				<a href="/results-reports/sarif-report/">Rapport SARIF</a>.
+				ce n’est pas une déclaration de conformité. Une option relève en erreurs les constats qui
+				échouent probablement, pour un build qui bloque sur eux sans bloquer sur chaque question.
+				Voir <a href="/results-reports/sarif-report/">Rapport SARIF</a>.
 			</p>
 
 			<h2>Rapport JUnit</h2>
@@ -72,7 +78,8 @@ export function ResultsReportsContent() {
 				de vos tests unitaires. Chaque critère WCAG est une suite et chaque règle un test : un défaut
 				répété sur une page est un seul test en échec, et les décomptes restent stables d’une
 				exécution à l’autre. <code>cantTell</code> arrive sous forme de test ignoré, visible sans
-				faire passer le build au rouge. Les noms des suites sont les mêmes dans toutes les
+				faire passer le build au rouge, sauf si vous choisissez de faire échouer le build sur ceux
+				qui échouent probablement. Les noms des suites sont les mêmes dans toutes les
 				langues : l’historique des tests ne repart pas de zéro quand la langue de l’analyse
 				change. Une suite verte signifie que les règles exécutées pour un critère n’ont rien
 				trouvé, pas que le critère est satisfait. Voir{" "}

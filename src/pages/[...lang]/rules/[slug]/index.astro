@@ -3,6 +3,7 @@ import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import { RulePage } from "../../../../components/RulePage.jsx";
 import { plainRuleText } from "../../../../components/RuleText.jsx";
 import rules from "../../../../data/rules.generated.json";
+import reviews from "../../../../data/rules.review.generated.json";
 import { isRuleTranslated, localizeRule } from "../../../../data/localizeRule";
 import { DEFAULT_LOCALE, localeCodes } from "../../../../i18n/locales";
 import { localeParam } from "../../../../i18n/paths";
@@ -32,7 +33,7 @@ const available = localeCodes.filter((l) => isRuleTranslated(ruleId, l));
 	contentLocale={locale}
 	translatedLocales={available}
 >
-	<RulePage rule={rule} locale={locale} />
+	<RulePage rule={rule} review={(reviews as Record<string, any>)[ruleId]} locale={locale} />
 </BaseLayout>
 
 <style>
@@ -75,6 +76,10 @@ const available = localeCodes.filter((l) => isRuleTranslated(ruleId, l));
 	:global(.example-context) {
 		color: var(--text-muted);
 		font-size: var(--text-sm);
+	}
+
+	:global(.review-question h3) {
+		margin-top: var(--space-6);
 	}
 
 	:global(.related-rules) {

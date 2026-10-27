@@ -55,7 +55,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build   # produce whatever static HTML you're scanning",
 					"      - run: npx @surea11y/cli scan ./dist/index.html",
 				]}
@@ -114,7 +114,7 @@ export function CiIntegrationContent() {
 					"      - uses: actions/checkout@v4",
 					"      - uses: actions/setup-node@v4",
 					"        with:",
-					"          node-version: 20",
+					"          node-version: 22",
 					"      - run: npm ci && npm run build",
 					"      - name: Scan (report, don't fail the job here)",
 					"        run: npx @surea11y/cli scan ./dist/index.html --baseline a11y-baseline.json --sarif results.sarif",
@@ -154,7 +154,7 @@ export function CiIntegrationContent() {
 					"    '**':",
 					"      - step:",
 					"          name: Accessibility scan",
-					"          image: node:20",
+					"          image: node:22",
 					"          script:",
 					"            - npm ci",
 					"            - npm run build",
@@ -188,7 +188,7 @@ export function CiIntegrationContent() {
 				lang="yaml"
 				lines={[
 					"a11y:",
-					"  image: node:20",
+					"  image: node:22",
 					"  script:",
 					"    - npm ci",
 					"    - npm run build",
@@ -238,7 +238,13 @@ export function CiIntegrationContent() {
 				<code>devDependencies</code>
 				に
 				<code>@surea11y/core</code>
-				が必要です。変わるのはレポートであり、CLIの終了コードではありません。
+				が必要です。より狭い選択肢は
+				<code>{"{ leanFailAs: 'failure' }"}</code>
+				です。
+				<a href="/results-reports/output-schema/#leans">不合格寄り</a>
+				の
+				<code>cantTell</code>
+				の検出結果だけが不合格になり、それぞれに理由と確認の手順が付きます。どちらの場合も、変わるのはレポートであり、CLIの終了コードではありません。
 			</p>
 
 			<h2>無料枠やプライベートリポジトリの実行時間制限</h2>

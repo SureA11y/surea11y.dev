@@ -36,6 +36,24 @@ const coverageSampleLines = [
 	"// }",
 ];
 
+const reviewDictionaryRows = [
+	{
+		id: "node",
+		who: <><code>runDomRulesInPage</code>, <code>addHowToCheck</code>, <code>howToCheckFor</code>, <code>renderHtmlReport</code></>,
+		how: <>From the installed package, looked up by the locale in lower case (<code>fr-ca</code>, then <code>fr</code>), English last.</>,
+	},
+	{
+		id: "browser",
+		who: "Code that runs in a browser (a Cypress spec)",
+		how: <><code>{"applyHowToCheck(result, { en, fr })"}</code> from <code>@surea11y/core/how-to-check</code>, with the dictionaries it imports as <code>@surea11y/core/review/&lt;locale&gt;</code>.</>,
+	},
+	{
+		id: "bundle",
+		who: <><code>a11ycore.openReport(result)</code> in the browser bundle</>,
+		how: <>Fetched from beside the bundle, or given as <code>{"{ reviewDictionaries }"}</code>.</>,
+	},
+];
+
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "You got exactly what you asked for, and that dictionary carries every key." },
 	{
@@ -263,7 +281,7 @@ export function LocalesContent() {
 				no page needs every language. Keeping English inline and the rest optional keeps the other
 				languages off the download, and stops it growing as languages are added. Each side file,{" "}
 				<code>surea11y.i18n.&lt;locale&gt;.js</code>, is about as large as the English text it
-				replaces (130 to 160 KB today), and a page loads only the ones it uses. Nothing else
+				replaces (200 to 250 KB today), and a page loads only the ones it uses. Nothing else
 				changes: the Node package and the bindings are unaffected.
 			</p>
 			<CodeBlock
@@ -291,6 +309,38 @@ export function LocalesContent() {
 				the pack lists per locale; a locale the pack has no dictionary for shows its messages in
 				English.
 			</p>
+
+			<h3 id="review-dictionaries">The review dictionaries</h3>
+			<p>
+				The steps that tell a person how to answer an undecided finding (<code>howToCheck</code>,
+				see <a href="/results-reports/output-schema/#how-to-check">the output schema</a>) live in
+				dictionaries of their own, in the same five locales. They are kept out of the engine's
+				dictionaries so the steps never enter the bundle or a page: they are added after the scan,
+				in Node, or by code that imports them. Core 1.14.0 and later.
+			</p>
+			<DataTable
+				label="Who reads the review dictionaries"
+				rowKey="id"
+				columns={[
+					{ key: "who", label: "Who reads them", width: "40%", wrap: true },
+					{ key: "how", label: "How", wrap: true },
+				]}
+				rows={reviewDictionaryRows}
+			/>
+			<p>
+				A step a locale lacks shows in English, as a message does. A{" "}
+				<a href="/configuration/packs/#review-steps">pack rule's own steps</a> are English in
+				every locale. <code>getLocaleCoverage()</code> doesn't count these dictionaries. The steps
+				carry no keys, so to show them in another locale, add them again:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { addHowToCheck } = require('@surea11y/core');",
+					"",
+					"const inFrench = addHowToCheck(result, { locale: 'fr' });",
+				]}
+			/>
 
 			<h3>Supplying a dictionary yourself</h3>
 			<p>
@@ -322,7 +372,9 @@ export function LocalesContent() {
 			<p>
 				English is always checked. The list for the element's own language, taken from the nearest{" "}
 				<code>lang</code> attribute (the <code>&lt;html&gt;</code> element's for a page title), is
-				added on top. Checking every list everywhere would flag words that are generic in one
+				added on top. <code>link-name-quality</code> checks every language's list where no{" "}
+				<code>lang</code> is declared anywhere up the link's tree, since the link may be in any of
+				them. Checking every list everywhere would flag words that are generic in one
 				language and a real name in another, such as "Suite" or "Plus" on an English page.
 				Transcript words are the exception: they are distinctive in every language and a page can
 				link a transcript in another language, so all of them are always checked. Text is
@@ -356,8 +408,16 @@ export function LocalesContent() {
 				<li>
 					<strong>Occurrence-level</strong>: <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,
 					with <code>i18n.params</code> for <code>{"{{placeholder}}"}</code> interpolation —
-					resolve an occurrence's <code>summary</code>/<code>hint</code>. See{" "}
+					resolve an occurrence's <code>summary</code>/<code>hint</code>. A lean's{" "}
+					<code>i18n.whyKey</code> / <code>i18n.cautionKey</code> resolve its <code>why</code> and{" "}
+					<code>caution</code> the same way. See{" "}
 					<a href="/results-reports/output-schema/">the output schema</a>.
+				</li>
+				<li>
+					<strong>Review</strong>: <code>{"<prefix>_review_<CODE>_step<n>"}</code>,{" "}
+					<code>_pass</code> and <code>_fail</code>, in{" "}
+					<a href="#review-dictionaries">the review dictionaries</a> — an undecided occurrence's{" "}
+					<code>howToCheck</code>.
 				</li>
 			</ul>
 			<p>
