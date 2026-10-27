@@ -7,7 +7,9 @@ export function HtmlReportContent() {
 			<p>
 				A self-contained HTML report you can open in a browser after a scan — no server, no
 				external assets, no network requests. Built for QA/manual testers who want a browsable
-				view of a scan's results rather than raw JSON or a terminal summary.
+				view of a scan's results rather than raw JSON or a terminal summary. <a href="/sample-report.html">Open a sample
+				report</a>: a small checkout page scanned with the listener and live-region hooks, with a
+				finding in every group.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
 			<p>
@@ -22,14 +24,29 @@ export function HtmlReportContent() {
 					<strong>Hero</strong>: one plain-language headline ("N of M applicable checks passed")
 					plus a stacked bar and legend (icon + label + count — status is never color-only)
 					broken down by outcome (<code>fail</code>/<code>cantTell</code>/<code>pass</code>/
-					<code>notApplicable</code>).
+					<code>notApplicable</code>). When no rule failed and some applied, a note under the
+					headline says that is not a claim the page conforms, and names what a person still
+					checks: the findings that need review, keyboard use, how a screen reader reads the page,
+					and the content itself.
 				</li>
 				<li>
 					<strong>Worth reviewing</strong>: one card per rule with <code>fail</code>/
 					<code>cantTell</code> occurrences (not one per occurrence — a rule with many identical
 					occurrences is one thing worth attention, not many), each showing severity, WCAG SC
-					chip(s), a representative occurrence, and the total occurrence count. Capped at the 24
-					highest-priority rules with an overflow note past that. A rule that did not complete (it
+					chip(s), a representative occurrence, and the total occurrence count. Failing rules come
+					first. The findings that need review follow in three groups: those whose evidence points
+					to a failure (“Likely fails: confirm”), those whose evidence points to a pass (“Likely
+					passes: confirm”), and those only a person can judge (“Needs a person”), as{" "}
+					<code>reviewGroupOf(check, occurrence)</code> from <code>@surea11y/core</code> files
+					them, so a tool that sorts a review queue sorts it the same way. Each card in the first
+					two says why it leans that way (the occurrence's{" "}
+					<a href="/results-reports/output-schema/#leans"><code>lean</code></a>). Each of these
+					cards has a “How to check” section, collapsed by default, with the steps to answer the
+					question and what passes and what fails (the occurrence's{" "}
+					<a href="/results-reports/output-schema/#how-to-check"><code>howToCheck</code></a>). A
+					rule whose findings lean different ways has a card in each group. Within each group, most
+					severe first (critical to minor) and, at the same severity, the one with more occurrences
+					first. Capped at the 24 highest-priority rules with an overflow note past that. A rule that did not complete (it
 					threw) gets a card too, saying so with its error, since the page was not checked against
 					it. A rule with an <code>http(s)</code> help link (<code>meta.helpUrl</code>, a custom
 					rule's included) gets a "How to fix &lt;rule&gt;" link on its card; a rule without one
@@ -47,8 +64,9 @@ export function HtmlReportContent() {
 					<li>
 						<strong>Closest to the limit</strong>: shown when the scan has margins (
 						<a href="/results-reports/output-schema/#margin"><code>margin</code> on a check result</a>).
-						One row per rule that measures against a threshold: its closest passing value, the limit,
-						the room left and the element. Pixels are rounded to whole ones, with "less than 1 px"
+						One row per rule whose closest passing element came close to its threshold (within the
+						rule's band, such as 10% of a contrast ratio), as the note above the table says: its
+						closest passing value, the limit, the room left and the element. Pixels are rounded to whole ones, with "less than 1 px"
 						under one; ratios show two decimals. A rule that passed with little room is one a small
 						change can turn into a failure.
 					</li>
@@ -59,7 +77,10 @@ export function HtmlReportContent() {
 					the requirements of each other standard in the result's <code>standards</code> that its
 					rules map to, such as the EN 301 549 clause that restates it, where there is one and the
 					scan asked for EN 301 549 clauses), its outcome, a pass/fail/needs-review/n/a breakdown
-					(with a “Partly checked” line when the scan selected only some of the criterion's rules, such as “Partly checked: 1 of 2 checks was not selected for this scan”,
+					(with a “Partly checked” line when the criterion's rules check only part of what it asks,
+					so a person checks the rest, as “Partly checked: its checks cover only part of this
+					criterion, so a person checks the rest”, or when the scan selected only some of its
+					rules, as “Partly checked: 1 of 2 checks was not selected for this scan”,
 					see <a href="/results-reports/output-schema/#partly-checked">A partly checked
 					criterion</a>), and which atomic rules contributed, a custom rule mapped to the criterion included. This is real engine data, not an invented grouping — the same rollup you'd
 					get from the raw JSON's <code>rulesResults</code>.
@@ -77,7 +98,8 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Full technical data</strong> (collapsed by default): a scorecard (tiles per
 					outcome) and a searchable, filterable (by outcome), paginated table of every individual
-					occurrence across the whole scan. When it shows no occurrence, it holds one row saying
+					occurrence across the whole scan; a finding that needs review and has a lean shows it under
+					its summary (“Likely fails: …”), and the search finds it. When it shows no occurrence, it holds one row saying
 					so: the scan recorded none, or the filters hide them all.
 				</li>
 			</ul>
@@ -151,7 +173,14 @@ export function HtmlReportContent() {
 				does the writing). The page is dated by the result's <code>timestamp</code> (set it with{" "}
 				<code>engineOptions.timestamp</code>), shown in UTC, so the same result always renders the
 				same page; a result without one is dated by the time of rendering.{" "}
-				<code>options.title</code> is optional (defaults to <code>"surea11y scan report"</code>).
+				<code>options.title</code> is optional (defaults to the report language's own title,{" "}
+				<code>"surea11y scan report"</code> in English). <code>options.packs</code> is the list of
+				packs the scan ran (<code>engineOptions.packs</code>), when it ran any: in Node the report
+				adds the “How to check” steps to undecided findings that come without them, a core rule's
+				and a variant's base rule's always, and a pack rule's own steps (its{" "}
+				<code>meta.review</code>, in English) only when given the packs (see{" "}
+				<a href="/configuration/packs/#rules">Packs</a>). In the browser (
+				<code>surea11y.report.js</code>) it shows the steps the result already carries.
 			</p>
 
 			<h2>Scope</h2>

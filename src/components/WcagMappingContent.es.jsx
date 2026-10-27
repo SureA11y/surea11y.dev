@@ -1,4 +1,5 @@
 import React from "react";
+import engine from "../data/engine.generated.json";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { Callout } from "./design-system/feedback/Callout.jsx";
@@ -30,20 +31,43 @@ const precedenceRows = [
 		id: "na",
 		condition: (
 			<>
-				Todos los contribuyentes en <code>notApplicable</code>
+				Todos los contribuyentes en <code>notApplicable</code>, para un criterio cuyas reglas
+				encuentran todos los casos a los que se aplica
 			</>
 		),
 		outcome: <code>notApplicable</code>,
+	},
+	{
+		id: "na-partial",
+		condition: (
+			<>
+				Todos los contribuyentes en <code>notApplicable</code>, para cualquier otro criterio
+			</>
+		),
+		outcome: (
+			<>
+				<code>cantTell</code> (<code>composite.rollup.cantTell.partialCoverage</code>)
+			</>
+		),
 	},
 	{
 		id: "pass",
 		condition: (
 			<>
 				En cualquier otro caso (todos se ejecutaron, ninguno falló ni quedó en <code>cantTell</code>, no
-				todos son N/A)
+				todos son N/A), para un criterio cuyas reglas comprueban todo lo que pide
 			</>
 		),
 		outcome: <code>pass</code>,
+	},
+	{
+		id: "pass-partial",
+		condition: "En cualquier otro caso, para cualquier otro criterio",
+		outcome: (
+			<>
+				<code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>)
+			</>
+		),
 	},
 ];
 
@@ -79,7 +103,7 @@ export function WcagMappingContent() {
 					un agregado generado de cada regla atómica asociada a un SC, que da un único veredicto{" "}
 					<code>pass</code>/<code>fail</code>/<code>cantTell</code>/<code>notApplicable</code> por SC en
 					lugar de tener que combinar tú mismo docenas de resultados atómicos. Ver{" "}
-					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-34`}>
+					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-${engine.composites}`}>
 						la lista completa
 					</a>{" "}
 					(por ejemplo, <code>wcag-1.1.1-non-text-content</code> agrupa 21 reglas atómicas).
@@ -97,14 +121,50 @@ export function WcagMappingContent() {
 				]}
 				rows={precedenceRows}
 			/>
+			<h3 id="when-a-criterion-passes">Cuándo un criterio se cumple y cuándo no es aplicable</h3>
 			<p>
-				Esto significa: <strong>un compuesto en <code>pass</code> es un "todas las comprobaciones
-				automatizadas aplicables a este SC salieron limpias" real y determinista, pero no es, por
-				sí solo, una declaración de conformidad WCAG.</strong> Si alguna faceta de ese SC no tiene
-				ninguna cobertura automatizada (ver <code>coverage-report.md</code>), un compuesto en{" "}
-				<code>pass</code> guarda silencio sobre esa faceta, no está afirmando que esté bien. Verifica
-				la tabla de facetas antes de tratar un compuesto en <code>pass</code> como "SC totalmente
-				verificado".
+				Desde la 1.14, un criterio se cumple solo cuando sus reglas comprueban todo lo que pide,
+				igual que WCAG lo da por satisfecho solo cuando lo está entero. Que todas las reglas se
+				cumplan solo dice que se cumplen las partes que comprueban:{" "}
+				<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a> comprueba
+				que <code>{'<html lang="fr">'}</code> nombra un idioma, no que la página esté en francés
+				(3.1.1), y <a href="/rules/page-title-present/"><code>page-title-present</code></a>, que
+				la página tiene título, no que el título la describa (2.4.2). Un criterio así queda en{" "}
+				<code>cantTell</code>, con el código de motivo{" "}
+				<code>composite.rollup.cantTell.partialCheck</code>, y el{" "}
+				<a href="/results-reports/html-report/">informe HTML</a> dice que se comprobó en parte
+				(«Comprobado en parte»): el resto lo comprueba una persona. Los criterios cuyas reglas los
+				comprueban enteros se enumeran en <code>src/coverage/complete-applicability.js</code>{" "}
+				(<code>COMPLETE_CHECK</code>), cada uno con su motivo, y todavía no hay ninguno: cada uno
+				pide algo que las reglas no ven, ya sea si un texto alternativo, una etiqueta, un
+				encabezado o el texto de un enlace dicen lo correcto, o cómo lo cumple el contenido que un
+				script dibuja o cambia. <strong>Así que en la 1.14 no se cumple ningún compuesto de
+				WCAG.</strong>
+			</p>
+			<p>
+				Del mismo modo, un criterio es <code>notApplicable</code> solo cuando sus reglas encuentran
+				todos los casos a los que se aplica: los enlaces para 2.4.4 y 2.4.9, los elementos
+				enfocables para 2.4.3 y 2.4.7, los componentes con etiqueta para 2.5.3, el marcado para
+				4.1.1. Los campos de formulario (1.3.5, 3.3.2) y los objetivos de puntero (2.5.8) no están
+				en esa lista: un campo hecho con un rol ARIA, un campo sin <code>autocomplete</code> o un
+				elemento que solo es un objetivo mediante un script pueden estar en una página donde esas
+				reglas no encontraron nada. Para cualquier otro criterio, que ninguna regla encuentre nada
+				solo dice que faltan los casos que buscan: un script que redirige tras un retardo es un
+				límite de tiempo (2.2.1) sin <code>{'<meta http-equiv="refresh">'}</code>, y un pasaje en
+				otro idioma (3.1.2) no tiene por qué llevar <code>lang</code>. En términos de WCAG-EM,
+				«no presente» exige haber mirado todos los lugares donde podría estar el contenido, así
+				que un criterio así queda en <code>cantTell</code>, con el código de motivo{" "}
+				<code>composite.rollup.cantTell.partialCoverage</code>.
+			</p>
+			<p>
+				Esto significa: <strong>un compuesto en <code>fail</code> es una violación real y
+				determinista, y un compuesto en <code>cantTell</code> cuyos contribuyentes se cumplieron
+				todos (<code>partialCheck</code>) dice que todas las comprobaciones automatizadas de ese
+				criterio salieron limpias y que lo que queda lo comprueba una persona.</strong> No es, por
+				sí solo, una declaración de conformidad. La tabla de facetas (
+				<code>coverage-report.md</code>) muestra qué partes de cada criterio tienen cobertura
+				automatizada y cuáles comprueba una persona. Muéstralos como «comprobaciones superadas,
+				requiere revisión» y «nada que comprobar encontrado», nunca como cumplidos.
 			</p>
 			<p>
 				El array <code>data.details.contributors</code> de un compuesto (ver{" "}
@@ -190,8 +250,8 @@ export function WcagMappingContent() {
 				Una regla lleva una etiqueta de nivel por cada Criterio de Éxito al que se asocia, y nada
 				más: una regla asociada solo a un criterio AA lleva la etiqueta <code>wcag2aa</code> y{" "}
 				<em>no</em> <code>wcag2a</code>. Pedir <code>{"{ tags: ['wcag2aa'] }"}</code> por sí solo,
-				por tanto, ejecuta las 9 reglas asociadas a un criterio AA de la versión 2.0, no las
-				aproximadamente 100 que forman un objetivo A + AA. Enumera cada nivel que quieras, o usa{" "}
+				por tanto, ejecuta las 11 reglas asociadas a un criterio AA de la versión 2.0, no las
+				105 que forman un objetivo A + AA de la 2.0. Enumera cada nivel que quieras, o usa{" "}
 				<code>runOnly.wcag</code>, que no tiene ese problema. <code>engineOptions.profile</code> (
 				<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>, <code>en301549-v3.2.1</code>,{" "}
 				<code>section508</code>) también lo hace por ti; ver{" "}
@@ -215,8 +275,12 @@ export function WcagMappingContent() {
 				<code>engine.wcagVersion</code>. Bajo un objetivo 2.2, una regla asociada solo al SC 4.1.1
 				<span lang="en">Parsing</span> no puede devolver <code>fail</code>: se ejecuta, informa de sus ocurrencias, y vuelve
 				como <code>cantTell</code> con un campo <code>wcagVersionScope</code> que explica la
-				coerción. Así, un análisis por defecto nunca bloquea por un criterio que WCAG 2.2 no
-				contiene, y un análisis 2.0/2.1 sigue obteniendo un veredicto real para el 4.1.1.
+				coerción. Desde la 1.14, bajo un objetivo 2.0 o 2.1 hace lo mismo, con{" "}
+				<code>wcagVersionScope.by: "errata"</code>: las erratas de 2023 del W3C a esas versiones
+				dan el 4.1.1 por satisfecho siempre para contenido en HTML o XML. Así, ningún análisis de
+				WCAG bloquea por el 4.1.1; solo un perfil cuyo estándar conserva su texto, uno que declara{" "}
+				<code>keepsParsing: true</code> como hace <code>en301549-v3.2.1</code>, sigue haciéndolo
+				fallar.
 			</p>
 			<p>
 				Los compuestos, a diferencia de las reglas atómicas, <em>sí</em> se filtran de forma
@@ -373,13 +437,18 @@ export function WcagMappingContent() {
 					incertidumbre silenciada.
 				</li>
 				<li>
+					Un compuesto nunca da por cumplido un criterio que sus reglas solo comprueban en parte:
+					cuando todas se cumplen, queda en <code>cantTell</code>{" "}
+					(<code>composite.rollup.cantTell.partialCheck</code>), así que un <code>pass</code> nunca
+					guarda silencio sobre una parte que ninguna regla comprueba.
+				</li>
+				<li>
 					La tabla de cobertura de facetas te dice exactamente qué partes de qué SC no tienen
-					ninguna cobertura automatizada, para que sepas dónde un <code>pass</code> guarda silencio
-					en lugar de ser exhaustivo.
+					ninguna cobertura automatizada, y por tanto qué queda para una persona.
 				</li>
 			</ul>
 			<p>
-				Un compuesto en <code>pass</code> en cada SC de tu nivel objetivo significa:{" "}
+				Que ningún compuesto esté en <code>fail</code> en cada SC de tu nivel objetivo significa:{" "}
 				<em>cada comprobación automatizable para ese nivel salió limpia.</em> Es el subconjunto
 				automatizable de la conformidad, declarado con precisión, no un sustituto de la revisión
 				manual que la propia WCAG exige.

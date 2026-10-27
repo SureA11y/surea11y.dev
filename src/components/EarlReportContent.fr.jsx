@@ -191,7 +191,7 @@ export function EarlReportContent() {
 				c’est produire un faux positif : échouer sur un exemple censé réussir selon la règle,
 				ou censé être inapplicable. C’est ce seuil qu’il faut surveiller, et il dépend des
 				règles, pas de ce rapport. Lors de la dernière exécution complète, le moteur a produit{" "}
-				<strong>zéro faux positif</strong> sur les 942 exemples que le W3C publie pour ses 59
+				<strong>zéro faux positif</strong> sur les 957 exemples que le W3C publie pour ses 60
 				règles correspondantes ; voir{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>, et
 				relancez <code>scripts/act-testcase-check.js</code> pour obtenir le chiffre à jour plutôt

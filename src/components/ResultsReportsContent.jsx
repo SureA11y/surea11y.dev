@@ -37,7 +37,9 @@ export function ResultsReportsContent() {
 				from: a top-level result envelope, one entry per rule (including every{" "}
 				<code>pass</code> and <code>notApplicable</code> — never a violations-only list), per-occurrence
 				detail down to the flagged element, explicit uncertainty codes for anything a rule couldn't
-				decide, and composite WCAG-SC rollups. Worth reading once if you're building anything on
+				decide, and composite WCAG-SC rollups. Every undecided finding says how a person answers
+				it, and some say which way the page's evidence points (a <em>lean</em>), so a review
+				starts with the likely failures rather than a flat list. Worth reading once if you're building anything on
 				top of a raw result. See <a href="/results-reports/output-schema/">Output schema</a> for
 				the full shape.
 			</p>
@@ -45,8 +47,10 @@ export function ResultsReportsContent() {
 			<h2>HTML report</h2>
 			<p>
 				One HTML file that opens in any browser, with no server or build step. A plain-language
-				summary up top, a WCAG rollup grouped by conformance level sourced from the engine's own
-				composite results, and a full searchable table underneath for anyone who wants to dig in.
+				summary up top, the failures, then the findings that need review sorted into likely
+				fails, likely passes and the ones only a person can judge, each with the steps to check it,
+				a WCAG rollup grouped by conformance level sourced from the engine's own composite results,
+				and a full searchable table underneath for anyone who wants to dig in.
 				This is the report to hand a reviewer who doesn't want to read raw output. See{" "}
 				<a href="/results-reports/html-report/">HTML report</a>.
 			</p>
@@ -59,7 +63,8 @@ export function ResultsReportsContent() {
 				still filters cleanly and a dashboard can track a
 				finding across commits instead of losing it every time a line number shifts. A log with
 				no results means nothing failed or needs review among the checks that ran; it is not a
-				conformance claim. See <a href="/results-reports/sarif-report/">SARIF report</a>.
+				conformance claim. One option raises the findings that likely fail to errors, for a build
+				that gates on them without gating on every question. See <a href="/results-reports/sarif-report/">SARIF report</a>.
 			</p>
 
 			<h2>JUnit report</h2>
@@ -68,7 +73,8 @@ export function ResultsReportsContent() {
 				widget, Azure DevOps' Tests tab, Jenkins, CircleCI — next to your unit tests. Each WCAG
 				criterion is a suite and each rule a test, so a defect repeated across a page is one
 				failing test, and counts stay stable between runs. <code>cantTell</code> arrives as a
-				skipped test, visible without turning the build red. Suite names are the same in every
+				skipped test, visible without turning the build red, unless you choose to fail the build on
+				the ones that likely fail. Suite names are the same in every
 				locale, so test history doesn't restart when the scan's language changes. A green suite
 				means the rules that ran for a criterion found nothing, not that the criterion is met. See{" "}
 				<a href="/results-reports/junit-report/">JUnit report</a>.

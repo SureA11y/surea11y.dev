@@ -21,7 +21,8 @@ export function ConfigurationContent() {
 				known-noisy widgets globally or for a single rule without losing
 				coverage everywhere else, tune how aggressive the contrast checks are for a human auditor
 				versus an unattended CI gate, and drop in an org-specific rule alongside the built-ins when
-				the catalog doesn't cover something you care about. See{" "}
+				the catalog doesn't cover something you care about, and hand the rules the CSS of a style
+				sheet from another origin that the page can't read. See{" "}
 				<a href="/configuration/engine-options/">Engine options</a> for the full reference.
 			</p>
 
@@ -32,7 +33,9 @@ export function ConfigurationContent() {
 				and the engine runs it as it runs its own rules: its profiles select what runs, its
 				checklist items come back as one result each, and every report shows them beside the WCAG
 				criteria. The same pack works from Node, every binding, the test matchers and the CLI, and{" "}
-				<code>npx surea11y-pack new</code> writes one that passes its own tests as generated. See{" "}
+				<code>npx surea11y-pack new</code> writes one that passes its own tests as generated. A
+				standard can file a rule's findings under the requirements they belong to, and a pack rule
+				can tell a person how to answer what it leaves undecided. See{" "}
 				<a href="/configuration/packs/">Packs</a> to use one or write one.
 			</p>
 
@@ -43,7 +46,9 @@ export function ConfigurationContent() {
 				own exit code, baseline an existing site's pre-existing violations so you only fail on
 				genuinely new ones, and upload SARIF results straight into GitHub Code Scanning where your
 				team already looks. GitLab CI and Azure DevOps recipes put results in their own test views
-				as JUnit, written by the CLI in the same step. See <a href="/configuration/ci-integration/">CI integration</a> for the
+				as JUnit, written by the CLI in the same step, and a JUnit report can turn the undecided
+				findings that lean fail into failures, so a likely failure doesn't pass as a skipped test.
+				See <a href="/configuration/ci-integration/">CI integration</a> for the
 				full templates.
 			</p>
 
@@ -53,7 +58,8 @@ export function ConfigurationContent() {
 				title and every occurrence's summary and hint resolve from a key-based dictionary, with
 				graceful per-string fallback to English rather than a blank or an error. Five languages
 				ship today (English, French, German, Spanish, Japanese), and a result always tells you exactly which
-				locale it used, so nothing silently degrades without you knowing. See{" "}
+				locale it used, so nothing silently degrades without you knowing. The steps for answering
+				an undecided finding ("How to check") come in the same five languages. See{" "}
 				<a href="/configuration/locales/">Locales</a> for coverage and how to supply your own
 				dictionary.
 			</p>

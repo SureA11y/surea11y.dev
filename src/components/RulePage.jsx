@@ -52,7 +52,60 @@ function LabeledRichText({ label, text, locale }) {
 	});
 }
 
-export function RulePage({ rule, locale = "en" }) {
+// Core translates every rule's "How to check" steps itself; a locale it
+// doesn't ship falls back to English, marked as such.
+function ReviewQuestions({ review, locale }) {
+	return (
+		<>
+			<h2 id="how-to-check">{t("rulePage.howToCheck", locale)}</h2>
+			<p>
+				<Trans
+					k="rulePage.howToCheckIntro"
+					locale={locale}
+					values={{
+						cantTell: <code>cantTell</code>,
+						howToCheck: <code>howToCheck</code>,
+						schema: (
+							<a href="/results-reports/output-schema/#how-to-check">
+								{tOr("nav:/results-reports/output-schema/", locale, "Output schema")}
+							</a>
+						),
+					}}
+				/>
+			</p>
+			{review.map(({ code, text }) => {
+				const textLang = text[locale] ? locale : "en";
+				const { steps, passWhen, failWhen } = text[textLang];
+				return (
+					<div className="review-question" key={code}>
+						<h3 id={`how-to-check-${code.toLowerCase().replace(/_/g, "-")}`}>
+							<code translate="no">{code}</code>
+						</h3>
+						<div lang={textLang === locale ? undefined : textLang}>
+							<ol>
+								{steps.map((step, i) => (
+									<li key={i}>{step}</li>
+								))}
+							</ol>
+							<p>
+								<strong>{t("rulePage.passWhen", textLang)}</strong>
+								{wordSeparator(textLang)}
+								{passWhen}
+							</p>
+							<p>
+								<strong>{t("rulePage.failWhen", textLang)}</strong>
+								{wordSeparator(textLang)}
+								{failWhen}
+							</p>
+						</div>
+					</div>
+				);
+			})}
+		</>
+	);
+}
+
+export function RulePage({ rule, review, locale = "en" }) {
 	return (
 		<article>
 			<p className="rule-kicker" translate="no">
@@ -210,6 +263,8 @@ export function RulePage({ rule, locale = "en" }) {
 					</p>
 				</div>
 			))}
+
+			{review?.length ? <ReviewQuestions review={review} locale={locale} /> : null}
 
 			{rule.relatedRuleIds.length ? (
 				<>

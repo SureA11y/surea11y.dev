@@ -7,68 +7,76 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-12">« Mes résultats de CI ont changé après la mise à jour vers core 1.12 »</h2>
+				<h2 id="results-changed-1-14">« Mes résultats ont changé après la mise à jour vers core 1.14 »</h2>
 				<p>
-					Ce que le moteur trouve reste pour l’essentiel le même ; c’est l’endroit où cela apparaît,
-					et quelques règles, qui ont changé. Les changements les plus susceptibles de se voir dans
-					un pipeline :
+					La 1.14 renvoie plus de <code>cantTell</code> et affirme moins, délibérément. Les
+					changements les plus susceptibles de se voir dans un pipeline :
 				</p>
 				<ul>
 					<li>
-						<strong>Un titre vide échoue.</strong>{" "}
-						<a href="/rules/empty-heading/"><code>empty-heading</code></a> fait échouer un titre
-						sans nom accessible, là où elle posait la question. C’est une bonne pratique : elle
-						s’exécute donc dans une analyse sans sélection ou avec les bonnes pratiques ajoutées,
-						pas sous une cible WCAG, des tags ou un profil. Corrigez le titre, ou analysez une
-						cible WCAG.
+						<strong>Aucune règle composite WCAG ne renvoie <code>pass</code>.</strong> Un critère
+						n’est satisfait que si ses règles vérifient tout ce qu’il demande, et aucun n’est encore
+						listé comme vérifié entièrement : un critère dont toutes les règles renvoient{" "}
+						<code>pass</code> est donc <code>cantTell</code> (
+						<code>composite.rollup.cantTell.partialCheck</code>). Un critère dont les règles n’ont
+						rien trouvé n’est <code>notApplicable</code> que pour 2.4.3, 2.4.4, 2.4.7, 2.4.9, 2.5.3
+						et 4.1.1, et <code>cantTell</code> sinon (
+						<code>composite.rollup.cantTell.partialCoverage</code>). Une règle en échec fait
+						toujours échouer son critère. Un tableau de bord ou un contrôle qui compte les critères
+						satisfaits n’en verra aucun ; voir <a href="#why-criterion-canttell">l’entrée
+						ci-dessous</a> et{" "}
+						<a href="/conformance/wcag-mapping/#when-a-criterion-passes">Correspondance de conformité WCAG</a>.
 					</li>
 					<li>
-						<strong>
-							<a href="/rules/label-in-name/"><code>label-in-name</code></a> compte le texte masqué
-							seulement par <code>aria-hidden</code>
-						</strong>
-						, puisqu’il reste affiché :{" "}
-						<code>{'Download <span aria-hidden="true">gizmo</span> specification'}</code> nommé
-						« Download specification » échoue désormais au 2.5.3.
+						<strong>Deux règles demandent davantage.</strong>{" "}
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> pose la
+						question pour chaque titre de page, pas seulement les titres génériques ou issus d’un
+						modèle, car savoir si un titre décrit sa page revient à une personne (G88).{" "}
+						<a href="/rules/duplicate-id/"><code>duplicate-id</code></a> pose la question du 4.1.1
+						aussi avec les WCAG 2.0 et 2.1, que les errata de 2023 considèrent comme satisfait, sauf
+						si un profil déclare <code>keepsParsing: true</code>, comme <code>en301549-v3.2.1</code>.
 					</li>
 					<li>
-						<strong>Les analyses qui nomment des vérifications rapportent leurs critères.</strong>{" "}
-						Des identifiants de règles, un tag qui ne désigne aucun niveau WCAG ou les bonnes
-						pratiques remplissent désormais <code>rulesResults</code> avec les critères auxquels
-						ces règles appartiennent, là où il était vide ; un critère dont les autres règles
-						n’ont pas été sélectionnées est <code>cantTell</code>, vérifié en partie. Définissez{" "}
-						<code>engineOptions.wcagLevel</code> (<code>.wcagLevel()</code> dans les bindings,{" "}
-						<code>--wcag-level</code> dans la CLI) pour les limiter à un niveau. Voir{" "}
-						<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>.
+						<strong>Onze nouvelles règles</strong>, dont les premières pour le 3.3.1 (
+						<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>),
+						le 4.1.3 (<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>)
+						et le 1.4.5 (<a href="/rules/image-of-text/"><code>image-of-text</code></a>). La plupart
+						posent une question ;{" "}
+						<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>,{" "}
+						<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>{" "}
+						et <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a> peuvent échouer, tout
+						comme <a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>, qui
+						vérifie désormais les contraintes entre attributs (<code>aria-valuemin</code> au-dessus
+						de <code>aria-valuemax</code>, par exemple). Voir{" "}
+						<a href="/rules/">le catalogue des règles</a>.
 					</li>
 					<li>
-						<strong>Cinq règles comptent pour davantage de critères</strong>, selon la
-						correspondance des règles ACT du W3C : <code>input-image-alt-present</code> ajoute le
-						4.1.2, <code>aria-roles-valid</code> le 1.3.1, <code>link-name-present</code> et{" "}
-						<code>link-name-quality</code> le 2.4.9 (AAA), et{" "}
-						<code>meta-refresh-timing-absent</code> les 2.2.4 et 3.2.5 (AAA). Les constats ne
-						changent pas, mais les agrégats 1.3.1 et 4.1.2 peuvent désormais échouer là où ils
-						réussissaient.
+						<strong>Certains échecs deviennent des questions, et de nouveaux échecs
+						apparaissent.</strong> <code>td-has-header</code> pose une seule question sur un grand
+						tableau sans cellule d’en-tête au lieu de faire échouer chaque cellule, et{" "}
+						<code>form-control-single-label</code> pose la question pour un champ à deux libellés.
+						Le contraste est mesuré sur une plus grande part de ce que la page dessine (le texte sur
+						le canevas de la page dans chaque schéma de couleurs, <code>::first-line</code>,{" "}
+						<code>font-size-adjust</code>, un placeholder dont la page a choisi les couleurs) : de
+						nouveaux échecs de contraste peuvent donc apparaître.
 					</li>
 					<li>
-						<strong>Les noms des suites JUnit sont les mêmes dans toutes les langues</strong> (
-						<code>WCAG 4.1.2</code>), et le titre passe dans la propriété <code>title</code> de la
-						suite. Un tableau de bord qui suit les tests par nom de suite les affiche une fois comme
-						nouveaux. Voir <a href="/results-reports/junit-report/">Rapport JUnit</a>.
+						<strong>Certains constats ont un nouveau code de raison.</strong> Dix-sept règles qui
+						n’en donnaient pas en donnent un, et quelques codes sont scindés selon la cause. Une
+						baseline écrite par la 1.13 y correspond toujours jusqu’à la 1.15 ; réécrivez-la avec{" "}
+						<code>migrateBaselineEntries</code> (voir{" "}
+						<a href="#baseline-after-upgrade">l’entrée ci-dessous</a>). Une alerte Code Scanning
+						pour un tel constat se ferme et revient comme nouvelle.
 					</li>
 					<li>
-						<strong>Le contraste est mesuré tel que la page est dessinée.</strong> Dans un
-						navigateur, le texte d’une page sans arrière-plan, le texte généré (<code>::before</code>,{" "}
-						<code>::after</code>, <code>::marker</code>) et un <code>&lt;select&gt;</code> fermé sont
-						mesurés, là où ils étaient laissés de côté ou en <code>cantTell</code> : de nouveaux
-						échecs de contraste peuvent donc apparaître. Un caractère isolé qui tient lieu de nom à
-						son contrôle, comme « X » dans un bouton nommé « Close », fait l’objet d’une question
-						plutôt que d’un échec sous le rapport.
-					</li>
-					<li>
-						<strong>Les composants web sans nom deviennent des questions.</strong> Un élément
-						personnalisé défini sans nom lisible est <code>cantTell</code> là où il échouait ; voir{" "}
-						<a href="#web-component-canttell">l’entrée sur les composants web</a>.
+						<strong>Chaque <code>cantTell</code> dit comment y répondre.</strong> Le constat d’une
+						règle de core porte les étapes de <code>howToCheck</code>, et certains portent un{" "}
+						<code>lean</code>, le sens vers lequel pointent les indices de la page. Le résultat reste{" "}
+						<code>cantTell</code>, et rien ne bloque sur un <code>lean</code> sans que vous le
+						demandiez (<code>leanFailAs</code>). Le{" "}
+						<a href="/results-reports/html-report/">rapport HTML</a> regroupe ces constats en échecs
+						probables, réussites probables et constats à examiner par une personne. Voir le{" "}
+						<a href="/results-reports/output-schema/#leans">schéma de sortie</a>.
 					</li>
 				</ul>
 				<p>
@@ -462,11 +470,35 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2>« Une analyse sans erreur (<code>pass</code> partout) signifie-t-elle que la page est conforme WCAG ? »</h2>
+				<h2 id="why-criterion-canttell">
+					« Toutes les vérifications renvoient <code>pass</code> : pourquoi chaque critère WCAG
+					est-il <code>cantTell</code> ? »
+				</h2>
+				<p>
+					Depuis la 1.14, une règle composite WCAG dans <code>rulesResults</code> ne renvoie{" "}
+					<code>pass</code> que pour un critère dont les règles vérifient tout ce qu’il demande, et
+					aucun critère n’est encore listé ainsi (<code>COMPLETE_CHECK</code> dans{" "}
+					<code>src/coverage/complete-applicability.js</code>). Quand toutes les règles d’un critère
+					renvoient <code>pass</code>, sa règle composite est <code>cantTell</code>, avec le{" "}
+					<code>reasonCode</code> <code>composite.rollup.cantTell.partialCheck</code> : les parties
+					que vérifient les règles sont respectées, et une personne vérifie le reste.{" "}
+					<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a> constate
+					que <code>{'<html lang="fr">'}</code> désigne une langue, pas que la page est en français.
+					De même, un critère dont les règles n’ont rien trouvé n’est <code>notApplicable</code> que
+					si elles trouvent tous les cas auxquels il s’applique, et sinon <code>cantTell</code>, avec{" "}
+					<code>composite.rollup.cantTell.partialCoverage</code>. Une règle en échec fait toujours
+					échouer son critère. Présentez-les comme « vérifications réussies, revue nécessaire » et
+					« rien trouvé à vérifier », jamais comme réussis ; voir{" "}
+					<a href="/conformance/wcag-mapping/#when-a-criterion-passes">Correspondance de conformité WCAG</a>.
+				</p>
+			</article>
+
+			<article>
+				<h2>« Une analyse sans échec signifie-t-elle que la page est conforme WCAG ? »</h2>
 				<p>
 					Non : voir <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
 					<strong>
-						Un <code>pass</code> signifie que les vérifications exécutées sont revenues sans erreur
+						Le <code>pass</code> d’une règle signifie que les vérifications exécutées sont revenues sans erreur
 						sur la partie de la page qu’elles ont analysée.
 					</strong>{" "}
 					Une analyse limitée à une partie de la page, à certaines règles, ou exécutée sous jsdom
@@ -487,7 +519,15 @@ export function FaqContent() {
 					<code>cantTell</code> sans faire échouer la CI, car faire échouer un build sur quelque
 					chose que le moteur n’a explicitement pas pu déterminer habitue les gens à ignorer le
 					contrôle. Une équipe qui veut que chacun soit examiné avant une fusion peut au contraire
-					bloquer sur eux ; dans les deux cas, gardez-les à part des échecs. Voir <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> si vous
+					bloquer sur eux ; dans les deux cas, gardez-les à part des échecs. Entre les deux, un build
+					peut ne bloquer que sur les constats qui penchent vers l’échec, là où les indices de la page
+					pointent vers un échec : <code>leanFailAs</code> dans les rapports{" "}
+					<a href="/results-reports/junit-report/#options">JUnit</a> et{" "}
+					<a href="/results-reports/sarif-report/#options">SARIF</a>, ou{" "}
+					<code>leaningFailures(result)</code> (voir le{" "}
+					<a href="/results-reports/output-schema/#leans">schéma de sortie</a>). Chaque constat{" "}
+					<code>cantTell</code> d’une règle de core dit comment y répondre dans{" "}
+					<code>howToCheck</code>. Voir <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> si vous
 					voulez modifier ce comportement (par exemple via un contrat de politique personnalisé),
 					et{" "}
 					<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
@@ -526,6 +566,43 @@ export function FaqContent() {
 					(qui n’a pas accès à la portée de vos modules Node). Voir{" "}
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> pour les deux
 					patterns détaillés.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="baseline-after-upgrade">
+					« Après une mise à jour, ma baseline signale des constats connus comme nouveaux et leurs
+					entrées comme obsolètes »
+				</h2>
+				<p>
+					L’identité d’un constat comprend son code de raison, et la 1.14 a donné des codes à
+					dix-sept règles qui n’en avaient pas et a scindé quelques codes selon la cause. Une
+					baseline écrite par la 1.13 continue de correspondre à ces constats avec la 1.14.x, grâce
+					à <code>src/baseline-moves.json</code> ; un constat dont le résultat a changé avec la mise
+					à jour est nouveau ou disparaît malgré tout, et le journal des modifications explique
+					pourquoi. Réécrivez les codes du fichier avec <code>migrateBaselineEntries</code> de{" "}
+					<code>@surea11y/core/baseline</code>, ou régénérez-le et examinez le diff, avant la 1.15.
+					Voir <a href="/conformance/baseline/#upgrading">Baseline / allowlist</a>.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="stylesheets-not-readable">
+					« <code>css-orientation-lock</code> pose une question avec{" "}
+					<code>STYLESHEETS_NOT_READABLE</code> »
+				</h2>
+				<p>
+					Le script d’une page ne peut pas lire une feuille de style servie par une autre origine
+					(un CDN, un service de polices) : les règles qui lisent le CSS ne peuvent donc pas savoir
+					ce qu’elle contient. Donnez son texte à l’analyse dans{" "}
+					<code>engineOptions.styleSheetTexts</code> : <code>preloadStyleSheets()</code>, ou{" "}
+					<code>runa11yCoreInPageAsync</code> dans le bundle navigateur, récupère celles que le
+					serveur partage, et un outil qui pilote le navigateur peut récupérer les autres depuis
+					l’extérieur de la page. Voir « Style sheets from another origin » dans{" "}
+					<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, le guide d’intégration sur GitHub.
 				</p>
 			</article>
 		</>

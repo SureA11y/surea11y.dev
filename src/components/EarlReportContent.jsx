@@ -182,8 +182,8 @@ export function EarlReportContent() {
 				implementation may <em>not</em> do is produce a false positive: failing an example the rule
 				says should pass, or that is inapplicable. That is the gate worth watching, and it is a
 				property of the rules rather than of this reporter. As of the last full run the engine
-				produces <strong>zero false positives</strong> across the 942 examples W3C publishes for
-				its 59 matched rules — see{" "}
+				produces <strong>zero false positives</strong> across the 957 examples W3C publishes for
+				its 60 matched rules — see{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a>, and
 				re-run <code>scripts/act-testcase-check.js</code> for the live figure rather than trusting
 				this one indefinitely.

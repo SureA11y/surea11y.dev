@@ -8,7 +8,9 @@ export function HtmlReportContent() {
 				Ein eigenständiger HTML-Bericht, den Sie nach einem Scan im Browser öffnen können — ohne
 				Server, ohne externe Ressourcen, ohne Netzwerkanfragen. Gedacht für Personen in QA und
 				manueller Prüfung, die die Ergebnisse eines Scans durchblättern möchten, statt rohes JSON oder eine
-				Zusammenfassung im Terminal zu lesen.
+				Zusammenfassung im Terminal zu lesen. <a href="/sample-report.html">Öffnen Sie einen Beispielbericht</a>: eine
+				kleine Bezahlseite, gescannt mit dem Listener- und dem Live-Region-Hook, mit einem Befund in
+				jeder Gruppe.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
 			<p>
@@ -25,14 +27,35 @@ export function HtmlReportContent() {
 					anwendbaren Prüfungen bestanden“) plus ein gestapelter Balken mit Legende (Icon +
 					Bezeichnung + Anzahl — der Status wird nie nur über Farbe vermittelt), aufgeschlüsselt
 					nach Ergebnis (<code>fail</code>/<code>cantTell</code>/<code>pass</code>/
-					<code>notApplicable</code>).
+					<code>notApplicable</code>). Ist keine Regel fehlgeschlagen und waren einige anwendbar,
+					sagt ein Hinweis unter der Schlagzeile, dass das keine Aussage über die Konformität der
+					Seite ist, und nennt, was eine Person weiterhin prüft: die Befunde, die eine Prüfung
+					brauchen, die Bedienung per Tastatur, wie ein Screenreader die Seite vorliest, und die
+					Inhalte selbst.
 				</li>
 				<li>
 					<strong>Prüfenswert</strong>: eine Karte pro Regel mit <code>fail</code>-/
 					<code>cantTell</code>-Vorkommen (nicht eine pro Vorkommen — eine Regel mit vielen
 					identischen Vorkommen ist eine Sache, die Aufmerksamkeit verdient, nicht viele), jeweils
 					mit Schweregrad, Chip(s) für das WCAG-Erfolgskriterium, einem repräsentativen Vorkommen
-					und der Gesamtzahl der Vorkommen. Begrenzt auf die 24 Regeln mit der höchsten Priorität,
+					und der Gesamtzahl der Vorkommen. Regeln mit dem Ergebnis <code>fail</code> stehen
+					zuerst. Die Befunde, die eine Prüfung brauchen, folgen in drei Gruppen: die, deren
+					Anhaltspunkte auf einen Fehler weisen („Wahrscheinlich nicht erfüllt: bitte
+					bestätigen“), die, deren Anhaltspunkte auf ein Bestehen weisen („Wahrscheinlich erfüllt:
+					bitte bestätigen“), und die, die nur eine Person beurteilen kann („Muss eine Person
+					prüfen“), so wie <code>reviewGroupOf(check, occurrence)</code> aus{" "}
+					<code>@surea11y/core</code> sie einordnet, damit ein Tool, das eine Prüfliste sortiert,
+					sie genauso sortiert. Jede Karte der ersten beiden Gruppen sagt, warum sie in diese
+					Richtung tendiert (das{" "}
+					<a href="/results-reports/output-schema/#leans"><code>lean</code></a> des Vorkommens).
+					Jede dieser Karten hat einen standardmäßig eingeklappten Abschnitt „So prüfen Sie es“ mit
+					den Schritten, um die Frage zu beantworten, und was als erfüllt und was als nicht erfüllt
+					gilt (das{" "}
+					<a href="/results-reports/output-schema/#how-to-check"><code>howToCheck</code></a> des
+					Vorkommens). Eine Regel, deren Befunde in verschiedene Richtungen tendieren, hat in jeder
+					Gruppe eine Karte. Innerhalb jeder Gruppe steht der höchste Schweregrad zuerst (von
+					kritisch bis gering) und bei gleichem Schweregrad die Regel mit mehr Vorkommen. Begrenzt
+					auf die 24 Regeln mit der höchsten Priorität,
 					darüber hinaus mit einem Hinweis auf weitere. Eine Regel, die nicht abgeschlossen wurde
 					(sie hat eine Ausnahme geworfen), erhält ebenfalls eine Karte, die das mit ihrem Fehler
 					sagt, da die Seite nicht gegen sie geprüft wurde. Eine Regel mit einem{" "}
@@ -53,7 +76,9 @@ export function HtmlReportContent() {
 					<li>
 						<strong>Am nächsten an der Grenze</strong>: erscheint, wenn der Scan Abstandswerte enthält
 						(<a href="/results-reports/output-schema/#margin"><code>margin</code> bei einem Prüfergebnis</a>).
-						Eine Zeile je Regel, die gegen einen Schwellenwert misst: ihr knappster bestandener Wert,
+						Eine Zeile je Regel, deren knappstes bestandenes Element ihrem Schwellenwert nahe kam
+						(innerhalb des Bands der Regel, etwa 10 % eines Kontrastverhältnisses), wie der Hinweis
+						über der Tabelle sagt: ihr knappster bestandener Wert,
 						die Grenze, der verbleibende Abstand und das Element. Pixel werden auf ganze Zahlen
 						gerundet, unter einem Pixel steht „weniger als 1 px“; Verhältnisse zeigen zwei
 						Nachkommastellen. Eine Regel, die nur knapp bestanden hat, kann schon durch eine kleine
@@ -68,7 +93,11 @@ export function HtmlReportContent() {
 					EN-301-549-Klausel, die es wiedergibt, sofern es eine gibt und der Scan
 					EN-301-549-Klauseln angefordert hat) mit seinem Ergebnis, einer Aufschlüsselung nach
 					bestanden/nicht bestanden/zu prüfen/nicht anwendbar (mit einer Zeile „Teilweise geprüft“,
-					wenn der Scan nur einen Teil der Regeln des Kriteriums ausgewählt hat, etwa „Teilweise geprüft: 1 von 2 Prüfungen war für diesen Scan nicht ausgewählt“, siehe{" "}
+					wenn die Regeln des Kriteriums nur einen Teil dessen prüfen, was es verlangt, sodass eine
+					Person den Rest prüft, etwa „Teilweise geprüft: Die Prüfungen decken nur einen Teil dieses
+					Kriteriums ab, den Rest prüft ein Mensch“, oder wenn der Scan nur einen Teil seiner Regeln
+					ausgewählt hat, etwa „Teilweise geprüft: 1 von 2 Prüfungen war für diesen Scan nicht
+					ausgewählt“, siehe{" "}
 					<a href="/results-reports/output-schema/#partly-checked">Ein teilweise geprüftes
 					Kriterium</a>) und den atomaren Regeln, die dazu
 					beigetragen haben, einschließlich einer eigenen Regel, die dem Kriterium zugeordnet ist.
@@ -90,7 +119,9 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Vollständige technische Daten</strong> (standardmäßig eingeklappt): eine
 					Übersicht (Kacheln pro Ergebnis) und eine durchsuchbare, (nach Ergebnis) filterbare,
-					paginierte Tabelle aller einzelnen Vorkommen des gesamten Scans. Zeigt sie kein
+					paginierte Tabelle aller einzelnen Vorkommen des gesamten Scans; ein Befund, der eine
+					Prüfung braucht und eine Tendenz hat, zeigt sie unter seiner Zusammenfassung
+					(„Wahrscheinlich nicht erfüllt: …“), und die Suche findet sie. Zeigt sie kein
 					Vorkommen, enthält sie eine Zeile, die das sagt: Der Scan hat keine erfasst, oder die
 					Filter blenden alle aus.
 				</li>
@@ -172,7 +203,15 @@ export function HtmlReportContent() {
 				Ergebnisses (gesetzt mit <code>engineOptions.timestamp</code>), in UTC angezeigt, sodass
 				dasselbe Ergebnis immer dieselbe Seite ergibt; ein Ergebnis ohne Zeitstempel erhält das
 				Datum der Erzeugung. <code>options.title</code> ist optional
-				(Standardwert <code>"surea11y scan report"</code>).
+				(Standardwert ist der Titel in der Sprache des Berichts, auf Deutsch{" "}
+				<code>"surea11y-Scanbericht"</code>). <code>options.packs</code> ist die Liste der Packs,
+				die der Scan ausgeführt hat (<code>engineOptions.packs</code>), falls er welche ausgeführt
+				hat: In Node fügt der Bericht Befunden, die eine Prüfung brauchen und ohne sie kommen, die
+				Schritte „So prüfen Sie es“ hinzu, die einer Core-Regel und der Basisregel einer Variante
+				immer, die eigenen Schritte einer Pack-Regel (ihr <code>meta.review</code>, auf Englisch)
+				nur, wenn er die Packs erhält (siehe <a href="/configuration/packs/#rules">Packs</a>). Im
+				Browser (<code>surea11y.report.js</code>) zeigt er die Schritte, die das Ergebnis bereits
+				mitführt.
 			</p>
 
 			<h2>Umfang</h2>

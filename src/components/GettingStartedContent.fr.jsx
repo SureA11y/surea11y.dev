@@ -12,7 +12,13 @@ const choiceRows = [
 	{
 		need: "Analyser du HTML statique",
 		recommended: <a href="/getting-started/cli/">CLI</a>,
-		reason: "Aucune intégration à écrire : une seule commande sur un fichier, une URL ou une étape de CI.",
+		reason: (
+			<>
+				Aucune intégration à écrire : une seule commande sur des fichiers, des URL, un sitemap ou
+				une étape de CI ; avec <code>--browser</code>, elle analyse aussi les pages rendues par leur
+				JavaScript.
+			</>
+		),
 	},
 	{
 		need: "Vous utilisez déjà Cypress, Selenium, Puppeteer ou WebdriverIO",
@@ -82,11 +88,13 @@ export function GettingStartedContent() {
 			/>
 			<CodeBlock
 				lines={[
-					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.12.0",
-					"  pass: 13   fail: 3   cantTell: 3   notApplicable: 115",
 					"",
-					"  occurrences by tier: fail: 3   cantTell: 4",
+					"surea11y scan: file:///path/to/index.html",
+					"  engine: @surea11y/core 1.14.0",
+					"  pass: 14   fail: 3   cantTell: 2   notApplicable: 126",
+					"",
+					"  occurrences by tier: fail: 3   cantTell: 2",
+					"  needs review: likely fail: 0   likely pass: 0   needs a person: 2",
 					"",
 					"FAIL (3 rule(s)):",
 					"",
@@ -100,9 +108,9 @@ export function GettingStartedContent() {
 					"",
 					"  contrast-minimum  (serious, 1 fail occurrence(s))",
 					"    - html > body > main > p",
-					"      Element has insufficient color contrast of 2.85:1 (foreground: #999999,",
-					"      background: #ffffff, font size: 16px, font weight: normal). Expected",
-					"      contrast ratio of 4.5:1 (normal text).",
+					"      Element has insufficient color contrast of 2.85:1 (foreground:",
+					"      #999999, background: #ffffff, font size: 16px, font weight: normal).",
+					"      Expected contrast ratio of 4.5:1 (normal text).",
 					"      hint: Change the text color, the background color, or both, so the",
 					"      contrast ratio reaches at least 4.5:1.",
 					"",
@@ -111,43 +119,53 @@ export function GettingStartedContent() {
 					"      This page has no <title> element.",
 					"      hint: Add a <title> that says what the page is about or what it is for.",
 					"",
-					"cantTell — needs human review (3 rule(s)): contrast-computable, link-name-quality,",
+					"cantTell — needs human review (2 rule(s)): link-name-quality,",
 					"manual-review",
 					"",
 					"criteria (WCAG 2.2):",
-					"  fail       1.4.3 Contrast: minimum; 1.4.6 Contrast: enhanced;",
-					"             2.4.2 Page titled",
-					"  cantTell   2.1.1 Keyboard; 2.4.3 Focus order;",
-					"             2.4.4 Link Purpose (In Context); 2.4.7 Focus visible;",
-					"             2.4.9 Link Purpose (Link Only)",
-					"  pass       1.3.1 Info and Relationships; 2.2.2 Pause, Stop, Hide;",
-					"             2.4.1 Bypass Blocks; 3.1.1 Language of page;",
-					"             4.1.2 Name, role, value: accessible name;",
-					"             4.1.2 Name, role, value: ARIA validity",
-					"  notApplicable: 20",
-					"  A criterion that passes here means the checks that ran found nothing in it,",
-					"  not that the page conforms.",
+					"  fail       1.4.3 Contrast: minimum; 1.4.6 Contrast: enhanced; 2.4.2 Page",
+					"             titled",
+					"  cantTell   1.1.1 Non-text content: text alternatives; 1.2.1 Audio-only",
+					"             and video-only (prerecorded): transcript; 1.2.2 Captions",
+					"             (Prerecorded); 1.3.1 Info and Relationships; 1.3.4",
+					"             Orientation; 1.3.5 Identify Input Purpose; 1.4.1 Use of",
+					"             Color; 1.4.2 Audio Control; 1.4.4 Resize Text; 1.4.5 Images",
+					"             of Text; 1.4.12 Text Spacing; 2.1.1 Keyboard; 2.1.3 Keyboard",
+					"             (No Exception); 2.2.1 Timing Adjustable; 2.2.2 Pause, Stop,",
+					"             Hide; 2.2.4 Interruptions; 2.4.1 Bypass Blocks; 2.4.3 Focus",
+					"             order; 2.4.4 Link Purpose (In Context); 2.4.6 Headings and",
+					"             Labels; 2.4.7 Focus visible; 2.4.9 Link Purpose (Link Only);",
+					"             2.5.8 Target size: minimum; 3.1.1 Language of page; 3.1.2",
+					"             Language of Parts; 3.2.5 Change on Request; 3.3.1 Error",
+					"             Identification; 3.3.2 Labels or Instructions; 3.3.8",
+					"             Accessible Authentication (Minimum); 4.1.2 Name, role, value:",
+					"             accessible name; 4.1.2 Name, role, value: ARIA validity;",
+					"             4.1.3 Status Messages",
+					"  notApplicable: 2",
+					"  A criterion that passes here means the checks that ran found nothing in",
+					"  it, not that the page conforms.",
 				]}
 			/>
 			<p>
 				Deux problèmes dont le moteur est certain, qui donnent donc <code>fail</code> : le texte à
 				faible contraste, en échec aux seuils AA et AAA, et l’absence de{" "}
-				<code>&lt;title&gt;</code>. Puis une liste <code>cantTell</code> à examiner par une personne (« <span lang="en">Click here</span> » est-il un bon nom de
-				lien, ce même texte à faible contraste passe-t-il une autre vérification, y a-t-il ici
-				quelque chose qui demande un examen manuel), et, parmi les 115 résultats{" "}
-				<code>notApplicable</code>, <code>target-size-minimum</code> : cette règle ne peut pas
-				s’exécuter sans une vraie mise en page CSS, dont une analyse de HTML statique ne dispose
-				pas.
+				<code>&lt;title&gt;</code>. Puis une liste <code>cantTell</code> à examiner par une personne
+				(« <span lang="en">Click here</span> » est-il un bon nom de lien, y a-t-il ici quelque
+				chose qui demande un examen manuel) ; la ligne <code>needs review</code> indique qu’aucune
+				des deux questions ne penche d’un côté, si bien que toutes deux demandent une personne.
+				Parmi les 126 résultats <code>notApplicable</code> figure <code>target-size-minimum</code> :
+				cette règle ne peut pas s’exécuter sans une vraie mise en page CSS, dont une analyse de
+				HTML statique ne dispose pas (<code>--browser</code> la lui donne).
 			</p>
 			<p>
 				Le dernier bloc présente le même résultat par critère WCAG 2.2 : 1.4.3, 1.4.6 et 2.4.2
-				donnent <code>fail</code> ; 2.1.1, 2.4.3, 2.4.4, 2.4.7 et 2.4.9 sont <code>cantTell</code>,
-				laissés à une personne ; 1.3.1, 2.2.2, 2.4.1, 3.1.1 et les deux entrées de 4.1.2 donnent{" "}
-				<code>pass</code> ; et les 20 critères sans rien à juger sont seulement comptés. Sa
-				dernière ligne est celle à retenir : qu’un critère passe signifie que les vérifications
-				exécutées n’y ont rien trouvé, pas que la page est conforme. Voir{" "}
-				<a href="/results-reports/output-schema/">Résultats et rapports</a> pour la signification
-				de chaque champ d’un résultat complet.
+				donnent <code>fail</code> ; tous les autres critères vérifiés par l’analyse sont{" "}
+				<code>cantTell</code>, laissés à une personne ; et les 2 sans rien à juger sont seulement
+				comptés. Aucun n’apparaît en <code>pass</code> : depuis <code>@surea11y/core</code> 1.14,
+				un critère ne réussit que si ses règles vérifient tout ce qu’il demande, et aucun ne le
+				fait encore, si bien que, lorsqu’elles réussissent toutes, le reste revient à une personne.
+				Voir <a href="/results-reports/output-schema/">Résultats et rapports</a> pour la
+				signification de chaque champ d’un résultat complet.
 			</p>
 			<ul>
 				<li>
@@ -163,7 +181,7 @@ export function GettingStartedContent() {
 					<a href="/getting-started/test-matchers/">test-matchers</a>, pour Jest ou Vitest.
 				</li>
 				<li>
-					<strong>HTML statique depuis un terminal ou un pipeline de CI :</strong> la{" "}
+					<strong>Des pages depuis un terminal ou un pipeline de CI, en HTML statique ou dans un navigateur :</strong> la{" "}
 					<a href="/getting-started/cli/">CLI</a>.
 				</li>
 				<li>

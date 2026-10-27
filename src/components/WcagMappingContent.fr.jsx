@@ -1,4 +1,5 @@
 import React from "react";
+import engine from "../data/engine.generated.json";
 import { CodeBlock } from "./design-system/core/CodeBlock.jsx";
 import { DataTable } from "./design-system/data/DataTable.jsx";
 import { Callout } from "./design-system/feedback/Callout.jsx";
@@ -30,15 +31,38 @@ const precedenceRows = [
 		id: "na",
 		condition: (
 			<>
-				Tous les contributeurs <code>notApplicable</code>
+				Tous les contributeurs <code>notApplicable</code>, pour un critère dont les règles trouvent
+				tous les cas auxquels il s’applique
 			</>
 		),
 		outcome: <code>notApplicable</code>,
 	},
 	{
+		id: "na-partial",
+		condition: (
+			<>
+				Tous les contributeurs <code>notApplicable</code>, pour tout autre critère
+			</>
+		),
+		outcome: (
+			<>
+				<code>cantTell</code> (<code>composite.rollup.cantTell.partialCoverage</code>)
+			</>
+		),
+	},
+	{
 		id: "pass",
-		condition: "Sinon (tous exécutés, aucun fail/cantTell, pas tous N/A)",
+		condition: "Sinon (tous exécutés, aucun fail/cantTell, pas tous N/A), pour un critère dont les règles vérifient tout ce qu’il demande",
 		outcome: <code>pass</code>,
+	},
+	{
+		id: "pass-partial",
+		condition: "Sinon, pour tout autre critère",
+		outcome: (
+			<>
+				<code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>)
+			</>
+		),
 	},
 ];
 
@@ -74,7 +98,7 @@ export function WcagMappingContent() {
 					un agrégat généré de toutes les règles atomiques associées à un CS, qui vous donne un
 					verdict pass/fail/cantTell/notApplicable par CS au lieu de devoir agréger vous-même des
 					dizaines de résultats atomiques. Voir{" "}
-					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-34`}>
+					<a href={`${core}/docs/RULE_CATALOG.md#composite-wcag-sc-rollup-rules-${engine.composites}`}>
 						la liste complète
 					</a>{" "}
 					(par exemple, <code>wcag-1.1.1-non-text-content</code> agrège 21 règles atomiques).
@@ -92,14 +116,52 @@ export function WcagMappingContent() {
 				]}
 				rows={precedenceRows}
 			/>
+			<h3 id="when-a-criterion-passes">Quand un critère est satisfait, et quand il est non applicable</h3>
 			<p>
-				Autrement dit : <strong>un <code>pass</code> composite signifie réellement, de façon
-				déterministe, que « toutes les vérifications automatisées applicables à ce CS sont
-				revenues sans problème », mais ce n’est pas à lui seul une déclaration de conformité
-				WCAG.</strong> Si une facette de ce CS n’a aucune couverture automatisée (voir{" "}
-				<code>coverage-report.md</code>), un <code>pass</code> composite ne dit rien de cette
-				facette ; il n’affirme pas qu’elle est correcte. Consultez le tableau des facettes avant
-				de considérer un <code>pass</code> composite comme « CS entièrement vérifié ».
+				Depuis la 1.14, un critère n’est satisfait que si ses règles vérifient tout ce qu’il
+				demande, comme les WCAG ne le tiennent pour satisfait que s’il l’est entièrement. Des
+				règles qui renvoient toutes <code>pass</code> disent seulement que les parties qu’elles
+				vérifient sont respectées : <a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>{" "}
+				constate que <code>{'<html lang="fr">'}</code> désigne une langue, pas que la page est en
+				français (3.1.1), et <a href="/rules/page-title-present/"><code>page-title-present</code></a>{" "}
+				que la page a un titre, pas qu’il décrit la page (2.4.2). Un tel critère est{" "}
+				<code>cantTell</code>, avec le code de raison{" "}
+				<code>composite.rollup.cantTell.partialCheck</code>, et le{" "}
+				<a href="/results-reports/html-report/">rapport HTML</a> indique qu’il a été vérifié en
+				partie (« Vérifié en partie ») : une personne vérifie le reste. Les critères que leurs
+				règles vérifient entièrement sont listés dans{" "}
+				<code>src/coverage/complete-applicability.js</code> (<code>COMPLETE_CHECK</code>), chacun
+				avec sa raison, et il n’y en a encore aucun : chacun demande quelque chose que les règles
+				ne voient pas, qu’il s’agisse de savoir si une alternative textuelle, un libellé, un titre
+				ou le texte d’un lien dit ce qu’il faut, ou comment un contenu qu’un script dessine ou
+				modifie y répond. <strong>Aucune règle composite WCAG ne renvoie donc <code>pass</code> en
+				1.14.</strong>
+			</p>
+			<p>
+				De même, un critère n’est <code>notApplicable</code> que si ses règles trouvent tous les cas
+				auxquels il s’applique : les liens pour 2.4.4 et 2.4.9, les éléments focalisables pour
+				2.4.3 et 2.4.7, les composants munis d’un libellé pour 2.5.3, le balisage pour 4.1.1. Les
+				champs de formulaire (1.3.5, 3.3.2) et les cibles de pointeur (2.5.8) ne figurent pas dans
+				cette liste : un champ construit avec un rôle ARIA, un champ sans <code>autocomplete</code>{" "}
+				ou un élément qui n’est une cible que par un script peuvent se trouver sur une page où ces
+				règles n’ont rien trouvé. Pour tout autre critère, des règles qui n’ont rien trouvé disent
+				seulement que les cas qu’elles cherchent sont absents : un script qui redirige après un
+				délai est une limite de temps (2.2.1) sans <code>{'<meta http-equiv="refresh">'}</code>, et
+				un passage dans une autre langue (3.1.2) n’a pas forcément de <code>lang</code>. Dans les
+				termes de WCAG-EM, « absent » suppose d’avoir regardé partout où le contenu pourrait se
+				trouver ; un tel critère est donc <code>cantTell</code>, avec le code de raison{" "}
+				<code>composite.rollup.cantTell.partialCoverage</code>.
+			</p>
+			<p>
+				Autrement dit : <strong>un <code>fail</code> composite est une violation réelle et
+				déterministe, et un <code>cantTell</code> composite dont tous les contributeurs ont renvoyé{" "}
+				<code>pass</code> (<code>partialCheck</code>) dit que toutes les vérifications automatisées
+				de ce critère sont revenues sans problème, et que le reste revient à une personne.</strong>{" "}
+				Ce n’est pas à lui seul une déclaration de conformité. Le tableau des facettes (
+				<code>coverage-report.md</code>) montre quelles parties de chaque critère ont une
+				couverture automatisée, et lesquelles une personne vérifie. Présentez-les comme
+				« vérifications réussies, revue nécessaire » et « rien trouvé à vérifier », jamais comme
+				réussis.
 			</p>
 			<p>
 				Le tableau <code>data.details.contributors</code> d’une règle composite (voir{" "}
@@ -182,8 +244,8 @@ export function WcagMappingContent() {
 				Une règle porte un tag de niveau par critère de succès auquel elle correspond, et rien de
 				plus : une règle associée uniquement à un critère AA porte le tag <code>wcag2aa</code> et{" "}
 				<em>pas</em> <code>wcag2a</code>. Demander <code>{"{ tags: ['wcag2aa'] }"}</code> seul
-				exécute donc les 9 règles associées à un critère AA de la version 2.0, et non la centaine
-				qui constitue une cible A + AA. Listez chaque niveau que vous visez, ou utilisez{" "}
+				exécute donc les 11 règles associées à un critère AA de la version 2.0, et non les 105
+				qui constituent une cible A + AA en 2.0. Listez chaque niveau que vous visez, ou utilisez{" "}
 				<code>runOnly.wcag</code>, qui n’a pas ce problème. <code>engineOptions.profile</code>{" "}
 				(<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>, <code>en301549-v3.2.1</code>,{" "}
 				<code>section508</code>) le fait aussi pour vous ; voir{" "}
@@ -206,8 +268,12 @@ export function WcagMappingContent() {
 				Avec une cible 2.2, une règle associée uniquement au CS 4.1.1 Analyse syntaxique ne peut
 				pas renvoyer <code>fail</code> : elle s’exécute, rapporte ses occurrences et renvoie{" "}
 				<code>cantTell</code> avec un champ <code>wcagVersionScope</code> qui explique cette
-				conversion. Une analyse par défaut ne bloque donc jamais sur un critère absent des WCAG
-				2.2, et une analyse 2.0/2.1 obtient toujours un vrai verdict sur le 4.1.1.
+				conversion. Depuis la 1.14, avec une cible 2.0 ou 2.1, elle fait de même, avec{" "}
+				<code>wcagVersionScope.by: "errata"</code> : les errata de 2023 du W3C à ces versions
+				considèrent le 4.1.1 comme toujours satisfait pour un contenu en HTML ou en XML. Aucune
+				analyse WCAG ne bloque donc sur le 4.1.1 ; seul un profil dont la norme en garde le texte,
+				un profil qui déclare <code>keepsParsing: true</code> comme le fait{" "}
+				<code>en301549-v3.2.1</code>, peut encore le faire échouer.
 			</p>
 			<p>
 				Les règles composites, contrairement aux règles atomiques, <em>sont</em> filtrées de façon
@@ -365,13 +431,18 @@ export function WcagMappingContent() {
 					une incertitude passée sous silence.
 				</li>
 				<li>
+					Une règle composite ne renvoie jamais <code>pass</code> pour un critère que ses règles
+					ne vérifient qu’en partie : quand elles renvoient toutes <code>pass</code>, elle est{" "}
+					<code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>), donc un{" "}
+					<code>pass</code> ne passe jamais sous silence une partie qu’aucune règle ne vérifie.
+				</li>
+				<li>
 					Le tableau de couverture des facettes vous indique exactement quelles parties de quels
-					CS n’ont aucune couverture automatisée : vous savez ainsi où un <code>pass</code> ne dit
-					rien plutôt que d’être exhaustif.
+					CS n’ont aucune couverture automatisée, et donc ce qui revient à une personne.
 				</li>
 			</ul>
 			<p>
-				Un <code>pass</code> composite sur tous les CS de votre niveau cible signifie : <em>toutes
+				L’absence de <code>fail</code> composite sur tous les CS de votre niveau cible signifie : <em>toutes
 				les vérifications automatisables pour ce niveau sont revenues sans problème.</em> C’est la
 				part automatisable de la conformité, énoncée précisément, et non un substitut à la revue
 				manuelle que les WCAG exigent elles-mêmes.

@@ -7,70 +7,73 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-12">
-					"Mis resultados de CI cambiaron al actualizar a core 1.12"
-				</h2>
+				<h2 id="results-changed-1-14">"Mis resultados cambiaron al actualizar a core 1.14"</h2>
 				<p>
-					Lo que encuentra el motor es en gran parte lo mismo; cambió dónde se refleja, y algunas
-					reglas. Los cambios que más probablemente se noten en un pipeline:
+					La 1.14 informa de más <code>cantTell</code> y afirma menos, a propósito. Los cambios que
+					más probablemente se noten en un pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>Un encabezado vacío falla.</strong>{" "}
-						<a href="/rules/empty-heading/"><code>empty-heading</code></a> hace fallar un
-						encabezado sin nombre accesible, donde antes preguntaba por él. Es una buena práctica,
-						así que se ejecuta en un análisis sin selección o con las buenas prácticas añadidas, no
-						con un objetivo de WCAG, etiquetas o un perfil. Arregla el encabezado, o analiza con un
-						objetivo de WCAG.
+						<strong>Ningún resultado agregado de WCAG se cumple.</strong> Un criterio se cumple solo
+						cuando sus reglas comprueban todo lo que pide, y todavía no hay ninguno marcado como
+						comprobado por completo, así que un criterio cuyas reglas se cumplen todas queda en{" "}
+						<code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>). Uno cuyas
+						reglas no encontraron nada es <code>notApplicable</code> solo para 2.4.3, 2.4.4, 2.4.7,
+						2.4.9, 2.5.3 y 4.1.1, y <code>cantTell</code> en los demás (
+						<code>composite.rollup.cantTell.partialCoverage</code>). Una regla que falla sigue
+						haciendo fallar su criterio. Un panel o una validación que cuente criterios cumplidos no
+						verá ninguno; consulta <a href="#why-criterion-canttell">la entrada de más abajo</a> y{" "}
+						<a href="/conformance/wcag-mapping/#when-a-criterion-passes">Mapeo de conformidad con WCAG</a>.
 					</li>
 					<li>
-						<strong>
-							<a href="/rules/label-in-name/"><code>label-in-name</code></a> cuenta el texto oculto
-							solo con <code>aria-hidden</code>
-						</strong>
-						, ya que se sigue pintando:{" "}
-						<code>{'Download <span aria-hidden="true">gizmo</span> specification'}</code> con el
-						nombre "Download specification" ahora falla el 2.5.3.
+						<strong>Dos reglas preguntan más.</strong>{" "}
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> pregunta por
+						cada título de página, no solo por los genéricos o de plantilla, ya que si un título
+						describe su página lo decide una persona (G88).{" "}
+						<a href="/rules/duplicate-id/"><code>duplicate-id</code></a> pregunta por el 4.1.1 también
+						con WCAG 2.0 y 2.1, ya que las erratas de 2023 lo dan por satisfecho, salvo que un
+						perfil declare <code>keepsParsing: true</code>, como hace <code>en301549-v3.2.1</code>.
 					</li>
 					<li>
-						<strong>Los análisis que nombran comprobaciones informan de sus criterios.</strong> Los
-						ids de regla, una etiqueta que no nombra ningún nivel de WCAG o las buenas prácticas
-						rellenan ahora <code>rulesResults</code> con los criterios a los que pertenecen esas
-						reglas, donde antes estaba vacío; un criterio cuyas otras reglas no se seleccionaron es{" "}
-						<code>cantTell</code>, comprobado en parte. Define{" "}
-						<code>engineOptions.wcagLevel</code> (<code>.wcagLevel()</code> en las integraciones,{" "}
-						<code>--wcag-level</code> en la CLI) para limitarlos a un nivel. Consulta{" "}
-						<a href="/conformance/wcag-mapping/">Mapeo de conformidad con WCAG</a>.
+						<strong>Once reglas nuevas</strong>, entre ellas las primeras para el 3.3.1 (
+						<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>),
+						el 4.1.3 (<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>)
+						y el 1.4.5 (<a href="/rules/image-of-text/"><code>image-of-text</code></a>). La mayoría
+						pregunta;{" "}
+						<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>,{" "}
+						<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>{" "}
+						y <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a> pueden fallar, igual
+						que <a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>, que
+						ahora comprueba las restricciones entre atributos (<code>aria-valuemin</code> por encima
+						de <code>aria-valuemax</code>, por ejemplo). Consulta{" "}
+						<a href="/rules/">el catálogo de reglas</a>.
 					</li>
 					<li>
-						<strong>Cinco reglas cuentan para más criterios</strong>, tal como las asocian las
-						reglas ACT del W3C: <code>input-image-alt-present</code> añade el 4.1.2,{" "}
-						<code>aria-roles-valid</code> el 1.3.1, <code>link-name-present</code> y{" "}
-						<code>link-name-quality</code> el 2.4.9 (AAA), y{" "}
-						<code>meta-refresh-timing-absent</code> el 2.2.4 y el 3.2.5 (AAA). Los hallazgos no
-						cambian, pero los resultados agregados del 1.3.1 y el 4.1.2 pueden fallar ahora donde
-						antes aprobaban.
+						<strong>Algunos fallos pasan a ser preguntas, y aparecen fallos nuevos.</strong>{" "}
+						<code>td-has-header</code> pregunta una vez por una tabla grande sin celdas de
+						encabezado en lugar de hacer fallar cada celda, y <code>form-control-single-label</code>{" "}
+						pregunta por un campo con dos etiquetas. El contraste se mide en más de lo que dibuja la
+						página (el texto sobre el lienzo de la página en cada esquema de color,{" "}
+						<code>::first-line</code>, <code>font-size-adjust</code>, un placeholder cuyos colores
+						eligió la página), así que pueden aparecer fallos de contraste nuevos.
 					</li>
 					<li>
-						<strong>Los nombres de las suites JUnit son iguales en todos los idiomas</strong> (
-						<code>WCAG 4.1.2</code>), y el título pasa a la propiedad <code>title</code> de la
-						suite. Un panel que sigue las pruebas por nombre de suite las mostrará una vez como
-						nuevas. Consulta <a href="/results-reports/junit-report/">Informe JUnit</a>.
+						<strong>Algunos hallazgos tienen un código de motivo nuevo.</strong> Diecisiete reglas
+						que no daban ninguno ahora lo dan, y algunos códigos se dividen según la causa. Un
+						baseline escrito por la 1.13 sigue coincidiendo con ellos hasta la 1.15; reescríbelo con{" "}
+						<code>migrateBaselineEntries</code> (consulta{" "}
+						<a href="#baseline-after-upgrade">la entrada de más abajo</a>). Una alerta de Code
+						Scanning de un hallazgo así se cierra y vuelve como nueva.
 					</li>
 					<li>
-						<strong>El contraste se mide tal como se dibuja la página.</strong> En un navegador, el
-						texto de una página sin fondo, el texto generado (<code>::before</code>,{" "}
-						<code>::after</code>, <code>::marker</code>) y un <code>&lt;select&gt;</code> cerrado se
-						miden, donde antes se dejaban fuera o eran <code>cantTell</code>, así que pueden
-						aparecer nuevos fallos de contraste. Por un carácter suelto que hace de nombre de su
-						control, como la "X" de un botón llamado "Close", se pregunta en lugar de hacerlo
-						fallar por debajo de la relación de contraste.
-					</li>
-					<li>
-						<strong>Los componentes web sin nombre pasan a ser preguntas.</strong> Un elemento
-						personalizado definido sin un nombre legible es <code>cantTell</code> donde antes
-						fallaba; consulta{" "}
-						<a href="#web-component-canttell">la entrada sobre componentes web</a>.
+						<strong>Cada <code>cantTell</code> dice cómo responderlo.</strong> El hallazgo de una
+						regla de core lleva los pasos de <code>howToCheck</code>, y algunos llevan un{" "}
+						<code>lean</code>, hacia dónde apunta la evidencia de la página. El resultado sigue
+						siendo <code>cantTell</code>, y nada bloquea por un <code>lean</code> salvo que lo pidas
+						(<code>leanFailAs</code>). El <a href="/results-reports/html-report/">informe HTML</a>{" "}
+						agrupa estos hallazgos en probables fallos, probables cumplimientos y los que debe
+						revisar una persona. Consulta el{" "}
+						<a href="/results-reports/output-schema/#leans">esquema de salida</a>.
 					</li>
 				</ul>
 				<p>
@@ -463,11 +466,35 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2>"¿Un análisis limpio (<code>pass</code> en todo) significa que la página es conforme con WCAG?"</h2>
+				<h2 id="why-criterion-canttell">
+					"Todas las comprobaciones se cumplen, ¿por qué cada criterio de WCAG queda en{" "}
+					<code>cantTell</code>?"
+				</h2>
+				<p>
+					Desde la 1.14, un resultado agregado de WCAG en <code>rulesResults</code> se cumple solo
+					para un criterio cuyas reglas comprueban todo lo que pide, y todavía no hay ninguno
+					marcado así (<code>COMPLETE_CHECK</code> en{" "}
+					<code>src/coverage/complete-applicability.js</code>). Cuando todas las reglas de un
+					criterio se cumplen, su resultado agregado es <code>cantTell</code> con{" "}
+					<code>reasonCode</code> <code>composite.rollup.cantTell.partialCheck</code>: las partes que
+					comprueban las reglas se cumplen, y el resto lo comprueba una persona.{" "}
+					<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a> comprueba
+					que <code>{'<html lang="fr">'}</code> nombra un idioma, no que la página esté en francés.
+					Del mismo modo, un criterio cuyas reglas no encontraron nada es <code>notApplicable</code>{" "}
+					solo cuando encuentran todos los casos a los que se aplica, y si no, <code>cantTell</code>{" "}
+					con <code>composite.rollup.cantTell.partialCoverage</code>. Una regla que falla sigue
+					haciendo fallar su criterio. Muéstralos como «comprobaciones superadas, requiere revisión»
+					y «nada que comprobar encontrado», nunca como cumplidos; consulta{" "}
+					<a href="/conformance/wcag-mapping/#when-a-criterion-passes">Mapeo de conformidad con WCAG</a>.
+				</p>
+			</article>
+
+			<article>
+				<h2>"¿Un análisis limpio (sin fallos) significa que la página es conforme con WCAG?"</h2>
 				<p>
 					No. Consulta <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
 					<strong>
-						Un <code>pass</code> significa que las comprobaciones que se ejecutaron salieron limpias
+						El <code>pass</code> de una regla significa que las comprobaciones que se ejecutaron salieron limpias
 						en la parte de la página que analizaron.
 					</strong>{" "}
 					Un análisis limitado a una parte de la página, a algunas reglas, o ejecutado bajo jsdom
@@ -487,8 +514,15 @@ export function FaqContent() {
 					<code>cantTell</code> sin hacer fallar la CI por ellos, ya que hacer fallar una
 					compilación por algo que el motor explícitamente no pudo determinar tiende a enseñar a la
 					gente a ignorar la validación. Un equipo que quiera revisar cada uno antes de fusionar
-					puede bloquear por ellos; en cualquier caso, mantenlos separados de los fallos.
-					Consulta <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> si quieres cambiar
+					puede bloquear por ellos; en cualquier caso, mantenlos separados de los fallos. Entre
+					ambas opciones, una compilación puede bloquearse solo por los hallazgos que apuntan a un
+					fallo, donde la evidencia de la página indica un fallo: <code>leanFailAs</code> en los
+					generadores de informes <a href="/results-reports/junit-report/#options">JUnit</a> y{" "}
+					<a href="/results-reports/sarif-report/#options">SARIF</a>, o{" "}
+					<code>leaningFailures(result)</code> (consulta el{" "}
+					<a href="/results-reports/output-schema/#leans">esquema de salida</a>). Cada hallazgo{" "}
+					<code>cantTell</code> de una regla de core dice cómo responderlo en{" "}
+					<code>howToCheck</code>. Consulta <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> si quieres cambiar
 					este comportamiento (por ejemplo, mediante un contrato de política personalizado), y{" "}
 					<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
 						<code>INTEGRATION.md</code>
@@ -526,6 +560,42 @@ export function FaqContent() {
 					y la vuelve a ejecutar dentro de la pestaña del navegador (que no tiene acceso al ámbito de
 					tus módulos de Node). Consulta <a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>{" "}
 					para ver ambos patrones desarrollados por completo.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="baseline-after-upgrade">
+					"Tras actualizar, mi baseline indica hallazgos conocidos como nuevos y sus entradas como
+					obsoletas"
+				</h2>
+				<p>
+					La identidad de un hallazgo incluye su código de motivo, y la 1.14 dio códigos a
+					diecisiete reglas que no tenían y dividió algunos códigos según la causa. Un baseline
+					escrito por la 1.13 sigue coincidiendo con esos hallazgos con la 1.14.x, gracias a{" "}
+					<code>src/baseline-moves.json</code>; un hallazgo cuyo resultado cambió con la
+					actualización es nuevo o desaparece igualmente, y el registro de cambios explica por qué.
+					Reescribe los códigos del archivo con <code>migrateBaselineEntries</code> de{" "}
+					<code>@surea11y/core/baseline</code>, o regenéralo y revisa el diff, antes de la 1.15.
+					Consulta <a href="/conformance/baseline/#upgrading">Baseline / allowlist</a>.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="stylesheets-not-readable">
+					"<code>css-orientation-lock</code> pregunta por <code>STYLESHEETS_NOT_READABLE</code>"
+				</h2>
+				<p>
+					El script de una página no puede leer una hoja de estilos que sirve otro origen (una CDN,
+					un servicio de fuentes), así que las reglas que leen CSS no saben qué contiene. Pásale su
+					texto al análisis en <code>engineOptions.styleSheetTexts</code>:{" "}
+					<code>preloadStyleSheets()</code>, o <code>runa11yCoreInPageAsync</code> en el bundle del
+					navegador, descarga las que el servidor comparte, y una herramienta que controla el
+					navegador puede descargar las demás desde fuera de la página. Consulta "Style sheets from
+					another origin" en{" "}
+					<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, la guía de integración en GitHub.
 				</p>
 			</article>
 		</>

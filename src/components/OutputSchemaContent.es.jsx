@@ -76,9 +76,9 @@ const topLevelRows = [
 				Contra qué versión de WCAG comprobó esta ejecución: tu{" "}
 				<code>engineOptions.wcagVersion</code>, o el <code>wcagVersion</code> del perfil del pack
 				que aplicó la ejecución, o lo que implicaban tus etiquetas de origen de versión, o el valor
-				predeterminado <code>"2.2"</code>. Hoy afecta a una sola cosa:{" "}
-				<strong>una regla mapeada únicamente al SC 4.1.1 <span lang="en">Parsing</span> no puede dar <code>fail</code>{" "}
-				bajo un objetivo 2.2</strong> (ver{" "}
+				predeterminado <code>"2.2"</code>. Para el SC 4.1.1 <span lang="en">Parsing</span> indica
+				por qué <strong>una regla mapeada únicamente a él no puede dar <code>fail</code></strong>:
+				2.2 lo eliminó, y las erratas de 2023 de 2.0 y 2.1 lo consideran siempre satisfecho (ver{" "}
 				<code>checksResults[i].wcagVersionScope</code> más abajo). Se informa una vez por
 				resultado: una ejecución tiene un solo objetivo en todo momento.
 			</>
@@ -190,8 +190,8 @@ const topLevelRows = [
 				partir del catálogo de core. Un resultado que ese catálogo no podría rellenar se queda
 				completo: todos los resultados de comprobación de un análisis con <code>packs</code>, el de
 				una regla personalizada, y uno cuyo título o descripción cambiaron los{" "}
-				<code>messages</code> del análisis. El resultado de una página vacía pasa de unos 236 KB a
-				80 KB.
+				<code>messages</code> del análisis. El resultado de una página vacía pasa de unos 263 KB a
+				90 KB.
 			</>
 		),
 	},
@@ -209,8 +209,9 @@ const topLevelRows = [
 				fuentes web aún se están cargando, así que esto es lo que necesitas para reproducir una
 				ejecución. <code>layout</code> indica si la página tenía diseño: <code>false</code> en jsdom
 				y otros emuladores de DOM, y entonces el viewport y los demás campos de renderizado se
-				omiten, ya que no describen nada que se haya medido; solo <code>internalsHook</code> puede
-				acompañarlo, donde la página ejecuta el hook. En un navegador,{" "}
+				omiten, ya que no describen nada que se haya medido; solo <code>internalsHook</code>,{" "}
+				<code>listenerHook</code> y <code>liveRegionHook</code> pueden acompañarlo, donde la página
+				los ejecuta. En un navegador,{" "}
 				<code>viewport</code> es <code>innerWidth</code>/<code>innerHeight</code> en píxeles CSS,{" "}
 				<code>devicePixelRatio</code> el de la página (el zoom del navegador también se refleja
 				aquí), <code>colorScheme</code> lo que coincide con <code>prefers-color-scheme</code>,{" "}
@@ -218,8 +219,12 @@ const topLevelRows = [
 				<code>"active"</code> con el alto contraste de Windows o los colores forzados emulados de
 				Chromium, <code>"none"</code> en caso contrario; las reglas miden los colores propios de la
 				página en ambos casos, ver{" "}
-				<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}>Forced colors</a>), y{" "}
-				<code>fonts</code> es <code>"loading"</code> mientras alguna de las fuentes de la página aún
+				<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#forced-colors`}>Forced colors</a>),{" "}
+				<code>forcedColorsCss</code> es <code>true</code> con colores forzados cuando el propio CSS
+				de la página reacciona a ellos de una forma que el análisis no puede evitar (una media query{" "}
+				<code>forced-colors</code>, que sigue coincidiendo, o un color del sistema como{" "}
+				<code>GrayText</code>, que sigue tomando el de la paleta forzada), así que los resultados de
+				contraste pueden diferir de los de un análisis sin colores forzados, y <code>fonts</code> es <code>"loading"</code> mientras alguna de las fuentes de la página aún
 				se está cargando, <code>"loaded"</code> en caso contrario. Un campo que la página no puede
 				informar se omite. Leerlos no añade no determinismo: igual que el DOM, son entrada. Para
 				obtener resultados que puedas comparar entre ejecuciones, espera a{" "}
@@ -245,7 +250,24 @@ const topLevelRows = [
 				elemento sin ellos no plantea ninguna duda; <code>"late"</code> cuando se instaló después de
 				ellos, o la página reemplazó <code>attachInternals</code> después, así que solo se leyeron
 				los internals adjuntados después. Sin hook el campo no aparece y el resultado es como
-				antes. Cada frame de un <a href="#cross-frame-result">resultado entre frames</a> lleva el
+				antes. <code>listenerHook</code> es lo mismo para el hook opcional de listeners (
+				<code>listenerHookScript()</code>, ver{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				): <code>"early"</code> cuando se instaló antes de los scripts de la página y sigue siendo
+				el <code>addEventListener</code> de la página, así que las reglas de teclado vieron todos
+				los listeners que la página añadió desde script y que falte uno demuestra que no lo hay;{" "}
+				<code>"late"</code> cuando se instaló después de ellos, o la página reemplazó{" "}
+				<code>addEventListener</code> después. <code>liveRegionHook</code> está presente solo donde
+				la página ejecuta el hook opcional de regiones vivas (<code>liveRegionHookScript()</code>,
+				ver{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>
+				): <code>"early"</code> cuando se instaló antes de que el documento terminara de cargarse,
+				así que vio todos los cambios en las regiones vivas de la página desde entonces;{" "}
+				<code>"late"</code> en caso contrario. Cada frame de un <a href="#cross-frame-result">resultado entre frames</a> lleva el
 				suyo.
 			</>
 		),
@@ -526,11 +548,21 @@ const occurrenceRows = [
 				un contrato estable. La única excepción es{" "}
 				<code>data.details.reasonCode</code>, que <strong>sí</strong> es estable: identifica{" "}
 				<em>cuál</em> de los hallazgos de una regla es este, y junto con <code>ruleId</code> y{" "}
-				<code>html</code> forma la huella sobre la que se indexan los baselines y SARIF. Consulta{" "}
+				<code>html</code> forma la huella sobre la que se indexan los baselines y SARIF. Una regla
+				puede ganar un código de motivo nuevo en una versión menor, o dividir uno según su causa;
+				consulta{" "}
 				<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>
 					<code>API_STABILITY.md</code>
 				</a>
-				. La página de cada regla enumera los campos que llevan sus hallazgos, en “Qué informa un
+				. Los campos de tamaño y razón de un fallo de contraste (<code>metrics.ratio</code>,{" "}
+				<code>metrics.threshold</code>, y <code>fontSizePx</code>, <code>fontSizePt</code>,{" "}
+				<code>fontWeight</code>, <code>isBold</code> e <code>isLargeText</code> de{" "}
+				<code>typography</code>) también son estables, para que un informe o un pack pueda saber
+				qué tipo de texto falló, y también lo son <code>element</code> en los hallazgos de{" "}
+				<code>list-children-valid</code>, <code>parentElement</code> en los de{" "}
+				<code>listitem-parent-valid</code> y <code>role</code> en los de{" "}
+				<code>aria-role-name-present</code>, que dicen qué tipo de lista o de widget falló. La
+				página de cada regla enumera los campos que llevan sus hallazgos, en “Qué informa un
 				hallazgo”.
 			</>
 		),
@@ -543,7 +575,9 @@ const occurrenceRows = [
 				A qué nivel pertenece esta ocurrencia, en una regla que clasificó sus hallazgos en un
 				nivel <code>fail</code> (con confianza) y un nivel <code>cantTell</code> (que necesita
 				revisión). Una regla que solo informa un nivel lo omite, en cuyo caso el propio{" "}
-				<code>outcome</code> del resultado es el nivel de la ocurrencia. El resultado siempre
+				<code>outcome</code> del resultado es el nivel de la ocurrencia.{" "}
+				<code>occurrenceOutcome(check, occurrence)</code>, de <code>@surea11y/core</code>, da el
+				nivel tal como lo lee cada generador de informes, en ambos casos. El resultado siempre
 				concuerda con los niveles: cualquier ocurrencia de nivel <code>fail</code> lo hace{" "}
 				<code>fail</code>, y un <code>fail</code> cuyas ocurrencias son todas de nivel{" "}
 				<code>cantTell</code> es <code>cantTell</code>, así que SARIF, JUnit, EARL y las líneas base
@@ -557,6 +591,8 @@ const occurrenceRows = [
 		),
 	},
 	{ id: "uncertainty", field: <code>uncertainty</code>, meaning: <>Por qué no se pudo decidir este hallazgo (ver <a href="#uncertainty-codes">Códigos de incertidumbre</a> más abajo).</> },
+	{ id: "lean", field: <code>lean</code>, meaning: <>Hacia dónde apunta este hallazgo sin decidir, cuando la página da indicios de ello (ver <a href="#leans">Tendencias</a> más abajo).</> },
+	{ id: "howToCheck", field: <code>howToCheck</code>, meaning: <>Cómo responde una persona a este hallazgo sin decidir (ver <a href="#how-to-check">Cómo comprobarlo</a> más abajo).</> },
 ];
 
 const uncertaintyRows = [
@@ -573,8 +609,10 @@ const rollupReasonRows = [
 	{ id: "anyCantTell", code: <code>composite.rollup.cantTell.anyCantTell</code>, outcome: <code>cantTell</code>, when: <>Ninguno falló, y uno es <code>cantTell</code>.</> },
 	{ id: "notSelectedChild", code: <code>composite.rollup.cantTell.notSelectedChild</code>, outcome: <code>cantTell</code>, when: <>Ninguno falló ni es <code>cantTell</code>, y algunos no se ejecutaron porque el análisis no los seleccionó: comprobado en parte.</> },
 	{ id: "missingChild", code: <code>composite.rollup.cantTell.missingChild</code>, outcome: <code>cantTell</code>, when: <>Ninguno falló ni es <code>cantTell</code>, y algunos no se ejecutaron por otro motivo.</> },
-	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>Todos los contribuyentes son <code>notApplicable</code>.</> },
+	{ id: "allInapplicable", code: <code>composite.rollup.notApplicable.allInapplicable</code>, outcome: <code>notApplicable</code>, when: <>Todos los contribuyentes son <code>notApplicable</code>, y encuentran todos los casos a los que se aplica el criterio.</> },
+	{ id: "partialCoverage", code: <code>composite.rollup.cantTell.partialCoverage</code>, outcome: <code>cantTell</code>, when: <>Todos los contribuyentes son <code>notApplicable</code>, pero el criterio (o un requisito de un estándar marcado como <code>partial</code>) puede aplicarse a contenido que no buscan, así que no se ha demostrado que la página no tenga ninguno.</> },
 	{ id: "emptyComposite", code: <code>composite.rollup.cantTell.emptyComposite</code>, outcome: <code>cantTell</code>, when: "El resultado agregado no tiene reglas." },
+	{ id: "partialCheck", code: <code>composite.rollup.cantTell.partialCheck</code>, outcome: <code>cantTell</code>, when: <>Ninguno falló ni es <code>cantTell</code>, y no todos son <code>notApplicable</code>, pero las reglas solo comprueban parte de lo que pide el criterio (o un requisito de un estándar marcado como <code>partial</code>): el resto lo comprueba una persona.</> },
 	{ id: "otherwise", code: <code>composite.rollup.pass.otherwise</code>, outcome: <code>pass</code>, when: "En cualquier otro caso." },
 ];
 
@@ -621,10 +659,13 @@ export function OutputSchemaContent() {
 					"      devicePixelRatio?: number,",
 					'      colorScheme?: "light" | "dark",',
 					'      forcedColors?: "active" | "none",',
+					"      forcedColorsCss?: true,          // under forced colors, when the page's own CSS reacts to them",
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
 					"      animationsSettled?: number,",
-					'      internalsHook?: "early" | "late"  // only where the page runs the internals hook',
+					'      internalsHook?: "early" | "late",  // only where the page runs the internals hook',
+					'      listenerHook?: "early" | "late",   // only where the page runs the listener hook',
+					'      liveRegionHook?: "early" | "late"  // only where the page runs the live-region hook',
 					"    }",
 					"  },",
 					"  url: string | null,",
@@ -754,7 +795,7 @@ export function OutputSchemaContent() {
 					"  occurrences: Occurrence[],",
 					"  title: string,",
 					"  description: string,",
-					"  i18n: { titleKey: string, descriptionKey: string } | null,",
+					"  i18n: { titleKey: string, descriptionKey: string, variantOfTitleKey?: string } | null,",
 					"  meta: {",
 					"    ruleId: string,",
 					"    ruleInterfaceVersion: string,",
@@ -778,6 +819,7 @@ export function OutputSchemaContent() {
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  variantOf?: string,      // a pack's variant only: the id of the rule it runs at other settings; i18n.variantOfTitleKey is that rule's titleKey",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
 					'    measure: string,       // "contrast-ratio" | "overflow-px" | "target-size-px" | ... (open set)',
@@ -795,7 +837,8 @@ export function OutputSchemaContent() {
 					"  wcagVersionScope?: {     // present only when the target WCAG version changed this outcome",
 					'    target: "2.0" | "2.1" | "2.2",',
 					"    removedSc: string[],",
-					'    coercedFrom: "fail"',
+					'    coercedFrom: "fail",',
+					'    by?: "errata"         // 2.0 or 2.1: their errata count the criterion as always satisfied',
 					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
@@ -852,9 +895,12 @@ export function OutputSchemaContent() {
 					<strong><code>wcagVersionScope</code></strong>: presente solo cuando la versión de WCAG
 					objetivo de la ejecución convirtió el <code>fail</code> de esta regla en un{" "}
 					<code>cantTell</code>: hoy eso significa una regla mapeada al SC 4.1.1 <span lang="en">Parsing</span> (
-					<code>duplicate-id</code>) bajo el objetivo 2.2 predeterminado, ya que 2.2 eliminó ese
-					criterio. <code>removedSc</code> enumera los criterios que dejaron de existir,{" "}
-					<code>target</code> es la versión que los eliminó, y <code>coercedFrom</code> es el
+					<code>duplicate-id</code>): bajo 2.2, que eliminó ese criterio, y bajo 2.0 y 2.1, cuyas
+					erratas de 2023 lo consideran siempre satisfecho para HTML y XML (
+					<code>by: "errata"</code>). Un perfil cuyo estándar conserva el texto de 4.1.1 (
+					<code>en301549-v3.2.1</code>, o el perfil de un pack con <code>keepsParsing</code>) no se
+					convierte. <code>removedSc</code> enumera los criterios afectados,{" "}
+					<code>target</code> es la versión de la ejecución, y <code>coercedFrom</code> es el
 					outcome que la propia regla devolvió. Las occurrences son las propias de la regla, sin
 					cambios: no se descartó nada, solo cambió el veredicto de conformidad. Ausente en
 					cualquier otro resultado, y <strong>nunca</strong> se indica a través de{" "}
@@ -869,8 +915,16 @@ export function OutputSchemaContent() {
 					<li id="margin">
 						<strong><code>margin</code></strong>: presente solo en una regla que declara uno en el
 						catálogo (<code>getChecksCatalog()[i].margin</code>,{" "}
-						<code>{"{ measure, unit, limit }"}</code>), cuando al menos un elemento alcanzó el umbral
-						de la regla. Indica el elemento que más se acercó al umbral cumpliéndolo, de modo que un{" "}
+						<code>{"{ measure, unit, limit, band? }"}</code>), cuando al menos un elemento alcanzó el
+						umbral de la regla y, si la declaración tiene un <code>band</code>, quedó dentro de él.{" "}
+						<code>band.relative</code> es una fracción del umbral: <code>contrast-minimum</code>,{" "}
+						<code>contrast-enhanced</code> y <code>link-in-text-block</code>, con <code>0.1</code>,
+						solo indican un margen para una razón a menos del 10 % de la que necesitaba (de 4,5 a 4,95
+						frente a 4,5:1, de 3 a 3,3 frente a 3:1). <code>band.absolute</code> es una cantidad en{" "}
+						<code>unit</code>: <code>target-size-minimum</code>, con <code>6</code>, solo indica un
+						objetivo de hasta 30 px, y <code>text-spacing-content-loss</code>, con <code>8</code>, una
+						línea solo desde 6 px dentro del borde de su caja. Un texto a 21:1 o un botón de 48 px no
+						está cerca de nada, y ningún margen lo dice. Indica el elemento que más se acercó al umbral cumpliéndolo, de modo que un{" "}
 						<code>pass</code> a 4,52:1 frente a 4,5:1, o a 0,4 px de cortar el texto, se distingue de
 						uno holgado. Va junto al resultado y no es un hallazgo: nunca añade, quita ni cambia una
 						ocurrencia, y las líneas base, SARIF, JUnit y EARL lo ignoran. También se indica en
@@ -923,15 +977,20 @@ export function OutputSchemaContent() {
 					<em>resuelto</em> (después de aplicar los valores predeterminados de locale/contrast),
 					no literalmente lo que pasaste: útil para confirmar qué vio realmente una regla dada,
 					especialmente el <code>locale</code> resuelto y <code>contrast.mode</code>/
-					<code>contrast.rootCanvasFallback</code>. Omite <code>messages</code>, los diccionarios con
+					<code>contrast.rootCanvasFallback</code>. <code>contrast.rootCanvasFallback</code> es
+					blanco cuando quien llama no dio ninguno, y <code>contrast.rootCanvasFallbackSet</code>{" "}
+					indica cuál: <code>true</code> para un color que dio quien llama, <code>false</code> para
+					el predeterminado. Omite <code>messages</code>, los diccionarios con
 					los que tradujo la ejecución (un archivo de locale aparte en el paquete para navegador, o tus
 					propias cadenas): son datos, no un ajuste, y una copia en cada resultado hacía que un
 					análisis ocupara decenas de megabytes. <code>engine.locale</code> indica qué diccionario se
-					usó. Otras dos opciones se reflejan tal como las vieron las reglas, para que el resultado
+					usó. Otras tres opciones se reflejan tal como las vieron las reglas, para que el resultado
 					siga siendo datos simples que <code>JSON.stringify</code> y <code>structuredClone</code>{" "}
 					(<code>postMessage</code>) puedan transportar: <code>probes</code> como la copia limitada
-					que leen las reglas, y <code>customRules</code> como <code>{"[{ id }]"}</code>, una entrada
-					por cada regla personalizada con id, sin sus funciones.
+					que leen las reglas, <code>customRules</code> como <code>{"[{ id }]"}</code>, una entrada
+					por cada regla personalizada con id, sin sus funciones, y <code>styleSheetTexts</code>{" "}
+					como <code>{"[{ href }]"}</code>, una entrada por cada hoja dada, sin su texto, ya que el
+					CSS de una página repetido en cada resultado se multiplicaba por el número de reglas.
 					</li>
 			</ul>
 
@@ -973,6 +1032,19 @@ export function OutputSchemaContent() {
 					'        | "equivalence-unknown" | "judgement-required" | "out-of-scope",',
 					"    needed?: string,       // what would settle the question",
 					"    evidence?: object      // what the rule did establish, rule-specific",
+					"  },",
+					"  lean?: {                 // present only on a cantTell-tier occurrence, and only with evidence",
+					'    toward: "pass" | "fail",',
+					"    why: string,           // localized: what in the page points that way",
+					"    signals: { signal: string, value: string | number | boolean | null }[],",
+					"    caution?: string,      // localized: what could make it wrong",
+					"    measured?: { agreed: number, cases: number, corpus?: string, coreVersion?: string },",
+					"    i18n?: { whyKey?: string, cautionKey?: string, params?: object }",
+					"  },",
+					"  howToCheck?: {           // present only on a cantTell-tier occurrence, when the rule says",
+					"    steps: string[],       // localized: what a person does, in order",
+					"    passWhen: string,      // localized: what they see if it passes",
+					"    failWhen: string       // localized: what they see if it fails",
 					"  },",
 					"  data?: {               // absent on manual-review's page-level finding",
 					"    visibilityFilter?: { eligible?: boolean, targetSet: string, accEligible: boolean | null, reasons: string[] },",
@@ -1031,6 +1103,112 @@ export function OutputSchemaContent() {
 				resultado no diga ya.
 			</p>
 
+			<h3 id="leans">Tendencias</h3>
+			<p>
+				Un <code>cantTell</code> puede apuntar igualmente hacia un lado. <code>lean</code> indica
+				hacia cuál, cuando la página da indicios de ello: <code>toward</code> es la respuesta que
+				esos indicios hacen probable, <code>why</code> dice cuáles son, y <code>signals</code>{" "}
+				enumera los hechos que leyó la regla, cada uno con un nombre en kebab-case y un valor
+				simple, para que una herramienta pueda mostrarlos o ponderarlos. <code>caution</code> dice
+				qué podría hacer que la tendencia se equivoque, cuando no queda claro por{" "}
+				<code>uncertainty.needed</code>.{" "}
+				<strong>El resultado sigue siendo <code>cantTell</code></strong>: una tendencia es un
+				consejo, no un veredicto, y nada de lo que lee resultados o niveles cambia por ella.{" "}
+				<a href={`${core}/docs/LEANS.md`}><code>LEANS.md</code></a> es la guía para quienes leen
+				informes y construyen herramientas: qué hallazgos tienen tendencia y por qué, cómo se mide
+				una tendencia y hasta qué punto fiarse de ella.
+			</p>
+			<p>
+				<code>lean</code> solo está presente donde la regla tiene indicios.{" "}
+				<strong>Su ausencia también es información</strong>: solo una persona puede juzgar este
+				caso. Solo está presente en una ocurrencia de nivel <code>cantTell</code>, igual que{" "}
+				<code>uncertainty</code>; el motor la descarta en una ocurrencia decidida, y descarta una
+				mal formada (un <code>toward</code> distinto de <code>pass</code> o <code>fail</code>, o
+				sin <code>why</code>) sin tocar el hallazgo. <code>measured</code> aparece cuando una
+				tendencia se ha contado frente a al menos cinco casos de respuesta conocida: cuántas veces
+				acertó (<code>agreed</code>) de cuántas (<code>cases</code>), de qué corpus salieron (
+				<code>corpus</code>, con la fecha en que se leyó) y qué versión de core los contó (
+				<code>coreVersion</code>). Los recuentos son por regla, código de motivo y dirección, a
+				partir de los casos de prueba de las W3C ACT Rules, y el motor los lleva consigo, así que
+				un resultado de cualquier punto de entrada los tiene. Una tendencia nunca contada, o
+				contada en menos casos, no lo tiene; no hay ningún número de confianza. Ninguna lo tiene
+				todavía: el primer recuento, en jsdom, vio 9 tendencias, ninguna en cinco casos.
+			</p>
+			<p>
+				<code>why</code> y <code>caution</code> están en el idioma del análisis; <code>i18n</code>{" "}
+				guarda sus claves y parámetros, como hace el <code>i18n</code> de una ocurrencia con{" "}
+				<code>summary</code> y <code>hint</code>. El propio motor da tendencia a un hallazgo: una
+				regla mapeada únicamente a un criterio que la versión de WCAG objetivo eliminó, o que las
+				erratas de 2023 consideran satisfecho, tiende a <code>pass</code> junto a su incertidumbre{" "}
+				<code>out-of-scope</code>.
+			</p>
+			<p>
+				<code>reviewGroupOf(check, occurrence)</code>, de <code>@surea11y/core</code>, indica a
+				qué grupo de una revisión va una ocurrencia: <code>'fail'</code>, <code>'leanFail'</code>,{" "}
+				<code>'leanPass'</code> u <code>'open'</code> (solo una persona puede juzgarla), los grupos
+				del <a href="/results-reports/html-report/">informe HTML</a>.{" "}
+				<code>leaningFailures(result, {"{ wcagOnly }"})</code> enumera los hallazgos que tienden a
+				fallo, los que cuenta una puerta con <code>leanFailAs</code> (
+				<a href="/results-reports/junit-report/#options">JUnit</a>,{" "}
+				<a href="/results-reports/sarif-report/#options">SARIF</a>).
+			</p>
+			<p>
+				Llegan tendencias nuevas en versiones menores, regla a regla, y una tendencia puede
+				retirarse si la medición muestra que se equivoca demasiado a menudo: trata una tendencia
+				como un consejo que puede estar o no,{" "}
+				<strong>nunca como parte de la identidad de un hallazgo</strong>. No entra en la huella.
+			</p>
+
+			<h3 id="how-to-check">Cómo comprobarlo</h3>
+			<p>
+				Un <code>cantTell</code> le pasa una pregunta a una persona. <code>howToCheck</code> le
+				dice cómo responderla: <code>steps</code>, unas pocas acciones en orden, empezando por el
+				elemento que nombra el hallazgo (“Ve con Tab hasta el elemento.”, “Observa si el indicador de
+				foco se queda en él.”), y luego <code>passWhen</code> y <code>failWhen</code>, lo que ve si cumple
+				y si falla, nombrando el criterio que incumple. Cada regla de core que puede devolver{" "}
+				<code>cantTell</code> los escribe para cada uno de sus códigos de motivo (su{" "}
+				<code>meta.review</code>), y cada ocurrencia de nivel <code>cantTell</code> recibe la
+				entrada de su código, en el idioma del análisis. El hallazgo de una variante (
+				<code>variantOf</code>) recibe los de su regla base cuando no tiene propios. Una regla de
+				un pack también puede escribirlos, en inglés (ver{" "}
+				<a href="/configuration/packs/#rules">Packs</a>); sus hallazgos los reciben cuando se
+				conocen los packs, como los conocen <code>runDomRulesInPage</code> con{" "}
+				<code>engineOptions.packs</code> y <code>addHowToCheck(result, {"{ packs }"})</code>. No
+				aparece en una ocurrencia decidida, en el hallazgo de una regla personalizada, en el de una
+				que reemplaza a otra (una regla personalizada o de un pack en{" "}
+				<code>overriddenBuiltinIds</code>), ni en el de una regla de un pack que no escribe
+				ninguno.
+			</p>
+			<p>
+				<strong>Los pasos se añaden después del análisis, en Node, no los añade el motor en la
+				página</strong>: el motor se inyecta en cada página y frame que abre un análisis, y no le
+				sirven de nada mil frases que ninguna regla lee. <code>runDomRulesInPage</code> los añade
+				a su resultado. Un resultado de <code>runa11yCoreInPage</code> ejecutado en una página (el
+				de un binding, el de una extensión) vuelve sin ellos; <code>addHowToCheck(result)</code>{" "}
+				devuelve una copia con ellos, y <code>howToCheckFor(ruleId, reasonCode, locale)</code> da
+				los de un hallazgo. Ambos leen del disco los diccionarios de revisión de core, así que
+				necesitan Node; un binding cuyo código se ejecuta en un navegador (Cypress) llama a{" "}
+				<code>applyHowToCheck(result, {"{ en, fr }"})</code> de{" "}
+				<code>@surea11y/core/how-to-check</code> con los diccionarios que importa de{" "}
+				<code>{"@surea11y/core/review/<locale>"}</code>, y obtiene los mismos pasos (
+				<a href={`${core}/docs/BINDING_AUTHORS_GUIDE.md`}><code>BINDING_AUTHORS_GUIDE.md</code></a>{" "}
+				muestra cómo lo hace un binding). El <a href="/results-reports/html-report/">informe HTML</a>{" "}
+				(<code>renderHtmlReport</code>) los añade en Node a un resultado que llega sin ellos; en el
+				navegador (<code>surea11y.report.js</code>) muestra los que lleva el resultado. Una
+				herramienta que muestra un resultado en otro idioma que el del análisis pasa{" "}
+				<code>{"{ locale }"}</code> a <code>addHowToCheck</code> o <code>applyHowToCheck</code> (
+				<code>{"addHowToCheck(result, { locale: 'de' })"}</code>, o una lista de locales, la
+				preferida primero; <code>renderHtmlReport</code> no lo admite): los pasos se dan en ese
+				idioma, incluidos los que ya estaban, con inglés para cualquier paso que le falte al locale.
+			</p>
+			<p>
+				Los pasos dan por hecho un navegador, sus herramientas de desarrollo (el árbol de
+				accesibilidad), un teclado y, en algunos casos, un lector de pantalla. A diferencia de{" "}
+				<code>uncertainty.needed</code>, que dice en una frase qué resolvería la cuestión, ellos
+				dicen cómo resolverla. Como una tendencia, son una guía, no parte de la identidad de un
+				hallazgo, y su redacción puede mejorar en cualquier versión.
+			</p>
+
 			<h2 id="composite-result">Un resultado compuesto (<code>rulesResults[i]</code>)</h2>
 			<p>
 				Los compuestos agregan varias reglas atómicas en un solo criterio de éxito de WCAG (por
@@ -1057,7 +1235,10 @@ export function OutputSchemaContent() {
 					"      criterion?: string,",
 					"      checksIds: string[],      // every atomic ruleId it rolls up, custom rules mapped to its criteria included",
 					"      customChecksIds?: string[], // the custom rules among them; absent when none",
-					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true }>,",
+					"      restatesWcag?: string[],  // a standard's rollup that restates WCAG criteria (applicability: 'wcag'): those criteria",
+					"      partial?: true,           // a standard's requirement its rules don't check in full (partial: true)",
+					"      contributors: Array<{ testId: string, outcome: string, severity?: string | null, custom?: true, notSelected?: true,",
+					"                            byReasonCode?: true, checkOutcome?: string, requirements?: string[] }>,",
 					"      metrics: { failCount, cantTellCount, notApplicableCount, passCount, missingCount }",
 					"    }",
 					"  }",
@@ -1070,10 +1251,26 @@ export function OutputSchemaContent() {
 				si no, <strong>cualquier <code>cantTell</code> (o una regla contribuyente que no se
 				ejecutó en absoluto, <code>missingCount &gt; 0</code>) → compuesto{" "}
 				<code>cantTell</code></strong>; si no, <strong>todos los contribuyentes{" "}
-				<code>notApplicable</code> → compuesto <code>notApplicable</code></strong>; si no,{" "}
-				<strong><code>pass</code></strong>. Consulta{" "}
+				<code>notApplicable</code> → compuesto <code>notApplicable</code></strong>, donde las
+				reglas encuentran todos los casos a los que se aplica el criterio, y <code>cantTell</code>{" "}
+				(<code>partialCoverage</code>) en caso contrario; si no,{" "}
+				<strong><code>pass</code></strong>, donde las reglas comprueban todo lo que pide el
+				criterio, y <code>cantTell</code> (<code>partialCheck</code>) en caso contrario.{" "}
+				<strong>Todavía no hay ningún criterio de WCAG catalogado como comprobado por completo,
+				así que hoy ningún resultado agregado de WCAG da <code>pass</code>.</strong> Consulta{" "}
 				<a href="/conformance/wcag-mapping/">Conformidad</a> para ver qué implica esto en una
 				afirmación de conformidad global.
+			</p>
+			<p>
+				El resultado agregado propio de un estándar puede juzgar una regla por sus hallazgos en
+				lugar de entera (ver <a href="/configuration/packs/">Packs</a>): su contribuyente indica
+				entonces <code>byReasonCode: true</code>, <code>outcome</code> es el resultado de la regla
+				en este resultado agregado (un <code>fail</code> cuyos hallazgos pertenecen todos a otro
+				sitio es aquí un <code>pass</code>) y <code>checkOutcome</code> el propio de la regla.
+				Cuando los hallazgos que cuentan para el resultado agregado indican a cuál de sus requisitos
+				pertenecen, <code>requirements</code> los enumera, y el{" "}
+				<code>meta.normativeMappings</code> del resultado agregado nombra esos para esa regla, no
+				todos los requisitos que comprueba la regla.
 			</p>
 			<p>
 				Las reglas de un resultado agregado de WCAG son su propia lista y cada regla de{" "}
@@ -1194,8 +1391,11 @@ export function OutputSchemaContent() {
 					"{",
 					'  "engine": {',
 					'    "tag": "a11ycore",',
+					'    "version": "1.14.0",',
 					'    "schemaVersion": "1.0.0",',
-					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" }',
+					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" },',
+					'    "wcagVersion": "2.2",',
+					'    "environment": { "layout": false }',
 					"  },",
 					'  "url": "https://example.test/",',
 					'  "title": "Example",',
@@ -1236,7 +1436,11 @@ export function OutputSchemaContent() {
 					'          "html": "<img src=\\"logo.png\\">",',
 					'          "structuralPath": [1, 0],',
 					'          "summary": "This <img> has no alt attribute.",',
-					'          "hint": "Add an alt attribute (use alt=\\"\\" only for decorative images)."',
+					'          "hint": "Add an alt attribute that says what the image shows, or alt=\\"\\" if the image is purely decorative.",',
+					'          "data": {',
+					'            "details": { "reasonCode": "TEXT_ALTERNATIVE_MISSING" },',
+					'            "visibilityFilter": { "eligible": true, "reasons": [], "targetSet": "acc", "accEligible": true }',
+					"          }",
 					"        }",
 					"      ]",
 					"    }",

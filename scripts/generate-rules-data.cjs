@@ -6,7 +6,11 @@
  * headers (the package ships src/checks) and docs/RULE_EXAMPLES.md's
  * hand-authored example pairs. Also writes src/data/engine.generated.json
  * (version/license) from the package's package.json, so pages that display
- * those values never drift from the release the site depends on. Reading the
+ * those values never drift from the release the site depends on, and
+ * src/data/rules.review.generated.json: each rule's "How to check" steps
+ * per cantTell reason code (meta.review, since core 1.14), in every locale
+ * core translates them into, read through core's own howToCheckFor so the
+ * site shows the same text a report does. Reading the
  * pinned devDependency rather than a ../core checkout keeps the site's rule
  * text on a release, and lets CI check it (docs:rules:check).
  *
@@ -25,6 +29,7 @@ const path = require('path');
 const CORE_DIR = path.dirname(require.resolve('@surea11y/core/package.json'));
 const OUT_PATH = path.join(__dirname, '..', 'src', 'data', 'rules.generated.json');
 const ENGINE_OUT_PATH = path.join(__dirname, '..', 'src', 'data', 'engine.generated.json');
+const REVIEW_OUT_PATH = path.join(__dirname, '..', 'src', 'data', 'rules.review.generated.json');
 
 function parseArgs(argv) {
   const out = {};
@@ -122,6 +127,7 @@ function readRuleMeta(checksDirAbs) {
       applicability: jsdocTag(source, 'applicability'),
       expectation: jsdocTag(source, 'expectation'),
       reports: jsdocTag(source, 'reports'),
+      reviewCodes: Object.keys((mod.meta && mod.meta.review) || {}),
       sourcePath: path.relative(CORE_DIR, file).split(path.sep).join('/')
     });
   }
@@ -245,6 +251,20 @@ function computeRelated(ruleIds) {
   return related;
 }
 
+// Core's Japanese review text spaces Japanese from Latin text and uses ASCII
+// parentheses; the site's Japanese leaves the spaces out (text-autospace
+// draws the gap) and uses full-width parentheses (check:typography). Only
+// whitespace and parenthesis width change; a call such as `blur()` stays.
+const JA_CHARS = '\\p{Script=Han}\\p{Script=Hiragana}\\p{Script=Katakana}ー々〆、。「」『』（）！？：；・…';
+const JA_SPACE = new RegExp(`(?<=[${JA_CHARS}])[ \\u00a0]+|[ \\u00a0]+(?=[${JA_CHARS}])`, 'gu');
+function unspaceJa(text) {
+  return text
+    .replace(/(?<![A-Za-z])\(|\((?!\))/g, '（')
+    .replace(/(?<!\()\)/g, '）')
+    .replace(JA_SPACE, '');
+}
+const UNSPACED_LOCALES = new Set(['ja']);
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -290,8 +310,35 @@ function main() {
 
   const json = JSON.stringify(rules, null, 2) + '\n';
 
+  // The locales core ships review dictionaries for (src/i18n/review/<code>.json).
+  const reviewLocales = fs
+    .readdirSync(path.join(CORE_DIR, 'src', 'i18n', 'review'))
+    .filter((f) => f.endsWith('.json'))
+    .map((f) => f.slice(0, -'.json'.length))
+    .sort();
+  // howToCheckFor is on the package entry point, not src/core.js.
+  const { howToCheckFor } = require(CORE_DIR);
+  const review = {};
+  for (const r of rules) {
+    const codes = meta.get(r.ruleId).reviewCodes;
+    if (!codes.length) continue;
+    review[r.ruleId] = codes.map((code) => {
+      const text = {};
+      for (const locale of reviewLocales) {
+        const h = howToCheckFor(r.ruleId, code, locale);
+        if (!h) throw new Error(`generate-rules-data: no howToCheck for ${r.ruleId} ${code} (${locale})`);
+        const fix = UNSPACED_LOCALES.has(locale) ? unspaceJa : (x) => x;
+        text[locale] = { steps: h.steps.map(fix), passWhen: fix(h.passWhen), failWhen: fix(h.failWhen) };
+      }
+      return { code, text };
+    });
+  }
+  const reviewJson = JSON.stringify(review, null, 2) + '\n';
+
   const corePkg = require(path.join(CORE_DIR, 'package.json'));
-  const engine = { version: corePkg.version, license: corePkg.license };
+  // The composite WCAG rollups aren't in getChecksCatalog(); pages quote
+  // their count, and RULE_CATALOG.md's heading anchor carries it.
+  const engine = { version: corePkg.version, license: corePkg.license, composites: core.getRulesCatalog().length };
   const engineJson = JSON.stringify(engine, null, 2) + '\n';
 
   if (args.check) {
@@ -300,6 +347,11 @@ function main() {
     let stale = false;
     if (current !== json) {
       console.error(`[generate-rules-data] ${OUT_PATH} is stale. Run: npm run docs:rules`);
+      stale = true;
+    }
+    const reviewCurrent = fs.existsSync(REVIEW_OUT_PATH) ? fs.readFileSync(REVIEW_OUT_PATH, 'utf8') : null;
+    if (reviewCurrent !== reviewJson) {
+      console.error(`[generate-rules-data] ${REVIEW_OUT_PATH} is stale. Run: npm run docs:rules`);
       stale = true;
     }
     if (engineCurrent !== engineJson) {
@@ -314,7 +366,9 @@ function main() {
   fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   fs.writeFileSync(OUT_PATH, json);
   fs.writeFileSync(ENGINE_OUT_PATH, engineJson);
+  fs.writeFileSync(REVIEW_OUT_PATH, reviewJson);
   console.log(`[generate-rules-data] wrote ${OUT_PATH} (${rules.length} rules)`);
+  console.log(`[generate-rules-data] wrote ${REVIEW_OUT_PATH} (${Object.keys(review).length} rules)`);
   console.log(`[generate-rules-data] wrote ${ENGINE_OUT_PATH} (v${engine.version}, ${engine.license})`);
 }
 

@@ -71,6 +71,20 @@ export function OverviewContent() {
 				GitHub, auf Englisch) den stabilen Vertrag, das Ausführen von Scans, die Wahl der Prüfungen
 				und wie man Ergebnisse darstellt, ohne mehr zu behaupten, als sie aussagen.
 			</p>
+			<p>
+				Für einen ersten Blick ohne Testsuite laden Sie das{" "}
+				<a href="/getting-started/standalone/">Standalone-Bundle</a> in eine Seite und scannen sie
+				aus der Browserkonsole: <code>await a11ycore.run()</code> scannt die Seite,{" "}
+				<code>a11ycore.table(result)</code> listet die Befunde auf, <code>a11ycore.highlight(result)</code>{" "}
+				umrahmt sie auf der Seite, und <code>await a11ycore.openReport(result)</code> öffnet den
+				HTML-Bericht.{" "}
+				<a href={`${core}/docs/INTEGRATION.md#from-the-browser-console`}>
+					<code>INTEGRATION.md</code>
+				</a>{" "}
+				(auf GitHub, auf Englisch) listet die weiteren Hilfsfunktionen auf, etwa{" "}
+				<code>a11ycore.inspect('headings')</code> für die Überschriften, Landmarks, Namen oder die
+				Fokusreihenfolge einer Seite.
+			</p>
 
 			<h2>Wie sich die Ergebnisse unterscheiden</h2>
 			<p>
@@ -109,6 +123,33 @@ export function OverviewContent() {
 				(2.0/2.1/2.2) ermittelt und angewendet wird.
 			</p>
 			<p>
+				Ein <code>cantTell</code> lässt Sie nicht mit einer bloßen Frage zurück. Jeder Befund dieser
+				Art, den eine Regel von core meldet, sagt, wie er sich beantworten lässt: einige Schritte,
+				ausgehend von dem Element, das er nennt, und was Sie sehen, wenn es erfüllt ist und wenn
+				nicht, in der Sprache des Scans. Wo die Seite Anhaltspunkte liefert, zeigt der Befund
+				außerdem eine Tendenz zu <code>pass</code> oder <code>fail</code>, mit den Fakten, die er
+				gelesen hat, seiner Begründung und dem, was ihn falsch machen könnte. Jede Tendenz wird an
+				den ACT-Testfällen des W3C gezählt, und sobald sie an mindestens fünf gezählt wurde, sagt
+				sie, wie oft sie richtig lag; bis dahin trägt sie gar keine Zahl, nie eine Schätzung. Das
+				Ergebnis bleibt <code>cantTell</code>: Eine Tendenz ordnet die Fragen, beantworten muss sie
+				weiterhin eine Person. Siehe{" "}
+				<a href="/results-reports/output-schema/#how-to-check">So prüfen Sie es</a> und{" "}
+				<a href="/results-reports/output-schema/#leans">Tendenzen</a> im Ausgabeschema sowie{" "}
+				<a href={`${core}/docs/LEANS.md`}><code>LEANS.md</code></a> (auf GitHub, auf Englisch)
+				dazu, wann ein Befund eine Tendenz bekommt und wie weit man ihr trauen kann.
+			</p>
+			<p>
+				Der HTML-Bericht ordnet die Fragen so, wie eine prüfende Person sie abarbeitet:
+				„Wahrscheinlich nicht erfüllt: bitte bestätigen“, „Wahrscheinlich erfüllt: bitte
+				bestätigen“ und „Muss eine Person prüfen“, jede Karte mit ihrer Begründung und ihren
+				Schritten unter „So prüfen Sie es“. In CI können die JUnit- und SARIF-Berichte außerdem an
+				den Befunden scheitern, die zu <code>fail</code> tendieren, standardmäßig ausgeschaltet, und
+				eine Baseline kann die akzeptieren, die eine Seite schon hat, sodass nur neue den Build
+				brechen. Siehe <a href="/results-reports/html-report/">HTML-Bericht</a> und{" "}
+				<a href="/conformance/baseline/">Baseline / Allowlist</a>, oder öffnen Sie <a href="/sample-report.html">einen Beispielbericht</a>
+				zu einer kleinen Bezahlseite.
+			</p>
+			<p>
 				Ein <code>pass</code> sagt auch, wie knapp er war. Regeln, die gegen einen Grenzwert messen
 				(Kontrast, Zielgröße, Textabstände), melden eine <code>margin</code>: das Element, das dem
 				Grenzwert am nächsten kam und ihn trotzdem einhielt. Text mit 4,52:1 bei einem Minimum von
@@ -137,6 +178,17 @@ export function OverviewContent() {
 				nicht wegen eines AAA-Kriteriums fehl.
 			</p>
 			<p>
+				Kein WCAG-Kriterium gilt als bestanden, nur weil Regeln, die einen Teil davon prüfen,
+				bestanden haben. Ein Kriterium ergibt <code>pass</code> nur, wenn seine Regeln alles prüfen,
+				was es verlangt, und noch keines wird so vollständig geprüft. Wo alle Regeln eines
+				Kriteriums bestehen, ergibt das Kriterium daher <code>cantTell</code>: Die Teile, die die
+				Regeln prüfen, sind erfüllt, den Rest prüft eine Person. Ein Bericht ohne Fehlschlag sagt
+				dasselbe unter seiner Überschrift: Keine Regel ist fehlgeschlagen, und das ist keine
+				Aussage über Konformität. Diese Kriterien als bestanden auszuweisen, wäre genau der
+				trügerische Eindruck vollständiger Abdeckung, den diese Engine vermeiden soll. Siehe{" "}
+				<a href="/conformance/wcag-mapping/">WCAG-Konformitätszuordnung</a>.
+			</p>
+			<p>
 				Web Components werden nach dem beurteilt, was sie bereitstellen. Ein Custom Element, das
 				sich über <code>ElementInternals</code> einen Namen, Zustände oder eine Rolle gibt, wird daran
 				geprüft, wo die Engine sie lesen kann, und als Frage gemeldet, wo nicht. Für Test- und
@@ -147,6 +199,24 @@ export function OverviewContent() {
 					<code>INTEGRATION.md</code>
 				</a>{" "}
 				(auf GitHub) zeigt, wie Sie es vor den Skripten der Seite installieren.
+			</p>
+			<p>
+				Die Regeln erreichen drei Kriterien, die bisher keine Regel abdeckte: 3.3.1
+				„Fehlererkennung“ (ein als ungültig markiertes Feld, dessen Fehlermeldung fehlt, verborgen
+				oder nicht mit ihm verknüpft ist), 4.1.3 „Statusmeldungen“ (eine Live-Region, die
+				assistive Technologien nicht erreichen) und 1.4.5 „Bilder eines Textes“ (in ein Bild
+				gezeichneter Text, der echter Text sein könnte). Alle drei stellen eine Frage, statt
+				fehlzuschlagen. Die Tastaturregeln lesen Event-Handler aus dem Markup; mit{" "}
+				<code>listenerHookScript()</code>, einem weiteren optionalen Skript, das vor den Skripten
+				der Seite installiert wird, beurteilen sie auch per Skript hinzugefügte Listener. Ein{" "}
+				<code>role="button"</code> in der Tab-Reihenfolge mit einem Klick-Listener und ohne
+				Tasten-Listener an einer Stelle, die ihn erreicht (am Element, seinen Vorfahren, am Dokument oder
+				am Fenster), ergibt <code>fail</code>: Eingabe- und Leertaste bewirken nichts.{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>{" "}
+				(auf GitHub) zeigt, wie Sie es installieren, und sein Gegenstück für Statusmeldungen, den
+				Live-Region-Hook.
 			</p>
 			<p>
 				Im Browser wird Kontrast so gemessen, wie die Seite gezeichnet wird: Text auf einer Seite
@@ -161,10 +231,10 @@ export function OverviewContent() {
 
 			<h3 id="checked-against-the-act-corpus">Geprüft am ACT-Korpus</h3>
 			<p>
-				Die Engine bringt {rules.length} Regeln mit. 59 davon haben eine Entsprechung in den{" "}
+				Die Engine bringt {rules.length} Regeln mit. 60 davon haben eine Entsprechung in den{" "}
 				<a href="https://www.w3.org/WAI/standards-guidelines/act/rules/"><span lang="en">W3C ACT Rules</span></a>{" "}
 				und laufen gegen die Testfälle, die das W3C dafür veröffentlicht, also die Menge, die die
-				Implementierungsliste des W3C bewertet: 942 Beispiele über diese 59 Regeln. Für keines der
+				Implementierungsliste des W3C bewertet: 957 Beispiele über diese 60 Regeln. Für keines der
 				Beispiele, die ACT als bestanden oder nicht anwendbar markiert, meldet die Engine{" "}
 				<code>fail</code>; gegenüber diesem Korpus gibt es also keine Falsch-Positive. Das ist ein
 				Ergebnis für diese Beispiele, keine Garantie für jede Seite. Wo die Engine einen Fall nicht
@@ -174,8 +244,8 @@ export function OverviewContent() {
 			<p>
 				Das gilt an beiden Orten, an denen die Engine läuft: in jsdom, wie test-matchers und die CLI
 				sie ausführen, und in Chromium, wie die Browser-Bindings es tun, wobei jeder Testfall als
-				echte Seite geladen wird, mit seinen Skripten und verlinkten Stylesheets. 25 Beispiele, die
-				ACT als nicht bestanden markiert, erkennt die Engine in jsdom nicht, in Chromium 21. Meist
+				echte Seite geladen wird, mit seinen Skripten und verlinkten Stylesheets. 22 Beispiele, die
+				ACT als nicht bestanden markiert, erkennt die Engine in jsdom nicht, in Chromium 18. Meist
 				geht es um Ermessensfragen wie die, ob eine Überschrift den Inhalt darunter beschreibt; die
 				vier, die der Browser erkennt, brauchen die Skripte oder Stylesheets der Seite selbst, die
 				jsdom nicht ausführt. Jedes einzelne, mit Begründung, steht in{" "}
@@ -221,7 +291,7 @@ export function OverviewContent() {
 			<h3>Was surea11y nicht findet</h3>
 			<p>Die Grenzen der Automatisierung klar zu benennen, gehört zur selben Philosophie. surea11y wird zum Beispiel nicht:</p>
 			<ul>
-				<li>bestätigen, dass ein Alternativtext <em>aussagekräftig</em> ist, nur dass er vorhanden ist (ein alt-Attribut <code>"image123.png"</code> besteht die objektive Prüfung);</li>
+				<li>bestätigen, dass ein Alternativtext <em>aussagekräftig</em> ist, nur dass er vorhanden ist (ein alt-Attribut <code>"image123.png"</code> besteht die objektive Prüfung und wird als Dateiname mit Tendenz zu <code>fail</code> als Frage gemeldet);</li>
 				<li>beurteilen, ob eine Farbkombination ästhetisch passt, nur ob sie das geltende Kontrastverhältnis erfüllt;</li>
 				<li>feststellen, ob eine Fehlermeldung das Problem tatsächlich <em>erklärt</em>, denn das hängt von Validierungslogik ab, die ein statischer Scan nicht sieht;</li>
 				<li>eine Tastaturfalle oder bei 400 % Zoom abgeschnittenen Inhalt erkennen, denn beides erfordert, echte Benutzerinteraktion über die Zeit zu simulieren, statt das DOM zu einem einzigen Zeitpunkt zu lesen.</li>

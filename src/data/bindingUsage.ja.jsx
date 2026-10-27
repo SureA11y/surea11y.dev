@@ -19,32 +19,110 @@ const hookCaveat = (repo) => (
 	</p>
 );
 
-/** A pointer to the builder methods this page leaves to the binding's README. */
-const alsoAvailable = (repo, { logger = true } = {}) => (
+/** Opens each binding's listener- and live-region-hook passage; the snippet and its note follow. */
+const moreHooks = (
 	<p>
-		<code>A11yCoreBuilder</code>
-		にはほかにも、実行するルールを変えずに報告する達成基準をWCAGのレベルまでに絞る
-		<code>.wcagLevel()</code>
-		、タグのルールに名前を挙げたルールを加えて実行する
-		<code>.includeMode('or')</code>
-		、スキャンが何をチェックするかを実行前に一覧にし、何も実行しない選択が問題のないスキャンに見えないようにする
-		<code>.plannedChecks()</code>
-		と
-		<code>.plannedCriteria()</code>
-		、
-		{logger ? (
-			<>
-				スキャンギャップの警告を自分のログに送る
-				<code>.logger()</code>
-				、
-			</>
-		) : null}
-		ページがどのようにスキャンされたかを示す
-		<code>getScanNotes(results)</code>
-		があります。それぞれの説明は
-		<a href={`https://github.com/SureA11y/${repo}#readme`}>バインディングのREADME</a>
-		にあります。
+		<strong>クリックハンドラーとライブリージョン。</strong>
+		core 1.14から、オプトインのフックがさらに2つあります。多くのページはクリックハンドラーをスクリプトから追加しますが、後からそれを一覧にできるページのスクリプトはありません。そのため、スキャンはクリックリスナーを持つ
+		<code>&lt;div role="button"&gt;</code>
+		がキーボードでは何もしないことを見抜けません。リスナーフックがあれば、そのようなボタンは失敗します（
+		<code>CLICK_HANDLER_NO_KEY_LISTENER</code>
+		）。ライブリージョンフックは、ページのライブリージョンに何が与えられたかを記録します。スキャンはテキストが入った状態で追加された、スクリーンリーダーが読み上げないことの多いステータスメッセージについて確認を求め、
+		<code>announcements()</code>
+		はページが読み上げ用に提供した内容を返します。これで、操作の結果がユーザーに伝えられたかをテストで確かめられます。internalsフックと同じように、ページ自身のスクリプトが実行される前にインストールしてください。
 	</p>
+);
+
+const moreHooksCaveat = (repo) => (
+	<p>
+		internalsフックと同じく、どちらもテストや監査の実行のためのものです。記録した内容はページのどのスクリプトからも読めます。
+		<code>announcements()</code>
+		はページが読み上げ用に提供した内容で、スクリーンリーダーが実際に読み上げた内容ではありません。ライブリージョンフックがなければ
+		<code>null</code>
+		です。どちらかのフックがない場合、そのフックなら判断できた検出結果がフックなしで判定されたときに
+		<code>getScanNotes()</code>
+		がそのことを示します。詳しくはREADMEの
+		<a href={`https://github.com/SureA11y/${repo}#click-handlers-added-from-script-the-listener-hook`}>リスナーフック</a>
+		と
+		<a href={`https://github.com/SureA11y/${repo}#live-regions-the-live-region-hook-and-announcements`}>ライブリージョンフック</a>
+		の節を参照してください。
+	</p>
+);
+
+/**
+ * Conditions, the severity gate and leaning questions (binding 1.5.0), then a pointer to the
+ * builder methods this page leaves to the binding's README.
+ */
+const alsoAvailable = (repo, { logger = true, conditions = null, cypress = false } = {}) => (
+	<>
+		<p>
+			<strong>ダークモード、スマートフォンの幅、重大度によるゲート。</strong>
+			<code>{".conditions([{ colorScheme: 'dark' }, { width: 320 }])"}</code>
+			は、ページをそのままの状態でスキャンしたあと、条件ごとにもう一度スキャンし、1つの結果を返します。ルールの判定結果はすべてのスキャンのうち最も悪いものになり、各検出結果にはそれが見つかった条件が示されます。条件ごとに完全なスキャンを行います。また、
+			<code>.frames(true)</code>
+			とはまだ組み合わせられません。
+			{conditions}
+			<code>{"getGatingFailures(results, { failOnSeverity: 'serious' })"}</code>
+			は、その重大度以上で失敗したルールを返します。これにより、ほかの問題は報告し続けながら、まず重大な問題と致命的な問題でテストを止められます。
+			<code>formatFailures()</code>
+			も同じオプションを受け取ります。
+		</p>
+		<p>
+			<strong>傾きと確認手順のある問い。</strong>
+			core 1.14から、
+			<code>cantTell</code>
+			の検出結果は理由とともに
+			<code>fail</code>
+			または
+			<code>pass</code>
+			のどちらかに傾くことがあり、人が答えるための手順である
+			<code>howToCheck</code>
+			を持ちます。
+			<code>formatFailures()</code>
+			は失敗の直後に不適合の可能性が高い問いを並べ、
+			<code>{"{ howToCheck: true }"}</code>
+			で手順も出力します。不適合の可能性が高いものでもテストを失敗させるには、coreの
+			<code>leaningFailures(results)</code>
+			をゲートに加えてください。
+			{cypress ? (
+				<>
+					Cypressでは手順はプラグインから届きます。
+					<code>setupNodeEvents</code>
+					は
+					<code>surea11y(on, config)</code>
+					の戻り値を返す必要があります。返さない場合、結果に手順は含まれませんが、何も失敗しません。
+				</>
+			) : null}
+		</p>
+		<p>
+			<code>A11yCoreBuilder</code>
+			にはほかにも、実行するルールを変えずに報告する達成基準をWCAGのレベルまでに絞る
+			<code>.wcagLevel()</code>
+			、タグのルールに名前を挙げたルールを加えて実行する
+			<code>.includeMode('or')</code>
+			、スキャンが何をチェックするかを実行前に一覧にし、何も実行しない選択が問題のないスキャンに見えないようにする
+			<code>.plannedChecks()</code>
+			と
+			<code>.plannedCriteria()</code>
+			、
+			{logger ? (
+				<>
+					スキャンギャップの警告を自分のログに送る
+					<code>.logger()</code>
+					、
+				</>
+			) : null}
+			CSSを読むルールのために、ページ自身が読めない別オリジンのスタイルシートを
+			<code>.analyze()</code>
+			が取得しないようにする
+			<code>.fetchStyleSheets(false)</code>
+			、ページがどのようにスキャンされたかを示す
+			<code>getScanNotes(results)</code>
+			があります。それぞれの説明は
+			<a href={`https://github.com/SureA11y/${repo}#readme`}>バインディングのREADME</a>
+			にあります。
+		</p>
+	</>
 );
 
 export const bindingUsage = {
@@ -111,7 +189,7 @@ export const bindingUsage = {
 		),
 		packs: (
 			<p>
-				<a href="/configuration/packs/">パック</a>はNodeで準備され、Cypressのテストはブラウザーで実行されます。そのため、Cypressの<code>.withPacks()</code>は各パックのモジュール名（パッケージ名、またはプロジェクトのルートからのパス）を受け取り、バインディングのプラグイン<code>@surea11y/cypress/plugin</code>がNodeでパックを準備します。<code>setupNodeEvents</code>で<code>surea11y(on, config)</code>として登録してください。<code>{".options({ profile })"}</code>でパックのプロファイルを選びます。実行されなかったパックは<code>'pack-skipped'</code>のスキャンギャップとして報告されます。
+				<a href="/configuration/packs/">パック</a>はNodeで準備され、Cypressのテストはブラウザーで実行されます。そのため、Cypressの<code>.withPacks()</code>は各パックのモジュール名（パッケージ名、またはプロジェクトのルートからのパス）を受け取り、バインディングのプラグイン<code>@surea11y/cypress/plugin</code>がNodeでパックを準備します。<code>setupNodeEvents</code>から<code>surea11y(on, config)</code>の戻り値を返して登録してください。<code>{".options({ profile })"}</code>でパックのプロファイルを選びます。実行されなかったパックは<code>'pack-skipped'</code>のスキャンギャップとして報告されます。
 			</p>
 		),
 		internals: {
@@ -137,7 +215,45 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("cypress"),
 		},
-		more: alsoAvailable("cypress", { logger: false }),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"// cypress/support/e2e.js",
+				"import { installListenerHook, installLiveRegionHook } from '@surea11y/cypress';",
+				"",
+				"installListenerHook();",
+				"installLiveRegionHook();",
+				"",
+				"// in a spec",
+				"cy.get('#save').click();",
+				"A11yCoreBuilder.announcements().then((said) => {",
+				"  expect(said.map((a) => a.text)).to.include('Saved');",
+				"});",
+			],
+			note: (
+				<p>
+					internalsフックと同じく、サポートファイルですべての訪問をカバーでき、適用されるのはアプリ自身のウィンドウだけで、その中のフレームには適用されません。
+					<code>announcements()</code>
+					はアプリのウィンドウを読み、
+					<code>.analyze()</code>
+					と同じくchainableを返します。
+				</p>
+			),
+			caveat: moreHooksCaveat("cypress"),
+		},
+		more: alsoAvailable("cypress", {
+			logger: false,
+			cypress: true,
+			conditions: (
+				<>
+					幅は
+					<code>cy.viewport()</code>
+					で設定します。カラースキームにはChromium系のブラウザー（Chrome、Edge、Electron）が必要で、Firefoxでは
+					<code>.analyze()</code>
+					がスキャンの前に失敗します。
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/cypress/blob/main/examples/basic-scan.cy.js",
 	},
 
@@ -208,7 +324,39 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("playwright"),
 		},
-		more: alsoAvailable("playwright"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"const context = await browser.newContext();",
+				"await A11yCoreBuilder.installListenerHook(context); // before any page navigates",
+				"await A11yCoreBuilder.installLiveRegionHook(context);",
+				"const page = await context.newPage();",
+				"await page.goto('https://example.com/settings');",
+				"await page.getByRole('button', { name: 'Save' }).click();",
+				"",
+				"const said = await A11yCoreBuilder.announcements(page);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					どちらもinternalsフックと同じように、ページまたはそのブラウザーコンテキストに、ナビゲーションの前にインストールします。
+					<code>@playwright/test</code>
+					では、
+					<code>context</code>
+					フィクスチャーの
+					<code>beforeEach</code>
+					でインストールしてください。
+				</p>
+			),
+			caveat: moreHooksCaveat("playwright"),
+		},
+		more: alsoAvailable("playwright", {
+			conditions: (
+				<>
+					Chromium、Firefox、WebKitで動作します。
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/playwright/blob/main/examples/basic-scan.js",
 	},
 
@@ -265,7 +413,38 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("puppeteer"),
 		},
-		more: alsoAvailable("puppeteer"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"const page = await browser.newPage();",
+				"await A11yCoreBuilder.installListenerHook(page); // before goto",
+				"await A11yCoreBuilder.installLiveRegionHook(page);",
+				"await page.goto('https://example.com/settings');",
+				"await page.click('#save');",
+				"",
+				"const said = await A11yCoreBuilder.announcements(page);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					どちらもinternalsフックと同じように、
+					<code>page.goto()</code>
+					の前に
+					<code>page.evaluateOnNewDocument()</code>
+					でインストールします。
+				</p>
+			),
+			caveat: moreHooksCaveat("puppeteer"),
+		},
+		more: alsoAvailable("puppeteer", {
+			conditions: (
+				<>
+					Firefoxでは幅は使えますが、カラースキームにはDevToolsプロトコルが必要で、PuppeteerではChromeにしかないため、Firefoxでは
+					<code>.analyze()</code>
+					がスキャンの前に拒否されます。
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/puppeteer/blob/main/examples/basic-scan.js",
 	},
 
@@ -338,7 +517,43 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("selenium"),
 		},
-		more: alsoAvailable("selenium"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"await A11yCoreBuilder.installListenerHook(driver); // before driver.get()",
+				"await A11yCoreBuilder.installLiveRegionHook(driver);",
+				"await driver.get('https://example.com/settings');",
+				"await driver.findElement(By.css('#save')).click();",
+				"",
+				"const said = await A11yCoreBuilder.announcements(driver);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					どちらもinternalsフックと同じように
+					<code>driver.get()</code>
+					の前にインストールします。セッションにWebDriver BiDiがあればそれを使い、なければChromeとEdgeでDevToolsプロトコルを使います。それぞれ
+					<code>'bidi'</code>
+					または
+					<code>'cdp'</code>
+					を返します。
+					<code>By</code>
+					は
+					<code>selenium-webdriver</code>
+					から取得します。
+				</p>
+			),
+			caveat: moreHooksCaveat("selenium"),
+		},
+		more: alsoAvailable("selenium", {
+			conditions: (
+				<>
+					ChromeとEdgeではどちらもDevToolsプロトコルで設定します。ほかのブラウザーでは幅はウィンドウのサイズを変え、カラースキームを指定すると
+					<code>.analyze()</code>
+					がスキャンの前に拒否されます。
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/selenium/blob/main/examples/basic-scan.js",
 	},
 
@@ -410,7 +625,41 @@ export const bindingUsage = {
 			),
 			caveat: hookCaveat("webdriverio"),
 		},
-		more: alsoAvailable("webdriverio"),
+		hooks: {
+			intro: moreHooks,
+			code: [
+				"await A11yCoreBuilder.installListenerHook(browser); // before browser.url()",
+				"await A11yCoreBuilder.installLiveRegionHook(browser);",
+				"await browser.url('https://example.com/settings');",
+				"await $('#save').click();",
+				"",
+				"const said = await A11yCoreBuilder.announcements(browser);",
+				"// [{ text: 'Saved', politeness: 'polite', ..., selector: '#status' }]",
+			],
+			note: (
+				<p>
+					どちらもinternalsフックと同じセッションで、
+					<code>browser.url()</code>
+					の前に（WDIOのテストランナーでは
+					<code>before</code>
+					フックで）インストールし、
+					<code>'bidi'</code>
+					または
+					<code>'cdp'</code>
+					を返します。
+				</p>
+			),
+			caveat: moreHooksCaveat("webdriverio"),
+		},
+		more: alsoAvailable("webdriverio", {
+			conditions: (
+				<>
+					ChromeとEdgeでは、クラシックとBiDiのどちらのセッションでもDevToolsプロトコルで設定します。ほかのブラウザーでは幅はウィンドウのサイズを変え、カラースキームを指定すると
+					<code>.analyze()</code>
+					がスキャンの前に拒否されます。
+				</>
+			),
+		}),
 		exampleHref: "https://github.com/SureA11y/webdriverio/blob/main/examples/basic-scan.js",
 	},
 };

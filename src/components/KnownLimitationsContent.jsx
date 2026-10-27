@@ -34,8 +34,9 @@ const remedyRows = [
 		),
 		remedy: (
 			<>
-				Read the occurrence's <code>uncertainty.code</code> and <code>uncertainty.needed</code>,
-				and decide it by hand.
+				Follow the occurrence's <code>howToCheck</code> steps and decide it by hand.{" "}
+				<code>uncertainty</code> says what was missing, and <code>lean</code> which way the page's
+				evidence points (see <a href="/results-reports/output-schema/#how-to-check">Output schema</a>).
 			</>
 		),
 	},
@@ -213,22 +214,68 @@ export function KnownLimitationsContent() {
 					are judged as before.
 				</li>
 				<li>
+					<strong>Event listeners added from script can't be listed.</strong> A listener added with{" "}
+					<code>addEventListener</code>, or set as a property (<code>el.onclick = fn</code>),
+					leaves nothing in the markup and no script can read it back, so the keyboard rules (
+					<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>,{" "}
+					<a href="/rules/mouse-only-event-handlers/"><code>mouse-only-event-handlers</code></a>)
+					judge inline handler attributes only: a focusable <code>role="button"</code> given its
+					click listener from script is not reported (one that can't take focus is asked about by{" "}
+					<a href="/rules/widget-keyboard-focusable/"><code>widget-keyboard-focusable</code></a> all
+					the same), a key listener added from script can't excuse an inline <code>onclick</code>,
+					and <code>password-paste-enabled</code> can't tell whether a paste listener added from
+					script puts back the text an inline <code>onpaste</code> cancels. Install the opt-in
+					listener hook (<code>listenerHookScript()</code>) before the page's scripts run: the rules
+					then judge the listeners it records too, and, where it saw no key listener at all, fail a
+					control that Enter and Space can't operate. A click listener a framework adds to its root
+					element serves elements nothing names, so even with the hook those are judged by their
+					markup. Where to install it:{" "}
+					<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, on GitHub.
+				</li>
+				<li>
+					<strong>How a live region was filled can't be seen afterwards.</strong> A status message is
+					announced when a live region changes while assistive technology can reach it (4.1.3), but a
+					scan sees the page at one moment. Without help,{" "}
+					<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>{" "}
+					judges only what is there: a live region hidden from assistive technology by{" "}
+					<code>aria-hidden</code> or <code>inert</code>, or behind an open modal{" "}
+					<code>&lt;dialog&gt;</code>, or left <code>aria-busy</code>. Install the opt-in live-region
+					hook (<code>liveRegionHookScript()</code>), and it also asks about a region the page added
+					with its text already in it, or showed and filled at once, and{" "}
+					<code>getAnnouncements()</code> lists what the page made available to announce. Neither
+					says what a screen reader spoke: that depends on the screen reader. The hook doesn't see
+					inside shadow roots. Details:{" "}
+					<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, on GitHub.
+				</li>
+				<li>
 					<strong>A scan taken while a modal dialog is open sees the dialog, not the page.</strong>{" "}
-					A <code>&lt;dialog&gt;</code> opened with <code>showModal()</code> (or an open{" "}
-					<code>&lt;dialog aria-modal="true"&gt;</code>) makes the rest of the document inert, and
-					browsers give assistive technology only the dialog. The engine follows that: content
-					behind the dialog is left out of every rule, as other hidden content is, and the rules
-					about the page's own structure (<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
+					A <code>&lt;dialog&gt;</code> opened with <code>showModal()</code> makes the rest of the
+					document inert, and browsers give assistive technology only the dialog. A dialog opened
+					with the <code>open</code> attribute or <code>show()</code> is not modal, even with{" "}
+					<code>aria-modal="true"</code>: the page behind it stays reachable, and the engine judges
+					it. Under jsdom, which has no top layer, an open{" "}
+					<code>&lt;dialog aria-modal="true"&gt;</code> is taken as modal instead, the closest the
+					engine can tell there. The engine follows that: content behind the dialog is left out of
+					every rule, as other hidden content is, and the rules about the page's own structure (
+					<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
 					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
 					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
 					<a href="/rules/region/"><code>region</code></a>) report <code>notApplicable</code>, since
 					the scan cannot see that structure. Scan the page again with the dialog closed to judge
-					what is behind it. Two limits: a modal <code>&lt;dialog&gt;</code> inside a shadow root
-					is not detected, and a custom modal built from a <code>role="dialog"</code> element with{" "}
-					<code>inert</code> or <code>aria-hidden</code> on the rest of the page is handled only
-					through those attributes, which hide the page but do not tell the structure rules a
-					dialog is open. Other engines differ here: some do the same, others judge the page behind
-					the dialog as if nothing were open.
+					what is behind it. A custom modal, a shown element with <code>role="dialog"</code> or{" "}
+					<code>role="alertdialog"</code> and <code>aria-modal="true"</code>, also makes those
+					structure rules <code>notApplicable</code>; <code>aria-modal</code> makes nothing inert,
+					so every other rule still judges the page behind it. A modal dialog inside an open shadow
+					root counts as one in the document; one in a closed shadow root can't be found. A custom
+					modal without <code>aria-modal="true"</code> is handled only through the{" "}
+					<code>inert</code> or <code>aria-hidden</code> the page puts on the rest of it, which hide
+					the page but don't tell the structure rules a dialog is open.
 				</li>
 				<li>
 					<strong>
@@ -239,8 +286,7 @@ export function KnownLimitationsContent() {
 					<code>[hidden]</code>, or closed <code>&lt;details&gt;</code>, and an{" "}
 					<code>[inert]</code> subtree (which rules about how content looks, such as contrast and
 					text spacing, still judge, since it is drawn), are{" "}
-					<strong>excluded from rule evaluation by default</strong> — matching the
-					visibility-aware behavior of other established engines. This is a deliberate default (
+					<strong>excluded from rule evaluation by default</strong>. This is a deliberate default (
 					<code>engineOptions.includeHiddenElements: false</code>), not an oversight: hidden
 					content isn't reachable by assistive technology or keyboard until it's shown, so
 					flagging a markup defect inside it by default would often be noise. Set{" "}
@@ -248,6 +294,15 @@ export function KnownLimitationsContent() {
 					subtrees anyway — e.g. to catch a markup defect (like a broken ARIA ID reference) before
 					a dialog ever opens. See <a href="/configuration/engine-options/"><code>ENGINE_OPTIONS.md</code></a>{" "}
 					for the option and exactly which hiding mechanisms it covers.
+				</li>
+				<li>
+					<strong>An <code>aria-details</code> that names hidden content is not reported.</strong>{" "}
+					<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a> checks
+					that the id names an element, not that the element is shown. Chromium leaves the relation
+					out of its accessibility tree while the element is hidden and puts it back once it is
+					shown, so details that open on demand are announced when open, and WCAG asks nothing
+					more. To check the relation as assistive technology gets it, scan the page with the
+					details shown.
 				</li>
 				<li>
 					<strong>jsdom has no popovers.</strong> It ships HTML's rule hiding a closed{" "}
@@ -260,6 +315,14 @@ export function KnownLimitationsContent() {
 					browser with the popover open.
 				</li>
 				<li>
+					<strong>Under jsdom, text from CSS <code>content</code> names nothing.</strong> jsdom
+					computes no style for <code>::before</code> and <code>::after</code>, so a button or link
+					whose only text is generated (<code>content: "Save"</code>,{" "}
+					<code>content: attr(data-label)</code>) is named in a browser and unnamed under jsdom,
+					where <code>button-name-present</code>, <code>link-name-present</code> and the other name
+					rules fail it. Scan such pages in a browser.
+				</li>
+				<li>
 					<strong>jsdom keeps a font size as written.</strong> A browser reports a computed font
 					size in px; jsdom keeps a keyword or a <code>calc()</code> as written. The engine reads
 					the keywords at a browser's sizes for a 16px default (<code>xx-large</code> is 32px) and{" "}
@@ -267,6 +330,16 @@ export function KnownLimitationsContent() {
 					<code>larger</code> and <code>smaller</code>, which depend on the parent's size, are not
 					resolved under jsdom: such text is held to the normal-text ratio, and its message gives
 					its size as 0px. A browser resolves both.
+				</li>
+				<li>
+					<strong>jsdom ignores a shadow root's own style sheets.</strong> Confirmed in jsdom
+					29.1.1: neither a <code>&lt;style&gt;</code> inside a shadow root nor its{" "}
+					<code>adoptedStyleSheets</code> reaches the computed style of the elements in it, so under
+					jsdom colors, sizes, and <code>display: none</code> or <code>visibility: hidden</code> set
+					there are not seen. The rules then judge a component's content as if unstyled: contrast is
+					measured on default colors, and content its CSS hides is judged as shown. The one
+					exception is a link's color, which the contrast helpers work out from the shadow root's
+					sheets themselves. Scan pages built from styled web components in a browser.
 				</li>
 				<li>
 					<strong>
@@ -324,6 +397,28 @@ export function KnownLimitationsContent() {
 					measured. Run a real browser for large production pages.
 				</li>
 				<li>
+					<strong>Under jsdom, a link's color is worked out from the page's own rules.</strong>{" "}
+					jsdom ranks its own <code>{":link { color: #0000EE }"}</code> with the page's rules by
+					specificity alone, so a page's <code>{"a { color: #fff }"}</code> loses to it, where a
+					browser applies the page's rule. Under jsdom the engine works out the color of a link, and
+					of the text inside it, from the page's rules as a browser's cascade does; a link no rule
+					of the page colors keeps the browser's link color, and a link is taken as not visited.
+					Where that can't be done (a style sheet that can't be read, a <code>var()</code>, a rule
+					under <code>@supports</code>, <code>@layer</code>, <code>@container</code> or nested in
+					another), the text is asked about (<code>contrast-computable</code>,{" "}
+					<code>FOREGROUND_UNPARSABLE</code>) rather than measured in jsdom's blue. In a browser the
+					computed color is read as it is.
+				</li>
+				<li>
+					<strong>Under jsdom, text is judged by its computed <code>font-size</code>.</strong> In a
+					browser, the contrast rules and <code>p-as-heading</code> judge text by the size it is
+					drawn at: CSS <code>zoom</code>, an SVG transform and <code>font-size-adjust</code>{" "}
+					included, the last from the font's own metrics (<code>font-size: 24px;
+					font-size-adjust: 0.3</code> draws Arial at about 14px, which is not large text). jsdom
+					lays nothing out and reads no font, so there <code>font-size</code> is taken as it is.
+					Scan in a browser for a page that scales its text so.
+				</li>
+				<li>
 					<strong>
 						In a real browser, some rules change the page for the time of their check, and the
 						page's own scripts can react.
@@ -332,9 +427,13 @@ export function KnownLimitationsContent() {
 					keyboard would, and switches transitions off on the element it measures;{" "}
 					<code>aria-hidden-focus</code> focuses an element inside an <code>aria-hidden</code>{" "}
 					subtree to see whether the page moves focus away at once (a focus-trap sentinel);{" "}
-					<code>text-spacing-content-loss</code> adds a style sheet with the WCAG 1.4.12 spacing.
-					All of this is put back before the rule returns: focus, scroll position, style attributes
-					and the added style sheet. What cannot be put back is what the page's scripts do in
+					<code>text-spacing-content-loss</code> adds a style sheet with the WCAG 1.4.12 spacing;
+					the contrast rules add a blank, off-screen frame to read the browser's own colors for a
+					placeholder or a drop-down <code>&lt;select&gt;</code>. The scan also moves each running
+					animation to a fixed point while the rules run (a finite one to its end, an endless one
+					to its start), so a fade-in is measured as it settles. All of this is put back before the
+					rule or the scan returns: focus, scroll position, style attributes, animations, the added
+					style sheet and the frame. What cannot be put back is what the page's scripts do in
 					response, since focusing an element fires its <code>focus</code> and <code>focusin</code>{" "}
 					handlers: a carousel may move to the focused slide, moving <code>aria-hidden</code> with
 					it, or enable a button. The findings of that scan are those of the page as it was found:{" "}
@@ -342,6 +441,19 @@ export function KnownLimitationsContent() {
 					before it focuses anything. But the page is left as its scripts made it, so a second scan
 					of the same page can find something else: if you scan a page you go on using, or scan one
 					page twice, reload it in between.
+				</li>
+				<li>
+					<strong>A style sheet from another origin can't be read from the page.</strong> A page's
+					script can't list the rules of a sheet another origin serves (a CDN, a fonts service), so{" "}
+					<code>css-orientation-lock</code> asks about it (<code>STYLESHEETS_NOT_READABLE</code>),
+					and <code>css-hidden-focus</code> and <code>css-focus-indicator-suppressed</code> can't see
+					a focus rule in it. Pass its text in <code>engineOptions.styleSheetTexts</code>:{" "}
+					<code>preloadStyleSheets()</code> fetches those the server shares (CORS), and a tool
+					driving the browser can fetch the others from outside the page (see{" "}
+					<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, on GitHub).
 				</li>
 				<li>
 					<strong>Static markup vs. live/post-hydration DOM state.</strong> The rule logic itself
@@ -407,7 +519,10 @@ export function KnownLimitationsContent() {
 					Fixed and sticky boxes over text are ignored. Under jsdom, text is measured against its
 					ancestors alone. Scanned under forced colors (Windows high contrast, or an emulated{" "}
 					<code>forced-colors: active</code>), the page is kept in its own colors while it is
-					measured, so the outcomes are those with forced colors off; where it can't be (a
+					measured, so the outcomes are those with forced colors off, unless the page's own CSS
+					reacts to forced colors (a <code>forced-colors</code> media query, or a system color such
+					as <code>GrayText</code>), which the scan reports in{" "}
+					<code>engine.environment.forcedColorsCss</code>; where it can't be (a
 					Content Security Policy blocking the engine's <code>&lt;style&gt;</code> in a browser
 					that can't adopt a style sheet), the colors measured are partly the browser's, and each
 					contrast occurrence says so (<code>details.forcedColors</code>). How the measurement
@@ -416,6 +531,47 @@ export function KnownLimitationsContent() {
 						<code>LAYOUT_MEASUREMENT.md</code>
 					</a>
 					, on GitHub.
+				</li>
+				<li>
+					<strong>
+						Text on a page with no background is measured on the canvas of the page's color scheme,
+						where that canvas is known.
+					</strong>{" "}
+					The browser paints its canvas behind a page that paints no opaque background, in the{" "}
+					<code>Canvas</code> color of the color scheme the page is drawn in, which the page's own{" "}
+					<code>color-scheme</code> decides: white for a page that declares none, whatever the user
+					prefers, and the dark canvas for one drawn in dark. The contrast rules measure text there
+					in either mode. Not measured, and asked about by <code>contrast-computable</code> (
+					<code>BACKGROUND_NOT_OPAQUE_AT_ROOT</code>): text in a frame, whose canvas can let the page
+					around it show through, and text under forced colors, where the canvas is the user's
+					palette.
+				</li>
+				<li>
+					<strong>
+						Under jsdom, text is measured in the colors of the scheme the page is drawn in where
+						they can be worked out, and asked about where they can't.
+					</strong>{" "}
+					jsdom computes the light scheme's colors and applies no{" "}
+					<code>prefers-color-scheme</code> rule. On a page drawn in dark (
+					<code>color-scheme: dark</code> on the root or in{" "}
+					<code>&lt;meta name="color-scheme"&gt;</code>), text the scheme colors takes the dark
+					scheme's colors (Chromium's), and a text color given as <code>light-dark()</code> or a
+					system color is worked out for dark. Text whose colors in that scheme can't be worked out
+					is asked about (<code>contrast-computable</code>, <code>COLOR_SCHEME_NOT_RENDERED</code>;{" "}
+					<code>link-in-text-block</code>, <code>COLOR_NOT_COMPUTABLE</code>) rather than measured in
+					the light colors. In a browser, the colors are the ones it draws.
+				</li>
+				<li>
+					<strong>
+						On a page that supports light and dark, the scheme the scan doesn't see is measured
+						only where the text's colors can't change with it.
+					</strong>{" "}
+					A scan sees the scheme the browser prefers (jsdom: light). Text on the canvas is measured
+					in the other scheme too, except where a <code>prefers-color-scheme</code> rule, a{" "}
+					<code>light-dark()</code> value or a system color the page sets reaches the text's color or
+					a background behind it, or where a style sheet can't be read.{" "}
+					<code>data.details.colorSchemesChecked</code> lists the schemes measured; scan again with
+					the browser in the other scheme to check it.
 				</li>
 				<li>
 					<strong>Generated text is measured only in a browser, and only where it can be read.</strong>{" "}
@@ -436,11 +592,10 @@ export function KnownLimitationsContent() {
 					closed control draws it, its shown option in the select's own colors; another of its
 					options with colors of its own is shown only in the list the platform draws when it
 					opens, and is <code>cantTell</code> (<code>SELECT_OPTION_COLOR</code>). A placeholder
-					below its ratio is <code>cantTell</code> (<code>PLACEHOLDER_BELOW_THRESHOLD</code>)
-					rather than a fail: WCAG holds placeholder text to the ratio, but counts colours the
-					page left entirely to the browser as meeting it (technique G148), and telling the two
-					apart on real pages is not settled yet. Under jsdom, placeholders are not measured at
-					all. Details:{" "}
+					below its ratio fails (<code>PLACEHOLDER_BELOW_THRESHOLD</code>) when the page chose its
+					colors, meets the ratio when they are all the browser's own (technique G148), and is{" "}
+					<code>cantTell</code> when that can't be told. Under jsdom, placeholders are not measured
+					at all. Details:{" "}
 					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#form-fields`}>
 						<code>LAYOUT_MEASUREMENT.md</code>
 					</a>
@@ -513,8 +668,13 @@ export function KnownLimitationsContent() {
 					narrower ones are not, by design.
 				</li>
 				<li>
-					<strong>Images-of-text content analysis</strong> (WCAG 1.4.5/1.4.9) — would need
-					OCR-equivalent image understanding; out of scope for a static-markup engine.
+					<strong>Images-of-text content analysis</strong> (WCAG 1.4.5/1.4.9) — whether an image
+					holds text is in its pixels, which would need OCR-equivalent image understanding.{" "}
+					<a href="/rules/image-of-text/"><code>image-of-text</code></a> asks only where markup shows
+					a sign: an <code>&lt;input type="image"&gt;</code>, and an <code>&lt;img&gt;</code> showing
+					an SVG data URL whose markup holds <code>&lt;text&gt;</code>. A photo of a sentence, a
+					banner with text baked in, or a CSS background image of text gives no sign, and is not
+					asked about. 1.4.9, which allows no exceptions, has no rule.
 				</li>
 				<li>
 					<strong>Motion-actuation controls</strong> (WCAG 2.5.4) — niche, low real-world
@@ -541,8 +701,9 @@ export function KnownLimitationsContent() {
 				how they report what they can't decide. The reason to state it explicitly here: <strong>a <code>pass</code> from
 				this engine (or any automated tool) is never a substitute for the manual review WCAG
 				itself requires for the criteria above.</strong> See{" "}
-				<a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a> for exactly what a{" "}
-				<code>pass</code>/composite <code>pass</code> does and doesn't claim.
+					<a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a> for exactly what a
+				rule's <code>pass</code> does and doesn't claim, and why a WCAG criterion whose rules all
+				pass is still <code>cantTell</code>.
 			</p>
 		</>
 	);

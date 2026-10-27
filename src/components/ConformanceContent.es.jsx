@@ -15,8 +15,10 @@ export function ConformanceContent() {
 			<h2>Mapeo de conformidad con WCAG</h2>
 			<p>
 				Mira exactamente cómo encajan entre sí las reglas atómicas, las facetas de cobertura y las
-				reglas compuestas de resultado agregado por SC de WCAG, para que un <code>pass</code> compuesto signifique
-				algo concreto en lugar de un vago "parece estar bien". Un análisis que nombra unas pocas
+				reglas compuestas de resultado agregado por SC de WCAG, y por qué un criterio cuyas
+				comprobaciones salieron todas limpias queda en <code>cantTell</code>, comprobado en parte, en
+				lugar de un vago "parece estar bien": un compuesto dice qué partes se comprobaron y deja el
+				resto a una persona. Un análisis que nombra unas pocas
 				comprobaciones en lugar de un objetivo sigue informando de los criterios a los que
 				pertenecen, e indica cuáles comprobó solo en parte. Apunta a un nivel de conformidad (A,
 				AA o AAA) en cualquier versión de WCAG con un único conjunto de etiquetas o un perfil con
@@ -33,7 +35,9 @@ export function ConformanceContent() {
 				futura: registra una sola vez lo que ya se conoce, y condiciona la CI solo a violaciones
 				genuinamente nuevas. Es la diferencia entre "no podemos publicar nada hasta que esto sea
 				perfecto" y "podemos detectar regresiones a partir de hoy", y es lo que de verdad hace que
-				un equipo active la puerta de control. Ver{" "}
+				un equipo active la puerta de control. También puede aceptar los hallazgos que
+				probablemente fallan, y un baseline escrito antes de actualizar sigue coincidiendo cuando el
+				código de motivo de un hallazgo se divide o cambia de nombre. Ver{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
 		</>

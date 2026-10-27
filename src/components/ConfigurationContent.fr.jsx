@@ -23,7 +23,8 @@ export function ConfigurationContent() {
 				globalement ou pour une seule règle, sans perdre la couverture ailleurs, ajustez le degré d’exigence
 				des vérifications de contraste selon qu’elles servent un auditeur humain ou un contrôle de CI
 				sans surveillance, et ajoutez une règle propre à votre organisation à côté des règles
-				intégrées quand le catalogue ne couvre pas un point qui vous importe. Voir{" "}
+				intégrées quand le catalogue ne couvre pas un point qui vous importe, et donnez aux règles
+				le CSS d’une feuille de style d’une autre origine que la page ne peut pas lire. Voir{" "}
 				<a href="/configuration/engine-options/">Options du moteur</a> pour la référence complète.
 			</p>
 
@@ -35,7 +36,10 @@ export function ConfigurationContent() {
 				choisissent ce qui s’exécute, chacun des points de sa liste de contrôle revient sous la forme d’un
 				résultat, et chaque rapport les affiche à côté des critères WCAG. Le même pack fonctionne
 				depuis Node, chaque binding, test-matchers et la CLI, et{" "}
-				<code>npx surea11y-pack new</code> en génère un qui réussit ses propres tests tel quel. Voir{" "}
+				<code>npx surea11y-pack new</code> en génère un qui réussit ses propres tests tel quel. Une
+				norme peut classer les constats d’une règle sous les exigences auxquelles ils
+				appartiennent, et une règle de pack peut dire à une personne comment trancher ce qu’elle
+				laisse ouvert. Voir{" "}
 				<a href="/configuration/packs/">Packs</a> pour en utiliser un ou en écrire un.
 			</p>
 
@@ -47,7 +51,8 @@ export function ConfigurationContent() {
 				présentes sur un site existant pour n’échouer que sur les nouvelles, et envoient les
 				résultats SARIF directement dans <span lang="en">GitHub Code Scanning</span>, là où votre équipe regarde déjà. Des recettes pour GitLab CI et Azure DevOps placent
 				les résultats dans leurs propres vues de tests, au format JUnit, écrit par la CLI dans la
-				même étape. Voir{" "}
+				même étape, et un rapport JUnit peut transformer en échecs les constats non tranchés qui
+				penchent vers l’échec, pour qu’un échec probable ne passe pas pour un test ignoré. Voir{" "}
 				<a href="/configuration/ci-integration/">Intégration CI</a> pour les modèles complets.
 			</p>
 
@@ -58,7 +63,8 @@ export function ConfigurationContent() {
 				à partir d’un dictionnaire à clés, avec un repli chaîne par chaîne vers l’anglais plutôt
 				qu’un texte vide ou une erreur. Cinq langues sont disponibles aujourd’hui (anglais,
 				français, allemand, espagnol, japonais), et un résultat indique toujours exactement quelle langue il a
-				utilisée, pour que rien ne se dégrade en silence à votre insu. Voir{" "}
+				utilisée, pour que rien ne se dégrade en silence à votre insu. Les étapes pour trancher un
+				constat ouvert (« Comment vérifier ») existent dans les mêmes cinq langues. Voir{" "}
 				<a href="/configuration/locales/">Langues</a> pour la couverture et la façon de
 				fournir votre propre dictionnaire.
 			</p>

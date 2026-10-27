@@ -36,6 +36,24 @@ const coverageSampleLines = [
 	"// }",
 ];
 
+const reviewDictionaryRows = [
+	{
+		id: "node",
+		who: <><code>runDomRulesInPage</code>, <code>addHowToCheck</code>, <code>howToCheckFor</code>, <code>renderHtmlReport</code></>,
+		how: <>インストールしたパッケージから読み込みます。ロケールを小文字にして探し（<code>fr-ca</code>、次に<code>fr</code>）、最後は英語です。</>,
+	},
+	{
+		id: "browser",
+		who: "ブラウザーで動くコード（Cypressのspec）",
+		how: <><code>@surea11y/core/how-to-check</code>の<code>{"applyHowToCheck(result, { en, fr })"}</code>を使い、辞書は<code>@surea11y/core/review/&lt;locale&gt;</code>としてインポートします。</>,
+	},
+	{
+		id: "bundle",
+		who: <><code>a11ycore.openReport(result)</code>（ブラウザーバンドル）</>,
+		how: <>バンドルの隣から取得するか、<code>{"{ reviewDictionaries }"}</code>として渡します。</>,
+	},
+];
+
 const localeReasonRows = [
 	{ id: "ok", reason: <code>ok</code>, meaning: "指定したとおりの辞書が使われ、その辞書にすべてのキーがそろっています。" },
 	{
@@ -296,7 +314,7 @@ export function LocalesContent() {
 				rows={dictionaryLocationRows}
 			/>
 			<p>
-				バンドルを分けているのは、それを使うすべてのページにネットワーク経由で配信されるうえ、すべての言語を必要とするページはないからです。英語だけを内蔵し、残りを任意にしたことで、ほかの言語はダウンロードに含まれず、言語を追加しても増えなくなりました。各別ファイル<code>surea11y.i18n.&lt;locale&gt;.js</code>の大きさは、置き換える英語のテキストとほぼ同じで（現在130〜160 KB）、ページが読み込むのは使うものだけです。それ以外は何も変わりません。Nodeパッケージとバインディングには影響しません。
+				バンドルを分けているのは、それを使うすべてのページにネットワーク経由で配信されるうえ、すべての言語を必要とするページはないからです。英語だけを内蔵し、残りを任意にしたことで、ほかの言語はダウンロードに含まれず、言語を追加しても増えなくなりました。各別ファイル<code>surea11y.i18n.&lt;locale&gt;.js</code>の大きさは、置き換える英語のテキストとほぼ同じで（現在200〜250 KB）、ページが読み込むのは使うものだけです。それ以外は何も変わりません。Nodeパッケージとバインディングには影響しません。
 			</p>
 			<CodeBlock
 				lang="html"
@@ -334,6 +352,31 @@ export function LocalesContent() {
 				<a href="/configuration/packs/">パック</a>
 				のメッセージはパック自身の辞書にあり、パックがロケールごとに列挙します。パックに辞書がないロケールでは、そのメッセージは英語で表示されます。
 			</p>
+
+			<h3 id="review-dictionaries">確認手順の辞書</h3>
+			<p>
+				判定できなかった検出結果に人がどう答えるかを示す手順（<code>howToCheck</code>。<a href="/results-reports/output-schema/#how-to-check">出力スキーマ</a>を参照）は、同じ5つのロケールについて、専用の辞書にあります。手順がバンドルやページに入らないよう、エンジンの辞書とは分けてあり、スキャンの後にNodeで、またはそれをインポートするコードで追加されます。core 1.14.0以降です。
+			</p>
+			<DataTable
+				label="確認手順の辞書を読むもの"
+				rowKey="id"
+				columns={[
+					{ key: "who", label: "読むもの", width: "40%", wrap: true },
+					{ key: "how", label: "方法", wrap: true },
+				]}
+				rows={reviewDictionaryRows}
+			/>
+			<p>
+				ロケールにない手順は、メッセージと同じく英語で表示されます。<a href="/configuration/packs/#review-steps">パックのルール独自の手順</a>は、どのロケールでも英語です。<code>getLocaleCoverage()</code>はこれらの辞書を数えません。手順はキーを持たないので、別のロケールで表示するには、もう一度追加します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { addHowToCheck } = require('@surea11y/core');",
+					"",
+					"const inFrench = addHowToCheck(result, { locale: 'fr' });",
+				]}
+			/>
 
 			<h3>辞書を自分で渡す</h3>
 			<p>
@@ -384,7 +427,11 @@ export function LocalesContent() {
 				<code>lang</code>
 				属性（ページタイトルの場合は
 				<code>&lt;html&gt;</code>
-				要素のもの）から得た要素自身の言語のリストを確認します。すべてのリストをどこでも確認すると、ある言語では一般的な語でも別の言語では実際の名前になる語、例えば英語のページの「<span lang="fr">Suite</span>」や「<span lang="fr">Plus</span>」を検出してしまうためです。文字起こしを表す語は例外です。どの言語でも紛れがなく、ページが別の言語の文字起こしにリンクすることもあるため、常にすべて確認します。テキストは最初にNFKC正規化するので、「見出し２」のような全角の形も一致します。
+				要素のもの）から得た要素自身の言語のリストを確認します。リンクの上の木構造のどこにも
+				<code>lang</code>
+				が宣言されていない場合、
+				<code>link-name-quality</code>
+				はすべての言語のリストを確認します。リンクがどの言語でもありうるためです。すべてのリストをどこでも確認すると、ある言語では一般的な語でも別の言語では実際の名前になる語、例えば英語のページの「<span lang="fr">Suite</span>」や「<span lang="fr">Plus</span>」を検出してしまうためです。文字起こしを表す語は例外です。どの言語でも紛れがなく、ページが別の言語の文字起こしにリンクすることもあるため、常にすべて確認します。テキストは最初にNFKC正規化するので、「見出し２」のような全角の形も一致します。
 			</p>
 			<p>
 				<code>page-title-patterns</code>
@@ -440,9 +487,30 @@ export function LocalesContent() {
 					<code>summary</code>
 					／
 					<code>hint</code>
+					を解決します。傾きの
+					<code>i18n.whyKey</code>
+					／
+					<code>i18n.cautionKey</code>
+					も同じ方法で、その
+					<code>why</code>
+					と
+					<code>caution</code>
 					を解決します。詳しくは
 					<a href="/results-reports/output-schema/">出力スキーマ</a>
 					を参照してください。
+				</li>
+				<li>
+					<strong>確認手順</strong>：
+					<a href="#review-dictionaries">確認手順の辞書</a>
+					の
+					<code>{"<prefix>_review_<CODE>_step<n>"}</code>
+					、
+					<code>_pass</code>
+					、
+					<code>_fail</code>
+					。判定できなかった検出箇所の
+					<code>howToCheck</code>
+					です。
 				</li>
 			</ul>
 			<p>

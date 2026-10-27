@@ -7,11 +7,13 @@ const core = "https://github.com/SureA11y/core/blob/main";
 const sarifLevelRows = [
 	{ id: "fail", outcome: <code>fail</code>, level: <code>error</code>, meaning: "決定論的な違反です。CIのゲート判定に使うのはこのケースです。" },
 	{ id: "cantTell", outcome: <code>cantTell</code>, level: <code>warning</code>, meaning: "人間によるレビューが必要です。表示はされますが、それだけでビルドを止めるべきではありません。" },
+	{ id: "leanFail", outcome: <><code>fail</code>に傾く<code>cantTell</code>（<code>leanFailAs: 'error'</code>指定時）</>, level: <code>error</code>, meaning: <>未判定ですが、ページの根拠が不適合を指しています（<a href="/results-reports/output-schema/#leans"><code>lean</code></a>）。errorによるゲートで数えられます。</> },
 ];
 
 const sarifFieldRows = [
 	{ id: "ruleId", field: <code>results[].ruleId</code>, source: <code>checksResults[i].ruleId</code> },
-	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code>＋<code>occurrence.hint</code>。要約のない検出箇所（カスタムルールのものなど）では、ルールのタイトル、またはそのIDを使います。GitHubは空のテキストを持つresultを拒否するためです。</> },
+	{ id: "message", field: <code>results[].message.text</code>, source: <><code>occurrence.summary</code>＋<code>occurrence.hint</code>。要約のない検出箇所（カスタムルールのものなど）では、ルールのタイトル、またはそのIDを使います。GitHubは空のテキストを持つresultを拒否するためです。未判定の検出結果では、空行の後に手順が続きます。<code>How to check:</code>、番号付きの手順、そして<code>Passes when:</code>と<code>Fails when:</code>で、アラートがそれへの答え方を示すようにします。</> },
+	{ id: "howToCheck", field: <code>results[].properties.howToCheck</code>, source: <>未判定の検出結果の手順で、<a href="/results-reports/output-schema/#how-to-check"><code>occurrence.howToCheck</code></a>が示すとおりの<code>{"{ steps, passWhen, failWhen }"}</code>です。バインディングの結果のように手順を持たない結果には、Nodeで追加されます。<code>packs</code>（スキャンが実行したパック）を渡すと、パックのルール自身の手順も追加されます。傾きと同じく、検出結果の同一性には含まれません。</> },
 	{ id: "uri", field: <code>results[].locations[].physicalLocation.artifactLocation.uri</code>, source: <>スキャン対象そのものです。後述の<a href="#sarif-locations">位置情報</a>を参照してください。</> },
 	{ id: "fqn", field: <code>results[].locations[].logicalLocations[].fullyQualifiedName</code>, source: <>要素の位置で、<code>kind: "element"</code>を伴います。<code>occurrence.selector</code>が空でない文字列の場合に含まれます。シャドウツリーの外ではセレクターそのものです。シャドウツリー内の要素では、シャドウホストのセレクター、続いて要素自身のセレクターを<code>{" >>> "}</code>でつないだものです：<code>{"html > body > main > x-card >>> button"}</code>。JUnitの<code>selector:</code>行とHTMLレポートも同じテキストを示します。</> },
 	{
@@ -29,6 +31,10 @@ const sarifFieldRows = [
 				がキーそのものを保持していたため、
 				<code>v1</code>
 				を読んでいたツールでは、各検出結果が一度だけ新規として扱われます。
+				<strong>理由コードが変わった検出結果は、別のダイジェストになります</strong>
+				。1.14では、新たにコードを示すようになった17件のルールの検出結果と、原因ごとに分けられたコードの検出結果がこれに当たり、それらの<span lang="en">Code Scanning</span>のアラートは一度閉じられ、検出結果は新規として戻ります（
+				<a href="/conformance/baseline/">ベースライン／許可リスト</a>
+				を参照）。
 			</>
 		),
 	},
@@ -46,14 +52,17 @@ const sarifFieldRows = [
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <>ルールのヘルプリンクである<code>meta.helpUrl</code>が絶対<code>http(s)</code> URLならその値、そうでなければ対応する最初のWCAG達成基準のUnderstanding文書です。どちらもないルールでは含まれませんが、組み込みルールにそうしたものはありません。どの達成基準にも対応しないルールは、ルールカタログにある自身の節にリンクします。</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <><code>toolVersion</code>オプションが指定されていればその値（エンジンを組み込んだツールは自身のバージョンを渡します）、なければ結果を生成したエンジンのリリースである<code>engine.version</code>です。<code>"0.0.0"</code>になるのは、1.10.0より前のリリースによる、この値を持たない結果か、<code>engine.version</code>が文字列でない結果の場合だけです。</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <><code>category</code>オプションの値で、末尾に<code>/</code>がなければ追加します（GitHubは最後のスラッシュまでをカテゴリーとして読むためです）。カテゴリーを指定しない場合は含まれません。<a href="#scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</a>を参照してください。</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <>結果の<code>engine</code>にある<code>wcagVersion</code>、<code>wcagLevel</code>（スキャンにレベルがあった場合。<code>engineOptions.wcagLevel</code>、または選択が示すレベル）、<code>profile</code>、<code>optInRules</code>、<code>environment</code>です。実行が使った適合性の目標を示すので、ダッシュボードはWCAG 2.1の実行と2.2の実行を、またAAの実行とすべてのレベルの実行を区別できます。その目標を超えてオプトインルールのタグを追加した場合は、それも示します。また、ページがレンダリングされた条件（<code>layout</code>、<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）も示します。これらのフィールドより前のエンジンの結果では省略されます。</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <>結果の<code>engine</code>にある<code>wcagVersion</code>、<code>wcagLevel</code>（スキャンにレベルがあった場合。<code>engineOptions.wcagLevel</code>、または選択が示すレベル）、<code>profile</code>、<code>optInRules</code>、<code>environment</code>（<code>engine.environment</code>のコピー）です。実行が使った適合性の目標を示すので、ダッシュボードはWCAG 2.1の実行と2.2の実行を、またAAの実行とすべてのレベルの実行を区別できます。その目標を超えてオプトインルールのタグを追加した場合は、それも示します。また、ページがレンダリングされた条件（<code>layout</code>、<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>、フックのものを含むそのほかのすべてのフィールド。<a href="/results-reports/output-schema/#top-level-result">出力スキーマ</a>を参照）も示します。これらのフィールドより前のリリースの結果では省略されます。</> },
 ];
 
 const sarifOptionRows = [
 	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>です。エンジンを組み込んだツールのためのものです。</> },
 	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>、つまりツールのホームページです。</> },
-	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "なし", effect: <>保存したままのベースラインファイル（それを<code>JSON.parse</code>したもの）、またはその<code>entries</code>の一覧です。<a href="/conformance/baseline/#file-format">ファイル形式</a>を参照してください。そこに記録された<code>fail</code>の検出箇所は、<code>--baseline</code>と同じく省かれます（後述）。</> },
+	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "なし", effect: <>保存したままのベースラインファイル（それを<code>JSON.parse</code>したもの）、またはその<code>entries</code>の一覧です。<a href="/conformance/baseline/#file-format">ファイル形式</a>を参照してください。そこに記録された<code>fail</code>の検出箇所は、<code>--baseline</code>と同じく省かれます（後述）。1.13が書いたエントリーのうち、1.14で変わった理由コードのものも、新しいコードの検出結果に一致します。</> },
 	{ id: "category", option: <code>category</code>, def: "なし", effect: <><code>runs[0].automationDetails.id</code>です。<a href="#scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</a>を参照してください。</> },
+	{ id: "leanFailAs", option: <code>leanFailAs</code>, def: <code>'warning'</code>, effect: <><code>'error'</code>にすると、傾きが不適合を指す<code>cantTell</code>の検出結果を<code>error</code>で報告するため、errorでゲートするビルドは不適合の可能性が高いものでも失敗します。大文字と小文字は区別しません。ほかの値を指定すると<code>TypeError</code>が投げられます。ベストプラクティスのルールも対象です。そうしたルールはどのWCAG達成基準にも対応せず、<code>fail</code>になることはありませんが、示す事実は無条件で不適合に傾くため、見出しレベルの飛び（<code>heading-order</code>）は<code>error</code>になります。対応するすべての達成基準がスキャンの目標の外にあるルールの検出結果は<code>note</code>のままです。不適合に傾き、<code>baselineEntries</code>に<code>lean: 'fail'</code>と示されたエントリーがある検出結果は<code>warning</code>のままです。</> },
+	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <><code>leanFailAs: 'error'</code>と組み合わせて<code>true</code>にすると、スキャンの目標内のWCAG達成基準に対応するルールの検出結果だけを引き上げ、ベストプラクティスのルールの傾きは<code>warning</code>のままにします。<code>true</code>と<code>false</code>以外の値を指定すると<code>TypeError</code>が投げられます。<code>@surea11y/core</code>の<code>leaningFailures(result, {"{ wcagOnly }"})</code>は、この2つのオプションが引き上げる検出結果を、ベースラインを適用する前の状態で列挙します。</> },
+	{ id: "packs", option: <code>packs</code>, def: "なし", effect: <>スキャンが実行したパック（<code>engineOptions.packs</code>）です。Nodeでは、パックのルールの未判定の検出結果が、そのルール自身の<code>meta.review</code>の手順（<code>properties.howToCheck</code>）を持ちます。</> },
 ];
 
 export function SarifReportContent() {
@@ -166,6 +175,27 @@ export function SarifReportContent() {
 				]}
 				rows={sarifLevelRows}
 			/>
+			<p>
+				傾きのある未判定の検出結果は、どのlevelで報告されても、それを
+				<code>properties.lean</code>
+				に持ちます：
+				<code>{'{ "toward": "fail", "why": "The heading skips a level after the one before it." }'}</code>
+				。傾きにあれば、誤りになりうる要因である
+				<code>caution</code>
+				（
+				<code>"A layout table can also hold numbers."</code>
+				）と、これまでどれだけ正しかったかを示す
+				<code>measured</code>
+				（
+				<code>{'{ "agreed": 47, "cases": 50, "corpus": "…", "coreVersion": "…" }'}</code>
+				。5件のケースで数えられた傾きにだけ付きますが、まだそうした傾きはありません）も持つので、アラートは
+				<a href="/results-reports/html-report/">HTMLレポート</a>
+				が傾きと並べて示すものを示します。
+				<code>signals</code>
+				と
+				<code>i18n</code>
+				のキーはスキャン結果に残ります。
+			</p>
 			<p id="outside-the-target">
 				WCAGの達成基準がすべてスキャンの目標の外にあるルール（
 				<code>engineOptions.wcagLevel: 'AA'</code>
@@ -312,7 +342,7 @@ export function SarifReportContent() {
 				検出結果の識別にはビューポートは含まれず、含める必要もありません。同じ要素の同じ欠陥は、どの幅でも同じ検出結果であり、分析を分けておくのはカテゴリーの役割です。<code>runs[0].properties.environment</code>には、各実行が使ったビューポートが記録されます。
 			</p>
 
-			<h2>オプション</h2>
+			<h2 id="options">オプション</h2>
 			<p>
 				<code>@surea11y/core/sarif</code>
 				の
@@ -348,13 +378,23 @@ export function SarifReportContent() {
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --baseline baseline.json --sarif results.sarif", command: true }]} />
 			<p>
 				<code>cantTell</code>
-				の検出箇所がベースラインで除外されることはありません。ベースラインの仕組みが追跡するのは
-				<code>fail</code>
-				の検出箇所だけです（
-				<code>--write-baseline</code>
-				と同じです。
-				<a href="/conformance/baseline/">ベースライン／許可リスト</a>
+				の検出箇所がベースラインで除外されることはありません。
+				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>
+				で書いたベースラインは、不適合に傾く検出結果も
+				<code>lean: 'fail'</code>
+				と示したエントリーとして記録します（
+				<a href="/conformance/baseline/#findings-that-lean-fail">ベースライン／許可リスト</a>
 				を参照）。
+				<code>leanFailAs: 'error'</code>
+				のもとでは、そうした検出結果は
+				<code>error</code>
+				に引き上げられず
+				<code>warning</code>
+				のままなので、チームはすでにある不適合の可能性が高いものを受け入れつつ、新しいものでゲートできます。
+				<code>--write-baseline</code>
+				が記録するのは
+				<code>fail</code>
+				の検出箇所だけです。
 			</p>
 
 			<h2>

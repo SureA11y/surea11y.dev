@@ -109,6 +109,65 @@ export function StandaloneUsageContent() {
 				オプションで、SVGやXHTMLのドキュメントをその形式どおりに解析できます。
 			</p>
 
+			<h2 id="from-the-browser-console">ブラウザーのコンソールから</h2>
+			<p>
+				手作業でスキャンするために、バンドルにはいくつかの補助関数があります。ブラウザーのコンソール（開発者ツールのConsoleタブ）から開いているページにバンドルを読み込み、スキャン、検出結果の一覧表示、ページ上での枠表示、HTMLレポートの表示ができます。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// Pasted into the console of the page to check.",
+					"const s = document.createElement('script');",
+					"s.src = 'https://cdn.jsdelivr.net/npm/@surea11y/core/surea11y.browser.js';",
+					"document.head.append(s);",
+					"",
+					"// Once it has loaded:",
+					"a11ycore.version; // the engine's version",
+					"const result = await a11ycore.run(); // scan the page",
+					"a11ycore.table(result); // the findings, worst first",
+					"a11ycore.highlight(result); // box each one on the page",
+					"await a11ycore.openReport(result); // the HTML report, in a new tab",
+					"await a11ycore.inspect('headings'); // what a person checks by hand",
+				]}
+			/>
+			<p>
+				<code>run(options)</code>
+				はエンジンのオプションに加えて、独自の
+				<code>context</code>
+				（ページの一部だけをスキャンするセレクター）と
+				<code>runOnly</code>
+				を受け取り、スキャンの前に、ページ自身が読めないスタイルシートを取得します。
+				<code>table()</code>
+				は検出結果を1行ずつ表示します。まず失敗、次に不適合に傾いた問い、適合に傾いた問い、人だけが判断できる問いの順です。
+				<code>highlight()</code>
+				は、
+				<code>fail</code>
+				（赤の実線）や
+				<code>cantTell</code>
+				（琥珀色の破線）が示す各要素に枠を描きます。枠は専用のレイヤーに描かれ、ページの要素には手を加えません。
+				<code>clearHighlights()</code>
+				で消せます。
+				<code>inspect()</code>
+				は、ページを確認する人が手作業でチェックする内容を描くだけで、何も判定しません（
+				<code>'headings'</code>
+				、
+				<code>'landmarks'</code>
+				、
+				<code>'names'</code>
+				、
+				<code>'focus-order'</code>
+				）。
+				<code>openReport()</code>
+				は初回にバンドルの隣から
+				<code>surea11y.report.js</code>
+				を取得し、レポートには各問いの確認方法が示されます。ページのContent Security PolicyがCDNのスクリプトを遮断する場合は、ページ自身のオリジンからファイルを読み込むか、ドライバーでスキャンしてください。すべてのオプションは、GitHubにある連携ガイド
+				<a href={`${core}/docs/INTEGRATION.md#from-the-browser-console`}>
+					<code>INTEGRATION.md</code>
+					のブラウザーのコンソールの節
+				</a>
+				にあります。
+			</p>
+
 			<h2 id="packs-in-a-page">ページ内でのパック</h2>
 			<p>
 				<a href="/configuration/packs/">パック</a>
@@ -209,6 +268,38 @@ export function StandaloneUsageContent() {
 				にあります。
 			</p>
 
+			<h2 id="style-sheets-from-another-origin">別オリジンのスタイルシート</h2>
+			<p>
+				ページのスクリプトは、別オリジン（CDNやフォントサービス）から配信されたスタイルシートのルールを読めません。そのため、
+				<code>css-orientation-lock</code>
+				のようにCSSの中の何かを探すルールは、それがあるかどうかを判断できず、確認を求めます。
+				<code>engineOptions.styleSheetTexts</code>
+				（
+				<code>{"[{ href, text }]"}</code>
+				）でスキャンにそのテキストを渡すと、
+				<code>css-orientation-lock</code>
+				、
+				<code>css-hidden-focus</code>
+				、
+				<code>css-focus-indicator-suppressed</code>
+				がそれを読みます。バンドルでは、
+				<code>runa11yCoreInPageAsync</code>
+				が
+				<code>runa11yCoreInPage</code>
+				と同じ4つの引数を受け取り、サーバーが共有している（CORS）スタイルシートを
+				<code>preloadStyleSheets()</code>
+				で取得してからスキャンします。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = await a11ycore.runa11yCoreInPageAsync(location.href, null, {}, null);",
+				]}
+			/>
+			<p>
+				サーバーが共有していないスタイルシートは、ページからはまったく読めません。ブラウザーを操作するツールなら、CORSが適用されないページの外から取得して、同じオプションで渡せます。バインディングはそうしています。
+			</p>
+
 			<h2 id="a-time-limit-on-a-scan">スキャンの制限時間</h2>
 			<p>
 				スキャンはページ内で一度に実行され、いったん始まるとページ内のどれもそれを止められません。戻らないページのゲッターやルールは、そのタブを止めたままにします。スキャンを開始する側で時間を制限し、制限を過ぎたらそのタブを諦めてください。時間制限で止まるのは待機であり、ページ内で実行中のスクリプトではありません。60秒は通常のページにかかる時間をはるかに上回るので、引っかかるのは壊れたページだけです。
@@ -293,6 +384,102 @@ export function StandaloneUsageContent() {
 				にあります。
 			</p>
 
+			<h2 id="listener-and-live-region-hooks">クリックハンドラーとライブリージョン</h2>
+			<p>
+				core 1.14から、オプトインのフックがさらに2つあり、internalsフックと同じように、ページ自身のスクリプトより前にインストールします。
+				<code>listenerHookScript()</code>
+				は、ページがスクリプトから追加するクリック、キー、フォーカス、マウス、貼り付けのリスナーを記録し、キーボードのルールがそれを判定できるようにします。クリックリスナーを持ち、そこからのキーイベントが届く先のどこにもキーリスナーがない
+				<code>&lt;div role="button"&gt;</code>
+				は失敗します（
+				<code>CLICK_HANDLER_NO_KEY_LISTENER</code>
+				）。
+				<code>liveRegionHookScript()</code>
+				は、ライブリージョンに何が与えられたかを記録します。すると
+				<code>live-region-announcements</code>
+				は、テキストが入った状態で追加されたリージョンや、表示と同時に中身が入ったリージョンなど、スクリーンリーダーが読み上げないことの多いものについて確認を求め、
+				<code>getAnnouncements()</code>
+				はページが読み上げ用に提供した内容を返します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { listenerHookScript, liveRegionHookScript, getAnnouncements } = require('@surea11y/core');",
+					"",
+					"// Playwright: before the page's own scripts",
+					"await page.addInitScript({ content: listenerHookScript() });",
+					"await page.addInitScript({ content: liveRegionHookScript() });",
+					"await page.goto('https://example.com/settings');",
+					"",
+					"await page.click('text=Save');",
+					"const said = await page.evaluate(getAnnouncements, { selectors: true });",
+					"// [{ text: 'Saved', politeness: 'polite', time: 1234.5, order: 7, behindModal: false, selector: '#status' }]",
+				]}
+			/>
+			<p>
+				<code>engine.environment.listenerHook</code>
+				と
+				<code>.liveRegionHook</code>
+				は、スキャンがフックを確認できたかを示します。リスナーがないことを示せるのは、ページのスクリプトより前にインストールされたリスナーフック（
+				<code>'early'</code>
+				）だけで、後からインストールした場合、ルールは確認を求めるだけです。バンドルでは
+				<code>a11ycore.getAnnouncements()</code>
+				がページ内で記録を読みます。internalsフックと同じく、どちらも記録した内容をページのどのスクリプトからも読める場所に保持するので、テストや監査の実行のためにインストールしてください。jsdomのセットアップファイルでは
+				<code>{"{ early: true }"}</code>
+				を渡し、リスナーフックの前にセレクターを1回実行してください（
+				<code>document.querySelector('*')</code>
+				）。jsdomは最初にセレクターを実行したときに独自のキーリスナーを追加するためです。残りは、GitHubにある連携ガイド
+				<code>INTEGRATION.md</code>
+				の
+				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+					リスナーフック
+				</a>
+				と
+				<a href={`${core}/docs/INTEGRATION.md#seeing-what-live-regions-are-given-the-live-region-hook`}>
+					ライブリージョンフック
+				</a>
+				の節にあります。
+			</p>
+
+			<h2 id="questions-and-steps">問いの傾きと確認方法</h2>
+			<p>
+				core 1.14から、
+				<code>cantTell</code>
+				の出現箇所は
+				<code>lean</code>
+				を持つことがあります。ページの証拠がどちらを示しているか（
+				<code>toward: 'fail'</code>
+				または
+				<code>'pass'</code>
+				）、その理由、それが誤りになりうる点です。判定結果は
+				<code>cantTell</code>
+				のままです。coreのルールの各問いには、人が答えるための手順である
+				<code>howToCheck</code>
+				も、スキャンのロケールで含まれます。これはページ内のエンジンではなくNodeで追加されます。
+				<code>runDomRulesInPage</code>
+				は自動で追加し、ページから返ってきた結果には
+				<code>addHowToCheck(result)</code>
+				が手順を加えたコピーを返します。
+				<code>leaningFailures(result)</code>
+				は、独自のゲートのために、不適合に傾いた検出結果を一覧にします。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { runa11yCoreInPage, addHowToCheck, leaningFailures } = require('@surea11y/core');",
+					"",
+					"const raw = await page.evaluate(runa11yCoreInPage, page.url(), null, {}, null);",
+					"const result = addHowToCheck(raw); // a copy, with each question's steps",
+					"const likelyFailures = leaningFailures(result);",
+				]}
+			/>
+			<p>
+				検出結果が傾くかどうかとその文言はcoreのマイナーリリースで変わることがありますが、
+				<code>lean</code>
+				の形は安定しています。両方のフィールドについては
+				<a href="/results-reports/output-schema/#leans">出力スキーマ</a>
+				を参照してください。
+			</p>
+
 			<h2 id="what-a-scan-covers">スキャンの対象を事前に知る</h2>
 			<p>
 				WCAGの達成基準ごとに報告し、利用者にチェックを選ばせるツールでは、スキャンの目標を指定できます。
@@ -320,7 +507,7 @@ export function StandaloneUsageContent() {
 				<code>cantTell</code>
 				として返り、実行されなかった各チェックには
 				<code>notSelected: true</code>
-				が付きます。こうした達成基準は「一部だけチェック済み」として示し、合格とは決して表示しないでください。core上に自分のツール（CLI、CI連携、ダッシュボード、適合性レポートの生成ツールなど）を作る方法は、GitHubの
+				が付きます。こうした達成基準は「一部だけチェック済み」として示し、合格とは決して表示しないでください。core 1.14からは、合格と報告される達成基準はそもそもありません。達成基準が合格になるのは、そのルールが基準の求めることをすべてチェックする場合だけで、完全にチェックできるとされた基準はまだないためです。core上に自分のツール（CLI、CI連携、ダッシュボード、適合性レポートの生成ツールなど）を作る方法は、GitHubの
 				<a href={`${core}/docs/BUILDING_ON_CORE.md`}>
 					<code>BUILDING_ON_CORE.md</code>
 				</a>

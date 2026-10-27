@@ -69,6 +69,19 @@ export function OverviewContent() {
 				on GitHub covers the stable contract, running scans, choosing checks, and presenting
 				results without claiming more than they say.
 			</p>
+			<p>
+				For a first look without a test suite, load the{" "}
+				<a href="/getting-started/standalone/">standalone bundle</a> on a page and scan it from the
+				browser console: <code>await a11ycore.run()</code> scans the page,{" "}
+				<code>a11ycore.table(result)</code> lists the findings, <code>a11ycore.highlight(result)</code>{" "}
+				outlines them on the page, and <code>await a11ycore.openReport(result)</code> opens the HTML
+				report.{" "}
+				<a href={`${core}/docs/INTEGRATION.md#from-the-browser-console`}>
+					<code>INTEGRATION.md</code>
+				</a>{" "}
+				on GitHub lists the other helpers, such as <code>a11ycore.inspect('headings')</code> for a
+				page's headings, landmarks, names or focus order.
+			</p>
 
 			<h2>How its results differ</h2>
 			<p>
@@ -102,6 +115,29 @@ export function OverviewContent() {
 				verdict — including how a target WCAG version (2.0/2.1/2.2) is resolved and applied.
 			</p>
 			<p>
+				A <code>cantTell</code> doesn't leave you with only a question. Every one a core rule
+				reports says how to answer it: a few steps starting from the element it names, and what
+				you'll see if it passes and if it fails, in the scan's language. Where the page gives
+				evidence, the finding also leans toward <code>pass</code> or <code>fail</code>, with the facts
+				it read, its reason, and what could make it wrong. Each lean is counted against the W3C ACT
+				test cases, and once it has been counted on at least five, it says how often it was right;
+				until then it carries no figure at all, never an estimate. The outcome stays{" "}
+				<code>cantTell</code>: a lean orders the questions, and a person still answers them. See{" "}
+				<a href="/results-reports/output-schema/#how-to-check">How to check</a> and{" "}
+				<a href="/results-reports/output-schema/#leans">Leans</a> in the Output schema, and{" "}
+				<a href={`${core}/docs/LEANS.md`}><code>LEANS.md</code></a> on GitHub for what earns a
+				finding a lean and how far to trust one.
+			</p>
+			<p>
+				The HTML report sets out the questions in the order a reviewer works through them: "Likely
+				fails: confirm", "Likely passes: confirm" and "Needs a person", each card with its reason and
+				its "How to check" steps. In CI, the JUnit and SARIF reports can also gate on the findings
+				that lean fail, off by default, and a baseline can accept the ones a page already has, so
+				only new ones break the build. See <a href="/results-reports/html-report/">HTML report</a>{" "}
+				and <a href="/conformance/baseline/">Baseline / allowlist</a>, or <a href="/sample-report.html">open a sample report</a> of a
+				small checkout page.
+			</p>
+			<p>
 				A <code>pass</code> also says how close it came. Rules that measure against a threshold —
 				contrast, target size, text spacing — report a <code>margin</code>: the element that came
 				closest to the limit while still meeting it. Text at 4.52:1 against a 4.5:1 minimum passes,
@@ -127,6 +163,15 @@ export function OverviewContent() {
 				it, so an AA build doesn't fail on an AAA criterion.
 			</p>
 			<p>
+				No WCAG criterion is reported as passed on the strength of rules that check only part of
+				it. A criterion passes only when its rules check everything it asks, and none is checked
+				that completely yet, so where every rule for a criterion passes, the criterion comes back{" "}
+				<code>cantTell</code>: the parts the rules check are met, and a person checks the rest. A
+				report with no failure says the same under its headline: no rule failed, and that is not a
+				claim that the page conforms. Marking those criteria as passed would be the false sense of
+				coverage this engine is built to avoid. See <a href="/conformance/wcag-mapping/">WCAG conformance mapping</a>.
+			</p>
+			<p>
 				Web components are judged by what they expose. A custom element that gives itself a name,
 				states or a role through <code>ElementInternals</code> is checked against them where the
 				engine can read them, and asked about where it can't. For test and audit runs,{" "}
@@ -139,6 +184,21 @@ export function OverviewContent() {
 				on GitHub shows how to install it before the page's own scripts.
 			</p>
 			<p>
+				Rules reach three criteria no rule covered before: 3.3.1 Error Identification (a field
+				marked invalid whose error message is missing, hidden or not tied to it), 4.1.3 Status
+				Messages (a live region assistive technology can't reach) and 1.4.5 Images of Text (text
+				drawn in an image that could be real text). All three ask rather than fail. The keyboard
+				rules read event handlers from the markup; with <code>listenerHookScript()</code>, another
+				opt-in script installed before the page's own, they judge listeners added from script too,
+				so a <code>role="button"</code> in the tab order with a click listener and no key listener
+				anywhere it could hear one (on it, its ancestors, the document or the window) fails: Enter and Space do nothing.{" "}
+				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
+					<code>INTEGRATION.md</code>
+				</a>{" "}
+				on GitHub shows how to install it, and its counterpart for status messages, the
+				live-region hook.
+			</p>
+			<p>
 				In a browser, contrast is measured as the page is drawn: text on a page with no background
 				of its own, on the canvas the browser paints, light or dark; generated text from{" "}
 				<code>::before</code>, <code>::after</code> and list markers; a closed{" "}
@@ -149,10 +209,10 @@ export function OverviewContent() {
 
 			<h3 id="checked-against-the-act-corpus">Checked against the ACT corpus</h3>
 			<p>
-				The engine ships {rules.length} rules. Fifty-nine of them have a{" "}
+				The engine ships {rules.length} rules. Sixty of them have a{" "}
 				<a href="https://www.w3.org/WAI/standards-guidelines/act/rules/">W3C ACT Rules</a>{" "}
 				counterpart and run against the test cases W3C publishes for them, the set W3C's own
-				implementation listing scores: 942 examples across those 59 rules. The engine fails none of
+				implementation listing scores: 957 examples across those 60 rules. The engine fails none of
 				the examples ACT marks passed or inapplicable, so it reports no false positives against
 				that corpus. That is a result on those examples, not a guarantee for every page; where the
 				engine can't decide a case, it returns <code>cantTell</code>, which ACT permits for an
@@ -161,8 +221,8 @@ export function OverviewContent() {
 			<p>
 				It holds in both places the engine runs: in jsdom, as test-matchers and the CLI run it, and
 				in Chromium, as the browser bindings do, with each test case loaded as a real page, its
-				scripts and linked style sheets included. Twenty-five examples ACT marks failed go
-				unflagged in jsdom and 21 in Chromium. Most are judgement calls, such as whether a heading
+				scripts and linked style sheets included. Twenty-two examples ACT marks failed go
+				unflagged in jsdom and 18 in Chromium. Most are judgement calls, such as whether a heading
 				describes the content under it; the four a browser catches need a page's own scripts or
 				style sheets, which jsdom doesn't run. See{" "}
 				<a href={`${core}/docs/ACT_RULE_MAPPING.md`}><code>ACT_RULE_MAPPING.md</code></a> for every
@@ -206,7 +266,7 @@ export function OverviewContent() {
 			<h3>What surea11y won't catch</h3>
 			<p>Being explicit about the boundaries of automation is part of the same philosophy. For example, surea11y will not:</p>
 			<ul>
-				<li>confirm that alt text is <em>meaningful</em>, only that it is present (an alt attribute of <code>"image123.png"</code> passes the objective check);</li>
+				<li>confirm that alt text is <em>meaningful</em>, only that it is present (an alt attribute of <code>"image123.png"</code> passes the objective check, and is asked about, leaning fail, as a file name);</li>
 				<li>judge whether a color contrast choice is aesthetically appropriate, only whether it meets the applicable contrast ratio;</li>
 				<li>determine whether an error message actually <em>explains</em> the problem, since that depends on validation logic a static scan can't see;</li>
 				<li>detect a keyboard focus trap or content clipped at 400% zoom, since both require simulating real user interaction over time, not just reading the DOM at one instant.</li>

@@ -7,62 +7,67 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-12">"My CI results changed after upgrading to core 1.12"</h2>
+				<h2 id="results-changed-1-14">"My results changed after upgrading to core 1.14"</h2>
 				<p>
-					What the engine finds is mostly the same; where it lands, and a few rules, changed. The
-					changes most likely to show in a pipeline:
+					1.14 reports more <code>cantTell</code> and claims less, on purpose. The changes most
+					likely to show in a pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>An empty heading fails.</strong>{" "}
-						<a href="/rules/empty-heading/"><code>empty-heading</code></a> fails a heading with no
-						accessible name, where it asked about one. It is a best practice, so it runs in a scan
-						with no selection or with the best practices added, not under a WCAG target, tags or a
-						profile. Fix the heading, or scan a WCAG target.
+						<strong>No WCAG rollup passes.</strong> A criterion passes only when its rules check all
+						it asks, and none is listed as checked in full yet, so a criterion whose rules all pass
+						is <code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>). One
+						whose rules all found nothing is <code>notApplicable</code> only for 2.4.3, 2.4.4,
+						2.4.7, 2.4.9, 2.5.3 and 4.1.1, and <code>cantTell</code> otherwise (
+						<code>composite.rollup.cantTell.partialCoverage</code>). A failing rule still fails its
+						criterion. A dashboard or gate that counts passed criteria sees none; see{" "}
+						<a href="#why-criterion-canttell">the entry below</a> and{" "}
+						<a href="/conformance/wcag-mapping/#when-a-criterion-passes">WCAG conformance mapping</a>.
 					</li>
 					<li>
-						<strong>
-							<a href="/rules/label-in-name/"><code>label-in-name</code></a> counts text hidden
-							only with <code>aria-hidden</code>
-						</strong>
-						, since it is still painted:{" "}
-						<code>{'Download <span aria-hidden="true">gizmo</span> specification'}</code> named
-						"Download specification" now fails 2.5.3.
+						<strong>Two rules ask more.</strong>{" "}
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> asks about
+						every page title, not only generic or templated ones, since whether a title describes
+						its page is for a person (G88).{" "}
+						<a href="/rules/duplicate-id/"><code>duplicate-id</code></a> asks about 4.1.1 under WCAG
+						2.0 and 2.1 too, as the 2023 errata count it satisfied, unless a profile says{" "}
+						<code>keepsParsing: true</code>, as <code>en301549-v3.2.1</code> does.
 					</li>
 					<li>
-						<strong>Scans that name checks report their criteria.</strong> Rule ids, a tag that
-						names no WCAG level, or the best practices now fill <code>rulesResults</code> with the
-						criteria those rules belong to, where it was empty; a criterion whose other rules
-						weren't selected is <code>cantTell</code>, partly checked. Set{" "}
-						<code>engineOptions.wcagLevel</code> (<code>.wcagLevel()</code> in the bindings,{" "}
-						<code>--wcag-level</code> in the CLI) to keep them to a level. See{" "}
-						<a href="/conformance/wcag-mapping/">WCAG conformance mapping</a>.
+						<strong>Eleven new rules</strong>, among them the first for 3.3.1 (
+						<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>),
+						4.1.3 (<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>)
+						and 1.4.5 (<a href="/rules/image-of-text/"><code>image-of-text</code></a>). Most ask;{" "}
+						<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>,{" "}
+						<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>{" "}
+						and <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a> can fail, and so
+						can <a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>, which
+						now checks the constraints between attributes (<code>aria-valuemin</code> above{" "}
+						<code>aria-valuemax</code>, say). See <a href="/rules/">the rule catalog</a>.
 					</li>
 					<li>
-						<strong>Five rules count toward more criteria</strong>, as W3C's ACT rules map them:{" "}
-						<code>input-image-alt-present</code> adds 4.1.2, <code>aria-roles-valid</code> 1.3.1,{" "}
-						<code>link-name-present</code> and <code>link-name-quality</code> 2.4.9 (AAA), and{" "}
-						<code>meta-refresh-timing-absent</code> 2.2.4 and 3.2.5 (AAA). The findings don't
-						change, but the 1.3.1 and 4.1.2 rollups can now fail where they passed.
+						<strong>Some failures became questions, and some new failures appear.</strong>{" "}
+						<code>td-has-header</code> asks once about a large table with no header cell instead of
+						failing every cell, and <code>form-control-single-label</code> asks about a field with
+						two labels. Contrast is measured on more of what the page draws (text on the page's
+						canvas in each color scheme, <code>::first-line</code>, <code>font-size-adjust</code>, a
+						placeholder whose colors the page chose), so new contrast failures can appear.
 					</li>
 					<li>
-						<strong>JUnit suite names are the same in every locale</strong> (
-						<code>WCAG 4.1.2</code>), and the title moves to the suite's <code>title</code>{" "}
-						property. A dashboard that tracks tests by suite name shows them once as new. See{" "}
-						<a href="/results-reports/junit-report/">JUnit report</a>.
+						<strong>Some findings have a new reason code.</strong> Seventeen rules that gave none
+						now do, and a few codes are split by cause. A baseline written by 1.13 still matches
+						them until 1.15; rewrite it with <code>migrateBaselineEntries</code> (see{" "}
+						<a href="#baseline-after-upgrade">the entry below</a>). A Code Scanning alert for such a
+						finding closes and comes back as new.
 					</li>
 					<li>
-						<strong>Contrast is measured as the page is drawn.</strong> In a browser, text on a
-						page with no background, generated text (<code>::before</code>, <code>::after</code>,{" "}
-						<code>::marker</code>) and a closed <code>&lt;select&gt;</code> are measured, where
-						they were left out or <code>cantTell</code>, so new contrast failures can appear. A
-						lone character standing in for its control's name, such as "X" in a button named
-						"Close", is asked about rather than failed below the ratio.
-					</li>
-					<li>
-						<strong>Unnamed web components are questions.</strong> A defined custom element with no
-						readable name is <code>cantTell</code> where it failed; see{" "}
-						<a href="#web-component-canttell">the entry on web components</a>.
+						<strong>Every <code>cantTell</code> says how to answer it.</strong> A core rule's
+						finding carries <code>howToCheck</code> steps, and some carry a <code>lean</code>, which
+						way the page's evidence points. The outcome stays <code>cantTell</code>, and nothing
+						gates on a lean unless you ask (<code>leanFailAs</code>). The{" "}
+						<a href="/results-reports/html-report/">HTML report</a> groups these findings into
+						likely fails, likely passes and those that need a person. See{" "}
+						<a href="/results-reports/output-schema/#leans">Leans</a>.
 					</li>
 				</ul>
 				<p>
@@ -431,11 +436,33 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2>"Does a clean scan (<code>pass</code> everywhere) mean the page is WCAG conformant?"</h2>
+				<h2 id="why-criterion-canttell">
+					"Every check passed, so why is each WCAG criterion <code>cantTell</code>?"
+				</h2>
+				<p>
+					Since 1.14, a WCAG rollup in <code>rulesResults</code> passes only for a criterion whose
+					rules check all it asks, and no criterion is listed as such yet (<code>COMPLETE_CHECK</code>{" "}
+					in <code>src/coverage/complete-applicability.js</code>). Where every rule of a criterion
+					passes, its rollup is <code>cantTell</code> with <code>reasonCode</code>{" "}
+					<code>composite.rollup.cantTell.partialCheck</code>: the parts the rules check are met, and
+					a person checks the rest.{" "}
+					<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a> finds that{" "}
+					<code>{'<html lang="fr">'}</code> names a language, not that the page is in French.
+					Likewise, a criterion whose rules all found nothing is <code>notApplicable</code> only where
+					they find every case it applies to, and otherwise <code>cantTell</code> with{" "}
+					<code>composite.rollup.cantTell.partialCoverage</code>. A failing rule still fails its
+					criterion. Show these as "checks passed, needs review" and "nothing found to check", never
+					as passed; see{" "}
+					<a href="/conformance/wcag-mapping/#when-a-criterion-passes">WCAG conformance mapping</a>.
+				</p>
+			</article>
+
+			<article>
+				<h2>"Does a clean scan (no failures) mean the page is WCAG conformant?"</h2>
 				<p>
 					No — see <a href="/conformance/wcag-mapping/"><code>WCAG_CONFORMANCE.md</code></a>.{" "}
 					<strong>
-						A <code>pass</code> means the checks that ran came back clean on the part of the page
+						A rule's <code>pass</code> means the checks that ran came back clean on the part of the page
 						they scanned.
 					</strong>{" "}
 					A scan scoped to part of a page, limited to some rules, or run under jsdom checks less
@@ -454,7 +481,13 @@ export function FaqContent() {
 					common choice is to log <code>cantTell</code> findings without failing CI on them, since
 					failing a build on something the engine explicitly couldn't determine tends to train
 					people to ignore the gate. A team that wants every one reviewed before a merge can gate
-					on them instead; either way, keep them apart from failures. See <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> if you want to
+					on them instead; either way, keep them apart from failures. In between, a build can gate
+					only on the findings that lean fail, where the page's evidence points to a failure:{" "}
+					<code>leanFailAs</code> in the <a href="/results-reports/junit-report/#options">JUnit</a>{" "}
+					and <a href="/results-reports/sarif-report/#options">SARIF</a> reporters, or{" "}
+					<code>leaningFailures(result)</code> (see <a href="/results-reports/output-schema/#leans">Leans</a>).
+					Each <code>cantTell</code> finding of a core rule says how to answer it in{" "}
+					<code>howToCheck</code>. See <a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a> if you want to
 					reshape this behavior (e.g. via a custom policy contract), and{" "}
 					<a href={`${core}/docs/INTEGRATION.md#ci-gating-a-build-on-the-result`}>
 						<code>INTEGRATION.md</code>
@@ -489,6 +522,39 @@ export function FaqContent() {
 					source text and re-runs it inside the browser tab (which has no access to your Node
 					module scope). See <a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>{" "}
 					for both patterns worked out in full.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="baseline-after-upgrade">
+					"After upgrading, my baseline reports known findings as new and their entries as stale"
+				</h2>
+				<p>
+					A finding's identity includes its reason code, and 1.14 gave codes to seventeen rules
+					that had none and split a few codes by cause. A baseline written by 1.13 keeps matching
+					those findings under 1.14.x, through <code>src/baseline-moves.json</code>; a finding whose
+					outcome changed with the upgrade is new or gone all the same, and the changelog says why.
+					Rewrite the file's codes with <code>migrateBaselineEntries</code> from{" "}
+					<code>@surea11y/core/baseline</code>, or regenerate it and review the diff, before 1.15.
+					See <a href="/conformance/baseline/#upgrading">Baseline / allowlist</a>.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="stylesheets-not-readable">
+					"<code>css-orientation-lock</code> asks about <code>STYLESHEETS_NOT_READABLE</code>"
+				</h2>
+				<p>
+					A page's script can't read a style sheet another origin serves (a CDN, a fonts service),
+					so the rules that read CSS can't tell what it holds. Give the scan its text in{" "}
+					<code>engineOptions.styleSheetTexts</code>: <code>preloadStyleSheets()</code>, or{" "}
+					<code>runa11yCoreInPageAsync</code> on the browser bundle, fetches those the server
+					shares, and a tool driving the browser can fetch the others from outside the page. See
+					"Style sheets from another origin" in{" "}
+					<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}>
+						<code>INTEGRATION.md</code>
+					</a>
+					, the integration guide on GitHub.
 				</p>
 			</article>
 		</>
