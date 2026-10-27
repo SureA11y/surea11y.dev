@@ -336,14 +336,13 @@ export function PacksContent() {
 				Browser-Bundle von core ein oder liefern eine einzige Datei aus, die mit{" "}
 				<code>buildBrowserBundle({"{ packs: [acmePolicy] }"})</code> gebaut wurde, und nennen das
 				Pack als <code>name@version</code>. Siehe{" "}
-				<a href="/getting-started/standalone/#packs-in-a-page">Standalone</a>.
+				<a href="/getting-started/standalone/#packs-in-a-page">Standalone</a>. Für eine Seite, die ihre Scripts als Dateien lädt, eignet sich die eine Datei aus{" "}
+				<code>buildBrowserBundle</code> am besten: Das Script eines Packs läuft nur mit dem core, der es geschrieben hat.
 			</p>
 			<p>
-				Das Skript läuft nur mit dem core, der es geschrieben hat: Eine Seite mit dem Bundle eines
-				anderen core überspringt das Pack, und <code>skippedPacks</code> nennt die beiden Versionen.
-				Für eine Seite ohne Driver, die ihre Skripte als Dateien lädt (ein{" "}
-				<code>&lt;script&gt;</code>-Tag, eine Erweiterung), eignet sich am besten eine einzige Datei
-				aus <code>buildBrowserBundle</code>, neu erzeugt für jede Version von core oder des Packs.
+				Eine Seite mit dem Bundle eines anderen core überspringt das Pack, und <code>skippedPacks</code>{" "}
+				nennt die beiden Versionen. Erzeugen Sie diese Datei daher für jede Version von core oder des
+				Packs neu.
 			</p>
 
 			<h2 id="what-a-scan-reports">Was ein Scan meldet</h2>
