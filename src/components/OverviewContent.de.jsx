@@ -12,7 +12,7 @@ const packageRows = [
 	{ id: "cypress", want: "…in Cypress-Tests", install: <><code>@surea11y/cypress</code> + <code>@surea11y/core</code></> },
 	{ id: "webdriverio", want: "…in WebdriverIO-Tests", install: <><code>@surea11y/webdriverio</code> + <code>@surea11y/core</code></> },
 	{ id: "test-matchers", want: "Barrierefreiheit in Komponenten- oder Unit-Tests mit Jest/Vitest prüfen", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
-	{ id: "cli", want: "Statisches HTML im Terminal oder in einer CI-Pipeline scannen", install: <code>@surea11y/cli</code> },
+	{ id: "cli", want: "Seiten im Terminal oder in einer CI-Pipeline scannen, als statisches HTML oder in Chromium", install: <code>@surea11y/cli</code> },
 	{ id: "pack-en301549", want: "Gegen die EN 301 549, die europäische Norm, prüfen, mit jedem der obigen", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
 	{ id: "pack-own", want: "Gegen eigene Regeln, Profile oder eine eigene Norm prüfen, öffentlich oder intern", install: <>Ein eigenes Pack: siehe <a href="/configuration/packs/#writing-a-pack">Ein Pack schreiben</a></> },
 	{ id: "core", want: "Die Engine auf ein DOM anwenden, das Sie bereits haben", install: <code>@surea11y/core</code> },
@@ -141,8 +141,8 @@ export function OverviewContent() {
 			<p>
 				Der HTML-Bericht ordnet die Fragen so, wie eine prüfende Person sie abarbeitet:
 				„Wahrscheinlich nicht erfüllt: bitte bestätigen“, „Wahrscheinlich erfüllt: bitte
-				bestätigen“ und „Muss eine Person prüfen“, jede Karte mit ihrer Begründung und ihren
-				Schritten unter „So prüfen Sie es“. In CI können die JUnit- und SARIF-Berichte außerdem an
+				bestätigen“ und „Muss eine Person prüfen“. Jede Karte hat ihre Schritte unter „So prüfen Sie es“,
+				und die in den ersten beiden Gruppen sagen, warum sie tendieren. In CI können die JUnit- und SARIF-Berichte außerdem an
 				den Befunden scheitern, die zu <code>fail</code> tendieren, standardmäßig ausgeschaltet, und
 				eine Baseline kann die akzeptieren, die eine Seite schon hat, sodass nur neue den Build
 				brechen. Siehe <a href="/results-reports/html-report/">HTML-Bericht</a> und{" "}
@@ -150,9 +150,9 @@ export function OverviewContent() {
 				zu einer kleinen Bezahlseite.
 			</p>
 			<p>
-				Ein <code>pass</code> sagt auch, wie knapp er war. Regeln, die gegen einen Grenzwert messen
-				(Kontrast, Zielgröße, Textabstände), melden eine <code>margin</code>: das Element, das dem
-				Grenzwert am nächsten kam und ihn trotzdem einhielt. Text mit 4,52:1 bei einem Minimum von
+				Ein <code>pass</code>, der knapp war, sagt es. Regeln, die gegen einen Grenzwert messen
+				(Kontrast, Zielgröße, Textabstände), melden eine <code>margin</code>, wenn der knappste
+				Fall nahe am Grenzwert lag: das Element, das ihm am nächsten kam und ihn trotzdem einhielt. Text mit 4,52:1 bei einem Minimum von
 				4,5:1 besteht, und die <code>margin</code> zeigt es. So können Sie ihn korrigieren, bevor eine
 				kleine Änderung ein <code>fail</code> daraus macht. Siehe{" "}
 				<a href="/results-reports/output-schema/#margin">Ausgabeschema</a>.
@@ -210,8 +210,9 @@ export function OverviewContent() {
 				<code>listenerHookScript()</code>, einem weiteren optionalen Skript, das vor den Skripten
 				der Seite installiert wird, beurteilen sie auch per Skript hinzugefügte Listener. Ein{" "}
 				<code>role="button"</code> in der Tab-Reihenfolge mit einem Klick-Listener und ohne
-				Tasten-Listener an einer Stelle, die ihn erreicht (am Element, seinen Vorfahren, am Dokument oder
-				am Fenster), ergibt <code>fail</code>: Eingabe- und Leertaste bewirken nichts.{" "}
+				Tasten-Listener an einer Stelle, die seine Tasten erreichen können (am Element, darin, an
+				seinen Vorfahren, an einem Shadow Root, in dem es liegt, am Dokument oder am Fenster), und
+				ohne Fokus-Listener, der einen hinzufügen könnte, ergibt <code>fail</code>: Eingabe- und Leertaste bewirken nichts.{" "}
 				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
 					<code>INTEGRATION.md</code>
 				</a>{" "}
@@ -222,8 +223,9 @@ export function OverviewContent() {
 				Im Browser wird Kontrast so gemessen, wie die Seite gezeichnet wird: Text auf einer Seite
 				ohne eigenen Hintergrund, auf der Fläche, die der Browser malt, hell oder dunkel; generierter
 				Text aus <code>::before</code>, <code>::after</code> und Listenmarkern; ein geschlossenes{" "}
-				<code>&lt;select&gt;</code>; und Text, der nur durch eine Kontur gezeichnet wird. Diese Fälle
-				wurden früher übersprungen oder als Frage gemeldet. Ein einzelnes Zeichen, das für den Namen
+				<code>&lt;select&gt;</code>. Diese Fälle wurden früher übersprungen oder als Frage gemeldet.
+				Text, der nur durch eine Kontur oder einen Schatten gezeichnet wird, ergibt jetzt{" "}
+				<code>fail</code>, wo jede Farbe, in der er gezeichnet wird, unter dem Verhältnis liegt. Ein einzelnes Zeichen, das für den Namen
 				eines Bedienelements steht, wie das „X“ in einer Schaltfläche namens „Schließen“, wird als
 				Frage gemeldet statt als <code>fail</code>: Ob es ein Icon oder ein Buchstabe ist, muss eine
 				Person entscheiden.
@@ -231,10 +233,10 @@ export function OverviewContent() {
 
 			<h3 id="checked-against-the-act-corpus">Geprüft am ACT-Korpus</h3>
 			<p>
-				Die Engine bringt {rules.length} Regeln mit. 60 davon haben eine Entsprechung in den{" "}
+				Die Engine bringt {rules.length} Regeln mit. Diejenigen mit einer Entsprechung in den{" "}
 				<a href="https://www.w3.org/WAI/standards-guidelines/act/rules/"><span lang="en">W3C ACT Rules</span></a>{" "}
-				und laufen gegen die Testfälle, die das W3C dafür veröffentlicht, also die Menge, die die
-				Implementierungsliste des W3C bewertet: 957 Beispiele über diese 60 Regeln. Für keines der
+				laufen gegen die Testfälle, die das W3C dafür veröffentlicht, also die Menge, die die
+				Implementierungsliste des W3C bewertet: 957 Beispiele über 60 ACT-Regeln. Für keines der
 				Beispiele, die ACT als bestanden oder nicht anwendbar markiert, meldet die Engine{" "}
 				<code>fail</code>; gegenüber diesem Korpus gibt es also keine Falsch-Positive. Das ist ein
 				Ergebnis für diese Beispiele, keine Garantie für jede Seite. Wo die Engine einen Fall nicht
@@ -243,7 +245,7 @@ export function OverviewContent() {
 			</p>
 			<p>
 				Das gilt an beiden Orten, an denen die Engine läuft: in jsdom, wie test-matchers und die CLI
-				sie ausführen, und in Chromium, wie die Browser-Bindings es tun, wobei jeder Testfall als
+				sie standardmäßig ausführen, und in Chromium, wie die Browser-Bindings es tun, wobei jeder Testfall als
 				echte Seite geladen wird, mit seinen Skripten und verlinkten Stylesheets. 22 Beispiele, die
 				ACT als nicht bestanden markiert, erkennt die Engine in jsdom nicht, in Chromium 18. Meist
 				geht es um Ermessensfragen wie die, ob eine Überschrift den Inhalt darunter beschreibt; die

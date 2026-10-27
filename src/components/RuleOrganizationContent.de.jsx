@@ -147,11 +147,12 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				Das ist wichtig beim Lesen des Ergebnisses einer zusammengesetzten Regel
-				(Zusammenfassung pro WCAG-Erfolgskriterium): Ein <ResultBadge lang="en" state="pass" size="sm" />{" "}
-				einer zusammengesetzten Regel bedeutet, dass jede automatisierte Prüfung für dieses
-				Erfolgskriterium ohne Befund blieb, aber <strong>wenn eine Facette überhaupt keine automatisierte
-				Abdeckung hat, schweigt die zusammengesetzte Regel zu dieser Facette, statt zu behaupten,
-				sie sei in Ordnung</strong>. Unter <a href="/conformance/wcag-mapping/">Konformität</a>{" "}
+				(Zusammenfassung pro WCAG-Erfolgskriterium): Eine zusammengesetzte Regel ergibt nur dann{" "}
+				<code>pass</code>, wenn ihre Regeln alles prüfen, was das Kriterium verlangt, und das tut
+				noch keine. Wo also jede automatisierte Prüfung für ein Erfolgskriterium ohne Befund bleibt,
+				ist die zusammengesetzte Regel <ResultBadge lang="en" state="unknown" size="sm" />, teilweise
+				geprüft: <strong>Die Facetten, die ihre Regeln abdecken, sind erfüllt, und den Rest prüft
+				eine Person</strong>. Unter <a href="/conformance/wcag-mapping/">Konformität</a>{" "}
 				finden Sie die drei Ebenen (atomare Regeln, Facetten, zusammengesetzte Regeln) und wie das
 				Ergebnis einer zusammengesetzten Regel tatsächlich berechnet wird.
 			</p>

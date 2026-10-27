@@ -185,9 +185,11 @@ export function WcagMappingContent() {
 				sie keinem zugeordnet ist (mit einer Warnung).
 			</p>
 			<p>
-				Ein Scan, der Regeln statt Kriterien nennt (<code>{"includeRuleIds: ['link-name-present']"}</code>,
-				ein Tag, das keine WCAG-Stufe nennt, die Best Practices), bekommt ebenfalls die
-				zusammengesetzten Regeln der Kriterien, die diese Regeln prüfen (siehe{" "}
+				Ein Scan, der Regeln statt Kriterien nennt (per ID, etwa{" "}
+				<code>{"includeRuleIds: ['link-name-present']"}</code>, per Tag, das kein WCAG-Tag ist, per{" "}
+				<code>optInRules</code> oder als die Best Practices), bekommt ebenfalls die
+				zusammengesetzten Regeln der Kriterien, die diese Regeln prüfen; ein Kriteriums-Tag wie{" "}
+				<code>wcag244</code> meldet nur dieses Kriterium (siehe{" "}
 				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Engine-Optionen</a>). Vor 1.12 meldete ein solcher
 				Scan keine. Die Tabelle oben entscheidet über sie: Eine Regel mit <code>fail</code> lässt das
 				Kriterium scheitern, und die Regeln, die der Scan nicht ausgewählt hat, sind Beitragende,

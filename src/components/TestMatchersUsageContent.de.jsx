@@ -74,9 +74,9 @@ export function TestMatchersUsageContent() {
 			</p>
 			<p>
 				<a href="https://github.com/SureA11y/test-matchers"><code>@surea11y/test-matchers</code></a>{" "}
-				ist ein einzelner Matcher, <code>toHaveNoA11yViolations()</code>, der sich unverändert in{" "}
-				<code>expect.extend()</code> beider Frameworks einfügt; er enthält keinen
-				framework-spezifischen Code. Er scannt die jsdom-basierte Umgebung, in der Ihr Test
+				bietet <code>toHaveNoA11yViolations()</code> sowie <code>toHaveAnnounced()</code> für
+				Live-Regionen. Beide fügen sich unverändert in <code>expect.extend()</code> beider
+				Frameworks ein, ohne eigenen framework-spezifischen Code. Er scannt die jsdom-basierte Umgebung, in der Ihr Test
 				ohnehin läuft; er hängt nicht selbst von <code>jsdom</code> ab und richtet auch keine
 				Umgebung für Sie ein. Die Engine von surea11y ist synchron, also auch dieser Matcher: kein{" "}
 				<code>await</code>, und damit auch kein vergessenes <code>await</code>, bei dem ein Test

@@ -38,8 +38,8 @@ export function ResultsReportsContent() {
 				(einschließlich jedes <code>pass</code> und <code>notApplicable</code> — nie eine Liste nur
 				mit Verstößen), Details pro Vorkommen bis hinunter zum gemeldeten Element, explizite
 				Unsicherheitscodes für alles, was eine Regel nicht entscheiden konnte, und
-				zusammengesetzte Zusammenfassungen pro WCAG-Erfolgskriterium. Jeder offene Befund sagt,
-				wie eine Person ihn beantwortet, und manche sagen, in welche Richtung die Anhaltspunkte der
+				zusammengesetzte Zusammenfassungen pro WCAG-Erfolgskriterium. Jeder offene Befund einer
+				core-Regel sagt, wie eine Person ihn beantwortet, und manche sagen, in welche Richtung die Anhaltspunkte der
 				Seite weisen (eine <em>Tendenz</em>), sodass eine Prüfung mit den wahrscheinlichen Fehlern
 				beginnt statt mit einer flachen Liste. Es lohnt sich, das einmal zu
 				lesen, wenn Sie irgendetwas auf einem rohen Ergebnis aufbauen. Die vollständige Form finden
@@ -51,7 +51,7 @@ export function ResultsReportsContent() {
 				Eine HTML-Datei, die sich in jedem Browser öffnet, ohne Server oder Build-Schritt. Oben eine Zusammenfassung in einfacher Sprache, dann die
 				Fehlschläge, danach die Befunde, die eine Prüfung brauchen, sortiert in wahrscheinlich
 				nicht erfüllt, wahrscheinlich erfüllt und solche, die nur eine Person beurteilen kann,
-				jeweils mit den Schritten zur Prüfung, darunter eine WCAG-Zusammenfassung nach
+				bei core-Regeln jeweils mit den Schritten zur Prüfung, darunter eine WCAG-Zusammenfassung nach
 				Konformitätsstufe, die aus den zusammengesetzten Ergebnissen
 				der Engine selbst stammt, und ganz unten eine vollständige, durchsuchbare Tabelle für
 				alle, die tiefer einsteigen wollen. Das ist der Bericht für Prüfende, die keine rohe
