@@ -148,10 +148,12 @@ export function RuleOrganizationContent() {
 			</p>
 			<p>
 				C’est important pour lire un résultat composite (agrégation par critère de succès WCAG) :
-				un <ResultBadge lang="en" state="pass" size="sm" /> composite signifie que chaque vérification
-				automatisée de ce critère est revenue sans erreur, mais{" "}
-				<strong>si une facette n’a aucune couverture automatisée, le composite ne dit rien de
-				cette facette au lieu d’affirmer qu’elle est correcte</strong>. Voir{" "}
+				un composite ne réussit que si ses règles vérifient tout ce que demande le critère, et
+				aucun ne le fait encore. Là où chaque vérification automatisée d’un critère revient sans
+				erreur, le composite est donc{" "}
+				<ResultBadge lang="en" state="unknown" size="sm" />, vérifié en partie :{" "}
+				<strong>les facettes que couvrent ses règles sont respectées, et une personne vérifie le
+				reste</strong>. Voir{" "}
 				<a href="/conformance/wcag-mapping/">Conformité</a> pour les trois couches (règles
 				atomiques, facettes, composites) et la façon dont le résultat d’un composite est
 				réellement calculé.

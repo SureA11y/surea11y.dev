@@ -31,7 +31,7 @@ export function ConformanceContent() {
 				difference between "we can't ship anything until this is perfect" and "we can catch
 				regressions starting today," and it's what actually gets a team to turn the gate on. It can
 				accept the findings that likely fail too, and a baseline written before an upgrade keeps
-				matching when a finding's reason code is split or renamed. See{" "}
+				matching for one minor release when a finding's reason code is split or newly given. See{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
 		</>

@@ -143,11 +143,12 @@ export function RuleOrganizationContent() {
 				facetas del mismo SC, que es exactamente lo que hace arriba la familia img-alt para 1.1.1.
 			</p>
 			<p>
-				Esto importa al leer un resultado compuesto (resultado agregado por WCAG-SC): un resultado
-				agregado con estado{" "}
-				<ResultBadge lang="en" state="pass" size="sm" /> significa que ninguna comprobación automatizada de ese
-				criterio detectó fallos, pero <strong>si una faceta no tiene ninguna cobertura automatizada, el
-				compuesto guarda silencio sobre esa faceta en lugar de afirmar que está bien</strong>. Consulta{" "}
+				Esto importa al leer un resultado compuesto (resultado agregado por WCAG-SC): un compuesto
+				solo pasa cuando sus reglas comprueban todo lo que pide el criterio, y aún no lo hace
+				ninguno. Así que, cuando todas las comprobaciones automatizadas de un criterio salen sin
+				fallos, el compuesto es{" "}
+				<ResultBadge lang="en" state="unknown" size="sm" />, comprobado en parte:{" "}
+				<strong>las facetas que cubren sus reglas se cumplen, y una persona comprueba el resto</strong>. Consulta{" "}
 				<a href="/conformance/wcag-mapping/">Conformidad</a> para ver las tres capas (reglas atómicas,
 				facetas, compuestos) y cómo se calcula realmente el resultado de un compuesto.
 			</p>

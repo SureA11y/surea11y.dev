@@ -37,7 +37,7 @@ export function ConformanceContent() {
 				ausliefern, bis alles perfekt ist“ und „Wir erkennen Regressionen ab heute“, und genau das bringt
 				ein Team dazu, das Gate tatsächlich einzuschalten. Sie kann auch Befunde akzeptieren, die zu{" "}
 				<code>fail</code> tendieren, und eine vor einem Upgrade geschriebene Baseline passt weiter,
-				wenn der Reason-Code eines Befunds geteilt oder umbenannt wird. Siehe{" "}
+				für ein Minor-Release, wenn der Reason-Code eines Befunds geteilt oder neu vergeben wird. Siehe{" "}
 				<a href="/conformance/baseline/">Baseline / Allowlist</a>.
 			</p>
 		</>

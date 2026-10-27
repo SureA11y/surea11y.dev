@@ -12,7 +12,7 @@ const packageRows = [
 	{ id: "cypress", want: "…Cypress", install: <><code>@surea11y/cypress</code> + <code>@surea11y/core</code></> },
 	{ id: "webdriverio", want: "…WebdriverIO", install: <><code>@surea11y/webdriverio</code> + <code>@surea11y/core</code></> },
 	{ id: "test-matchers", want: "Assert accessibility in Jest/Vitest component or unit tests", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
-	{ id: "cli", want: "Scan static HTML from a terminal or CI pipeline", install: <code>@surea11y/cli</code> },
+	{ id: "cli", want: "Scan pages from a terminal or CI pipeline, as static HTML or in Chromium", install: <code>@surea11y/cli</code> },
 	{ id: "pack-en301549", want: "Check against EN 301 549, the European standard, with any of the above", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
 	{ id: "pack-own", want: "Check against your own rules, profiles or standard, public or internal", install: <>A pack of your own: see <a href="/configuration/packs/#writing-a-pack">Writing a pack</a></> },
 	{ id: "core", want: "Run the engine against a DOM you already have", install: <code>@surea11y/core</code> },
@@ -130,17 +130,17 @@ export function OverviewContent() {
 			</p>
 			<p>
 				The HTML report sets out the questions in the order a reviewer works through them: "Likely
-				fails: confirm", "Likely passes: confirm" and "Needs a person", each card with its reason and
-				its "How to check" steps. In CI, the JUnit and SARIF reports can also gate on the findings
+				fails: confirm", "Likely passes: confirm" and "Needs a person". Each card has its "How to check" steps, and those in the
+				first two groups say why they lean. In CI, the JUnit and SARIF reports can also gate on the findings
 				that lean fail, off by default, and a baseline can accept the ones a page already has, so
 				only new ones break the build. See <a href="/results-reports/html-report/">HTML report</a>{" "}
 				and <a href="/conformance/baseline/">Baseline / allowlist</a>, or <a href="/sample-report.html">open a sample report</a> of a
 				small checkout page.
 			</p>
 			<p>
-				A <code>pass</code> also says how close it came. Rules that measure against a threshold —
-				contrast, target size, text spacing — report a <code>margin</code>: the element that came
-				closest to the limit while still meeting it. Text at 4.52:1 against a 4.5:1 minimum passes,
+				A <code>pass</code> that came close says so. Rules that measure against a threshold —
+				contrast, target size, text spacing — report a <code>margin</code> when the closest pass
+				came near the limit: the element that came closest while still meeting it. Text at 4.52:1 against a 4.5:1 minimum passes,
 				and the margin shows it, so you can fix it before a small change turns it into a{" "}
 				<code>fail</code>. See the <a href="/results-reports/output-schema/#margin">Output schema</a>.
 			</p>
@@ -191,7 +191,9 @@ export function OverviewContent() {
 				rules read event handlers from the markup; with <code>listenerHookScript()</code>, another
 				opt-in script installed before the page's own, they judge listeners added from script too,
 				so a <code>role="button"</code> in the tab order with a click listener and no key listener
-				anywhere it could hear one (on it, its ancestors, the document or the window) fails: Enter and Space do nothing.{" "}
+				anywhere its keys could reach one (on it, inside it, on its ancestors, a shadow root it
+				is in, the document or the window), and no focus listener that might add one, fails: Enter
+				and Space do nothing.{" "}
 				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
 					<code>INTEGRATION.md</code>
 				</a>{" "}
@@ -202,24 +204,24 @@ export function OverviewContent() {
 				In a browser, contrast is measured as the page is drawn: text on a page with no background
 				of its own, on the canvas the browser paints, light or dark; generated text from{" "}
 				<code>::before</code>, <code>::after</code> and list markers; a closed{" "}
-				<code>&lt;select&gt;</code>; and text drawn only by an outline. These used to be skipped or
-				asked about. A lone character standing in for a control's name, the "X" in a button named
+				<code>&lt;select&gt;</code>. These used to be skipped or asked about. Text drawn only by
+				an outline or a shadow now fails where every color it is drawn in is below the ratio. A lone character standing in for a control's name, the "X" in a button named
 				"Close", is asked about rather than failed: whether it's an icon or a letter takes a person.
 			</p>
 
 			<h3 id="checked-against-the-act-corpus">Checked against the ACT corpus</h3>
 			<p>
-				The engine ships {rules.length} rules. Sixty of them have a{" "}
+				The engine ships {rules.length} rules. Those with a{" "}
 				<a href="https://www.w3.org/WAI/standards-guidelines/act/rules/">W3C ACT Rules</a>{" "}
-				counterpart and run against the test cases W3C publishes for them, the set W3C's own
-				implementation listing scores: 957 examples across those 60 rules. The engine fails none of
+				counterpart run against the test cases W3C publishes for them, the set W3C's own
+				implementation listing scores: 957 examples across 60 ACT rules. The engine fails none of
 				the examples ACT marks passed or inapplicable, so it reports no false positives against
 				that corpus. That is a result on those examples, not a guarantee for every page; where the
 				engine can't decide a case, it returns <code>cantTell</code>, which ACT permits for an
 				automated implementation.
 			</p>
 			<p>
-				It holds in both places the engine runs: in jsdom, as test-matchers and the CLI run it, and
+				It holds in both places the engine runs: in jsdom, as test-matchers and the CLI run it by default, and
 				in Chromium, as the browser bindings do, with each test case loaded as a real page, its
 				scripts and linked style sheets included. Twenty-two examples ACT marks failed go
 				unflagged in jsdom and 18 in Chromium. Most are judgement calls, such as whether a heading

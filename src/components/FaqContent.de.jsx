@@ -78,6 +78,19 @@ export function FaqContent() {
 						wahrscheinlich nicht erfüllt, wahrscheinlich erfüllt und solche, die eine Person prüfen
 						muss. Siehe <a href="/results-reports/output-schema/#leans">Ausgabeschema</a>.
 					</li>
+					<li>
+						<strong>1.14.1 meldet beim Textabstand weniger Fehlschläge.</strong>{" "}
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
+						lässt keinen Text mehr fehlschlagen, den die Seite nicht verliert. Zu einer Seite,
+						deren Scrollen mit <code>{"body { position: fixed }"}</code> gesperrt ist, wie bei
+						vielen hinter einem Consent-Banner, und zu einer fixierten Box, die höher als der
+						Viewport ist, wird als <code>VIEWPORT_SCROLL_LOCKED</code> nachgefragt; zu Text, den
+						eine Box abschneidet, die das Skript der Seite an ihn anpasst, etwa das schwebende
+						Label eines Angular-Material-Felds, als <code>TEXT_CLIPPED_SCRIPT_SIZED</code>. Ein
+						Baseline-Eintrag oder eine Code-Scanning-Warnung dazu wird geschlossen wie bei einem
+						behobenen Fehler. Die Schritte von 36 Fragen fragen außerdem, ob ein anderer Weg auf
+						der Seite dasselbe leistet, bevor sie zu einem Fehlschlag führen.
+					</li>
 				</ul>
 				<p>
 					Die vollständige Liste steht im{" "}
@@ -542,12 +555,11 @@ export function FaqContent() {
 					<strong>Fehlende Schlüssel fallen einzeln auf den englischen Text zurück (nie ein leeres oder
 					kaputtes Ergebnis): Wo in einer unvollständigen Locale eine Übersetzung fehlt, erscheint
 					die englische Meldung, statt dass die Ausgabe ganz fehlschlägt.</strong> Siehe <a href="/configuration/locales/"><code>I18N.md</code></a> für
-					den Mechanismus und die aktuelle Abdeckung. Die Gleichheit der Schlüssel wird
-					erzwungen, nicht erhofft: <code>npm run i18n:sync</code> überträgt jeden neuen oder
-					umbenannten <code>en.json</code>-Schlüssel in alle anderen Locale-Dateien, und der
-					Build schlägt fehl, wenn eine davon nicht auf dem gleichen Stand ist. Ein so
-					hinzugefügter Schlüssel enthält den englischen Text, bis ihn jemand übersetzt — eine
-					Locale kann also bei den Formulierungen hinterherhinken, aber nie bei den Schlüsseln.
+					den Mechanismus und die aktuelle Abdeckung. Die Gleichheit der Schlüssel wird im
+					eigenen Build von core erzwungen, nicht erhofft: Jeder neue oder umbenannte englische
+					Schlüssel wird in alle anderen Locale-Dateien übertragen und enthält den englischen
+					Text, bis ihn jemand übersetzt — eine Locale kann also bei den Formulierungen
+					hinterherhinken, aber nie bei den Schlüsseln.
 				</p>
 			</article>
 

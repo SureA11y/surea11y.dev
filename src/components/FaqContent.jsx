@@ -69,6 +69,18 @@ export function FaqContent() {
 						likely fails, likely passes and those that need a person. See{" "}
 						<a href="/results-reports/output-schema/#leans">Leans</a>.
 					</li>
+					<li>
+						<strong>1.14.1 fails less on text spacing.</strong>{" "}
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
+						no longer fails text the page doesn't lose. A page scroll-locked with{" "}
+						<code>{"body { position: fixed }"}</code>, as many are behind a consent banner, and a
+						fixed box taller than the viewport are asked about as{" "}
+						<code>VIEWPORT_SCROLL_LOCKED</code>; text cut off by a box the page's script sizes to
+						fit it, such as an Angular Material form field's floating label, as{" "}
+						<code>TEXT_CLIPPED_SCRIPT_SIZED</code>. A baseline entry or Code Scanning alert for one
+						of those closes as a fixed bug does. The steps of 36 questions also ask whether
+						another way on the page does the same before they lead to a fail.
+					</li>
 				</ul>
 				<p>
 					The full list is in core's{" "}
@@ -502,11 +514,10 @@ export function FaqContent() {
 					<strong>Missing keys fall back to English per-string (never a blank or broken result), so a
 					partial locale degrades gracefully rather than failing outright.</strong> See{" "}
 					<a href="/configuration/locales/"><code>I18N.md</code></a> for the mechanism and current
-					coverage. Key parity is enforced rather than hoped for: <code>npm run i18n:sync</code>{" "}
-					carries any new or renamed <code>en.json</code> key into every other locale file, and
-					the build fails if one is out of step. A key it adds holds the English text until
-					someone translates it, so a locale can be behind on wording without ever being behind
-					on keys.
+					coverage. Key parity is enforced in core's own build rather than hoped for: every new
+					or renamed English key is carried into every other locale file, holding the English
+					text until someone translates it, so a locale can be behind on wording without ever
+					being behind on keys.
 				</p>
 			</article>
 

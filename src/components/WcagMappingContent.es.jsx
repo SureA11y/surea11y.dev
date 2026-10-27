@@ -186,9 +186,11 @@ export function WcagMappingContent() {
 				ninguno (con un aviso).
 			</p>
 			<p>
-				Un análisis que nombra reglas en lugar de criterios (<code>{"includeRuleIds: ['link-name-present']"}</code>,
-				una etiqueta que no nombra ningún nivel de WCAG, las buenas prácticas) también obtiene
-				los compuestos de los criterios que esas reglas comprueban (consulta{" "}
+				Un análisis que nombra reglas en lugar de criterios (por ID, como{" "}
+				<code>{"includeRuleIds: ['link-name-present']"}</code>, por una etiqueta que no es de WCAG,
+				por <code>optInRules</code> o como las buenas prácticas) también obtiene los compuestos de
+				los criterios que esas reglas comprueban; una etiqueta de criterio como{" "}
+				<code>wcag244</code> informa solo de ese criterio (consulta{" "}
 				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Opciones del motor</a>). Antes de 1.12, un
 				análisis así no informaba de ninguno. La tabla anterior los decide: una regla que falla
 				hace fallar el criterio, y las reglas que el análisis no seleccionó son contribuyentes que

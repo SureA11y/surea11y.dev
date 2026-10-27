@@ -36,7 +36,8 @@ export function ConformanceContent() {
 				ce n’est pas parfait » et « on peut détecter les régressions dès aujourd’hui », et c’est ce
 				qui amène concrètement une équipe à activer le contrôle. Elle peut aussi accepter les
 				constats qui penchent vers l’échec, et une baseline écrite avant une mise à jour continue de
-				correspondre quand le code de raison d’un constat est scindé ou renommé. Voir{" "}
+				correspondre pendant une version mineure quand le code de raison d’un constat est scindé
+				ou nouvellement attribué. Voir{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
 		</>

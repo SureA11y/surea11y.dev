@@ -24,7 +24,7 @@ export function HelpContent() {
 
 			<h2>Limites connues</h2>
 			<p>
-				Chaque limite de ce moteur est nommée explicitement plutôt que découverte par surprise : ce
+				Les limites connues de ce moteur sont nommées explicitement plutôt que découverte par surprise : ce
 				qu’une analyse d’un seul état de la page ne peut pas voir, ce qui dépend de l’endroit où
 				vous l’exécutez (jsdom, un navigateur, les scripts de la page elle-même), et ce qu’il refuse
 				délibérément de deviner, parce qu’une mauvaise supposition serait pire qu’un{" "}

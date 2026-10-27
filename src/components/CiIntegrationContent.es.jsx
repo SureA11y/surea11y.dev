@@ -89,6 +89,17 @@ export function CiIntegrationContent() {
 				independiente (o <code>continue-on-error</code> + tu propia comprobación) si también quieres
 				que la compilación falle ante violaciones nuevas.
 			</p>
+			<p>
+				Los hallazgos que tienden a fallo son alertas <code>warning</code> por defecto.
+				Generados con <code>{"renderSarifReport(result, { leanFailAs: 'error' })"}</code> desde{" "}
+				<code>@surea11y/core/sarif</code>, son <code>error</code>, así que un control sobre los
+				errores se detiene también ante los fallos probables (
+				<a href="/results-reports/sarif-report/#options">opciones de SARIF</a>); un baseline
+				escrito con <code>{"buildBaselineEntries(result, { leanFail: true })"}</code> acepta los
+				que una página ya tiene (
+				<a href="/conformance/baseline/#findings-that-lean-fail">hallazgos que probablemente
+				fallan</a>).
+			</p>
 			<CodeBlock
 				lang="yaml"
 				lines={[

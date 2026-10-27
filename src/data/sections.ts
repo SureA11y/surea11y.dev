@@ -26,17 +26,17 @@ export const sections: Section[] = [
 	{
 		href: "/configuration/",
 		label: "Configuration",
-		description: "Select which rules run, wire up CI, and add a locale.",
+		description: "Select which rules run, add packs, wire up CI, and choose a report language.",
 	},
 	{
 		href: "/results-reports/",
 		label: "Results & Reports",
-		description: "The result shape, plus HTML, SARIF, and EARL reports.",
+		description: "The result shape, plus HTML, SARIF, JUnit and EARL reports.",
 	},
 	{
 		href: "/conformance/",
 		label: "Conformance",
-		description: "How atomic rules roll up into a WCAG conformance verdict.",
+		description: "How atomic rules roll up into per-criterion WCAG results, and what those results don't claim.",
 	},
 	{
 		href: "/help/",

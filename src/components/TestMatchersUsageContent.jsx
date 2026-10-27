@@ -72,9 +72,9 @@ export function TestMatchersUsageContent() {
 			</p>
 			<p>
 				<a href="https://github.com/SureA11y/test-matchers"><code>@surea11y/test-matchers</code></a>{" "}
-				is one matcher, <code>toHaveNoA11yViolations()</code>,
-				that plugs into either framework's <code>expect.extend()</code> unmodified — it has no
-				framework-specific code of its own. It scans whatever jsdom-based environment your test
+				gives you <code>toHaveNoA11yViolations()</code>, plus <code>toHaveAnnounced()</code> for
+				live regions. Both plug into either framework's <code>expect.extend()</code> unmodified,
+				with no framework-specific code of their own. It scans whatever jsdom-based environment your test
 				already runs under; it doesn't depend on <code>jsdom</code> itself or set one up for you.
 				surea11y's engine is synchronous, so this matcher is too — no <code>await</code>, no
 				forgetting one and silently passing on a resolved promise.
@@ -578,7 +578,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.14.0.",
+					"Scanned with @surea11y/core 1.14.1.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -608,7 +608,7 @@ export function TestMatchersUsageContent() {
 					"",
 					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.14.0.",
 					"",
-					"Scanned with @surea11y/core 1.14.0.",
+					"Scanned with @surea11y/core 1.14.1.",
 				]}
 			/>
 

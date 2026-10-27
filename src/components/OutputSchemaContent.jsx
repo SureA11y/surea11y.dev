@@ -566,7 +566,7 @@ const occurrenceRows = [
 ];
 
 const uncertaintyRows = [
-	{ id: "not-computable", code: <code>not-computable</code>, meaning: "The evidence the rule needed could not be read in this environment.", shape: "A cross-origin stylesheet, a background colour that resolves to no value, an src that will not resolve." },
+	{ id: "not-computable", code: <code>not-computable</code>, meaning: "The evidence the rule needed could not be read in this environment.", shape: "A cross-origin stylesheet, a background color that resolves to no value, an src that will not resolve." },
 	{ id: "runtime-dependent", code: <code>runtime-dependent</code>, meaning: "The markup cannot settle it because script decides at runtime.", shape: "An aria-controls naming an element the widget builds when it opens." },
 	{ id: "spec-only", code: <code>spec-only</code>, meaning: "A real specification violation, but the exposed name, role and value survive it, so no Success Criterion is established as failed.", shape: "An ARIA attribute whose absence the specification supplies a default for." },
 	{ id: "equivalence-unknown", code: <code>equivalence-unknown</code>, meaning: "Two things may or may not serve the same purpose, and neither the markup nor the content settles it.", shape: "Two frames sharing an accessible name but embedding different resources." },
@@ -934,7 +934,7 @@ export function OutputSchemaContent() {
 					resolved <code>locale</code> and <code>contrast.mode</code>/
 					<code>contrast.rootCanvasFallback</code>. <code>contrast.rootCanvasFallback</code> is
 						white when the caller gave none, and <code>contrast.rootCanvasFallbackSet</code> says
-						which: <code>true</code> for a colour the caller gave, <code>false</code> for the
+						which: <code>true</code> for a color the caller gave, <code>false</code> for the
 						default. It leaves out <code>messages</code>, the
 					dictionaries the run translated with (a locale side file in the browser bundle, or your
 					own strings): they are data, not a setting, and a copy on every result made a scan tens

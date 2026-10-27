@@ -23,7 +23,7 @@ export function HelpContent() {
 
 			<h2>Known limitations</h2>
 			<p>
-				Every boundary of this engine, named explicitly rather than discovered by surprise: what
+				The known boundaries of this engine, named explicitly rather than discovered by surprise: what
 				one scan of one page state can't see, what depends on where you run it (jsdom, a browser,
 				the page's own scripts), and what it deliberately declines to guess at because a wrong
 				guess would be worse than an honest <code>cantTell</code>, each with what to do about it. Knowing these up front is what

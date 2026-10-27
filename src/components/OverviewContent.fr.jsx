@@ -12,7 +12,7 @@ const packageRows = [
 	{ id: "cypress", want: "…Cypress", install: <><code>@surea11y/cypress</code> + <code>@surea11y/core</code></> },
 	{ id: "webdriverio", want: "…WebdriverIO", install: <><code>@surea11y/webdriverio</code> + <code>@surea11y/core</code></> },
 	{ id: "test-matchers", want: "Vérifier l’accessibilité dans des tests unitaires ou de composants Jest/Vitest", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
-	{ id: "cli", want: "Analyser du HTML statique depuis un terminal ou un pipeline de CI", install: <code>@surea11y/cli</code> },
+	{ id: "cli", want: "Analyser des pages depuis un terminal ou un pipeline de CI, en HTML statique ou dans Chromium", install: <code>@surea11y/cli</code> },
 	{ id: "pack-en301549", want: "Vérifier EN 301 549, la norme européenne, avec n’importe lequel des précédents", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
 	{ id: "pack-own", want: "Vérifier mes propres règles, profils ou norme, publics ou internes", install: <>Un pack à moi : voir <a href="/configuration/packs/#writing-a-pack">Écrire un pack</a></> },
 	{ id: "core", want: "Exécuter le moteur sur un DOM dont je dispose déjà", install: <code>@surea11y/core</code> },
@@ -140,7 +140,8 @@ export function OverviewContent() {
 			<p>
 				Le rapport HTML présente les questions dans l’ordre où une personne les examine :
 				« Échec probable : à confirmer », « Réussite probable : à confirmer » et « À examiner
-				par une personne », chaque carte avec sa raison et ses étapes « Comment vérifier ». En CI,
+				par une personne ». Chaque carte a ses étapes « Comment vérifier », et celles des deux
+				premiers groupes disent pourquoi elles penchent. En CI,
 				les rapports JUnit et SARIF peuvent aussi bloquer le build sur les résultats qui penchent
 				vers l’échec, option désactivée par défaut, et une baseline peut accepter ceux qu’une page
 				a déjà, si bien que seuls les nouveaux font échouer le build. Voir{" "}
@@ -149,10 +150,10 @@ export function OverviewContent() {
 				une petite page de paiement.
 			</p>
 			<p>
-				Un <code>pass</code> indique aussi de combien il passe. Les règles qui mesurent une valeur
+				Un <code>pass</code> qui est passé de justesse le dit. Les règles qui mesurent une valeur
 				par rapport à un seuil (contraste, taille de cible, espacement du texte) signalent une{" "}
-				<code>margin</code> : l’élément qui s’est le plus approché de la limite tout en la
-				respectant. Un texte à 4,52:1 pour un minimum de 4,5:1 passe, et la marge le montre :
+				<code>margin</code> quand la réussite la plus juste s’est approchée de la limite :
+				l’élément qui s’en est le plus approché tout en la respectant. Un texte à 4,52:1 pour un minimum de 4,5:1 passe, et la marge le montre :
 				vous pouvez le corriger avant qu’un petit changement n’en fasse un <code>fail</code>. Voir
 				le <a href="/results-reports/output-schema/#margin">Schéma de sortie</a>.
 			</p>
@@ -210,8 +211,9 @@ export function OverviewContent() {
 				balisage ; avec <code>listenerHookScript()</code>, un autre script facultatif installé
 				avant ceux de la page, elles jugent aussi les écouteurs ajoutés par script : un{" "}
 				<code>role="button"</code> dans l’ordre de tabulation avec un écouteur de clic et aucun
-				écouteur de touche là où il pourrait en entendre un (sur lui, ses ancêtres, le document ou la
-				fenêtre) échoue, car Entrée et Espace ne font rien.{" "}
+				écouteur de touche là où ses touches pourraient en atteindre un (sur lui, à l’intérieur, sur
+				ses ancêtres, sur un shadow root qui le contient, le document ou la fenêtre), ni
+				d’écouteur de focus qui pourrait en ajouter un, échoue, car Entrée et Espace ne font rien.{" "}
 				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
 					<code>INTEGRATION.md</code>
 				</a>{" "}
@@ -222,8 +224,9 @@ export function OverviewContent() {
 				Dans un navigateur, le contraste est mesuré tel que la page est dessinée : le texte d’une
 				page sans arrière-plan propre, sur le canevas que peint le navigateur, clair ou sombre ;
 				le texte généré par <code>::before</code>, <code>::after</code> et les marqueurs de liste ;
-				un <code>&lt;select&gt;</code> fermé ; et le texte dessiné uniquement par un contour. Ces
-				cas étaient auparavant ignorés ou faisaient l’objet d’une question. Un caractère isolé qui
+				et un <code>&lt;select&gt;</code> fermé. Ces cas étaient auparavant ignorés ou faisaient
+				l’objet d’une question. Le texte dessiné uniquement par un contour ou une ombre échoue
+				désormais là où chaque couleur dans laquelle il est dessiné est sous le ratio. Un caractère isolé qui
 				tient lieu du nom d’un contrôle, comme le « X » d’un bouton nommé « Fermer », fait
 				l’objet d’une question au lieu d’un échec : savoir s’il s’agit d’une icône ou d’une lettre
 				demande une personne.
@@ -231,10 +234,10 @@ export function OverviewContent() {
 
 			<h3 id="checked-against-the-act-corpus">Vérifié sur le corpus ACT</h3>
 			<p>
-				Le moteur comprend {rules.length} règles. Soixante d’entre elles ont un équivalent
+				Le moteur comprend {rules.length} règles. Celles qui ont un équivalent
 				dans les <a href="https://www.w3.org/WAI/standards-guidelines/act/rules/"><span lang="en">W3C ACT Rules</span></a>{" "}
-				et sont exécutées sur les cas de test que le W3C publie pour elles, ceux que note la liste
-				des implémentations du W3C : 957 exemples répartis sur ces 60 règles. Le moteur ne renvoie{" "}
+				sont exécutées sur les cas de test que le W3C publie pour elles, ceux que note la liste
+				des implémentations du W3C : 957 exemples répartis sur 60 règles ACT. Le moteur ne renvoie{" "}
 				<code>fail</code> sur aucun des exemples qu’ACT marque comme réussis ou inapplicables ; il ne
 				produit donc aucun faux positif sur ce corpus. C’est un résultat sur ces exemples, pas une
 				garantie pour toute page ; quand le moteur ne peut pas trancher un cas, il renvoie{" "}
@@ -242,7 +245,7 @@ export function OverviewContent() {
 			</p>
 			<p>
 				Cela vaut dans les deux environnements où le moteur s’exécute : dans jsdom, comme avec
-				test-matchers et la CLI, et dans Chromium, comme avec les bindings de navigateur, chaque cas
+				test-matchers et la CLI par défaut, et dans Chromium, comme avec les bindings de navigateur, chaque cas
 				de test étant chargé comme une vraie page, scripts et feuilles de style liées compris.
 				Vingt-deux exemples qu’ACT marque en échec ne sont pas signalés dans jsdom, et 18 dans
 				Chromium. Ce sont pour la plupart des questions de jugement, comme savoir si un titre décrit

@@ -809,10 +809,11 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				El objetivo de WCAG se deduce de las etiquetas igual que con un conjunto escrito a mano (ver{" "}
-				<a href="#filtering-by-wcag-version">"Filtrado por versión de WCAG"</a> más abajo), así que
-				con <code>en301549-v3.2.1</code> un id duplicado todavía puede dar <code>fail</code>, y con{" "}
-				<code>en301549-v4.1.1</code> no: el perfil de V3.2.1 mantiene el 4.1.1 (
-				<a href="#parsing-errata">ver más abajo</a>). El perfil de un pack puede nombrar su versión en su lugar,
+				<a href="#filtering-by-wcag-version">"Filtrado por versión de WCAG"</a> más abajo), así que{" "}
+				<code>en301549-v3.2.1</code> apunta a WCAG 2.1 y <code>en301549-v4.1.1</code> a WCAG 2.2.
+				Un id duplicado todavía puede dar <code>fail</code> con <code>en301549-v3.2.1</code>{" "}
+				porque su perfil mantiene el texto del 4.1.1 (<code>keepsParsing</code>,{" "}
+				<a href="#parsing-errata">ver más abajo</a>); con <code>en301549-v4.1.1</code> no. El perfil de un pack puede nombrar su versión en su lugar,
 				con <code>wcagVersion</code> (<a href="/configuration/packs/#profiles">Packs</a>): un
 				perfil que ejecuta solo las reglas que asocia su estándar no tiene etiquetas de WCAG que
 				impliquen una. Los nombres no distinguen mayúsculas y minúsculas. Una ejecución que usó un

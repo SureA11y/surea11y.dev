@@ -78,6 +78,19 @@ export function FaqContent() {
 						probables, réussites probables et constats à examiner par une personne. Voir le{" "}
 						<a href="/results-reports/output-schema/#leans">schéma de sortie</a>.
 					</li>
+					<li>
+						<strong>La 1.14.1 échoue moins sur l’espacement du texte.</strong>{" "}
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
+						ne fait plus échouer un texte que la page ne perd pas. Une page dont le défilement est
+						bloqué par <code>{"body { position: fixed }"}</code>, comme beaucoup derrière une
+						bannière de consentement, et une boîte fixe plus haute que le viewport donnent lieu à
+						une question <code>VIEWPORT_SCROLL_LOCKED</code> ; un texte coupé par une boîte que
+						le script de la page ajuste à sa taille, comme le libellé flottant d’un champ Angular
+						Material, à une question <code>TEXT_CLIPPED_SCRIPT_SIZED</code>. Une entrée de
+						baseline ou une alerte Code Scanning pour l’un d’eux se ferme comme pour un bug
+						corrigé. Les étapes de 36 questions demandent aussi si un autre moyen sur la page fait
+						la même chose avant de mener à un échec.
+					</li>
 				</ul>
 				<p>
 					La liste complète se trouve dans le{" "}
@@ -543,12 +556,11 @@ export function FaqContent() {
 					<strong>Les clés manquantes se replient sur l’anglais chaîne par chaîne (jamais de
 					résultat vide ou cassé) : une langue partiellement traduite reste donc utilisable au
 					lieu d’échouer.</strong> Voir <a href="/configuration/locales/"><code>I18N.md</code></a> pour
-					le mécanisme et la couverture actuelle. La parité des clés est imposée, pas espérée :{" "}
-					<code>npm run i18n:sync</code> reporte toute clé nouvelle ou renommée de{" "}
-					<code>en.json</code> dans chaque autre fichier de langue, et le build échoue si l’un
-					d’eux est désynchronisé. Une clé ajoutée ainsi contient le texte anglais jusqu’à ce que
-					quelqu’un la traduise : une langue peut donc être en retard sur la formulation, jamais
-					sur les clés.
+					le mécanisme et la couverture actuelle. La parité des clés est imposée par le build de
+					core lui-même, pas espérée : toute clé anglaise nouvelle ou renommée est reportée dans
+					chaque autre fichier de langue, avec le texte anglais jusqu’à ce que quelqu’un la
+					traduise, si bien qu’une langue peut être en retard sur la formulation, jamais sur les
+					clés.
 				</p>
 			</article>
 

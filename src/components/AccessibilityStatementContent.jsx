@@ -25,13 +25,14 @@ export function AccessibilityStatementContent() {
 			<h2>How this site is tested</h2>
 			<p>
 				This site is built by the same team that builds <code>@surea11y/core</code>, so it would
-				be a strange place to skip testing with our own engine. The full built output is
-				periodically scanned with <code>@surea11y/core</code> itself — the same static-DOM-scan
-				engine documented throughout this site — and every real finding that scan turns up gets
-				fixed, not explained away. That scan has real, honest limits of its own (see{" "}
-				<a href="/help/known-limitations/">Known limitations</a>): it can't run against
-				this site's actual computed CSS the way a real browser would, so contrast findings from
-				that particular scan mode are not meaningful evidence either way.
+				be a strange place to skip testing with our own engine. Every change is scanned with{" "}
+				<code>@surea11y/core</code> itself, in a real browser (Chromium, through{" "}
+				<code>@surea11y/playwright</code>), against WCAG 2.2 AA at 375 and 1280 px wide, and
+				nothing is deployed while that scan reports a <code>fail</code>. Every real finding gets
+				fixed, not explained away. That scan has honest limits of its own (see{" "}
+				<a href="/help/known-limitations/">Known limitations</a>): it sees one state of each page,
+				at those two widths, and what it can't decide it reports as <code>cantTell</code> for a
+				person to check.
 			</p>
 			<p>
 				<strong>Automated scanning is only ever a floor, not a ceiling</strong>, so it isn't the only check this

@@ -89,6 +89,18 @@ export function CiIntegrationContent() {
 				einem separaten Gating-Schritt (oder <code>continue-on-error</code> plus eigener
 				Prüfung), wenn der Build bei neuen Verstößen auch fehlschlagen soll.
 			</p>
+			<p>
+				Befunde, die zu <code>fail</code> tendieren, sind standardmäßig{" "}
+				<code>warning</code>-Alerts. Mit{" "}
+				<code>{"renderSarifReport(result, { leanFailAs: 'error' })"}</code> aus{" "}
+				<code>@surea11y/core/sarif</code> erzeugt, sind sie <code>error</code>s, sodass ein
+				Gating auf Fehler auch bei wahrscheinlichen Fehlschlägen stoppt (
+				<a href="/results-reports/sarif-report/#options">SARIF-Optionen</a>); eine mit{" "}
+				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code> geschriebene Baseline
+				akzeptiert die, die eine Seite schon hat (
+				<a href="/conformance/baseline/#findings-that-lean-fail">Befunde mit Tendenz zu{" "}
+				<code>fail</code></a>).
+			</p>
 			<CodeBlock
 				lang="yaml"
 				lines={[

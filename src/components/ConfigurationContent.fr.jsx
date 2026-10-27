@@ -15,9 +15,11 @@ export function ConfigurationContent() {
 			<p>
 				Limitez une analyse exactement aux règles voulues, en nommant une version et un niveau WCAG
 				(WCAG 2.2 AA en une seule option, avec les bonnes pratiques en plus si vous le souhaitez),
-				par identifiant, par tag, ou en nommant un profil de conformité comme WCAG 2.2 AA,
-				EN 301 549 ou Section 508, pour qu’une exécution rapporte ce dont vous êtes
-				réellement responsable, ni plus ni moins. N’exécutez que quelques vérifications tout en
+				par identifiant, par tag, ou en nommant un profil de conformité comme WCAG 2.2 AA ou
+				Section 508, pour qu’une exécution rapporte ce dont vous êtes réellement responsable, ni
+				plus ni moins. Les profils EN 301 549 de core fonctionnent encore mais sont obsolètes :
+				cette norme est désormais fournie sous forme{" "}
+				<a href="/configuration/packs/#en-301-549-pack">de pack</a>. N’exécutez que quelques vérifications tout en
 				obtenant les critères WCAG auxquels elles appartiennent, au niveau qui vous est demandé, et
 				listez ce qu’une analyse rapportera avant de la lancer. Faites taire des widgets connus pour être bruyants,
 				globalement ou pour une seule règle, sans perdre la couverture ailleurs, ajustez le degré d’exigence

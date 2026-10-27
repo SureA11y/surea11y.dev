@@ -184,9 +184,11 @@ export function WcagMappingContent() {
 				à aucun (avec un avertissement).
 			</p>
 			<p>
-				Une analyse qui nomme des règles plutôt que des critères (<code>{"includeRuleIds: ['link-name-present']"}</code>,
-				un tag qui ne désigne aucun niveau WCAG, les bonnes pratiques) obtient aussi les règles
-				composites des critères que ces règles vérifient (voir{" "}
+				Une analyse qui nomme des règles plutôt que des critères (par identifiant, comme{" "}
+				<code>{"includeRuleIds: ['link-name-present']"}</code>, par un tag qui n’est pas un tag
+				WCAG, par <code>optInRules</code>, ou en tant que bonnes pratiques) obtient aussi les règles
+				composites des critères que ces règles vérifient ; un tag de critère comme{" "}
+				<code>wcag244</code> rapporte ce seul critère (voir{" "}
 				<a href="/configuration/engine-options/#which-criteria-a-scan-reports">Options du moteur</a>). Avant la 1.12, une telle
 				analyse n’en rapportait aucune. Le tableau ci-dessus les tranche : une règle qui échoue
 				fait échouer le critère, et les règles que l’analyse n’a pas sélectionnées sont des
