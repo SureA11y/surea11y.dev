@@ -174,9 +174,11 @@ export function WcagMappingContent() {
 				nowhere when it maps to none (with a warning).
 			</p>
 			<p>
-				A scan that names rules rather than criteria (<code>{"includeRuleIds: ['link-name-present']"}</code>,
-				a tag that names no WCAG level, the best practices) gets the composites of the criteria
-				those rules check too (see <a href="/configuration/engine-options/#which-criteria-a-scan-reports">Engine options</a>).
+				A scan that names rules rather than criteria (by id, such as{" "}
+				<code>{"includeRuleIds: ['link-name-present']"}</code>, by a tag that isn't a WCAG tag, by{" "}
+				<code>optInRules</code>, or as the best practices) gets the composites of the criteria
+				those rules check too; a criterion tag such as <code>wcag244</code> reports that criterion
+				alone (see <a href="/configuration/engine-options/#which-criteria-a-scan-reports">Engine options</a>).
 				Before 1.12 such a scan reported none. The table above decides them: a failing rule fails
 				the criterion, and the rules the scan didn't select are contributors that didn't run, so
 				the criterion is at best <code>cantTell</code>, partly checked (<code>reasonCode</code>{" "}

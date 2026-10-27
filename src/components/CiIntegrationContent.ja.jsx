@@ -97,6 +97,23 @@ export function CiIntegrationContent() {
 				<code>continue-on-error</code>
 				と独自のチェック）と組み合わせてください。
 			</p>
+			<p>
+				不合格寄りの検出結果は、既定では
+				<code>warning</code>
+				のアラートです。
+				<code>@surea11y/core/sarif</code>
+				の
+				<code>{"renderSarifReport(result, { leanFailAs: 'error' })"}</code>
+				で出力すると
+				<code>error</code>
+				になるため、エラーで止めるゲートは不合格の可能性が高いものでも止まります（
+				<a href="/results-reports/sarif-report/#options">SARIFのオプション</a>
+				）。
+				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>
+				で書いたベースラインは、ページにすでにあるものを受け入れます（
+				<a href="/conformance/baseline/#findings-that-lean-fail">不適合の可能性が高い検出結果</a>
+				）。
+			</p>
 			<CodeBlock
 				lang="yaml"
 				lines={[

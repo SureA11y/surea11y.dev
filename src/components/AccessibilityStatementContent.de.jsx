@@ -25,14 +25,14 @@ export function AccessibilityStatementContent() {
 			<h2>Wie diese Website getestet wird</h2>
 			<p>
 				Diese Website wird vom selben Team gebaut, das <code>@surea11y/core</code> entwickelt —
-				es wäre seltsam, gerade hier auf Tests mit der eigenen Engine zu verzichten. Die vollständige
-				Build-Ausgabe wird regelmäßig mit <code>@surea11y/core</code> selbst gescannt —
-				derselben Engine für statische DOM-Scans, die auf dieser ganzen Website dokumentiert ist
-				—, und jeder echte Befund dieses Scans wird behoben, nicht wegdiskutiert. Dieser Scan hat
-				eigene, echte Grenzen (siehe{" "}
-				<a href="/help/known-limitations/">Bekannte Einschränkungen</a>): Er kann nicht wie ein
-				echter Browser gegen das tatsächlich berechnete CSS dieser Website laufen, daher sind
-				Kontrastbefunde aus diesem Scan-Modus in keine Richtung ein aussagekräftiger Beleg.
+				es wäre seltsam, gerade hier auf Tests mit der eigenen Engine zu verzichten. Jede Änderung
+				wird mit <code>@surea11y/core</code> selbst gescannt, in einem echten Browser (Chromium,
+				über <code>@surea11y/playwright</code>), gegen WCAG 2.2 AA bei 375 und 1280 px Breite, und
+				nichts wird veröffentlicht, solange dieser Scan ein <code>fail</code> meldet. Jeder echte
+				Befund wird behoben, nicht wegdiskutiert. Dieser Scan hat eigene, ehrliche Grenzen (siehe{" "}
+				<a href="/help/known-limitations/">Bekannte Einschränkungen</a>): Er sieht einen Zustand
+				jeder Seite, bei diesen beiden Breiten, und was er nicht entscheiden kann, meldet er als{" "}
+				<code>cantTell</code>, damit eine Person es prüft.
 			</p>
 			<p>
 				<strong>Automatisierte Scans sind immer nur eine Untergrenze, keine Obergrenze</strong>, deshalb sind sie

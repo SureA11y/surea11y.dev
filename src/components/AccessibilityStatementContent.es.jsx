@@ -24,14 +24,14 @@ export function AccessibilityStatementContent() {
 			<h2>Cómo se prueba este sitio</h2>
 			<p>
 				Este sitio lo construye el mismo equipo que construye <code>@surea11y/core</code>, así que
-				por coherencia, el sitio también se evalúa con nuestro propio motor. La salida
-				completa compilada se analiza periódicamente con <code>@surea11y/core</code> mismo (el
-				mismo motor de análisis estático del DOM documentado en todo este sitio) y todo hallazgo
-				real que arroja ese análisis se corrige, no se justifica. Ese análisis tiene límites reales
-				y honestos propios (ver <a href="/help/known-limitations/">Limitaciones conocidas</a>): no
-				puede ejecutarse contra el CSS computado real de este sitio como lo haría un navegador real,
-				así que los hallazgos de contraste de ese modo de análisis en particular no son una
-				evidencia significativa en ningún sentido.
+				por coherencia, el sitio también se evalúa con nuestro propio motor. Cada cambio se analiza
+				con <code>@surea11y/core</code> mismo, en un navegador real (Chromium, mediante{" "}
+				<code>@surea11y/playwright</code>), frente a WCAG 2.2 AA a 375 y 1280 px de ancho, y no
+				se despliega nada mientras ese análisis informe de un <code>fail</code>. Todo hallazgo real
+				se corrige, no se justifica. Ese análisis tiene límites honestos propios (ver{" "}
+				<a href="/help/known-limitations/">Limitaciones conocidas</a>): ve un solo estado de cada
+				página, en esos dos anchos, y lo que no puede decidir lo informa como{" "}
+				<code>cantTell</code> para que lo compruebe una persona.
 			</p>
 			<p>
 				<strong>El análisis automatizado establece un punto de partida, no un límite</strong>, así que no es la

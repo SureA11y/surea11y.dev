@@ -176,7 +176,7 @@ export function WcagMappingContent() {
 				に列挙します。組み込みルールの上書きは、それ自身の対応付けに従って算入されます。その達成基準に対応していれば組み込みルールの代わりに算入され、どの達成基準にも対応していなければどこにも算入されません（警告が出ます）。
 			</p>
 			<p>
-				達成基準ではなくルールを指定したスキャン（<code>{"includeRuleIds: ['link-name-present']"}</code>、WCAGのレベルを示さないタグ、ベストプラクティス）でも、それらのルールがチェックする達成基準の複合ルールが得られます（<a href="/configuration/engine-options/#which-criteria-a-scan-reports">エンジンオプション</a>を参照）。1.12より前は、そうしたスキャンは複合ルールを1つも報告しませんでした。判定は上の表で決まります。不合格のルールがあればその達成基準は不合格になり、スキャンが選ばなかったルールは実行されなかった構成ルールとして扱われるので、その達成基準はよくても<code>cantTell</code>、つまり一部だけチェックしたものになります（<code>reasonCode</code>は<code>composite.rollup.cantTell.notSelectedChild</code>で、そうした構成ルールにはそれぞれ<code>notSelected: true</code>が付きます。<a href="/results-reports/html-report/">HTMLレポート</a>では「一部のみ確認」と表示されます）。
+				達成基準ではなくルールを指定したスキャン（<code>{"includeRuleIds: ['link-name-present']"}</code>のようなIDで、WCAGのタグではないタグで、<code>optInRules</code>で、またはベストプラクティスとして指定）でも、それらのルールがチェックする達成基準の複合ルールが得られます。<code>wcag244</code>のような達成基準のタグを指定した場合は、その達成基準だけが報告されます（<a href="/configuration/engine-options/#which-criteria-a-scan-reports">エンジンオプション</a>を参照）。1.12より前は、そうしたスキャンは複合ルールを1つも報告しませんでした。判定は上の表で決まります。不合格のルールがあればその達成基準は不合格になり、スキャンが選ばなかったルールは実行されなかった構成ルールとして扱われるので、その達成基準はよくても<code>cantTell</code>、つまり一部だけチェックしたものになります（<code>reasonCode</code>は<code>composite.rollup.cantTell.notSelectedChild</code>で、そうした構成ルールにはそれぞれ<code>notSelected: true</code>が付きます。<a href="/results-reports/html-report/">HTMLレポート</a>では「一部のみ確認」と表示されます）。
 			</p>
 
 			<h2>適合レベル（A／AA／AAA）を対象にする</h2>

@@ -37,7 +37,7 @@ export function ResultsReportsContent() {
 				from: a top-level result envelope, one entry per rule (including every{" "}
 				<code>pass</code> and <code>notApplicable</code> — never a violations-only list), per-occurrence
 				detail down to the flagged element, explicit uncertainty codes for anything a rule couldn't
-				decide, and composite WCAG-SC rollups. Every undecided finding says how a person answers
+				decide, and composite WCAG-SC rollups. Every undecided finding of a core rule says how a person answers
 				it, and some say which way the page's evidence points (a <em>lean</em>), so a review
 				starts with the likely failures rather than a flat list. Worth reading once if you're building anything on
 				top of a raw result. See <a href="/results-reports/output-schema/">Output schema</a> for
@@ -48,7 +48,7 @@ export function ResultsReportsContent() {
 			<p>
 				One HTML file that opens in any browser, with no server or build step. A plain-language
 				summary up top, the failures, then the findings that need review sorted into likely
-				fails, likely passes and the ones only a person can judge, each with the steps to check it,
+				fails, likely passes and the ones only a person can judge, each core rule's with the steps to check it,
 				a WCAG rollup grouped by conformance level sourced from the engine's own composite results,
 				and a full searchable table underneath for anyone who wants to dig in.
 				This is the report to hand a reviewer who doesn't want to read raw output. See{" "}

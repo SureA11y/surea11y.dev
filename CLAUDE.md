@@ -597,7 +597,8 @@ Open English-source issues found in that review, not yet decided:
   which wasn't documented. Core 1.10.0 says the wording list now covers
   every shipped language (CHANGELOG, `bypass-blocks-present`); the rule
   pages don't list the words either way.
-- The FAQ mentions `npm run i18n:sync`, a `core` maintainer command.
+- ~~The FAQ mentions `npm run i18n:sync`, a `core` maintainer command.~~
+  Fixed with core 1.14.1, every language.
 - Found updating to core 1.10.0 and fixed in core 1.11.0: `region`'s cut-off
   "Applies to" (SureA11y/core#87) and the `contrast-computable`
   `BACKGROUND_OVERLAP` noise from the language menu inside a closed
@@ -1007,22 +1008,70 @@ Content pages, every language:
 - The 1.12 FAQ entry (`#results-changed-1-12`) was dropped; nothing
   linked to it.
 
-Open English-source issues found in this update (rule text in `core`,
-translated as written): `form-control-single-label` and
-`invalid-field-error-message` have "must" titles but never fail;
-`focus-not-removed-by-script` and `moving-content-pausable` titles are
-statements, not must/should; `video-caption`'s title doesn't cover the
-new "are the captions complete" question; `contrast-minimum`'s
-expectation has a verbless clause ("declares only dark on the dark
-canvas") and "(`contrast.rootCanvasFallback`, given)"; rule `reports`
-cite `API_STABILITY.md`/`docs/*.md` paths; `click-handler-keyboard-operable`'s
-description is narrower than its expectation; "colour"/"color" still
-mixed. Docs: ENGINE_OPTIONS.md's profiles paragraph still credits the
-tags for V3.2.1's duplicate-id failure (it's `keepsParsing`);
-TROUBLESHOOTING.md still mentions `npm run i18n:sync`; the CHANGELOG's
-`migrateBaselineEntries(entries, result)` vs BASELINE.md's sample (the
-site follows BASELINE.md); core's `ja` review and report strings are
-spaced (see above); CHANGELOG and OUTPUT_SCHEMA.md list different stable
-contrast fields (the site follows OUTPUT_SCHEMA.md). Core's `es` review
-steps (shown on rule pages and in the sample report) say "usted"
-("Localice…", "Haga clic…") while the site says "tú"; left as core's text.
+Open English-source issues found in this update: core 1.14.1 fixed the
+rule titles, the `contrast-minimum` clauses, the `docs/*.md` paths in rule
+`reports`, `click-handler-keyboard-operable`'s description, "colour", the
+ENGINE_OPTIONS.md profiles paragraph, TROUBLESHOOTING.md's `i18n:sync` and
+the `es` review steps' "usted" (now infinitives). Still open: the
+CHANGELOG's `migrateBaselineEntries(entries, result)` vs BASELINE.md's
+sample (the site follows BASELINE.md); core's `ja` review and report
+strings are spaced (see above); CHANGELOG and OUTPUT_SCHEMA.md list
+different stable contrast fields (the site follows OUTPUT_SCHEMA.md).
+
+## Core 1.14.1 update (2026-10-27)
+
+Pinned `@surea11y/core` 1.14.1 (bindings, CLI, test-matchers and the
+EN 301 549 pack unchanged). Rule data regenerated: 19 rules' text changed
+(titles of `focus-not-removed-by-script`, `form-control-single-label`,
+`invalid-field-error-message`, `moving-content-pausable`, `video-caption`;
+`click-handler-keyboard-operable`'s description; the placeholder (G148)
+sentence of the contrast rules; `docs/*.md` paths and issue numbers taken
+out of rule text) and every overlay follows. The "How to check" steps of
+36 questions changed (they consider another way on the page before a
+fail), shown from core's own dictionaries. Content pages, every language:
+Engine options (V3.2.1 targets 2.1 and fails a duplicate id because of
+`keepsParsing`), CI integration (SARIF `leanFailAs: 'error'` and a
+baseline's `leanFail`), FAQ (the key-parity answer no longer names
+`i18n:sync`; a 1.14.1 bullet in `#results-changed-1-14`: the
+`text-spacing-content-loss` fixes, `VIEWPORT_SCROLL_LOCKED`,
+`TEXT_CLIPPED_SCRIPT_SIZED`, and the steps' other way); "colour" →
+"color" where the English adapts a core doc that changed (HTML report,
+Output schema, How rules are organized). Sample HTML reports
+re-generated. The local Chromium differs from the one the pinned
+`playwright` expects; `docs:sample-report` ran from a temporary copy
+launching `/opt/pw-browsers/chromium`.
+
+`@surea11y/core` 1.14.1 reached npm the same day; its package is identical
+to the tag the data was first generated from.
+
+A full content audit followed, every English page against core 1.14.1's
+docs and the bindings' (1.5.0), CLI's (1.4.0) and test-matchers' (1.4.0)
+READMEs, and every fix went into all five languages:
+
+- Accessibility statement: the site's scan is Chromium at WCAG 2.2 AA, 375
+  and 1280 px, gating the deploy, not a static-DOM scan.
+- Homepage stats and Overview: 60 is the number of W3C ACT rules, not of
+  core's (they map to more core rules); `margin` only near the limit; the
+  click-handler fail condition (descendants, shadow root, focus listener);
+  only the two "likely" groups explain a lean; outline/shadow text fails
+  only where every color is below; the CLI scans in Chromium too.
+- How rules are organized: no WCAG rollup passes since 1.14 (all-pass is
+  `cantTell`, partly checked), badge `unknown`.
+- Configuration index: core's EN 301 549 profiles are deprecated, linking
+  the pack (per the user: valid but not preferred, so say so).
+- Conformance (baseline moves last one minor release), Help ("known"
+  boundaries), WCAG mapping (a criterion tag reports its own criterion),
+  Known limitations (two color-scheme omissions), Results & Reports (only
+  core rules carry how-to-check steps), section descriptions (packs,
+  JUnit, no "conformance verdict").
+- Packs: `surea11y-pack new` writes `^<core version>` (core's PACKS.md
+  still says `^1.14.0`).
+- test-matchers ships `toHaveAnnounced()` too; the CLI sample lists all
+  four failing rules (from the CLI README); samples say core 1.14.1 (a
+  1.14.1 re-run gave the same output).
+
+Left as they are, deliberately: the Locales page's `i18n:sync` paragraph
+(core keeps it in I18N.md's coverage section); the Rules description's
+"a pass/fail example" (still an open question above). Not verifiable from
+core: the EN 301 549 pack's own claims, the bindings' `examples/`, the
+CLI's `--pack` resolution.

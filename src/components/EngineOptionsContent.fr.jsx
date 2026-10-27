@@ -798,10 +798,11 @@ export function EngineOptionsContent() {
 			</p>
 			<p>
 				La cible WCAG se déduit des tags comme pour un jeu écrit à la main (voir{" "}
-				<a href="#filtering-by-wcag-version">« Filtrer par version de WCAG »</a> ci-dessous) : sous{" "}
-				<code>en301549-v3.2.1</code>, un id dupliqué peut encore donner <code>fail</code>, et sous{" "}
-				<code>en301549-v4.1.1</code>, non : le profil de V3.2.1 conserve le 4.1.1 (
-				<a href="#parsing-errata">voir plus bas</a>). Le profil d’un pack peut plutôt nommer sa version, avec{" "}
+				<a href="#filtering-by-wcag-version">« Filtrer par version de WCAG »</a> ci-dessous) :{" "}
+				<code>en301549-v3.2.1</code> cible WCAG 2.1 et <code>en301549-v4.1.1</code> WCAG 2.2.
+				Un id dupliqué peut encore donner <code>fail</code> sous <code>en301549-v3.2.1</code>{" "}
+				parce que son profil conserve le texte du 4.1.1 (<code>keepsParsing</code>,{" "}
+				<a href="#parsing-errata">voir plus bas</a>) ; sous <code>en301549-v4.1.1</code>, non. Le profil d’un pack peut plutôt nommer sa version, avec{" "}
 				<code>wcagVersion</code> (<a href="/configuration/packs/#profiles">Packs</a>) : un profil qui
 				n’exécute que les règles associées à sa norme n’a aucun tag WCAG pour en impliquer une. Les
 				noms ne tiennent pas compte de la casse. Une exécution

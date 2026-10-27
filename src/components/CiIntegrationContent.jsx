@@ -85,6 +85,16 @@ export function CiIntegrationContent() {
 				<code>continue-on-error</code> + your own check) if you also want the build to fail on
 				new violations.
 			</p>
+			<p>
+				Findings that lean fail are <code>warning</code> alerts by default. Rendered with{" "}
+				<code>{"renderSarifReport(result, { leanFailAs: 'error' })"}</code> from{" "}
+				<code>@surea11y/core/sarif</code>, they are <code>error</code>s, so a gate on errors
+				stops on likely failures too (<a href="/results-reports/sarif-report/#options">SARIF
+				options</a>); a baseline written with{" "}
+				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code> accepts the ones a page
+				already has (<a href="/conformance/baseline/#findings-that-lean-fail">findings that lean
+				fail</a>).
+			</p>
 			<CodeBlock
 				lang="yaml"
 				lines={[

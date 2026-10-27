@@ -43,7 +43,7 @@ export function RuleOrganizationContent() {
 					block that turns an element other than the page's content (
 					<code>css-orientation-lock</code>), a placeholder below its ratio whose colors can't be
 					told to be the page's or the browser's, or a lone character standing in for its control's
-					name below its ratio (<code>contrast-minimum</code>), or a colour or size that cannot be computed (the contrast
+					name below its ratio (<code>contrast-minimum</code>), or a color or size that cannot be computed (the contrast
 					rules, <code>target-size-minimum</code>). A rule that throws is reported as{" "}
 					<code>cantTell</code> too, as a safety net.
 				</li>
@@ -136,10 +136,11 @@ export function RuleOrganizationContent() {
 				exactly what the img-alt family above does for 1.1.1.
 			</p>
 			<p>
-				This matters when reading a composite (WCAG-SC rollup) result: a composite{" "}
-				<ResultBadge lang="en" state="pass" size="sm" /> means every automated check for that SC came back
-				clean, but <strong>if a facet has no automated coverage at all, the composite is silent
-				about that facet rather than asserting it's fine</strong>. See{" "}
+				This matters when reading a composite (WCAG-SC rollup) result: a composite passes only
+				when its rules check everything the criterion asks, and none does yet. So where every
+				automated check for an SC comes back clean, the composite is{" "}
+				<ResultBadge lang="en" state="unknown" size="sm" />, partly checked:{" "}
+				<strong>the facets its rules cover are met, and a person checks the rest</strong>. See{" "}
 				<a href="/conformance/wcag-mapping/">Conformance</a> for the three layers (atomic rules, facets,
 				composites) and how a composite's outcome is actually computed.
 			</p>

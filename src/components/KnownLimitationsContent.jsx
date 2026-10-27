@@ -555,8 +555,9 @@ export function KnownLimitationsContent() {
 					<code>prefers-color-scheme</code> rule. On a page drawn in dark (
 					<code>color-scheme: dark</code> on the root or in{" "}
 					<code>&lt;meta name="color-scheme"&gt;</code>), text the scheme colors takes the dark
-					scheme's colors (Chromium's), and a text color given as <code>light-dark()</code> or a
-					system color is worked out for dark. Text whose colors in that scheme can't be worked out
+					scheme's colors (Chromium's), and a text color given as <code>light-dark()</code>,{" "}
+					<code>CanvasText</code>, <code>LinkText</code> or <code>Canvas</code> is worked out for
+					dark. Text whose colors in that scheme can't be worked out
 					is asked about (<code>contrast-computable</code>, <code>COLOR_SCHEME_NOT_RENDERED</code>;{" "}
 					<code>link-in-text-block</code>, <code>COLOR_NOT_COMPUTABLE</code>) rather than measured in
 					the light colors. In a browser, the colors are the ones it draws.
@@ -569,7 +570,9 @@ export function KnownLimitationsContent() {
 					A scan sees the scheme the browser prefers (jsdom: light). Text on the canvas is measured
 					in the other scheme too, except where a <code>prefers-color-scheme</code> rule, a{" "}
 					<code>light-dark()</code> value or a system color the page sets reaches the text's color or
-					a background behind it, or where a style sheet can't be read.{" "}
+					a background behind it, or where a style sheet can't be read; nor is text drawn by an
+					outline, a shadow, <code>::first-line</code> or a pseudo-element, or text measured over
+					other paint.{" "}
 					<code>data.details.colorSchemesChecked</code> lists the schemes measured; scan again with
 					the browser in the other scheme to check it.
 				</li>

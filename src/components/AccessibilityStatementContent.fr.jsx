@@ -25,14 +25,14 @@ export function AccessibilityStatementContent() {
 			<h2>Comment ce site est testé</h2>
 			<p>
 				Ce site est construit par l’équipe qui développe <code>@surea11y/core</code> : ce serait
-				un drôle d’endroit pour se passer de notre propre moteur. L’ensemble du site généré est
-				périodiquement analysé avec <code>@surea11y/core</code> lui-même, le moteur d’analyse
-				statique du DOM documenté tout au long de ce site, et chaque vrai problème relevé par
-				cette analyse est corrigé, pas justifié. Cette analyse a ses propres limites, réelles et
-				assumées (voir <a href="/help/known-limitations/">Limites connues</a>) : elle ne peut pas
-				s’exécuter sur le CSS réellement calculé du site comme le ferait un vrai navigateur, donc
-				les résultats de contraste issus de ce mode d’analyse ne prouvent rien, dans un sens
-				comme dans l’autre.
+				un drôle d’endroit pour se passer de notre propre moteur. Chaque modification est analysée
+				avec <code>@surea11y/core</code> lui-même, dans un vrai navigateur (Chromium, via{" "}
+				<code>@surea11y/playwright</code>), selon les WCAG 2.2 AA, à 375 et 1280 px de large, et
+				rien n’est déployé tant que cette analyse signale un <code>fail</code>. Chaque vrai
+				problème relevé est corrigé, pas justifié. Cette analyse a ses propres limites, assumées
+				(voir <a href="/help/known-limitations/">Limites connues</a>) : elle voit un seul état de
+				chaque page, à ces deux largeurs, et ce qu’elle ne peut pas trancher, elle le signale en{" "}
+				<code>cantTell</code> pour qu’une personne le vérifie.
 			</p>
 			<p>
 				<strong>L’analyse automatisée n’est qu’un plancher, jamais un plafond</strong> : ce n’est

@@ -36,8 +36,9 @@ export function ConformanceContent() {
 				genuinamente nuevas. Es la diferencia entre "no podemos publicar nada hasta que esto sea
 				perfecto" y "podemos detectar regresiones a partir de hoy", y es lo que de verdad hace que
 				un equipo active la puerta de control. También puede aceptar los hallazgos que
-				probablemente fallan, y un baseline escrito antes de actualizar sigue coincidiendo cuando el
-				código de motivo de un hallazgo se divide o cambia de nombre. Ver{" "}
+				probablemente fallan, y un baseline escrito antes de actualizar sigue coincidiendo durante
+				una versión menor cuando el código de motivo de un hallazgo se divide o se le asigna por
+				primera vez. Ver{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
 		</>

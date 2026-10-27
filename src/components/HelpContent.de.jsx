@@ -23,7 +23,7 @@ export function HelpContent() {
 
 			<h2>Bekannte Einschränkungen</h2>
 			<p>
-				Jede Grenze dieser Engine, ausdrücklich benannt, statt überraschend entdeckt: was ein Scan
+				Die bekannten Grenzen dieser Engine, ausdrücklich benannt, statt überraschend entdeckt: was ein Scan
 				eines einzigen Seitenzustands nicht sehen kann, was davon abhängt, wo Sie ihn ausführen
 				(jsdom, ein Browser, die eigenen Skripte der Seite), und wo sie bewusst nicht rät, weil eine
 				falsche Vermutung schlimmer wäre als ein ehrliches <code>cantTell</code>, jeweils mit dem, was

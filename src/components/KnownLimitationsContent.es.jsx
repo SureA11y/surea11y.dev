@@ -608,7 +608,8 @@ export function KnownLimitationsContent() {
 					<code>color-scheme: dark</code> en la raíz o en{" "}
 					<code>&lt;meta name="color-scheme"&gt;</code>), el texto que colorea el esquema toma los
 					colores del esquema oscuro (los de Chromium), y un color de texto dado como{" "}
-					<code>light-dark()</code> o como color del sistema se calcula para el oscuro. Por el texto
+					<code>light-dark()</code>, <code>CanvasText</code>, <code>LinkText</code> o{" "}
+					<code>Canvas</code> se calcula para el oscuro. Por el texto
 					cuyos colores en ese esquema no se pueden calcular se pregunta (
 					<code>contrast-computable</code>, <code>COLOR_SCHEME_NOT_RENDERED</code>;{" "}
 					<code>link-in-text-block</code>, <code>COLOR_NOT_COMPUTABLE</code>) en lugar de medirlo
@@ -623,7 +624,9 @@ export function KnownLimitationsContent() {
 					lienzo se mide también en el otro esquema, salvo donde una regla{" "}
 					<code>prefers-color-scheme</code>, un valor <code>light-dark()</code> o un color del
 					sistema que define la página alcanza el color del texto o un fondo detrás de él, o donde
-					una hoja de estilo no se puede leer. <code>data.details.colorSchemesChecked</code> enumera
+					una hoja de estilo no se puede leer; tampoco el texto dibujado por un contorno, una
+					sombra, <code>::first-line</code> o un pseudoelemento, ni el texto medido sobre otra
+					pintura. <code>data.details.colorSchemesChecked</code> enumera
 					los esquemas medidos; vuelve a analizar con el navegador en el otro esquema para
 					comprobarlo.
 				</li>

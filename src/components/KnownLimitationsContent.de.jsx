@@ -607,8 +607,9 @@ export function KnownLimitationsContent() {
 					<code>prefers-color-scheme</code>-Regel an. Auf einer dunkel gezeichneten Seite (
 					<code>color-scheme: dark</code> an der Wurzel oder in{" "}
 					<code>&lt;meta name="color-scheme"&gt;</code>) nimmt Text, den das Schema färbt, die Farben
-					des dunklen Schemas an (die von Chromium), und eine als <code>light-dark()</code> oder
-					Systemfarbe angegebene Textfarbe wird für dunkel ermittelt. Zu Text, dessen Farben in
+					des dunklen Schemas an (die von Chromium), und eine als <code>light-dark()</code>,{" "}
+					<code>CanvasText</code>, <code>LinkText</code> oder <code>Canvas</code> angegebene
+					Textfarbe wird für dunkel ermittelt. Zu Text, dessen Farben in
 					diesem Schema sich nicht ermitteln lassen, wird nachgefragt (
 					<code>contrast-computable</code>, <code>COLOR_SCHEME_NOT_RENDERED</code>;{" "}
 					<code>link-in-text-block</code>, <code>COLOR_NOT_COMPUTABLE</code>), statt ihn in den
@@ -623,7 +624,9 @@ export function KnownLimitationsContent() {
 					wird auch im anderen Schema gemessen, außer wo eine{" "}
 					<code>prefers-color-scheme</code>-Regel, ein <code>light-dark()</code>-Wert oder eine
 					Systemfarbe, die die Seite setzt, die Textfarbe oder einen Hintergrund dahinter erreicht,
-					oder wo sich ein Stylesheet nicht lesen lässt.{" "}
+					oder wo sich ein Stylesheet nicht lesen lässt; ebenso wenig Text, der durch eine Kontur,
+					einen Schatten, <code>::first-line</code> oder ein Pseudoelement gezeichnet wird, oder
+					Text, der über anderer Farbe gemessen wird.{" "}
 					<code>data.details.colorSchemesChecked</code> listet die gemessenen Schemata; scannen Sie
 					mit dem Browser im anderen Schema erneut, um es zu prüfen.
 				</li>
