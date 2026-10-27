@@ -51,7 +51,7 @@
 	"homepage.description": "Deterministic WCAG 2.2 accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI — verified against the W3C ACT rules corpus, and honest about what it can't tell you.",
 	"homepage.tagline": "Accessibility testing that tells you what it can't tell you.",
 	"homepage.subtitle": "Deterministic accessibility testing for Playwright, Cypress, Puppeteer, Selenium, WebdriverIO, Jest/Vitest, and CI pipelines.",
-	"homepage.stats": "{rules} accessibility rules · 60 checked against W3C's ACT test cases · 957 reference cases · deterministic results · explicit uncertainty",
+	"homepage.stats": "{rules} accessibility rules · 60 W3C ACT rules checked against W3C's test cases · 957 reference cases · deterministic results · explicit uncertainty",
 	"homepage.changelog": "See what changed in the latest release",
 	"homepage.getStarted": "Get started",
 	"homepage.viewOnGitHub": "View on GitHub",
