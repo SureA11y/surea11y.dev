@@ -171,24 +171,58 @@ export function StandaloneUsageContent() {
 			<h2 id="packs-in-a-page">ページ内でのパック</h2>
 			<p>
 				<a href="/configuration/packs/">パック</a>
-				はNodeで用意されるため、スクリプトとしてページに届きます。
+				はNodeで用意されるため、スクリプトとしてページに届きます。スクリプトをファイルとして読み込むページ（
+				<code>&lt;script&gt;</code>
+				タグ、ブックマークレット、拡張機能）では、Nodeで1つのファイルを作ってください。
 				<code>@surea11y/core/pack</code>
 				の
-				<code>packScript(packs)</code>
-				は、パックを登録するスクリプトを返します。バンドルの後に（スキャンするすべてのフレームにも）読み込み、
+				<code>buildBrowserBundle({"{ packs }"})</code>
+				は、バンドルの後にパックを登録したファイルを作ります。そのうえで、
 				<code>engineOptions.packs</code>
 				でパックを
 				<code>name@version</code>
-				の形で指定してください。あるいは、
-				<code>buildBrowserBundle({"{ packs }"})</code>
-				で、バンドルの後にパックを登録した1つのファイルとして配布することもできます。ルールのコードは関数としてスクリプトに書き込まれるため、コンテンツセキュリティポリシーが
+				の形で指定してください。ルールのコードは関数としてスクリプトに書き込まれるため、コンテンツセキュリティポリシーが
 				<code>eval</code>
 				を禁止している環境でも動作します。
 			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
-					"// In Node: write the script once, beside the bundle.",
+					"// In Node, once per release of core or of a pack.",
+					"const fs = require('node:fs');",
+					"const { buildBrowserBundle } = require('@surea11y/core/pack');",
+					"const acmePolicy = require('./acme-policy-pack');",
+					"fs.writeFileSync('surea11y-acme.js', buildBrowserBundle({ packs: [acmePolicy] }));",
+				]}
+			/>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<script src="surea11y-acme.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(location.href, null, {",
+					"    packs: ['@acme/a11y-policy@1.0.0'],",
+					"    profile: 'acme-web-2026'",
+					"  }, null);",
+					"</script>",
+				]}
+			/>
+			<p>
+				パックのスクリプトは、それを書き出したコアでしか動作しません。コアとパックが合わせて作るカタログを、Nodeで検証したうえで含んでいるためです。バンドルが別のバージョンのコアであるページは、パックなしでスキャンを実行し、各パックを2つのバージョンとともに
+				<code>skippedPacks</code>
+				に列挙します。1つのファイルに両方が入っていれば、ずれることはありません。コアやパックを更新したら作り直し、ページが指定する
+				<code>name@version</code>
+				も更新してください。
+			</p>
+			<p>
+				コアのバンドルがすでにページにある場合は、同じコアで
+				<code>packScript(packs)</code>
+				をファイルに書き出し、バンドルの後に（スキャンするすべてのフレームにも）読み込んでください。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// In Node, with the core whose bundle the page loads.",
 					"const fs = require('node:fs');",
 					"const { packScript } = require('@surea11y/core/pack');",
 					"const acmePolicy = require('./acme-policy-pack');",
@@ -200,12 +234,6 @@ export function StandaloneUsageContent() {
 				lines={[
 					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
 					'<script src="acme-pack.js"></script>',
-					"<script>",
-					"  const result = a11ycore.runa11yCoreInPage(location.href, null, {",
-					"    packs: ['@acme/a11y-policy@1.0.0'],",
-					"    profile: 'acme-web-2026'",
-					"  }, null);",
-					"</script>",
 				]}
 			/>
 			<p>

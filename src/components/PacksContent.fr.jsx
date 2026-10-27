@@ -336,14 +336,12 @@ export function PacksContent() {
 				navigateur de core, ou livrez un seul fichier construit avec{" "}
 				<code>buildBrowserBundle({"{ packs: [acmePolicy] }"})</code>, et nommez le pack sous la
 				forme <code>name@version</code>. Voir{" "}
-				<a href="/getting-started/standalone/#packs-in-a-page">Autonome</a>.
+				<a href="/getting-started/standalone/#packs-in-a-page">Autonome</a>. Pour une page qui charge ses scripts sous forme de fichiers, préférez le fichier unique de{" "}
+				<code>buildBrowserBundle</code> : le script d’un pack ne s’exécute qu’avec la version de core qui l’a écrit.
 			</p>
 			<p>
-				Le script ne s’exécute qu’avec le core qui l’a écrit : une page dotée du bundle d’un autre
-				core ignore le pack, et <code>skippedPacks</code> nomme les deux versions. Une page sans
-				driver, qui charge ses scripts comme des fichiers (une balise <code>&lt;script&gt;</code>,
-				une extension), est mieux servie par un seul fichier de <code>buildBrowserBundle</code>,
-				reconstruit à chaque version de core ou du pack.
+				Une page dotée du bundle d’un autre core ignore le pack, et <code>skippedPacks</code> nomme les
+				deux versions : reconstruisez donc ce fichier à chaque version de core ou du pack.
 			</p>
 
 			<h2 id="what-a-scan-reports">Ce que rapporte une analyse</h2>

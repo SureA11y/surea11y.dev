@@ -144,17 +144,51 @@ export function StandaloneUsageContent() {
 			<h2 id="packs-in-a-page">Packs in a page</h2>
 			<p>
 				A <a href="/configuration/packs/">pack</a> is prepared in Node, so it reaches a page as a
-				script. <code>packScript(packs)</code> from <code>@surea11y/core/pack</code> returns one
-				that registers the packs; load it after the bundle (and into every frame you scan), then
-				name the packs in <code>engineOptions.packs</code> as <code>name@version</code>. Or ship one
-				file with <code>buildBrowserBundle({"{ packs }"})</code>, the bundle with the packs
-				registered after it. The rules' code is written into the script as functions, so it runs
-				where a Content Security Policy forbids <code>eval</code>.
+				script. For a page that loads its scripts as files (a <code>&lt;script&gt;</code> tag, a
+				bookmarklet, an extension), build one file in Node:{" "}
+				<code>buildBrowserBundle({"{ packs }"})</code> from <code>@surea11y/core/pack</code> is the
+				bundle with the packs registered after it. Then name the packs in{" "}
+				<code>engineOptions.packs</code> as <code>name@version</code>. The rules' code is written
+				into the script as functions, so it runs where a Content Security Policy forbids{" "}
+				<code>eval</code>.
 			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
-					"// In Node: write the script once, beside the bundle.",
+					"// In Node, once per release of core or of a pack.",
+					"const fs = require('node:fs');",
+					"const { buildBrowserBundle } = require('@surea11y/core/pack');",
+					"const acmePolicy = require('./acme-policy-pack');",
+					"fs.writeFileSync('surea11y-acme.js', buildBrowserBundle({ packs: [acmePolicy] }));",
+				]}
+			/>
+			<CodeBlock
+				lang="html"
+				lines={[
+					'<script src="surea11y-acme.js"></script>',
+					"<script>",
+					"  const result = a11ycore.runa11yCoreInPage(location.href, null, {",
+					"    packs: ['@acme/a11y-policy@1.0.0'],",
+					"    profile: 'acme-web-2026'",
+					"  }, null);",
+					"</script>",
+				]}
+			/>
+			<p>
+				A pack's script runs only with the core that wrote it: it carries the catalog core and the
+				packs make together, checked in Node. A page whose bundle is another version of core runs
+				the scan without the packs and lists each in <code>skippedPacks</code>, naming the two
+				versions. One file holds both, so they can't fall out of step. Build it again when you
+				update core or a pack, and update the <code>name@version</code> the page names.
+			</p>
+			<p>
+				Where core's bundle is already on the page, write <code>packScript(packs)</code> to a file
+				with the same core, and load it after the bundle (and into every frame you scan):
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// In Node, with the core whose bundle the page loads.",
 					"const fs = require('node:fs');",
 					"const { packScript } = require('@surea11y/core/pack');",
 					"const acmePolicy = require('./acme-policy-pack');",
@@ -166,12 +200,6 @@ export function StandaloneUsageContent() {
 				lines={[
 					'<script src="node_modules/@surea11y/core/surea11y.browser.js"></script>',
 					'<script src="acme-pack.js"></script>',
-					"<script>",
-					"  const result = a11ycore.runa11yCoreInPage(location.href, null, {",
-					"    packs: ['@acme/a11y-policy@1.0.0'],",
-					"    profile: 'acme-web-2026'",
-					"  }, null);",
-					"</script>",
 				]}
 			/>
 			<p>

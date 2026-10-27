@@ -326,14 +326,12 @@ export function PacksContent() {
 				browser bundle, or ship one file built with{" "}
 				<code>buildBrowserBundle({"{ packs: [acmePolicy] }"})</code>, and name the pack as{" "}
 				<code>name@version</code>. See{" "}
-				<a href="/getting-started/standalone/#packs-in-a-page">Standalone</a>.
+				<a href="/getting-started/standalone/#packs-in-a-page">Standalone</a>. A page that loads its scripts as files is best served by the one file from{" "}
+				<code>buildBrowserBundle</code>: the pack's script runs only with the core that wrote it.
 			</p>
 			<p>
-				The script runs only with the core that wrote it: a page with another core's bundle skips
-				the pack, and <code>skippedPacks</code> names the two versions. A page with no driver,
-				which loads its scripts as files (a <code>&lt;script&gt;</code> tag, an extension), is
-				best served by one file from <code>buildBrowserBundle</code>, built again for each release
-				of core or of the pack.
+				A page with another core's bundle skips the pack, and <code>skippedPacks</code> names the two
+				versions, so build that file again for each release of core or of the pack.
 			</p>
 
 			<h2 id="what-a-scan-reports">What a scan reports</h2>

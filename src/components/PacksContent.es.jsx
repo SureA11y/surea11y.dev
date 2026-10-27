@@ -336,14 +336,12 @@ export function PacksContent() {
 				de navegador de core, o distribuye un solo archivo generado con{" "}
 				<code>buildBrowserBundle({"{ packs: [acmePolicy] }"})</code>, y nombra el pack como{" "}
 				<code>name@version</code>. Consulta{" "}
-				<a href="/getting-started/standalone/#packs-in-a-page">Uso independiente</a>.
+				<a href="/getting-started/standalone/#packs-in-a-page">Uso independiente</a>. Para una página que carga sus scripts como archivos, conviene el archivo único de{" "}
+				<code>buildBrowserBundle</code>: el script de un pack solo se ejecuta con el core que lo escribió.
 			</p>
 			<p>
-				El script solo funciona con el core que lo escribió: una página con el bundle de otro core
-				omite el pack, y <code>skippedPacks</code> nombra las dos versiones. A una página sin
-				driver, que carga sus scripts como archivos (una etiqueta <code>&lt;script&gt;</code>, una
-				extensión), le conviene un único archivo de <code>buildBrowserBundle</code>, generado de
-				nuevo para cada versión de core o del pack.
+				Una página con el bundle de otro core omite el pack, y <code>skippedPacks</code> nombra las dos
+				versiones, así que genera de nuevo ese archivo para cada versión de core o del pack.
 			</p>
 
 			<h2 id="what-a-scan-reports">Qué informa un análisis</h2>
