@@ -91,6 +91,22 @@ export function FaqContent() {
 						behobenen Fehler. Die Schritte von 36 Fragen fragen außerdem, ob ein anderer Weg auf
 						der Seite dasselbe leistet, bevor sie zu einem Fehlschlag führen.
 					</li>
+					<li>
+						<strong>1.14.2 liest die Seite so, wie der Browser sie zeichnet.</strong> Inhalt, den
+						der Browser mit <code>content-visibility: auto</code> außerhalb des Bildschirms
+						überspringt, wird so gemessen, wie er angeordnet ist. Damit entfallen die falschen
+						Überlappungen, Fragen zum Hintergrund und Befunde zu unerreichbarem Fokus und
+						Zielgröße, die er auf Seiten mit Karten ergab, und 
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a> 
+						lässt jetzt Text fehlschlagen, den ein solches Element abschneidet
+						(<code>details.clippedBy</code>). 
+						<a href="/rules/label-in-name/"><code>label-in-name</code></a> 
+						lässt keine Beschriftung mehr fehlschlagen, die nur über aneinanderstoßende Boxen
+						verteilt ist, und die Regeln, die Stylesheets lesen, überspringen CSS nur für den Druck
+						oder ohne Unterstützung und Regeln, die das Element nicht erreichen. Ein
+						Baseline-Eintrag oder eine Code-Scanning-Warnung zu einem Befund, der nicht mehr
+						gemeldet wird, wird geschlossen wie bei einem behobenen Fehler.
+					</li>
 				</ul>
 				<p>
 					Die vollständige Liste steht im{" "}

@@ -239,7 +239,7 @@ const topLevelRows = [
 				un indicador de carga) en su inicio, y cada una se devuelve exactamente a donde estaba
 				después, así que una página analizada durante un fundido de entrada obtiene el mismo
 				resultado que una analizada después. El navegador nunca pinta el estado detenido, ya que el
-				análisis es una única tarea síncrona. <code>internalsHook</code> está presente solo donde
+				análisis es una única tarea síncrona. <code>contentVisibilitySkipped</code> es cuántos elementos con <code>content-visibility: auto</code> tenían su contenido omitido por el navegador, como hace fuera de la pantalla: el análisis dispone ese contenido tal como queda una vez cerca del viewport, y deja que el navegador vuelva a omitirlo después (ver <a href={`${core}/docs/LAYOUT_MEASUREMENT.md#skipped-content`}><code>LAYOUT_MEASUREMENT.md</code></a> en GitHub); no está presente si no hubo ninguno. <code>internalsHook</code> está presente solo donde
 				la página ejecuta el hook opcional de internals (<code>internalsHookScript()</code>, ver{" "}
 				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
 					<code>INTEGRATION.md</code>
@@ -663,6 +663,7 @@ export function OutputSchemaContent() {
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
 					"      animationsSettled?: number,",
+					"      contentVisibilitySkipped?: number, // elements whose content-visibility: auto content was skipped",
 					'      internalsHook?: "early" | "late",  // only where the page runs the internals hook',
 					'      listenerHook?: "early" | "late",   // only where the page runs the listener hook',
 					'      liveRegionHook?: "early" | "late"  // only where the page runs the live-region hook',

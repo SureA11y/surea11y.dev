@@ -88,6 +88,20 @@ export function FaqContent() {
 						preguntas también piden comprobar si otra vía de la página hace lo mismo antes de
 						llevar a un fallo.
 					</li>
+					<li>
+						<strong>La 1.14.2 lee la página como la dibuja el navegador.</strong> El contenido que
+						el navegador omite fuera de la pantalla con <code>content-visibility: auto</code> se
+						mide tal como queda dispuesto, así que desaparecen los solapamientos falsos, las
+						preguntas sobre el fondo y los hallazgos de foco inalcanzable y de tamaño del objetivo
+						que daba en páginas de tarjetas, y 
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a> 
+						ahora falla el texto que un elemento así corta (<code>details.clippedBy</code>). 
+						<a href="/rules/label-in-name/"><code>label-in-name</code></a> 
+						ya no falla una etiqueta partida solo entre cajas que se tocan, y las reglas que leen
+						hojas de estilo omiten el CSS solo de impresión o no admitido y las reglas que no llegan
+						al elemento. Una entrada de baseline o una alerta de Code Scanning de un hallazgo que ya
+						no se informa se cierra como lo hace un error corregido.
+					</li>
 				</ul>
 				<p>
 					La lista completa está en el{" "}

@@ -41,6 +41,14 @@ export function FaqContent() {
 						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>
 						は、ページが失っていないテキストを不合格にしなくなりました。同意バナーの裏でよくあるように<code>{"body { position: fixed }"}</code>でスクロールを固定したページと、ビューポートより高い固定ボックスは、<code>VIEWPORT_SCROLL_LOCKED</code>として確認を求めます。Angular Materialのフィールドのフローティングラベルのように、ページのスクリプトがテキストに合わせて大きさを決めるボックスで切れたテキストは、<code>TEXT_CLIPPED_SCRIPT_SIZED</code>として確認を求めます。それらのベースラインの項目やCode Scanningのアラートは、修正されたバグと同じように閉じます。また、36の質問の手順は、不合格につながる前に、ページ上の別の方法で同じことができるかどうかも確認するようになりました。
 					</li>
+					<li>
+						<strong>1.14.2では、ブラウザーが描画するとおりにページを読み取ります。</strong>
+						ブラウザーが<code>content-visibility: auto</code>で画面外のレイアウトを省略する内容は、実際にレイアウトされた状態で計測されます。そのため、カードが並ぶページで出ていた誤った重なり、背景についての質問、到達できないフォーカスやターゲットサイズの検出結果はなくなり、
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>
+						は、そうした要素が切り取るテキストを不合格にするようになりました（<code>details.clippedBy</code>）。
+						<a href="/rules/label-in-name/"><code>label-in-name</code></a>
+						は、接したボックスにまたがっているだけのラベルを不合格にしなくなり、スタイルシートを読むルールは、印刷専用やサポートされていないCSSと、要素に届かないルールを読み飛ばします。報告されなくなった検出結果のベースラインの項目やCode Scanningのアラートは、修正されたバグと同じように閉じます。
+					</li>
 				</ul>
 				<p>
 					変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。

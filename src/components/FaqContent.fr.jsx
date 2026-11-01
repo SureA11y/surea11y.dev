@@ -91,6 +91,21 @@ export function FaqContent() {
 						corrigé. Les étapes de 36 questions demandent aussi si un autre moyen sur la page fait
 						la même chose avant de mener à un échec.
 					</li>
+					<li>
+						<strong>La 1.14.2 lit la page telle que le navigateur la dessine.</strong> Le contenu
+						que le navigateur saute hors de l’écran avec <code>content-visibility: auto</code> est
+						mesuré tel qu’il est mis en page, si bien que les faux chevauchements, les questions sur
+						l’arrière-plan et les constats de focus inatteignable et de taille de cible qu’il donnait
+						sur des pages de cartes disparaissent, et 
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a> 
+						fait désormais échouer un texte qu’un tel élément coupe (<code>details.clippedBy</code>). 
+						<a href="/rules/label-in-name/"><code>label-in-name</code></a> 
+						ne fait plus échouer un libellé découpé seulement entre des boîtes qui se touchent, et
+						les règles qui lisent les feuilles de style ignorent le CSS réservé à l’impression ou
+						non pris en charge et les règles qui n’atteignent pas l’élément. Une entrée de baseline
+						ou une alerte Code Scanning pour un constat qui n’est plus signalé se ferme comme pour un
+						bug corrigé.
+					</li>
 				</ul>
 				<p>
 					La liste complète se trouve dans le{" "}

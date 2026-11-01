@@ -243,7 +243,7 @@ const topLevelRows = [
 				dorthin zurückgesetzt, wo sie war. So ergibt eine Seite, die während eines Einblendens
 				gescannt wird, dasselbe Ergebnis wie eine danach gescannte. Der Browser zeichnet den
 				angehaltenen Zustand nie, da der Scan eine einzige synchrone Aufgabe ist.{" "}
-				<code>internalsHook</code> ist nur vorhanden, wo die Seite den optionalen Internals-Hook (
+				<code>contentVisibilitySkipped</code> gibt an, bei wie vielen Elementen mit <code>content-visibility: auto</code> der Browser den Inhalt übersprungen hatte, wie er es außerhalb des Bildschirms tut: Der Scan legt diesen Inhalt so aus, wie er nahe am Viewport ist, und lässt den Browser ihn danach wieder überspringen (siehe <a href={`${core}/docs/LAYOUT_MEASUREMENT.md#skipped-content`}><code>LAYOUT_MEASUREMENT.md</code></a> auf GitHub); fehlt, wenn es keine gab. <code>internalsHook</code> ist nur vorhanden, wo die Seite den optionalen Internals-Hook (
 				<code>internalsHookScript()</code>, siehe{" "}
 				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
 					<code>INTEGRATION.md</code>
@@ -673,6 +673,7 @@ export function OutputSchemaContent() {
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
 					"      animationsSettled?: number,",
+					"      contentVisibilitySkipped?: number, // elements whose content-visibility: auto content was skipped",
 					'      internalsHook?: "early" | "late",  // only where the page runs the internals hook',
 					'      listenerHook?: "early" | "late",   // only where the page runs the listener hook',
 					'      liveRegionHook?: "early" | "late"  // only where the page runs the live-region hook',
