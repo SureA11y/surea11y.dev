@@ -1075,3 +1075,27 @@ Left as they are, deliberately: the Locales page's `i18n:sync` paragraph
 "a pass/fail example" (still an open question above). Not verifiable from
 core: the EN 301 549 pack's own claims, the bindings' `examples/`, the
 CLI's `--pack` resolution.
+
+## Core 1.14.2 update (2026-11-01)
+
+Pinned `@surea11y/core` 1.14.2, a patch released from `release/1.14.x`
+before 1.15's procedures work (bindings, CLI, test-matchers and the
+EN 301 549 pack unchanged). Rule data regenerated: two rules' text
+changed and every overlay follows it: `label-in-name`'s expectation (in a
+browser, a label is also read as it shows, so words in touching boxes
+join) and `text-spacing-content-loss`'s expectation and reports
+(`content-visibility: auto` clips like `contain: paint`; new `clippedBy`).
+No "How to check" steps changed. Content pages, every language:
+
+- Output schema: `engine.environment.contentVisibilitySkipped`, in the
+  type block and the environment paragraph, linking
+  `LAYOUT_MEASUREMENT.md#skipped-content` (GitHub-only).
+- FAQ: a 1.14.2 bullet in `#results-changed-1-14` (content-visibility
+  content measured as laid out, the new clipping failures, `label-in-name`
+  across touching boxes, the style sheet fixes).
+- Samples say core 1.14.2: the quickstart re-run with `@surea11y/cli`
+  1.4.0 on core 1.14.2 gave the same output; the CLI and test-matchers
+  samples and the Packs page's `^1.14.2` follow. The sample HTML reports,
+  re-generated, came out byte-identical.
+
+The Locales page's key counts (1,336) come from `docs:locales`.
