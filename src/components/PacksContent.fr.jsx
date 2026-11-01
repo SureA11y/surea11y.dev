@@ -84,7 +84,7 @@ const fileRows = [
 	{ id: "examples", file: <code>docs/RULE_EXAMPLES.md</code>, what: "Des exemples des résultats de chaque règle." },
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Les règles de lint de core pour les règles." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Norme seulement : les exigences et les règles qui vérifient chacune d’elles." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, avec <code>@surea11y/core</code> en dépendance peer à la version qui l’a écrit (<code>^1.14.1</code>), et eslint, jsdom et Playwright en dépendances de développement.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, avec <code>@surea11y/core</code> en dépendance peer à la version qui l’a écrit (<code>^1.14.2</code>), et eslint, jsdom et Playwright en dépendances de développement.</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "Le guide du pack lui-même sur ces fichiers, et ce que git laisse de côté." },
 ];
 
@@ -500,7 +500,7 @@ export function PacksContent() {
 					dans Node. Une analyse avec
 					une version de core hors de cette plage ignore le pack, avec la raison dans{" "}
 					<code>skippedPacks</code>. <code>surea11y-pack new</code> écrit la version qui a généré
-					le pack (<code>^1.14.1</code>) ; gardez une plage qui commence à 1.14 si le pack utilise ce
+					le pack (<code>^1.14.2</code>) ; gardez une plage qui commence à 1.14 si le pack utilise ce
 					qu’a ajouté la 1.14 : <code>meta.review</code>, des lignes <code>reasonCodes</code> et{" "}
 					<code>findings</code>, <code>meta.contributions</code>, <code>applicability</code>,{" "}
 					<code>partial</code> ou <code>keepsParsing</code>.

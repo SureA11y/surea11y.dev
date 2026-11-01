@@ -84,7 +84,7 @@ const fileRows = [
 	{ id: "examples", file: <code>docs/RULE_EXAMPLES.md</code>, what: "Examples of each rule's outcomes." },
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Core's lint rules for rules." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Standard only: the requirements and the rules that check each." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.14.1</code>), and eslint, jsdom and Playwright as development dependencies.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.14.2</code>), and eslint, jsdom and Playwright as development dependencies.</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "The pack's own guide to these files, and what git leaves out." },
 ];
 
@@ -475,7 +475,7 @@ export function PacksContent() {
 					<code>'^1.11.1'</code>), read as npm reads ranges. Start new packs at 1.11.1: the 1.11.0
 					package left out a file packs need in Node. A scan with a core outside it skips the
 					pack, with the reason in <code>skippedPacks</code>. <code>surea11y-pack new</code> writes
-					the version that generated the pack (<code>^1.14.1</code>); keep a range that starts at
+					the version that generated the pack (<code>^1.14.2</code>); keep a range that starts at
 					1.14 if the pack uses what 1.14 added: <code>meta.review</code>, <code>reasonCodes</code>{" "}
 					and <code>findings</code> rows, <code>meta.contributions</code>, <code>applicability</code>,{" "}
 					<code>partial</code> or <code>keepsParsing</code>.

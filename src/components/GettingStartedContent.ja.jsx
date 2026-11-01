@@ -89,7 +89,7 @@ export function GettingStartedContent() {
 				lines={[
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.14.1",
+					"  engine: @surea11y/core 1.14.2",
 					"  pass: 14   fail: 3   cantTell: 2   notApplicable: 126",
 					"",
 					"  occurrences by tier: fail: 3   cantTell: 2",

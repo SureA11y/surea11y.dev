@@ -228,7 +228,7 @@ const topLevelRows = [
 							that repeats for ever (a marquee, a spinner) at its start, and each is put back exactly
 							where it was afterwards, so a page scanned during a fade-in gets the same result as one
 							scanned after it. The browser never paints the held state, since the scan is one
-							synchronous task. <code>internalsHook</code> is there only where the page runs the
+							synchronous task. <code>contentVisibilitySkipped</code> is how many elements with <code>content-visibility: auto</code> had their content skipped by the browser, as it does off screen: the scan lays that content out as it is once near the viewport, and lets the browser skip it again afterwards (see <a href={`${core}/docs/LAYOUT_MEASUREMENT.md#skipped-content`}><code>LAYOUT_MEASUREMENT.md</code></a> on GitHub); absent when there were none. <code>internalsHook</code> is there only where the page runs the
 							opt-in internals hook (<code>internalsHookScript()</code>, see{" "}
 							<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
 								<code>INTEGRATION.md</code>
@@ -633,6 +633,7 @@ export function OutputSchemaContent() {
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
 					"      animationsSettled?: number,",
+					"      contentVisibilitySkipped?: number, // elements whose content-visibility: auto content was skipped",
 					'      internalsHook?: "early" | "late",  // only where the page runs the internals hook',
 					'      listenerHook?: "early" | "late",   // only where the page runs the listener hook',
 					'      liveRegionHook?: "early" | "late"  // only where the page runs the live-region hook',

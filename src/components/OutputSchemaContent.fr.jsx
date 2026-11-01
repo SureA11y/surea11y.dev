@@ -246,7 +246,7 @@ const topLevelRows = [
 				remise exactement où elle était ensuite, si bien qu’une page analysée pendant un fondu
 				d’apparition donne le même résultat qu’une page analysée après. Le navigateur n’affiche
 				jamais l’état figé, puisque l’analyse est une seule tâche synchrone.{" "}
-				<code>internalsHook</code> n’est présent que là où la page exécute le hook d’internals
+				<code>contentVisibilitySkipped</code> est le nombre d’éléments avec <code>content-visibility: auto</code> dont le navigateur avait sauté le contenu, comme il le fait hors de l’écran : l’analyse met ce contenu en page tel qu’il est une fois près du viewport, puis laisse le navigateur le sauter à nouveau (voir <a href={`${core}/docs/LAYOUT_MEASUREMENT.md#skipped-content`}><code>LAYOUT_MEASUREMENT.md</code></a> sur GitHub) ; absent s’il n’y en avait aucun. <code>internalsHook</code> n’est présent que là où la page exécute le hook d’internals
 				optionnel (<code>internalsHookScript()</code>, voir{" "}
 				<a href={`${core}/docs/INTEGRATION.md#reading-private-elementinternals-the-internals-hook`}>
 					<code>INTEGRATION.md</code>
@@ -675,6 +675,7 @@ export function OutputSchemaContent() {
 					'      fonts?: "loaded" | "loading",',
 					'      images?: "loaded" | "loading",',
 					"      animationsSettled?: number,",
+					"      contentVisibilitySkipped?: number, // elements whose content-visibility: auto content was skipped",
 					'      internalsHook?: "early" | "late",  // only where the page runs the internals hook',
 					'      listenerHook?: "early" | "late",   // only where the page runs the listener hook',
 					'      liveRegionHook?: "early" | "late"  // only where the page runs the live-region hook',
