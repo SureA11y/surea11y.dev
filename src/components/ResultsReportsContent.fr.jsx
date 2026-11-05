@@ -40,7 +40,8 @@ export function ResultsReportsContent() {
 				composites par critère de succès WCAG. Chaque constat non tranché d’une règle de core dit comment
 				une personne y répond, et certains indiquent de quel côté penchent les indices de la page (une{" "}
 				<em>tendance</em>), si bien qu’une revue commence par les échecs probables plutôt que
-				par une liste à plat. À lire une fois si vous construisez quoi que ce soit
+				par une liste à plat. Une analyse de plusieurs profils garde
+				chaque constat une seule fois et dit ce que chaque profil en conclut. À lire une fois si vous construisez quoi que ce soit
 				sur un résultat brut. Voir <a href="/results-reports/output-schema/">Schéma de sortie</a>{" "}
 				pour la structure complète.
 			</p>
@@ -51,7 +52,9 @@ export function ResultsReportsContent() {
 				build. Un résumé en langage clair en haut, les échecs, puis les constats à vérifier,
 				répartis entre échecs probables, réussites probables et ceux que seule une personne peut
 				juger, avec, pour ceux des règles de core, les étapes pour les vérifier, une agrégation WCAG regroupée par niveau
-				de conformité, issue des résultats composites du moteur lui-même, et un tableau complet
+				de conformité, issue des résultats composites du moteur lui-même,
+				ce que l’analyse laisse à une personne, critère par critère, avec les étapes de chaque vérification,
+				et un tableau complet
 				consultable en dessous pour qui veut creuser. C’est le rapport à remettre à un relecteur qui
 				ne veut pas lire la sortie brute. Voir{" "}
 				<a href="/results-reports/html-report/">Rapport HTML</a>.

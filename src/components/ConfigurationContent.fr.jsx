@@ -17,7 +17,9 @@ export function ConfigurationContent() {
 				(WCAG 2.2 AA en une seule option, avec les bonnes pratiques en plus si vous le souhaitez),
 				par identifiant, par tag, ou en nommant un profil de conformité comme WCAG 2.2 AA ou
 				Section 508, pour qu’une exécution rapporte ce dont vous êtes réellement responsable, ni
-				plus ni moins. Les profils EN 301 549 de core fonctionnent encore mais sont obsolètes :
+				plus ni moins. Jugez une même analyse selon plusieurs
+				profils à la fois, WCAG à côté de WAI-ARIA ou de votre propre politique, et voyez ce que
+				chacun conclut de chaque constat. Les profils EN 301 549 de core fonctionnent encore mais sont obsolètes :
 				cette norme est désormais fournie sous forme{" "}
 				<a href="/configuration/packs/#en-301-549-pack">de pack</a>. N’exécutez que quelques vérifications tout en
 				obtenant les critères WCAG auxquels elles appartiennent, au niveau qui vous est demandé, et
@@ -41,7 +43,9 @@ export function ConfigurationContent() {
 				<code>npx surea11y-pack new</code> en génère un qui réussit ses propres tests tel quel. Une
 				norme peut classer les constats d’une règle sous les exigences auxquelles ils
 				appartiennent, et une règle de pack peut dire à une personne comment trancher ce qu’elle
-				laisse ouvert. Voir{" "}
+				laisse ouvert, et comment évaluer chaque exigence à la main. Deux normes sont prêtes à
+				être installées : EN 301 549, et WAI-ARIA 1.2, qui fait échouer ce que WAI-ARIA exige là
+				où les WCAG ne font que demander. Voir{" "}
 				<a href="/configuration/packs/">Packs</a> pour en utiliser un ou en écrire un.
 			</p>
 
@@ -66,7 +70,8 @@ export function ConfigurationContent() {
 				qu’un texte vide ou une erreur. Cinq langues sont disponibles aujourd’hui (anglais,
 				français, allemand, espagnol, japonais), et un résultat indique toujours exactement quelle langue il a
 				utilisée, pour que rien ne se dégrade en silence à votre insu. Les étapes pour trancher un
-				constat ouvert (« Comment vérifier ») existent dans les mêmes cinq langues. Voir{" "}
+				constat ouvert (« Comment vérifier »), ainsi que les procédures de test pour évaluer
+				chaque critère à la main, existent dans les mêmes cinq langues. Voir{" "}
 				<a href="/configuration/locales/">Langues</a> pour la couverture et la façon de
 				fournir votre propre dictionnaire.
 			</p>

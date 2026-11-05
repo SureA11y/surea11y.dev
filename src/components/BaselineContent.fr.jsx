@@ -236,7 +236,12 @@ export function BaselineContent() {
 				d’abord cherchée sous le code propre du constat : elle ne va donc jamais à un constat
 				déplacé quand un autre constat a exactement cette identité.
 			</p>
-			<p>La 1.14 déplace ceux-ci, depuis la 1.13 :</p>
+			<p>
+				Le tableau couvre une version mineure : un déplacement y figure depuis la version qui l’a
+				apporté jusqu’à la version mineure suivante, qui le retire. La 1.15 n’a déplacé aucun
+				constat, son tableau est donc vide.
+			</p>
+			<p>La 1.14 a déplacé ceux-ci, depuis la 1.13, et la 1.15 les a retirés :</p>
 			<DataTable
 				label="Codes de raison déplacés en 1.14"
 				rowKey="id"
@@ -248,9 +253,11 @@ export function BaselineContent() {
 				rows={baselineMoves}
 			/>
 			<p>
-				Le tableau couvre une version mineure : un déplacement y figure depuis la version qui l’a
-				apporté jusqu’à la version mineure suivante, qui le retire. Une baseline écrite par la 1.13
-				continue donc de correspondre avec la 1.14.x, et doit être régénérée avant la 1.15.
+				Une baseline écrite par la 1.13 continue donc de correspondre à ceux-ci avec la 1.14.x,
+				mais pas avec la 1.15 : là, une entrée sous un ancien code est périmée et son constat est
+				nouveau. Mettez une telle baseline à jour avec la 1.14.x, comme ci-dessous, avant de passer
+				à la 1.15 ; <code>migrateBaselineEntries</code> ne connaît plus ces déplacements en 1.15.
+				Une baseline écrite par la 1.14 continue de correspondre avec la 1.15.
 			</p>
 			<p>
 				Régénérer la baseline avec <code>--write-baseline</code> (ou{" "}
@@ -284,6 +291,16 @@ export function BaselineContent() {
 				donne un constat que la baseline ne contenait pas, ou n’en donne plus un qu’elle
 				contenait, et le <a href={`${core}/CHANGELOG.md`}>journal des modifications</a> explique
 				pourquoi.
+			</p>
+
+			<h2 id="several-profiles">Une analyse de plusieurs profils</h2>
+			<p>
+				Un résultat de <a href="/configuration/engine-options/#several-profiles">plusieurs profils</a>{" "}
+				(<code>engineOptions.profile</code> sous forme de liste, core 1.15.0 et ultérieur)
+				liste chaque constat une seule fois, avec dans <code>verdicts</code> ce que chaque profil en
+				conclut. Une entrée de baseline est le constat, par règle, code de raison et balisage : une
+				seule entrée le couvre donc sous chaque profil, et une baseline écrite à partir d’une analyse
+				d’un seul profil correspond toujours aux mêmes constats dans une analyse de plusieurs.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</h2>

@@ -345,7 +345,7 @@ export function LocalesContent() {
 			<p>
 				Une étape qui manque dans une langue s’affiche en anglais, comme un message. Les{" "}
 				<a href="/configuration/packs/#review-steps">étapes propres à une règle de pack</a> sont
-				en anglais dans toutes les langues. <code>getLocaleCoverage()</code> ne compte pas ces
+				en anglais, sauf si les dictionnaires de leur pack les traduisent (core 1.15.0 et ultérieur). <code>getLocaleCoverage()</code> ne compte pas ces
 				dictionnaires. Les étapes ne portent pas de clés : pour les afficher dans une autre langue,
 				ajoutez-les de nouveau :
 			</p>
@@ -357,6 +357,20 @@ export function LocalesContent() {
 					"const inFrench = addHowToCheck(result, { locale: 'fr' });",
 				]}
 			/>
+
+			<h3 id="procedure-dictionaries">Les dictionnaires de procédures</h3>
+			<p>
+				Depuis core 1.15.0, les étapes de revue sont écrites avec les{" "}
+				<a href="/conformance/procedures/">procédures de test</a> de core, la façon dont une
+				personne évalue chaque critère à la main, et les dictionnaires de revue en sont tirés. Les
+				dictionnaires de procédures, <code>{"@surea11y/core/procedures/<locale>"}</code>,
+				contiennent les procédures générales, les noms des outils, les mots d’une page générée à
+				partir d’elles, et les noms des principes, règles et critères des WCAG et de chaque
+				facette, tels que les donne la traduction publiée des WCAG dans chaque langue. Les cinq
+				langues ont tous les textes, si bien qu’une page de procédures est dans une seule langue
+				de bout en bout ; <code>procedureLanguages()</code> l’indique pour chaque langue, et pour la
+				norme d’un pack, qui peut être lisible dans moins de langues.
+			</p>
 
 			<h3>Fournir votre propre dictionnaire</h3>
 			<p>
@@ -439,6 +453,11 @@ export function LocalesContent() {
 					<code>_pass</code> et <code>_fail</code>, dans{" "}
 					<a href="#review-dictionaries">les dictionnaires de revue</a> : le{" "}
 					<code>howToCheck</code> d’une occurrence indécise.
+				</li>
+				<li>
+					<strong>Procédures</strong> : <code>{"wcag_<criterion>_<facet>_step<n>"}</code>,{" "}
+					<code>_pass</code> et <code>_fail</code>, <code>{"tool_<id>"}</code> et{" "}
+					<code>render_*</code>, dans <a href="#procedure-dictionaries">les dictionnaires de procédures</a>.
 				</li>
 			</ul>
 			<p>

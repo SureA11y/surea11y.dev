@@ -56,11 +56,50 @@ const moreHooksCaveat = (repo) => (
 );
 
 /**
- * Conditions, the severity gate and leaning questions (binding 1.5.0), then a pointer to the
+ * Several profiles and frames (binding 1.6.0), conditions, the severity gate and leaning
+ * questions (binding 1.5.0), then a pointer to the
  * builder methods this page leaves to the binding's README.
  */
 const alsoAvailable = (repo, { logger = true, conditions = null, cypress = false } = {}) => (
 	<>
+		<p>
+			<strong>Plusieurs profils à la fois.</strong> Avec core 1.15 (binding 1.6.0),{" "}
+			<code>.options({"{ profile }"})</code> accepte aussi une liste, le profil d’un pack à côté de
+			celui des WCAG ou de celui d’un autre pack :{" "}
+			{cypress ? (
+				<code>{".withPacks('@surea11y/pack-wai-aria').options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			) : (
+				<code>{".withPacks(waiAria).options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			)}{" "}
+			juge la page selon les WCAG et selon WAI-ARIA en une seule analyse. Une règle que les deux
+			exécutent est une seule vérification : son résultat est le pire, et ses{" "}
+			<code>verdicts</code> disent ce que chaque profil en conclut (voir{" "}
+			<a href="/configuration/engine-options/#several-profiles">Options du moteur</a>). Un profil
+			qui ne s’est pas exécuté figure dans <code>results.engine.profilesNotRun</code>, et{" "}
+			<code>getScanGaps()</code> le signale comme <code>'profile-not-run'</code>.
+		</p>
+		<p>
+			<strong>Les frames, lues comme le navigateur les lit.</strong> Depuis core 1.15, un document
+			affiché dans une frame n’est pas une page à part entière : ses règles de titre, de langue,
+			de viewport et de landmarks sont donc <code>notApplicable</code> ; une frame sous{" "}
+			<code>aria-hidden</code> ou <code>inert</code> est lue comme telle, une frame derrière une
+			boîte de dialogue modale ouverte est laissée de côté, et une frame dans un shadow root est
+			lue à travers son hôte.
+			{cypress ? (
+				<>
+					{" "}
+					Cypress affiche l’application testée dans une frame de son exécuteur : <code>.analyze()</code>{" "}
+					passe donc <code>engineOptions.topLevelDocument: true</code> pour elle, et l’application
+					est toujours jugée comme la page ; les frames qu’elle contient sont lues comme des frames.
+				</>
+			) : null}{" "}
+			Et là où seul WAI-ARIA ou le modèle de contenu HTML est enfreint, les règles de structure
+			ARIA et HTML posent désormais la question au lieu d’échouer (
+			<a href="/help/faq/#results-changed-1-15">ce qui a changé</a>) ; les constats gardent leurs
+			codes de raison, si bien que les baselines correspondent toujours. Un constat{" "}
+			<code>text-spacing-content-loss</code> est aussi illustré avec l’espacement appliqué, avec{" "}
+			<code>.screenshots()</code>.
+		</p>
 		<p>
 			<strong>Mode sombre, largeurs de téléphone et seuil de gravité.</strong>{" "}
 			<code>{".conditions([{ colorScheme: 'dark' }, { width: 320 }])"}</code> analyse la page telle

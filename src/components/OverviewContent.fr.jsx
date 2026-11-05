@@ -14,6 +14,7 @@ const packageRows = [
 	{ id: "test-matchers", want: "Vérifier l’accessibilité dans des tests unitaires ou de composants Jest/Vitest", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "Analyser des pages depuis un terminal ou un pipeline de CI, en HTML statique ou dans Chromium", install: <code>@surea11y/cli</code> },
 	{ id: "pack-en301549", want: "Vérifier EN 301 549, la norme européenne, avec n’importe lequel des précédents", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
+	{ id: "pack-wai-aria", want: "Vérifier ARIA par rapport à WAI-ARIA 1.2 lui-même, à côté des WCAG ou seul", install: <><a href="/configuration/packs/#wai-aria-pack"><code>@surea11y/pack-wai-aria</code></a> + <code>@surea11y/core</code></> },
 	{ id: "pack-own", want: "Vérifier mes propres règles, profils ou norme, publics ou internes", install: <>Un pack à moi : voir <a href="/configuration/packs/#writing-a-pack">Écrire un pack</a></> },
 	{ id: "core", want: "Exécuter le moteur sur un DOM dont je dispose déjà", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "Créer mon propre outil sur le moteur : une CLI, une extension, un tableau de bord, un générateur de rapports", install: <code>@surea11y/core</code> },
@@ -138,10 +139,24 @@ export function OverviewContent() {
 				ce qui vaut un penchant à un résultat et la confiance à lui accorder.
 			</p>
 			<p>
+				Une analyse n’est que la moitié d’une évaluation, et le moteur vous donne aussi l’autre
+				moitié. Pour chaque critère WCAG qu’évaluent ses règles, core a une procédure de test pour
+				chacune de ses parties : les étapes qu’une personne suit dans un navigateur, les outils
+				nécessaires (un clavier, un lecteur d’écran, le zoom), et ce qu’elle constate si cela
+				réussit et si cela échoue, en cinq langues. C’est le même texte que celui d’où vient le
+				« Comment vérifier » d’un constat. Lisez-les comme des données, ou générez-en une référence
+				ou une liste de travail qui enregistre chaque résultat et les agrège par critère, sans
+				analyse pour un audit manuel, ou à côté d’une analyse pour ce qu’elle laisse ouvert. Voir{" "}
+				<a href="/conformance/procedures/">Procédures de test</a>, ou ouvrez{" "}
+				<a href="/procedures/wcag-22-aa-checklist.html">la liste de travail WCAG 2.2 AA</a>.
+			</p>
+			<p>
 				Le rapport HTML présente les questions dans l’ordre où une personne les examine :
 				« Échec probable : à confirmer », « Réussite probable : à confirmer » et « À examiner
 				par une personne ». Chaque carte a ses étapes « Comment vérifier », et celles des deux
-				premiers groupes disent pourquoi elles penchent. En CI,
+				premiers groupes disent pourquoi elles penchent, et une dernière section, « Ce qui reste à
+				vérifier par une personne », liste les vérifications qu’aucune règle ne tranche
+				entièrement, critère par critère, à côté du résultat de l’analyse pour chacun. En CI,
 				les rapports JUnit et SARIF peuvent aussi bloquer le build sur les résultats qui penchent
 				vers l’échec, option désactivée par défaut, et une baseline peut accepter ceux qu’une page
 				a déjà, si bien que seuls les nouveaux font échouer le build. Voir{" "}
@@ -169,6 +184,16 @@ export function OverviewContent() {
 				<a href="/configuration/packs/">Packs</a>.
 			</p>
 			<p>
+				Nommez plusieurs normes, et une même analyse juge la page selon chacune.{" "}
+				<code>profile: ['wcag22-aa', 'wai-aria-1.2']</code> la juge à la fois selon les WCAG et
+				selon WAI-ARIA : chaque profil tranche comme le ferait une analyse de ce seul profil, le
+				résultat compte comme une seule analyse dotée des règles de tous, et chaque constat dit ce
+				que chaque profil en conclut. Un attribut qu’un rôle ne prend pas en charge est une
+				question pour le critère WCAG 4.1.2 et un échec pour WAI-ARIA, et le résultat dit les deux :
+				rien n’est compté deux fois, et rien n’est perdu. Voir{" "}
+				<a href="/configuration/engine-options/#several-profiles">Options du moteur</a>.
+			</p>
+			<p>
 				Nommez des vérifications plutôt qu’une norme, et le résultat indique toujours les critères
 				WCAG qu’elles concernent. Une analyse qui n’exécute que <code>link-name-present</code>{" "}
 				signale aussi 2.4.4 et 4.1.2, plus le critère AAA 2.4.9 si l’analyse ne fixe pas de niveau, et un critère dont l’analyse a laissé de côté les autres
@@ -187,6 +212,15 @@ export function OverviewContent() {
 				ces critères réussis, ce serait donner la fausse impression de couverture que ce moteur est
 				conçu pour éviter. Voir{" "}
 				<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>.
+			</p>
+			<p>
+				Un échec WCAG est un échec WCAG, pas une spécification enfreinte que les WCAG ne comptent
+				pas. Là où seul WAI-ARIA ou le modèle de contenu HTML est enfreint, et que le nom, le rôle
+				et la valeur sur lesquels comptent les personnes y survivent, les règles de structure ARIA
+				et HTML posent une question plutôt que d’échouer, avec des étapes pour vérifier. Le{" "}
+				<a href="/configuration/packs/#wai-aria-pack">pack WAI-ARIA</a> lit les mêmes constats selon
+				les MUST de WAI-ARIA lui-même, si bien qu’une équipe qui s’impose la spécification peut
+				échouer sur elle, par choix.
 			</p>
 			<p>
 				Les composants web sont jugés sur ce qu’ils exposent. Un élément personnalisé qui se donne
@@ -304,7 +338,9 @@ export function OverviewContent() {
 				ne sont pas du tout vérifiés par le moteur et demandent des tests à part : aucun{" "}
 				<code>cantTell</code> ne les remplace, donc un résultat qui n’en contient pas ne signifie
 				pas qu’ils ont été couverts. Voir{" "}
-				<a href="/help/known-limitations/">Limites connues</a> pour la liste complète.
+				<a href="/help/known-limitations/">Limites connues</a> pour la liste complète, et les{" "}
+				<a href="/conformance/procedures/">procédures de test</a> pour savoir comment une personne
+				vérifie les critères qu’évaluent les règles.
 			</p>
 		</>
 	);

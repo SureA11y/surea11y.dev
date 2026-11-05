@@ -302,6 +302,24 @@ export function TestMatchersUsageContent() {
 				échoue à cause de lui au lieu de réussir sans que les règles du pack se soient jamais
 				exécutées.
 			</p>
+			<p id="several-profiles">
+				Avec <code>@surea11y/core</code> 1.15 et test-matchers 1.5.0, <code>profile</code> accepte
+				aussi une liste, pour juger le composant selon{" "}
+				<a href="/configuration/engine-options/#several-profiles">plusieurs profils à la fois</a>,
+				celui d’un pack à côté de celui des WCAG : chaque profil le juge comme il le ferait seul,
+				et un échec sous n’importe lequel d’entre eux fait échouer l’assertion. Un profil de la
+				liste qui ne s’est pas exécuté la fait échouer aussi, puisque l’analyse a jugé moins que ce
+				qui lui était demandé ; de même pour un profil unique que l’analyse n’a pas appliqué, et qui
+				analyse alors avec les règles par défaut de core.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"expect(container).toHaveNoA11yViolations({ packs: [waiAria], profile: ['wcag22-aa', 'wai-aria-1.2'] });",
+				]}
+			/>
 
 			<h2>API</h2>
 			<DataTable
@@ -352,8 +370,10 @@ export function TestMatchersUsageContent() {
 				<strong>Une analyse qui n’a pas pu vérifier ce qu’on lui demandait échoue aussi</strong>,
 				au lieu de réussir sur rien : un élément qui n’est pas dans le document où s’exécute
 				l’analyse (détaché, ou issu d’un autre document), une règle personnalisée qui ne s’est pas
-				exécutée (listée dans <code>skippedCustomRules</code>), ou un pack qui ne s’est pas exécuté
-				(listé dans <code>skippedPacks</code>). Le message nomme chacun d’eux avec la raison.
+				exécutée (listée dans <code>skippedCustomRules</code>), un pack qui ne s’est pas exécuté
+				(listé dans <code>skippedPacks</code>), ou un profil qui ne s’est pas exécuté (listé dans{" "}
+				<code>engine.profilesNotRun</code>, ou un profil unique que l’analyse n’a pas appliqué). Le
+				message nomme chacun d’eux avec la raison.
 				Une règle personnalisée que le test exclut lui-même n’est pas une lacune, et ne
 				le fait pas échouer.
 			</p>
@@ -367,6 +387,16 @@ export function TestMatchersUsageContent() {
 				sans rien dedans : donnez au test un vrai contenu ou corrigez le composant. Un
 				appel avec une cible WCAG, qui laisse de côté les bonnes pratiques, ne l’exécute
 				pas.
+			</p>
+			<p>
+				<strong>Depuis <code>@surea11y/core</code> 1.15, WCAG n’échoue que là où les WCAG échouent.</strong>{" "}
+				Là où seul WAI-ARIA ou le modèle de contenu HTML est enfreint (un attribut que le rôle ne
+				prend pas en charge, une grille ou une boîte de dialogue sans nom, un titre dans une
+				liste), les règles de structure ARIA et HTML posent la question (<code>cantTell</code>,
+				incertitude <code>spec-only</code>) au lieu d’échouer, si bien qu’un tel constat ne fait
+				plus échouer l’assertion. Le message d’échec le liste avec les questions, et il garde son
+				code de raison. Pour le faire échouer selon WAI-ARIA, ajoutez le profil du{" "}
+				<a href="/configuration/packs/#wai-aria-pack">pack WAI-ARIA</a>.
 			</p>
 			<p>
 				L’analyse elle-même peut lever une erreur, et le test échoue alors avec l’erreur du
@@ -603,7 +633,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -632,9 +662,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.14.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.15.0.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 				]}
 			/>
 

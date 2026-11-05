@@ -82,12 +82,13 @@ const optionRows = [
 		option: <code>profile</code>,
 		meaning: (
 			<>
-				Cible de conformité nommée, facultative : <code>'wcag22-aa'</code>,{" "}
-				<code>'en301549-v4.1.1'</code>, <code>'en301549-v3.2.1'</code>, <code>'section508'</code>{" "}
-				ou celle d’un pack.
-				Sélectionne les règles d’après le jeu de tags correspondant quand rien d’autre n’en inclut,
-				et la cible WCAG découle de ces tags. Renvoyée dans <code>engine.profile</code> quand elle a
-				pris effet ; sinon ignorée avec un avertissement dans la console. Voir{" "}
+				Cible de conformité nommée, facultative : <code>'wcag22-a'</code>, <code>'wcag22-aa'</code>,{" "}
+				<code>'wcag22-aaa'</code>, <code>'en301549-v4.1.1'</code>, <code>'en301549-v3.2.1'</code>,{" "}
+				<code>'section508'</code> ou celle d’un pack ; ou une liste de ces cibles, pour une
+				analyse de plusieurs profils à la fois. Sélectionne les règles d’après le jeu de tags
+				correspondant quand rien d’autre n’en inclut, et la cible WCAG découle de ces tags.
+				Renvoyée dans <code>engine.profile</code> quand elle a pris effet (pour une liste, le
+				premier profil exécuté, avec chacun d’eux dans <code>engine.profiles</code>) ; sinon ignorée avec un avertissement dans la console. Voir{" "}
 				<a href="#conformance-profiles">« Profils de conformité »</a> ci-dessus.
 			</>
 		),
@@ -210,7 +211,66 @@ const optionRows = [
 				<code>fragment: true</code> pour le cas que le ciblage seul ne peut pas détecter : une
 				cible d’analyse qui est le document fourni <em>tout entier</em>, mais qui n’a jamais été
 				censée représenter une vraie page (par exemple un extrait de composant brut parsé
-				isolément). Cela impose le même filtrage <code>notApplicable</code> même sans ciblage.
+				isolément). Cela impose le même filtrage <code>notApplicable</code> même sans ciblage. Un
+				document affiché dans une frame n’est pas non plus une page à part entière :{" "}
+				<code>page-title-present</code>, <code>page-title-patterns</code>,{" "}
+				<code>html-lang-attr-present</code>, <code>meta-viewport-zoom-enabled</code>,{" "}
+				<code>meta-viewport-large</code>, <code>region</code>, <code>bypass-blocks-present</code>,{" "}
+				<code>landmark-one-main</code> et <code>page-has-heading-one</code> y sont{" "}
+				<code>notApplicable</code> quoi que dise cette option, sauf si{" "}
+				<code>topLevelDocument: true</code> (ci-dessous) indique que c’est la page. Core 1.15.0 et
+				versions ultérieures.
+			</>
+		),
+	},
+	{
+		id: "embeddedAriaHidden",
+		option: <code>embeddedAriaHidden</code>,
+		meaning: (
+			<>
+				<code>false</code> par défaut. <code>true</code> indique que le document est affiché dans
+				une frame sous <code>aria-hidden="true"</code> (sur l’<code>&lt;iframe&gt;</code> ou un
+				élément qui l’entoure) : chaque élément est lu comme l’est un contenu aria-hidden, hors de
+				l’arbre d’accessibilité sauf ce qui l’emporte sur cela. Les règles qui portent sur les noms
+				et les rôles (<code>img-alt-present</code>, <code>button-name-present</code>, …) ne
+				s’appliquent alors pas, et celles qui portent sur ce qui se voit et s’utilise (contraste,
+				focus, clavier) s’appliquent toujours. <code>runa11yCoreAcrossFrames</code> la définit pour
+				une telle frame, et un binding qui analyse lui-même les frames la définit dans les{" "}
+				<code>engineOptions</code> de cette frame. Le focus que prend une telle frame est le
+				constat <code>aria-hidden-focus</code> de la page principale sur l’
+				<code>&lt;iframe&gt;</code>. Core 1.15.0 et ultérieur.
+			</>
+		),
+	},
+	{
+		id: "embeddedInert",
+		option: <code>embeddedInert</code>,
+		meaning: (
+			<>
+				<code>false</code> par défaut. <code>true</code> indique que le document est affiché dans
+				une frame sous <code>[inert]</code> : chaque élément est lu comme l’est un contenu inerte,
+				hors de l’arbre d’accessibilité et sans prendre le focus, si bien que seules les règles qui
+				portent sur l’aspect du contenu (contraste, espacement du texte) le jugent.{" "}
+				<code>runa11yCoreAcrossFrames</code> la définit pour une telle frame, et laisse de côté une
+				frame derrière une boîte de dialogue modale ouverte, comme il laisse de côté une frame
+				masquée ; un binding qui analyse lui-même les frames fait de même. Core 1.15.0 et ultérieur.
+			</>
+		),
+	},
+	{
+		id: "topLevelDocument",
+		option: <code>topLevelDocument</code>,
+		meaning: (
+			<>
+				Non définie par défaut : indique si le document est une page à part entière. Non définie,
+				il l’est quand c’est celui de la fenêtre principale : un document affiché dans une frame
+				n’est pas une page à part entière, et les neuf règles portant sur la page que nomme la
+				ligne <code>fragment</code> y sont <code>notApplicable</code>. Un exécuteur de tests qui
+				affiche la page testée dans une frame à lui, comme le fait Cypress, la définit à{" "}
+				<code>true</code> (<code>@surea11y/cypress</code> le fait pour vous) ; <code>false</code>{" "}
+				lit un document de premier niveau comme celui d’une frame.{" "}
+				<code>runa11yCoreAcrossFrames</code> ne la transmet pas aux frames qu’il analyse. Core
+				1.15.0 et ultérieur.
 			</>
 		),
 	},
@@ -727,6 +787,17 @@ export function EngineOptionsContent() {
 				]}
 				rows={[
 					{
+						profile: <code>wcag22-a</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag21a</code>, <code>wcag22a</code>
+							</>
+						),
+						target: "2.2",
+						wcagTarget: <code>{"{ version: '2.2', level: 'A' }"}</code>,
+						why: "WCAG 2.2 niveau A",
+					},
+					{
 						profile: <code>wcag22-aa</code>,
 						tags: (
 							<>
@@ -737,6 +808,18 @@ export function EngineOptionsContent() {
 						target: "2.2",
 						wcagTarget: <code>{"{ version: '2.2', level: 'AA' }"}</code>,
 						why: "WCAG 2.2 niveaux A et AA",
+					},
+					{
+						profile: <code>wcag22-aaa</code>,
+						tags: (
+							<>
+								les tags de <code>wcag22-aa</code> et <code>wcag2aaa</code>, <code>wcag21aaa</code>,{" "}
+								<code>wcag22aaa</code>
+							</>
+						),
+						target: "2.2",
+						wcagTarget: <code>{"{ version: '2.2', level: 'AAA' }"}</code>,
+						why: "WCAG 2.2 niveaux A, AA et AAA",
 					},
 					{
 						profile: <code>en301549-v4.1.1</code>,
@@ -776,8 +859,12 @@ export function EngineOptionsContent() {
 			<p>
 				<code>getProfileWcagTarget(profile)</code> donne la cible <code>runOnly.wcag</code> à
 				laquelle revient le jeu de tags d’un profil, ou <code>null</code> pour un nom qui n’est pas
-				un profil. Un profil sélectionne toujours par ses tags, comme dans le tableau : sous{" "}
-				<code>wcag22-aa</code>, <code>duplicate-id</code> (4.1.1) s’exécute et ne peut pas donner{" "}
+				un profil. Chaque niveau WCAG inclut ceux qui sont en dessous, comme les niveaux des WCAG :{" "}
+				<code>wcag22-aaa</code> exécute chaque règle de <code>wcag22-aa</code> et y ajoute celles du
+				niveau AAA, si bien qu’une analyse nomme un seul niveau, pas plusieurs.{" "}
+				<code>wcag22-a</code> et <code>wcag22-aaa</code> sont nouveaux dans core 1.15.0. Un profil
+				sélectionne toujours par ses tags, comme dans le tableau : sous <code>wcag22-aa</code> (et{" "}
+				<code>wcag22-a</code> et <code>wcag22-aaa</code>), <code>duplicate-id</code> (4.1.1) s’exécute et ne peut pas donner{" "}
 				<code>fail</code>, alors que <code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code>{" "}
 				l’écarte.
 			</p>
@@ -795,6 +882,44 @@ export function EngineOptionsContent() {
 			<p>
 				La norme ou la liste de contrôle d’un <a href="/configuration/packs/">pack</a> ajoute ses
 				propres profils à cette liste.
+			</p>
+			<h4 id="several-profiles">Plusieurs profils à la fois</h4>
+			<p>
+				<code>profile</code> accepte aussi une liste, avec dans <code>packs</code> les packs qui
+				les apportent : une même analyse juge alors la page selon les WCAG et selon WAI-ARIA, selon
+				EN 301 549 et votre propre politique, ou selon deux versions d’une même norme pendant que
+				vous passez de l’une à l’autre. Chaque profil juge la page comme le ferait une analyse de ce
+				seul profil, et le résultat se lit comme un seul profil doté des règles de tous :
+				l’<code>outcome</code> d’une vérification est le pire que lui donnent ses profils, et les{" "}
+				<code>verdicts</code> de chaque constat disent ce que chaque profil en conclut (
+				<a href="/results-reports/output-schema/#several-profiles">Schéma de sortie</a>). Core
+				1.15.0 et ultérieur.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"const result = runDomRulesInPage(url, null, {",
+					"  packs: [waiAria],",
+					"  profile: ['wcag22-aa', 'wai-aria-1.2']",
+					"});",
+					"// <div role=\"group\" aria-checked=\"true\">: an attribute the role doesn't",
+					"// support, a question for WCAG 4.1.2 and a failure of WAI-ARIA.",
+					"result.checksResults.find((c) => c.ruleId === 'aria-allowed-attr').verdicts;",
+					"// { 'wcag22-aa': 'cantTell', 'wai-aria-1.2': 'fail' }",
+				]}
+			/>
+			<p>
+				Chaque profil est analysé à son tour, sur la même page : l’analyse dure donc à peu près
+				autant qu’une analyse par profil. Un profil qui ne s’applique pas (profil inexistant, pack
+				ignoré, ou une inclusion <code>runOnly</code> qui choisit les règles à sa place) est listé
+				dans <code>engine.profilesNotRun</code> avec la raison, et les autres s’exécutent quand
+				même ; SARIF, JUnit, la CLI et test-matchers traitent une telle analyse comme une erreur,
+				puisqu’elle a jugé moins que ce qui lui était demandé. Une liste d’un seul élément équivaut
+				à son seul nom, et analyse exactement comme avant. Le{" "}
+				<a href="/configuration/packs/#wai-aria-pack">pack WAI-ARIA</a> est le cas pour lequel cela
+				a été conçu.
 			</p>
 			<p>
 				La cible WCAG se déduit des tags comme pour un jeu écrit à la main (voir{" "}
@@ -1518,13 +1643,16 @@ export function EngineOptionsContent() {
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
 					"  wcagLevel: 'AA',                 // optional — the level of the criteria reported",
-					"  profile: 'wcag22-aa',            // optional — a named conformance target",
+					"  profile: 'wcag22-aa',            // optional — a named conformance target, or a list of them",
 					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
 					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
 					"  messages: { de: { /* key: text */ } },  // optional caller-supplied dictionaries; win over built-in ones",
 					"  includeHiddenElements: false,    // default false — set true to evaluate hidden/collapsed subtrees too",
 					"  includeShadowDom: true,          // default true — opt OUT with false to skip open shadow roots",
 					"  fragment: false,                 // default false — set true when the scan target isn't a real page",
+					"  embeddedAriaHidden: false,       // default false — a frame's document shown under aria-hidden=\"true\"",
+					"  embeddedInert: false,            // default false — a frame's document shown under [inert]",
+					"  topLevelDocument: true,          // optional — unset, a document shown in a frame is no page of its own",
 					"  excludeSelectors: ['#cookie-banner', '.third-party-widget'],  // array or comma-separated string",
 					"  styleSheetTexts: [{ href: 'https://cdn.example/site.css', text: '/* its CSS */' }],  // sheets the page can't read",
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
