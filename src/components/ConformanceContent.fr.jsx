@@ -28,6 +28,18 @@ export function ConformanceContent() {
 				<a href="/conformance/wcag-mapping/">Correspondance de conformité WCAG</a>.
 			</p>
 
+			<h2>Procédures de test</h2>
+			<p>
+				Une analyse n’est que la moitié d’une évaluation ; l’autre moitié, c’est une personne qui
+				vérifie ce que les règles ne peuvent pas trancher. Core fournit aussi cette moitié : pour
+				chaque critère qu’évaluent ses règles, une procédure pour chaque facette, avec les étapes,
+				les outils nécessaires, et ce qui réussit et ce qui échoue, en cinq langues. Lisez-les
+				comme des données, ou comme une page de référence ou une liste de travail qui enregistre
+				chaque résultat et les agrège par critère, sans analyse ou à côté d’une analyse, pour qu’un
+				audit et une exécution de CI partent du même texte. Voir{" "}
+				<a href="/conformance/procedures/">Procédures de test</a>.
+			</p>
+
 			<h2>Baseline / allowlist</h2>
 			<p>
 				Ne laissez pas une première analyse d’un site existant et imparfait bloquer tous les builds
@@ -35,7 +47,8 @@ export function ConformanceContent() {
 				violations réellement nouvelles. C’est la différence entre « on ne peut rien livrer tant que
 				ce n’est pas parfait » et « on peut détecter les régressions dès aujourd’hui », et c’est ce
 				qui amène concrètement une équipe à activer le contrôle. Elle peut aussi accepter les
-				constats qui penchent vers l’échec, et une baseline écrite avant une mise à jour continue de
+				constats qui penchent vers l’échec, une même baseline couvre une analyse de plusieurs
+				profils, et une baseline écrite avant une mise à jour continue de
 				correspondre pendant une version mineure quand le code de raison d’un constat est scindé
 				ou nouvellement attribué. Voir{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.

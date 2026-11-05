@@ -453,6 +453,29 @@ export function StandaloneUsageContent() {
 				<a href="/results-reports/output-schema/#leans">le schéma de sortie</a> pour ces deux champs.
 			</p>
 
+			<h2 id="procedures-in-a-browser">Les procédures dans un navigateur</h2>
+			<p>
+				Depuis core 1.15, les <a href="/conformance/procedures/">procédures de test</a>, la façon
+				dont une personne évalue chaque critère à la main, sont aussi disponibles pour du code qui
+				s’exécute dans un navigateur, depuis <code>@surea11y/core/procedures</code> : il n’a besoin
+				d’aucun système de fichiers et n’atteint aucune des règles, si bien qu’une extension de
+				navigateur ou une page à vous peut les afficher, ou ouvrir une liste de travail, avec les
+				dictionnaires qu’elle importe :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"import { procedureChecklistFrom, renderProceduresFrom } from '@surea11y/core/procedures';",
+					"import en from '@surea11y/core/procedures/en';",
+					"import fr from '@surea11y/core/procedures/fr';",
+					"",
+					"const dictionaries = { en, fr };",
+					"const checklist = procedureChecklistFrom(dictionaries, { levels: ['A', 'AA'], locale: 'fr' });",
+					"const html = renderProceduresFrom(dictionaries, checklist);",
+					"window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })));",
+				]}
+			/>
+
 			<h2 id="what-a-scan-covers">Savoir ce que couvre une analyse</h2>
 			<p>
 				Un outil qui rapporte par critère WCAG et laisse ses utilisateurs choisir des
