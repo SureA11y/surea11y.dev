@@ -277,6 +277,25 @@ export function KnownLimitationsContent() {
 					<code>inert</code> or <code>aria-hidden</code> the page puts on the rest of it, which hide
 					the page but don't tell the structure rules a dialog is open.
 				</li>
+				<li id="framed-documents">
+					<strong>A document shown in a frame is not judged as a page of its own.</strong> In a
+					frame, the rules about the page (<code>page-title-present</code>,{" "}
+					<code>page-title-patterns</code>, <code>html-lang-attr-present</code>,{" "}
+					<code>meta-viewport-zoom-enabled</code>, <code>meta-viewport-large</code>,{" "}
+					<code>page-has-heading-one</code>, <code>landmark-one-main</code>,{" "}
+					<code>bypass-blocks-present</code> and <code>region</code>) are{" "}
+					<code>notApplicable</code>: the page around the frame is what has the title, language and
+					landmarks people use, and a browser ignores a framed document's viewport{" "}
+					<code>&lt;meta&gt;</code>. A test runner that shows the page under test in a frame of its
+					own sets <code>engineOptions.topLevelDocument: true</code>, so that page is judged as the
+					page (<a href="/getting-started/cypress/">@surea11y/cypress</a> does).{" "}
+					<code>runa11yCoreAcrossFrames</code> reads a frame under <code>aria-hidden="true"</code>{" "}
+					as aria-hidden content and one under <code>[inert]</code> as inert content, where only how
+					content looks is judged, and leaves out a frame behind an open modal dialog; a binding
+					that scans frames one by one sets <code>embeddedAriaHidden</code> and{" "}
+					<code>embeddedInert</code> itself (see{" "}
+					<a href="/configuration/engine-options/">Engine options</a>). Core 1.15.0 and later.
+				</li>
 				<li>
 					<strong>
 						<code>&lt;dialog&gt;</code> and other elements hidden by the default UA stylesheet
@@ -440,7 +459,12 @@ export function KnownLimitationsContent() {
 					<code>aria-hidden-focus</code> reads which subtrees are hidden, and the markup it reports,
 					before it focuses anything. But the page is left as its scripts made it, so a second scan
 					of the same page can find something else: if you scan a page you go on using, or scan one
-					page twice, reload it in between.
+					page twice, reload it in between. Since the spacing is taken off again, a screenshot taken
+					after the scan shows text that <code>text-spacing-content-loss</code> found cut off as
+					fitting; such a finding names the state it was made in (
+					<code>data.details.evidenceState: 'text-spacing'</code>), and{" "}
+					<code>evidenceState()</code> from <code>@surea11y/core</code> puts the page in it again for
+					the picture, as the bindings' <code>.screenshots()</code> do.
 				</li>
 				<li>
 					<strong>A style sheet from another origin can't be read from the page.</strong> A page's

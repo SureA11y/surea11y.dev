@@ -22,7 +22,9 @@
     "check:a11y": "node scripts/check-a11y.mjs",
     "i18n:mark": "node scripts/i18n-mark.mjs",
     "docs:sample-report": "node --experimental-strip-types scripts/generate-sample-report.mjs",
-    "docs:og-image": "node scripts/generate-og-image.mjs"
+    "docs:og-image": "node scripts/generate-og-image.mjs",
+    "docs:sample-procedures": "node --experimental-strip-types scripts/generate-sample-procedures.mjs",
+    "docs:sample-procedures:check": "node --experimental-strip-types scripts/generate-sample-procedures.mjs --check"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.1",
@@ -37,8 +39,8 @@
     "esbuild": true
   },
   "devDependencies": {
-    "@surea11y/core": "1.14.2",
-    "@surea11y/playwright": "1.5.0",
+    "@surea11y/core": "1.15.0",
+    "@surea11y/playwright": "1.6.0",
     "playwright": "1.64.0",
     "wrangler": "^4.149.0"
   }

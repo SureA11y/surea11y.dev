@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="@surea11y/core">
+<title>WCAG 2.2: lista de comprobación manual</title>
+<style>
+  :root { color-scheme: light dark; --fg: #1a1a1a; --muted: #555b63; --bg: #fafafa; --card: #fff; --line: #dcdfe3; --soft: #f2f3f5; --accent: #1a5fb4; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fg: #e6e6e6; --muted: #b0b4ba; --bg: #16181c; --card: #1f2227; --line: #3a3d44; --soft: #262a30; --accent: #7db6ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0 0 48px; font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--fg); }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .skip { position: absolute; left: 8px; top: -60px; padding: 8px 12px; background: var(--card); color: var(--fg); border: 2px solid var(--accent); border-radius: 6px; z-index: 2; }
+  .skip:focus { top: 8px; }
+  .vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  header.page { padding: 24px 32px; background: #202531; color: #fff; }
+  header.page h1 { margin: 0 0 6px; font-size: 24px; line-height: 1.3; }
+  header.page p, header.page ul { margin: 4px 0 0; color: #e8eaed; font-size: 14px; }
+  header.page ul { padding-left: 20px; }
+  .layout { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+  nav.toc { margin: 24px 0; padding: 16px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  nav.toc h2 { margin: 0 0 8px; font-size: 16px; }
+  nav.toc ol { margin: 0; padding-left: 0; list-style: none; }
+  nav.toc ol ol { padding-left: 20px; }
+  nav.toc li { margin: 2px 0; }
+  main h2, main h3, main h4, main h5, main h6 { line-height: 1.35; }
+  section.group > h2 { font-size: 21px; margin: 36px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
+  section.group section.group > :is(h3, h4) { font-size: 17px; margin: 24px 0 10px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .req, .item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px; margin: 12px 0; }
+  .req > :is(h2, h3, h4, h5, h6), .item > :is(h2, h3, h4, h5, h6) { font-size: 17px; margin: 0 0 8px; }
+  .meta { margin: 0 0 10px; color: var(--muted); font-size: 13.5px; }
+  .meta span + span::before { content: " · "; }
+  .facet { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+  .facet > :is(h3, h4, h5, h6) { font-size: 15.5px; margin: 0 0 6px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; padding: 0; list-style: none; font-size: 12.5px; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--soft); }
+  .badge.auto-full { background: #e9f7e9; color: #0b5d0b; border-color: #9fd09f; }
+  .badge.auto-partial { background: #fdf3d9; color: #6b4d00; border-color: #e5c66b; }
+  .badge.auto-manual { background: #eaf1fb; color: #174a8b; border-color: #a9c4ea; }
+  .badge.level { font-weight: 600; }
+  ol.steps { margin: 6px 0 10px; padding-left: 24px; }
+  ol.steps li { margin: 4px 0; }
+  dl.verdict { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0; }
+  dl.verdict dt { font-weight: 600; }
+  dl.verdict dd { margin: 0; }
+  .rules, .covers, .note { font-size: 13.5px; color: var(--muted); margin: 6px 0 0; }
+  .req-note { margin: 6px 0 0; }
+  .rules code, .covers code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; background: var(--soft); padding: 1px 5px; border-radius: 4px; color: var(--fg); }
+  details.variants { margin-top: 10px; font-size: 14px; }
+  details.variants summary { cursor: pointer; color: var(--accent); }
+  details.variants .variant { margin: 8px 0 0 4px; padding-left: 12px; border-left: 3px solid var(--line); }
+  .results { margin: 24px 0; padding: 14px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  details.technical { margin-top: 8px; font-size: 13.5px; color: var(--muted); }
+  details.technical summary { cursor: pointer; color: var(--accent); }
+  .results h2 { margin: 0 0 4px; font-size: 16px; }
+  .results p { margin: 2px 0; }
+  .before { margin: 24px 0; padding: 14px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  .before h2 { margin: 0 0 6px; font-size: 17px; }
+  .before p { margin: 0 0 6px; }
+  .before ul { margin: 0; padding-left: 20px; }
+  .before li { margin: 4px 0; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  button { font: inherit; font-size: 14px; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--soft); color: var(--fg); cursor: pointer; }
+  button[data-armed] { border-color: #b0441f; color: #b0441f; }
+  fieldset.record { margin: 12px 0 0; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; }
+  fieldset.record legend { font-weight: 600; padding: 0 4px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .choices label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .choices input { width: 18px; height: 18px; margin: 0; }
+  fieldset.record label.notes { display: block; margin: 10px 0 4px; font-weight: 600; }
+  textarea { width: 100%; min-height: 3.2em; font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--fg); }
+  .item[data-outcome="pass"] { border-left: 6px solid #0b7d0b; }
+  .item[data-outcome="fail"] { border-left: 6px solid #b0441f; }
+  .item[data-outcome="notApplicable"] { border-left: 6px solid #5f6368; }
+  .empty { font-style: italic; }
+  @media (forced-colors: active) {
+    .badge, .req, .item, nav.toc, .results, .before, fieldset.record { border: 1px solid CanvasText; }
+    .item[data-outcome] { border-left-width: 6px; }
+  }
+  @media print {
+    body { background: #fff; color: #000; font-size: 11pt; }
+    .skip, nav.toc, .actions, .results .note { display: none; }
+    header.page { background: none; color: #000; padding: 0 0 12px; border-bottom: 2px solid #000; }
+    header.page p, header.page ul { color: #000; }
+    .layout { padding: 0; max-width: none; }
+    details.technical { display: none; }
+    .req, .item { break-inside: avoid; border-color: #999; }
+    details.variants { display: none; }
+    textarea { border: 1px solid #999; min-height: 2.4em; }
+  }
+  @media (max-width: 640px) {
+    header.page, .layout { padding-left: 16px; padding-right: 16px; }
+    dl.verdict { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Ir a los procedimientos</a>
+<header class="page">
+<h1>WCAG 2.2: lista de comprobación manual</h1>
+<p>Comprobaciones: 50 · Requisitos: 30</p>
+<ul><li>Niveles: A, AA</li></ul>
+
+</header>
+<div class="layout">
+<nav class="toc" aria-labelledby="toc-h"><h2 id="toc-h">Contenido</h2><ol><li><a href="#g-1">1 <span>Perceptible</span></a><ol><li><a href="#g-1-1">1.1 <span>Alternativas textuales</span></a></li><li><a href="#g-1-2">1.2 <span>Medios tempodependientes</span></a></li><li><a href="#g-1-3">1.3 <span>Adaptable</span></a></li><li><a href="#g-1-4">1.4 <span>Distinguible</span></a></li></ol></li><li><a href="#g-2">2 <span>Operable</span></a><ol><li><a href="#g-2-1">2.1 <span>Accesible por teclado</span></a></li><li><a href="#g-2-2">2.2 <span>Tiempo suficiente</span></a></li><li><a href="#g-2-3">2.3 <span>Convulsiones y reacciones físicas</span></a></li><li><a href="#g-2-4">2.4 <span>Navegable</span></a></li><li><a href="#g-2-5">2.5 <span>Modalidades de entrada</span></a></li></ol></li><li><a href="#g-3">3 <span>Comprensible</span></a><ol><li><a href="#g-3-1">3.1 <span>Legible</span></a></li><li><a href="#g-3-2">3.2 <span>Predecible</span></a></li><li><a href="#g-3-3">3.3 <span>Entrada de datos asistida</span></a></li></ol></li><li><a href="#g-4">4 <span>Robusto</span></a><ol><li><a href="#g-4-1">4.1 <span>Compatible</span></a></li></ol></li></ol></nav>
+<main id="main" tabindex="-1">
+<section class="before" aria-labelledby="before-h">
+<h2 id="before-h">Antes de empezar</h2>
+<p>Estos procedimientos describen qué comprobar y cómo decidir. Unos pocos hábitos hacen que los resultados sean fiables, sea cual sea el navegador y la tecnología de apoyo que se use.</p>
+<ul><li>Probar con al menos dos combinaciones de navegador y lector de pantalla que usen sus usuarios. Las combinaciones habituales son NVDA con Firefox o Chrome y JAWS con Chrome en Windows, VoiceOver con Safari en macOS e iOS, y TalkBack con Chrome en Android. Los lectores de pantalla y los navegadores difieren en lo que anuncian, así que un resultado con una combinación no vale para todas. Cuando no coincidan, anotar qué combinación falló.</li><li>Hacer las pruebas de teclado con el lector de pantalla desactivado. En modo exploración, un lector de pantalla puede activar elementos a los que el teclado solo no llega, lo que oculta los fallos de teclado.</li><li>En un Mac, activar Navegación con teclado en Ajustes del Sistema, dentro de Teclado, y en Safari activar, en los ajustes avanzados, la opción de resaltar cada ítem de una página web al pulsar Tab. Sin ellas, Tab se salta los enlaces y algunos controles, y se anotarán fallos que no existen.</li><li>Para empezar un recorrido con el teclado al principio de la página, recargarla y pulsar Tab sin hacer clic, o hacer clic en una zona vacía justo encima del primer enlace o control. Empezar desde la barra de direcciones no es fiable: algunos navegadores mueven primero el foco por su propia barra de herramientas o por las sugerencias de la barra de direcciones.</li><li>Cada navegador muestra el árbol de accesibilidad en un sitio distinto: Chrome y Edge, en el panel Accesibilidad del panel Elements (activar el árbol de accesibilidad de página completa para ver toda la página); Firefox, en el Inspector de accesibilidad, y Safari, en la sección Accesibilidad del panel Node de la pestaña Elements. Donde un procedimiento dice «el panel Accesibilidad de las herramientas para desarrolladores», usar el del navegador con el que se está probando.</li><li>La barra de herramientas de dispositivos de las herramientas para desarrolladores cambia el tamaño de la ventana gráfica, pero no reproduce el zoom, la rotación, los gestos ni el lector de pantalla de un teléfono real. Confirmar los resultados para móviles en un dispositivo real.</li><li>Probar cada estado en que puede estar la página, no solo cómo se carga al principio: menús y diálogos abiertos, mensajes de error, listas vacías y llenas, vistas con la sesión iniciada y sin iniciar.</li><li>Las reglas marcadas como «solo indicios» no pueden decidir por sí solas. Tratar lo que indican como una lista de lugares que comprobar a mano.</li></ul>
+</section>
+<section class="results" aria-labelledby="results-h" data-record="wcag|2.2|WCAG 2.2: lista de comprobación manual">
+<h2 id="results-h">Sus resultados</h2>
+<p id="record-progress" role="status">Comprobados: 0 de 50 · Superados: 0 · No superados: 0 · No aplicables: 0</p>
+<p class="note">Sus resultados se guardan solo en este navegador, hasta que los borre. Descárguelos para conservarlos o compartirlos.</p>
+<noscript><p class="note">Sin scripts, los resultados se pueden marcar pero no se guardan ni se descargan.</p></noscript>
+<div class="actions"><button type="button" id="record-json">Descargar resultados (JSON)</button><button type="button" id="record-csv">Descargar resultados (CSV)</button><button type="button" id="record-clear">Borrar resultados</button></div>
+</section>
+<section class="group" aria-labelledby="g-1">
+<h2 id="g-1"><span class="num">1</span> <span>Perceptible</span></h2>
+<section class="group" aria-labelledby="g-1-1">
+<h3 id="g-1-1"><span class="num">1.1</span> <span>Alternativas textuales</span></h3>
+<article class="item" id="i-1-1-1-text-alternative-mechanism" aria-labelledby="item-1-1-1-text-alternative-mechanism" data-key="1.1.1/text-alternative-mechanism" data-facet="text-alternative-mechanism" data-label="El contenido no textual que transmite algo tiene una alternativa textual" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-text-alternative-mechanism">El contenido no textual que transmite algo tiene una alternativa textual</h4>
+<p class="meta"><span>Para: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Recorrer toda la página en busca de contenido que no sea texto: fotos, iconos, logotipos, gráficos, mapas, diagramas, imágenes de portada de vídeos y las imágenes dentro de botones y enlaces.</li><li>Para cada uno, seleccionarlo en el panel Elements de las herramientas para desarrolladores y leer el nombre en su panel Accesibilidad.</li><li>Anotar cada uno que no tenga nombre y no esté oculto para las tecnologías de apoyo (con alt=&quot;&quot;, aria-hidden=&quot;true&quot;, role=&quot;presentation&quot; o como fondo CSS).</li><li>Buscar también información que solo muestra el CSS: imágenes de fondo, fuentes de iconos e imágenes añadidas con la propiedad content. Inspeccionar cada una, ya que no hay atributo alt que leer, y comprobar que lo que muestra se da también en un texto que lee un lector de pantalla.</li><li>En el contenido que no se puede describir en pocas palabras, como un gráfico o un mapa, comprobar que el nombre dice al menos qué es, y que hay una descripción más completa en la página o enlazada al lado.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Todo el contenido no textual que una persona necesita tiene una alternativa textual, o está oculto para las tecnologías de apoyo porque es decorativo.</dd><dt>No se supera si</dt><dd>Un contenido no textual que transmite algo no tiene alternativa textual, así que quien usa un lector de pantalla encuentra una imagen sin nombre o nada en absoluto, lo que incumple WCAG 1.1.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>img-alt-present</code>, <code>role-img-text-alternative-present</code>, <code>canvas-text-alternative-present</code>, <code>embed-text-alternative-present</code>, <code>svg-text-alternative-present</code>, <code>svg-image-text-alternative-present</code>, <code>object-text-alternative-present</code>, <code>video-poster-text-alternative-present</code>, <code>meter-name-present</code>, <code>progressbar-name-present</code></p><p class="covers">También evalúa: <code>img-alt-attr-present</code>, <code>role-img-text-alternative-present</code>, <code>canvas-text-alternative-present</code>, <code>embed-text-alternative-present</code>, <code>svg-text-alt-present</code>, <code>svg-text-alternative-present</code>, <code>svg-image-text-alt-present</code>, <code>object-text-alternative-present</code>, <code>video-poster-text-alt-present</code>, <code>meter-name-present</code>, <code>progressbar-name-present</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El contenido no textual que transmite algo tiene una alternativa textual</span></legend>
+<div class="choices"><label><input type="radio" name="o-1" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-1" value="pass"> Superado</label><label><input type="radio" name="o-1" value="fail"> No superado</label><label><input type="radio" name="o-1" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-1">Notas<span class="vh">: </span><span class="vh">El contenido no textual que transmite algo tiene una alternativa textual</span></label>
+<textarea id="notes-1" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-1-1-functional-nontext-name" aria-labelledby="item-1-1-1-functional-nontext-name" data-key="1.1.1/functional-nontext-name" data-facet="functional-nontext-name" data-label="Las imágenes y los iconos usados como controles tienen como nombre lo que hacen" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-functional-nontext-name">Las imágenes y los iconos usados como controles tienen como nombre lo que hacen</h4>
+<p class="meta"><span>Para: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Localizar cada enlace, botón y otro control cuyo único contenido sea una imagen o un icono, como un logotipo que enlaza con la página de inicio, una lupa para buscar o un aspa que cierra un diálogo.</li><li>Para cada uno, seleccionarlo en el panel Elements de las herramientas para desarrolladores y leer el nombre en su panel Accesibilidad.</li><li>Comprobar que el nombre dice qué hace el control o adónde lleva («Buscar», «Cerrar», «Inicio»), no lo que muestra la imagen («lupa») ni un nombre de archivo.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada control formado por una imagen o un icono tiene un nombre que dice qué hace o adónde lleva.</dd><dt>No se supera si</dt><dd>Un control formado por una imagen o un icono no tiene nombre, o tiene uno que describe la imagen en lugar de lo que hace, lo que incumple WCAG 1.1.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>input-image-alt-present</code>, <code>area-alt-present</code></p><p class="covers">También evalúa: <code>input-image-alt-attr-present</code>, <code>area-alt-attr-present</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Las imágenes y los iconos usados como controles tienen como nombre lo que hacen</span></legend>
+<div class="choices"><label><input type="radio" name="o-2" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-2" value="pass"> Superado</label><label><input type="radio" name="o-2" value="fail"> No superado</label><label><input type="radio" name="o-2" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-2">Notas<span class="vh">: </span><span class="vh">Las imágenes y los iconos usados como controles tienen como nombre lo que hacen</span></label>
+<textarea id="notes-2" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-1-1-decorative-null" aria-labelledby="item-1-1-1-decorative-null" data-key="1.1.1/decorative-null" data-facet="decorative-null" data-label="Las imágenes decorativas, y solo ellas, están ocultas para las tecnologías de apoyo" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-decorative-null">Las imágenes decorativas, y solo ellas, están ocultas para las tecnologías de apoyo</h4>
+<p class="meta"><span>Para: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Recorrer la página en busca de imágenes, iconos y gráficos que solo decoran: bordes, separadores, imágenes de fondo, adornos e imágenes cuyo contenido ya da el texto que tienen al lado.</li><li>Para cada uno, seleccionarlo en el panel Elements de las herramientas para desarrolladores y comprobar en su panel Accesibilidad que se ignora (alt=&quot;&quot;, aria-hidden=&quot;true&quot;, role=&quot;presentation&quot; o un fondo CSS).</li><li>En un SVG decorativo dibujado en la página, comprobar que tiene aria-hidden=&quot;true&quot;. Sin él, algunas combinaciones de navegador y lector de pantalla lo anuncian como una imagen sin nombre, o leen el texto que contiene.</li><li>Después, hacer lo contrario: para cada imagen oculta de ese modo, preguntarse si un usuario echaría algo en falta si no estuviera: información, una etiqueta, los datos de un gráfico.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Las imágenes decorativas están ocultas para las tecnologías de apoyo, y cada imagen oculta es realmente decorativa.</dd><dt>No se supera si</dt><dd>Se anuncia una imagen decorativa (a menudo por su nombre de archivo), o una imagen que transmite información está oculta para las tecnologías de apoyo, lo que incumple WCAG 1.1.1.</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Las imágenes decorativas, y solo ellas, están ocultas para las tecnologías de apoyo</span></legend>
+<div class="choices"><label><input type="radio" name="o-3" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-3" value="pass"> Superado</label><label><input type="radio" name="o-3" value="fail"> No superado</label><label><input type="radio" name="o-3" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-3">Notas<span class="vh">: </span><span class="vh">Las imágenes decorativas, y solo ellas, están ocultas para las tecnologías de apoyo</span></label>
+<textarea id="notes-3" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-1-1-text-alternative-quality" aria-labelledby="item-1-1-1-text-alternative-quality" data-key="1.1.1/text-alternative-quality" data-facet="text-alternative-quality" data-label="Cada alternativa textual da lo que da su imagen" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-text-alternative-quality">Cada alternativa textual da lo que da su imagen</h4>
+<p class="meta"><span>Para: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Para cada imagen y otro contenido no textual que tenga alternativa textual, leer la alternativa (el nombre en el panel Accesibilidad de las herramientas para desarrolladores) y observar el contenido en su lugar de la página.</li><li>Preguntarse qué aporta el contenido a un lector en ese lugar, y comprobar que la alternativa aporta lo mismo: las palabras de una imagen de texto, la idea que transmite una foto, los datos que muestra un gráfico.</li><li>Donde la alternativa solo nombre una imagen compleja, como un gráfico o un diagrama, comprobar que los detalles están en un pie, un texto o una tabla junto a ella, o en un enlace al lado, que un usuario de lector de pantalla pueda encontrar desde la imagen.</li><li>Anotar las alternativas que son un nombre de archivo, una dirección web, una palabra como «imagen» o «foto», o que repiten el texto que tienen justo al lado.</li><li>Comprobar el idioma de cada alternativa: debería estar en el idioma de la página, o marcada con el suyo propio.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada alternativa textual da lo que da su contenido en ese lugar, directamente o mediante una descripción a la que un usuario de lector de pantalla puede llegar desde ella.</dd><dt>No se supera si</dt><dd>Una alternativa textual no da lo que da el contenido, por ejemplo un nombre de archivo, una palabra genérica o un gráfico nombrado sin sus datos en ninguna parte, lo que incumple WCAG 1.1.1 (F30).</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>area-alt-quality</code>, <code>canvas-text-alternative-quality</code>, <code>embed-text-alternative-quality</code>, <code>img-alt-decorative</code>, <code>img-alt-quality</code>, <code>input-image-alt-decorative</code>, <code>input-image-alt-quality</code>, <code>object-text-alternative-quality</code>, <code>svg-text-alternative-quality</code></p><p class="covers">También evalúa: <code>text-alt-quality-review</code>, <code>alt-suspicious-patterns</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Cada alternativa textual da lo que da su imagen</span></legend>
+<div class="choices"><label><input type="radio" name="o-4" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-4" value="pass"> Superado</label><label><input type="radio" name="o-4" value="fail"> No superado</label><label><input type="radio" name="o-4" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-4">Notas<span class="vh">: </span><span class="vh">Cada alternativa textual da lo que da su imagen</span></label>
+<textarea id="notes-4" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-1-1-captcha-alternative" aria-labelledby="item-1-1-1-captcha-alternative" data-key="1.1.1/captcha-alternative" data-facet="captcha-alternative" data-label="Un CAPTCHA indica para qué sirve y ofrece otra forma que usa un sentido distinto" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-captcha-alternative">Un CAPTCHA indica para qué sirve y ofrece otra forma que usa un sentido distinto</h4>
+<p class="meta"><span>Para: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Localizar cualquier prueba que use la página para distinguir a las personas de los programas, como letras deformadas que hay que escribir, imágenes que hay que elegir o un rompecabezas que hay que arrastrar.</li><li>Comprobar que tiene una alternativa textual que dice qué es y qué hay que hacer, sin revelar la respuesta.</li><li>Comprobar que ofrece otra forma que usa un sentido distinto, como una versión en audio de una prueba visual, o una vía completamente distinta, como un código por correo electrónico.</li><li>Probar la otra forma con un lector de pantalla y con el teclado.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>La página no tiene ninguna prueba de este tipo, o la prueba dice qué es y ofrece una forma que usa otro sentido y que se puede completar.</dd><dt>No se supera si</dt><dd>La prueba solo se puede superar viendo (o solo oyendo), o no tiene ningún texto que diga qué es, lo que incumple WCAG 1.1.1.</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Un CAPTCHA indica para qué sirve y ofrece otra forma que usa un sentido distinto</span></legend>
+<div class="choices"><label><input type="radio" name="o-5" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-5" value="pass"> Superado</label><label><input type="radio" name="o-5" value="fail"> No superado</label><label><input type="radio" name="o-5" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-5">Notas<span class="vh">: </span><span class="vh">Un CAPTCHA indica para qué sirve y ofrece otra forma que usa un sentido distinto</span></label>
+<textarea id="notes-5" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-1-2">
+<h3 id="g-1-2"><span class="num">1.2</span> <span>Medios tempodependientes</span></h3>
+<article class="item" id="i-1-2-1-transcript-evidence" aria-labelledby="item-1-2-1-transcript-evidence" data-key="1.2.1/transcript-evidence" data-facet="transcript-evidence" data-label="El contenido grabado de solo audio y de solo vídeo tiene una transcripción o una alternativa equivalente" data-requirements="[&quot;1.2.1&quot;]">
+<h4 id="item-1-2-1-transcript-evidence">El contenido grabado de solo audio y de solo vídeo tiene una transcripción o una alternativa equivalente</h4>
+<p class="meta"><span>Para: 1.2.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: solo un navegador</li></ul>
+<ol class="steps"><li>Localizar cada reproductor de audio y cada vídeo sin sonido de la página, incluidos los que están en marcos, y reproducir cada uno.</li><li>En el audio, buscar junto al reproductor y en el resto de la página una transcripción o un enlace a ella.</li><li>En un vídeo sin sonido, buscar una transcripción, o una versión en audio que describa todo lo que se muestra, que se pueda encontrar y reproducir desde la página con el teclado.</li><li>Comparar cada alternativa con el contenido multimedia y comprobar que da la misma información: lo que se dice, los sonidos importantes y lo que se muestra.</li><li>Dejar fuera el contenido multimedia que es en sí una alternativa a un texto de la página y está identificado como tal.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada contenido grabado de solo audio o de solo vídeo tiene una transcripción, o en el caso del vídeo una versión en audio, que da lo que da él, o es una alternativa identificada a un texto de la página.</dd><dt>No se supera si</dt><dd>Un contenido grabado de solo audio no tiene transcripción, o un contenido grabado de solo vídeo no tiene ni transcripción ni una versión en audio con la misma información, lo que incumple WCAG 1.2.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>media-alternative-transcript-evidence</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El contenido grabado de solo audio y de solo vídeo tiene una transcripción o una alternativa equivalente</span></legend>
+<div class="choices"><label><input type="radio" name="o-6" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-6" value="pass"> Superado</label><label><input type="radio" name="o-6" value="fail"> No superado</label><label><input type="radio" name="o-6" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-6">Notas<span class="vh">: </span><span class="vh">El contenido grabado de solo audio y de solo vídeo tiene una transcripción o una alternativa equivalente</span></label>
+<textarea id="notes-6" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-2-2-video-captions-track-evidence" aria-labelledby="item-1-2-2-video-captions-track-evidence" data-key="1.2.2/video-captions-track-evidence" data-facet="video-captions-track-evidence" data-label="El vídeo grabado con sonido tiene subtítulos" data-requirements="[&quot;1.2.2&quot;]">
+<h4 id="item-1-2-2-video-captions-track-evidence">El vídeo grabado con sonido tiene subtítulos</h4>
+<p class="meta"><span>Para: 1.2.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: solo un navegador</li></ul>
+<ol class="steps"><li>Localizar cada vídeo grabado con sonido de la página, incluidos los que están en marcos y en reproductores de otros sitios.</li><li>Reproducir cada uno con el sonido activado y anotar si su sonido transmite información: diálogo o sonidos importantes.</li><li>Cuando la transmita, buscar subtítulos: el botón CC del reproductor, subtítulos incrustados en la imagen o una versión subtitulada del mismo vídeo enlazada al lado. Una transcripción por sí sola no sustituye a los subtítulos.</li><li>Dejar fuera un vídeo que es en sí una alternativa a un texto de la página y está identificado como tal.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada vídeo grabado cuyo sonido transmite información tiene subtítulos, aquí o en una versión subtitulada enlazada al lado, o es una alternativa identificada a un texto de la página.</dd><dt>No se supera si</dt><dd>Un vídeo grabado tiene diálogos o sonidos importantes y no tiene subtítulos, ni aquí ni en una versión subtitulada enlazada, aunque se ofrezca una transcripción, lo que incumple WCAG 1.2.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>video-caption</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El vídeo grabado con sonido tiene subtítulos</span></legend>
+<div class="choices"><label><input type="radio" name="o-7" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-7" value="pass"> Superado</label><label><input type="radio" name="o-7" value="fail"> No superado</label><label><input type="radio" name="o-7" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-7">Notas<span class="vh">: </span><span class="vh">El vídeo grabado con sonido tiene subtítulos</span></label>
+<textarea id="notes-7" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-2-2-captions-complete" aria-labelledby="item-1-2-2-captions-complete" data-key="1.2.2/captions-complete" data-facet="captions-complete" data-label="Los subtítulos recogen todo el diálogo, quién habla y los sonidos importantes, sincronizados con el vídeo" data-requirements="[&quot;1.2.2&quot;]">
+<h4 id="item-1-2-2-captions-complete">Los subtítulos recogen todo el diálogo, quién habla y los sonidos importantes, sincronizados con el vídeo</h4>
+<p class="meta"><span>Para: 1.2.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: solo un navegador</li></ul>
+<ol class="steps"><li>Reproducir cada vídeo subtitulado con el sonido y los subtítulos activados.</li><li>Comparar los subtítulos con lo que se dice y se oye, de principio a fin.</li><li>Comprobar que recogen todo el diálogo, dicen quién habla cuando no queda claro y describen los sonidos importantes (música, alarmas, risas), y que van sincronizados con la imagen.</li><li>Tratar con cautela los subtítulos generados automáticamente: suelen equivocarse en nombres, cifras y puntuación y no describen los sonidos, así que rara vez cumplen este criterio sin editarlos.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Los subtítulos recogen todo el diálogo, quién habla cuando hace falta y los sonidos importantes, sincronizados con el vídeo.</dd><dt>No se supera si</dt><dd>Los subtítulos omiten diálogo o sonidos importantes, no dicen quién habla cuando importa o se desfasan respecto al vídeo, lo que incumple WCAG 1.2.2 (F8).</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los subtítulos recogen todo el diálogo, quién habla y los sonidos importantes, sincronizados con el vídeo</span></legend>
+<div class="choices"><label><input type="radio" name="o-8" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-8" value="pass"> Superado</label><label><input type="radio" name="o-8" value="fail"> No superado</label><label><input type="radio" name="o-8" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-8">Notas<span class="vh">: </span><span class="vh">Los subtítulos recogen todo el diálogo, quién habla y los sonidos importantes, sincronizados con el vídeo</span></label>
+<textarea id="notes-8" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-1-3">
+<h3 id="g-1-3"><span class="num">1.3</span> <span>Adaptable</span></h3>
+<article class="item" id="i-1-3-1-headings-marked-up" aria-labelledby="item-1-3-1-headings-marked-up" data-key="1.3.1/headings-marked-up" data-facet="headings-marked-up" data-label="El texto que parece un encabezado está marcado como tal, con un nivel que corresponde al esquema de la página" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-headings-marked-up">El texto que parece un encabezado está marcado como tal, con un nivel que corresponde al esquema de la página</h4>
+<p class="meta"><span>Para: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Recorrer la página y anotar cada texto que funciona como encabezado: es más grande o más grueso que el texto que lo rodea e introduce lo que sigue.</li><li>Para cada uno, comprobar en el panel Elements de las herramientas para desarrolladores que es un elemento de &lt;h1&gt; a &lt;h6&gt;, o que tiene role=&quot;heading&quot; con un aria-level.</li><li>Comprobar lo contrario: cada elemento de encabezado de la página introduce contenido, en lugar de usarse solo para que el texto sea grande.</li><li>Enumerar los encabezados con la lista de encabezados de un lector de pantalla, una extensión del navegador como HeadingsMap o el panel Accesibilidad, y comprobar que sus niveles corresponden a la estructura que muestra la página: los subencabezados de una sección están por debajo de su encabezado, no al mismo nivel ni por encima. Un nivel saltado por sí solo, como un h2 seguido de un h4, no incumple este criterio si el anidamiento sigue siendo correcto. Anotarlo como problema de buena práctica.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada encabezado visual está marcado como encabezado, cada elemento de encabezado lo es realmente y los niveles siguen el esquema que muestra la página.</dd><dt>No se supera si</dt><dd>Un texto que parece un encabezado es texto normal, un elemento de encabezado se usa solo por su tamaño o los niveles contradicen el esquema, así que quienes usan un lector de pantalla no pueden encontrar ni seguir las secciones, lo que incumple WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>p-as-heading</code></p><p class="covers">También evalúa: <code>p-as-heading-evidence</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El texto que parece un encabezado está marcado como tal, con un nivel que corresponde al esquema de la página</span></legend>
+<div class="choices"><label><input type="radio" name="o-9" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-9" value="pass"> Superado</label><label><input type="radio" name="o-9" value="fail"> No superado</label><label><input type="radio" name="o-9" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-9">Notas<span class="vh">: </span><span class="vh">El texto que parece un encabezado está marcado como tal, con un nivel que corresponde al esquema de la página</span></label>
+<textarea id="notes-9" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-lists-marked-up" aria-labelledby="item-1-3-1-lists-marked-up" data-key="1.3.1/lists-marked-up" data-facet="lists-marked-up" data-label="El contenido que se muestra como lista está marcado como lista" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-lists-marked-up">El contenido que se muestra como lista está marcado como lista</h4>
+<p class="meta"><span>Para: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Recorrer la página en busca de contenido que se muestra como lista: elementos en fila o en columna con viñetas, números o la misma disposición, como menús, pasos y grupos de enlaces.</li><li>Para cada uno, comprobar en el panel Elements de las herramientas para desarrolladores que es un &lt;ul&gt;, un &lt;ol&gt; o un &lt;dl&gt; (o que tiene role=&quot;list&quot; con elementos role=&quot;listitem&quot;).</li><li>Comprobar que cada lista solo contiene directamente elementos de lista, y que cada elemento de lista está dentro de una lista.</li><li>Si se prueba con VoiceOver y Safari, tener en cuenta que Safari no expone una lista cuyas viñetas se quitan con list-style: none a menos que tenga role=&quot;list&quot;. Es una decisión del navegador, no un fallo de la página, pero conviene anotarlo cuando la estructura de la lista importa al usuario.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El contenido que se muestra como lista está marcado como lista, y el marcado de la lista está completo.</dd><dt>No se supera si</dt><dd>El contenido que se muestra como lista es una sucesión de párrafos, saltos de línea o div, o el marcado de la lista está roto, así que un lector de pantalla no dice que es una lista ni cuántos elementos tiene, lo que incumple WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>list-children-valid</code>, <code>listitem-parent-valid</code>, <code>definition-list-children-valid</code>, <code>dlitem-parent-valid</code></p><p class="covers">También evalúa: <code>list-children-valid</code>, <code>listitem-parent-valid</code>, <code>definition-list-children-valid</code>, <code>dlitem-parent-valid</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El contenido que se muestra como lista está marcado como lista</span></legend>
+<div class="choices"><label><input type="radio" name="o-10" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-10" value="pass"> Superado</label><label><input type="radio" name="o-10" value="fail"> No superado</label><label><input type="radio" name="o-10" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-10">Notas<span class="vh">: </span><span class="vh">El contenido que se muestra como lista está marcado como lista</span></label>
+<textarea id="notes-10" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-tables-marked-up" aria-labelledby="item-1-3-1-tables-marked-up" data-key="1.3.1/tables-marked-up" data-facet="tables-marked-up" data-label="Las tablas de datos marcan sus encabezados y su título, y las tablas usadas solo para maquetar no llevan marcado de encabezado" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-tables-marked-up">Las tablas de datos marcan sus encabezados y su título, y las tablas usadas solo para maquetar no llevan marcado de encabezado</h4>
+<p class="meta"><span>Para: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Localizar cada tabla de la página, y cada cuadrícula de datos dibujada sin tabla.</li><li>En una tabla de datos, comprobar en el panel Elements de las herramientas para desarrolladores que sus celdas de encabezado son &lt;th&gt; (con scope donde un encabezado no sea claramente de fila o de columna) y que un título que se muestra encima es su &lt;caption&gt;.</li><li>En una tabla compleja, con encabezados en más de un nivel, comprobar que cada celda de datos indica sus encabezados con un atributo headers o con scope.</li><li>Con un lector de pantalla, recorrer algunas celdas de datos y comprobar que lee sus encabezados con ellas.</li><li>En una tabla usada solo para maquetar, comprobar que no tiene &lt;th&gt;, &lt;caption&gt; ni summary.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Los datos están en tablas con los encabezados y el título marcados, un lector de pantalla lee los encabezados de cada celda y las tablas de maquetación no llevan marcado de encabezado.</dd><dt>No se supera si</dt><dd>Una tabla de datos no tiene marcado de encabezado o tiene un título falso en una celda, hay datos dispuestos como cuadrícula sin tabla, o una tabla de maquetación está marcada como de datos, lo que incumple WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>table-headers-attr-valid</code>, <code>table-th-has-data-cells</code>, <code>table-fake-caption</code>, <code>td-has-header</code></p><p class="covers">También evalúa: <code>table-headers-attr-valid</code>, <code>table-th-has-data-cells</code>, <code>table-fake-caption-evidence</code>, <code>td-has-header</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Las tablas de datos marcan sus encabezados y su título, y las tablas usadas solo para maquetar no llevan marcado de encabezado</span></legend>
+<div class="choices"><label><input type="radio" name="o-11" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-11" value="pass"> Superado</label><label><input type="radio" name="o-11" value="fail"> No superado</label><label><input type="radio" name="o-11" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-11">Notas<span class="vh">: </span><span class="vh">Las tablas de datos marcan sus encabezados y su título, y las tablas usadas solo para maquetar no llevan marcado de encabezado</span></label>
+<textarea id="notes-11" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-form-labels-associated" aria-labelledby="item-1-3-1-form-labels-associated" data-key="1.3.1/form-labels-associated" data-facet="form-labels-associated" data-label="Los campos de formulario están vinculados a sus etiquetas visibles, y los grupos de campos al texto que nombra el grupo" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-form-labels-associated">Los campos de formulario están vinculados a sus etiquetas visibles, y los grupos de campos al texto que nombra el grupo</h4>
+<p class="meta"><span>Para: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Localizar cada campo de formulario de la página: campos de texto, casillas de verificación, botones de opción, listas desplegables y controles personalizados.</li><li>Para cada uno, seleccionarlo en el panel Elements de las herramientas para desarrolladores y comprobar que el nombre de su panel Accesibilidad contiene su etiqueta visible.</li><li>En un grupo de campos bajo una misma pregunta, como botones de opción o una fecha en tres partes, comprobar que el grupo es un &lt;fieldset&gt; con un &lt;legend&gt;, o que tiene role=&quot;group&quot; con nombre, para que la pregunta se lea con cada campo.</li><li>Comprobar que las instrucciones que se muestran junto a un campo (un formato, una marca de obligatorio) están vinculadas a él con aria-describedby o forman parte de su etiqueta.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El nombre de cada campo incluye su etiqueta visible, los grupos de campos tienen como nombre su pregunta y las instrucciones de cada campo están vinculadas a él.</dd><dt>No se supera si</dt><dd>Un campo solo está etiquetado por un texto cercano que no está vinculado a él, o la pregunta de un grupo no está vinculada a sus campos, así que un lector de pantalla lee un campo sin decir para qué sirve, lo que incumple WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>form-control-programmatic-label-present</code></p><p class="covers">También evalúa: <code>form-control-programmatic-label-present</code>, <code>form-control-label-quality-review</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los campos de formulario están vinculados a sus etiquetas visibles, y los grupos de campos al texto que nombra el grupo</span></legend>
+<div class="choices"><label><input type="radio" name="o-12" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-12" value="pass"> Superado</label><label><input type="radio" name="o-12" value="fail"> No superado</label><label><input type="radio" name="o-12" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-12">Notas<span class="vh">: </span><span class="vh">Los campos de formulario están vinculados a sus etiquetas visibles, y los grupos de campos al texto que nombra el grupo</span></label>
+<textarea id="notes-12" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-aria-structure-valid" aria-labelledby="item-1-3-1-aria-structure-valid" data-key="1.3.1/aria-structure-valid" data-facet="aria-structure-valid" data-label="Los roles y las relaciones ARIA dan la misma estructura que muestra la página" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-aria-structure-valid">Los roles y las relaciones ARIA dan la misma estructura que muestra la página</h4>
+<p class="meta"><span>Para: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Localizar las partes de la página construidas con roles ARIA: menús personalizados, pestañas, árboles, cuadrículas, listas y cuadros de lista.</li><li>Para cada una, abrir el árbol de accesibilidad de las herramientas para desarrolladores y comprobar que la estructura que muestra corresponde a lo que hay en pantalla: un tablist que contiene pestañas, un menú que contiene elementos de menú, una cuadrícula que contiene filas y celdas.</li><li>Comprobar que a ningún elemento con rol le falta el padre o los hijos que necesita su rol, y que aria-owns, donde se use, da a cada elemento un solo propietario.</li><li>Comprobar que el &lt;body&gt; no está oculto con aria-hidden=&quot;true&quot;.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El árbol de accesibilidad da la estructura que muestra la página, con cada rol en el lugar que su rol necesita.</dd><dt>No se supera si</dt><dd>A un rol le falta el padre o los hijos que requiere, o tiene dos propietarios, o la página está oculta en el árbol, así que las tecnologías de apoyo dan una estructura que no corresponde a la pantalla, lo que incumple WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>aria-hidden-body</code>, <code>aria-required-children</code>, <code>aria-prohibited-children</code>, <code>aria-required-parent</code>, <code>aria-roles-valid</code>, <code>aria-owns-valid</code></p><p class="covers">También evalúa: <code>aria-hidden-body-absent</code>, <code>aria-role-required-owned-children</code>, <code>aria-role-owned-children-allowed</code>, <code>aria-role-required-context-parent</code>, <code>aria-role-valid</code>, <code>aria-owns-valid</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los roles y las relaciones ARIA dan la misma estructura que muestra la página</span></legend>
+<div class="choices"><label><input type="radio" name="o-13" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-13" value="pass"> Superado</label><label><input type="radio" name="o-13" value="fail"> No superado</label><label><input type="radio" name="o-13" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-13">Notas<span class="vh">: </span><span class="vh">Los roles y las relaciones ARIA dan la misma estructura que muestra la página</span></label>
+<textarea id="notes-13" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-visual-cues-conveyed" aria-labelledby="item-1-3-1-visual-cues-conveyed" data-key="1.3.1/visual-cues-conveyed" data-facet="visual-cues-conveyed" data-label="El significado que transmiten el estilo o la disposición, como la negrita, el color, la posición o un asterisco, también se da en el marcado o en el texto" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-visual-cues-conveyed">El significado que transmiten el estilo o la disposición, como la negrita, el color, la posición o un asterisco, también se da en el marcado o en el texto</h4>
+<p class="meta"><span>Para: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Buscar significado que la página solo muestra por el aspecto: campos obligatorios marcados con un asterisco o con color, palabras destacadas o tachadas, un elemento seleccionado indicado por su estilo, texto separado en un recuadro.</li><li>Para cada caso, comprobar si el mismo significado está en el marcado (como required, aria-current, &lt;em&gt;, &lt;del&gt;) o en el propio texto («obligatorio», «página actual»).</li><li>Observar el texto y los iconos añadidos con CSS mediante la propiedad content. Los navegadores difieren en si los lectores de pantalla los leen, así que la información que solo añade el CSS debe estar también en el marcado o en el texto.</li><li>Leer esas partes con un lector de pantalla y comprobar que se dice lo que muestra el estilo.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Todo lo que transmiten el estilo o la disposición está también en el marcado o en el texto.</dd><dt>No se supera si</dt><dd>El significado solo lo dan el estilo o la posición, como campos obligatorios marcados solo con color o con un asterisco sin explicar, así que quien usa un lector de pantalla no lo percibe, lo que incumple WCAG 1.3.1.</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El significado que transmiten el estilo o la disposición, como la negrita, el color, la posición o un asterisco, también se da en el marcado o en el texto</span></legend>
+<div class="choices"><label><input type="radio" name="o-14" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-14" value="pass"> Superado</label><label><input type="radio" name="o-14" value="fail"> No superado</label><label><input type="radio" name="o-14" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-14">Notas<span class="vh">: </span><span class="vh">El significado que transmiten el estilo o la disposición, como la negrita, el color, la posición o un asterisco, también se da en el marcado o en el texto</span></label>
+<textarea id="notes-14" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-4-orientation-not-locked" aria-labelledby="item-1-3-4-orientation-not-locked" data-key="1.3.4/orientation-not-locked" data-facet="orientation-not-locked" data-label="La página funciona en vertical y en horizontal, salvo que una orientación sea esencial" data-requirements="[&quot;1.3.4&quot;]">
+<h4 id="item-1-3-4-orientation-not-locked">La página funciona en vertical y en horizontal, salvo que una orientación sea esencial</h4>
+<p class="meta"><span>Para: 1.3.4</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Abrir la página en la barra de herramientas de dispositivos de las herramientas para desarrolladores, o en un teléfono o una tableta.</li><li>Verla en vertical, girarla luego a horizontal (o al revés) y usar su contenido y sus controles principales en cada orientación.</li><li>Confirmar el resultado en un teléfono o una tableta reales con el bloqueo de rotación desactivado. La barra de herramientas de dispositivos no puede mostrar si la página bloquea la orientación con script o, en una aplicación web instalada, mediante su manifiesto.</li><li>Comprobar que la página no pide girar el dispositivo, no gira su contenido de lado ni oculta contenido en una de las orientaciones.</li><li>Si lo hace, preguntarse si esa orientación es esencial, como en un cheque bancario o un teclado de piano.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>La página se muestra y funciona en ambas orientaciones, o una de ellas le es esencial.</dd><dt>No se supera si</dt><dd>La página solo funciona en una orientación, porque pide girar el dispositivo, gira su contenido o lo oculta, sin una razón esencial, lo que incumple WCAG 1.3.4.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>css-orientation-lock</code></p><p class="covers">También evalúa: <code>css-orientation-lock</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">La página funciona en vertical y en horizontal, salvo que una orientación sea esencial</span></legend>
+<div class="choices"><label><input type="radio" name="o-15" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-15" value="pass"> Superado</label><label><input type="radio" name="o-15" value="fail"> No superado</label><label><input type="radio" name="o-15" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-15">Notas<span class="vh">: </span><span class="vh">La página funciona en vertical y en horizontal, salvo que una orientación sea esencial</span></label>
+<textarea id="notes-15" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-5-input-purpose-identified" aria-labelledby="item-1-3-5-input-purpose-identified" data-key="1.3.5/input-purpose-identified" data-facet="input-purpose-identified" data-label="Los campos que piden información sobre el usuario indican su propósito con el valor de autocomplete correcto" data-requirements="[&quot;1.3.5&quot;]">
+<h4 id="item-1-3-5-input-purpose-identified">Los campos que piden información sobre el usuario indican su propósito con el valor de autocomplete correcto</h4>
+<p class="meta"><span>Para: 1.3.5</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Localizar cada campo que pide información sobre la persona que usa la página: nombre, correo electrónico, teléfono, dirección, fecha de nacimiento, nombre de usuario, contraseña, datos de la tarjeta.</li><li>Para cada uno, leer su atributo autocomplete en el panel Elements de las herramientas para desarrolladores.</li><li>Comprobar que es el valor que corresponde a lo que pide el campo (name, email, tel, street-address, postal-code, bday, username, new-password, cc-number, etc.).</li><li>Un campo con autocomplete=&quot;off&quot;, o sin atributo autocomplete, no identifica su propósito, aunque el navegador siga ofreciendo rellenarlo.</li><li>Dejar fuera los campos que piden datos de otra persona, como el destinatario de un regalo, salvo que lo indiquen con la sección o el valor correctos.</li><li>Solo entran en el alcance los propósitos de la lista de propósitos de entrada de WCAG. Un campo para un número de socio o de cliente, por ejemplo, no tiene valor en esa lista ni lo necesita.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada campo que pide información propia del usuario tiene el valor de autocomplete que le corresponde.</dd><dt>No se supera si</dt><dd>Un campo que pide información propia del usuario no tiene valor de autocomplete, o tiene uno erróneo, así que el navegador y las herramientas de apoyo no pueden rellenarlo ni marcar su propósito, lo que incumple WCAG 1.3.5.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>autocomplete-valid</code></p><p class="covers">También evalúa: <code>autocomplete-valid</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los campos que piden información sobre el usuario indican su propósito con el valor de autocomplete correcto</span></legend>
+<div class="choices"><label><input type="radio" name="o-16" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-16" value="pass"> Superado</label><label><input type="radio" name="o-16" value="fail"> No superado</label><label><input type="radio" name="o-16" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-16">Notas<span class="vh">: </span><span class="vh">Los campos que piden información sobre el usuario indican su propósito con el valor de autocomplete correcto</span></label>
+<textarea id="notes-16" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-1-4">
+<h3 id="g-1-4"><span class="num">1.4</span> <span>Distinguible</span></h3>
+<article class="item" id="i-1-4-1-color-not-only-means" aria-labelledby="item-1-4-1-color-not-only-means" data-key="1.4.1/color-not-only-means" data-facet="color-not-only-means" data-label="El color no es el único medio para mostrar información, pedir una respuesta o distinguir un elemento" data-requirements="[&quot;1.4.1&quot;]">
+<h4 id="item-1-4-1-color-not-only-means">El color no es el único medio para mostrar información, pedir una respuesta o distinguir un elemento</h4>
+<p class="meta"><span>Para: 1.4.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Buscar información que la página da mediante el color: enlaces en un párrafo, campos obligatorios o no válidos, la pestaña o el día seleccionados, series de un gráfico, estados en rojo o verde.</li><li>Para cada caso, comprobar si algo además del color la da también: un subrayado, un icono, una etiqueta de texto, un patrón, un borde o un cambio de forma.</li><li>En los enlaces de un párrafo que solo se distinguen por el color, comprobar que reciben un subrayado u otra marca al pasar el puntero y al recibir el foco, y que su color tiene un contraste de al menos 3:1 con el texto que los rodea.</li><li>Ver la página en escala de grises (en el panel Rendering de las herramientas para desarrolladores, emular acromatopsia) y comprobar que no se pierde nada.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Todo lo que la página da mediante el color se da también de otra forma.</dd><dt>No se supera si</dt><dd>Hay información, como qué campos tienen errores o qué texto es un enlace, que solo se da mediante el color, lo que incumple WCAG 1.4.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>link-in-text-block</code></p><p class="covers">También evalúa: <code>link-in-text-block</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El color no es el único medio para mostrar información, pedir una respuesta o distinguir un elemento</span></legend>
+<div class="choices"><label><input type="radio" name="o-17" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-17" value="pass"> Superado</label><label><input type="radio" name="o-17" value="fail"> No superado</label><label><input type="radio" name="o-17" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-17">Notas<span class="vh">: </span><span class="vh">El color no es el único medio para mostrar información, pedir una respuesta o distinguir un elemento</span></label>
+<textarea id="notes-17" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-2-no-autoplay-audio-evidence" aria-labelledby="item-1-4-2-no-autoplay-audio-evidence" data-key="1.4.2/no-autoplay-audio-evidence" data-facet="no-autoplay-audio-evidence" data-label="El sonido que se reproduce solo durante más de 3 segundos se puede pausar, detener o bajar de volumen" data-requirements="[&quot;1.4.2&quot;]">
+<h4 id="item-1-4-2-no-autoplay-audio-evidence">El sonido que se reproduce solo durante más de 3 segundos se puede pausar, detener o bajar de volumen</h4>
+<p class="meta"><span>Para: 1.4.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un teclado</span></li></ul>
+<ol class="steps"><li>Cargar la página con el sonido activado y escuchar si hay sonido que empieza solo: música, un vídeo, un anuncio.</li><li>Donde suene durante más de 3 segundos, buscar cerca del principio de la página o del reproductor una forma de pausarlo o detenerlo, o de bajar su volumen con independencia del volumen del equipo.</li><li>Comprobar que el control se puede encontrar y usar con el teclado.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Ningún sonido se reproduce solo durante más de 3 segundos, o un control cerca del principio de la página lo pausa, lo detiene o lo baja.</dd><dt>No se supera si</dt><dd>Un sonido se reproduce solo durante más de 3 segundos sin forma de pausarlo, detenerlo o bajarlo aparte del volumen del equipo, así que tapa al lector de pantalla, lo que incumple WCAG 1.4.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>no-autoplay-audio</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El sonido que se reproduce solo durante más de 3 segundos se puede pausar, detener o bajar de volumen</span></legend>
+<div class="choices"><label><input type="radio" name="o-18" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-18" value="pass"> Superado</label><label><input type="radio" name="o-18" value="fail"> No superado</label><label><input type="radio" name="o-18" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-18">Notas<span class="vh">: </span><span class="vh">El sonido que se reproduce solo durante más de 3 segundos se puede pausar, detener o bajar de volumen</span></label>
+<textarea id="notes-18" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-3-contrast-minimum-text" aria-labelledby="item-1-4-3-contrast-minimum-text" data-key="1.4.3/contrast-minimum-text" data-facet="contrast-minimum-text" data-label="El texto tiene un contraste de al menos 4.5:1 con su fondo, o de 3:1 si es grande" data-requirements="[&quot;1.4.3&quot;]">
+<h4 id="item-1-4-3-contrast-minimum-text">El texto tiene un contraste de al menos 4.5:1 con su fondo, o de 3:1 si es grande</h4>
+<p class="meta"><span>Para: 1.4.3</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Recorrer la página en busca de texto que parezca tenue sobre su fondo: texto gris claro, texto sobre paneles de color, texto del atributo placeholder, texto sobre imágenes o degradados, texto en botones.</li><li>Para cada uno, inspeccionarlo y hacer clic en la muestra de su color en el panel Styles de las herramientas para desarrolladores: el selector de color muestra su relación de contraste con el fondo.</li><li>El selector de color mide respecto al color de fondo definido en CSS. Donde el texto esté sobre una imagen, un degradado o una capa semitransparente, o su color venga de la opacidad o de un modo de fusión, la cifra del selector no es fiable: usar en su lugar el paso siguiente.</li><li>Donde el fondo sea una imagen, un degradado o una capa semitransparente, medir el texto respecto a la parte del fondo en que menos se vea, con un analizador de contraste de color.</li><li>Comprobar que la relación es de al menos 4.5:1, o de 3:1 para texto grande: al menos 24 píxeles (18 pt), o 18.66 píxeles (14 pt) y en negrita.</li><li>No redondear el resultado: 4.49:1 no se supera. Comprobar también el texto en sus otros estados, como al pasar el puntero, con el foco y seleccionado, ya que un estado puede reducir el contraste.</li><li>Dejar fuera los logotipos y los nombres de marca, el texto de controles deshabilitados, el texto que es solo decorativo o que nadie puede ver, y el texto que forma parte de una imagen con otro contenido importante, como una señal de tráfico en una foto.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Todo el texto y todas las imágenes de texto tienen un contraste de al menos 4.5:1 con su fondo, o de 3:1 si son grandes.</dd><dt>No se supera si</dt><dd>Un texto tiene con su fondo un contraste inferior a 4.5:1 (3:1 para texto grande), así que las personas con baja visión no pueden leerlo, lo que incumple WCAG 1.4.3.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>contrast-minimum</code>, <code>contrast-computable</code></p><p class="covers">También evalúa: <code>contrast-computability-143</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El texto tiene un contraste de al menos 4.5:1 con su fondo, o de 3:1 si es grande</span></legend>
+<div class="choices"><label><input type="radio" name="o-19" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-19" value="pass"> Superado</label><label><input type="radio" name="o-19" value="fail"> No superado</label><label><input type="radio" name="o-19" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-19">Notas<span class="vh">: </span><span class="vh">El texto tiene un contraste de al menos 4.5:1 con su fondo, o de 3:1 si es grande</span></label>
+<textarea id="notes-19" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-4-text-resizes-200" aria-labelledby="item-1-4-4-text-resizes-200" data-key="1.4.4/text-resizes-200" data-facet="text-resizes-200" data-label="El texto se puede ampliar al 200 % sin perder contenido ni funcionalidad" data-requirements="[&quot;1.4.4&quot;]">
+<h4 id="item-1-4-4-text-resizes-200">El texto se puede ampliar al 200 % sin perder contenido ni funcionalidad</h4>
+<p class="meta"><span>Para: 1.4.4</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>El zoom del navegador</span></li></ul>
+<ol class="steps"><li>Ampliar el zoom del navegador al 200 %.</li><li>Recorrer toda la página y comprobar que todo el texto ha aumentado de tamaño y que ninguno queda cortado, superpuesto u oculto.</li><li>Usar los controles, los menús y los formularios de la página a ese tamaño y comprobar que todos siguen funcionando.</li><li>En un teléfono, comprobar que se puede ampliar la página al 200 % pellizcando. Usar Chrome en Android con su ajuste de accesibilidad que fuerza la habilitación del zoom desactivado: Safari en iOS ignora una ventana gráfica que bloquea el zoom, así que puede ocultar este fallo.</li><li>Dejar fuera los subtítulos y las imágenes de texto.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Al 200 %, todo el texto ha aumentado de tamaño y sigue siendo legible, y todo sigue funcionando.</dd><dt>No se supera si</dt><dd>Al 200 %, el texto queda cortado, se superpone o no aumenta de tamaño, un control deja de funcionar o el zoom con los dedos está bloqueado, lo que incumple WCAG 1.4.4.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>meta-viewport-zoom-enabled</code></p><p class="covers">También evalúa: <code>meta-viewport-zoom-enabled</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El texto se puede ampliar al 200 % sin perder contenido ni funcionalidad</span></legend>
+<div class="choices"><label><input type="radio" name="o-20" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-20" value="pass"> Superado</label><label><input type="radio" name="o-20" value="fail"> No superado</label><label><input type="radio" name="o-20" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-20">Notas<span class="vh">: </span><span class="vh">El texto se puede ampliar al 200 % sin perder contenido ni funcionalidad</span></label>
+<textarea id="notes-20" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-5-text-not-as-image" aria-labelledby="item-1-4-5-text-not-as-image" data-key="1.4.5/text-not-as-image" data-facet="text-not-as-image" data-label="El texto se muestra como texto, no en una imagen, salvo que su aspecto sea esencial, como en un logotipo" data-requirements="[&quot;1.4.5&quot;]">
+<h4 id="item-1-4-5-text-not-as-image">El texto se muestra como texto, no en una imagen, salvo que su aspecto sea esencial, como en un logotipo</h4>
+<p class="meta"><span>Para: 1.4.5</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Buscar imágenes que contengan palabras: banners, encabezados, botones, citas, menús.</li><li>Intentar seleccionar una de sus palabras con el puntero, o inspeccionarla: el texto que no se puede seleccionar suele estar en una imagen, un dibujo SVG o un canvas.</li><li>Para cada una, preguntarse si se podría mostrar lo mismo con texto real con estilo CSS.</li><li>Dejar fuera los logotipos y los nombres de marca, las imágenes en las que el aspecto concreto del texto es esencial, como una muestra de fuente, y las imágenes de texto que el usuario puede adaptar a su gusto, como una página que permite elegir la fuente, el tamaño y los colores del texto de la imagen.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El texto es texto real, o la imagen de texto es un logotipo o necesita su aspecto exacto.</dd><dt>No se supera si</dt><dd>Hay palabras que se muestran como imagen cuando un texto con estilo se vería igual, así que no se puede cambiar su tamaño, su color ni su espaciado, lo que incumple WCAG 1.4.5.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>image-of-text</code></p><p class="covers">También evalúa: <code>image-of-text-evidence</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El texto se muestra como texto, no en una imagen, salvo que su aspecto sea esencial, como en un logotipo</span></legend>
+<div class="choices"><label><input type="radio" name="o-21" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-21" value="pass"> Superado</label><label><input type="radio" name="o-21" value="fail"> No superado</label><label><input type="radio" name="o-21" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-21">Notas<span class="vh">: </span><span class="vh">El texto se muestra como texto, no en una imagen, salvo que su aspecto sea esencial, como en un logotipo</span></label>
+<textarea id="notes-21" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-12-avoid-inline-spacing" aria-labelledby="item-1-4-12-avoid-inline-spacing" data-key="1.4.12/avoid-inline-spacing" data-facet="avoid-inline-spacing" data-label="El espaciado forzado en un atributo style no impide que el texto adopte el espaciado del usuario" data-requirements="[&quot;1.4.12&quot;]">
+<h4 id="item-1-4-12-avoid-inline-spacing">El espaciado forzado en un atributo style no impide que el texto adopte el espaciado del usuario</h4>
+<p class="meta"><span>Para: 1.4.12</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>En el panel Elements de las herramientas para desarrolladores, buscar !important en el marcado de la página (Ctrl+F, o Cmd+F en un Mac) y anotar cada coincidencia en un atributo style que defina line-height, letter-spacing o word-spacing.</li><li>Para cada una, leer el valor resultante en la pestaña Computed y compararlo con 1,5 veces el tamaño de la fuente para line-height, 0,12 veces para letter-spacing y 0,16 veces para word-spacing.</li><li>Donde el valor sea menor, estrechar la ventana hasta 320 píxeles CSS de ancho y comprobar si ese texto pasa a ocupar más de una línea.</li><li>En el panel Styles de las herramientas para desarrolladores, añadir una nueva regla de estilo para * con line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important, y una regla para p con margin-bottom: 2em !important. El elemento conserva su propio valor, porque gana su atributo style.</li><li>Comprobar si ese texto queda cortado, se superpone a otro texto o queda oculto.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Ningún atributo style fuerza un espaciado inferior a esos valores en un texto que pasa a otra línea, o el texto afectado se sigue mostrando completo con el espaciado aplicado.</dd><dt>No se supera si</dt><dd>Un atributo style fuerza un espaciado inferior a esos valores en un texto que pasa a otra línea, así que un bookmarklet o una extensión del navegador no puede aplicar el espaciado de la persona, y con ese espaciado el texto se superpone o queda cortado, lo que incumple WCAG 1.4.12.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>avoid-inline-spacing</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El espaciado forzado en un atributo style no impide que el texto adopte el espaciado del usuario</span></legend>
+<div class="choices"><label><input type="radio" name="o-22" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-22" value="pass"> Superado</label><label><input type="radio" name="o-22" value="fail"> No superado</label><label><input type="radio" name="o-22" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-22">Notas<span class="vh">: </span><span class="vh">El espaciado forzado en un atributo style no impide que el texto adopte el espaciado del usuario</span></label>
+<textarea id="notes-22" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-12-text-spacing-content-loss" aria-labelledby="item-1-4-12-text-spacing-content-loss" data-key="1.4.12/text-spacing-content-loss" data-facet="text-spacing-content-loss" data-label="Con el espaciado de 1.4.12 aplicado, ningún texto queda cortado ni se superpone (medido en un navegador)" data-requirements="[&quot;1.4.12&quot;]">
+<h4 id="item-1-4-12-text-spacing-content-loss">Con el espaciado de 1.4.12 aplicado, ningún texto queda cortado ni se superpone (medido en un navegador)</h4>
+<p class="meta"><span>Para: 1.4.12</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un teclado</span></li></ul>
+<ol class="steps"><li>En el panel Styles de las herramientas para desarrolladores, añadir una nueva regla de estilo para * con line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important, y una regla para p con margin-bottom: 2em !important. La política de seguridad de la página no bloquea las reglas añadidas en el panel Styles.</li><li>Recorrer toda la página y buscar texto que quede cortado, se superponga a otro texto o desaparezca. El texto que forma parte de una imagen no cuenta.</li><li>Hacerlo con los anchos que se prueban en otras comprobaciones, incluidos 320 píxeles CSS, donde el texto pasa más a otra línea y más a menudo queda cortado.</li><li>Donde el texto quede cortado, comprobar si la página ofrece una forma de mostrarlo entero, como un enlace «Leer más» o un botón que amplía el recuadro. Solo cuenta si se puede usar con el teclado y, con el espaciado aún aplicado, muestra el texto completo.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Todo el texto sigue visible y legible, o cualquier texto cortado se puede mostrar completo con el teclado.</dd><dt>No se supera si</dt><dd>Con el espaciado aplicado, parte del texto queda cortado, se superpone o se pierde, y no se puede mostrar completo de otra forma, lo que incumple WCAG 1.4.12.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>text-spacing-content-loss</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Con el espaciado de 1.4.12 aplicado, ningún texto queda cortado ni se superpone (medido en un navegador)</span></legend>
+<div class="choices"><label><input type="radio" name="o-23" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-23" value="pass"> Superado</label><label><input type="radio" name="o-23" value="fail"> No superado</label><label><input type="radio" name="o-23" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-23">Notas<span class="vh">: </span><span class="vh">Con el espaciado de 1.4.12 aplicado, ningún texto queda cortado ni se superpone (medido en un navegador)</span></label>
+<textarea id="notes-23" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-12-text-spacing-functionality-kept" aria-labelledby="item-1-4-12-text-spacing-functionality-kept" data-key="1.4.12/text-spacing-functionality-kept" data-facet="text-spacing-functionality-kept" data-label="Con el espaciado de 1.4.12 aplicado, los controles, los menús y los formularios siguen funcionando y muestran todo su texto" data-requirements="[&quot;1.4.12&quot;]">
+<h4 id="item-1-4-12-text-spacing-functionality-kept">Con el espaciado de 1.4.12 aplicado, los controles, los menús y los formularios siguen funcionando y muestran todo su texto</h4>
+<p class="meta"><span>Para: 1.4.12</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un teclado</span>, <span>Un ratón u otro dispositivo señalador</span></li></ul>
+<ol class="steps"><li>En el panel Styles de las herramientas para desarrolladores, añadir una nueva regla de estilo para * con line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important, y una regla para p con margin-bottom: 2em !important.</li><li>Usar cada control de la página: abrir sus menús y listas desplegables, rellenar y enviar sus formularios, cambiar de pestaña y abrir y cerrar sus diálogos.</li><li>Comprobar que cada uno sigue respondiendo, que ningún texto desplazado tapa un control y que cada etiqueta y cada botón muestran todo su texto.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Con el espaciado aplicado, todos los controles siguen funcionando y muestran todo su texto.</dd><dt>No se supera si</dt><dd>Con el espaciado aplicado, un control deja de funcionar, queda tapado de modo que no se puede usar o pierde el texto que dice qué hace, lo que incumple WCAG 1.4.12.</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Con el espaciado de 1.4.12 aplicado, los controles, los menús y los formularios siguen funcionando y muestran todo su texto</span></legend>
+<div class="choices"><label><input type="radio" name="o-24" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-24" value="pass"> Superado</label><label><input type="radio" name="o-24" value="fail"> No superado</label><label><input type="radio" name="o-24" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-24">Notas<span class="vh">: </span><span class="vh">Con el espaciado de 1.4.12 aplicado, los controles, los menús y los formularios siguen funcionando y muestran todo su texto</span></label>
+<textarea id="notes-24" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-12-text-spacing-other-states" aria-labelledby="item-1-4-12-text-spacing-other-states" data-key="1.4.12/text-spacing-other-states" data-facet="text-spacing-other-states" data-label="Con el espaciado de 1.4.12 aplicado, el contenido que solo se muestra tras una interacción (menús, diálogos, pestañas, mensajes) conserva todo su texto" data-requirements="[&quot;1.4.12&quot;]">
+<h4 id="item-1-4-12-text-spacing-other-states">Con el espaciado de 1.4.12 aplicado, el contenido que solo se muestra tras una interacción (menús, diálogos, pestañas, mensajes) conserva todo su texto</h4>
+<p class="meta"><span>Para: 1.4.12</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un teclado</span>, <span>Un ratón u otro dispositivo señalador</span></li></ul>
+<ol class="steps"><li>En el panel Styles de las herramientas para desarrolladores, añadir una nueva regla de estilo para * con line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important, y una regla para p con margin-bottom: 2em !important.</li><li>Hacer aparecer el contenido que la página solo muestra después de hacer algo: abrir cada menú y cada diálogo, cambiar a cada pestaña, desplegar cada sección contraída, mostrar cada información emergente y enviar un formulario con un error para ver sus mensajes de error.</li><li>Comprobar en cada uno si hay texto que quede cortado, se superponga a otro texto o desaparezca, como en la propia página.</li><li>Donde el texto quede cortado, comprobar si la página ofrece una forma de mostrarlo entero, como un enlace «Leer más» o un botón que amplía el recuadro. Solo cuenta si se puede usar con el teclado y, con el espaciado aún aplicado, muestra el texto completo.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Con el espaciado aplicado, el contenido que se muestra después de hacer algo mantiene todo su texto visible y legible, o el texto cortado se puede mostrar completo con el teclado.</dd><dt>No se supera si</dt><dd>Con el espaciado aplicado, el texto de un menú, un diálogo, una pestaña, una información emergente o un mensaje queda cortado o se superpone, y no se puede mostrar completo de otra forma, lo que incumple WCAG 1.4.12.</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Con el espaciado de 1.4.12 aplicado, el contenido que solo se muestra tras una interacción (menús, diálogos, pestañas, mensajes) conserva todo su texto</span></legend>
+<div class="choices"><label><input type="radio" name="o-25" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-25" value="pass"> Superado</label><label><input type="radio" name="o-25" value="fail"> No superado</label><label><input type="radio" name="o-25" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-25">Notas<span class="vh">: </span><span class="vh">Con el espaciado de 1.4.12 aplicado, el contenido que solo se muestra tras una interacción (menús, diálogos, pestañas, mensajes) conserva todo su texto</span></label>
+<textarea id="notes-25" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+</section>
+<section class="group" aria-labelledby="g-2">
+<h2 id="g-2"><span class="num">2</span> <span>Operable</span></h2>
+<section class="group" aria-labelledby="g-2-1">
+<h3 id="g-2-1"><span class="num">2.1</span> <span>Accesible por teclado</span></h3>
+<article class="item" id="i-2-1-1-keyboard-operable-all-functionality" aria-labelledby="item-2-1-1-keyboard-operable-all-functionality" data-key="2.1.1/keyboard-operable-all-functionality" data-facet="keyboard-operable-all-functionality" data-label="Toda la funcionalidad se puede manejar solo con el teclado" data-requirements="[&quot;2.1.1&quot;]">
+<h4 id="item-2-1-1-keyboard-operable-all-functionality">Toda la funcionalidad se puede manejar solo con el teclado</h4>
+<p class="meta"><span>Para: 2.1.1</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un teclado</span></li></ul>
+<ol class="steps"><li>Desactivar cualquier lector de pantalla. En modo exploración, un lector de pantalla puede activar elementos a los que el teclado solo no llega, lo que oculta los fallos.</li><li>Recargar la página y, sin hacer clic, pulsar Tab repetidamente por toda la página. Anotar cada enlace, botón, campo y otro control por el que se pase.</li><li>Compararlo con lo que se puede pulsar o arrastrar con el puntero, y anotar todo aquello a lo que el teclado nunca llega: un control, una opción de menú, un cuadro desplazable, una parte de un mapa o un widget personalizado.</li><li>Usar cada control con el teclado: Intro o Espacio para activarlo, las teclas de flecha dentro de menús, pestañas, listas y controles deslizantes, y Esc para cerrar lo que se abre.</li><li>En los widgets personalizados, comparar las teclas con las que indican las WAI-ARIA Authoring Practices para ese tipo de widget, como las teclas de flecha en una lista de pestañas. Un widget que solo funciona con teclas poco habituales puede superar este criterio si la página las explica, pero conviene anotarlo como problema de usabilidad.</li><li>Donde algo no se pueda alcanzar o usar con el teclado, comprobar si la página ofrece otra forma de hacer lo mismo solo con el teclado, como los botones anterior y siguiente de un carrusel. Solo cuenta si hace todo lo que puede hacer el puntero.</li><li>Dejar fuera lo que depende de la trayectoria del puntero, como el dibujo a mano alzada.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Todo lo que la página permite hacer con un puntero se puede hacer solo con el teclado, directamente o mediante otra forma que cumple la misma función.</dd><dt>No se supera si</dt><dd>Algo solo se puede hacer con un puntero, sin forma de hacer lo mismo con el teclado, lo que incumple WCAG 2.1.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>iframe-focusable-content</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable</code>, <code>mouse-only-event-handlers</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable</code>, <code>focus-not-removed-by-script</code></p><p class="covers">También evalúa: <code>iframe-tabindex-negative-content-not-focusable</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable-evidence</code>, <code>mouse-only-event-handlers-evidence</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable-evidence</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Toda la funcionalidad se puede manejar solo con el teclado</span></legend>
+<div class="choices"><label><input type="radio" name="o-26" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-26" value="pass"> Superado</label><label><input type="radio" name="o-26" value="fail"> No superado</label><label><input type="radio" name="o-26" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-26">Notas<span class="vh">: </span><span class="vh">Toda la funcionalidad se puede manejar solo con el teclado</span></label>
+<textarea id="notes-26" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-2">
+<h3 id="g-2-2"><span class="num">2.2</span> <span>Tiempo suficiente</span></h3>
+<article class="item" id="i-2-2-1-time-limits-adjustable" aria-labelledby="item-2-2-1-time-limits-adjustable" data-key="2.2.1/time-limits-adjustable" data-facet="time-limits-adjustable" data-label="Cada límite de tiempo se puede desactivar, ajustar o ampliar, salvo que sea en tiempo real, esencial o de más de 20 horas" data-requirements="[&quot;2.2.1&quot;]">
+<h4 id="item-2-2-1-time-limits-adjustable">Cada límite de tiempo se puede desactivar, ajustar o ampliar, salvo que sea en tiempo real, esencial o de más de 20 horas</h4>
+<p class="meta"><span>Para: 2.2.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: solo un navegador</li></ul>
+<ol class="steps"><li>Buscar cualquier cosa de la página que ocurra pasado un tiempo fijo: una sesión que termina, un formulario que caduca, una página que se actualiza o avanza sola, un contenido que desaparece.</li><li>Revisar el código fuente de la página y esperar un rato en ella para encontrar límites que no se anuncian, como un &lt;meta http-equiv=&quot;refresh&quot;&gt; o un cierre de sesión por inactividad.</li><li>En una sesión que termina en el servidor, preguntar al equipo cuánto dura en lugar de suponerlo, y esperar al aviso en ese momento. Comprobar el aviso con un lector de pantalla: debe anunciarse, no solo mostrarse.</li><li>Para cada límite, comprobar que se cumple al menos una de estas condiciones: se puede desactivar antes de alcanzarlo; se puede ajustar a al menos diez veces su duración; o se avisa antes de que termine, se dispone de al menos 20 segundos para ampliarlo con una acción sencilla, como pulsar una tecla, y se puede ampliar al menos diez veces.</li><li>Dejar fuera los límites que forman parte de un evento en tiempo real, como una subasta, los que son esenciales, como un examen cronometrado, y los de más de 20 horas.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada límite de tiempo se puede desactivar, ajustar o ampliar, o es en tiempo real, esencial o de más de 20 horas.</dd><dt>No se supera si</dt><dd>Un límite de tiempo pone fin a una sesión, un formulario o una página sin forma de desactivarlo, ajustarlo ni ampliarlo, lo que incumple WCAG 2.2.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>meta-refresh-timing-absent</code></p><p class="covers">También evalúa: <code>meta-refresh-timing-absent</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Cada límite de tiempo se puede desactivar, ajustar o ampliar, salvo que sea en tiempo real, esencial o de más de 20 horas</span></legend>
+<div class="choices"><label><input type="radio" name="o-27" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-27" value="pass"> Superado</label><label><input type="radio" name="o-27" value="fail"> No superado</label><label><input type="radio" name="o-27" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-27">Notas<span class="vh">: </span><span class="vh">Cada límite de tiempo se puede desactivar, ajustar o ampliar, salvo que sea en tiempo real, esencial o de más de 20 horas</span></label>
+<textarea id="notes-27" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-2-2-auto-moving-content-pausable" aria-labelledby="item-2-2-2-auto-moving-content-pausable" data-key="2.2.2/auto-moving-content-pausable" data-facet="auto-moving-content-pausable" data-label="Las animaciones que empiezan solas y duran más de cinco segundos se pueden poner en pausa, detener u ocultar" data-requirements="[&quot;2.2.2&quot;]">
+<h4 id="item-2-2-2-auto-moving-content-pausable">Las animaciones que empiezan solas y duran más de cinco segundos se pueden poner en pausa, detener u ocultar</h4>
+<p class="meta"><span>Para: 2.2.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un teclado</span></li></ul>
+<ol class="steps"><li>Cargar la página y observar si algo se mueve, parpadea o se desplaza solo: carruseles, texto en movimiento, animaciones, vídeos de fondo.</li><li>Para cada uno que empieza solo, dura más de 5 segundos y se muestra junto a otro contenido, buscar un control para ponerlo en pausa, detenerlo u ocultarlo.</li><li>Comprobar que el control se puede encontrar y usar con el teclado, y que detiene el movimiento en lugar de solo ralentizarlo.</li><li>Dejar fuera el movimiento esencial, como un indicador de progreso mientras algo se carga.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Todo lo que se mueve, parpadea o se desplaza solo durante más de 5 segundos junto a otro contenido se puede poner en pausa, detener u ocultar.</dd><dt>No se supera si</dt><dd>Un contenido se mueve, parpadea o se desplaza solo durante más de 5 segundos junto a otro contenido sin forma de ponerlo en pausa, detenerlo u ocultarlo, lo que incumple WCAG 2.2.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>moving-content-pausable</code>, <code>deprecated-elements-not-used</code></p><p class="covers">También evalúa: <code>deprecated-non-stoppable-elements-absent</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Las animaciones que empiezan solas y duran más de cinco segundos se pueden poner en pausa, detener u ocultar</span></legend>
+<div class="choices"><label><input type="radio" name="o-28" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-28" value="pass"> Superado</label><label><input type="radio" name="o-28" value="fail"> No superado</label><label><input type="radio" name="o-28" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-28">Notas<span class="vh">: </span><span class="vh">Las animaciones que empiezan solas y duran más de cinco segundos se pueden poner en pausa, detener u ocultar</span></label>
+<textarea id="notes-28" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-2-2-auto-updating-content-controllable" aria-labelledby="item-2-2-2-auto-updating-content-controllable" data-key="2.2.2/auto-updating-content-controllable" data-facet="auto-updating-content-controllable" data-label="El contenido que se actualiza solo se puede poner en pausa, detener, ocultar o configurar para que se actualice con menos frecuencia" data-requirements="[&quot;2.2.2&quot;]">
+<h4 id="item-2-2-2-auto-updating-content-controllable">El contenido que se actualiza solo se puede poner en pausa, detener, ocultar o configurar para que se actualice con menos frecuencia</h4>
+<p class="meta"><span>Para: 2.2.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un teclado</span></li></ul>
+<ol class="steps"><li>Observar en la página el contenido que cambia solo: teletipos de noticias, resultados en directo, precios, feeds, temporizadores.</li><li>Para cada uno que empieza solo y se muestra junto a otro contenido, buscar un control para ponerlo en pausa, detenerlo u ocultarlo, o para elegir con qué frecuencia se actualiza.</li><li>Comprobar que el control se puede encontrar y usar con el teclado.</li><li>Dejar fuera las actualizaciones esenciales para la finalidad de la página.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada parte que se actualiza sola junto a otro contenido se puede poner en pausa, detener, ocultar o ralentizar, o sus actualizaciones son esenciales.</dd><dt>No se supera si</dt><dd>Un contenido se actualiza solo junto a otro contenido sin forma de ponerlo en pausa, detenerlo, ocultarlo ni cambiar su frecuencia, lo que incumple WCAG 2.2.2.</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El contenido que se actualiza solo se puede poner en pausa, detener, ocultar o configurar para que se actualice con menos frecuencia</span></legend>
+<div class="choices"><label><input type="radio" name="o-29" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-29" value="pass"> Superado</label><label><input type="radio" name="o-29" value="fail"> No superado</label><label><input type="radio" name="o-29" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-29">Notas<span class="vh">: </span><span class="vh">El contenido que se actualiza solo se puede poner en pausa, detener, ocultar o configurar para que se actualice con menos frecuencia</span></label>
+<textarea id="notes-29" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-3">
+<h3 id="g-2-3"><span class="num">2.3</span> <span>Convulsiones y reacciones físicas</span></h3>
+
+</section>
+<section class="group" aria-labelledby="g-2-4">
+<h3 id="g-2-4"><span class="num">2.4</span> <span>Navegable</span></h3>
+<article class="item" id="i-2-4-1-bypass-blocks-present" aria-labelledby="item-2-4-1-bypass-blocks-present" data-key="2.4.1/bypass-blocks-present" data-facet="bypass-blocks-present" data-label="Los bloques que se repiten en varias páginas se pueden saltar" data-requirements="[&quot;2.4.1&quot;]">
+<h4 id="item-2-4-1-bypass-blocks-present">Los bloques que se repiten en varias páginas se pueden saltar</h4>
+<p class="meta"><span>Para: 2.4.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Un teclado</span>, <span>Un lector de pantalla</span>, <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Cerrar cualquier diálogo o capa superpuesta y anotar los bloques que la página repite de otras páginas del sitio: cabecera, navegación, búsqueda, barras laterales.</li><li>Recargar la página y pulsar Tab una vez: comprobar si aparece un enlace de salto que lleve el foco más allá de esos bloques, hasta el contenido principal, y seguirlo con Intro.</li><li>Comprobar, en el panel Accesibilidad de las herramientas para desarrolladores o en las listas de un lector de pantalla, si el contenido principal es una región de referencia main o empieza con un encabezado fuera de la navegación.</li><li>Donde la página tenga un enlace de salto, comprobar que su destino existe y que el siguiente Tab después de seguirlo entra en el contenido principal.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>La página no repite bloques, o un enlace de salto que funciona, una región de referencia main o los encabezados permiten saltarlos a quienes usan el teclado o un lector de pantalla.</dd><dt>No se supera si</dt><dd>Los bloques repetidos no tienen forma de saltarse, así que quienes usan el teclado o un lector de pantalla deben recorrerlos en cada página, lo que incumple WCAG 2.4.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>bypass-blocks-present</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los bloques que se repiten en varias páginas se pueden saltar</span></legend>
+<div class="choices"><label><input type="radio" name="o-30" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-30" value="pass"> Superado</label><label><input type="radio" name="o-30" value="fail"> No superado</label><label><input type="radio" name="o-30" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-30">Notas<span class="vh">: </span><span class="vh">Los bloques que se repiten en varias páginas se pueden saltar</span></label>
+<textarea id="notes-30" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-2-page-title-descriptive" aria-labelledby="item-2-4-2-page-title-descriptive" data-key="2.4.2/page-title-descriptive" data-facet="page-title-descriptive" data-label="La página tiene un título que dice de qué trata o para qué sirve, y la distingue de las demás páginas del sitio" data-requirements="[&quot;2.4.2&quot;]">
+<h4 id="item-2-4-2-page-title-descriptive">La página tiene un título que dice de qué trata o para qué sirve, y la distingue de las demás páginas del sitio</h4>
+<p class="meta"><span>Para: 2.4.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: solo un navegador</li></ul>
+<ol class="steps"><li>Leer el título de la página en la pestaña del navegador, o en el &lt;title&gt; del panel Elements de las herramientas para desarrolladores.</li><li>Comprobar que dice de qué trata esta página o para qué sirve, como el titular del artículo o el paso de un proceso («Dirección de entrega - Pago - Tienda»).</li><li>Abrir otras dos o tres páginas del sitio y comprobar que sus títulos las distinguen. Poner primero la parte propia de la página, antes del nombre del sitio, es una buena práctica, pero no se exige.</li><li>Donde la página cambie su contenido sin cargar una página nueva, como hace una aplicación de una sola página, comprobar que el título cambia con él.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El título de la página dice de qué trata o para qué sirve y la distingue de las demás páginas.</dd><dt>No se supera si</dt><dd>La página no tiene título, o tiene uno genérico, un nombre de archivo o el mismo que otras páginas, lo que incumple WCAG 2.4.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>page-title-present</code>, <code>page-title-patterns</code></p><p class="covers">También evalúa: <code>page-title-present</code>, <code>page-title-patterns</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">La página tiene un título que dice de qué trata o para qué sirve, y la distingue de las demás páginas del sitio</span></legend>
+<div class="choices"><label><input type="radio" name="o-31" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-31" value="pass"> Superado</label><label><input type="radio" name="o-31" value="fail"> No superado</label><label><input type="radio" name="o-31" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-31">Notas<span class="vh">: </span><span class="vh">La página tiene un título que dice de qué trata o para qué sirve, y la distingue de las demás páginas del sitio</span></label>
+<textarea id="notes-31" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-3-focus-order-preserves-meaning" aria-labelledby="item-2-4-3-focus-order-preserves-meaning" data-key="2.4.3/focus-order-preserves-meaning" data-facet="focus-order-preserves-meaning" data-label="Al mover el foco con Tab y Mayús+Tab se sigue un orden que conserva el significado de la página y permite usarla" data-requirements="[&quot;2.4.3&quot;]">
+<h4 id="item-2-4-3-focus-order-preserves-meaning">Al mover el foco con Tab y Mayús+Tab se sigue un orden que conserva el significado de la página y permite usarla</h4>
+<p class="meta"><span>Para: 2.4.3</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un teclado</span></li></ul>
+<ol class="steps"><li>Recargar la página y pulsar Tab repetidamente hasta que el foco haya recorrido toda la página, observando adónde va.</li><li>Comparar el orden con el orden en que se leería y se usaría la página: los campos de un formulario en el orden de sus etiquetas, por ejemplo, y los pasos de una tarea en su secuencia.</li><li>Volver a recorrer la página con Mayús+Tab y comprobar que el foco vuelve por el mismo camino en sentido inverso.</li><li>Donde el orden difiera del orden de lectura, comprobar si eso cambia el significado de algo o impide usarlo, como llegar al botón Enviar de un formulario antes que a sus campos.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El foco recorre la página en un orden que conserva su significado y permite usar todas sus partes, aunque difiera ligeramente del orden visual.</dd><dt>No se supera si</dt><dd>El foco salta por la página de forma que cambia su significado o su uso, como campos que se rellenan fuera de orden, lo que incumple WCAG 2.4.3.</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Al mover el foco con Tab y Mayús+Tab se sigue un orden que conserva el significado de la página y permite usarla</span></legend>
+<div class="choices"><label><input type="radio" name="o-32" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-32" value="pass"> Superado</label><label><input type="radio" name="o-32" value="fail"> No superado</label><label><input type="radio" name="o-32" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-32">Notas<span class="vh">: </span><span class="vh">Al mover el foco con Tab y Mayús+Tab se sigue un orden que conserva el significado de la página y permite usarla</span></label>
+<textarea id="notes-32" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-3-focus-order-opened-content" aria-labelledby="item-2-4-3-focus-order-opened-content" data-key="2.4.3/focus-order-opened-content" data-facet="focus-order-opened-content" data-label="El foco entra en un diálogo, un menú o una sección que se abre, se queda en un diálogo mientras este cubre la página y vuelve cuando se cierra" data-requirements="[&quot;2.4.3&quot;]">
+<h4 id="item-2-4-3-focus-order-opened-content">El foco entra en un diálogo, un menú o una sección que se abre, se queda en un diálogo mientras este cubre la página y vuelve cuando se cierra</h4>
+<p class="meta"><span>Para: 2.4.3</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un teclado</span></li></ul>
+<ol class="steps"><li>Con el teclado, abrir cada diálogo, menú, lista desplegable y sección contraída que tenga la página, pulsando Intro o Espacio en el control que lo abre.</li><li>Pulsar Tab una vez y comprobar que el foco entra en lo que se ha abierto, o ya está en ello, en lugar de ir a algo que queda detrás o lejos.</li><li>En un diálogo que cubre la página, pulsar Tab hasta haber recorrido todos sus controles y comprobar que el foco se queda en el diálogo en lugar de ir a la página que hay detrás.</li><li>Cerrarlo con Esc o con su botón de cierre y comprobar que el foco vuelve al control que lo abrió, o al siguiente lugar lógico.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El foco entra en lo que se abre, se queda en un diálogo mientras este cubre la página y vuelve a donde estaba cuando se cierra.</dd><dt>No se supera si</dt><dd>El foco se queda detrás de lo que se abre, sale de un diálogo hacia la página que hay detrás o acaba al principio de la página al cerrarse, así que el orden ya no sigue lo que hay en pantalla, lo que incumple WCAG 2.4.3.</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El foco entra en un diálogo, un menú o una sección que se abre, se queda en un diálogo mientras este cubre la página y vuelve cuando se cierra</span></legend>
+<div class="choices"><label><input type="radio" name="o-33" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-33" value="pass"> Superado</label><label><input type="radio" name="o-33" value="fail"> No superado</label><label><input type="radio" name="o-33" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-33">Notas<span class="vh">: </span><span class="vh">El foco entra en un diálogo, un menú o una sección que se abre, se queda en un diálogo mientras este cubre la página y vuelve cuando se cierra</span></label>
+<textarea id="notes-33" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-3-focus-order-no-hidden-stops" aria-labelledby="item-2-4-3-focus-order-no-hidden-stops" data-key="2.4.3/focus-order-no-hidden-stops" data-facet="focus-order-no-hidden-stops" data-label="El foco no se detiene en contenido cerrado, oculto o fuera de la pantalla" data-requirements="[&quot;2.4.3&quot;]">
+<h4 id="item-2-4-3-focus-order-no-hidden-stops">El foco no se detiene en contenido cerrado, oculto o fuera de la pantalla</h4>
+<p class="meta"><span>Para: 2.4.3</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un teclado</span>, <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Cerrar cualquier menú o diálogo, recargar la página y recorrerla entera con Tab, observando dónde está el foco.</li><li>Anotar cada vez que el foco parezca desaparecer durante una o más pulsaciones.</li><li>En cada una de esas paradas, escribir document.activeElement en la consola de las herramientas para desarrolladores y comprobar si el elemento que muestra está en un menú cerrado, en un panel oculto o fuera de la pantalla.</li><li>Dejar fuera un enlace de salto que aparece al recibir el foco: se muestra una vez que tiene el foco.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada parada de tabulación está en algo visible, o en algo que aparece al recibir el foco, como un enlace de salto.</dd><dt>No se supera si</dt><dd>El foco se detiene en controles de menús cerrados, de paneles ocultos o fuera de la pantalla, así que el orden pasa por cosas que no están a la vista, lo que incumple WCAG 2.4.3.</dd></dl>
+
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El foco no se detiene en contenido cerrado, oculto o fuera de la pantalla</span></legend>
+<div class="choices"><label><input type="radio" name="o-34" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-34" value="pass"> Superado</label><label><input type="radio" name="o-34" value="fail"> No superado</label><label><input type="radio" name="o-34" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-34">Notas<span class="vh">: </span><span class="vh">El foco no se detiene en contenido cerrado, oculto o fuera de la pantalla</span></label>
+<textarea id="notes-34" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-4-link-purpose-clear" aria-labelledby="item-2-4-4-link-purpose-clear" data-key="2.4.4/link-purpose-clear" data-facet="link-purpose-clear" data-label="El propósito de cada enlace se puede saber por su texto, o por su texto junto con la frase, el párrafo, el elemento de lista o la celda de tabla en que está" data-requirements="[&quot;2.4.4&quot;]">
+<h4 id="item-2-4-4-link-purpose-clear">El propósito de cada enlace se puede saber por su texto, o por su texto junto con la frase, el párrafo, el elemento de lista o la celda de tabla en que está</h4>
+<p class="meta"><span>Para: 2.4.4</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Enumerar los enlaces de la página con la lista de enlaces de un lector de pantalla, o recorrerlos con Tab y leer el nombre de cada uno en el panel Accesibilidad de las herramientas para desarrolladores.</li><li>Anotar los enlaces cuyo nombre no dice adónde llevan ni qué hacen: nombres vacíos, «haga clic aquí», «leer más», «PDF», el nombre de archivo de un icono.</li><li>Para cada uno, leer la frase, el párrafo, el elemento de lista o la celda de tabla en que está el enlace, o el encabezado de tabla de su celda, y comprobar si eso deja claro su propósito.</li><li>El contexto que cuenta es la frase, el párrafo, el elemento de lista o la celda de tabla del enlace, las celdas de encabezado de su celda, el encabezado bajo el que está el enlace y el texto vinculado al enlace con aria-describedby. El texto que solo está cerca del enlace, como un párrafo de otra columna, no cuenta.</li><li>Comprobar que los enlaces con el mismo nombre que llevan a sitios distintos se distinguen por su contexto.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El propósito de cada enlace queda claro por su nombre, o por su nombre junto con la frase, el párrafo, el elemento de lista o la celda de tabla en que está.</dd><dt>No se supera si</dt><dd>Un enlace no tiene nombre, o tiene un nombre como «leer más» cuyo propósito no explica nada de lo que lo rodea, lo que incumple WCAG 2.4.4.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>link-name-present</code>, <code>link-name-quality</code></p><p class="covers">También evalúa: <code>link-name-present</code>, <code>link-text-descriptive-evidence</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El propósito de cada enlace se puede saber por su texto, o por su texto junto con la frase, el párrafo, el elemento de lista o la celda de tabla en que está</span></legend>
+<div class="choices"><label><input type="radio" name="o-35" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-35" value="pass"> Superado</label><label><input type="radio" name="o-35" value="fail"> No superado</label><label><input type="radio" name="o-35" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-35">Notas<span class="vh">: </span><span class="vh">El propósito de cada enlace se puede saber por su texto, o por su texto junto con la frase, el párrafo, el elemento de lista o la celda de tabla en que está</span></label>
+<textarea id="notes-35" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-6-heading-text-descriptive-evidence" aria-labelledby="item-2-4-6-heading-text-descriptive-evidence" data-key="2.4.6/heading-text-descriptive-evidence" data-facet="heading-text-descriptive-evidence" data-label="Los encabezados describen el contenido que les sigue" data-requirements="[&quot;2.4.6&quot;]">
+<h4 id="item-2-4-6-heading-text-descriptive-evidence">Los encabezados describen el contenido que les sigue</h4>
+<p class="meta"><span>Para: 2.4.6</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Enumerar los encabezados de la página con la lista de encabezados de un lector de pantalla, una extensión del navegador como HeadingsMap o el árbol de accesibilidad de las herramientas para desarrolladores.</li><li>Leer cada encabezado y el contenido que hay debajo.</li><li>Comprobar que cada encabezado dice de qué trata ese contenido, y que no es un texto provisional, un nombre de archivo ni una palabra que podría encabezar cualquier cosa.</li><li>Comprobar que los encabezados contiguos del mismo nivel se pueden distinguir.</li><li>Este criterio solo pide que los encabezados y las etiquetas que existen describan su contenido. La falta de un encabezado o una etiqueta se comprueba en 1.3.1 o 3.3.2, no aquí.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada encabezado dice de qué trata el contenido que hay debajo.</dd><dt>No se supera si</dt><dd>Un encabezado no describe el contenido que hay debajo, como «Sección 1» o un nombre de archivo, lo que incumple WCAG 2.4.6.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>heading-quality</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los encabezados describen el contenido que les sigue</span></legend>
+<div class="choices"><label><input type="radio" name="o-36" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-36" value="pass"> Superado</label><label><input type="radio" name="o-36" value="fail"> No superado</label><label><input type="radio" name="o-36" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-36">Notas<span class="vh">: </span><span class="vh">Los encabezados describen el contenido que les sigue</span></label>
+<textarea id="notes-36" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-6-form-control-label-descriptive-evidence" aria-labelledby="item-2-4-6-form-control-label-descriptive-evidence" data-key="2.4.6/form-control-label-descriptive-evidence" data-facet="form-control-label-descriptive-evidence" data-label="Las etiquetas describen sus campos, y los campos con la misma etiqueta se pueden distinguir" data-requirements="[&quot;2.4.6&quot;]">
+<h4 id="item-2-4-6-form-control-label-descriptive-evidence">Las etiquetas describen sus campos, y los campos con la misma etiqueta se pueden distinguir</h4>
+<p class="meta"><span>Para: 2.4.6</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: solo un navegador</li></ul>
+<ol class="steps"><li>Leer la etiqueta visible de cada campo y control de la página.</li><li>Comprobar que cada una dice qué introducir o elegir, como «Correo electrónico» en lugar de «Campo 1» o «Texto».</li><li>Donde varios campos compartan etiqueta, como «Nombre» dos veces, comprobar que la página deja claro cuál es cuál, mediante un encabezado de grupo o el resto de la etiqueta.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada etiqueta dice para qué sirve su campo o su control, y los campos con la misma etiqueta se distinguen.</dd><dt>No se supera si</dt><dd>Una etiqueta no dice para qué sirve su campo, o varios campos tienen la misma etiqueta sin nada que los distinga, lo que incumple WCAG 2.4.6.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>form-control-label-quality</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Las etiquetas describen sus campos, y los campos con la misma etiqueta se pueden distinguir</span></legend>
+<div class="choices"><label><input type="radio" name="o-37" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-37" value="pass"> Superado</label><label><input type="radio" name="o-37" value="fail"> No superado</label><label><input type="radio" name="o-37" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-37">Notas<span class="vh">: </span><span class="vh">Las etiquetas describen sus campos, y los campos con la misma etiqueta se pueden distinguir</span></label>
+<textarea id="notes-37" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-7-focus-indicator-visible" aria-labelledby="item-2-4-7-focus-indicator-visible" data-key="2.4.7/focus-indicator-visible" data-facet="focus-indicator-visible" data-label="Cada elemento que recibe el foco del teclado muestra que lo tiene" data-requirements="[&quot;2.4.7&quot;]">
+<h4 id="item-2-4-7-focus-indicator-visible">Cada elemento que recibe el foco del teclado muestra que lo tiene</h4>
+<p class="meta"><span>Para: 2.4.7</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Un teclado</span></li></ul>
+<ol class="steps"><li>Recargar la página y recorrerla entera con Tab, despacio.</li><li>En cada parada, comprobar que se ve qué elemento tiene el foco: un contorno, un cambio de color, un subrayado u otro cambio visible.</li><li>Mover el foco con el teclado, no con el ratón. Los navegadores muestran el foco de un elemento en el que se ha hecho clic con el ratón de forma distinta que el de uno al que se ha llegado con Tab, así que una prueba con el ratón no demuestra nada aquí.</li><li>Anotar cada parada en la que no se distingue dónde está el foco, y cada vez que el foco parezca desaparecer durante una o más pulsaciones.</li><li>Hacer lo mismo dentro de los menús, los diálogos y los widgets que usan las teclas de flecha.</li><li>Activar un tema de contraste en Windows y repetir algunas paradas. Un estilo de foco dibujado solo con box-shadow o con un color de fondo desaparece en ese modo. WCAG no exige que se muestre ahí, pero conviene anotarlo como problema de buena práctica.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>En cada parada se ve qué elemento tiene el foco.</dd><dt>No se supera si</dt><dd>El foco llega a un elemento sin ningún cambio visible, o cae en algo oculto o fuera de la pantalla, así que quienes usan el teclado pierden la noción de dónde están, lo que incumple WCAG 2.4.7.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>css-hidden-focus</code>, <code>css-focus-indicator-suppressed</code>, <code>focus-not-removed-by-script</code></p><p class="covers">También evalúa: <code>css-hidden-focusable</code>, <code>focus-indicator-not-suppressed</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Cada elemento que recibe el foco del teclado muestra que lo tiene</span></legend>
+<div class="choices"><label><input type="radio" name="o-38" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-38" value="pass"> Superado</label><label><input type="radio" name="o-38" value="fail"> No superado</label><label><input type="radio" name="o-38" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-38">Notas<span class="vh">: </span><span class="vh">Cada elemento que recibe el foco del teclado muestra que lo tiene</span></label>
+<textarea id="notes-38" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-5">
+<h3 id="g-2-5"><span class="num">2.5</span> <span>Modalidades de entrada</span></h3>
+<article class="item" id="i-2-5-3-label-in-name" aria-labelledby="item-2-5-3-label-in-name" data-key="2.5.3/label-in-name" data-facet="label-in-name" data-label="El nombre de un control contiene el texto de su etiqueta visible" data-requirements="[&quot;2.5.3&quot;]">
+<h4 id="item-2-5-3-label-in-name">El nombre de un control contiene el texto de su etiqueta visible</h4>
+<p class="meta"><span>Para: 2.5.3</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Localizar cada control con una etiqueta visible formada por texto: botones, enlaces, campos, pestañas, opciones de menú y controles etiquetados por un texto junto a ellos.</li><li>Para cada uno, leer su nombre en el panel Accesibilidad de las herramientas para desarrolladores.</li><li>Comprobar que el nombre contiene las palabras de la etiqueta visible, en el mismo orden e idealmente al principio (un botón que muestra «Enviar» con el nombre «Enviar mensaje», no «Mandar»).</li><li>Al comparar, no tener en cuenta las diferencias de mayúsculas ni de puntuación. El texto que se muestra como imagen también cuenta como etiqueta visible.</li><li>Dejar fuera una etiqueta formada solo por símbolos, como «×» o «&gt;»: el nombre debería decir qué hace el control.</li><li>Dejar fuera los controles sin texto visible, como un botón que solo tiene un icono: no tienen una etiqueta visible con la que coincidir.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El nombre de cada control contiene las palabras de su etiqueta visible, en orden.</dd><dt>No se supera si</dt><dd>El nombre de un control no contiene su etiqueta visible, así que quien usa la entrada por voz no puede activarlo diciendo lo que ve, lo que incumple WCAG 2.5.3.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>label-in-name</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El nombre de un control contiene el texto de su etiqueta visible</span></legend>
+<div class="choices"><label><input type="radio" name="o-39" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-39" value="pass"> Superado</label><label><input type="radio" name="o-39" value="fail"> No superado</label><label><input type="radio" name="o-39" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-39">Notas<span class="vh">: </span><span class="vh">El nombre de un control contiene el texto de su etiqueta visible</span></label>
+<textarea id="notes-39" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-5-8-target-size-minimum-pointer" aria-labelledby="item-2-5-8-target-size-minimum-pointer" data-key="2.5.8/target-size-minimum-pointer" data-facet="target-size-minimum-pointer" data-label="Los objetivos miden al menos 24 por 24 píxeles CSS, o están suficientemente separados" data-requirements="[&quot;2.5.8&quot;]">
+<h4 id="item-2-5-8-target-size-minimum-pointer">Los objetivos miden al menos 24 por 24 píxeles CSS, o están suficientemente separados</h4>
+<p class="meta"><span>Para: 2.5.8</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Buscar controles pequeños: iconos, botones de cierre, paginación, enlaces en fila, casillas de verificación pequeñas.</li><li>Inspeccionar cada uno y leer en el modelo de caja de las herramientas para desarrolladores el tamaño de la zona que responde al puntero, que puede ser mayor que el icono visible. Comprobar que mide al menos 24 por 24 píxeles CSS.</li><li>Donde sea menor, comprobar si un círculo de 24 píxeles centrado en él tocaría otro objetivo o el círculo de otro objetivo pequeño.</li><li>Dejar fuera los enlaces dentro de una frase o un párrafo, los controles que dibuja el navegador sin estilo, los controles con un equivalente de tamaño suficiente en otra parte de la página y los objetivos cuyo tamaño es esencial, como los marcadores de un mapa.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada objetivo mide al menos 24 por 24 píxeles CSS, o está suficientemente separado de los demás, o es una de las excepciones.</dd><dt>No se supera si</dt><dd>Un objetivo de menos de 24 por 24 píxeles CSS está tan cerca de otro que sus círculos de 24 píxeles se superponen, y no se le aplica ninguna excepción, lo que incumple WCAG 2.5.8.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>target-size-minimum</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los objetivos miden al menos 24 por 24 píxeles CSS, o están suficientemente separados</span></legend>
+<div class="choices"><label><input type="radio" name="o-40" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-40" value="pass"> Superado</label><label><input type="radio" name="o-40" value="fail"> No superado</label><label><input type="radio" name="o-40" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-40">Notas<span class="vh">: </span><span class="vh">Los objetivos miden al menos 24 por 24 píxeles CSS, o están suficientemente separados</span></label>
+<textarea id="notes-40" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+</section>
+<section class="group" aria-labelledby="g-3">
+<h2 id="g-3"><span class="num">3</span> <span>Comprensible</span></h2>
+<section class="group" aria-labelledby="g-3-1">
+<h3 id="g-3-1"><span class="num">3.1</span> <span>Legible</span></h3>
+<article class="item" id="i-3-1-1-page-language-correct" aria-labelledby="item-3-1-1-page-language-correct" data-key="3.1.1/page-language-correct" data-facet="page-language-correct" data-label="El idioma principal de la página se indica en su marcado y es el correcto" data-requirements="[&quot;3.1.1&quot;]">
+<h4 id="item-3-1-1-page-language-correct">El idioma principal de la página se indica en su marcado y es el correcto</h4>
+<p class="meta"><span>Para: 3.1.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Leer el atributo lang del elemento &lt;html&gt; en el panel Elements de las herramientas para desarrolladores.</li><li>Comprobar que es un código de idioma (en, fr, pt-BR) y que es el idioma en que está la mayor parte del texto de la página.</li><li>Donde &lt;html&gt; tenga también xml:lang, comprobar que ambos indican el mismo idioma.</li><li>En una aplicación de una sola página, cambiar el idioma de la interfaz y comprobar que lang cambia con él. Un lector de pantalla solo cambia de voz si tiene instalada una para ese idioma, así que conviene juzgar por el marcado, no solo por lo que se oye.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El lang del elemento &lt;html&gt; indica el idioma en que está la mayor parte de la página.</dd><dt>No se supera si</dt><dd>La página no tiene lang, o tiene uno erróneo o no válido, así que los lectores de pantalla la leen con una voz y una pronunciación equivocadas, lo que incumple WCAG 3.1.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p><p class="covers">También evalúa: <code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El idioma principal de la página se indica en su marcado y es el correcto</span></legend>
+<div class="choices"><label><input type="radio" name="o-41" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-41" value="pass"> Superado</label><label><input type="radio" name="o-41" value="fail"> No superado</label><label><input type="radio" name="o-41" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-41">Notas<span class="vh">: </span><span class="vh">El idioma principal de la página se indica en su marcado y es el correcto</span></label>
+<textarea id="notes-41" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-3-1-2-parts-language-marked" aria-labelledby="item-3-1-2-parts-language-marked" data-key="3.1.2/parts-language-marked" data-facet="parts-language-marked" data-label="Los pasajes y las frases en un idioma distinto del de la página están marcados con su propio idioma" data-requirements="[&quot;3.1.2&quot;]">
+<h4 id="item-3-1-2-parts-language-marked">Los pasajes y las frases en un idioma distinto del de la página están marcados con su propio idioma</h4>
+<p class="meta"><span>Para: 3.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Leer la página entera y anotar los pasajes, citas, frases y nombres de cosas escritos en un idioma distinto del de la página, incluidas las opciones de un selector de idioma.</li><li>Para cada uno, comprobar en el panel Elements de las herramientas para desarrolladores que él, o un elemento que lo contiene, tiene un atributo lang con el código de ese idioma.</li><li>Dejar fuera los nombres propios, los términos técnicos y las palabras que se han incorporado al idioma de la página, como «café» en inglés.</li><li>Escuchar algunos con un lector de pantalla para comprobar que cambia de pronunciación.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada pasaje o frase en otro idioma está marcado con un atributo lang válido para ese idioma.</dd><dt>No se supera si</dt><dd>Un pasaje o una frase en otro idioma no está marcado con su idioma, o lo está con un código erróneo, así que se lee con una pronunciación equivocada, lo que incumple WCAG 3.1.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>valid-lang</code></p><p class="covers">También evalúa: <code>element-lang-valid</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los pasajes y las frases en un idioma distinto del de la página están marcados con su propio idioma</span></legend>
+<div class="choices"><label><input type="radio" name="o-42" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-42" value="pass"> Superado</label><label><input type="radio" name="o-42" value="fail"> No superado</label><label><input type="radio" name="o-42" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-42">Notas<span class="vh">: </span><span class="vh">Los pasajes y las frases en un idioma distinto del de la página están marcados con su propio idioma</span></label>
+<textarea id="notes-42" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-3-2">
+<h3 id="g-3-2"><span class="num">3.2</span> <span>Predecible</span></h3>
+
+</section>
+<section class="group" aria-labelledby="g-3-3">
+<h3 id="g-3-3"><span class="num">3.3</span> <span>Entrada de datos asistida</span></h3>
+<article class="item" id="i-3-3-1-errors-identified" aria-labelledby="item-3-3-1-errors-identified" data-key="3.3.1/errors-identified" data-facet="errors-identified" data-label="Un error de entrada que detecta la página se muestra en un texto que dice qué campo es erróneo y qué está mal" data-requirements="[&quot;3.3.1&quot;]">
+<h4 id="item-3-3-1-errors-identified">Un error de entrada que detecta la página se muestra en un texto que dice qué campo es erróneo y qué está mal</h4>
+<p class="meta"><span>Para: 3.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Un teclado</span>, <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Localizar cada formulario de la página y enviarlo vacío, y luego con valores erróneos: un correo electrónico mal formado, letras en un campo numérico, una fecha pasada.</li><li>Comprobar que cada error que detecta la página se muestra en texto, no solo con color o con un icono, junto al campo o en una lista al principio.</li><li>Comprobar que el texto dice qué campo es erróneo y qué tiene de malo.</li><li>Los mensajes de validación del propio navegador cuentan como texto, pero su redacción y el tiempo que permanecen en pantalla varían entre navegadores. Comprobarlos en cada navegador con el que se pruebe.</li><li>Comprobar con un lector de pantalla que el error se anuncia o se alcanza con facilidad, y que cada campo erróneo está marcado como no válido.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada error de entrada que detecta la página se muestra en un texto que nombra el campo y el problema.</dd><dt>No se supera si</dt><dd>Un error de entrada solo se muestra con color o con un icono, no se muestra en absoluto o se muestra sin decir qué campo es erróneo, lo que incumple WCAG 3.3.1.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>invalid-field-error-message</code></p><p class="covers">También evalúa: <code>invalid-field-error-message</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Un error de entrada que detecta la página se muestra en un texto que dice qué campo es erróneo y qué está mal</span></legend>
+<div class="choices"><label><input type="radio" name="o-43" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-43" value="pass"> Superado</label><label><input type="radio" name="o-43" value="fail"> No superado</label><label><input type="radio" name="o-43" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-43">Notas<span class="vh">: </span><span class="vh">Un error de entrada que detecta la página se muestra en un texto que dice qué campo es erróneo y qué está mal</span></label>
+<textarea id="notes-43" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-3-3-2-labels-instructions-provided" aria-labelledby="item-3-3-2-labels-instructions-provided" data-key="3.3.2/labels-instructions-provided" data-facet="labels-instructions-provided" data-label="Los campos que piden datos tienen una etiqueta visible, e instrucciones donde los datos las necesitan" data-requirements="[&quot;3.3.2&quot;]">
+<h4 id="item-3-3-2-labels-instructions-provided">Los campos que piden datos tienen una etiqueta visible, e instrucciones donde los datos las necesitan</h4>
+<p class="meta"><span>Para: 3.3.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>Localizar cada campo y cada control de la página que pide datos.</li><li>Comprobar que cada uno tiene una etiqueta que se ve sin pasar el puntero por encima ni escribir: no solo el texto del atributo placeholder, que desaparece al escribir, ni un title que aparece al pasar el puntero.</li><li>Donde los datos deban seguir unas reglas, como un formato de fecha, los requisitos de una contraseña o qué campos son obligatorios, comprobar que la página lo indica antes de que el usuario los envíe.</li><li>Este criterio solo pide que se muestren etiquetas e instrucciones. Si una etiqueta está vinculada a su campo en el marcado se comprueba en 1.3.1 y 4.1.2.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada campo tiene una etiqueta visible, y la página da las instrucciones que necesitan los datos antes de enviarlos.</dd><dt>No se supera si</dt><dd>Un campo no tiene etiqueta visible, solo un atributo placeholder o un title que aparece al pasar el puntero, o las reglas de los datos solo se indican después de un error, lo que incumple WCAG 3.3.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>form-control-programmatic-label-present</code>, <code>form-control-single-label</code>, <code>form-control-programmatic-label-quality</code></p><p class="covers">También evalúa: <code>form-control-labels-or-instructions-present</code>, <code>form-control-single-label</code>, <code>form-control-visible-label-quality</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los campos que piden datos tienen una etiqueta visible, e instrucciones donde los datos las necesitan</span></legend>
+<div class="choices"><label><input type="radio" name="o-44" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-44" value="pass"> Superado</label><label><input type="radio" name="o-44" value="fail"> No superado</label><label><input type="radio" name="o-44" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-44">Notas<span class="vh">: </span><span class="vh">Los campos que piden datos tienen una etiqueta visible, e instrucciones donde los datos las necesitan</span></label>
+<textarea id="notes-44" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-3-3-8-authentication-no-cognitive-test" aria-labelledby="item-3-3-8-authentication-no-cognitive-test" data-key="3.3.8/authentication-no-cognitive-test" data-facet="authentication-no-cognitive-test" data-label="Iniciar sesión no exige recordar, transcribir ni resolver nada, salvo que se ofrezca una forma de evitarlo" data-requirements="[&quot;3.3.8&quot;]">
+<h4 id="item-3-3-8-authentication-no-cognitive-test">Iniciar sesión no exige recordar, transcribir ni resolver nada, salvo que se ofrezca una forma de evitarlo</h4>
+<p class="meta"><span>Para: 3.3.8</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: solo un navegador</li></ul>
+<ol class="steps"><li>Recorrer cada forma que ofrece el sitio para iniciar sesión o verificar la identidad, con una cuenta de prueba.</li><li>Anotar cada paso que pida recordar algo (una contraseña), transcribirlo (un código de otro dispositivo) o resolver algo (un rompecabezas, un cálculo, elegir imágenes).</li><li>En una contraseña o un código, comprobar que se puede pegar y que un gestor de contraseñas puede rellenarlo, para no tener que recordarlo ni volver a escribirlo.</li><li>Comprobar que un gestor de contraseñas rellena realmente los campos: los campos de usuario y contraseña necesitan autocomplete=&quot;username&quot; y autocomplete=&quot;current-password&quot; (o new-password), y un campo de código de un solo uso funciona mejor con autocomplete=&quot;one-time-code&quot;.</li><li>Donde un código esté dividido en una casilla por dígito, pegar el código completo en la primera casilla y comprobar que las rellena todas. Las casillas que bloquean el pegado, o que solo admiten un carácter cada una, no se superan.</li><li>En otras pruebas, comprobar que se ofrece otro método, o que la prueba solo pide reconocer objetos o algo que el usuario dio al sitio.</li><li>Contar un CAPTCHA que se muestra durante el inicio de sesión como parte del inicio de sesión. Otros métodos que no requieren ninguna prueba cognitiva, como una llave de acceso, un enlace de inicio de sesión enviado por correo electrónico o el inicio de sesión mediante un tercero, son alternativas válidas.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada paso de inicio de sesión que pide recordar, transcribir o resolver algo permite pegar y usar gestores de contraseñas, u ofrece otra forma, o solo pide reconocer objetos o contenido propio del usuario.</dd><dt>No se supera si</dt><dd>Iniciar sesión exige recordar, transcribir o resolver algo sin forma de evitarlo, como un campo de código que bloquea el pegado, lo que incumple WCAG 3.3.8.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>password-paste-enabled</code></p><p class="covers">También evalúa: <code>authentication-paste-not-blocked</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Iniciar sesión no exige recordar, transcribir ni resolver nada, salvo que se ofrezca una forma de evitarlo</span></legend>
+<div class="choices"><label><input type="radio" name="o-45" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-45" value="pass"> Superado</label><label><input type="radio" name="o-45" value="fail"> No superado</label><label><input type="radio" name="o-45" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-45">Notas<span class="vh">: </span><span class="vh">Iniciar sesión no exige recordar, transcribir ni resolver nada, salvo que se ofrezca una forma de evitarlo</span></label>
+<textarea id="notes-45" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+</section>
+<section class="group" aria-labelledby="g-4">
+<h2 id="g-4"><span class="num">4</span> <span>Robusto</span></h2>
+<section class="group" aria-labelledby="g-4-1">
+<h3 id="g-4-1"><span class="num">4.1</span> <span>Compatible</span></h3>
+<article class="item" id="i-4-1-2-components-named" aria-labelledby="item-4-1-2-components-named" data-key="4.1.2/components-named" data-facet="components-named" data-label="Cada enlace, control, marco y diálogo tiene un nombre que dice para qué sirve" data-requirements="[&quot;4.1.2&quot;]">
+<h4 id="item-4-1-2-components-named">Cada enlace, control, marco y diálogo tiene un nombre que dice para qué sirve</h4>
+<p class="meta"><span>Para: 4.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Recorrer cada enlace, botón, campo, marco y control personalizado de la página, pulsando Tab y, dentro de los widgets, con las teclas de flecha.</li><li>Para cada uno, leer el nombre en el panel Accesibilidad de las herramientas para desarrolladores, o escuchar lo que dice un lector de pantalla.</li><li>Comprobar los nombres con dos combinaciones de navegador y lector de pantalla. Los nombres que se obtienen de aria-labelledby, de un label que envuelve el control o de content en CSS pueden variar entre ellas.</li><li>Comprobar que cada uno tiene un nombre que dice para qué sirve, incluidos los botones que solo tienen un icono, los marcos («Reproductor de vídeo», «Mapa») y los diálogos.</li><li>Comprobar que los marcos con el mismo nombre muestran lo mismo, y que los nombres dados solo para braille tienen un equivalente hablado.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Cada enlace, control, marco y diálogo tiene un nombre que dice para qué sirve.</dd><dt>No se supera si</dt><dd>Un enlace, un control, un marco o un diálogo no tiene nombre, o tiene uno que no dice para qué sirve, así que las tecnologías de apoyo solo anuncian su rol, lo que incumple WCAG 4.1.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>form-control-programmatic-label-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-alt-present</code>, <code>binary-control-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>iframe-title-unique</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p><p class="covers">También evalúa: <code>form-control-name-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-name-present</code>, <code>checkbox-name-present</code>, <code>radio-name-present</code>, <code>switch-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Cada enlace, control, marco y diálogo tiene un nombre que dice para qué sirve</span></legend>
+<div class="choices"><label><input type="radio" name="o-46" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-46" value="pass"> Superado</label><label><input type="radio" name="o-46" value="fail"> No superado</label><label><input type="radio" name="o-46" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-46">Notas<span class="vh">: </span><span class="vh">Cada enlace, control, marco y diálogo tiene un nombre que dice para qué sirve</span></label>
+<textarea id="notes-46" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-4-1-2-roles-match-behavior" aria-labelledby="item-4-1-2-roles-match-behavior" data-key="4.1.2/roles-match-behavior" data-facet="roles-match-behavior" data-label="El rol de cada control dice lo que hace, y los controles no están anidados unos dentro de otros" data-requirements="[&quot;4.1.2&quot;]">
+<h4 id="item-4-1-2-roles-match-behavior">El rol de cada control dice lo que hace, y los controles no están anidados unos dentro de otros</h4>
+<p class="meta"><span>Para: 4.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Para cada control de la página, anotar lo que hace al usarlo: abre una página (un enlace), actúa sobre la página (un botón), alterna un estado (una casilla de verificación o un interruptor), abre una lista (un menú o un cuadro combinado).</li><li>Leer su rol en el panel Accesibilidad de las herramientas para desarrolladores, o escuchar un lector de pantalla, y comprobar que el rol corresponde a lo que hace.</li><li>Prestar atención a los controles personalizados hechos con div y span, a los enlaces usados como botones y a los botones usados como enlaces.</li><li>Comprobar que ningún control contiene otro, como un botón dentro de un enlace, y que los controles cuyos hijos son presentacionales, como una pestaña o un botón, no contienen nada enfocable.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El rol de cada control dice lo que hace, y ningún control está anidado dentro de otro.</dd><dt>No se supera si</dt><dd>Un control no tiene rol, tiene uno erróneo (un div en el que se puede hacer clic sin rol, un enlace que actúa como botón) o contiene otro control, lo que incumple WCAG 4.1.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>aria-roles-valid</code>, <code>aria-deprecated-role</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p><p class="covers">También evalúa: <code>aria-role-valid</code>, <code>aria-role-not-deprecated</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El rol de cada control dice lo que hace, y los controles no están anidados unos dentro de otros</span></legend>
+<div class="choices"><label><input type="radio" name="o-47" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-47" value="pass"> Superado</label><label><input type="radio" name="o-47" value="fail"> No superado</label><label><input type="radio" name="o-47" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-47">Notas<span class="vh">: </span><span class="vh">El rol de cada control dice lo que hace, y los controles no están anidados unos dentro de otros</span></label>
+<textarea id="notes-47" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-4-1-2-states-values-exposed" aria-labelledby="item-4-1-2-states-values-exposed" data-key="4.1.2/states-values-exposed" data-facet="states-values-exposed" data-label="El estado y el valor de cada control se exponen y cambian con lo que hay en pantalla" data-requirements="[&quot;4.1.2&quot;]">
+<h4 id="item-4-1-2-states-values-exposed">El estado y el valor de cada control se exponen y cambian con lo que hay en pantalla</h4>
+<p class="meta"><span>Para: 4.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span>, <span>Un teclado</span></li></ul>
+<ol class="steps"><li>Localizar los controles que tienen un estado o un valor: casillas de verificación, interruptores, botones de opción, secciones y menús desplegables, pestañas, controles deslizantes, elementos seleccionados, botones pulsados.</li><li>Leer el estado y el valor de cada uno en el panel Accesibilidad de las herramientas para desarrolladores, o escucharlos con un lector de pantalla: marcado, expandido, seleccionado, pulsado, el elemento actual (aria-current) y el valor actual de un control deslizante o un control numérico.</li><li>Cambiar cada uno con el teclado y comprobar que el estado o el valor que se lee cambia con lo que se ve.</li><li>En un control desplegable, comprobar que indica expandido solo mientras se muestra lo que abre.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>El estado y el valor de cada control se exponen y cambian con lo que hay en pantalla.</dd><dt>No se supera si</dt><dd>El estado o el valor de un control no se expone, o no cambia cuando cambia en pantalla, como una casilla de verificación personalizada que siempre se lee como no marcada, lo que incumple WCAG 4.1.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>aria-required-attr</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p><p class="covers">También evalúa: <code>aria-attr-required-for-role</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">El estado y el valor de cada control se exponen y cambian con lo que hay en pantalla</span></legend>
+<div class="choices"><label><input type="radio" name="o-48" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-48" value="pass"> Superado</label><label><input type="radio" name="o-48" value="fail"> No superado</label><label><input type="radio" name="o-48" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-48">Notas<span class="vh">: </span><span class="vh">El estado y el valor de cada control se exponen y cambian con lo que hay en pantalla</span></label>
+<textarea id="notes-48" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-4-1-2-aria-used-validly" aria-labelledby="item-4-1-2-aria-used-validly" data-key="4.1.2/aria-used-validly" data-facet="aria-used-validly" data-label="Los atributos ARIA son reales, válidos y están permitidos donde se usan, y nada enfocable está oculto para las tecnologías de apoyo" data-requirements="[&quot;4.1.2&quot;]">
+<h4 id="item-4-1-2-aria-used-validly">Los atributos ARIA son reales, válidos y están permitidos donde se usan, y nada enfocable está oculto para las tecnologías de apoyo</h4>
+<p class="meta"><span>Para: 4.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
+<ol class="steps"><li>En el panel Elements de las herramientas para desarrolladores, buscar aria- y role= en el marcado y revisar cada uso.</li><li>Comprobar que cada atributo aria-* existe realmente, tiene un valor válido y está permitido en el rol de su elemento.</li><li>Comprobar que los id a los que apuntan aria-labelledby, aria-describedby, aria-controls y similares existen y aparecen una sola vez.</li><li>Comprobar que nada que reciba el foco está dentro de un elemento con aria-hidden=&quot;true&quot;, y que el &lt;body&gt; no está oculto.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Los atributos ARIA son reales, válidos y están permitidos donde se usan, sus id son únicos y nada enfocable está oculto.</dd><dt>No se supera si</dt><dd>Un atributo ARIA está mal escrito, tiene un valor no válido o no está permitido en su rol, falta o se repite un id al que apunta, o algo enfocable está oculto para las tecnologías de apoyo, lo que incumple WCAG 4.1.2.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>aria-hidden-focus</code>, <code>aria-valid-attr</code>, <code>aria-valid-attr-value</code>, <code>aria-allowed-attr</code>, <code>aria-prohibited-attr</code>, <code>aria-hidden-body</code>, <code>duplicate-id-aria</code></p><p class="covers">También evalúa: <code>aria-hidden-focusable</code>, <code>aria-attr-name-valid</code>, <code>aria-attr-value-valid</code>, <code>aria-attr-allowed-for-role</code>, <code>aria-attr-not-prohibited</code>, <code>aria-hidden-body-absent</code>, <code>duplicate-id-aria</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Los atributos ARIA son reales, válidos y están permitidos donde se usan, y nada enfocable está oculto para las tecnologías de apoyo</span></legend>
+<div class="choices"><label><input type="radio" name="o-49" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-49" value="pass"> Superado</label><label><input type="radio" name="o-49" value="fail"> No superado</label><label><input type="radio" name="o-49" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-49">Notas<span class="vh">: </span><span class="vh">Los atributos ARIA son reales, válidos y están permitidos donde se usan, y nada enfocable está oculto para las tecnologías de apoyo</span></label>
+<textarea id="notes-49" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-4-1-3-status-messages-announced" aria-labelledby="item-4-1-3-status-messages-announced" data-key="4.1.3/status-messages-announced" data-facet="status-messages-announced" data-label="Las tecnologías de apoyo anuncian los mensajes de estado sin que estos reciban el foco" data-requirements="[&quot;4.1.3&quot;]">
+<h4 id="item-4-1-3-status-messages-announced">Las tecnologías de apoyo anuncian los mensajes de estado sin que estos reciban el foco</h4>
+<p class="meta"><span>Para: 4.1.3</span></p>
+<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Un lector de pantalla</span></li></ul>
+<ol class="steps"><li>Localizar los mensajes que la página muestra sin mover el foco: «Añadido al carrito», número de resultados de búsqueda, «Guardado», progreso, errores de formulario enumerados después del envío.</li><li>Activar un lector de pantalla y provocar cada mensaje mediante la acción que lo muestra.</li><li>Comprobar que el lector de pantalla dice el mensaje sin que el foco se mueva a él.</li><li>Repetirlo con una segunda combinación de navegador y lector de pantalla. Las regiones vivas están entre los aspectos menos uniformes del soporte de los lectores de pantalla.</li><li>Donde no diga nada, comprobar en las herramientas para desarrolladores que el mensaje está en un elemento con role=&quot;status&quot;, role=&quot;alert&quot; o aria-live, y que el elemento no está oculto. Una región role=&quot;status&quot; o aria-live debe estar ya en la página, vacía, antes de que se le añada el mensaje. Un elemento con role=&quot;alert&quot; suele anunciarse aunque se añada junto con su mensaje.</li><li>Dejar fuera los mensajes que reciben el foco o que llegan con una página nueva: no son mensajes de estado, y se comprueban en otros criterios.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Un lector de pantalla anuncia cada mensaje de estado sin que el foco se mueva a él.</dd><dt>No se supera si</dt><dd>Un mensaje de estado aparece en pantalla pero un lector de pantalla no lo dice, lo que incumple WCAG 4.1.3.</dd></dl>
+<details class="technical"><summary>Reglas y facetas</summary><p class="rules">Reglas que lo comprueban: <code>live-region-announcements</code></p><p class="covers">También evalúa: <code>live-region-reachable-evidence</code>, <code>live-region-changes-evidence</code></p></details>
+<fieldset class="record"><legend>Resultado<span class="vh">: </span><span class="vh">Las tecnologías de apoyo anuncian los mensajes de estado sin que estos reciban el foco</span></legend>
+<div class="choices"><label><input type="radio" name="o-50" value="open" checked> Sin comprobar</label><label><input type="radio" name="o-50" value="pass"> Superado</label><label><input type="radio" name="o-50" value="fail"> No superado</label><label><input type="radio" name="o-50" value="notApplicable"> No aplicable</label></div>
+<label class="notes" for="notes-50">Notas<span class="vh">: </span><span class="vh">Las tecnologías de apoyo anuncian los mensajes de estado sin que estos reciban el foco</span></label>
+<textarea id="notes-50" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+</section>
+</main>
+</div>
+<script type="application/json" id="record-text">{"progress":"Comprobados: {{done}} de {{total}} · Superados: {{pass}} · No superados: {{fail}} · No aplicables: {{notApplicable}}","clearConfirm":"Seleccionar de nuevo para borrar todos los resultados","title":"WCAG 2.2: lista de comprobación manual","standard":"wcag","key":null,"version":"2.2","file":"wcag-2.2-results"}</script>
+<script>
+(function () {
+  var root = document.querySelector('[data-record]');
+  if (!root) return;
+  var storeKey = 'surea11y-procedures:' + root.getAttribute('data-record');
+  var text = JSON.parse(document.getElementById('record-text').textContent);
+  var items = Array.prototype.slice.call(document.querySelectorAll('.item[data-key]'));
+  var store = {};
+  try { store = JSON.parse(window.localStorage.getItem(storeKey) || '{}') || {}; } catch (e) { store = {}; }
+  function save() { try { window.localStorage.setItem(storeKey, JSON.stringify(store)); } catch (e) {} }
+  function fill(template, values) {
+    return template.replace(/\{\{(\w+)\}\}/g, function (m, name) { return values[name] != null ? values[name] : m; });
+  }
+  function stateOf(item) {
+    var checked = item.querySelector('input[type=radio]:checked');
+    var notes = item.querySelector('textarea');
+    return { outcome: checked ? checked.value : 'open', notes: notes ? notes.value : '' };
+  }
+  var status = document.getElementById('record-progress');
+  function update() {
+    var n = { open: 0, pass: 0, fail: 0, notApplicable: 0 };
+    items.forEach(function (item) {
+      var s = stateOf(item);
+      n[s.outcome] = (n[s.outcome] || 0) + 1;
+      if (s.outcome === 'open') item.removeAttribute('data-outcome');
+      else item.setAttribute('data-outcome', s.outcome);
+    });
+    status.textContent = fill(text.progress, {
+      done: items.length - n.open, total: items.length, pass: n.pass, fail: n.fail, notApplicable: n.notApplicable
+    });
+  }
+  items.forEach(function (item) {
+    var key = item.getAttribute('data-key');
+    var saved = store[key];
+    if (saved) {
+      var radio = item.querySelector('input[type=radio][value="' + saved.outcome + '"]');
+      if (radio) radio.checked = true;
+      var notes = item.querySelector('textarea');
+      if (notes && typeof saved.notes === 'string') notes.value = saved.notes;
+    }
+    function changed() {
+      var s = stateOf(item);
+      if (s.outcome === 'open' && !s.notes) delete store[key]; else store[key] = s;
+      save();
+      update();
+    }
+    item.addEventListener('change', changed);
+    item.addEventListener('input', changed);
+  });
+  function results() {
+    var rows = items.map(function (item) {
+      var s = stateOf(item);
+      return {
+        key: item.getAttribute('data-key'),
+        facet: item.getAttribute('data-facet'),
+        label: item.getAttribute('data-label'),
+        requirements: JSON.parse(item.getAttribute('data-requirements')),
+        outcome: s.outcome,
+        notes: s.notes
+      };
+    });
+    var order = [];
+    var by = {};
+    rows.forEach(function (row) {
+      row.requirements.forEach(function (id) {
+        if (!by[id]) { by[id] = []; order.push(id); }
+        by[id].push(row.outcome);
+      });
+    });
+    var requirements = order.map(function (id) {
+      var o = by[id];
+      var outcome = o.indexOf('fail') >= 0 ? 'fail' : o.indexOf('open') >= 0 ? 'open'
+        : o.every(function (x) { return x === 'notApplicable'; }) ? 'notApplicable' : 'pass';
+      return { id: id, outcome: outcome };
+    });
+    return {
+      title: text.title, standard: text.standard, key: text.key, version: text.version,
+      exportedAt: new Date().toISOString(), items: rows, requirements: requirements
+    };
+  }
+  function download(name, type, body) {
+    var url = URL.createObjectURL(new Blob([body], { type: type }));
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  function csvCell(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
+  var base = text.file;
+  document.getElementById('record-json').addEventListener('click', function () {
+    download(base + '.json', 'application/json', JSON.stringify(results(), null, 2) + '\n');
+  });
+  document.getElementById('record-csv').addEventListener('click', function () {
+    var r = results();
+    var lines = [['key', 'facet', 'label', 'requirements', 'outcome', 'notes'].map(csvCell).join(',')];
+    r.items.forEach(function (i) {
+      lines.push([i.key, i.facet, i.label, i.requirements.join(' '), i.outcome, i.notes].map(csvCell).join(','));
+    });
+    download(base + '.csv', 'text/csv', '\ufeff' + lines.join('\r\n') + '\r\n');
+  });
+  var clear = document.getElementById('record-clear');
+  var clearLabel = clear.textContent;
+  function disarm() { clear.removeAttribute('data-armed'); clear.textContent = clearLabel; }
+  clear.addEventListener('click', function () {
+    if (!clear.hasAttribute('data-armed')) {
+      clear.setAttribute('data-armed', '');
+      clear.textContent = text.clearConfirm;
+      return;
+    }
+    store = {};
+    save();
+    items.forEach(function (item) {
+      var open = item.querySelector('input[type=radio][value=open]');
+      if (open) open.checked = true;
+      var notes = item.querySelector('textarea');
+      if (notes) notes.value = '';
+    });
+    disarm();
+    update();
+  });
+  clear.addEventListener('blur', disarm);
+  update();
+})();
+</script>
+</body>
+</html>

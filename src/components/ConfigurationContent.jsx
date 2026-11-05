@@ -15,7 +15,9 @@ export function ConfigurationContent() {
 				Scope a scan to exactly the rules you want — by naming a WCAG version and level (WCAG 2.2
 				AA in one option, best practices on top if you want them), by id, by tag, or by naming a
 				conformance profile such as WCAG 2.2 AA or Section 508 — so a run reports what you're
-				actually accountable for, nothing more and nothing less. Core's EN 301 549 profiles still
+				actually accountable for, nothing more and nothing less. Judge one scan by several
+				profiles at once, WCAG beside WAI-ARIA or your own policy, and see what each makes of
+				every finding. Core's EN 301 549 profiles still
 				work but are deprecated: that standard now comes as{" "}
 				<a href="/configuration/packs/#en-301-549-pack">a pack</a>. Run only a few checks and still get the WCAG criteria they belong to, at
 				the level you're held to, and list what a scan will report before it runs. Silence
@@ -36,7 +38,9 @@ export function ConfigurationContent() {
 				criteria. The same pack works from Node, every binding, the test matchers and the CLI, and{" "}
 				<code>npx surea11y-pack new</code> writes one that passes its own tests as generated. A
 				standard can file a rule's findings under the requirements they belong to, and a pack rule
-				can tell a person how to answer what it leaves undecided. See{" "}
+				can tell a person how to answer what it leaves undecided, and how to assess each
+				requirement by hand. Two standards are ready to install: EN 301 549, and WAI-ARIA 1.2,
+				which fails what WAI-ARIA requires where WCAG only asks. See{" "}
 				<a href="/configuration/packs/">Packs</a> to use one or write one.
 			</p>
 
@@ -60,7 +64,8 @@ export function ConfigurationContent() {
 				graceful per-string fallback to English rather than a blank or an error. Five languages
 				ship today (English, French, German, Spanish, Japanese), and a result always tells you exactly which
 				locale it used, so nothing silently degrades without you knowing. The steps for answering
-				an undecided finding ("How to check") come in the same five languages. See{" "}
+				an undecided finding ("How to check"), and the test procedures for assessing each
+				criterion by hand, come in the same five languages. See{" "}
 				<a href="/configuration/locales/">Locales</a> for coverage and how to supply your own
 				dictionary.
 			</p>

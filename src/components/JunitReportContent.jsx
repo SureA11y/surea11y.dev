@@ -121,8 +121,9 @@ const optionRows = [
 				as in SARIF. It takes the baseline file as saved (<code>JSON.parse</code> of it) or its{" "}
 				<code>entries</code> list. A rule whose every failure is already known is{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, not
-				passing: it did not pass. An entry written by 1.13 under a reason code that changed in 1.14
-				still <a href="/conformance/baseline/#upgrading">matches the finding under its new one</a>. Under <code>leanFailAs: 'failure'</code>, a
+				passing: it did not pass. An entry written by the minor release before, under a reason code
+				that has changed since, still{" "}
+				<a href="/conformance/baseline/#upgrading">matches the finding under its new one</a>. Under <code>leanFailAs: 'failure'</code>, a
 				finding that leans fail and has an entry marked <code>lean: 'fail'</code> (
 				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>) does not gate either, and
 				the <code>&lt;skipped&gt;</code> message counts it among the{" "}
@@ -139,6 +140,21 @@ const optionRows = [
 				The packs the scan ran (<code>engineOptions.packs</code>): with{" "}
 				<code>leanFailAs: 'failure'</code>, a pack rule's likely failures give the steps of its own{" "}
 				<code>meta.review</code>, as in the <a href="/results-reports/html-report/">HTML report</a>.
+			</>
+		),
+	},
+	{
+		id: "allowProfilesNotRun",
+		option: <code>allowProfilesNotRun</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				A scan of <a href="/configuration/engine-options/#several-profiles">several profiles</a>{" "}
+				that ran fewer than it asked for (<code>engine.profilesNotRun</code>) counted less than it
+				was asked to: each profile not run is an <code>&lt;error&gt;</code> in a{" "}
+				<code>Profiles</code> suite. <code>true</code> makes them skips. A value other than{" "}
+				<code>true</code> or <code>false</code> throws a <code>TypeError</code>. Core 1.15.0 and
+				later.
 			</>
 		),
 	},
@@ -307,7 +323,9 @@ export function JunitReportContent() {
 				</li>
 				<li>
 					The run's <code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
-					<code>profile</code>, <code>optInRules</code>, the rendering conditions from{" "}
+					<code>profile</code> (the first profile, for a scan of several), <code>profiles</code> (a
+					scan of several profiles only: every profile it ran, comma-separated),{" "}
+					<code>optInRules</code>, the rendering conditions from{" "}
 					<a href="/results-reports/output-schema/">
 						<code>engine.environment</code>
 					</a>{" "}

@@ -223,7 +223,11 @@ export function BaselineContent() {
 				is looked up under the finding's own code first, so it never goes to a moved finding when
 				another finding has that exact identity.
 			</p>
-			<p>1.14 moves these, from 1.13:</p>
+			<p>
+				The table covers one minor release: a move is listed from the release it shipped in until
+				the next minor release, which drops it. 1.15 moved no finding, so its table is empty.
+			</p>
+			<p>1.14 moved these, from 1.13, and 1.15 dropped them:</p>
 			<DataTable
 				label="Reason codes moved in 1.14"
 				rowKey="id"
@@ -235,9 +239,10 @@ export function BaselineContent() {
 				rows={baselineMoves}
 			/>
 			<p>
-				The table covers one minor release: a move is listed from the release it shipped in until
-				the next minor release, which drops it. So a baseline written by 1.13 keeps matching under
-				1.14.x, and needs regenerating before 1.15.
+				So a baseline written by 1.13 keeps matching these under 1.14.x, not under 1.15: there an
+				entry under an old code is stale and its finding is new. Bring such a baseline up to date
+				under 1.14.x, as below, before moving to 1.15; <code>migrateBaselineEntries</code> in 1.15
+				no longer knows these moves. A baseline written by 1.14 keeps matching under 1.15.
 			</p>
 			<p>
 				Regenerating the baseline with <code>--write-baseline</code> (or{" "}
@@ -269,6 +274,16 @@ export function BaselineContent() {
 				what it asked about, or asks about what it failed, gives a finding the baseline didn't hold,
 				or no longer gives one it held, and the{" "}
 				<a href={`${core}/CHANGELOG.md`}>changelog</a> says why.
+			</p>
+
+			<h2 id="several-profiles">A scan of several profiles</h2>
+			<p>
+				A result of <a href="/configuration/engine-options/#several-profiles">several profiles</a>{" "}
+				(<code>engineOptions.profile</code> as a list, core 1.15.0 and later) lists each finding
+				once, with what each profile makes of it in <code>verdicts</code>. A baseline entry is the
+				finding, by rule, reason code and markup, so one entry covers it under every profile, and
+				a baseline written from a scan of one profile still matches the same findings in a scan of
+				several.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Scanning at several viewport widths</h2>

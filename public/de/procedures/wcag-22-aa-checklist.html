@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="@surea11y/core">
+<title>WCAG 2.2: manuelle Checkliste</title>
+<style>
+  :root { color-scheme: light dark; --fg: #1a1a1a; --muted: #555b63; --bg: #fafafa; --card: #fff; --line: #dcdfe3; --soft: #f2f3f5; --accent: #1a5fb4; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fg: #e6e6e6; --muted: #b0b4ba; --bg: #16181c; --card: #1f2227; --line: #3a3d44; --soft: #262a30; --accent: #7db6ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0 0 48px; font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--fg); }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .skip { position: absolute; left: 8px; top: -60px; padding: 8px 12px; background: var(--card); color: var(--fg); border: 2px solid var(--accent); border-radius: 6px; z-index: 2; }
+  .skip:focus { top: 8px; }
+  .vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  header.page { padding: 24px 32px; background: #202531; color: #fff; }
+  header.page h1 { margin: 0 0 6px; font-size: 24px; line-height: 1.3; }
+  header.page p, header.page ul { margin: 4px 0 0; color: #e8eaed; font-size: 14px; }
+  header.page ul { padding-left: 20px; }
+  .layout { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+  nav.toc { margin: 24px 0; padding: 16px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  nav.toc h2 { margin: 0 0 8px; font-size: 16px; }
+  nav.toc ol { margin: 0; padding-left: 0; list-style: none; }
+  nav.toc ol ol { padding-left: 20px; }
+  nav.toc li { margin: 2px 0; }
+  main h2, main h3, main h4, main h5, main h6 { line-height: 1.35; }
+  section.group > h2 { font-size: 21px; margin: 36px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
+  section.group section.group > :is(h3, h4) { font-size: 17px; margin: 24px 0 10px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .req, .item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px; margin: 12px 0; }
+  .req > :is(h2, h3, h4, h5, h6), .item > :is(h2, h3, h4, h5, h6) { font-size: 17px; margin: 0 0 8px; }
+  .meta { margin: 0 0 10px; color: var(--muted); font-size: 13.5px; }
+  .meta span + span::before { content: " · "; }
+  .facet { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+  .facet > :is(h3, h4, h5, h6) { font-size: 15.5px; margin: 0 0 6px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; padding: 0; list-style: none; font-size: 12.5px; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--soft); }
+  .badge.auto-full { background: #e9f7e9; color: #0b5d0b; border-color: #9fd09f; }
+  .badge.auto-partial { background: #fdf3d9; color: #6b4d00; border-color: #e5c66b; }
+  .badge.auto-manual { background: #eaf1fb; color: #174a8b; border-color: #a9c4ea; }
+  .badge.level { font-weight: 600; }
+  ol.steps { margin: 6px 0 10px; padding-left: 24px; }
+  ol.steps li { margin: 4px 0; }
+  dl.verdict { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0; }
+  dl.verdict dt { font-weight: 600; }
+  dl.verdict dd { margin: 0; }
+  .rules, .covers, .note { font-size: 13.5px; color: var(--muted); margin: 6px 0 0; }
+  .req-note { margin: 6px 0 0; }
+  .rules code, .covers code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; background: var(--soft); padding: 1px 5px; border-radius: 4px; color: var(--fg); }
+  details.variants { margin-top: 10px; font-size: 14px; }
+  details.variants summary { cursor: pointer; color: var(--accent); }
+  details.variants .variant { margin: 8px 0 0 4px; padding-left: 12px; border-left: 3px solid var(--line); }
+  .results { margin: 24px 0; padding: 14px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  details.technical { margin-top: 8px; font-size: 13.5px; color: var(--muted); }
+  details.technical summary { cursor: pointer; color: var(--accent); }
+  .results h2 { margin: 0 0 4px; font-size: 16px; }
+  .results p { margin: 2px 0; }
+  .before { margin: 24px 0; padding: 14px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  .before h2 { margin: 0 0 6px; font-size: 17px; }
+  .before p { margin: 0 0 6px; }
+  .before ul { margin: 0; padding-left: 20px; }
+  .before li { margin: 4px 0; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  button { font: inherit; font-size: 14px; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--soft); color: var(--fg); cursor: pointer; }
+  button[data-armed] { border-color: #b0441f; color: #b0441f; }
+  fieldset.record { margin: 12px 0 0; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; }
+  fieldset.record legend { font-weight: 600; padding: 0 4px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .choices label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .choices input { width: 18px; height: 18px; margin: 0; }
+  fieldset.record label.notes { display: block; margin: 10px 0 4px; font-weight: 600; }
+  textarea { width: 100%; min-height: 3.2em; font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--fg); }
+  .item[data-outcome="pass"] { border-left: 6px solid #0b7d0b; }
+  .item[data-outcome="fail"] { border-left: 6px solid #b0441f; }
+  .item[data-outcome="notApplicable"] { border-left: 6px solid #5f6368; }
+  .empty { font-style: italic; }
+  @media (forced-colors: active) {
+    .badge, .req, .item, nav.toc, .results, .before, fieldset.record { border: 1px solid CanvasText; }
+    .item[data-outcome] { border-left-width: 6px; }
+  }
+  @media print {
+    body { background: #fff; color: #000; font-size: 11pt; }
+    .skip, nav.toc, .actions, .results .note { display: none; }
+    header.page { background: none; color: #000; padding: 0 0 12px; border-bottom: 2px solid #000; }
+    header.page p, header.page ul { color: #000; }
+    .layout { padding: 0; max-width: none; }
+    details.technical { display: none; }
+    .req, .item { break-inside: avoid; border-color: #999; }
+    details.variants { display: none; }
+    textarea { border: 1px solid #999; min-height: 2.4em; }
+  }
+  @media (max-width: 640px) {
+    header.page, .layout { padding-left: 16px; padding-right: 16px; }
+    dl.verdict { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Zu den Prüfschritten springen</a>
+<header class="page">
+<h1>WCAG 2.2: manuelle Checkliste</h1>
+<p>Prüfungen: 50 · Anforderungen: 30</p>
+<ul><li>Stufen: A, AA</li></ul>
+
+</header>
+<div class="layout">
+<nav class="toc" aria-labelledby="toc-h"><h2 id="toc-h">Inhalt</h2><ol><li><a href="#g-1">1 <span>Wahrnehmbar</span></a><ol><li><a href="#g-1-1">1.1 <span>Textalternativen</span></a></li><li><a href="#g-1-2">1.2 <span>Zeitbasierte Medien</span></a></li><li><a href="#g-1-3">1.3 <span>Anpassbar</span></a></li><li><a href="#g-1-4">1.4 <span>Unterscheidbar</span></a></li></ol></li><li><a href="#g-2">2 <span>Bedienbar</span></a><ol><li><a href="#g-2-1">2.1 <span>Per Tastatur zugänglich</span></a></li><li><a href="#g-2-2">2.2 <span>Ausreichend Zeit</span></a></li><li><a href="#g-2-3">2.3 <span>Anfälle und physische Reaktionen</span></a></li><li><a href="#g-2-4">2.4 <span>Navigierbar</span></a></li><li><a href="#g-2-5">2.5 <span>Eingabemodalitäten</span></a></li></ol></li><li><a href="#g-3">3 <span>Verständlich</span></a><ol><li><a href="#g-3-1">3.1 <span>Lesbar</span></a></li><li><a href="#g-3-2">3.2 <span>Vorhersehbar</span></a></li><li><a href="#g-3-3">3.3 <span>Hilfestellung bei der Eingabe</span></a></li></ol></li><li><a href="#g-4">4 <span>Robust</span></a><ol><li><a href="#g-4-1">4.1 <span>Kompatibel</span></a></li></ol></li></ol></nav>
+<main id="main" tabindex="-1">
+<section class="before" aria-labelledby="before-h">
+<h2 id="before-h">Bevor Sie beginnen</h2>
+<p>Diese Prüfschritte beschreiben, was zu prüfen ist und wie Sie entscheiden. Einige Gewohnheiten machen die Ergebnisse verlässlich, unabhängig davon, welchen Browser und welche assistiven Technologien Sie verwenden.</p>
+<ul><li>Testen Sie mit mindestens zwei Kombinationen aus Browser und Screenreader, die Ihre Nutzenden verwenden. Übliche Kombinationen sind NVDA mit Firefox oder Chrome und JAWS mit Chrome unter Windows, VoiceOver mit Safari unter macOS und iOS sowie TalkBack mit Chrome unter Android. Screenreader und Browser unterscheiden sich darin, was sie ansagen, daher gilt ein Ergebnis mit einer Kombination nicht für alle. Weichen sie voneinander ab, halten Sie fest, mit welcher Kombination die Prüfung nicht bestanden wurde.</li><li>Führen Sie Tastaturtests mit ausgeschaltetem Screenreader durch. Im Lesemodus kann ein Screenreader Elemente aktivieren, die mit der Tastatur allein nicht erreichbar sind, und so Tastaturfehler verdecken.</li><li>Aktivieren Sie auf einem Mac in den Systemeinstellungen unter „Tastatur“ die „Tastaturnavigation“, und aktivieren Sie in Safari in den Einstellungen unter „Erweitert“ die Option, mit der die Tabulatortaste jedes Objekt auf einer Webseite hervorhebt. Ohne diese Einstellungen überspringt Tab Links und einige Bedienelemente, und Sie halten Fehler fest, die es nicht gibt.</li><li>Um einen Tastaturdurchgang am Anfang der Seite zu beginnen, laden Sie sie neu und drücken Sie Tab, ohne zu klicken, oder klicken Sie in einen leeren Bereich direkt über dem ersten Link oder Bedienelement. Ein Start in der Adressleiste ist unzuverlässig: Manche Browser bewegen den Fokus zuerst durch ihre eigene Symbolleiste oder die Vorschläge der Adressleiste.</li><li>Jeder Browser zeigt den Barrierefreiheitsbaum an einer anderen Stelle: Chrome und Edge im Bereich „Barrierefreiheit“ unter „Elemente“ (aktivieren Sie den Barrierefreiheitsbaum für die ganze Seite, um die gesamte Seite zu sehen), Firefox im Barrierefreiheitsinspektor und Safari im Abschnitt zur Barrierefreiheit im Bereich „Knoten“ im Tab „Elemente“. Wo ein Prüfschritt den Bereich „Barrierefreiheit“ der Entwicklertools nennt, verwenden Sie den des Browsers, den Sie testen.</li><li>Die Gerätesymbolleiste der Entwicklertools ändert die Größe des Viewports, bildet aber Zoom, Drehung, Gesten und Screenreader eines echten Smartphones nicht nach. Bestätigen Sie Ergebnisse für Mobilgeräte auf einem echten Gerät.</li><li>Testen Sie jeden Zustand, den die Seite haben kann, nicht nur den nach dem ersten Laden: geöffnete Menüs und Dialoge, Fehlermeldungen, leere und volle Listen, Ansichten mit und ohne Anmeldung.</li><li>Mit „nur Indiz“ markierte Regeln können nicht allein entscheiden. Behandeln Sie, was sie melden, als Liste von Stellen, die Sie von Hand prüfen.</li></ul>
+</section>
+<section class="results" aria-labelledby="results-h" data-record="wcag|2.2|WCAG 2.2: manuelle Checkliste">
+<h2 id="results-h">Ihre Ergebnisse</h2>
+<p id="record-progress" role="status">Geprüft: 0 von 50 · Bestanden: 0 · Nicht bestanden: 0 · Nicht anwendbar: 0</p>
+<p class="note">Ihre Ergebnisse werden nur in diesem Browser gespeichert, bis Sie sie löschen. Laden Sie sie herunter, um sie aufzubewahren oder weiterzugeben.</p>
+<noscript><p class="note">Ohne Skripte lassen sich Ergebnisse markieren, aber nicht speichern oder herunterladen.</p></noscript>
+<div class="actions"><button type="button" id="record-json">Ergebnisse herunterladen (JSON)</button><button type="button" id="record-csv">Ergebnisse herunterladen (CSV)</button><button type="button" id="record-clear">Ergebnisse löschen</button></div>
+</section>
+<section class="group" aria-labelledby="g-1">
+<h2 id="g-1"><span class="num">1</span> <span>Wahrnehmbar</span></h2>
+<section class="group" aria-labelledby="g-1-1">
+<h3 id="g-1-1"><span class="num">1.1</span> <span>Textalternativen</span></h3>
+<article class="item" id="i-1-1-1-text-alternative-mechanism" aria-labelledby="item-1-1-1-text-alternative-mechanism" data-key="1.1.1/text-alternative-mechanism" data-facet="text-alternative-mechanism" data-label="Nicht-Text-Inhalte, die etwas vermitteln, haben eine Textalternative" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-text-alternative-mechanism">Nicht-Text-Inhalte, die etwas vermitteln, haben eine Textalternative</h4>
+<p class="meta"><span>Für: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie auf der ganzen Seite nach Inhalten, die kein Text sind: Fotos, Symbole, Logos, Diagramme, Karten, Schaubilder, Posterbilder von Videos und die Bilder in Schaltflächen und Links.</li><li>Wählen Sie jeden davon im Bereich „Elemente“ der Entwicklertools aus und lesen Sie im Bereich „Barrierefreiheit“ den Eintrag „Name“.</li><li>Notieren Sie jeden, der keinen Namen hat und nicht vor assistiven Technologien verborgen ist (mit alt=&quot;&quot;, aria-hidden=&quot;true&quot;, role=&quot;presentation&quot; oder als CSS-Hintergrund).</li><li>Suchen Sie auch nach Informationen, die nur CSS anzeigt: Hintergrundbilder, Icon-Fonts und Bilder, die mit der Eigenschaft content eingefügt sind. Untersuchen Sie jedes davon, da es kein alt-Attribut zum Lesen gibt, und prüfen Sie, ob das Gezeigte auch als Text vorliegt, den ein Screenreader vorliest.</li><li>Prüfen Sie bei Inhalten, die sich nicht in wenigen Worten beschreiben lassen, etwa einem Diagramm oder einer Karte, ob der Name zumindest sagt, was es ist, und ob eine ausführlichere Beschreibung auf der Seite steht oder daneben verlinkt ist.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder Nicht-Text-Inhalt, den eine Person braucht, hat eine Textalternative oder ist vor assistiven Technologien verborgen, weil er dekorativ ist.</dd><dt>Nicht bestanden, wenn</dt><dd>Nicht-Text-Inhalt, der etwas vermittelt, hat keine Textalternative, sodass Screenreader-Nutzende auf ein unbenanntes Bild oder auf gar nichts stoßen; das verstößt gegen WCAG 1.1.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>img-alt-present</code>, <code>role-img-text-alternative-present</code>, <code>canvas-text-alternative-present</code>, <code>embed-text-alternative-present</code>, <code>svg-text-alternative-present</code>, <code>svg-image-text-alternative-present</code>, <code>object-text-alternative-present</code>, <code>video-poster-text-alternative-present</code>, <code>meter-name-present</code>, <code>progressbar-name-present</code></p><p class="covers">Er prüft auch: <code>img-alt-attr-present</code>, <code>role-img-text-alternative-present</code>, <code>canvas-text-alternative-present</code>, <code>embed-text-alternative-present</code>, <code>svg-text-alt-present</code>, <code>svg-text-alternative-present</code>, <code>svg-image-text-alt-present</code>, <code>object-text-alternative-present</code>, <code>video-poster-text-alt-present</code>, <code>meter-name-present</code>, <code>progressbar-name-present</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Nicht-Text-Inhalte, die etwas vermitteln, haben eine Textalternative</span></legend>
+<div class="choices"><label><input type="radio" name="o-1" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-1" value="pass"> Bestanden</label><label><input type="radio" name="o-1" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-1" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-1">Notizen<span class="vh">: </span><span class="vh">Nicht-Text-Inhalte, die etwas vermitteln, haben eine Textalternative</span></label>
+<textarea id="notes-1" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-1-1-functional-nontext-name" aria-labelledby="item-1-1-1-functional-nontext-name" data-key="1.1.1/functional-nontext-name" data-facet="functional-nontext-name" data-label="Bilder und Symbole, die als Bedienelemente dienen, sind nach ihrer Funktion benannt" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-functional-nontext-name">Bilder und Symbole, die als Bedienelemente dienen, sind nach ihrer Funktion benannt</h4>
+<p class="meta"><span>Für: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie jeden Link, jede Schaltfläche und jedes andere Bedienelement, deren einziger Inhalt ein Bild oder Symbol ist, etwa ein Logo, das zur Startseite führt, eine Lupe für die Suche oder ein Kreuz, das einen Dialog schließt.</li><li>Wählen Sie jedes davon im Bereich „Elemente“ der Entwicklertools aus und lesen Sie im Bereich „Barrierefreiheit“ den Eintrag „Name“.</li><li>Prüfen Sie, ob der Name sagt, was das Bedienelement tut oder wohin es führt („Suche“, „Schließen“, „Startseite“), und nicht beschreibt, was das Bild zeigt („Lupe“), oder ein Dateiname ist.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jedes Bedienelement, das aus einem Bild oder Symbol besteht, hat einen Namen, der sagt, was es tut oder wohin es führt.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Bedienelement, das aus einem Bild oder Symbol besteht, hat keinen Namen oder einen, der das Bild beschreibt statt seiner Funktion; das verstößt gegen WCAG 1.1.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>input-image-alt-present</code>, <code>area-alt-present</code></p><p class="covers">Er prüft auch: <code>input-image-alt-attr-present</code>, <code>area-alt-attr-present</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Bilder und Symbole, die als Bedienelemente dienen, sind nach ihrer Funktion benannt</span></legend>
+<div class="choices"><label><input type="radio" name="o-2" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-2" value="pass"> Bestanden</label><label><input type="radio" name="o-2" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-2" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-2">Notizen<span class="vh">: </span><span class="vh">Bilder und Symbole, die als Bedienelemente dienen, sind nach ihrer Funktion benannt</span></label>
+<textarea id="notes-2" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-1-1-decorative-null" aria-labelledby="item-1-1-1-decorative-null" data-key="1.1.1/decorative-null" data-facet="decorative-null" data-label="Dekorative Bilder sind vor assistiven Technologien verborgen, und nur diese" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-decorative-null">Dekorative Bilder sind vor assistiven Technologien verborgen, und nur diese</h4>
+<p class="meta"><span>Für: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie auf der Seite nach Bildern, Symbolen und Grafiken, die nur schmücken: Rahmen, Trennlinien, Hintergrundbilder, Ornamente und Bilder, deren Inhalt der Text daneben bereits wiedergibt.</li><li>Wählen Sie jedes davon im Bereich „Elemente“ der Entwicklertools aus und prüfen Sie im Bereich „Barrierefreiheit“, ob es ignoriert wird (alt=&quot;&quot;, aria-hidden=&quot;true&quot;, role=&quot;presentation&quot; oder ein CSS-Hintergrund).</li><li>Prüfen Sie bei einem dekorativen SVG, das in der Seite gezeichnet wird, ob es aria-hidden=&quot;true&quot; hat. Ohne dieses Attribut sagen manche Kombinationen aus Browser und Screenreader es als Bild ohne Namen an oder lesen den Text darin vor.</li><li>Prüfen Sie dann umgekehrt bei jedem so verborgenen Bild, ob Nutzenden etwas fehlen würde, wenn es nicht da wäre: Informationen, eine Beschriftung, die Daten eines Diagramms.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Dekorative Bilder sind vor assistiven Technologien verborgen, und jedes verborgene Bild ist tatsächlich dekorativ.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein dekoratives Bild wird angesagt (oft mit seinem Dateinamen), oder ein Bild, das Informationen vermittelt, ist vor assistiven Technologien verborgen; das verstößt gegen WCAG 1.1.1.</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Dekorative Bilder sind vor assistiven Technologien verborgen, und nur diese</span></legend>
+<div class="choices"><label><input type="radio" name="o-3" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-3" value="pass"> Bestanden</label><label><input type="radio" name="o-3" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-3" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-3">Notizen<span class="vh">: </span><span class="vh">Dekorative Bilder sind vor assistiven Technologien verborgen, und nur diese</span></label>
+<textarea id="notes-3" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-1-1-text-alternative-quality" aria-labelledby="item-1-1-1-text-alternative-quality" data-key="1.1.1/text-alternative-quality" data-facet="text-alternative-quality" data-label="Jede Textalternative gibt wieder, was ihr Bild vermittelt" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-text-alternative-quality">Jede Textalternative gibt wieder, was ihr Bild vermittelt</h4>
+<p class="meta"><span>Für: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Lesen Sie bei jedem Bild und jedem anderen Nicht-Text-Inhalt mit Textalternative die Alternative (den Namen im Bereich „Barrierefreiheit“ der Entwicklertools) und betrachten Sie den Inhalt an seiner Stelle auf der Seite.</li><li>Fragen Sie sich, was der Inhalt Lesenden an dieser Stelle vermittelt, und prüfen Sie, ob die Alternative dasselbe vermittelt: die Wörter in einem Bild von Text, die Aussage eines Fotos, die Fakten, die ein Diagramm zeigt.</li><li>Nennt die Alternative ein komplexes Bild wie ein Diagramm oder Schaubild nur, prüfen Sie, ob die Details in einer Bildunterschrift, einem Text oder einer Tabelle daneben oder hinter einem Link daneben stehen, die Screenreader-Nutzende vom Bild aus finden können.</li><li>Notieren Sie Alternativen, die ein Dateiname, eine Webadresse oder ein Wort wie „Bild“ oder „Foto“ sind oder den Text direkt daneben wiederholen.</li><li>Prüfen Sie die Sprache jeder Alternative: Sie sollte in der Sprache der Seite sein oder mit ihrer eigenen Sprache ausgezeichnet sein.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jede Textalternative vermittelt, was ihr Inhalt an dieser Stelle vermittelt, direkt oder über eine Beschreibung, die Screenreader-Nutzende von ihr aus erreichen können.</dd><dt>Nicht bestanden, wenn</dt><dd>Eine Textalternative vermittelt nicht, was der Inhalt vermittelt, zum Beispiel ein Dateiname, ein allgemeines Wort oder ein benanntes Diagramm, dessen Daten nirgends stehen; das verstößt gegen WCAG 1.1.1 (F30).</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>area-alt-quality</code>, <code>canvas-text-alternative-quality</code>, <code>embed-text-alternative-quality</code>, <code>img-alt-decorative</code>, <code>img-alt-quality</code>, <code>input-image-alt-decorative</code>, <code>input-image-alt-quality</code>, <code>object-text-alternative-quality</code>, <code>svg-text-alternative-quality</code></p><p class="covers">Er prüft auch: <code>text-alt-quality-review</code>, <code>alt-suspicious-patterns</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Jede Textalternative gibt wieder, was ihr Bild vermittelt</span></legend>
+<div class="choices"><label><input type="radio" name="o-4" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-4" value="pass"> Bestanden</label><label><input type="radio" name="o-4" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-4" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-4">Notizen<span class="vh">: </span><span class="vh">Jede Textalternative gibt wieder, was ihr Bild vermittelt</span></label>
+<textarea id="notes-4" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-1-1-captcha-alternative" aria-labelledby="item-1-1-1-captcha-alternative" data-key="1.1.1/captcha-alternative" data-facet="captcha-alternative" data-label="Ein CAPTCHA sagt, wofür es dient, und bietet eine andere Form an, die einen anderen Sinn nutzt" data-requirements="[&quot;1.1.1&quot;]">
+<h4 id="item-1-1-1-captcha-alternative">Ein CAPTCHA sagt, wofür es dient, und bietet eine andere Form an, die einen anderen Sinn nutzt</h4>
+<p class="meta"><span>Für: 1.1.1</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Suchen Sie jeden Test, mit dem die Seite Menschen von Programmen unterscheidet, etwa verzerrte Buchstaben zum Abtippen, Bilder zum Auswählen oder ein Puzzle zum Ziehen.</li><li>Prüfen Sie, ob er eine Textalternative hat, die sagt, was er ist und was zu tun ist, ohne die Lösung zu verraten.</li><li>Prüfen Sie, ob er eine andere Form anbietet, die einen anderen Sinn nutzt, etwa eine Audioversion eines visuellen Tests, oder einen ganz anderen Weg, etwa einen Code per E-Mail.</li><li>Probieren Sie die andere Form mit einem Screenreader und der Tastatur aus.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Die Seite hat keinen solchen Test, oder der Test sagt, was er ist, und bietet eine Form an, die einen anderen Sinn nutzt und sich abschließen lässt.</dd><dt>Nicht bestanden, wenn</dt><dd>Der Test lässt sich nur durch Sehen (oder nur durch Hören) bestehen oder hat keinen Text, der sagt, was er ist; das verstößt gegen WCAG 1.1.1.</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Ein CAPTCHA sagt, wofür es dient, und bietet eine andere Form an, die einen anderen Sinn nutzt</span></legend>
+<div class="choices"><label><input type="radio" name="o-5" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-5" value="pass"> Bestanden</label><label><input type="radio" name="o-5" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-5" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-5">Notizen<span class="vh">: </span><span class="vh">Ein CAPTCHA sagt, wofür es dient, und bietet eine andere Form an, die einen anderen Sinn nutzt</span></label>
+<textarea id="notes-5" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-1-2">
+<h3 id="g-1-2"><span class="num">1.2</span> <span>Zeitbasierte Medien</span></h3>
+<article class="item" id="i-1-2-1-transcript-evidence" aria-labelledby="item-1-2-1-transcript-evidence" data-key="1.2.1/transcript-evidence" data-facet="transcript-evidence" data-label="Aufgezeichnete reine Audio- und Videoinhalte haben ein Transkript oder eine gleichwertige Alternative" data-requirements="[&quot;1.2.1&quot;]">
+<h4 id="item-1-2-1-transcript-evidence">Aufgezeichnete reine Audio- und Videoinhalte haben ein Transkript oder eine gleichwertige Alternative</h4>
+<p class="meta"><span>Für: 1.2.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: nur ein Browser</li></ul>
+<ol class="steps"><li>Suchen Sie jeden Audioplayer und jedes Video ohne Ton auf der Seite, auch in Frames, und spielen Sie jedes ab.</li><li>Suchen Sie bei Audio neben dem Player und anderswo auf der Seite nach einem Transkript oder einem Link darauf.</li><li>Suchen Sie bei einem Video ohne Ton nach einem Transkript oder einer Audioversion, die alles Gezeigte beschreibt und die Sie von der Seite aus mit der Tastatur finden und abspielen können.</li><li>Vergleichen Sie jede Alternative mit dem Medium und prüfen Sie, ob sie dieselben Informationen wiedergibt: Sprache, wichtige Geräusche und das Gezeigte.</li><li>Lassen Sie Medien weg, die selbst eine Alternative für Text auf der Seite und als solche gekennzeichnet sind.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder aufgezeichnete reine Audio- oder Videoinhalt hat ein Transkript oder, bei Video, eine Audioversion, die wiedergibt, was er vermittelt, oder ist eine gekennzeichnete Alternative für Text auf der Seite.</dd><dt>Nicht bestanden, wenn</dt><dd>Aufgezeichnete reine Audioinhalte haben kein Transkript, oder aufgezeichnete reine Videoinhalte haben weder ein Transkript noch eine Audioversion mit denselben Informationen; das verstößt gegen WCAG 1.2.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>media-alternative-transcript-evidence</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Aufgezeichnete reine Audio- und Videoinhalte haben ein Transkript oder eine gleichwertige Alternative</span></legend>
+<div class="choices"><label><input type="radio" name="o-6" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-6" value="pass"> Bestanden</label><label><input type="radio" name="o-6" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-6" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-6">Notizen<span class="vh">: </span><span class="vh">Aufgezeichnete reine Audio- und Videoinhalte haben ein Transkript oder eine gleichwertige Alternative</span></label>
+<textarea id="notes-6" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-2-2-video-captions-track-evidence" aria-labelledby="item-1-2-2-video-captions-track-evidence" data-key="1.2.2/video-captions-track-evidence" data-facet="video-captions-track-evidence" data-label="Aufgezeichnete Videos mit Ton haben Untertitel" data-requirements="[&quot;1.2.2&quot;]">
+<h4 id="item-1-2-2-video-captions-track-evidence">Aufgezeichnete Videos mit Ton haben Untertitel</h4>
+<p class="meta"><span>Für: 1.2.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: nur ein Browser</li></ul>
+<ol class="steps"><li>Suchen Sie jedes aufgezeichnete Video mit Ton auf der Seite, auch in Frames und in Playern anderer Websites.</li><li>Spielen Sie jedes mit eingeschaltetem Ton ab und notieren Sie, ob sein Ton Informationen trägt: Sprache oder wichtige Geräusche.</li><li>Wenn ja, suchen Sie nach Untertiteln: die CC-Schaltfläche des Players, ins Bild eingebrannte Untertitel oder eine daneben verlinkte untertitelte Fassung desselben Videos. Ein Transkript allein ersetzt keine Untertitel.</li><li>Lassen Sie ein Video weg, das selbst eine Alternative für Text auf der Seite und als solche gekennzeichnet ist.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jedes aufgezeichnete Video, dessen Ton Informationen trägt, hat Untertitel, hier oder in einer daneben verlinkten untertitelten Fassung, oder ist eine gekennzeichnete Alternative für Text auf der Seite.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein aufgezeichnetes Video hat Dialoge oder wichtige Geräusche und keine Untertitel, weder hier noch in einer verlinkten untertitelten Fassung, auch wenn ein Transkript angeboten wird; das verstößt gegen WCAG 1.2.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>video-caption</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Aufgezeichnete Videos mit Ton haben Untertitel</span></legend>
+<div class="choices"><label><input type="radio" name="o-7" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-7" value="pass"> Bestanden</label><label><input type="radio" name="o-7" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-7" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-7">Notizen<span class="vh">: </span><span class="vh">Aufgezeichnete Videos mit Ton haben Untertitel</span></label>
+<textarea id="notes-7" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-2-2-captions-complete" aria-labelledby="item-1-2-2-captions-complete" data-key="1.2.2/captions-complete" data-facet="captions-complete" data-label="Untertitel geben alle Dialoge, die sprechende Person und die wichtigen Geräusche wieder, synchron zum Video" data-requirements="[&quot;1.2.2&quot;]">
+<h4 id="item-1-2-2-captions-complete">Untertitel geben alle Dialoge, die sprechende Person und die wichtigen Geräusche wieder, synchron zum Video</h4>
+<p class="meta"><span>Für: 1.2.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: nur ein Browser</li></ul>
+<ol class="steps"><li>Spielen Sie jedes untertitelte Video mit eingeschaltetem Ton und eingeschalteten Untertiteln ab.</li><li>Vergleichen Sie die Untertitel durchgehend mit dem, was gesagt wird und zu hören ist.</li><li>Prüfen Sie, ob sie alle Dialoge enthalten, angeben, wer spricht, wenn das nicht klar ist, die wichtigen Geräusche beschreiben (Musik, Alarme, Lachen) und synchron zum Bild bleiben.</li><li>Gehen Sie mit automatisch erzeugten Untertiteln vorsichtig um: Sie geben Namen, Zahlen und Satzzeichen oft falsch wieder und beschreiben keine Geräusche, daher erfüllen sie dieses Kriterium ohne Überarbeitung selten.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Die Untertitel enthalten alle Dialoge, wo nötig die sprechenden Personen und die wichtigen Geräusche, synchron zum Video.</dd><dt>Nicht bestanden, wenn</dt><dd>Untertitel lassen Dialoge oder wichtige Geräusche aus, geben nicht an, wer spricht, wo das wichtig ist, oder laufen nicht synchron zum Video; das verstößt gegen WCAG 1.2.2 (F8).</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Untertitel geben alle Dialoge, die sprechende Person und die wichtigen Geräusche wieder, synchron zum Video</span></legend>
+<div class="choices"><label><input type="radio" name="o-8" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-8" value="pass"> Bestanden</label><label><input type="radio" name="o-8" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-8" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-8">Notizen<span class="vh">: </span><span class="vh">Untertitel geben alle Dialoge, die sprechende Person und die wichtigen Geräusche wieder, synchron zum Video</span></label>
+<textarea id="notes-8" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-1-3">
+<h3 id="g-1-3"><span class="num">1.3</span> <span>Anpassbar</span></h3>
+<article class="item" id="i-1-3-1-headings-marked-up" aria-labelledby="item-1-3-1-headings-marked-up" data-key="1.3.1/headings-marked-up" data-facet="headings-marked-up" data-label="Text, der wie eine Überschrift aussieht, ist als Überschrift ausgezeichnet, mit einer Ebene, die zur Gliederung der Seite passt" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-headings-marked-up">Text, der wie eine Überschrift aussieht, ist als Überschrift ausgezeichnet, mit einer Ebene, die zur Gliederung der Seite passt</h4>
+<p class="meta"><span>Für: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Gehen Sie die Seite durch und notieren Sie jeden Text, der als Überschrift wirkt: Er ist größer oder fetter als der umgebende Text und leitet das Folgende ein.</li><li>Prüfen Sie bei jedem im Bereich „Elemente“ der Entwicklertools, ob er ein &lt;h1&gt; bis &lt;h6&gt; ist oder role=&quot;heading&quot; mit einem aria-level hat.</li><li>Prüfen Sie umgekehrt, ob jedes Überschriftenelement auf der Seite Inhalte einleitet und nicht nur dazu dient, Text groß darzustellen.</li><li>Listen Sie die Überschriften über die Überschriftenliste eines Screenreaders, eine Browsererweiterung wie HeadingsMap oder den Bereich „Barrierefreiheit“ auf und prüfen Sie, ob ihre Ebenen der Struktur entsprechen, die die Seite zeigt: Die Unterüberschriften eines Abschnitts liegen unter seiner Überschrift, nicht auf derselben Ebene oder darüber. Eine übersprungene Ebene allein, etwa ein h2 gefolgt von einem h4, verstößt nicht gegen dieses Kriterium, wenn die Verschachtelung trotzdem stimmt. Halten Sie sie als Best-Practice-Befund fest.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jede visuelle Überschrift ist als Überschrift ausgezeichnet, jedes Überschriftenelement ist tatsächlich eine Überschrift, und die Ebenen folgen der Gliederung, die die Seite zeigt.</dd><dt>Nicht bestanden, wenn</dt><dd>Text, der wie eine Überschrift aussieht, ist einfacher Text, ein Überschriftenelement wird nur wegen seiner Größe verwendet, oder die Ebenen widersprechen der Gliederung, sodass Screenreader-Nutzende die Abschnitte nicht finden oder ihnen nicht folgen können; das verstößt gegen WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>p-as-heading</code></p><p class="covers">Er prüft auch: <code>p-as-heading-evidence</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Text, der wie eine Überschrift aussieht, ist als Überschrift ausgezeichnet, mit einer Ebene, die zur Gliederung der Seite passt</span></legend>
+<div class="choices"><label><input type="radio" name="o-9" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-9" value="pass"> Bestanden</label><label><input type="radio" name="o-9" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-9" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-9">Notizen<span class="vh">: </span><span class="vh">Text, der wie eine Überschrift aussieht, ist als Überschrift ausgezeichnet, mit einer Ebene, die zur Gliederung der Seite passt</span></label>
+<textarea id="notes-9" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-lists-marked-up" aria-labelledby="item-1-3-1-lists-marked-up" data-key="1.3.1/lists-marked-up" data-facet="lists-marked-up" data-label="Inhalte, die als Liste dargestellt werden, sind als Liste ausgezeichnet" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-lists-marked-up">Inhalte, die als Liste dargestellt werden, sind als Liste ausgezeichnet</h4>
+<p class="meta"><span>Für: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie auf der Seite nach Inhalten, die als Liste dargestellt werden: Einträge in einer Zeile oder Spalte mit Aufzählungszeichen, Nummern oder gleichem Layout, etwa Menüs, Schritte und Gruppen von Links.</li><li>Prüfen Sie bei jedem im Bereich „Elemente“ der Entwicklertools, ob es ein &lt;ul&gt;, &lt;ol&gt; oder &lt;dl&gt; ist (oder role=&quot;list&quot; mit Einträgen mit role=&quot;listitem&quot; hat).</li><li>Prüfen Sie, ob jede Liste direkt nur Listeneinträge enthält und jeder Listeneintrag in einer Liste liegt.</li><li>Wenn Sie mit VoiceOver und Safari testen, beachten Sie, dass Safari eine Liste, deren Aufzählungszeichen mit list-style: none entfernt wurden, nur mit role=&quot;list&quot; als Liste bereitstellt. Das ist eine Entscheidung des Browsers, kein Fehler der Seite, aber notieren Sie es, wenn die Struktur der Liste für Nutzende wichtig ist.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Inhalte, die als Liste dargestellt werden, sind als Liste ausgezeichnet, und das Listen-Markup ist vollständig.</dd><dt>Nicht bestanden, wenn</dt><dd>Inhalte, die als Liste dargestellt werden, sind eine Folge von Absätzen, Zeilenumbrüchen oder divs, oder das Listen-Markup ist fehlerhaft, sodass ein Screenreader nicht sagt, dass es eine Liste ist oder wie viele Einträge sie hat; das verstößt gegen WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>list-children-valid</code>, <code>listitem-parent-valid</code>, <code>definition-list-children-valid</code>, <code>dlitem-parent-valid</code></p><p class="covers">Er prüft auch: <code>list-children-valid</code>, <code>listitem-parent-valid</code>, <code>definition-list-children-valid</code>, <code>dlitem-parent-valid</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Inhalte, die als Liste dargestellt werden, sind als Liste ausgezeichnet</span></legend>
+<div class="choices"><label><input type="radio" name="o-10" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-10" value="pass"> Bestanden</label><label><input type="radio" name="o-10" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-10" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-10">Notizen<span class="vh">: </span><span class="vh">Inhalte, die als Liste dargestellt werden, sind als Liste ausgezeichnet</span></label>
+<textarea id="notes-10" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-tables-marked-up" aria-labelledby="item-1-3-1-tables-marked-up" data-key="1.3.1/tables-marked-up" data-facet="tables-marked-up" data-label="Datentabellen zeichnen ihre Kopfzellen und ihre Tabellenbeschriftung aus, und reine Layouttabellen haben kein Kopfzellen-Markup" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-tables-marked-up">Datentabellen zeichnen ihre Kopfzellen und ihre Tabellenbeschriftung aus, und reine Layouttabellen haben kein Kopfzellen-Markup</h4>
+<p class="meta"><span>Für: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Suchen Sie jede Tabelle auf der Seite und jedes Datenraster, das ohne Tabelle dargestellt wird.</li><li>Prüfen Sie bei einer Datentabelle im Bereich „Elemente“ der Entwicklertools, ob ihre Kopfzellen &lt;th&gt; sind (mit scope, wo eine Kopfzelle nicht eindeutig eine Zeilen- oder Spaltenüberschrift ist) und ob ein darüber angezeigter Titel ihre &lt;caption&gt; ist.</li><li>Prüfen Sie bei einer komplexen Tabelle mit Kopfzellen auf mehr als einer Ebene, ob jede Datenzelle ihre Kopfzellen über ein headers-Attribut oder scope angibt.</li><li>Gehen Sie mit einem Screenreader einige Datenzellen durch und prüfen Sie, ob er ihre Kopfzellen mit vorliest.</li><li>Prüfen Sie bei einer Tabelle, die nur dem Layout dient, ob sie kein &lt;th&gt;, keine &lt;caption&gt; und kein summary hat.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Daten stehen in Tabellen, deren Kopfzellen und Tabellenbeschriftung ausgezeichnet sind, ein Screenreader liest zu jeder Zelle ihre Kopfzellen vor, und Layouttabellen haben kein Kopfzellen-Markup.</dd><dt>Nicht bestanden, wenn</dt><dd>Eine Datentabelle hat kein Kopfzellen-Markup oder eine nachgebildete Tabellenbeschriftung in einer Zelle, Daten sind als Raster ohne Tabelle angeordnet, oder eine Layouttabelle ist als Datentabelle ausgezeichnet; das verstößt gegen WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>table-headers-attr-valid</code>, <code>table-th-has-data-cells</code>, <code>table-fake-caption</code>, <code>td-has-header</code></p><p class="covers">Er prüft auch: <code>table-headers-attr-valid</code>, <code>table-th-has-data-cells</code>, <code>table-fake-caption-evidence</code>, <code>td-has-header</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Datentabellen zeichnen ihre Kopfzellen und ihre Tabellenbeschriftung aus, und reine Layouttabellen haben kein Kopfzellen-Markup</span></legend>
+<div class="choices"><label><input type="radio" name="o-11" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-11" value="pass"> Bestanden</label><label><input type="radio" name="o-11" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-11" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-11">Notizen<span class="vh">: </span><span class="vh">Datentabellen zeichnen ihre Kopfzellen und ihre Tabellenbeschriftung aus, und reine Layouttabellen haben kein Kopfzellen-Markup</span></label>
+<textarea id="notes-11" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-form-labels-associated" aria-labelledby="item-1-3-1-form-labels-associated" data-key="1.3.1/form-labels-associated" data-facet="form-labels-associated" data-label="Formularfelder sind mit ihren sichtbaren Beschriftungen verknüpft, Gruppen von Feldern mit dem Text, der die Gruppe benennt" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-form-labels-associated">Formularfelder sind mit ihren sichtbaren Beschriftungen verknüpft, Gruppen von Feldern mit dem Text, der die Gruppe benennt</h4>
+<p class="meta"><span>Für: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Suchen Sie jedes Formularfeld auf der Seite: Textfelder, Kontrollkästchen, Optionsfelder, Auswahllisten und benutzerdefinierte Bedienelemente.</li><li>Wählen Sie jedes davon im Bereich „Elemente“ der Entwicklertools aus und prüfen Sie, ob der Eintrag „Name“ im Bereich „Barrierefreiheit“ seine sichtbare Beschriftung enthält.</li><li>Prüfen Sie bei einer Gruppe von Feldern unter einer Frage, etwa Optionsfeldern oder einem Datum in drei Teilen, ob die Gruppe ein &lt;fieldset&gt; mit einer &lt;legend&gt; ist oder role=&quot;group&quot; mit einem Namen hat, sodass die Frage mit jedem Feld vorgelesen wird.</li><li>Prüfen Sie, ob neben einem Feld angezeigte Anweisungen (ein Format, eine Pflichtfeldmarkierung) über aria-describedby mit ihm verknüpft sind oder in seiner Beschriftung stehen.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Der Name jedes Feldes enthält seine sichtbare Beschriftung, Gruppen von Feldern sind nach ihrer Frage benannt, und die Anweisungen zu einem Feld sind mit ihm verknüpft.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Feld ist nur durch Text in der Nähe beschriftet, der nicht mit ihm verknüpft ist, oder die Frage einer Gruppe ist nicht mit ihren Feldern verknüpft, sodass ein Screenreader ein Feld vorliest, ohne zu sagen, wofür es dient; das verstößt gegen WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>form-control-programmatic-label-present</code></p><p class="covers">Er prüft auch: <code>form-control-programmatic-label-present</code>, <code>form-control-label-quality-review</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Formularfelder sind mit ihren sichtbaren Beschriftungen verknüpft, Gruppen von Feldern mit dem Text, der die Gruppe benennt</span></legend>
+<div class="choices"><label><input type="radio" name="o-12" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-12" value="pass"> Bestanden</label><label><input type="radio" name="o-12" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-12" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-12">Notizen<span class="vh">: </span><span class="vh">Formularfelder sind mit ihren sichtbaren Beschriftungen verknüpft, Gruppen von Feldern mit dem Text, der die Gruppe benennt</span></label>
+<textarea id="notes-12" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-aria-structure-valid" aria-labelledby="item-1-3-1-aria-structure-valid" data-key="1.3.1/aria-structure-valid" data-facet="aria-structure-valid" data-label="ARIA-Rollen und -Beziehungen ergeben dieselbe Struktur, die die Seite zeigt" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-aria-structure-valid">ARIA-Rollen und -Beziehungen ergeben dieselbe Struktur, die die Seite zeigt</h4>
+<p class="meta"><span>Für: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie die Teile der Seite, die mit ARIA-Rollen gebaut sind: benutzerdefinierte Menüs, Tabs, Bäume, Grids, Listen und Listenfelder.</li><li>Öffnen Sie bei jedem den Barrierefreiheitsbaum der Entwicklertools und prüfen Sie, ob die dort gezeigte Struktur dem entspricht, was auf dem Bildschirm zu sehen ist: eine tablist mit Tabs, ein Menü mit Menüeinträgen, ein Grid mit Zeilen und Zellen.</li><li>Prüfen Sie, ob keinem Element mit einer Rolle das Elternelement oder die Kinder fehlen, die seine Rolle braucht, und ob aria-owns, wo es verwendet wird, jedem Element genau einen Besitzer gibt.</li><li>Prüfen Sie, ob &lt;body&gt; nicht mit aria-hidden=&quot;true&quot; verborgen ist.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Der Barrierefreiheitsbaum gibt die Struktur wieder, die die Seite zeigt, und jede Rolle steht an der Stelle, die sie braucht.</dd><dt>Nicht bestanden, wenn</dt><dd>Einer Rolle fehlt das erforderliche Elternelement oder fehlen die erforderlichen Kinder, ein Element ist zweimal zugeordnet, oder die Seite ist im Baum verborgen, sodass assistive Technologien eine Struktur wiedergeben, die nicht zum Bildschirm passt; das verstößt gegen WCAG 1.3.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>aria-hidden-body</code>, <code>aria-required-children</code>, <code>aria-prohibited-children</code>, <code>aria-required-parent</code>, <code>aria-roles-valid</code>, <code>aria-owns-valid</code></p><p class="covers">Er prüft auch: <code>aria-hidden-body-absent</code>, <code>aria-role-required-owned-children</code>, <code>aria-role-owned-children-allowed</code>, <code>aria-role-required-context-parent</code>, <code>aria-role-valid</code>, <code>aria-owns-valid</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">ARIA-Rollen und -Beziehungen ergeben dieselbe Struktur, die die Seite zeigt</span></legend>
+<div class="choices"><label><input type="radio" name="o-13" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-13" value="pass"> Bestanden</label><label><input type="radio" name="o-13" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-13" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-13">Notizen<span class="vh">: </span><span class="vh">ARIA-Rollen und -Beziehungen ergeben dieselbe Struktur, die die Seite zeigt</span></label>
+<textarea id="notes-13" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-1-visual-cues-conveyed" aria-labelledby="item-1-3-1-visual-cues-conveyed" data-key="1.3.1/visual-cues-conveyed" data-facet="visual-cues-conveyed" data-label="Bedeutung, die durch Gestaltung oder Layout vermittelt wird, etwa Fettdruck, Farbe, Position oder ein Sternchen, steht auch im Markup oder im Text" data-requirements="[&quot;1.3.1&quot;]">
+<h4 id="item-1-3-1-visual-cues-conveyed">Bedeutung, die durch Gestaltung oder Layout vermittelt wird, etwa Fettdruck, Farbe, Position oder ein Sternchen, steht auch im Markup oder im Text</h4>
+<p class="meta"><span>Für: 1.3.1</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Suchen Sie nach Bedeutung, die die Seite nur durch das Aussehen zeigt: Pflichtfelder, die mit einem Sternchen oder einer Farbe markiert sind, hervorgehobene oder durchgestrichene Wörter, ein ausgewählter Eintrag, der nur durch seinen Stil erkennbar ist, Text, der in einem Kasten abgesetzt ist.</li><li>Prüfen Sie bei jedem, ob dieselbe Bedeutung im Markup (etwa required, aria-current, &lt;em&gt;, &lt;del&gt;) oder im Text selbst steht („Pflichtfeld“, „aktuelle Seite“).</li><li>Sehen Sie sich Text und Symbole an, die mit CSS über die Eigenschaft content eingefügt werden. Browser unterscheiden sich darin, ob Screenreader sie vorlesen, daher müssen Informationen, die nur CSS hinzufügt, auch im Markup oder im Text stehen.</li><li>Lesen Sie die Stellen mit einem Screenreader und prüfen Sie, ob das, was die Gestaltung zeigt, angesagt wird.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Was Gestaltung oder Layout vermitteln, steht auch im Markup oder im Text.</dd><dt>Nicht bestanden, wenn</dt><dd>Bedeutung wird nur durch Gestaltung oder Position vermittelt, etwa Pflichtfelder, die nur durch Farbe oder ein unerklärtes Sternchen markiert sind, sodass Screenreader-Nutzende sie nicht mitbekommen; das verstößt gegen WCAG 1.3.1.</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Bedeutung, die durch Gestaltung oder Layout vermittelt wird, etwa Fettdruck, Farbe, Position oder ein Sternchen, steht auch im Markup oder im Text</span></legend>
+<div class="choices"><label><input type="radio" name="o-14" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-14" value="pass"> Bestanden</label><label><input type="radio" name="o-14" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-14" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-14">Notizen<span class="vh">: </span><span class="vh">Bedeutung, die durch Gestaltung oder Layout vermittelt wird, etwa Fettdruck, Farbe, Position oder ein Sternchen, steht auch im Markup oder im Text</span></label>
+<textarea id="notes-14" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-4-orientation-not-locked" aria-labelledby="item-1-3-4-orientation-not-locked" data-key="1.3.4/orientation-not-locked" data-facet="orientation-not-locked" data-label="Die Seite funktioniert im Hoch- und im Querformat, sofern nicht eine Ausrichtung wesentlich ist" data-requirements="[&quot;1.3.4&quot;]">
+<h4 id="item-1-3-4-orientation-not-locked">Die Seite funktioniert im Hoch- und im Querformat, sofern nicht eine Ausrichtung wesentlich ist</h4>
+<p class="meta"><span>Für: 1.3.4</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Öffnen Sie die Seite in der Gerätesymbolleiste der Entwicklertools oder auf einem Smartphone oder Tablet.</li><li>Betrachten Sie sie im Hochformat, drehen Sie sie dann ins Querformat (oder umgekehrt) und nutzen Sie in beiden ihre Hauptinhalte und Bedienelemente.</li><li>Bestätigen Sie das Ergebnis auf einem echten Smartphone oder Tablet mit ausgeschalteter Rotationssperre. Die Gerätesymbolleiste kann nicht zeigen, ob die Seite die Ausrichtung per Skript oder, bei einer installierten Web-App, über ihr Manifest festlegt.</li><li>Prüfen Sie, ob die Seite Sie nicht auffordert, das Gerät zu drehen, ihre Inhalte nicht seitlich dreht und in keiner Ausrichtung Inhalte verbirgt.</li><li>Wenn doch, fragen Sie sich, ob diese Ausrichtung wesentlich ist, wie bei einem Bankscheck oder einer Klaviertastatur.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Die Seite wird in beiden Ausrichtungen angezeigt und funktioniert in beiden, oder eine Ausrichtung ist für sie wesentlich.</dd><dt>Nicht bestanden, wenn</dt><dd>Die Seite funktioniert nur in einer Ausrichtung, indem sie auffordert, das Gerät zu drehen, ihre Inhalte dreht oder verbirgt, ohne dass dies wesentlich ist; das verstößt gegen WCAG 1.3.4.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>css-orientation-lock</code></p><p class="covers">Er prüft auch: <code>css-orientation-lock</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Die Seite funktioniert im Hoch- und im Querformat, sofern nicht eine Ausrichtung wesentlich ist</span></legend>
+<div class="choices"><label><input type="radio" name="o-15" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-15" value="pass"> Bestanden</label><label><input type="radio" name="o-15" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-15" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-15">Notizen<span class="vh">: </span><span class="vh">Die Seite funktioniert im Hoch- und im Querformat, sofern nicht eine Ausrichtung wesentlich ist</span></label>
+<textarea id="notes-15" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-3-5-input-purpose-identified" aria-labelledby="item-1-3-5-input-purpose-identified" data-key="1.3.5/input-purpose-identified" data-facet="input-purpose-identified" data-label="Felder, die Informationen über die Nutzenden abfragen, benennen ihren Zweck mit dem richtigen autocomplete-Wert" data-requirements="[&quot;1.3.5&quot;]">
+<h4 id="item-1-3-5-input-purpose-identified">Felder, die Informationen über die Nutzenden abfragen, benennen ihren Zweck mit dem richtigen autocomplete-Wert</h4>
+<p class="meta"><span>Für: 1.3.5</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie jedes Feld, das Informationen über die Person abfragt, die die Seite nutzt: Name, E-Mail, Telefon, Adresse, Geburtstag, Benutzername, Passwort, Kartendaten.</li><li>Lesen Sie bei jedem im Bereich „Elemente“ der Entwicklertools sein autocomplete-Attribut.</li><li>Prüfen Sie, ob es den Wert hat, der zur abgefragten Information passt (name, email, tel, street-address, postal-code, bday, username, new-password, cc-number usw.).</li><li>Ein Feld mit autocomplete=&quot;off&quot; oder ohne autocomplete-Attribut bestimmt seinen Zweck nicht, auch wenn der Browser trotzdem anbietet, es auszufüllen.</li><li>Lassen Sie Felder weg, die nach einer anderen Person fragen, etwa nach der Empfängerin oder dem Empfänger eines Geschenks, es sei denn, sie geben dies mit dem richtigen section-Wert oder Wert an.</li><li>Nur die Zwecke aus der WCAG-Liste der Eingabezwecke sind relevant. Ein Feld für eine Mitglieds- oder Kundennummer zum Beispiel hat keinen Wert in dieser Liste und braucht keinen.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jedes Feld, das eigene Informationen der Nutzenden abfragt, hat den passenden autocomplete-Wert.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Feld, das eigene Informationen der Nutzenden abfragt, hat keinen oder einen falschen autocomplete-Wert, sodass Browser und Hilfsprogramme es nicht ausfüllen oder seinen Zweck nicht kennzeichnen können; das verstößt gegen WCAG 1.3.5.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>autocomplete-valid</code></p><p class="covers">Er prüft auch: <code>autocomplete-valid</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Felder, die Informationen über die Nutzenden abfragen, benennen ihren Zweck mit dem richtigen autocomplete-Wert</span></legend>
+<div class="choices"><label><input type="radio" name="o-16" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-16" value="pass"> Bestanden</label><label><input type="radio" name="o-16" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-16" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-16">Notizen<span class="vh">: </span><span class="vh">Felder, die Informationen über die Nutzenden abfragen, benennen ihren Zweck mit dem richtigen autocomplete-Wert</span></label>
+<textarea id="notes-16" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-1-4">
+<h3 id="g-1-4"><span class="num">1.4</span> <span>Unterscheidbar</span></h3>
+<article class="item" id="i-1-4-1-color-not-only-means" aria-labelledby="item-1-4-1-color-not-only-means" data-key="1.4.1/color-not-only-means" data-facet="color-not-only-means" data-label="Farbe ist nicht das einzige Mittel, um Informationen zu zeigen, zu einer Auswahl aufzufordern oder ein Element hervorzuheben" data-requirements="[&quot;1.4.1&quot;]">
+<h4 id="item-1-4-1-color-not-only-means">Farbe ist nicht das einzige Mittel, um Informationen zu zeigen, zu einer Auswahl aufzufordern oder ein Element hervorzuheben</h4>
+<p class="meta"><span>Für: 1.4.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie nach Informationen, die die Seite über Farbe vermittelt: Links in einem Absatz, Pflichtfelder oder ungültige Felder, der ausgewählte Tab oder Tag, Datenreihen in Diagrammen, Status in Rot oder Grün.</li><li>Prüfen Sie bei jeder, ob sie auch durch etwas anderes als Farbe vermittelt wird: eine Unterstreichung, ein Symbol, eine Textbeschriftung, ein Muster, einen Rahmen oder eine Formänderung.</li><li>Prüfen Sie bei Links in einem Absatz, die sich nur durch die Farbe unterscheiden, ob sie beim Überfahren mit der Maus und beim Fokussieren eine Unterstreichung oder eine andere Markierung erhalten und ob ihre Farbe einen Kontrast von mindestens 3:1 zum umgebenden Text hat.</li><li>Betrachten Sie die Seite in Graustufen (emulieren Sie im Bereich „Rendering“ der Entwicklertools eine Achromatopsie) und prüfen Sie, ob nichts verloren geht.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Alles, was die Seite über Farbe vermittelt, wird auch auf andere Weise vermittelt.</dd><dt>Nicht bestanden, wenn</dt><dd>Informationen, etwa welche Felder Fehler haben oder welcher Text ein Link ist, werden nur über Farbe vermittelt; das verstößt gegen WCAG 1.4.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>link-in-text-block</code></p><p class="covers">Er prüft auch: <code>link-in-text-block</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Farbe ist nicht das einzige Mittel, um Informationen zu zeigen, zu einer Auswahl aufzufordern oder ein Element hervorzuheben</span></legend>
+<div class="choices"><label><input type="radio" name="o-17" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-17" value="pass"> Bestanden</label><label><input type="radio" name="o-17" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-17" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-17">Notizen<span class="vh">: </span><span class="vh">Farbe ist nicht das einzige Mittel, um Informationen zu zeigen, zu einer Auswahl aufzufordern oder ein Element hervorzuheben</span></label>
+<textarea id="notes-17" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-2-no-autoplay-audio-evidence" aria-labelledby="item-1-4-2-no-autoplay-audio-evidence" data-key="1.4.2/no-autoplay-audio-evidence" data-facet="no-autoplay-audio-evidence" data-label="Ton, der von selbst länger als 3 Sekunden abgespielt wird, lässt sich pausieren, stoppen oder leiser stellen" data-requirements="[&quot;1.4.2&quot;]">
+<h4 id="item-1-4-2-no-autoplay-audio-evidence">Ton, der von selbst länger als 3 Sekunden abgespielt wird, lässt sich pausieren, stoppen oder leiser stellen</h4>
+<p class="meta"><span>Für: 1.4.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span></li></ul>
+<ol class="steps"><li>Laden Sie die Seite mit eingeschaltetem Ton und achten Sie auf Ton, der von selbst startet: Musik, ein Video, eine Werbung.</li><li>Wird Ton länger als 3 Sekunden abgespielt, suchen Sie oben auf der Seite oder am Player nach einer Möglichkeit, ihn zu pausieren oder zu stoppen oder seine Lautstärke unabhängig von der Systemlautstärke zu verringern.</li><li>Prüfen Sie, ob sich das Bedienelement mit der Tastatur finden und bedienen lässt.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Kein Ton wird von selbst länger als 3 Sekunden abgespielt, oder ein Bedienelement am Anfang der Seite pausiert, stoppt oder verringert ihn.</dd><dt>Nicht bestanden, wenn</dt><dd>Ton wird von selbst länger als 3 Sekunden abgespielt, ohne dass er sich anders als über die Systemlautstärke pausieren, stoppen oder verringern lässt, sodass er einen Screenreader übertönt; das verstößt gegen WCAG 1.4.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>no-autoplay-audio</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Ton, der von selbst länger als 3 Sekunden abgespielt wird, lässt sich pausieren, stoppen oder leiser stellen</span></legend>
+<div class="choices"><label><input type="radio" name="o-18" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-18" value="pass"> Bestanden</label><label><input type="radio" name="o-18" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-18" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-18">Notizen<span class="vh">: </span><span class="vh">Ton, der von selbst länger als 3 Sekunden abgespielt wird, lässt sich pausieren, stoppen oder leiser stellen</span></label>
+<textarea id="notes-18" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-3-contrast-minimum-text" aria-labelledby="item-1-4-3-contrast-minimum-text" data-key="1.4.3/contrast-minimum-text" data-facet="contrast-minimum-text" data-label="Text hat einen Kontrast von mindestens 4,5:1 zu seinem Hintergrund, bei großem Text 3:1" data-requirements="[&quot;1.4.3&quot;]">
+<h4 id="item-1-4-3-contrast-minimum-text">Text hat einen Kontrast von mindestens 4,5:1 zu seinem Hintergrund, bei großem Text 3:1</h4>
+<p class="meta"><span>Für: 1.4.3</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie auf der Seite nach Text, der vor seinem Hintergrund blass wirkt: hellgrauer Text, Text auf farbigen Flächen, Platzhalter, Text über Bildern oder Verläufen, Text in Schaltflächen.</li><li>Untersuchen Sie jeden und klicken Sie im Bereich „Stile“ der Entwicklertools auf das Farbfeld seiner Farbe: Der Farbwähler zeigt sein Kontrastverhältnis zum Hintergrund.</li><li>Der Farbwähler misst gegen die im CSS gesetzte Hintergrundfarbe. Liegt Text auf einem Bild, einem Verlauf oder einer halbtransparenten Ebene oder ergibt sich seine Farbe aus opacity oder einem Mischmodus, ist der Wert des Farbwählers nicht verlässlich: Gehen Sie stattdessen wie im nächsten Schritt vor.</li><li>Ist der Hintergrund ein Bild, ein Verlauf oder eine halbtransparente Ebene, messen Sie den Text mit einem Kontrastrechner gegen die Stelle des Hintergrunds, an der er am schlechtesten zu sehen ist.</li><li>Prüfen Sie, ob das Verhältnis mindestens 4,5:1 beträgt, bei großem Text 3:1: mindestens 24 Pixel (18 pt) oder 18,66 Pixel (14 pt) und fett.</li><li>Runden Sie das Ergebnis nicht: 4,49:1 ist nicht bestanden. Prüfen Sie Text auch in seinen anderen Zuständen, etwa beim Überfahren mit der Maus, bei Fokus und bei Auswahl, da ein Zustand den Kontrast verringern kann.</li><li>Lassen Sie Logos und Markennamen weg, Text auf deaktivierten Bedienelementen, Text, der nur Dekoration ist oder den niemand sehen kann, und Text, der Teil eines Bildes mit anderen wichtigen Inhalten ist, etwa ein Straßenschild auf einem Foto.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Alle Texte und Bilder von Text haben einen Kontrast von mindestens 4,5:1 zu ihrem Hintergrund, bei großem Text 3:1.</dd><dt>Nicht bestanden, wenn</dt><dd>Text hat einen geringeren Kontrast zu seinem Hintergrund als 4,5:1 (3:1 bei großem Text), sodass Menschen mit Sehbehinderung ihn nicht lesen können; das verstößt gegen WCAG 1.4.3.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>contrast-minimum</code>, <code>contrast-computable</code></p><p class="covers">Er prüft auch: <code>contrast-computability-143</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Text hat einen Kontrast von mindestens 4,5:1 zu seinem Hintergrund, bei großem Text 3:1</span></legend>
+<div class="choices"><label><input type="radio" name="o-19" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-19" value="pass"> Bestanden</label><label><input type="radio" name="o-19" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-19" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-19">Notizen<span class="vh">: </span><span class="vh">Text hat einen Kontrast von mindestens 4,5:1 zu seinem Hintergrund, bei großem Text 3:1</span></label>
+<textarea id="notes-19" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-4-text-resizes-200" aria-labelledby="item-1-4-4-text-resizes-200" data-key="1.4.4/text-resizes-200" data-facet="text-resizes-200" data-label="Text lässt sich ohne Verlust von Inhalt oder Funktion auf 200 % vergrößern" data-requirements="[&quot;1.4.4&quot;]">
+<h4 id="item-1-4-4-text-resizes-200">Text lässt sich ohne Verlust von Inhalt oder Funktion auf 200 % vergrößern</h4>
+<p class="meta"><span>Für: 1.4.4</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Der Zoom des Browsers</span></li></ul>
+<ol class="steps"><li>Zoomen Sie den Browser auf 200 %.</li><li>Gehen Sie die ganze Seite durch und prüfen Sie, ob aller Text größer geworden ist und keiner abgeschnitten, überlagert oder verborgen ist.</li><li>Nutzen Sie die Bedienelemente, Menüs und Formulare der Seite in dieser Größe und prüfen Sie, ob alle noch funktionieren.</li><li>Prüfen Sie auf einem Smartphone, ob Sie die Seite mit zwei Fingern auf 200 % zoomen können. Verwenden Sie Chrome unter Android, wobei die Bedienungshilfe von Chrome, die das Zoomen erzwingt, ausgeschaltet ist: Safari unter iOS ignoriert einen Viewport, der das Zoomen sperrt, und kann diesen Fehler daher verdecken.</li><li>Lassen Sie Untertitel und Bilder von Text weg.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Bei 200 % ist aller Text größer geworden und bleibt lesbar, und alles funktioniert noch.</dd><dt>Nicht bestanden, wenn</dt><dd>Bei 200 % ist Text abgeschnitten, überlappt oder wird nicht größer, ein Bedienelement funktioniert nicht mehr, oder das Zoomen mit zwei Fingern ist gesperrt; das verstößt gegen WCAG 1.4.4.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>meta-viewport-zoom-enabled</code></p><p class="covers">Er prüft auch: <code>meta-viewport-zoom-enabled</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Text lässt sich ohne Verlust von Inhalt oder Funktion auf 200 % vergrößern</span></legend>
+<div class="choices"><label><input type="radio" name="o-20" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-20" value="pass"> Bestanden</label><label><input type="radio" name="o-20" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-20" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-20">Notizen<span class="vh">: </span><span class="vh">Text lässt sich ohne Verlust von Inhalt oder Funktion auf 200 % vergrößern</span></label>
+<textarea id="notes-20" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-5-text-not-as-image" aria-labelledby="item-1-4-5-text-not-as-image" data-key="1.4.5/text-not-as-image" data-facet="text-not-as-image" data-label="Text wird als Text gezeigt, nicht in einem Bild, es sei denn, sein Aussehen ist wesentlich, wie bei einem Logo" data-requirements="[&quot;1.4.5&quot;]">
+<h4 id="item-1-4-5-text-not-as-image">Text wird als Text gezeigt, nicht in einem Bild, es sei denn, sein Aussehen ist wesentlich, wie bei einem Logo</h4>
+<p class="meta"><span>Für: 1.4.5</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie nach Bildern, die Wörter enthalten: Banner, Überschriften, Schaltflächen, Zitate, Menüs.</li><li>Versuchen Sie, ein Wort darin mit dem Zeiger auszuwählen, oder untersuchen Sie es: Text, der sich nicht auswählen lässt, steht meist in einem Bild, einer SVG-Zeichnung oder einem canvas.</li><li>Fragen Sie sich bei jedem, ob sich dasselbe mit echtem, per CSS gestaltetem Text darstellen ließe.</li><li>Lassen Sie Logos und Markennamen weg, Bilder, bei denen das besondere Aussehen des Textes wesentlich ist, etwa eine Schriftprobe, und Bilder von Text, die Nutzende nach ihren Bedürfnissen anpassen können, etwa eine Seite, auf der sie Schriftart, Größe und Farben des Textes im Bild einstellen können.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Text ist echter Text, oder ein Bild von Text ist ein Logo oder braucht genau sein Aussehen.</dd><dt>Nicht bestanden, wenn</dt><dd>Wörter werden als Bild gezeigt, wo gestalteter Text gleich aussähe, sodass Menschen ihre Größe, Farbe oder Abstände nicht ändern können; das verstößt gegen WCAG 1.4.5.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>image-of-text</code></p><p class="covers">Er prüft auch: <code>image-of-text-evidence</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Text wird als Text gezeigt, nicht in einem Bild, es sei denn, sein Aussehen ist wesentlich, wie bei einem Logo</span></legend>
+<div class="choices"><label><input type="radio" name="o-21" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-21" value="pass"> Bestanden</label><label><input type="radio" name="o-21" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-21" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-21">Notizen<span class="vh">: </span><span class="vh">Text wird als Text gezeigt, nicht in einem Bild, es sei denn, sein Aussehen ist wesentlich, wie bei einem Logo</span></label>
+<textarea id="notes-21" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-12-avoid-inline-spacing" aria-labelledby="item-1-4-12-avoid-inline-spacing" data-key="1.4.12/avoid-inline-spacing" data-facet="avoid-inline-spacing" data-label="In einem style-Attribut erzwungene Abstände verhindern nicht, dass Text die Abstände der Nutzenden übernimmt" data-requirements="[&quot;1.4.12&quot;]">
+<h4 id="item-1-4-12-avoid-inline-spacing">In einem style-Attribut erzwungene Abstände verhindern nicht, dass Text die Abstände der Nutzenden übernimmt</h4>
+<p class="meta"><span>Für: 1.4.12</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Durchsuchen Sie im Bereich „Elemente“ der Entwicklertools das Markup der Seite (Strg+F oder auf einem Mac Cmd+F) nach !important und notieren Sie jeden Treffer in einem style-Attribut, das line-height, letter-spacing oder word-spacing setzt.</li><li>Lesen Sie bei jedem den resultierenden Wert im Tab „Berechnet“ und vergleichen Sie ihn mit dem 1,5-Fachen der Schriftgröße für line-height, dem 0,12-Fachen für letter-spacing und dem 0,16-Fachen für word-spacing.</li><li>Ist der Wert niedriger, verkleinern Sie das Fenster auf 320 CSS-Pixel Breite und prüfen Sie, ob dieser Text in mehr als eine Zeile umbricht.</li><li>Fügen Sie im Bereich „Stile“ der Entwicklertools eine neue Stilregel für * mit line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important hinzu sowie eine Regel für p mit margin-bottom: 2em !important. Das Element behält seinen eigenen Wert, da sein style-Attribut Vorrang hat.</li><li>Prüfen Sie, ob dieser Text abgeschnitten wird, anderen Text überlappt oder verborgen ist.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Kein style-Attribut erzwingt bei umbrechendem Text Abstände unter diesen Werten, oder der betroffene Text wird mit den angewendeten Abständen weiterhin vollständig angezeigt.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein style-Attribut erzwingt bei umbrechendem Text Abstände unter diesen Werten, sodass ein Bookmarklet oder eine Browsererweiterung die Abstände der Person nicht anwenden kann, und mit diesen Abständen überlappt der Text oder wird abgeschnitten; das verstößt gegen WCAG 1.4.12.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>avoid-inline-spacing</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">In einem style-Attribut erzwungene Abstände verhindern nicht, dass Text die Abstände der Nutzenden übernimmt</span></legend>
+<div class="choices"><label><input type="radio" name="o-22" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-22" value="pass"> Bestanden</label><label><input type="radio" name="o-22" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-22" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-22">Notizen<span class="vh">: </span><span class="vh">In einem style-Attribut erzwungene Abstände verhindern nicht, dass Text die Abstände der Nutzenden übernimmt</span></label>
+<textarea id="notes-22" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-12-text-spacing-content-loss" aria-labelledby="item-1-4-12-text-spacing-content-loss" data-key="1.4.12/text-spacing-content-loss" data-facet="text-spacing-content-loss" data-label="Mit den Abständen aus 1.4.12 wird kein Text abgeschnitten oder überlappt (im Browser gemessen)" data-requirements="[&quot;1.4.12&quot;]">
+<h4 id="item-1-4-12-text-spacing-content-loss">Mit den Abständen aus 1.4.12 wird kein Text abgeschnitten oder überlappt (im Browser gemessen)</h4>
+<p class="meta"><span>Für: 1.4.12</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Eine Tastatur</span></li></ul>
+<ol class="steps"><li>Fügen Sie im Bereich „Stile“ der Entwicklertools eine neue Stilregel für * mit line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important hinzu sowie eine Regel für p mit margin-bottom: 2em !important. Im Bereich „Stile“ hinzugefügte Regeln werden nicht durch die Sicherheitsrichtlinie der Seite blockiert.</li><li>Scrollen Sie durch die ganze Seite und suchen Sie nach Text, der abgeschnitten wird, anderen Text überlappt oder verschwindet. Text, der Teil eines Bildes ist, zählt nicht.</li><li>Tun Sie dies bei den Breiten, die Sie auch sonst testen, einschließlich 320 CSS-Pixeln Breite, wo Text am stärksten umbricht und am häufigsten abgeschnitten wird.</li><li>Wird Text abgeschnitten, prüfen Sie, ob die Seite eine Möglichkeit bietet, ihn vollständig anzuzeigen, etwa einen Link „Weiterlesen“ oder eine Schaltfläche, die den Kasten aufklappt. Das zählt nur, wenn Sie sie mit der Tastatur bedienen können und sie bei weiterhin angewendeten Abständen den ganzen Text zeigt.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Aller Text bleibt sichtbar und lesbar, oder abgeschnittener Text lässt sich mit der Tastatur vollständig anzeigen.</dd><dt>Nicht bestanden, wenn</dt><dd>Mit den angewendeten Abständen wird Text abgeschnitten, überlappt oder geht verloren und lässt sich auch nicht auf andere Weise vollständig anzeigen; das verstößt gegen WCAG 1.4.12.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>text-spacing-content-loss</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Mit den Abständen aus 1.4.12 wird kein Text abgeschnitten oder überlappt (im Browser gemessen)</span></legend>
+<div class="choices"><label><input type="radio" name="o-23" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-23" value="pass"> Bestanden</label><label><input type="radio" name="o-23" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-23" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-23">Notizen<span class="vh">: </span><span class="vh">Mit den Abständen aus 1.4.12 wird kein Text abgeschnitten oder überlappt (im Browser gemessen)</span></label>
+<textarea id="notes-23" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-12-text-spacing-functionality-kept" aria-labelledby="item-1-4-12-text-spacing-functionality-kept" data-key="1.4.12/text-spacing-functionality-kept" data-facet="text-spacing-functionality-kept" data-label="Mit den Abständen aus 1.4.12 funktionieren Bedienelemente, Menüs und Formulare weiter und zeigen ihren ganzen Text" data-requirements="[&quot;1.4.12&quot;]">
+<h4 id="item-1-4-12-text-spacing-functionality-kept">Mit den Abständen aus 1.4.12 funktionieren Bedienelemente, Menüs und Formulare weiter und zeigen ihren ganzen Text</h4>
+<p class="meta"><span>Für: 1.4.12</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Eine Tastatur</span>, <span>Eine Maus oder ein anderes Zeigegerät</span></li></ul>
+<ol class="steps"><li>Fügen Sie im Bereich „Stile“ der Entwicklertools eine neue Stilregel für * mit line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important hinzu sowie eine Regel für p mit margin-bottom: 2em !important.</li><li>Bedienen Sie jedes Bedienelement der Seite: Öffnen Sie ihre Menüs und Auswahllisten, füllen Sie ihre Formulare aus und senden Sie sie ab, wechseln Sie ihre Tabs und öffnen und schließen Sie ihre Dialoge.</li><li>Prüfen Sie, ob jedes noch reagiert, ob kein verschobener Text ein Bedienelement verdeckt und ob jede Beschriftung und jede Schaltfläche ihren ganzen Text zeigt.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jedes Bedienelement funktioniert mit den angewendeten Abständen weiter und zeigt seinen ganzen Text.</dd><dt>Nicht bestanden, wenn</dt><dd>Mit den angewendeten Abständen funktioniert ein Bedienelement nicht mehr, ist so verdeckt, dass es sich nicht bedienen lässt, oder verliert Text, der sagt, was es tut; das verstößt gegen WCAG 1.4.12.</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Mit den Abständen aus 1.4.12 funktionieren Bedienelemente, Menüs und Formulare weiter und zeigen ihren ganzen Text</span></legend>
+<div class="choices"><label><input type="radio" name="o-24" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-24" value="pass"> Bestanden</label><label><input type="radio" name="o-24" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-24" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-24">Notizen<span class="vh">: </span><span class="vh">Mit den Abständen aus 1.4.12 funktionieren Bedienelemente, Menüs und Formulare weiter und zeigen ihren ganzen Text</span></label>
+<textarea id="notes-24" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-12-text-spacing-other-states" aria-labelledby="item-1-4-12-text-spacing-other-states" data-key="1.4.12/text-spacing-other-states" data-facet="text-spacing-other-states" data-label="Mit den Abständen aus 1.4.12 behalten Inhalte, die erst nach einer Interaktion erscheinen (Menüs, Dialoge, Tabs, Meldungen), ihren ganzen Text" data-requirements="[&quot;1.4.12&quot;]">
+<h4 id="item-1-4-12-text-spacing-other-states">Mit den Abständen aus 1.4.12 behalten Inhalte, die erst nach einer Interaktion erscheinen (Menüs, Dialoge, Tabs, Meldungen), ihren ganzen Text</h4>
+<p class="meta"><span>Für: 1.4.12</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Eine Tastatur</span>, <span>Eine Maus oder ein anderes Zeigegerät</span></li></ul>
+<ol class="steps"><li>Fügen Sie im Bereich „Stile“ der Entwicklertools eine neue Stilregel für * mit line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important hinzu sowie eine Regel für p mit margin-bottom: 2em !important.</li><li>Rufen Sie die Inhalte auf, die die Seite erst zeigt, wenn Sie etwas tun: Öffnen Sie jedes Menü und jeden Dialog, wechseln Sie zu jedem Tab, klappen Sie jeden eingeklappten Abschnitt auf, lassen Sie jeden Tooltip anzeigen und senden Sie ein Formular mit einem Fehler ab, um seine Fehlermeldungen zu sehen.</li><li>Prüfen Sie jeden wie auf der Seite selbst auf Text, der abgeschnitten wird, anderen Text überlappt oder verschwindet.</li><li>Wird Text abgeschnitten, prüfen Sie, ob die Seite eine Möglichkeit bietet, ihn vollständig anzuzeigen, etwa einen Link „Weiterlesen“ oder eine Schaltfläche, die den Kasten aufklappt. Das zählt nur, wenn Sie sie mit der Tastatur bedienen können und sie bei weiterhin angewendeten Abständen den ganzen Text zeigt.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Inhalte, die erscheinen, nachdem Sie etwas tun, behalten mit den angewendeten Abständen ihren ganzen Text sichtbar und lesbar, oder abgeschnittener Text lässt sich mit der Tastatur vollständig anzeigen.</dd><dt>Nicht bestanden, wenn</dt><dd>Text in einem Menü, Dialog, Tab, Tooltip oder einer Meldung wird mit den angewendeten Abständen abgeschnitten oder überlappt und lässt sich nicht auf andere Weise vollständig anzeigen; das verstößt gegen WCAG 1.4.12.</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Mit den Abständen aus 1.4.12 behalten Inhalte, die erst nach einer Interaktion erscheinen (Menüs, Dialoge, Tabs, Meldungen), ihren ganzen Text</span></legend>
+<div class="choices"><label><input type="radio" name="o-25" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-25" value="pass"> Bestanden</label><label><input type="radio" name="o-25" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-25" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-25">Notizen<span class="vh">: </span><span class="vh">Mit den Abständen aus 1.4.12 behalten Inhalte, die erst nach einer Interaktion erscheinen (Menüs, Dialoge, Tabs, Meldungen), ihren ganzen Text</span></label>
+<textarea id="notes-25" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+</section>
+<section class="group" aria-labelledby="g-2">
+<h2 id="g-2"><span class="num">2</span> <span>Bedienbar</span></h2>
+<section class="group" aria-labelledby="g-2-1">
+<h3 id="g-2-1"><span class="num">2.1</span> <span>Per Tastatur zugänglich</span></h3>
+<article class="item" id="i-2-1-1-keyboard-operable-all-functionality" aria-labelledby="item-2-1-1-keyboard-operable-all-functionality" data-key="2.1.1/keyboard-operable-all-functionality" data-facet="keyboard-operable-all-functionality" data-label="Alle Funktionen lassen sich allein mit der Tastatur bedienen" data-requirements="[&quot;2.1.1&quot;]">
+<h4 id="item-2-1-1-keyboard-operable-all-functionality">Alle Funktionen lassen sich allein mit der Tastatur bedienen</h4>
+<p class="meta"><span>Für: 2.1.1</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span></li></ul>
+<ol class="steps"><li>Schalten Sie jeden Screenreader aus. Im Lesemodus kann ein Screenreader Elemente aktivieren, die mit der Tastatur allein nicht erreichbar sind, und so Fehler verdecken.</li><li>Laden Sie die Seite neu und drücken Sie, ohne zu klicken, wiederholt Tab durch die ganze Seite. Notieren Sie jeden Link, jede Schaltfläche, jedes Feld und jedes andere Bedienelement, an dem Sie vorbeikommen.</li><li>Vergleichen Sie das mit dem, was Sie mit dem Zeiger anklicken oder ziehen können, und notieren Sie alles, was die Tastatur nie erreicht: ein Bedienelement, einen Menüeintrag, einen scrollbaren Kasten, einen Teil einer Karte oder ein benutzerdefiniertes Widget.</li><li>Bedienen Sie jedes Bedienelement mit der Tastatur: Eingabetaste oder Leertaste zum Aktivieren, Pfeiltasten in Menüs, Tabs, Listen und Schiebereglern, Esc zum Schließen dessen, was sich öffnet.</li><li>Vergleichen Sie bei benutzerdefinierten Widgets die Tasten mit denen, die die WAI-ARIA Authoring Practices für diese Art von Widget angeben, etwa die Pfeiltasten in einer Tab-Liste. Ein Widget, das nur mit ungewöhnlichen Tasten funktioniert, kann dieses Kriterium trotzdem erfüllen, wenn die Seite die Tasten erklärt, aber halten Sie es als Problem der Gebrauchstauglichkeit fest.</li><li>Lässt sich etwas mit der Tastatur nicht erreichen oder bedienen, prüfen Sie, ob die Seite einen anderen Weg bietet, dasselbe allein mit der Tastatur zu tun, etwa Schaltflächen „Zurück“ und „Weiter“ für ein Karussell. Das zählt nur, wenn dieser Weg alles leistet, was der Zeiger kann.</li><li>Lassen Sie weg, was vom Weg des Zeigers abhängt, etwa Freihandzeichnen.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Alles, was die Seite mit einem Zeiger ermöglicht, lässt sich allein mit der Tastatur erledigen, direkt oder über einen anderen Weg, der dasselbe leistet.</dd><dt>Nicht bestanden, wenn</dt><dd>Etwas lässt sich nur mit einem Zeiger erledigen, ohne einen Tastaturweg für dasselbe; das verstößt gegen WCAG 2.1.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>iframe-focusable-content</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable</code>, <code>mouse-only-event-handlers</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable</code>, <code>focus-not-removed-by-script</code></p><p class="covers">Er prüft auch: <code>iframe-tabindex-negative-content-not-focusable</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable-evidence</code>, <code>mouse-only-event-handlers-evidence</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable-evidence</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Alle Funktionen lassen sich allein mit der Tastatur bedienen</span></legend>
+<div class="choices"><label><input type="radio" name="o-26" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-26" value="pass"> Bestanden</label><label><input type="radio" name="o-26" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-26" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-26">Notizen<span class="vh">: </span><span class="vh">Alle Funktionen lassen sich allein mit der Tastatur bedienen</span></label>
+<textarea id="notes-26" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-2">
+<h3 id="g-2-2"><span class="num">2.2</span> <span>Ausreichend Zeit</span></h3>
+<article class="item" id="i-2-2-1-time-limits-adjustable" aria-labelledby="item-2-2-1-time-limits-adjustable" data-key="2.2.1/time-limits-adjustable" data-facet="time-limits-adjustable" data-label="Jede Zeitbegrenzung lässt sich ausschalten, anpassen oder verlängern, sofern sie nicht in Echtzeit abläuft, wesentlich ist oder 20 Stunden überschreitet" data-requirements="[&quot;2.2.1&quot;]">
+<h4 id="item-2-2-1-time-limits-adjustable">Jede Zeitbegrenzung lässt sich ausschalten, anpassen oder verlängern, sofern sie nicht in Echtzeit abläuft, wesentlich ist oder 20 Stunden überschreitet</h4>
+<p class="meta"><span>Für: 2.2.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: nur ein Browser</li></ul>
+<ol class="steps"><li>Suchen Sie auf der Seite nach allem, was nach einer festgelegten Zeit geschieht: eine Sitzung, die endet, ein Formular, das abläuft, eine Seite, die sich von selbst aktualisiert oder weiterschaltet, Inhalte, die verschwinden.</li><li>Prüfen Sie den Quelltext der Seite und warten Sie eine Weile auf ihr, um Begrenzungen zu finden, die nicht angekündigt werden, etwa ein &lt;meta http-equiv=&quot;refresh&quot;&gt; oder eine Abmeldung nach Inaktivität.</li><li>Fragen Sie bei einer Sitzung, die auf dem Server endet, das Team, wie lange sie dauert, statt zu raten, und warten Sie dann zu diesem Zeitpunkt auf die Warnung. Prüfen Sie die Warnung mit einem Screenreader: Sie muss angesagt und nicht nur angezeigt werden.</li><li>Prüfen Sie bei jeder Begrenzung, ob mindestens eine dieser Bedingungen zutrifft: Sie können sie ausschalten, bevor Sie sie erreichen; Sie können sie auf mindestens das Zehnfache ihrer Dauer anpassen; oder Sie werden gewarnt, bevor sie abläuft, haben mindestens 20 Sekunden, um sie mit einer einfachen Aktion wie einem Tastendruck zu verlängern, und können sie mindestens zehnmal verlängern.</li><li>Lassen Sie Begrenzungen weg, die Teil eines Echtzeitereignisses wie einer Auktion sind, die wesentlich sind wie bei einer zeitgebundenen Prüfung oder die länger als 20 Stunden sind.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jede Zeitbegrenzung lässt sich ausschalten, anpassen oder verlängern, oder sie läuft in Echtzeit ab, ist wesentlich oder länger als 20 Stunden.</dd><dt>Nicht bestanden, wenn</dt><dd>Eine Zeitbegrenzung beendet eine Sitzung, ein Formular oder eine Seite, ohne dass sie sich ausschalten, anpassen oder verlängern lässt; das verstößt gegen WCAG 2.2.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>meta-refresh-timing-absent</code></p><p class="covers">Er prüft auch: <code>meta-refresh-timing-absent</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Jede Zeitbegrenzung lässt sich ausschalten, anpassen oder verlängern, sofern sie nicht in Echtzeit abläuft, wesentlich ist oder 20 Stunden überschreitet</span></legend>
+<div class="choices"><label><input type="radio" name="o-27" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-27" value="pass"> Bestanden</label><label><input type="radio" name="o-27" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-27" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-27">Notizen<span class="vh">: </span><span class="vh">Jede Zeitbegrenzung lässt sich ausschalten, anpassen oder verlängern, sofern sie nicht in Echtzeit abläuft, wesentlich ist oder 20 Stunden überschreitet</span></label>
+<textarea id="notes-27" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-2-2-auto-moving-content-pausable" aria-labelledby="item-2-2-2-auto-moving-content-pausable" data-key="2.2.2/auto-moving-content-pausable" data-facet="auto-moving-content-pausable" data-label="Animationen, die von selbst starten und länger als fünf Sekunden dauern, lassen sich pausieren, beenden oder ausblenden" data-requirements="[&quot;2.2.2&quot;]">
+<h4 id="item-2-2-2-auto-moving-content-pausable">Animationen, die von selbst starten und länger als fünf Sekunden dauern, lassen sich pausieren, beenden oder ausblenden</h4>
+<p class="meta"><span>Für: 2.2.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span></li></ul>
+<ol class="steps"><li>Laden Sie die Seite und achten Sie auf alles, was sich von selbst bewegt, blinkt oder scrollt: Karussells, Lauftext, Animationen, Hintergrundvideos.</li><li>Suchen Sie bei allem, was von selbst startet, länger als 5 Sekunden dauert und neben anderen Inhalten angezeigt wird, nach einem Bedienelement, um es zu pausieren, zu beenden oder auszublenden.</li><li>Prüfen Sie, ob sich das Bedienelement mit der Tastatur finden und bedienen lässt und ob es die Bewegung anhält, statt sie nur zu verlangsamen.</li><li>Lassen Sie wesentliche Bewegung weg, etwa eine Fortschrittsanzeige, während etwas lädt.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Alles, was sich neben anderen Inhalten länger als 5 Sekunden von selbst bewegt, blinkt oder scrollt, lässt sich pausieren, beenden oder ausblenden.</dd><dt>Nicht bestanden, wenn</dt><dd>Inhalte bewegen sich, blinken oder scrollen neben anderen Inhalten länger als 5 Sekunden von selbst, ohne dass sie sich pausieren, beenden oder ausblenden lassen; das verstößt gegen WCAG 2.2.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>moving-content-pausable</code>, <code>deprecated-elements-not-used</code></p><p class="covers">Er prüft auch: <code>deprecated-non-stoppable-elements-absent</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Animationen, die von selbst starten und länger als fünf Sekunden dauern, lassen sich pausieren, beenden oder ausblenden</span></legend>
+<div class="choices"><label><input type="radio" name="o-28" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-28" value="pass"> Bestanden</label><label><input type="radio" name="o-28" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-28" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-28">Notizen<span class="vh">: </span><span class="vh">Animationen, die von selbst starten und länger als fünf Sekunden dauern, lassen sich pausieren, beenden oder ausblenden</span></label>
+<textarea id="notes-28" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-2-2-auto-updating-content-controllable" aria-labelledby="item-2-2-2-auto-updating-content-controllable" data-key="2.2.2/auto-updating-content-controllable" data-facet="auto-updating-content-controllable" data-label="Inhalte, die sich von selbst aktualisieren, lassen sich pausieren, beenden, ausblenden oder seltener aktualisieren" data-requirements="[&quot;2.2.2&quot;]">
+<h4 id="item-2-2-2-auto-updating-content-controllable">Inhalte, die sich von selbst aktualisieren, lassen sich pausieren, beenden, ausblenden oder seltener aktualisieren</h4>
+<p class="meta"><span>Für: 2.2.2</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span></li></ul>
+<ol class="steps"><li>Achten Sie auf der Seite auf Inhalte, die sich von selbst ändern: Nachrichtenticker, Live-Ergebnisse, Preise, Feeds, Timer.</li><li>Suchen Sie bei allem, was von selbst startet und neben anderen Inhalten angezeigt wird, nach einem Bedienelement, um es zu pausieren, zu beenden oder auszublenden oder um festzulegen, wie oft es sich aktualisiert.</li><li>Prüfen Sie, ob sich das Bedienelement mit der Tastatur finden und bedienen lässt.</li><li>Lassen Sie Aktualisierungen weg, die für den Zweck der Seite wesentlich sind.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder Teil, der sich neben anderen Inhalten von selbst aktualisiert, lässt sich pausieren, beenden, ausblenden oder verlangsamen, oder seine Aktualisierungen sind wesentlich.</dd><dt>Nicht bestanden, wenn</dt><dd>Inhalte aktualisieren sich neben anderen Inhalten von selbst, ohne dass sie sich pausieren, beenden oder ausblenden lassen oder sich ändern lässt, wie oft; das verstößt gegen WCAG 2.2.2.</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Inhalte, die sich von selbst aktualisieren, lassen sich pausieren, beenden, ausblenden oder seltener aktualisieren</span></legend>
+<div class="choices"><label><input type="radio" name="o-29" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-29" value="pass"> Bestanden</label><label><input type="radio" name="o-29" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-29" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-29">Notizen<span class="vh">: </span><span class="vh">Inhalte, die sich von selbst aktualisieren, lassen sich pausieren, beenden, ausblenden oder seltener aktualisieren</span></label>
+<textarea id="notes-29" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-3">
+<h3 id="g-2-3"><span class="num">2.3</span> <span>Anfälle und physische Reaktionen</span></h3>
+
+</section>
+<section class="group" aria-labelledby="g-2-4">
+<h3 id="g-2-4"><span class="num">2.4</span> <span>Navigierbar</span></h3>
+<article class="item" id="i-2-4-1-bypass-blocks-present" aria-labelledby="item-2-4-1-bypass-blocks-present" data-key="2.4.1/bypass-blocks-present" data-facet="bypass-blocks-present" data-label="Blöcke, die sich auf mehreren Seiten wiederholen, lassen sich überspringen" data-requirements="[&quot;2.4.1&quot;]">
+<h4 id="item-2-4-1-bypass-blocks-present">Blöcke, die sich auf mehreren Seiten wiederholen, lassen sich überspringen</h4>
+<p class="meta"><span>Für: 2.4.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span>, <span>Ein Screenreader</span>, <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Schließen Sie alle Dialoge und Overlays und notieren Sie dann die Blöcke, die die Seite von anderen Seiten der Website wiederholt: Kopfbereich, Navigation, Suche, Seitenleisten.</li><li>Laden Sie die Seite neu und drücken Sie einmal Tab: Prüfen Sie, ob ein Sprunglink erscheint, der den Fokus an diesen Blöcken vorbei zum Hauptinhalt bewegt, und folgen Sie ihm mit der Eingabetaste.</li><li>Prüfen Sie im Bereich „Barrierefreiheit“ der Entwicklertools oder in den Listen eines Screenreaders, ob der Hauptinhalt eine main-Landmarke ist oder mit einer Überschrift außerhalb der Navigation beginnt.</li><li>Hat die Seite einen Sprunglink, prüfen Sie, ob sein Ziel existiert und ob das nächste Tab, nachdem Sie ihm gefolgt sind, in den Hauptinhalt führt.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Die Seite wiederholt keine Blöcke, oder ein funktionierender Sprunglink, eine main-Landmarke oder Überschriften ermöglichen es Tastatur- und Screenreader-Nutzenden, sie zu überspringen.</dd><dt>Nicht bestanden, wenn</dt><dd>Wiederholte Blöcke lassen sich nicht überspringen, sodass Tastatur- und Screenreader-Nutzende sie auf jeder Seite durchlaufen müssen; das verstößt gegen WCAG 2.4.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>bypass-blocks-present</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Blöcke, die sich auf mehreren Seiten wiederholen, lassen sich überspringen</span></legend>
+<div class="choices"><label><input type="radio" name="o-30" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-30" value="pass"> Bestanden</label><label><input type="radio" name="o-30" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-30" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-30">Notizen<span class="vh">: </span><span class="vh">Blöcke, die sich auf mehreren Seiten wiederholen, lassen sich überspringen</span></label>
+<textarea id="notes-30" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-2-page-title-descriptive" aria-labelledby="item-2-4-2-page-title-descriptive" data-key="2.4.2/page-title-descriptive" data-facet="page-title-descriptive" data-label="Die Seite hat einen Titel, der sagt, worum es geht oder wofür sie dient, und sie von den anderen Seiten der Website unterscheidet" data-requirements="[&quot;2.4.2&quot;]">
+<h4 id="item-2-4-2-page-title-descriptive">Die Seite hat einen Titel, der sagt, worum es geht oder wofür sie dient, und sie von den anderen Seiten der Website unterscheidet</h4>
+<p class="meta"><span>Für: 2.4.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: nur ein Browser</li></ul>
+<ol class="steps"><li>Lesen Sie den Titel der Seite im Browser-Tab oder im &lt;title&gt; im Bereich „Elemente“ der Entwicklertools.</li><li>Prüfen Sie, ob er sagt, worum es auf dieser Seite geht oder wofür sie dient, etwa die Schlagzeile des Artikels oder den Schritt eines Prozesses („Lieferadresse - Kasse - Shop“).</li><li>Öffnen Sie zwei oder drei andere Seiten der Website und prüfen Sie, ob ihre Titel die Seiten unterscheiden. Den seitenspezifischen Teil vor den Namen der Website zu stellen, ist gute Praxis, aber nicht erforderlich.</li><li>Ändert die Seite ihren Inhalt, ohne eine neue Seite zu laden, wie es eine Einzelseitenanwendung (SPA) tut, prüfen Sie, ob sich der Titel mit ändert.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Der Titel der Seite sagt, worum es geht oder wofür sie dient, und unterscheidet sie von anderen Seiten.</dd><dt>Nicht bestanden, wenn</dt><dd>Die Seite hat keinen Titel oder einen, der allgemein ist, ein Dateiname ist oder dem anderer Seiten gleicht; das verstößt gegen WCAG 2.4.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>page-title-present</code>, <code>page-title-patterns</code></p><p class="covers">Er prüft auch: <code>page-title-present</code>, <code>page-title-patterns</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Die Seite hat einen Titel, der sagt, worum es geht oder wofür sie dient, und sie von den anderen Seiten der Website unterscheidet</span></legend>
+<div class="choices"><label><input type="radio" name="o-31" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-31" value="pass"> Bestanden</label><label><input type="radio" name="o-31" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-31" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-31">Notizen<span class="vh">: </span><span class="vh">Die Seite hat einen Titel, der sagt, worum es geht oder wofür sie dient, und sie von den anderen Seiten der Website unterscheidet</span></label>
+<textarea id="notes-31" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-3-focus-order-preserves-meaning" aria-labelledby="item-2-4-3-focus-order-preserves-meaning" data-key="2.4.3/focus-order-preserves-meaning" data-facet="focus-order-preserves-meaning" data-label="Das Bewegen des Fokus mit Tab und Umschalttaste+Tab folgt einer Reihenfolge, die die Bedeutung der Seite erhält und ihre Bedienung ermöglicht" data-requirements="[&quot;2.4.3&quot;]">
+<h4 id="item-2-4-3-focus-order-preserves-meaning">Das Bewegen des Fokus mit Tab und Umschalttaste+Tab folgt einer Reihenfolge, die die Bedeutung der Seite erhält und ihre Bedienung ermöglicht</h4>
+<p class="meta"><span>Für: 2.4.3</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span></li></ul>
+<ol class="steps"><li>Laden Sie die Seite neu und drücken Sie wiederholt Tab, bis der Fokus die ganze Seite durchlaufen hat, und beobachten Sie, wohin er geht.</li><li>Vergleichen Sie die Reihenfolge mit der, in der Sie die Seite lesen und nutzen würden: zum Beispiel die Felder eines Formulars in der Reihenfolge ihrer Beschriftungen und die Schritte einer Aufgabe in ihrer Abfolge.</li><li>Drücken Sie Umschalttaste+Tab zurück durch die Seite und prüfen Sie, ob der Fokus denselben Weg in umgekehrter Richtung nimmt.</li><li>Weicht die Reihenfolge von der Lesereihenfolge ab, prüfen Sie, ob das die Bedeutung von etwas ändert oder Sie an der Bedienung hindert, etwa wenn Sie die Schaltfläche „Absenden“ eines Formulars vor seinen Feldern erreichen.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Der Fokus bewegt sich in einer Reihenfolge durch die Seite, die ihre Bedeutung erhält und jeden Teil bedienbar macht, auch wo sie geringfügig von der visuellen Reihenfolge abweicht.</dd><dt>Nicht bestanden, wenn</dt><dd>Der Fokus springt so auf der Seite umher, dass sich ihre Bedeutung oder Bedienung ändert, etwa weil Felder außerhalb ihrer Reihenfolge ausgefüllt werden; das verstößt gegen WCAG 2.4.3.</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Das Bewegen des Fokus mit Tab und Umschalttaste+Tab folgt einer Reihenfolge, die die Bedeutung der Seite erhält und ihre Bedienung ermöglicht</span></legend>
+<div class="choices"><label><input type="radio" name="o-32" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-32" value="pass"> Bestanden</label><label><input type="radio" name="o-32" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-32" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-32">Notizen<span class="vh">: </span><span class="vh">Das Bewegen des Fokus mit Tab und Umschalttaste+Tab folgt einer Reihenfolge, die die Bedeutung der Seite erhält und ihre Bedienung ermöglicht</span></label>
+<textarea id="notes-32" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-3-focus-order-opened-content" aria-labelledby="item-2-4-3-focus-order-opened-content" data-key="2.4.3/focus-order-opened-content" data-facet="focus-order-opened-content" data-label="Der Fokus geht in einen Dialog, ein Menü oder einen Abschnitt, der sich öffnet, bleibt im Dialog, solange dieser die Seite überdeckt, und kehrt beim Schließen zurück" data-requirements="[&quot;2.4.3&quot;]">
+<h4 id="item-2-4-3-focus-order-opened-content">Der Fokus geht in einen Dialog, ein Menü oder einen Abschnitt, der sich öffnet, bleibt im Dialog, solange dieser die Seite überdeckt, und kehrt beim Schließen zurück</h4>
+<p class="meta"><span>Für: 2.4.3</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span></li></ul>
+<ol class="steps"><li>Öffnen Sie mit der Tastatur jeden Dialog, jedes Menü, jede Auswahlliste und jeden eingeklappten Abschnitt der Seite, indem Sie auf dem Bedienelement, das ihn öffnet, die Eingabetaste oder die Leertaste drücken.</li><li>Drücken Sie einmal Tab und prüfen Sie, ob der Fokus in das Geöffnete geht oder bereits darin ist, statt zu etwas dahinter oder weit davon entfernt.</li><li>Drücken Sie in einem Dialog, der die Seite überdeckt, Tab, bis Sie alle seine Bedienelemente durchlaufen haben, und prüfen Sie, ob der Fokus im Dialog bleibt, statt zur Seite dahinter zu gehen.</li><li>Schließen Sie ihn mit Esc oder seiner Schließen-Schaltfläche und prüfen Sie, ob der Fokus zu dem Bedienelement zurückkehrt, das ihn geöffnet hat, oder an die nächste sinnvolle Stelle.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Der Fokus geht in das, was sich öffnet, bleibt in einem Dialog, solange dieser die Seite überdeckt, und kehrt beim Schließen dorthin zurück, wo er war.</dd><dt>Nicht bestanden, wenn</dt><dd>Der Fokus bleibt hinter dem, was sich öffnet, verlässt einen Dialog zur Seite dahinter oder landet beim Schließen am Anfang der Seite, sodass die Reihenfolge nicht mehr dem Bildschirm folgt; das verstößt gegen WCAG 2.4.3.</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Der Fokus geht in einen Dialog, ein Menü oder einen Abschnitt, der sich öffnet, bleibt im Dialog, solange dieser die Seite überdeckt, und kehrt beim Schließen zurück</span></legend>
+<div class="choices"><label><input type="radio" name="o-33" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-33" value="pass"> Bestanden</label><label><input type="radio" name="o-33" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-33" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-33">Notizen<span class="vh">: </span><span class="vh">Der Fokus geht in einen Dialog, ein Menü oder einen Abschnitt, der sich öffnet, bleibt im Dialog, solange dieser die Seite überdeckt, und kehrt beim Schließen zurück</span></label>
+<textarea id="notes-33" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-3-focus-order-no-hidden-stops" aria-labelledby="item-2-4-3-focus-order-no-hidden-stops" data-key="2.4.3/focus-order-no-hidden-stops" data-facet="focus-order-no-hidden-stops" data-label="Der Fokus hält nicht an Inhalten, die geschlossen, verborgen oder außerhalb des Bildschirms sind" data-requirements="[&quot;2.4.3&quot;]">
+<h4 id="item-2-4-3-focus-order-no-hidden-stops">Der Fokus hält nicht an Inhalten, die geschlossen, verborgen oder außerhalb des Bildschirms sind</h4>
+<p class="meta"><span>Für: 2.4.3</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span>, <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Schließen Sie alle Menüs und Dialoge, laden Sie die Seite neu und drücken Sie dann Tab durch die ganze Seite, wobei Sie beobachten, wo der Fokus ist.</li><li>Notieren Sie jedes Mal, wenn der Fokus für einen oder mehrere Tastendrücke zu verschwinden scheint.</li><li>Geben Sie an jeder solchen Stelle document.activeElement in der Konsole der Entwicklertools ein und prüfen Sie, ob das angezeigte Element in einem geschlossenen Menü, einem verborgenen Bereich oder außerhalb des Bildschirms liegt.</li><li>Lassen Sie einen Sprunglink weg, der erscheint, wenn er den Fokus erhält: Er wird angezeigt, sobald er fokussiert ist.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder Tab-Stopp liegt auf etwas, das Sie sehen können, oder auf etwas, das erscheint, wenn es den Fokus erhält, etwa einem Sprunglink.</dd><dt>Nicht bestanden, wenn</dt><dd>Der Fokus hält an Bedienelementen in geschlossenen Menüs, verborgenen Bereichen oder außerhalb des Bildschirms, sodass die Reihenfolge durch Dinge führt, die nicht zu sehen sind; das verstößt gegen WCAG 2.4.3.</dd></dl>
+
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Der Fokus hält nicht an Inhalten, die geschlossen, verborgen oder außerhalb des Bildschirms sind</span></legend>
+<div class="choices"><label><input type="radio" name="o-34" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-34" value="pass"> Bestanden</label><label><input type="radio" name="o-34" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-34" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-34">Notizen<span class="vh">: </span><span class="vh">Der Fokus hält nicht an Inhalten, die geschlossen, verborgen oder außerhalb des Bildschirms sind</span></label>
+<textarea id="notes-34" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-4-link-purpose-clear" aria-labelledby="item-2-4-4-link-purpose-clear" data-key="2.4.4/link-purpose-clear" data-facet="link-purpose-clear" data-label="Der Zweck jedes Links geht aus seinem Text hervor oder aus seinem Text zusammen mit dem Satz, Absatz, Listeneintrag oder der Tabellenzelle, in dem er steht" data-requirements="[&quot;2.4.4&quot;]">
+<h4 id="item-2-4-4-link-purpose-clear">Der Zweck jedes Links geht aus seinem Text hervor oder aus seinem Text zusammen mit dem Satz, Absatz, Listeneintrag oder der Tabellenzelle, in dem er steht</h4>
+<p class="meta"><span>Für: 2.4.4</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Listen Sie die Links der Seite über die Linkliste eines Screenreaders auf oder gehen Sie sie mit Tab durch und lesen Sie bei jedem den Eintrag „Name“ im Bereich „Barrierefreiheit“ der Entwicklertools.</li><li>Notieren Sie Links, deren Name nicht sagt, wohin sie führen oder was sie tun: leere Namen, „hier klicken“, „mehr lesen“, „PDF“, der Dateiname eines Symbols.</li><li>Lesen Sie bei jedem den Satz, Absatz, Listeneintrag oder die Tabellenzelle, in dem der Link steht, oder die Tabellenüberschrift seiner Zelle, und prüfen Sie, ob das seinen Zweck klar macht.</li><li>Als Kontext zählen der Satz, Absatz, Listeneintrag oder die Tabellenzelle des Links, die Kopfzellen seiner Tabellenzelle, die Überschrift, unter der der Link steht, und Text, der über aria-describedby mit dem Link verknüpft ist. Text, der nur in der Nähe des Links steht, etwa ein Absatz in einer anderen Spalte, zählt nicht.</li><li>Prüfen Sie, ob Links mit demselben Namen, die zu unterschiedlichen Zielen führen, durch ihren Kontext unterscheidbar sind.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Der Zweck jedes Links geht aus seinem Namen hervor oder aus seinem Namen zusammen mit dem Satz, Absatz, Listeneintrag oder der Tabellenzelle, in dem er steht.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Link hat keinen Namen oder einen Namen wie „mehr lesen“, dessen Zweck nichts in seinem Umfeld erklärt; das verstößt gegen WCAG 2.4.4.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>link-name-present</code>, <code>link-name-quality</code></p><p class="covers">Er prüft auch: <code>link-name-present</code>, <code>link-text-descriptive-evidence</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Der Zweck jedes Links geht aus seinem Text hervor oder aus seinem Text zusammen mit dem Satz, Absatz, Listeneintrag oder der Tabellenzelle, in dem er steht</span></legend>
+<div class="choices"><label><input type="radio" name="o-35" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-35" value="pass"> Bestanden</label><label><input type="radio" name="o-35" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-35" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-35">Notizen<span class="vh">: </span><span class="vh">Der Zweck jedes Links geht aus seinem Text hervor oder aus seinem Text zusammen mit dem Satz, Absatz, Listeneintrag oder der Tabellenzelle, in dem er steht</span></label>
+<textarea id="notes-35" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-6-heading-text-descriptive-evidence" aria-labelledby="item-2-4-6-heading-text-descriptive-evidence" data-key="2.4.6/heading-text-descriptive-evidence" data-facet="heading-text-descriptive-evidence" data-label="Überschriften beschreiben die Inhalte, die ihnen folgen" data-requirements="[&quot;2.4.6&quot;]">
+<h4 id="item-2-4-6-heading-text-descriptive-evidence">Überschriften beschreiben die Inhalte, die ihnen folgen</h4>
+<p class="meta"><span>Für: 2.4.6</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Listen Sie die Überschriften der Seite über die Überschriftenliste eines Screenreaders, eine Browsererweiterung wie HeadingsMap oder den Barrierefreiheitsbaum der Entwicklertools auf.</li><li>Lesen Sie jede Überschrift und die Inhalte darunter.</li><li>Prüfen Sie, ob jede Überschrift sagt, worum es in diesen Inhalten geht, und kein Platzhalter, kein Dateiname und kein Wort ist, das über allem stehen könnte.</li><li>Prüfen Sie, ob benachbarte Überschriften derselben Ebene unterscheidbar sind.</li><li>Dieses Kriterium verlangt nur, dass vorhandene Überschriften und Beschriftungen ihren Inhalt beschreiben. Eine fehlende Überschrift oder Beschriftung wird unter 1.3.1 oder 3.3.2 geprüft, nicht hier.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jede Überschrift sagt, worum es in den Inhalten darunter geht.</dd><dt>Nicht bestanden, wenn</dt><dd>Eine Überschrift beschreibt die Inhalte darunter nicht, etwa „Abschnitt 1“ oder ein Dateiname; das verstößt gegen WCAG 2.4.6.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>heading-quality</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Überschriften beschreiben die Inhalte, die ihnen folgen</span></legend>
+<div class="choices"><label><input type="radio" name="o-36" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-36" value="pass"> Bestanden</label><label><input type="radio" name="o-36" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-36" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-36">Notizen<span class="vh">: </span><span class="vh">Überschriften beschreiben die Inhalte, die ihnen folgen</span></label>
+<textarea id="notes-36" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-6-form-control-label-descriptive-evidence" aria-labelledby="item-2-4-6-form-control-label-descriptive-evidence" data-key="2.4.6/form-control-label-descriptive-evidence" data-facet="form-control-label-descriptive-evidence" data-label="Beschriftungen beschreiben ihre Felder, und Felder mit derselben Beschriftung sind unterscheidbar" data-requirements="[&quot;2.4.6&quot;]">
+<h4 id="item-2-4-6-form-control-label-descriptive-evidence">Beschriftungen beschreiben ihre Felder, und Felder mit derselben Beschriftung sind unterscheidbar</h4>
+<p class="meta"><span>Für: 2.4.6</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: nur ein Browser</li></ul>
+<ol class="steps"><li>Lesen Sie die sichtbare Beschriftung jedes Feldes und Bedienelements auf der Seite.</li><li>Prüfen Sie, ob jede sagt, was einzugeben oder zu wählen ist, etwa „E-Mail-Adresse“ statt „Feld 1“ oder „Text“.</li><li>Teilen sich mehrere Felder eine Beschriftung, etwa zweimal „Name“, prüfen Sie, ob die Seite klar macht, welches welches ist, durch eine Gruppenüberschrift oder den Rest der Beschriftung.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jede Beschriftung sagt, wofür ihr Feld oder Bedienelement dient, und Felder mit derselben Beschriftung sind unterscheidbar.</dd><dt>Nicht bestanden, wenn</dt><dd>Eine Beschriftung sagt nicht, wofür ihr Feld dient, oder mehrere Felder haben dieselbe Beschriftung, ohne dass etwas sie unterscheidet; das verstößt gegen WCAG 2.4.6.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>form-control-label-quality</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Beschriftungen beschreiben ihre Felder, und Felder mit derselben Beschriftung sind unterscheidbar</span></legend>
+<div class="choices"><label><input type="radio" name="o-37" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-37" value="pass"> Bestanden</label><label><input type="radio" name="o-37" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-37" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-37">Notizen<span class="vh">: </span><span class="vh">Beschriftungen beschreiben ihre Felder, und Felder mit derselben Beschriftung sind unterscheidbar</span></label>
+<textarea id="notes-37" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-7-focus-indicator-visible" aria-labelledby="item-2-4-7-focus-indicator-visible" data-key="2.4.7/focus-indicator-visible" data-facet="focus-indicator-visible" data-label="Jedes Element, das den Tastaturfokus erhält, zeigt an, dass es ihn hat" data-requirements="[&quot;2.4.7&quot;]">
+<h4 id="item-2-4-7-focus-indicator-visible">Jedes Element, das den Tastaturfokus erhält, zeigt an, dass es ihn hat</h4>
+<p class="meta"><span>Für: 2.4.7</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span></li></ul>
+<ol class="steps"><li>Laden Sie die Seite neu und drücken Sie langsam Tab durch die ganze Seite.</li><li>Prüfen Sie an jedem Halt, ob Sie sehen können, welches Element den Fokus hat: ein Umriss, eine Farbänderung, eine Unterstreichung oder eine andere sichtbare Änderung.</li><li>Bewegen Sie den Fokus mit der Tastatur, nicht mit der Maus. Browser zeigen den Fokus eines mit der Maus angeklickten Elements anders an als den eines mit Tab erreichten, daher beweist ein Test mit der Maus hier nichts.</li><li>Notieren Sie jeden Halt, an dem Sie nicht erkennen, wo der Fokus ist, und jedes Mal, wenn der Fokus für einen oder mehrere Tastendrücke zu verschwinden scheint.</li><li>Gehen Sie in Menüs, Dialogen und Widgets, die die Pfeiltasten verwenden, ebenso vor.</li><li>Aktivieren Sie in Windows ein Kontrastdesign und wiederholen Sie einige Halte. Ein Fokusstil, der nur mit box-shadow oder einer Hintergrundfarbe gezeichnet ist, verschwindet in diesem Modus. WCAG verlangt nicht, dass er dort sichtbar ist, aber halten Sie es als Best-Practice-Befund fest.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>An jedem Halt ist zu sehen, welches Element den Fokus hat.</dd><dt>Nicht bestanden, wenn</dt><dd>Der Fokus erreicht ein Element ohne sichtbare Änderung oder landet auf etwas Verborgenem oder außerhalb des Bildschirms, sodass Tastaturnutzende nicht mehr wissen, wo sie sind; das verstößt gegen WCAG 2.4.7.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>css-hidden-focus</code>, <code>css-focus-indicator-suppressed</code>, <code>focus-not-removed-by-script</code></p><p class="covers">Er prüft auch: <code>css-hidden-focusable</code>, <code>focus-indicator-not-suppressed</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Jedes Element, das den Tastaturfokus erhält, zeigt an, dass es ihn hat</span></legend>
+<div class="choices"><label><input type="radio" name="o-38" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-38" value="pass"> Bestanden</label><label><input type="radio" name="o-38" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-38" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-38">Notizen<span class="vh">: </span><span class="vh">Jedes Element, das den Tastaturfokus erhält, zeigt an, dass es ihn hat</span></label>
+<textarea id="notes-38" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-5">
+<h3 id="g-2-5"><span class="num">2.5</span> <span>Eingabemodalitäten</span></h3>
+<article class="item" id="i-2-5-3-label-in-name" aria-labelledby="item-2-5-3-label-in-name" data-key="2.5.3/label-in-name" data-facet="label-in-name" data-label="Der Name eines Bedienelements enthält den Text seiner sichtbaren Beschriftung" data-requirements="[&quot;2.5.3&quot;]">
+<h4 id="item-2-5-3-label-in-name">Der Name eines Bedienelements enthält den Text seiner sichtbaren Beschriftung</h4>
+<p class="meta"><span>Für: 2.5.3</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie jedes Bedienelement mit einer sichtbaren Beschriftung aus Text: Schaltflächen, Links, Felder, Tabs, Menüeinträge und Bedienelemente, die durch Text daneben beschriftet sind.</li><li>Lesen Sie bei jedem den Eintrag „Name“ im Bereich „Barrierefreiheit“ der Entwicklertools.</li><li>Prüfen Sie, ob der Name die Wörter der sichtbaren Beschriftung in derselben Reihenfolge enthält, idealerweise am Anfang (eine Schaltfläche mit „Senden“ heißt „Nachricht senden“, nicht „Absenden“).</li><li>Ignorieren Sie beim Vergleich Unterschiede in Groß-/Kleinschreibung und Satzzeichen. Als Bild dargestellter Text zählt ebenfalls als sichtbare Beschriftung.</li><li>Lassen Sie eine Beschriftung weg, die nur aus Symbolen besteht, etwa „ד oder „&gt;“: Der Name sollte sagen, was das Bedienelement tut.</li><li>Lassen Sie Bedienelemente ohne sichtbaren Text weg, etwa eine Schaltfläche, die nur aus einem Symbol besteht: Sie haben keine sichtbare Beschriftung, mit der verglichen werden kann.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Der Name jedes Bedienelements enthält die Wörter seiner sichtbaren Beschriftung in ihrer Reihenfolge.</dd><dt>Nicht bestanden, wenn</dt><dd>Der Name eines Bedienelements enthält seine sichtbare Beschriftung nicht, sodass jemand, der Spracheingabe nutzt, es nicht aktivieren kann, indem er sagt, was er sieht; das verstößt gegen WCAG 2.5.3.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>label-in-name</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Der Name eines Bedienelements enthält den Text seiner sichtbaren Beschriftung</span></legend>
+<div class="choices"><label><input type="radio" name="o-39" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-39" value="pass"> Bestanden</label><label><input type="radio" name="o-39" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-39" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-39">Notizen<span class="vh">: </span><span class="vh">Der Name eines Bedienelements enthält den Text seiner sichtbaren Beschriftung</span></label>
+<textarea id="notes-39" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-5-8-target-size-minimum-pointer" aria-labelledby="item-2-5-8-target-size-minimum-pointer" data-key="2.5.8/target-size-minimum-pointer" data-facet="target-size-minimum-pointer" data-label="Ziele sind mindestens 24 mal 24 CSS-Pixel groß oder weit genug voneinander entfernt" data-requirements="[&quot;2.5.8&quot;]">
+<h4 id="item-2-5-8-target-size-minimum-pointer">Ziele sind mindestens 24 mal 24 CSS-Pixel groß oder weit genug voneinander entfernt</h4>
+<p class="meta"><span>Für: 2.5.8</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie nach kleinen Bedienelementen: Symbole, Schließen-Schaltflächen, Seitennavigation, Links in einer Reihe, kleine Kontrollkästchen.</li><li>Untersuchen Sie jedes und lesen Sie im Boxmodell der Entwicklertools die Größe des Bereichs ab, der auf den Zeiger reagiert und größer als das sichtbare Symbol sein kann. Prüfen Sie, ob er mindestens 24 mal 24 CSS-Pixel groß ist.</li><li>Ist er kleiner, prüfen Sie, ob ein Kreis mit 24 Pixeln Durchmesser, der darauf zentriert ist, ein anderes Ziel oder den Kreis eines anderen kleinen Ziels berühren würde.</li><li>Lassen Sie Links in einem Satz oder Absatz weg, Bedienelemente, die der Browser ungestaltet zeichnet, Bedienelemente mit einer Entsprechung in voller Größe an anderer Stelle der Seite und Ziele, deren Größe wesentlich ist, etwa die Markierungen auf einer Karte.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jedes Ziel ist mindestens 24 mal 24 CSS-Pixel groß, weit genug von anderen entfernt oder fällt unter eine der Ausnahmen.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Ziel, das kleiner als 24 mal 24 CSS-Pixel ist, liegt so nah an einem anderen, dass sich ihre 24-Pixel-Kreise überschneiden, ohne dass eine Ausnahme greift; das verstößt gegen WCAG 2.5.8.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>target-size-minimum</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Ziele sind mindestens 24 mal 24 CSS-Pixel groß oder weit genug voneinander entfernt</span></legend>
+<div class="choices"><label><input type="radio" name="o-40" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-40" value="pass"> Bestanden</label><label><input type="radio" name="o-40" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-40" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-40">Notizen<span class="vh">: </span><span class="vh">Ziele sind mindestens 24 mal 24 CSS-Pixel groß oder weit genug voneinander entfernt</span></label>
+<textarea id="notes-40" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+</section>
+<section class="group" aria-labelledby="g-3">
+<h2 id="g-3"><span class="num">3</span> <span>Verständlich</span></h2>
+<section class="group" aria-labelledby="g-3-1">
+<h3 id="g-3-1"><span class="num">3.1</span> <span>Lesbar</span></h3>
+<article class="item" id="i-3-1-1-page-language-correct" aria-labelledby="item-3-1-1-page-language-correct" data-key="3.1.1/page-language-correct" data-facet="page-language-correct" data-label="Die Hauptsprache der Seite ist im Markup angegeben und ist die richtige" data-requirements="[&quot;3.1.1&quot;]">
+<h4 id="item-3-1-1-page-language-correct">Die Hauptsprache der Seite ist im Markup angegeben und ist die richtige</h4>
+<p class="meta"><span>Für: 3.1.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Lesen Sie das lang-Attribut des &lt;html&gt;-Elements im Bereich „Elemente“ der Entwicklertools.</li><li>Prüfen Sie, ob es ein Sprachcode ist (en, fr, pt-BR) und ob es die Sprache ist, in der der größte Teil des Textes der Seite steht.</li><li>Hat &lt;html&gt; auch xml:lang, prüfen Sie, ob beide dieselbe Sprache angeben.</li><li>Ändern Sie in einer Einzelseitenanwendung (SPA) die Sprache der Oberfläche und prüfen Sie, ob sich lang mit ändert. Ein Screenreader wechselt die Stimme nur, wenn eine für diese Sprache installiert ist, beurteilen Sie daher das Markup und nicht nur, was Sie hören.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Das lang des &lt;html&gt;-Elements gibt die Sprache an, in der der größte Teil der Seite steht.</dd><dt>Nicht bestanden, wenn</dt><dd>Die Seite hat kein lang oder ein falsches oder ungültiges, sodass Screenreader sie mit der falschen Stimme und Aussprache vorlesen; das verstößt gegen WCAG 3.1.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p><p class="covers">Er prüft auch: <code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Die Hauptsprache der Seite ist im Markup angegeben und ist die richtige</span></legend>
+<div class="choices"><label><input type="radio" name="o-41" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-41" value="pass"> Bestanden</label><label><input type="radio" name="o-41" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-41" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-41">Notizen<span class="vh">: </span><span class="vh">Die Hauptsprache der Seite ist im Markup angegeben und ist die richtige</span></label>
+<textarea id="notes-41" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-3-1-2-parts-language-marked" aria-labelledby="item-3-1-2-parts-language-marked" data-key="3.1.2/parts-language-marked" data-facet="parts-language-marked" data-label="Passagen und Ausdrücke in einer anderen Sprache als der der Seite sind mit ihrer eigenen Sprache ausgezeichnet" data-requirements="[&quot;3.1.2&quot;]">
+<h4 id="item-3-1-2-parts-language-marked">Passagen und Ausdrücke in einer anderen Sprache als der der Seite sind mit ihrer eigenen Sprache ausgezeichnet</h4>
+<p class="meta"><span>Für: 3.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Lesen Sie die Seite durch und notieren Sie Passagen, Zitate, Ausdrücke und Bezeichnungen, die in einer anderen Sprache als der der Seite geschrieben sind, einschließlich der Optionen einer Sprachauswahl.</li><li>Prüfen Sie bei jeder im Bereich „Elemente“ der Entwicklertools, ob sie oder ein umgebendes Element ein lang-Attribut mit dem Code dieser Sprache hat.</li><li>Lassen Sie Eigennamen, Fachbegriffe und Wörter weg, die Teil der Sprache der Seite geworden sind, etwa „café“ im Englischen.</li><li>Hören Sie sich einige davon mit einem Screenreader an, um zu prüfen, ob er die Aussprache wechselt.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jede Passage und jeder Ausdruck in einer anderen Sprache ist mit einem gültigen lang-Attribut für diese Sprache ausgezeichnet.</dd><dt>Nicht bestanden, wenn</dt><dd>Eine Passage oder ein Ausdruck in einer anderen Sprache ist nicht oder mit einem falschen Code ausgezeichnet, sodass sie mit der falschen Aussprache vorgelesen wird; das verstößt gegen WCAG 3.1.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>valid-lang</code></p><p class="covers">Er prüft auch: <code>element-lang-valid</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Passagen und Ausdrücke in einer anderen Sprache als der der Seite sind mit ihrer eigenen Sprache ausgezeichnet</span></legend>
+<div class="choices"><label><input type="radio" name="o-42" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-42" value="pass"> Bestanden</label><label><input type="radio" name="o-42" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-42" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-42">Notizen<span class="vh">: </span><span class="vh">Passagen und Ausdrücke in einer anderen Sprache als der der Seite sind mit ihrer eigenen Sprache ausgezeichnet</span></label>
+<textarea id="notes-42" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+<section class="group" aria-labelledby="g-3-2">
+<h3 id="g-3-2"><span class="num">3.2</span> <span>Vorhersehbar</span></h3>
+
+</section>
+<section class="group" aria-labelledby="g-3-3">
+<h3 id="g-3-3"><span class="num">3.3</span> <span>Hilfestellung bei der Eingabe</span></h3>
+<article class="item" id="i-3-3-1-errors-identified" aria-labelledby="item-3-3-1-errors-identified" data-key="3.3.1/errors-identified" data-facet="errors-identified" data-label="Ein Eingabefehler, den die Seite erkennt, wird in Text angezeigt, der sagt, welches Feld falsch ist und was falsch ist" data-requirements="[&quot;3.3.1&quot;]">
+<h4 id="item-3-3-1-errors-identified">Ein Eingabefehler, den die Seite erkennt, wird in Text angezeigt, der sagt, welches Feld falsch ist und was falsch ist</h4>
+<p class="meta"><span>Für: 3.3.1</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span>, <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Suchen Sie jedes Formular auf der Seite und senden Sie es leer ab, dann mit falschen Werten: eine fehlerhafte E-Mail-Adresse, Buchstaben in einem Zahlenfeld, ein Datum in der Vergangenheit.</li><li>Prüfen Sie, ob jeder Fehler, den die Seite erkennt, in Text angezeigt wird, nicht nur durch Farbe oder ein Symbol, neben dem Feld oder in einer Liste oben.</li><li>Prüfen Sie, ob der Text sagt, welches Feld falsch ist und was daran falsch ist.</li><li>Die eigenen Validierungsmeldungen des Browsers zählen als Text, aber ihr Wortlaut und wie lange sie auf dem Bildschirm bleiben, unterscheiden sich zwischen Browsern. Prüfen Sie sie in jedem Browser, mit dem Sie testen.</li><li>Prüfen Sie mit einem Screenreader, ob der Fehler angesagt wird oder leicht erreichbar ist und ob jedes falsche Feld als ungültig markiert ist.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder Eingabefehler, den die Seite erkennt, wird in Text angezeigt, der das Feld und das Problem nennt.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Eingabefehler wird nur durch Farbe oder ein Symbol, gar nicht oder ohne Angabe des falschen Feldes angezeigt; das verstößt gegen WCAG 3.3.1.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>invalid-field-error-message</code></p><p class="covers">Er prüft auch: <code>invalid-field-error-message</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Ein Eingabefehler, den die Seite erkennt, wird in Text angezeigt, der sagt, welches Feld falsch ist und was falsch ist</span></legend>
+<div class="choices"><label><input type="radio" name="o-43" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-43" value="pass"> Bestanden</label><label><input type="radio" name="o-43" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-43" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-43">Notizen<span class="vh">: </span><span class="vh">Ein Eingabefehler, den die Seite erkennt, wird in Text angezeigt, der sagt, welches Feld falsch ist und was falsch ist</span></label>
+<textarea id="notes-43" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-3-3-2-labels-instructions-provided" aria-labelledby="item-3-3-2-labels-instructions-provided" data-key="3.3.2/labels-instructions-provided" data-facet="labels-instructions-provided" data-label="Felder, die eine Eingabe verlangen, haben eine sichtbare Beschriftung und, wo die Eingabe es erfordert, Anweisungen" data-requirements="[&quot;3.3.2&quot;]">
+<h4 id="item-3-3-2-labels-instructions-provided">Felder, die eine Eingabe verlangen, haben eine sichtbare Beschriftung und, wo die Eingabe es erfordert, Anweisungen</h4>
+<p class="meta"><span>Für: 3.3.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie jedes Feld und jedes Bedienelement auf der Seite, das eine Eingabe verlangt.</li><li>Prüfen Sie, ob jedes eine Beschriftung hat, die Sie sehen, ohne mit der Maus darüberzufahren oder etwas einzugeben: nicht nur einen Platzhalter, der beim Tippen verschwindet, oder einen title, der beim Überfahren angezeigt wird.</li><li>Muss die Eingabe Regeln folgen, etwa einem Datumsformat, den Anforderungen an ein Passwort oder der Angabe, welche Felder Pflichtfelder sind, prüfen Sie, ob die Seite dies sagt, bevor Nutzende das Formular absenden.</li><li>Dieses Kriterium verlangt nur, dass Beschriftungen und Anweisungen angezeigt werden. Ob eine Beschriftung im Markup mit ihrem Feld verknüpft ist, wird unter 1.3.1 und 4.1.2 geprüft.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jedes Feld hat eine sichtbare Beschriftung, und die Seite gibt die Anweisungen, die die Eingabe erfordert, bevor sie abgesendet wird.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Feld hat keine sichtbare Beschriftung, nur einen Platzhalter oder einen title beim Überfahren, oder Eingaberegeln werden erst nach einem Fehler genannt; das verstößt gegen WCAG 3.3.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>form-control-programmatic-label-present</code>, <code>form-control-single-label</code>, <code>form-control-programmatic-label-quality</code></p><p class="covers">Er prüft auch: <code>form-control-labels-or-instructions-present</code>, <code>form-control-single-label</code>, <code>form-control-visible-label-quality</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Felder, die eine Eingabe verlangen, haben eine sichtbare Beschriftung und, wo die Eingabe es erfordert, Anweisungen</span></legend>
+<div class="choices"><label><input type="radio" name="o-44" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-44" value="pass"> Bestanden</label><label><input type="radio" name="o-44" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-44" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-44">Notizen<span class="vh">: </span><span class="vh">Felder, die eine Eingabe verlangen, haben eine sichtbare Beschriftung und, wo die Eingabe es erfordert, Anweisungen</span></label>
+<textarea id="notes-44" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-3-3-8-authentication-no-cognitive-test" aria-labelledby="item-3-3-8-authentication-no-cognitive-test" data-key="3.3.8/authentication-no-cognitive-test" data-facet="authentication-no-cognitive-test" data-label="Die Anmeldung verlangt nicht, sich etwas zu merken, etwas abzuschreiben oder etwas zu lösen, es sei denn, es wird ein Weg daran vorbei angeboten" data-requirements="[&quot;3.3.8&quot;]">
+<h4 id="item-3-3-8-authentication-no-cognitive-test">Die Anmeldung verlangt nicht, sich etwas zu merken, etwas abzuschreiben oder etwas zu lösen, es sei denn, es wird ein Weg daran vorbei angeboten</h4>
+<p class="meta"><span>Für: 3.3.8</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: nur ein Browser</li></ul>
+<ol class="steps"><li>Gehen Sie mit einem Testkonto jeden Weg durch, auf dem Sie sich auf der Website anmelden oder Ihre Identität bestätigen können.</li><li>Notieren Sie jeden Schritt, der verlangt, dass Sie sich etwas merken (ein Passwort), etwas abschreiben (einen Code von einem anderen Gerät) oder etwas lösen (ein Puzzle, eine Rechnung, die Auswahl von Bildern).</li><li>Prüfen Sie bei einem Passwort oder Code, ob Sie ihn einfügen können und ob ein Passwortmanager ihn ausfüllen kann, sodass er weder gemerkt noch erneut eingetippt werden muss.</li><li>Prüfen Sie, ob ein Passwortmanager die Felder tatsächlich ausfüllt: Die Felder für Benutzername und Passwort brauchen autocomplete=&quot;username&quot; und autocomplete=&quot;current-password&quot; (oder new-password), und ein Feld für einen Einmalcode funktioniert am besten mit autocomplete=&quot;one-time-code&quot;.</li><li>Ist ein Code in ein Kästchen pro Ziffer aufgeteilt, fügen Sie den ganzen Code in das erste Kästchen ein und prüfen Sie, ob er alle füllt. Kästchen, die das Einfügen blockieren oder jeweils nur ein Zeichen annehmen, bestehen nicht.</li><li>Prüfen Sie bei anderen Tests, ob eine andere Methode angeboten wird oder ob der Test nur verlangt, Objekte oder etwas, das Sie der Website gegeben haben, wiederzuerkennen.</li><li>Zählen Sie ein CAPTCHA, das bei der Anmeldung angezeigt wird, als Teil der Anmeldung. Andere Methoden, die keinen kognitiven Test erfordern, etwa ein Passkey, ein per E-Mail gesendeter Anmeldelink oder die Anmeldung über einen Drittanbieter, sind gültige Alternativen.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder Anmeldeschritt, der verlangt, sich etwas zu merken, etwas abzuschreiben oder etwas zu lösen, erlaubt das Einfügen und Passwortmanager oder bietet einen anderen Weg an oder verlangt nur, Objekte oder eigene Inhalte wiederzuerkennen.</dd><dt>Nicht bestanden, wenn</dt><dd>Die Anmeldung verlangt, sich etwas zu merken, etwas abzuschreiben oder etwas zu lösen, ohne Weg daran vorbei, etwa ein Codefeld, das das Einfügen blockiert; das verstößt gegen WCAG 3.3.8.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>password-paste-enabled</code></p><p class="covers">Er prüft auch: <code>authentication-paste-not-blocked</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Die Anmeldung verlangt nicht, sich etwas zu merken, etwas abzuschreiben oder etwas zu lösen, es sei denn, es wird ein Weg daran vorbei angeboten</span></legend>
+<div class="choices"><label><input type="radio" name="o-45" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-45" value="pass"> Bestanden</label><label><input type="radio" name="o-45" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-45" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-45">Notizen<span class="vh">: </span><span class="vh">Die Anmeldung verlangt nicht, sich etwas zu merken, etwas abzuschreiben oder etwas zu lösen, es sei denn, es wird ein Weg daran vorbei angeboten</span></label>
+<textarea id="notes-45" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+</section>
+<section class="group" aria-labelledby="g-4">
+<h2 id="g-4"><span class="num">4</span> <span>Robust</span></h2>
+<section class="group" aria-labelledby="g-4-1">
+<h3 id="g-4-1"><span class="num">4.1</span> <span>Kompatibel</span></h3>
+<article class="item" id="i-4-1-2-components-named" aria-labelledby="item-4-1-2-components-named" data-key="4.1.2/components-named" data-facet="components-named" data-label="Jeder Link, jedes Bedienelement, jeder Frame und jeder Dialog hat einen Namen, der sagt, wofür er dient" data-requirements="[&quot;4.1.2&quot;]">
+<h4 id="item-4-1-2-components-named">Jeder Link, jedes Bedienelement, jeder Frame und jeder Dialog hat einen Namen, der sagt, wofür er dient</h4>
+<p class="meta"><span>Für: 4.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Gehen Sie jeden Link, jede Schaltfläche, jedes Feld, jeden Frame und jedes benutzerdefinierte Bedienelement auf der Seite durch, mit Tab und innerhalb von Widgets mit den Pfeiltasten.</li><li>Lesen Sie bei jedem den Eintrag „Name“ im Bereich „Barrierefreiheit“ der Entwicklertools oder hören Sie, was ein Screenreader ansagt.</li><li>Prüfen Sie die Namen mit zwei Kombinationen aus Browser und Screenreader. Namen, die aus aria-labelledby, aus einem label, das das Bedienelement umschließt, oder aus CSS-content gebildet werden, können sich zwischen ihnen unterscheiden.</li><li>Prüfen Sie, ob jedes einen Namen hat, der sagt, wofür es dient, einschließlich Schaltflächen, die nur aus einem Symbol bestehen, Frames („Videoplayer“, „Karte“) und Dialoge.</li><li>Prüfen Sie, ob Frames mit demselben Namen dasselbe zeigen und ob Namen, die nur für Braille angegeben sind, eine gesprochene Entsprechung haben.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder Link, jedes Bedienelement, jeder Frame und jeder Dialog hat einen Namen, der sagt, wofür er dient.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Link, ein Bedienelement, ein Frame oder ein Dialog hat keinen Namen oder einen, der nicht sagt, wofür er dient, sodass assistive Technologien nur seine Rolle ansagen; das verstößt gegen WCAG 4.1.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>form-control-programmatic-label-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-alt-present</code>, <code>binary-control-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>iframe-title-unique</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p><p class="covers">Er prüft auch: <code>form-control-name-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-name-present</code>, <code>checkbox-name-present</code>, <code>radio-name-present</code>, <code>switch-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Jeder Link, jedes Bedienelement, jeder Frame und jeder Dialog hat einen Namen, der sagt, wofür er dient</span></legend>
+<div class="choices"><label><input type="radio" name="o-46" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-46" value="pass"> Bestanden</label><label><input type="radio" name="o-46" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-46" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-46">Notizen<span class="vh">: </span><span class="vh">Jeder Link, jedes Bedienelement, jeder Frame und jeder Dialog hat einen Namen, der sagt, wofür er dient</span></label>
+<textarea id="notes-46" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-4-1-2-roles-match-behavior" aria-labelledby="item-4-1-2-roles-match-behavior" data-key="4.1.2/roles-match-behavior" data-facet="roles-match-behavior" data-label="Die Rolle jedes Bedienelements sagt, was es tut, und Bedienelemente sind nicht ineinander verschachtelt" data-requirements="[&quot;4.1.2&quot;]">
+<h4 id="item-4-1-2-roles-match-behavior">Die Rolle jedes Bedienelements sagt, was es tut, und Bedienelemente sind nicht ineinander verschachtelt</h4>
+<p class="meta"><span>Für: 4.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Notieren Sie bei jedem Bedienelement auf der Seite, was es bei der Bedienung tut: eine Seite öffnen (ein Link), auf der Seite etwas auslösen (eine Schaltfläche), umschalten (ein Kontrollkästchen oder Schalter), eine Liste öffnen (ein Menü oder eine Combobox).</li><li>Lesen Sie seinen Eintrag „Rolle“ im Bereich „Barrierefreiheit“ der Entwicklertools oder hören Sie mit einem Screenreader hin und prüfen Sie, ob die Rolle dazu passt, was es tut.</li><li>Achten Sie auf benutzerdefinierte Bedienelemente aus divs und spans, auf Links, die als Schaltflächen verwendet werden, und auf Schaltflächen, die als Links verwendet werden.</li><li>Prüfen Sie, ob kein Bedienelement ein anderes enthält, etwa eine Schaltfläche in einem Link, und ob Bedienelemente mit präsentativen Kindelementen, etwa ein Tab oder eine Schaltfläche, nichts Fokussierbares enthalten.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Die Rolle jedes Bedienelements sagt, was es tut, und kein Bedienelement ist in ein anderes verschachtelt.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Bedienelement hat keine Rolle, eine falsche (ein anklickbares div ohne Rolle, ein Link, der als Schaltfläche funktioniert) oder enthält ein anderes Bedienelement; das verstößt gegen WCAG 4.1.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>aria-roles-valid</code>, <code>aria-deprecated-role</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p><p class="covers">Er prüft auch: <code>aria-role-valid</code>, <code>aria-role-not-deprecated</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Die Rolle jedes Bedienelements sagt, was es tut, und Bedienelemente sind nicht ineinander verschachtelt</span></legend>
+<div class="choices"><label><input type="radio" name="o-47" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-47" value="pass"> Bestanden</label><label><input type="radio" name="o-47" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-47" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-47">Notizen<span class="vh">: </span><span class="vh">Die Rolle jedes Bedienelements sagt, was es tut, und Bedienelemente sind nicht ineinander verschachtelt</span></label>
+<textarea id="notes-47" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-4-1-2-states-values-exposed" aria-labelledby="item-4-1-2-states-values-exposed" data-key="4.1.2/states-values-exposed" data-facet="states-values-exposed" data-label="Zustand und Wert jedes Bedienelements werden bereitgestellt und ändern sich mit dem, was auf dem Bildschirm zu sehen ist" data-requirements="[&quot;4.1.2&quot;]">
+<h4 id="item-4-1-2-states-values-exposed">Zustand und Wert jedes Bedienelements werden bereitgestellt und ändern sich mit dem, was auf dem Bildschirm zu sehen ist</h4>
+<p class="meta"><span>Für: 4.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span>, <span>Eine Tastatur</span></li></ul>
+<ol class="steps"><li>Suchen Sie die Bedienelemente, die einen Zustand oder Wert haben: Kontrollkästchen, Schalter, Optionsfelder, aufklappbare Abschnitte und Menüs, Tabs, Schieberegler, ausgewählte Einträge, gedrückte Schaltflächen.</li><li>Lesen Sie Zustand und Wert jedes davon im Bereich „Barrierefreiheit“ der Entwicklertools oder hören Sie mit einem Screenreader hin: checked, expanded, selected, pressed, der aktuelle Eintrag (aria-current) und der aktuelle Wert eines Schiebereglers oder Drehfelds.</li><li>Ändern Sie jeden mit der Tastatur und prüfen Sie, ob sich der vorgelesene Zustand oder Wert mit dem ändert, was Sie sehen.</li><li>Prüfen Sie bei einem aufklappbaren Bedienelement, ob es nur „erweitert“ angibt, solange das, was es öffnet, angezeigt wird.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Zustand und Wert jedes Bedienelements werden bereitgestellt und ändern sich mit dem, was auf dem Bildschirm zu sehen ist.</dd><dt>Nicht bestanden, wenn</dt><dd>Zustand oder Wert eines Bedienelements werden nicht bereitgestellt oder ändern sich nicht, wenn sie sich auf dem Bildschirm ändern, etwa ein benutzerdefiniertes Kontrollkästchen, das immer als nicht aktiviert vorgelesen wird; das verstößt gegen WCAG 4.1.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>aria-required-attr</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p><p class="covers">Er prüft auch: <code>aria-attr-required-for-role</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Zustand und Wert jedes Bedienelements werden bereitgestellt und ändern sich mit dem, was auf dem Bildschirm zu sehen ist</span></legend>
+<div class="choices"><label><input type="radio" name="o-48" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-48" value="pass"> Bestanden</label><label><input type="radio" name="o-48" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-48" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-48">Notizen<span class="vh">: </span><span class="vh">Zustand und Wert jedes Bedienelements werden bereitgestellt und ändern sich mit dem, was auf dem Bildschirm zu sehen ist</span></label>
+<textarea id="notes-48" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-4-1-2-aria-used-validly" aria-labelledby="item-4-1-2-aria-used-validly" data-key="4.1.2/aria-used-validly" data-facet="aria-used-validly" data-label="ARIA-Attribute sind echt, gültig und dort erlaubt, wo sie stehen, und nichts Fokussierbares ist vor assistiven Technologien verborgen" data-requirements="[&quot;4.1.2&quot;]">
+<h4 id="item-4-1-2-aria-used-validly">ARIA-Attribute sind echt, gültig und dort erlaubt, wo sie stehen, und nichts Fokussierbares ist vor assistiven Technologien verborgen</h4>
+<p class="meta"><span>Für: 4.1.2</span></p>
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Durchsuchen Sie im Bereich „Elemente“ der Entwicklertools das Markup nach aria- und role= und sehen Sie sich jede Verwendung an.</li><li>Prüfen Sie, ob jedes aria-*-Attribut ein echtes ist, einen gültigen Wert hat und für die Rolle seines Elements erlaubt ist.</li><li>Prüfen Sie, ob ids, auf die aria-labelledby, aria-describedby, aria-controls und Ähnliche verweisen, jeweils genau einmal existieren.</li><li>Prüfen Sie, ob nichts, was den Fokus erhält, in einem Element mit aria-hidden=&quot;true&quot; liegt und ob &lt;body&gt; nicht verborgen ist.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>ARIA-Attribute sind echt, gültig und dort erlaubt, wo sie stehen, ihre ids sind eindeutig, und nichts Fokussierbares ist verborgen.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein ARIA-Attribut ist falsch geschrieben, hat einen ungültigen Wert oder ist für seine Rolle nicht erlaubt, eine id, auf die es verweist, fehlt oder ist mehrfach vorhanden, oder etwas Fokussierbares ist vor assistiven Technologien verborgen; das verstößt gegen WCAG 4.1.2.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>aria-hidden-focus</code>, <code>aria-valid-attr</code>, <code>aria-valid-attr-value</code>, <code>aria-allowed-attr</code>, <code>aria-prohibited-attr</code>, <code>aria-hidden-body</code>, <code>duplicate-id-aria</code></p><p class="covers">Er prüft auch: <code>aria-hidden-focusable</code>, <code>aria-attr-name-valid</code>, <code>aria-attr-value-valid</code>, <code>aria-attr-allowed-for-role</code>, <code>aria-attr-not-prohibited</code>, <code>aria-hidden-body-absent</code>, <code>duplicate-id-aria</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">ARIA-Attribute sind echt, gültig und dort erlaubt, wo sie stehen, und nichts Fokussierbares ist vor assistiven Technologien verborgen</span></legend>
+<div class="choices"><label><input type="radio" name="o-49" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-49" value="pass"> Bestanden</label><label><input type="radio" name="o-49" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-49" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-49">Notizen<span class="vh">: </span><span class="vh">ARIA-Attribute sind echt, gültig und dort erlaubt, wo sie stehen, und nichts Fokussierbares ist vor assistiven Technologien verborgen</span></label>
+<textarea id="notes-49" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-4-1-3-status-messages-announced" aria-labelledby="item-4-1-3-status-messages-announced" data-key="4.1.3/status-messages-announced" data-facet="status-messages-announced" data-label="Statusmeldungen werden von assistiven Technologien angesagt, ohne den Fokus zu erhalten" data-requirements="[&quot;4.1.3&quot;]">
+<h4 id="item-4-1-3-status-messages-announced">Statusmeldungen werden von assistiven Technologien angesagt, ohne den Fokus zu erhalten</h4>
+<p class="meta"><span>Für: 4.1.3</span></p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Ein Screenreader</span></li></ul>
+<ol class="steps"><li>Suchen Sie die Meldungen, die die Seite anzeigt, ohne den Fokus zu bewegen: „In den Warenkorb gelegt“, die Anzahl der Suchergebnisse, „Gespeichert“, Fortschritt, nach dem Absenden aufgelistete Formularfehler.</li><li>Schalten Sie einen Screenreader ein und lösen Sie jede Meldung durch die Aktion aus, die sie anzeigt.</li><li>Prüfen Sie, ob der Screenreader die Meldung ansagt, ohne dass der Fokus zu ihr wechselt.</li><li>Wiederholen Sie dies mit einer zweiten Kombination aus Browser und Screenreader. Live-Regionen gehören zu den am wenigsten einheitlichen Bereichen der Screenreader-Unterstützung.</li><li>Sagt er nichts, prüfen Sie in den Entwicklertools, ob die Meldung in einem Element mit role=&quot;status&quot;, role=&quot;alert&quot; oder aria-live steht und ob das Element nicht verborgen ist. Eine Region mit role=&quot;status&quot; oder aria-live muss bereits leer auf der Seite vorhanden sein, bevor die Meldung in sie eingefügt wird. Ein Element mit role=&quot;alert&quot; wird meist auch dann angesagt, wenn es zusammen mit seiner Meldung hinzugefügt wird.</li><li>Lassen Sie Meldungen weg, die den Fokus erhalten oder mit einer neuen Seite erscheinen: Das sind keine Statusmeldungen, und sie werden unter anderen Kriterien geprüft.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jede Statusmeldung wird von einem Screenreader angesagt, ohne dass der Fokus zu ihr wechselt.</dd><dt>Nicht bestanden, wenn</dt><dd>Eine Statusmeldung erscheint auf dem Bildschirm, aber ein Screenreader sagt sie nicht an; das verstößt gegen WCAG 4.1.3.</dd></dl>
+<details class="technical"><summary>Regeln und Facetten</summary><p class="rules">Regeln, die es prüfen: <code>live-region-announcements</code></p><p class="covers">Er prüft auch: <code>live-region-reachable-evidence</code>, <code>live-region-changes-evidence</code></p></details>
+<fieldset class="record"><legend>Ergebnis<span class="vh">: </span><span class="vh">Statusmeldungen werden von assistiven Technologien angesagt, ohne den Fokus zu erhalten</span></legend>
+<div class="choices"><label><input type="radio" name="o-50" value="open" checked> Nicht geprüft</label><label><input type="radio" name="o-50" value="pass"> Bestanden</label><label><input type="radio" name="o-50" value="fail"> Nicht bestanden</label><label><input type="radio" name="o-50" value="notApplicable"> Nicht anwendbar</label></div>
+<label class="notes" for="notes-50">Notizen<span class="vh">: </span><span class="vh">Statusmeldungen werden von assistiven Technologien angesagt, ohne den Fokus zu erhalten</span></label>
+<textarea id="notes-50" rows="2"></textarea>
+</fieldset>
+</article>
+</section>
+</section>
+</main>
+</div>
+<script type="application/json" id="record-text">{"progress":"Geprüft: {{done}} von {{total}} · Bestanden: {{pass}} · Nicht bestanden: {{fail}} · Nicht anwendbar: {{notApplicable}}","clearConfirm":"Erneut auswählen, um alle Ergebnisse zu löschen","title":"WCAG 2.2: manuelle Checkliste","standard":"wcag","key":null,"version":"2.2","file":"wcag-2.2-results"}</script>
+<script>
+(function () {
+  var root = document.querySelector('[data-record]');
+  if (!root) return;
+  var storeKey = 'surea11y-procedures:' + root.getAttribute('data-record');
+  var text = JSON.parse(document.getElementById('record-text').textContent);
+  var items = Array.prototype.slice.call(document.querySelectorAll('.item[data-key]'));
+  var store = {};
+  try { store = JSON.parse(window.localStorage.getItem(storeKey) || '{}') || {}; } catch (e) { store = {}; }
+  function save() { try { window.localStorage.setItem(storeKey, JSON.stringify(store)); } catch (e) {} }
+  function fill(template, values) {
+    return template.replace(/\{\{(\w+)\}\}/g, function (m, name) { return values[name] != null ? values[name] : m; });
+  }
+  function stateOf(item) {
+    var checked = item.querySelector('input[type=radio]:checked');
+    var notes = item.querySelector('textarea');
+    return { outcome: checked ? checked.value : 'open', notes: notes ? notes.value : '' };
+  }
+  var status = document.getElementById('record-progress');
+  function update() {
+    var n = { open: 0, pass: 0, fail: 0, notApplicable: 0 };
+    items.forEach(function (item) {
+      var s = stateOf(item);
+      n[s.outcome] = (n[s.outcome] || 0) + 1;
+      if (s.outcome === 'open') item.removeAttribute('data-outcome');
+      else item.setAttribute('data-outcome', s.outcome);
+    });
+    status.textContent = fill(text.progress, {
+      done: items.length - n.open, total: items.length, pass: n.pass, fail: n.fail, notApplicable: n.notApplicable
+    });
+  }
+  items.forEach(function (item) {
+    var key = item.getAttribute('data-key');
+    var saved = store[key];
+    if (saved) {
+      var radio = item.querySelector('input[type=radio][value="' + saved.outcome + '"]');
+      if (radio) radio.checked = true;
+      var notes = item.querySelector('textarea');
+      if (notes && typeof saved.notes === 'string') notes.value = saved.notes;
+    }
+    function changed() {
+      var s = stateOf(item);
+      if (s.outcome === 'open' && !s.notes) delete store[key]; else store[key] = s;
+      save();
+      update();
+    }
+    item.addEventListener('change', changed);
+    item.addEventListener('input', changed);
+  });
+  function results() {
+    var rows = items.map(function (item) {
+      var s = stateOf(item);
+      return {
+        key: item.getAttribute('data-key'),
+        facet: item.getAttribute('data-facet'),
+        label: item.getAttribute('data-label'),
+        requirements: JSON.parse(item.getAttribute('data-requirements')),
+        outcome: s.outcome,
+        notes: s.notes
+      };
+    });
+    var order = [];
+    var by = {};
+    rows.forEach(function (row) {
+      row.requirements.forEach(function (id) {
+        if (!by[id]) { by[id] = []; order.push(id); }
+        by[id].push(row.outcome);
+      });
+    });
+    var requirements = order.map(function (id) {
+      var o = by[id];
+      var outcome = o.indexOf('fail') >= 0 ? 'fail' : o.indexOf('open') >= 0 ? 'open'
+        : o.every(function (x) { return x === 'notApplicable'; }) ? 'notApplicable' : 'pass';
+      return { id: id, outcome: outcome };
+    });
+    return {
+      title: text.title, standard: text.standard, key: text.key, version: text.version,
+      exportedAt: new Date().toISOString(), items: rows, requirements: requirements
+    };
+  }
+  function download(name, type, body) {
+    var url = URL.createObjectURL(new Blob([body], { type: type }));
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  function csvCell(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
+  var base = text.file;
+  document.getElementById('record-json').addEventListener('click', function () {
+    download(base + '.json', 'application/json', JSON.stringify(results(), null, 2) + '\n');
+  });
+  document.getElementById('record-csv').addEventListener('click', function () {
+    var r = results();
+    var lines = [['key', 'facet', 'label', 'requirements', 'outcome', 'notes'].map(csvCell).join(',')];
+    r.items.forEach(function (i) {
+      lines.push([i.key, i.facet, i.label, i.requirements.join(' '), i.outcome, i.notes].map(csvCell).join(','));
+    });
+    download(base + '.csv', 'text/csv', '\ufeff' + lines.join('\r\n') + '\r\n');
+  });
+  var clear = document.getElementById('record-clear');
+  var clearLabel = clear.textContent;
+  function disarm() { clear.removeAttribute('data-armed'); clear.textContent = clearLabel; }
+  clear.addEventListener('click', function () {
+    if (!clear.hasAttribute('data-armed')) {
+      clear.setAttribute('data-armed', '');
+      clear.textContent = text.clearConfirm;
+      return;
+    }
+    store = {};
+    save();
+    items.forEach(function (item) {
+      var open = item.querySelector('input[type=radio][value=open]');
+      if (open) open.checked = true;
+      var notes = item.querySelector('textarea');
+      if (notes) notes.value = '';
+    });
+    disarm();
+    update();
+  });
+  clear.addEventListener('blur', disarm);
+  update();
+})();
+</script>
+</body>
+</html>

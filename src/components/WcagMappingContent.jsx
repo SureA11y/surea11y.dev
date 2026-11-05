@@ -90,7 +90,9 @@ export function WcagMappingContent() {
 					decides it with high confidence), <code>partial</code> (a rule decides <em>part</em>{" "}
 					of it — see each rule's own scope notes), or <code>manual</code> (no safe automated
 					heuristic exists at all). Run <code>npm run coverage</code> to regenerate{" "}
-					<code>coverage/coverage-report.md</code>, the per-SC facet breakdown.
+					<code>coverage/coverage-report.md</code>, the per-SC facet breakdown. Since core 1.15.0
+					each facet of a criterion a rule evaluates also has a procedure, how a person assesses
+					it by hand (see <a href="/conformance/procedures/">Test procedures</a>).
 				</li>
 				<li>
 					<strong>Composite (WCAG-SC rollup) rules</strong> (<code>rulesResults[]</code>) — a
@@ -233,7 +235,8 @@ export function WcagMappingContent() {
 				<code>wcag2a</code>. Asking for <code>{"{ tags: ['wcag2aa'] }"}</code> on its own
 				therefore runs the 11 rules mapped to a 2.0 AA criterion, not the 105 that make up a 2.0
 				A + AA target. List every level you mean, or use <code>runOnly.wcag</code>, which does not
-				have the problem. <code>engineOptions.profile</code> (<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>,{" "}
+				have the problem. <code>engineOptions.profile</code> (<code>wcag22-a</code>,{" "}
+				<code>wcag22-aa</code>, <code>wcag22-aaa</code>, <code>en301549-v4.1.1</code>,{" "}
 				<code>en301549-v3.2.1</code>, <code>section508</code>) does it for you too; see{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Conformance profiles</a>.
 				</p>
@@ -399,6 +402,14 @@ export function WcagMappingContent() {
 					for a check of its own that WCAG doesn't require.
 				</li>
 				<li>
+					Since core 1.15.0, a rule fails a WCAG criterion only where WCAG fails. Where only
+					WAI-ARIA or the HTML content model is broken and the page's name, role and value survive
+					it, the ARIA and HTML structure rules ask instead (<code>cantTell</code>, uncertainty{" "}
+					<code>spec-only</code>), so a WCAG failure never stands for a specification violation
+					that WCAG doesn't count. To judge those findings by WAI-ARIA itself, run the{" "}
+					<a href="/configuration/packs/#wai-aria-pack">WAI-ARIA pack</a>'s profile beside WCAG's.
+				</li>
+				<li>
 					Every <code>cantTell</code> is an explicit flag for human review, not a swallowed
 					uncertainty.
 				</li>
@@ -409,7 +420,9 @@ export function WcagMappingContent() {
 				</li>
 				<li>
 					The facet coverage table tells you exactly which parts of which SCs have zero automated
-					coverage, and so what is left to a person.
+					coverage, and so what is left to a person, and core's{" "}
+					<a href="/conformance/procedures/">test procedures</a> say how a person checks each of
+					them, for every criterion a rule evaluates.
 				</li>
 			</ul>
 			<p>

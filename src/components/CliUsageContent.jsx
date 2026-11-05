@@ -29,7 +29,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.14.2",
+					"  engine: @surea11y/core 1.15.0",
 					"  pass: 16   fail: 4   cantTell: 4   notApplicable: 121",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 4",
@@ -233,7 +233,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.14.2",
+					"  engine: @surea11y/core 1.15.0",
 					"  WCAG level reported: AA",
 					"  pass: 1   fail: 0   cantTell: 0   notApplicable: 0",
 					"",
@@ -279,6 +279,31 @@ export function CliUsageContent() {
 				never passes with the pack's checks unrun.
 			</p>
 
+			<h2 id="several-profiles">Several profiles</h2>
+			<p>
+				<code>--profile</code> can be given more than once, to judge each page by several profiles
+				at once, a pack's beside WCAG's or another pack's (<code>@surea11y/cli</code> 1.5.0, core
+				1.15.0 and later):
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan ./dist/index.html --pack @surea11y/pack-wai-aria --profile wcag22-aa --profile wai-aria-1.2", command: true },
+				]}
+			/>
+			<p>
+				Each profile judges the page as it would alone, and the result reads as one profile with
+				the rules of all: a rule's outcome is the worst its profiles give it, so a failure under
+				any profile exits <code>1</code>, and each finding's <code>verdicts</code> in{" "}
+				<code>--json</code> say what each profile makes of it (see{" "}
+				<a href="/results-reports/output-schema/#several-profiles">Output schema</a>). The summary
+				lists them (<code>profiles: wcag22-aa, wai-aria-1.2</code>), <code>--html</code> names
+				each and shows each one's verdict on a finding, and <code>--sarif</code> and{" "}
+				<code>--junit</code> gate on the worst outcome. A profile that didn't run exits{" "}
+				<code>2</code>, listed with why; <code>--allow-profiles-not-run</code> makes it a warning,
+				except for a profile whose pack the engine skipped, since the skipped pack exits{" "}
+				<code>2</code> itself.
+			</p>
+
 			<h2 id="failing-only-on-serious-problems">Failing only on serious problems</h2>
 			<p>
 				<code>--fail-on-severity</code> (<code>critical</code>, <code>serious</code>,{" "}
@@ -308,6 +333,79 @@ export function CliUsageContent() {
 				]}
 			/>
 
+			<h2 id="manual-checks">Manual checks</h2>
+			<p>
+				A scan decides what rules can decide. <code>--manual-checks &lt;path&gt;</code> writes,
+				next to it, the rest: a worksheet of the checks no rule decides in full, for a person to do
+				by hand, with the steps for each, what passes and what fails, and a result and notes to
+				record (core's <a href="/conformance/procedures/">test procedures</a>). With{" "}
+				<code>--html</code>, whose report now ends with “What's left for a person”, the team has
+				both halves of the assessment from one run:
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan https://example.com/ --wcag 2.2 --html report.html --manual-checks manual-checks.html", command: true },
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>For which standard:</strong> the one scanned. A pack's profile gives that
+					standard and version, under its own numbers, where the pack gives procedures; otherwise
+					WCAG, at the version and level of <code>--wcag</code> and <code>--wcag-level</code>, or of{" "}
+					<code>--profile</code>'s target, and WCAG 2.2 A and AA by default. With several{" "}
+					<code>--profile</code>, one worksheet per standard and version.
+				</li>
+				<li>
+					<strong>In which language:</strong> <code>--locale</code>'s. A path ending in{" "}
+					<code>.md</code> writes Markdown instead, with a task item per check.
+				</li>
+				<li>
+					<strong>Several pages:</strong> one worksheet per page, numbered as <code>--html</code>'s
+					are, each titled with its page, so each page's results stay apart.
+				</li>
+			</ul>
+			<p>
+				It never changes the exit code. Open the worksheet from disk, record each result and
+				notes, and download them as JSON, with each criterion's result rolled up from its checks,
+				or as CSV.
+			</p>
+
+			<h2 id="procedures">Procedures, with no scan</h2>
+			<p>
+				<code>surea11y procedures</code> writes how a person assesses each requirement of a
+				standard by hand, with no scan: a reference to read, or a worksheet to work through (
+				<code>--checklist</code>), in HTML, Markdown or JSON.
+			</p>
+			<CodeBlock
+				lines={[
+					"# How to assess every WCAG 2.2 A and AA criterion, as a page",
+					{ text: "surea11y procedures --wcag 2.2 --wcag-level AA -o wcag-22-aa.html", command: true },
+					"",
+					"# A worksheet for a manual audit, titled for it",
+					{ text: 'surea11y procedures --wcag-level AA --checklist --title "Audit: example.com" -o audit.html', command: true },
+					"",
+					"# Only what no rule decides in full, as Markdown for a repository",
+					{ text: "surea11y procedures --wcag-level AA --automation manual,partial -o left-to-a-person.md", command: true },
+					"",
+					"# What needs a screen reader, for a session with a person who uses one",
+					{ text: "surea11y procedures --wcag-level AA --tools screen-reader -o screen-reader-session.html", command: true },
+					"",
+					"# One criterion, in French, with the steps a scan's questions give",
+					{ text: "surea11y procedures 1.4.12 --locale fr --variants -o 1.4.12.html", command: true },
+					"",
+					"# A pack's standard, under its own numbers",
+					{ text: "surea11y procedures --pack @surea11y/pack-en301549 --profile en301549-v4.1.1 --checklist -o en-301-549.html", command: true },
+				]}
+			/>
+			<p>
+				<code>--standard</code> and <code>--standard-version</code> name a pack's standard by key
+				and version, <code>--rules</code> keeps only what some rules test, <code>--no-record</code>{" "}
+				gives a worksheet with nothing to record, and <code>--json</code> the data instead of a
+				page. A scan's options are a usage error here, as these are on <code>scan</code>. See{" "}
+				<a href={`${cliDocs}#procedures-how-to-assess-by-hand`}>the CLI reference</a> on GitHub for
+				every flag.
+			</p>
+
 			<h2 id="compact-results">Compact results</h2>
 			<p>
 				<code>--compact</code> keeps each <code>pass</code> and <code>notApplicable</code> result
@@ -327,9 +425,11 @@ export function CliUsageContent() {
 				"known" vs. "new"), <code>2</code> a usage or scan error, or a scan that would have checked
 				nothing or less than asked: a <code>--rules</code>/<code>--tags</code> list naming no known
 				rule or tag, a <code>--context</code> selector that matches nothing, a custom rule or a
-				pack that didn't run, a <code>--profile</code> that wasn't applied. A baseline written with
-				core 1.13 still matches the findings whose reason codes 1.14 split by cause;{" "}
-				<code>--migrate-baseline baseline.json</code> rewrites it under the new codes.
+				pack that didn't run, a <code>--profile</code> that wasn't applied (with several, one that
+				didn't run, unless <code>--allow-profiles-not-run</code>). A baseline written by the
+				minor release before keeps matching findings whose reason codes moved since;{" "}
+				<code>--migrate-baseline baseline.json</code> rewrites it under the new codes (see{" "}
+				<a href="/conformance/baseline/#upgrading">Upgrading</a>).
 			</p>
 			<p>
 				Without <code>--browser</code>, the CLI reads <strong>static HTML only</strong> — a local

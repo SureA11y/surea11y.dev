@@ -14,6 +14,7 @@ const packageRows = [
 	{ id: "test-matchers", want: "Assert accessibility in Jest/Vitest component or unit tests", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "Scan pages from a terminal or CI pipeline, as static HTML or in Chromium", install: <code>@surea11y/cli</code> },
 	{ id: "pack-en301549", want: "Check against EN 301 549, the European standard, with any of the above", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
+	{ id: "pack-wai-aria", want: "Check ARIA against WAI-ARIA 1.2 itself, beside WCAG or on its own", install: <><a href="/configuration/packs/#wai-aria-pack"><code>@surea11y/pack-wai-aria</code></a> + <code>@surea11y/core</code></> },
 	{ id: "pack-own", want: "Check against your own rules, profiles or standard, public or internal", install: <>A pack of your own: see <a href="/configuration/packs/#writing-a-pack">Writing a pack</a></> },
 	{ id: "core", want: "Run the engine against a DOM you already have", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "Build your own tool on the engine: a CLI, an extension, a dashboard, a report generator", install: <code>@surea11y/core</code> },
@@ -129,9 +130,22 @@ export function OverviewContent() {
 				finding a lean and how far to trust one.
 			</p>
 			<p>
+				A scan is half an assessment, and the engine gives you the other half too. For every WCAG
+				criterion its rules evaluate, core has a test procedure for each part of it: the steps a
+				person follows in a browser, the tools it needs (a keyboard, a screen reader, the zoom),
+				and what they see if it passes and if it fails, in five languages. They are the same text
+				a finding's "How to check" comes from. Read them as data, or render them as a reference or
+				as a worksheet that records each result and rolls them up per criterion, with no scan for
+				a manual audit, or next to one for what it leaves open. See{" "}
+				<a href="/conformance/procedures/">Test procedures</a>, or open{" "}
+				<a href="/procedures/wcag-22-aa-checklist.html">the WCAG 2.2 AA worksheet</a>.
+			</p>
+			<p>
 				The HTML report sets out the questions in the order a reviewer works through them: "Likely
 				fails: confirm", "Likely passes: confirm" and "Needs a person". Each card has its "How to check" steps, and those in the
-				first two groups say why they lean. In CI, the JUnit and SARIF reports can also gate on the findings
+				first two groups say why they lean, and a last section, "What's left for a person", lists
+				the checks no rule decides in full, criterion by criterion, beside the scan's outcome for
+				each. In CI, the JUnit and SARIF reports can also gate on the findings
 				that lean fail, off by default, and a baseline can accept the ones a page already has, so
 				only new ones break the build. See <a href="/results-reports/html-report/">HTML report</a>{" "}
 				and <a href="/conformance/baseline/">Baseline / allowlist</a>, or <a href="/sample-report.html">open a sample report</a> of a
@@ -155,6 +169,15 @@ export function OverviewContent() {
 				<a href="/configuration/packs/">Packs</a>.
 			</p>
 			<p>
+				Name several standards, and one scan judges the page by each.{" "}
+				<code>profile: ['wcag22-aa', 'wai-aria-1.2']</code> judges it by WCAG and by WAI-ARIA at
+				once: each profile decides as a scan of it alone would, the result counts as one scan with
+				the rules of all, and every finding says what each profile makes of it. An attribute a role
+				doesn't support is a question for WCAG 4.1.2 and a failure of WAI-ARIA, and the result
+				says both, so nothing is counted twice and nothing is lost. See{" "}
+				<a href="/configuration/engine-options/#several-profiles">Engine options</a>.
+			</p>
+			<p>
 				Name checks rather than a standard, and the result still says which WCAG criteria they
 				bear on. A scan that runs only <code>link-name-present</code> reports 2.4.4 and 4.1.2
 				too, plus the AAA 2.4.9 unless the scan sets a level, and a criterion whose other checks the scan left out comes back{" "}
@@ -170,6 +193,14 @@ export function OverviewContent() {
 				report with no failure says the same under its headline: no rule failed, and that is not a
 				claim that the page conforms. Marking those criteria as passed would be the false sense of
 				coverage this engine is built to avoid. See <a href="/conformance/wcag-mapping/">WCAG conformance mapping</a>.
+			</p>
+			<p>
+				A WCAG failure is a WCAG failure, not a broken specification that WCAG doesn't count. Where
+				only WAI-ARIA or the HTML content model is broken, and the name, role and value people
+				rely on survive it, the ARIA and HTML structure rules ask rather than fail, with steps to
+				check. The <a href="/configuration/packs/#wai-aria-pack">WAI-ARIA pack</a> reads the same
+				findings by WAI-ARIA's own MUSTs, so a team that holds itself to the specification can
+				fail on it, by choice.
 			</p>
 			<p>
 				Web components are judged by what they expose. A custom element that gives itself a name,
@@ -278,7 +309,9 @@ export function OverviewContent() {
 				aspects, including keyboard traps and reflow at zoom, are not checked by the engine at all
 				and need separate testing: no <code>cantTell</code> stands in for them, so a result without
 				one doesn't mean they were covered. See{" "}
-				<a href="/help/known-limitations/">Known limitations</a> for the complete list.
+				<a href="/help/known-limitations/">Known limitations</a> for the complete list, and the{" "}
+				<a href="/conformance/procedures/">test procedures</a> for how a person checks the
+				criteria the rules evaluate.
 			</p>
 		</>
 	);

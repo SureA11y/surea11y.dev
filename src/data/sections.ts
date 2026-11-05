@@ -36,7 +36,7 @@ export const sections: Section[] = [
 	{
 		href: "/conformance/",
 		label: "Conformance",
-		description: "How atomic rules roll up into per-criterion WCAG results, and what those results don't claim.",
+		description: "How atomic rules roll up into per-criterion WCAG results, how to check by hand what they leave open, and what they don't claim.",
 	},
 	{
 		href: "/help/",
