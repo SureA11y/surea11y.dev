@@ -138,6 +138,26 @@ export function CiIntegrationContent() {
 				vrai fichier du dépôt).
 			</p>
 
+			<h3 id="manual-checks-artifact">Publier ce que l’analyse laisse à une personne</h3>
+			<p>
+				Un contrôle tranche ce que les règles peuvent trancher. Pour confier le reste à une
+				personne à chaque exécution, écrivez le rapport HTML et une liste de travail des
+				vérifications qu’aucune règle ne tranche entièrement (
+				<code>--manual-checks</code>, <code>@surea11y/cli</code> 1.5.0 et core 1.15.0 et ultérieur), et envoyez les deux comme artefact. Ni l’un ni l’autre ne change le code de
+				sortie. Voir <a href="/conformance/procedures/">Procédures de test</a>.
+			</p>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"      - run: npx @surea11y/cli scan ./dist/index.html --html reports/report.html --manual-checks reports/manual-checks.html",
+					"      - uses: actions/upload-artifact@v4",
+					"        if: always()",
+					"        with:",
+					"          name: accessibility",
+					"          path: reports/",
+				]}
+			/>
+
 			<h2><span lang="en">Bitbucket Pipelines</span></h2>
 			<p>
 				<span lang="en">Bitbucket Pipelines</span> n’a pas de tableau de bord intégré exploitant SARIF équivalent à{" "}

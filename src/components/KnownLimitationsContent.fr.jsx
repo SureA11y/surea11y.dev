@@ -306,6 +306,26 @@ export function KnownLimitationsContent() {
 					<code>aria-hidden</code> que la page met sur le reste, qui masquent la page sans indiquer
 					aux règles de structure qu’une boîte de dialogue est ouverte.
 				</li>
+				<li id="framed-documents">
+					<strong>Un document affiché dans une frame n’est pas jugé comme une page à part entière.</strong>{" "}
+					Dans une frame, les règles qui portent sur la page (<code>page-title-present</code>,{" "}
+					<code>page-title-patterns</code>, <code>html-lang-attr-present</code>,{" "}
+					<code>meta-viewport-zoom-enabled</code>, <code>meta-viewport-large</code>,{" "}
+					<code>page-has-heading-one</code>, <code>landmark-one-main</code>,{" "}
+					<code>bypass-blocks-present</code> et <code>region</code>) sont{" "}
+					<code>notApplicable</code> : c’est la page autour de la frame qui a le titre, la langue et
+					les landmarks qu’utilisent les personnes, et un navigateur ignore le{" "}
+					<code>&lt;meta&gt;</code> viewport d’un document affiché dans une frame. Un exécuteur de
+					tests qui affiche la page testée dans une frame à lui définit{" "}
+					<code>engineOptions.topLevelDocument: true</code>, pour que cette page soit jugée comme la
+					page (c’est le cas de <a href="/getting-started/cypress/">@surea11y/cypress</a>).{" "}
+					<code>runa11yCoreAcrossFrames</code> lit une frame sous <code>aria-hidden="true"</code>{" "}
+					comme du contenu aria-hidden et une frame sous <code>[inert]</code> comme du contenu
+					inerte, dont seul l’aspect visuel est jugé, et laisse de côté une frame derrière une boîte
+					de dialogue modale ouverte ; un binding qui analyse les frames une par une définit
+					lui-même <code>embeddedAriaHidden</code> et <code>embeddedInert</code> (voir{" "}
+					<a href="/configuration/engine-options/">Options du moteur</a>). Core 1.15.0 et ultérieur.
+				</li>
 				<li>
 					<strong>
 						<code>&lt;dialog&gt;</code> et les autres éléments masqués par la feuille de style par
@@ -496,7 +516,12 @@ export function KnownLimitationsContent() {
 					focus à quoi que ce soit. Mais la page reste dans l’état où ses scripts l’ont mise, si bien
 					qu’une deuxième analyse de la même page peut trouver autre chose : si vous analysez une
 					page que vous continuez d’utiliser, ou analysez deux fois la même page, rechargez-la
-					entre-temps.
+					entre-temps. Comme l’espacement est retiré ensuite, une capture d’écran prise après
+					l’analyse montre comme tenant dans son espace un texte que{" "}
+					<code>text-spacing-content-loss</code> a trouvé coupé ; un tel constat nomme l’état dans
+					lequel il a été établi (<code>data.details.evidenceState: 'text-spacing'</code>), et{" "}
+					<code>evidenceState()</code> de <code>@surea11y/core</code> remet la page dans cet état
+					pour la capture, comme le font les <code>.screenshots()</code> des bindings.
 				</li>
 				<li>
 					<strong>Une feuille de style d’une autre origine ne peut pas être lue depuis la page.</strong>{" "}

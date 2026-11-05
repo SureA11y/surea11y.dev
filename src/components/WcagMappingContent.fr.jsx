@@ -91,7 +91,9 @@ export function WcagMappingContent() {
 					confiance), <code>partial</code> (une règle en tranche <em>une partie</em> ; voir les
 					notes de périmètre de chaque règle) ou <code>manual</code> (aucune heuristique
 					automatisée sûre n’existe). Lancez <code>npm run coverage</code> pour régénérer{" "}
-					<code>coverage/coverage-report.md</code>, le détail des facettes par CS.
+					<code>coverage/coverage-report.md</code>, le détail des facettes par CS. Depuis core 1.15.0,
+					chaque facette d’un critère qu’évalue une règle a aussi une procédure, la façon dont une
+					personne l’évalue à la main (voir <a href="/conformance/procedures/">Procédures de test</a>).
 				</li>
 				<li>
 					<strong>Règles composites (agrégation par CS WCAG)</strong> (<code>rulesResults[]</code>) :
@@ -249,7 +251,8 @@ export function WcagMappingContent() {
 				exécute donc les 11 règles associées à un critère AA de la version 2.0, et non les 105
 				qui constituent une cible A + AA en 2.0. Listez chaque niveau que vous visez, ou utilisez{" "}
 				<code>runOnly.wcag</code>, qui n’a pas ce problème. <code>engineOptions.profile</code>{" "}
-				(<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>, <code>en301549-v3.2.1</code>,{" "}
+				(<code>wcag22-a</code>, <code>wcag22-aa</code>, <code>wcag22-aaa</code>,{" "}
+				<code>en301549-v4.1.1</code>, <code>en301549-v3.2.1</code>,{" "}
 				<code>section508</code>) le fait aussi pour vous ; voir{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Profils de conformité</a>.
 			</p>
@@ -429,6 +432,15 @@ export function WcagMappingContent() {
 					WCAG n’exige pas.
 				</li>
 				<li>
+					Depuis core 1.15.0, une règle ne fait échouer un critère WCAG que là où les WCAG le font
+					échouer. Là où seul WAI-ARIA ou le modèle de contenu HTML est enfreint et que le nom, le
+					rôle et la valeur de la page y survivent, les règles de structure ARIA et HTML posent la
+					question à la place (<code>cantTell</code>, incertitude <code>spec-only</code>), si bien
+					qu’un échec WCAG ne représente jamais une violation de spécification que les WCAG ne
+					comptent pas. Pour juger ces constats selon WAI-ARIA lui-même, exécutez le profil du{" "}
+					<a href="/configuration/packs/#wai-aria-pack">pack WAI-ARIA</a> à côté de celui des WCAG.
+				</li>
+				<li>
 					Chaque <code>cantTell</code> est un signalement explicite pour une revue humaine, pas
 					une incertitude passée sous silence.
 				</li>
@@ -440,7 +452,9 @@ export function WcagMappingContent() {
 				</li>
 				<li>
 					Le tableau de couverture des facettes vous indique exactement quelles parties de quels
-					CS n’ont aucune couverture automatisée, et donc ce qui revient à une personne.
+					CS n’ont aucune couverture automatisée, et donc ce qui revient à une personne, et les{" "}
+					<a href="/conformance/procedures/">procédures de test</a> de core indiquent comment une
+					personne vérifie chacune d’elles, pour chaque critère qu’évalue une règle.
 				</li>
 			</ul>
 			<p>

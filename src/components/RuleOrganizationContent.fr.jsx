@@ -29,8 +29,9 @@ export function RuleOrganizationContent() {
 					<strong>automatique</strong> : tranche de façon déterministe, sans heuristique ni
 					supposition. Peut rapporter <code>fail</code>. <code>cantTell</code> apparaît quand même
 					ici, dans les situations suivantes : une violation réelle existe mais n’établit pas à elle seule
-					l’échec du critère WCAG associé (une exigence d’auteur ARIA dont le nom, le rôle ou la
-					valeur exposés restent valables) ; la règle établit de façon déterministe qu’une bonne
+					l’échec du critère WCAG associé (une exigence d’auteur ARIA, ou le modèle de contenu HTML,
+					dont le nom, le rôle ou la valeur exposés restent valables : depuis core 1.15, incertitude{" "}
+					<code>spec-only</code>, dans les règles de structure ARIA et HTML) ; la règle établit de façon déterministe qu’une bonne
 					pratique n’est pas respectée, ne revendique aucun critère de succès, et ce qu’elle a
 					trouvé ne gêne pas forcément qui que ce soit, puisque le rôle ou l’élément parvient tel
 					quel aux technologies d’assistance (<code>aria-allowed-role</code>,{" "}
@@ -156,7 +157,9 @@ export function RuleOrganizationContent() {
 				reste</strong>. Voir{" "}
 				<a href="/conformance/wcag-mapping/">Conformité</a> pour les trois couches (règles
 				atomiques, facettes, composites) et la façon dont le résultat d’un composite est
-				réellement calculé.
+				réellement calculé. Chaque facette d’un critère qu’évalue une règle a une procédure,
+				la façon dont une personne la vérifie à la main (voir{" "}
+				<a href="/conformance/procedures/">Procédures de test</a>).
 			</p>
 		</>
 	);

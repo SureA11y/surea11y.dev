@@ -9,7 +9,7 @@ export function HtmlReportContent() {
 				pas de ressources externes, pas de requêtes réseau. Pensé pour les testeurs QA et manuels
 				qui veulent parcourir les résultats d’une analyse plutôt que du JSON brut ou un résumé dans
 				le terminal. <a href="/sample-report.html">Ouvrez un exemple de rapport</a> : une petite page de paiement
-				analysée avec les hooks d’écouteurs et de régions live, avec un constat dans chaque groupe.
+				analysée avec les hooks d’écouteurs et de régions live, avec un constat dans chaque groupe et ce que l’analyse laisse à une personne.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
 			<p>
@@ -35,7 +35,9 @@ export function HtmlReportContent() {
 					<strong>À examiner</strong> : une carte par règle ayant des occurrences{" "}
 					<code>fail</code>/<code>cantTell</code> (et non une par occurrence : une règle avec de
 					nombreuses occurrences identiques est un seul point d’attention, pas plusieurs), chacune
-					indiquant la sévérité, le ou les critères de succès WCAG, une occurrence représentative
+					indiquant la sévérité, le ou les critères de succès WCAG, dans une analyse de plusieurs profils ce
+					que chaque profil en conclut (« wai-aria-1.2 : Échec » à côté de « wcag22-aa : À vérifier »,
+					ses <code>verdicts</code>), une occurrence représentative
 					et le nombre total d’occurrences. Les règles en échec viennent en premier. Les constats à
 					vérifier suivent, en trois groupes : ceux dont les indices pointent vers un échec
 					(« Échec probable : à confirmer »), ceux dont les indices pointent vers une réussite
@@ -99,7 +101,9 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Agrégation propre à une norme</strong> : seulement quand l’analyse a exécuté les
 					règles d’une norme qui a ses propres agrégations (son profil, ou{" "}
-					<code>engineOptions.optInRules</code>), une ligne par agrégation, avec la formulation de la
+					<code>engineOptions.optInRules</code>), un tableau par norme, et par version de celle-ci
+					quand une analyse de plusieurs profils a jugé la page selon deux versions (EN 301 549
+					V3.2.1 avec V4.1.1, chacune nommée par sa version), avec une ligne par agrégation, avec la formulation de la
 					norme, les exigences des règles qui ont déterminé le résultat, la ventilation et les
 					règles qui y ont contribué. Cela couvre la norme d’un{" "}
 					<a href="/configuration/packs/">pack</a> et la liste de contrôle d’un pack, dont les points sont
@@ -108,6 +112,25 @@ export function HtmlReportContent() {
 					rendu ; quand cette liste est absente ou endommagée, le rapport le signale au-dessus de
 					l’agrégation WCAG.
 				</li>
+					<li id="whats-left-for-a-person">
+						<strong>Ce qui reste à vérifier par une personne</strong> (core 1.15.0 et ultérieur) : ce que l’analyse ne peut pas trancher dans les exigences qu’évaluent ses
+						règles. Chaque exigence de la norme analysée qui a une vérification qu’aucune règle ne
+						tranche entièrement, chacune avec à côté son résultat dans l’analyse (« Analyse :
+						Échec », « Analyse : Réussite » ou « Aucune règle ne la teste ») et, en dessous, repliées
+						par défaut, ces vérifications : ce que chacune évalue, quelle part en tranchent les
+						règles, les outils nécessaires, les étapes, et ce qui réussit et ce qui échoue (les{" "}
+						<a href="/conformance/procedures/">procédures de test</a> de core). Une phrase au-dessus
+						indique combien il y a de vérifications et d’exigences, et qu’une exigence dont toutes
+						les règles réussissent n’est satisfaite que si ses vérifications réussissent aussi. La
+						norme est WCAG, à la version visée par l’analyse et aux niveaux qu’elle a rapportés ;
+						quand l’analyse a exécuté le profil d’un pack et que le pack, passé dans{" "}
+						<code>options.packs</code>, fournit des procédures, c’est la norme de ce pack, sous ses
+						propres numéros. Une analyse de plusieurs profils a une partie pour chaque norme et
+						chaque version. Une note en dessous indique comment en faire une liste de travail,
+						pour noter un résultat pour chacune (<code>renderProcedures</code>, ou{" "}
+						<code>--manual-checks</code> de la CLI). Elle est écrite dans Node ; le rapport pour
+						navigateur (<code>surea11y.report.js</code>) n’en a pas.
+					</li>
 				<li>
 					<strong>Données techniques complètes</strong> (repliées par défaut) : un tableau de
 					scores (une tuile par résultat) et un tableau paginé, consultable et filtrable (par
@@ -141,7 +164,8 @@ export function HtmlReportContent() {
 			<p>
 				La barre de métadonnées sous l’en-tête indique le nombre de règles, le nombre
 				d’occurrences, le tag du moteur, la version du schéma, la version de WCAG visée par
-				l’analyse, le <code>engineOptions.profile</code> utilisé (s’il y en a un), les tags de règles
+				l’analyse, le <code>engineOptions.profile</code> utilisé (s’il y en a un ; chaque profil d’une analyse
+				de plusieurs, joints par <code>+</code>, et ceux qui ne se sont pas exécutés), les tags de règles
 				optionnelles ajoutés par <code>engineOptions.optInRules</code> (s’il en a ajouté), les
 				conditions dans lesquelles la page a été rendue et la langue retenue pour l’analyse. Ces
 				conditions sont le viewport (avec le ratio de pixels de l’appareil lorsqu’il ne vaut pas 1)
@@ -202,9 +226,13 @@ export function HtmlReportContent() {
 				<code>engineOptions.packs</code>), s’il y en a : dans Node, le rapport ajoute les étapes
 				« Comment vérifier » aux constats non tranchés qui arrivent sans elles, toujours pour une
 				règle de core et pour la règle de base d’une variante, et les étapes propres d’une règle
-				de pack (son <code>meta.review</code>, en anglais) seulement quand il reçoit les packs
-				(voir <a href="/configuration/packs/#rules">Packs</a>). Dans le navigateur (
-				<code>surea11y.report.js</code>), il affiche les étapes que porte déjà le résultat.
+				de pack (son <code>meta.review</code>, en anglais, ou tel que le traduisent les
+				dictionnaires de son pack) seulement quand il reçoit les packs (voir{" "}
+				<a href="/configuration/packs/#review-steps">Packs</a>). Dans le navigateur (
+				<code>surea11y.report.js</code>), il affiche les étapes que porte déjà le résultat. Avec les
+				packs, « Ce qui reste à vérifier par une personne » suit aussi la norme d’un pack quand
+				l’analyse a exécuté son profil. <code>options.manualChecks: false</code> retire cette
+				section.
 			</p>
 
 			<h2>Périmètre</h2>
