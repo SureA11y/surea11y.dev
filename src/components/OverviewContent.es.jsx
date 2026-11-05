@@ -14,6 +14,7 @@ const packageRows = [
 	{ id: "test-matchers", want: "Verificar la accesibilidad en pruebas de componentes o unitarias con Jest/Vitest", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "Analizar páginas desde una terminal o una canalización de CI, como HTML estático o en Chromium", install: <code>@surea11y/cli</code> },
 	{ id: "pack-en301549", want: "Comprobar EN 301 549, el estándar europeo, con cualquiera de los anteriores", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
+	{ id: "pack-wai-aria", want: "Comprobar ARIA según el propio WAI-ARIA 1.2, junto a WCAG o por sí solo", install: <><a href="/configuration/packs/#wai-aria-pack"><code>@surea11y/pack-wai-aria</code></a> + <code>@surea11y/core</code></> },
 	{ id: "pack-own", want: "Comprobar tus propias reglas, perfiles o estándar, públicos o internos", install: <>Un pack propio: ver <a href="/configuration/packs/#writing-a-pack">Escribir un pack</a></> },
 	{ id: "core", want: "Ejecutar el motor sobre un DOM que ya tengas", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "Crear tu propia herramienta sobre el motor: una CLI, una extensión, un panel, un generador de informes", install: <code>@surea11y/core</code> },
@@ -133,10 +134,24 @@ export function OverviewContent() {
 				qué hace que un resultado se incline y hasta qué punto fiarse de ello.
 			</p>
 			<p>
+				Un análisis es la mitad de una evaluación, y el motor te da también la otra mitad. Para cada
+				criterio de WCAG que evalúan sus reglas, core tiene un procedimiento de prueba para cada
+				parte de él: los pasos que sigue una persona en un navegador, las herramientas que necesita
+				(un teclado, un lector de pantalla, el zoom) y lo que ve si cumple y si falla, en cinco
+				idiomas. Son el mismo texto del que sale el «Cómo comprobarlo» de un hallazgo. Léelos como
+				datos, o genéralos como una referencia o como una hoja de trabajo que registra cada
+				resultado y los agrega por criterio, sin análisis para una auditoría manual, o junto a uno
+				para lo que deja abierto. Consulta{" "}
+				<a href="/conformance/procedures/">Procedimientos de prueba</a>, o abre{" "}
+				<a href="/procedures/wcag-22-aa-checklist.html">la hoja de trabajo de WCAG 2.2 AA</a>.
+			</p>
+			<p>
 				El informe HTML presenta las preguntas en el orden en que las revisa una persona: «Probable
 				fallo: confírmelo», «Probablemente cumple: confírmelo» y «Lo debe revisar una persona». Cada
 				tarjeta tiene sus pasos de «Cómo comprobarlo», y las de los dos primeros grupos dicen por
-				qué se inclinan. En CI, los informes JUnit y SARIF
+				qué se inclinan, y una última sección, «Lo que queda para una persona», enumera las
+				comprobaciones que ninguna regla decide por completo, criterio por criterio, junto al
+				resultado del análisis para cada uno. En CI, los informes JUnit y SARIF
 				también pueden bloquear la compilación por los resultados que se inclinan hacia el fallo,
 				desactivado por defecto, y una baseline puede aceptar los que una página ya tiene, de modo
 				que solo los nuevos rompen la compilación. Consulta{" "}
@@ -165,6 +180,15 @@ export function OverviewContent() {
 				<a href="/configuration/packs/">Packs</a>.
 			</p>
 			<p>
+				Nombra varios estándares, y un solo análisis juzga la página con cada uno.{" "}
+				<code>profile: ['wcag22-aa', 'wai-aria-1.2']</code> la juzga con WCAG y con WAI-ARIA a la
+				vez: cada perfil decide como lo haría un análisis solo de él, el resultado cuenta como un
+				análisis con las reglas de todos, y cada hallazgo dice qué hace de él cada perfil. Un
+				atributo que un rol no admite es una pregunta para WCAG 4.1.2 y un fallo de WAI-ARIA, y el
+				resultado dice ambas cosas, así que nada se cuenta dos veces y nada se pierde. Consulta{" "}
+				<a href="/configuration/engine-options/#several-profiles">Opciones del motor</a>.
+			</p>
+			<p>
 				Si nombras comprobaciones en lugar de un estándar, el resultado sigue indicando a qué
 				criterios de WCAG afectan. Un análisis que ejecuta solo <code>link-name-present</code> informa
 				también de 2.4.4 y 4.1.2, más el AAA 2.4.9 si el análisis no fija un nivel, y un criterio cuyas otras comprobaciones el análisis dejó fuera
@@ -181,6 +205,15 @@ export function OverviewContent() {
 				ninguna regla ha fallado, y eso no significa que la página sea conforme. Dar esos criterios
 				por cumplidos sería la falsa sensación de cobertura que este motor está hecho para evitar.
 				Consulta <a href="/conformance/wcag-mapping/">Mapeo de conformidad con WCAG</a>.
+			</p>
+			<p>
+				Un fallo de WCAG es un fallo de WCAG, no una especificación incumplida que WCAG no cuenta.
+				Donde solo se incumple WAI-ARIA o el modelo de contenido de HTML, y el nombre, el rol y el
+				valor de los que dependen las personas sobreviven, las reglas de estructura ARIA y HTML
+				preguntan en lugar de fallar, con pasos para comprobarlo. El{" "}
+				<a href="/configuration/packs/#wai-aria-pack">pack de WAI-ARIA</a> lee los mismos hallazgos
+				según los propios MUST de WAI-ARIA, así que un equipo que se exige la especificación puede
+				fallar por ella, si así lo elige.
 			</p>
 			<p>
 				Los componentes web se juzgan por lo que exponen. Un elemento personalizado que se da un
@@ -296,7 +329,9 @@ export function OverviewContent() {
 				zoom, el motor no los comprueba en absoluto y necesitan pruebas aparte: ningún{" "}
 				<code>cantTell</code> los sustituye, así que un resultado sin ninguno no significa que se
 				hayan cubierto. Consulta{" "}
-				<a href="/help/known-limitations/">Limitaciones conocidas</a> para ver la lista completa.
+				<a href="/help/known-limitations/">Limitaciones conocidas</a> para ver la lista completa, y
+				los <a href="/conformance/procedures/">procedimientos de prueba</a> para saber cómo
+				comprueba una persona los criterios que evalúan las reglas.
 			</p>
 		</>
 	);

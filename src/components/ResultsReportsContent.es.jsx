@@ -40,7 +40,8 @@ export function ResultsReportsContent() {
 				todo lo que una regla no pudo decidir, y resultados agregados por criterio de conformidad de WCAG. Cada hallazgo sin decidir de una regla de core dice cómo
 				lo responde una persona, y algunos dicen hacia dónde apuntan los indicios de la página (una{" "}
 				<em>tendencia</em>), para que una revisión empiece por los fallos probables en lugar de por
-				una lista plana. Vale la pena
+				una lista plana. Un análisis de varios perfiles recoge cada hallazgo una vez y dice qué hace
+				de él cada perfil. Vale la pena
 				leerlo una vez si estás construyendo algo sobre un resultado sin procesar. Ver{" "}
 				<a href="/results-reports/output-schema/">Esquema de salida</a> para la estructura completa.
 			</p>
@@ -51,7 +52,8 @@ export function ResultsReportsContent() {
 				compilación. Un resumen en lenguaje llano arriba, los fallos, después los hallazgos que
 				necesitan revisión ordenados en fallos probables, probables cumplimientos y los que solo una
 				persona puede juzgar, los de cada regla de core con los pasos para comprobarlo, un resumen por WCAG agrupado por nivel
-				de conformidad obtenido de los resultados compuestos propios del motor, y una tabla completa
+				de conformidad obtenido de los resultados compuestos propios del motor, lo que el análisis
+				deja a una persona criterio por criterio, con los pasos de cada comprobación, y una tabla completa
 				con función de búsqueda debajo para quien quiera profundizar. Este es el informe para entregar a un
 				revisor que no quiere leer la salida sin procesar. Ver{" "}
 				<a href="/results-reports/html-report/">Informe HTML</a>.

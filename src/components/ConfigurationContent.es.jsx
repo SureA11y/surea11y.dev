@@ -16,8 +16,9 @@ export function ConfigurationContent() {
 				Limita un análisis exactamente a las reglas que quieres: nombrando una versión y un nivel de
 				WCAG (WCAG 2.2 AA en una sola opción, con las buenas prácticas encima si las quieres), por
 				ID, por etiqueta o nombrando un perfil de conformidad como WCAG 2.2 AA o Section 508, para
-				que una ejecución informe solo de lo que realmente eres responsable, ni más ni menos. Los
-				perfiles EN 301 549 de core siguen funcionando, pero están obsoletos: esa norma viene ahora
+				que una ejecución informe solo de lo que realmente eres responsable, ni más ni menos. Juzga
+				un análisis con varios perfiles a la vez, WCAG junto a WAI-ARIA o tu propia política, y mira
+				qué hace cada uno de cada hallazgo. Los perfiles EN 301 549 de core siguen funcionando, pero están obsoletos: esa norma viene ahora
 				como <a href="/configuration/packs/#en-301-549-pack">un pack</a>. Ejecuta solo unas pocas comprobaciones y
 				obtén igualmente los criterios de WCAG a los que pertenecen, en el nivel que se te exige, y
 				enumera lo que informará un análisis antes de ejecutarlo. Silencia widgets globalmente ruidosos conocidos
@@ -40,7 +41,8 @@ export function ConfigurationContent() {
 				<code>npx surea11y-pack new</code> genera uno que pasa sus propias pruebas tal como sale.
 				Un estándar puede archivar los hallazgos de una regla en los requisitos a los que
 				pertenecen, y una regla de un pack puede explicar a una persona cómo responder lo que deja
-				sin decidir. Ver <a href="/configuration/packs/">Packs</a> para usar uno o escribir uno.
+				sin decidir, y cómo evaluar a mano cada requisito. Hay dos estándares listos para instalar:
+				EN 301 549 y WAI-ARIA 1.2, que hace fallar lo que WAI-ARIA exige donde WCAG solo pregunta. Ver <a href="/configuration/packs/">Packs</a> para usar uno o escribir uno.
 			</p>
 
 			<h2>Integración con CI</h2>
@@ -66,7 +68,8 @@ export function ConfigurationContent() {
 				francés, alemán, español, japonés), y un resultado siempre te dice exactamente qué configuración
 				regional usó, así que nada se degrada
 				en silencio sin que lo sepas. Los pasos para responder un hallazgo sin decidir («Cómo
-				comprobarlo») llegan en los mismos cinco idiomas. Ver{" "}
+				comprobarlo»), y los procedimientos de prueba para evaluar a mano cada criterio, llegan en
+				los mismos cinco idiomas. Ver{" "}
 				<a href="/configuration/locales/">Locales</a> para la
 				cobertura y cómo aportar tu propio diccionario.
 			</p>

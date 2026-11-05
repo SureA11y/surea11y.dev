@@ -303,6 +303,23 @@ export function TestMatchersUsageContent() {
 				<code>skippedPacks</code> del resultado, y la aserción falla por ello en lugar de pasar sin
 				que se hayan ejecutado las reglas del pack.
 			</p>
+			<p id="several-profiles">
+				Con <code>@surea11y/core</code> 1.15 y test-matchers 1.5.0, <code>profile</code> acepta
+				también una lista, para juzgar el componente con{" "}
+				<a href="/configuration/engine-options/#several-profiles">varios perfiles a la vez</a>, el
+				de un pack junto al de WCAG: cada perfil lo juzga como lo haría por sí solo, y un fallo en
+				cualquiera de ellos hace fallar la aserción. Un perfil de la lista que no se ejecutó también
+				la hace fallar, ya que el análisis juzgó menos de lo que se le pidió; lo mismo ocurre con un
+				perfil único que el análisis no aplicó, que analiza con las reglas predeterminadas de core.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"expect(container).toHaveNoA11yViolations({ packs: [waiAria], profile: ['wcag22-aa', 'wai-aria-1.2'] });",
+				]}
+			/>
 
 			<h2>API</h2>
 			<DataTable
@@ -352,8 +369,10 @@ export function TestMatchersUsageContent() {
 				<strong>Un análisis que no pudo comprobar lo que se le pidió también falla</strong>, en
 				lugar de pasar sin haber comprobado nada: un elemento que no está en el documento en el que
 				se ejecuta el análisis (desconectado, o de otro documento), una regla personalizada que no
-				se ejecutó (listada en <code>skippedCustomRules</code>), o un pack que no se ejecutó
-				(listado en <code>skippedPacks</code>). El mensaje nombra cada uno con el motivo.
+				se ejecutó (listada en <code>skippedCustomRules</code>), un pack que no se ejecutó
+				(listado en <code>skippedPacks</code>), o un perfil que no se ejecutó (listado en{" "}
+				<code>engine.profilesNotRun</code>, o un perfil único que el análisis no aplicó). El
+				mensaje nombra cada uno con el motivo.
 				Una regla personalizada que la propia prueba excluye no es un hueco, y no la
 				hace fallar.
 			</p>
@@ -367,6 +386,16 @@ export function TestMatchersUsageContent() {
 				encabezado sin nada dentro: da contenido real a la prueba o corrige el
 				componente. Una llamada con un objetivo de WCAG, que deja fuera las buenas
 				prácticas, no la ejecuta.
+			</p>
+			<p>
+				<strong>Desde <code>@surea11y/core</code> 1.15, WCAG falla solo donde WCAG falla.</strong>{" "}
+				Donde solo se incumple WAI-ARIA o el modelo de contenido de HTML (un atributo que el rol no
+				admite, una cuadrícula o un diálogo sin nombre, un encabezado en una lista), las reglas de
+				estructura ARIA y HTML preguntan (<code>cantTell</code>, incertidumbre{" "}
+				<code>spec-only</code>) en lugar de fallar, así que ese hallazgo ya no hace fallar la
+				aserción. El mensaje de fallo lo enumera con las preguntas, y conserva su código de motivo.
+				Para que falle según WAI-ARIA, añade el perfil del{" "}
+				<a href="/configuration/packs/#wai-aria-pack">pack de WAI-ARIA</a>.
 			</p>
 			<p>
 				El propio análisis puede lanzar una excepción, y entonces la prueba falla con el error del
@@ -601,7 +630,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -629,9 +658,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.14.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.15.0.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 				]}
 			/>
 

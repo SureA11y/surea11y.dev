@@ -140,6 +140,27 @@ export function CiIntegrationContent() {
 				con un archivo real del repositorio).
 			</p>
 
+			<h3 id="manual-checks-artifact">Publicar lo que el análisis deja a una persona</h3>
+			<p>
+				Una puerta decide lo que las reglas pueden decidir. Para entregar el resto a una persona en
+				cada ejecución, escribe el informe HTML y una hoja de trabajo de las comprobaciones que
+				ninguna regla decide por completo (
+				<code>--manual-checks</code>, <code>@surea11y/cli</code> 1.5.0 y core 1.15.0 y
+				posteriores), y sube ambos como un artefacto. Ninguno de los dos cambia el código de salida.
+				Ver <a href="/conformance/procedures/">Procedimientos de prueba</a>.
+			</p>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"      - run: npx @surea11y/cli scan ./dist/index.html --html reports/report.html --manual-checks reports/manual-checks.html",
+					"      - uses: actions/upload-artifact@v4",
+					"        if: always()",
+					"        with:",
+					"          name: accessibility",
+					"          path: reports/",
+				]}
+			/>
+
 			<h2><span lang="en">Bitbucket Pipelines</span></h2>
 			<p>
 				<span lang="en">Bitbucket Pipelines</span> no tiene un panel integrado que consuma SARIF equivalente a <span lang="en">GitHub Code
