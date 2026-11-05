@@ -141,6 +141,27 @@ export function CiIntegrationContent() {
 				tatsächlichen Datei im Repository zuordnen).
 			</p>
 
+			<h3 id="manual-checks-artifact">Veröffentlichen, was der Scan einer Person überlässt</h3>
+			<p>
+				Ein Gate entscheidet, was Regeln entscheiden können. Um den Rest mit jedem Lauf an eine
+				Person zu übergeben, schreiben Sie den HTML-Bericht und ein Arbeitsblatt der Prüfungen, die
+				keine Regel vollständig entscheidet (<code>--manual-checks</code>, ab{" "}
+				<code>@surea11y/cli</code> 1.5.0 und core 1.15.0), und laden Sie beide als Artefakt hoch.
+				Keines von beiden ändert den Exit-Code. Siehe{" "}
+				<a href="/conformance/procedures/">Prüfverfahren</a>.
+			</p>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"      - run: npx @surea11y/cli scan ./dist/index.html --html reports/report.html --manual-checks reports/manual-checks.html",
+					"      - uses: actions/upload-artifact@v4",
+					"        if: always()",
+					"        with:",
+					"          name: accessibility",
+					"          path: reports/",
+				]}
+			/>
+
 			<h2><span lang="en">Bitbucket Pipelines</span></h2>
 			<p>
 				<span lang="en">Bitbucket Pipelines</span> hat kein eingebautes Dashboard für SARIF, das mit <span lang="en">GitHub Code

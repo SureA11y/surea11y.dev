@@ -17,7 +17,9 @@ export function ConfigurationContent() {
 				WCAG-Version und -Stufe (WCAG 2.2 AA in einer Option, auf Wunsch Best Practices dazu), nach
 				ID, nach Tag oder über ein benanntes Konformitätsprofil wie
 				WCAG 2.2 AA oder Section 508 —, damit ein Lauf das meldet, wofür Sie tatsächlich
-				verantwortlich sind, nicht mehr und nicht weniger. Die EN-301-549-Profile von core
+				verantwortlich sind, nicht mehr und nicht weniger. Beurteilen Sie einen Scan nach
+				mehreren Profilen zugleich, WCAG neben WAI-ARIA oder Ihrer eigenen Richtlinie, und sehen Sie,
+				was jedes aus jedem Befund macht. Die EN-301-549-Profile von core
 				funktionieren weiterhin, sind aber veraltet: Dieser Standard kommt jetzt als{" "}
 				<a href="/configuration/packs/#en-301-549-pack">Pack</a>. Führen Sie nur einige Prüfungen aus und
 				erhalten Sie trotzdem die WCAG-Kriterien, zu denen sie gehören, auf der Stufe, an der Sie
@@ -43,7 +45,9 @@ export function ConfigurationContent() {
 				<code>npx surea11y-pack new</code> erzeugt eines, das seine eigenen Tests direkt nach dem
 				Erzeugen besteht. Eine Norm kann die Befunde einer Regel den Anforderungen zuordnen, zu
 				denen sie gehören, und eine Pack-Regel kann einer Person sagen, wie sie beantwortet, was die
-				Regel offen lässt. Unter <a href="/configuration/packs/">Packs</a> erfahren Sie, wie Sie
+				Regel offen lässt, und wie sich jede Anforderung von Hand bewerten lässt. Zwei Standards
+				sind installationsbereit: EN 301 549 und WAI-ARIA 1.2, das als <code>fail</code> meldet, was
+				WAI-ARIA verlangt, wo WCAG nur fragt. Unter <a href="/configuration/packs/">Packs</a> erfahren Sie, wie Sie
 				eines verwenden oder schreiben.
 			</p>
 
@@ -70,8 +74,9 @@ export function ConfigurationContent() {
 				auf Englisch pro String statt einer Leerstelle oder eines Fehlers. Heute sind
 				fünf Sprachen verfügbar (Englisch, Französisch, Deutsch, Spanisch, Japanisch), und ein Ergebnis gibt
 				immer genau an, welche Locale verwendet wurde, sodass nichts unbemerkt schlechter wird.
-				Die Schritte, mit denen sich ein offener Befund beantworten lässt („So prüfen Sie es“), gibt
-				es in denselben fünf Sprachen.
+				Die Schritte, mit denen sich ein offener Befund beantworten lässt („So prüfen Sie es“), und
+				die Prüfverfahren, mit denen sich jedes Kriterium von Hand bewerten lässt, gibt es in
+				denselben fünf Sprachen.
 				Abdeckung und wie Sie ein eigenes Wörterbuch bereitstellen, finden Sie unter{" "}
 				<a href="/configuration/locales/">Locales</a>.
 			</p>

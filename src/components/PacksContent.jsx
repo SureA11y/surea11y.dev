@@ -876,7 +876,8 @@ export function PacksContent() {
 				reason codes in <code>meta.reasonCodes</code> (<code>['GENERIC_LINK_NAME']</code>) gives
 				steps only for a code it declares there or names in its <code>runInPage</code>, so a
 				mistyped code is refused: declaring them is worth it for that check. The steps are
-				English, whatever the scan's locale, and stay out of the page:{" "}
+				written in English (a pack's dictionaries may translate them, see below), and stay out
+				of the page:{" "}
 				<code>runDomRulesInPage</code> with <code>engineOptions.packs</code> adds them to the
 				result, and for a result from a page <code>{"addHowToCheck(result, { packs })"}</code>{" "}
 				does. A variant has its core rule's steps, translated, so it needs none; an override,

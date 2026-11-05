@@ -28,8 +28,10 @@ export function RuleOrganizationContent() {
 					<strong>automatisch</strong> — entscheidet deterministisch, ohne Heuristiken und ohne
 					Raten. Kann <code>fail</code> melden. <code>cantTell</code> kommt hier trotzdem vor, in
 					diesen Situationen: Es gibt einen echten Verstoß, der aber für sich allein nicht belegt,
-					dass das zugeordnete WCAG-Kriterium verletzt ist (eine ARIA-Anforderung an Autoren,
-					bei der der bereitgestellte Name, die Rolle bzw. der Wert trotzdem erhalten bleibt); die Regel entscheidet
+					dass das zugeordnete WCAG-Kriterium verletzt ist (eine ARIA-Anforderung an Autoren
+					oder das HTML-Inhaltsmodell, bei denen der bereitgestellte Name, die Rolle bzw. der Wert
+					trotzdem erhalten bleibt: seit core 1.15 die Unsicherheit <code>spec-only</code>, in den
+					ARIA- und HTML-Strukturregeln); die Regel entscheidet
 					deterministisch, dass eine Best Practice verletzt ist, beansprucht kein Erfolgskriterium,
 					und das Gefundene muss niemandem schaden, da die Rolle oder das Element assistive
 					Technologien so erreicht, wie es ist (<code>aria-allowed-role</code>,{" "}
@@ -154,7 +156,9 @@ export function RuleOrganizationContent() {
 				geprüft: <strong>Die Facetten, die ihre Regeln abdecken, sind erfüllt, und den Rest prüft
 				eine Person</strong>. Unter <a href="/conformance/wcag-mapping/">Konformität</a>{" "}
 				finden Sie die drei Ebenen (atomare Regeln, Facetten, zusammengesetzte Regeln) und wie das
-				Ergebnis einer zusammengesetzten Regel tatsächlich berechnet wird.
+				Ergebnis einer zusammengesetzten Regel tatsächlich berechnet wird. Jede Facette eines
+				Kriteriums, die eine Regel bewertet, hat ein Prüfverfahren, also wie eine Person sie von Hand
+				prüft (siehe <a href="/conformance/procedures/">Prüfverfahren</a>).
 			</p>
 		</>
 	);

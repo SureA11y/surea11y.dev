@@ -345,8 +345,9 @@ export function LocalesContent() {
 			/>
 			<p>
 				Ein Schritt, der einer Locale fehlt, erscheint auf Englisch, wie eine Meldung. Die{" "}
-				<a href="/configuration/packs/#review-steps">eigenen Schritte einer Pack-Regel</a> sind in
-				jeder Locale englisch. <code>getLocaleCoverage()</code> zählt diese Wörterbücher nicht. Die
+				<a href="/configuration/packs/#review-steps">eigenen Schritte einer Pack-Regel</a> sind
+				englisch, außer die Wörterbücher ihres Packs übersetzen sie (ab core 1.15.0).{" "}
+				<code>getLocaleCoverage()</code> zählt diese Wörterbücher nicht. Die
 				Schritte tragen keine Schlüssel; um sie in einer anderen Locale zu zeigen, fügen Sie sie
 				erneut hinzu:
 			</p>
@@ -358,6 +359,20 @@ export function LocalesContent() {
 					"const inFrench = addHowToCheck(result, { locale: 'fr' });",
 				]}
 			/>
+
+			<h3 id="procedure-dictionaries">Die Wörterbücher der Prüfverfahren</h3>
+			<p>
+				Seit core 1.15.0 werden die Prüfschritte mit den{" "}
+				<a href="/conformance/procedures/">Prüfverfahren</a> von core geschrieben, also damit, wie
+				eine Person jedes Kriterium von Hand bewertet, und die Prüf-Wörterbücher werden aus ihnen
+				erzeugt. Die Wörterbücher der Prüfverfahren, <code>{"@surea11y/core/procedures/<locale>"}</code>,
+				enthalten die allgemeinen Prüfverfahren, die Namen der Werkzeuge, die Wörter einer daraus
+				erzeugten Seite und die Namen der Prinzipien, Richtlinien und Kriterien von WCAG und jeder
+				Facette, jeweils in der veröffentlichten Übersetzung von WCAG in dieser Sprache. Alle fünf
+				Locales haben jeden Text, sodass eine Seite mit Prüfverfahren durchgehend in einer Sprache
+				ist; <code>procedureLanguages()</code> sagt das für jede Locale und für den Standard eines
+				Packs, der in weniger Sprachen lesbar sein kann.
+			</p>
 
 			<h3>Ein eigenes Wörterbuch übergeben</h3>
 			<p>
@@ -442,6 +457,12 @@ export function LocalesContent() {
 					<code>_pass</code> und <code>_fail</code>, in{" "}
 					<a href="#review-dictionaries">den Prüf-Wörterbüchern</a>: das{" "}
 					<code>howToCheck</code> eines offenen Vorkommens.
+				</li>
+				<li>
+					<strong>Prüfverfahren</strong>: <code>{"wcag_<criterion>_<facet>_step<n>"}</code>,{" "}
+					<code>_pass</code> und <code>_fail</code>, <code>{"tool_<id>"}</code> und{" "}
+					<code>render_*</code>, in <a href="#procedure-dictionaries">den Wörterbüchern der
+					Prüfverfahren</a>.
 				</li>
 			</ul>
 			<p>

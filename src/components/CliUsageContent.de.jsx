@@ -29,7 +29,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.14.2",
+					"  engine: @surea11y/core 1.15.0",
 					"  pass: 16   fail: 4   cantTell: 4   notApplicable: 121",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 4",
@@ -243,7 +243,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.14.2",
+					"  engine: @surea11y/core 1.15.0",
 					"  WCAG level reported: AA",
 					"  pass: 1   fail: 0   cantTell: 0   notApplicable: 0",
 					"",
@@ -291,6 +291,33 @@ export function CliUsageContent() {
 				wird, sodass ein Scan nie besteht, während die Prüfungen des Packs nicht gelaufen sind.
 			</p>
 
+			<h2 id="several-profiles">Mehrere Profile</h2>
+			<p>
+				<code>--profile</code> kann mehrmals angegeben werden, um jede Seite nach mehreren Profilen
+				zugleich zu beurteilen, das eines Packs neben dem von WCAG oder dem eines anderen Packs (ab{" "}
+				<code>@surea11y/cli</code> 1.5.0 und core 1.15.0):
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan ./dist/index.html --pack @surea11y/pack-wai-aria --profile wcag22-aa --profile wai-aria-1.2", command: true },
+				]}
+			/>
+			<p>
+				Jedes Profil beurteilt die Seite so, wie es das allein täte, und das Ergebnis liest sich wie
+				ein einziges Profil mit den Regeln aller: Das Ergebnis einer Regel ist das schlechteste, das
+				ihre Profile ihr geben, ein Fehlschlag unter irgendeinem Profil endet also mit Exit-Code{" "}
+				<code>1</code>, und die <code>verdicts</code> jedes Befunds in <code>--json</code> sagen,
+				was jedes Profil daraus macht (siehe{" "}
+				<a href="/results-reports/output-schema/#several-profiles">Ausgabeschema</a>). Die
+				Zusammenfassung führt sie auf (<code>profiles: wcag22-aa, wai-aria-1.2</code>),{" "}
+				<code>--html</code> nennt jedes und zeigt das Urteil jedes Profils zu einem Befund, und{" "}
+				<code>--sarif</code> und <code>--junit</code> steuern nach dem schlechtesten Ergebnis. Ein
+				Profil, das nicht gelaufen ist, endet mit Exit-Code <code>2</code> und wird mit dem Grund
+				aufgeführt; <code>--allow-profiles-not-run</code> macht daraus eine Warnung, außer bei einem
+				Profil, dessen Pack die Engine übersprungen hat, da das übersprungene Pack selbst mit{" "}
+				<code>2</code> endet.
+			</p>
+
 			<h2 id="failing-only-on-serious-problems">Nur bei schwerwiegenden Problemen fehlschlagen</h2>
 			<p>
 				<code>--fail-on-severity</code> (<code>critical</code>, <code>serious</code>,{" "}
@@ -323,6 +350,83 @@ export function CliUsageContent() {
 				]}
 			/>
 
+			<h2 id="manual-checks">Manuelle Prüfungen</h2>
+			<p>
+				Ein Scan entscheidet, was Regeln entscheiden können. <code>--manual-checks &lt;path&gt;</code>{" "}
+				schreibt daneben den Rest: ein Arbeitsblatt der Prüfungen, die keine Regel vollständig
+				entscheidet, damit eine Person sie von Hand durchführt, mit den Schritten für jede, dem, was
+				als bestanden und was als nicht bestanden gilt, und einem Ergebnis und Notizen zum Festhalten
+				(die <a href="/conformance/procedures/">Prüfverfahren</a> von core). Mit{" "}
+				<code>--html</code>, dessen Bericht jetzt mit „Was ein Mensch noch prüfen muss“ endet, hat
+				das Team beide Hälften der Bewertung aus einem Lauf:
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan https://example.com/ --wcag 2.2 --html report.html --manual-checks manual-checks.html", command: true },
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>Für welchen Standard:</strong> den gescannten. Das Profil eines Packs gibt diesen
+					Standard und diese Version vor, unter seinen eigenen Nummern, wo das Pack Prüfverfahren
+					mitbringt; sonst WCAG, in der Version und Stufe von <code>--wcag</code> und{" "}
+					<code>--wcag-level</code> oder vom Ziel von <code>--profile</code>, standardmäßig
+					WCAG 2.2 A und AA. Mit mehreren <code>--profile</code> ein Arbeitsblatt pro Standard und
+					Version.
+				</li>
+				<li>
+					<strong>In welcher Sprache:</strong> in der von <code>--locale</code>. Ein Pfad, der auf{" "}
+					<code>.md</code> endet, schreibt stattdessen Markdown, mit einem Aufgabenpunkt pro
+					Prüfung.
+				</li>
+				<li>
+					<strong>Mehrere Seiten:</strong> ein Arbeitsblatt pro Seite, nummeriert wie die von{" "}
+					<code>--html</code>, jedes mit seiner Seite betitelt, sodass die Ergebnisse jeder Seite
+					getrennt bleiben.
+				</li>
+			</ul>
+			<p>
+				Es ändert nie den Exit-Code. Öffnen Sie das Arbeitsblatt von der Festplatte, halten Sie
+				jedes Ergebnis und Notizen fest und laden Sie sie als JSON herunter, mit dem Ergebnis jedes
+				Kriteriums aus seinen Prüfungen zusammengefasst, oder als CSV.
+			</p>
+
+			<h2 id="procedures">Prüfverfahren, ohne Scan</h2>
+			<p>
+				<code>surea11y procedures</code> schreibt, wie eine Person jede Anforderung eines Standards
+				von Hand bewertet, ohne Scan: eine Referenz zum Lesen oder ein Arbeitsblatt zum
+				Durcharbeiten (<code>--checklist</code>), in HTML, Markdown oder JSON.
+			</p>
+			<CodeBlock
+				lines={[
+					"# How to assess every WCAG 2.2 A and AA criterion, as a page",
+					{ text: "surea11y procedures --wcag 2.2 --wcag-level AA -o wcag-22-aa.html", command: true },
+					"",
+					"# A worksheet for a manual audit, titled for it",
+					{ text: 'surea11y procedures --wcag-level AA --checklist --title "Audit: example.com" -o audit.html', command: true },
+					"",
+					"# Only what no rule decides in full, as Markdown for a repository",
+					{ text: "surea11y procedures --wcag-level AA --automation manual,partial -o left-to-a-person.md", command: true },
+					"",
+					"# What needs a screen reader, for a session with a person who uses one",
+					{ text: "surea11y procedures --wcag-level AA --tools screen-reader -o screen-reader-session.html", command: true },
+					"",
+					"# One criterion, in French, with the steps a scan's questions give",
+					{ text: "surea11y procedures 1.4.12 --locale fr --variants -o 1.4.12.html", command: true },
+					"",
+					"# A pack's standard, under its own numbers",
+					{ text: "surea11y procedures --pack @surea11y/pack-en301549 --profile en301549-v4.1.1 --checklist -o en-301-549.html", command: true },
+				]}
+			/>
+			<p>
+				<code>--standard</code> und <code>--standard-version</code> nennen den Standard eines Packs
+				über Schlüssel und Version, <code>--rules</code> behält nur, was bestimmte Regeln testen,{" "}
+				<code>--no-record</code> erzeugt ein Arbeitsblatt ohne etwas zum Festhalten, und{" "}
+				<code>--json</code> die Daten statt einer Seite. Die Optionen eines Scans sind hier ein
+				Aufruffehler, so wie diese bei <code>scan</code>. Jedes Flag finden Sie in{" "}
+				<a href={`${cliDocs}#procedures-how-to-assess-by-hand`}>der CLI-Referenz</a> auf GitHub.
+			</p>
+
 			<h2 id="compact-results">Kompakte Ergebnisse</h2>
 			<p>
 				<code>--compact</code> reduziert jedes <code>pass</code>- und{" "}
@@ -345,9 +449,11 @@ export function CliUsageContent() {
 				<code>--rules</code>-/<code>--tags</code>-Liste, die keine bekannte Regel und kein
 				bekanntes Tag nennt, ein <code>--context</code>-Selektor, der auf nichts passt, eine eigene
 				Regel oder ein Pack, die nicht gelaufen sind, ein <code>--profile</code>, das nicht
-				angewendet wurde. Eine mit core 1.13 geschriebene Baseline passt weiterhin zu den Befunden,
-				deren Reason Codes 1.14 nach Ursache aufgeteilt hat;{" "}
-				<code>--migrate-baseline baseline.json</code> schreibt sie mit den neuen Codes neu.
+				angewendet wurde (bei mehreren eines, das nicht gelaufen ist, außer mit{" "}
+				<code>--allow-profiles-not-run</code>). Eine vom vorherigen Minor-Release geschriebene
+				Baseline passt weiterhin zu Befunden, deren Reason-Codes sich seitdem verschoben haben;{" "}
+				<code>--migrate-baseline baseline.json</code> schreibt sie mit den neuen Codes neu (siehe{" "}
+				<a href="/conformance/baseline/#upgrading">Upgrade</a>).
 			</p>
 			<p>
 				Ohne <code>--browser</code> liest die CLI <strong>nur statisches HTML</strong> — eine

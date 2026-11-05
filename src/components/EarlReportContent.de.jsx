@@ -44,14 +44,16 @@ export function EarlReportContent() {
 				diese Engine bei ihren Testfällen verhält; darüber wird eine Engine neben den anderen
 				Implementierungen gelistet. Eine Listung ist keine Empfehlung, und das W3C prüft die Daten
 				nicht. Korrekt heißt es <em>„als ACT-Implementierung gelistet“</em>, nie{" "}
-				<em>„W3C-zertifiziert“</em>. Der Bericht dieser Engine ist unter{" "}
-				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
-					https://surea11y.github.io/act-report/act-report.jsonld
-				</a>{" "}
-				veröffentlicht und wird von <code>scripts/act-report.js</code> neu erzeugt.{" "}
-				<code>--runner=chromium</code> erzeugt denselben Bericht aus einem Scan in Chromium, so wie
-				die Browser-Bindings die Engine ausführen, mit dem Assertor „SureA11y in a browser“ und der
-				Chromium-Version in der Beschreibung des Berichts.
+				<em>„W3C-zertifiziert“</em>. Diese Engine veröffentlicht zwei, beide von{" "}
+				<code>scripts/act-report.js</code> aus dem neuesten Release neu erzeugt:{" "}
+				<a href="https://surea11y.github.io/act-report/act-report.jsonld">einen aus einem Scan in jsdom</a>,
+				so wie die CLI und die Test-Matcher die Engine ausführen, mit dem Assertor „SureA11y“; und{" "}
+				<a href="https://surea11y.github.io/act-report/act-report-browser.jsonld">einen aus einem
+				Scan in Chromium</a> (<code>--runner=chromium</code>), so wie die Browser-Bindings sie
+				ausführen, mit dem Assertor „SureA11y in a browser“ und der Chromium-Version in der
+				Beschreibung des Berichts. Ein Workflow in{" "}
+				<a href="https://github.com/SureA11y/act-report">SureA11y/act-report</a> veröffentlicht
+				beide jeden Montag neu und wird nach jedem Release von Hand ausgeführt.
 			</p>
 			<p>
 				Wer die Engine <strong>nutzt</strong>, bekommt ein Austauschformat. EARL ist das, was
@@ -238,6 +240,18 @@ export function EarlReportContent() {
 				einzige Ausnahme sind Ergebnisse ohne URL, die nach ihrer Position in der Liste
 				unterschieden werden (<code>about:blank#result-2</code>); geben Sie jedem Ergebnis seine
 				URL, wenn die Reihenfolge keine Rolle spielen soll. Erst dadurch ist ein Diff zwischen zwei Engine-Versionen aussagekräftig.
+			</p>
+
+			<h2 id="several-profiles">Ein Scan mehrerer Profile</h2>
+			<p>
+				In einem Ergebnis <a href="/configuration/engine-options/#several-profiles">mehrerer
+				Profile</a> (ab core 1.15.0) ist das <code>outcome</code> einer Prüfung das schlechteste, das
+				ihre Profile ihr geben; das kann das <code>fail</code> eines Standards für einen Befund sein,
+				nach dem WCAG nur fragt. Jede Assertion übernimmt stattdessen das eigene Ergebnis der Regel,{" "}
+				<code>checkOutcome</code>: Ein Attribut, das eine Rolle nicht unterstützt, das WAI-ARIA als{" "}
+				<code>fail</code> wertet und nach dem WCAG 4.1.2 fragt, wird gegenüber{" "}
+				<code>WCAG2:name-role-value</code> als <code>earl:cantTell</code> gemeldet. Das{" "}
+				<code>fail</code> eines Standards wird also nie als WCAG-Fehlschlag gemeldet.
 			</p>
 
 			<h2>Optionen</h2>
