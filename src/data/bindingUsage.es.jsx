@@ -56,11 +56,49 @@ const moreHooksCaveat = (repo) => (
 );
 
 /**
- * Conditions, the severity gate and leaning questions (binding 1.5.0), then a pointer to the
+ * Several profiles and frames (binding 1.6.0), conditions, the severity gate and leaning
+ * questions (binding 1.5.0), then a pointer to the
  * builder methods this page leaves to the binding's README.
  */
 const alsoAvailable = (repo, { logger = true, conditions = null, cypress = false } = {}) => (
 	<>
+		<p>
+			<strong>Varios perfiles a la vez.</strong> Con core 1.15 (binding 1.6.0),{" "}
+			<code>.options({"{ profile }"})</code> acepta también una lista, el perfil de un pack junto al
+			de WCAG o al de otro pack:{" "}
+			{cypress ? (
+				<code>{".withPacks('@surea11y/pack-wai-aria').options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			) : (
+				<code>{".withPacks(waiAria).options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			)}{" "}
+			juzga la página con WCAG y con WAI-ARIA en un solo análisis. Una regla que ejecutan ambos es
+			una sola comprobación: su resultado es el peor, y sus <code>verdicts</code> dicen qué hace de
+			ella cada perfil (ver{" "}
+			<a href="/configuration/engine-options/#several-profiles">Opciones del motor</a>). Un perfil
+			que no se ejecutó figura en <code>results.engine.profilesNotRun</code>, y{" "}
+			<code>getScanGaps()</code> lo informa como <code>'profile-not-run'</code>.
+		</p>
+		<p>
+			<strong>Frames, leídos como los lee el navegador.</strong> Desde core 1.15, un documento en
+			un frame no es una página propia, así que sus reglas de título, idioma, viewport y regiones
+			de referencia son <code>notApplicable</code>; un frame bajo <code>aria-hidden</code> o{" "}
+			<code>inert</code> se lee como tal, uno tras un diálogo modal abierto se deja fuera, y uno en
+			un shadow root se lee a través de su host.
+			{cypress ? (
+				<>
+					{" "}
+					Cypress muestra la aplicación bajo prueba en un frame de su ejecutor, así que{" "}
+					<code>.analyze()</code> le pasa <code>engineOptions.topLevelDocument: true</code>, y la
+					aplicación se sigue juzgando como la página; los frames que contiene se leen como frames.
+				</>
+			) : null}{" "}
+			Y donde solo se incumple WAI-ARIA o el modelo de contenido de HTML, las reglas de estructura
+			ARIA y HTML ahora preguntan en lugar de fallar (
+			<a href="/help/faq/#results-changed-1-15">qué cambió</a>); los hallazgos conservan sus
+			códigos de motivo, así que los baselines siguen coincidiendo. Un hallazgo de{" "}
+			<code>text-spacing-content-loss</code> también se muestra en imagen con el espaciado
+			aplicado, con <code>.screenshots()</code>.
+		</p>
 		<p>
 			<strong>Modo oscuro, anchos de móvil y un umbral de gravedad.</strong>{" "}
 			<code>{".conditions([{ colorScheme: 'dark' }, { width: 320 }])"}</code> analiza la página tal

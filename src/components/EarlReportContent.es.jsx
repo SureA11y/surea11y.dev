@@ -43,14 +43,16 @@ export function EarlReportContent() {
 				comporta este motor frente a sus casos de prueba, que es lo que permite que un motor aparezca
 				listado junto a las demás implementaciones. Estar listado no es un aval y el W3C no verifica
 				los datos: la formulación correcta es <em>"listado como implementación ACT"</em>, nunca{" "}
-				<em>"certificado por el W3C"</em>. El informe propio de este motor se publica en{" "}
-				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
-					https://surea11y.github.io/act-report/act-report.jsonld
-				</a>{" "}
-				y se regenera con <code>scripts/act-report.js</code>.{" "}
-				<code>--runner=chromium</code> genera el mismo informe a partir de un análisis en
-				Chromium, como ejecutan el motor los bindings de navegador, con el asertor llamado
-				«SureA11y in a browser» y la versión de Chromium en la descripción del informe.
+				<em>"certificado por el W3C"</em>. Este motor publica dos, ambos regenerados por{" "}
+				<code>scripts/act-report.js</code> a partir de la última versión:{" "}
+				<a href="https://surea11y.github.io/act-report/act-report.jsonld">uno de un análisis en jsdom</a>,
+				como ejecutan el motor la CLI y test-matchers, con el asertor llamado «SureA11y»; y{" "}
+				<a href="https://surea11y.github.io/act-report/act-report-browser.jsonld">otro de un análisis
+				en Chromium</a> (<code>--runner=chromium</code>), como lo ejecutan los bindings de navegador,
+				con el asertor llamado «SureA11y in a browser» y la versión de Chromium en la descripción
+				del informe. Un workflow en{" "}
+				<a href="https://github.com/SureA11y/act-report">SureA11y/act-report</a> vuelve a publicar
+				ambos cada lunes, y se ejecuta a mano tras cada versión.
 			</p>
 			<p>
 				Un <strong>consumidor</strong> obtiene un formato de intercambio. EARL es lo que lee una
@@ -257,6 +259,18 @@ export function EarlReportContent() {
 				excepción son los resultados sin URL, que se distinguen por su posición en la lista (
 				<code>about:blank#result-2</code>); da a cada resultado su URL cuando el orden no deba
 				importar. Eso es lo que hace útil una comparación entre dos versiones del motor.
+			</p>
+
+			<h2 id="several-profiles">Un análisis de varios perfiles</h2>
+			<p>
+				En un resultado de <a href="/configuration/engine-options/#several-profiles">varios
+				perfiles</a> (core 1.15.0 y posteriores), el <code>outcome</code> de una comprobación es el
+				peor que le dan sus perfiles, que puede ser el fallo de un estándar en un hallazgo por el que
+				WCAG solo pregunta. Cada aserción toma en su lugar el resultado propio de la regla,{" "}
+				<code>checkOutcome</code>: un atributo que un rol no admite, que WAI-ARIA hace fallar y por
+				el que WCAG 4.1.2 pregunta, se afirma <code>earl:cantTell</code> frente a{" "}
+				<code>WCAG2:name-role-value</code>. Así, el fallo de un estándar nunca se afirma como uno de
+				WCAG.
 			</p>
 
 			<h2>Opciones</h2>

@@ -10,7 +10,7 @@ export function HtmlReportContent() {
 				control de calidad (QA) o revisión manual y quieren una vista navegable de los resultados de
 				un análisis en lugar de JSON sin procesar o un resumen de terminal. <a href="/sample-report.html">Abre un informe de
 				ejemplo</a>: una pequeña página de pago analizada con los hooks de listeners y de regiones
-				vivas, con un hallazgo en cada grupo.
+				vivas, con un hallazgo en cada grupo y lo que el análisis deja a una persona.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
 			<p>
@@ -34,7 +34,9 @@ export function HtmlReportContent() {
 					<strong>Vale la pena revisar</strong>: una tarjeta por regla con ocurrencias{" "}
 					<code>fail</code>/<code>cantTell</code> (no una por ocurrencia: una regla con muchas
 					ocurrencias idénticas es una sola cosa que merece atención, no muchas), cada una mostrando
-					gravedad, chip(s) de SC de WCAG, una ocurrencia representativa y el recuento total de
+					gravedad, chip(s) de SC de WCAG, en un análisis de varios perfiles lo que hace de ella cada
+					perfil («wai-aria-1.2: No superada» junto a «wcag22-aa: Requiere revisión», sus{" "}
+					<code>verdicts</code>), una ocurrencia representativa y el recuento total de
 					ocurrencias. Las reglas que fallan van primero. Les siguen los hallazgos que necesitan
 					revisión, en tres grupos: aquellos cuyos indicios apuntan a un fallo («Probable fallo:
 					confírmelo»), aquellos cuyos indicios apuntan a que cumple («Probablemente cumple:
@@ -93,7 +95,9 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Resultado agregado propio de un estándar</strong>: solo cuando el análisis ejecutó
 					las reglas de un estándar que tiene sus propios resultados agregados (su perfil, o{" "}
-					<code>engineOptions.optInRules</code>), una fila por resultado agregado, con la redacción
+					<code>engineOptions.optInRules</code>), una tabla por estándar, y por versión de él cuando
+					un análisis de varios perfiles juzgó la página con dos (EN 301 549 V3.2.1 con V4.1.1, cada
+					una nombrada por su versión), con una fila por resultado agregado, con la redacción
 					del estándar, los requisitos de las reglas que decidieron el resultado, el desglose y las
 					reglas que contribuyeron. Esto cubre el estándar de un{" "}
 					<a href="/configuration/packs/">pack</a> y la lista de comprobación de un pack, cuyos
@@ -101,6 +105,25 @@ export function HtmlReportContent() {
 					<code>standards</code> del resultado, así que un resultado guardado se muestra igual
 					dondequiera que se genere; cuando esa lista falta o está dañada, el informe lo indica
 					encima del resumen por WCAG.
+				</li>
+				<li id="whats-left-for-a-person">
+					<strong>Lo que queda para una persona</strong> (core 1.15.0 y posteriores): lo que el
+					análisis no puede decidir en los requisitos que evalúan sus reglas. Cada requisito del
+					estándar analizado con una comprobación que ninguna regla decide por completo, cada uno con
+					su resultado en el análisis al lado («Análisis: No superada», «Análisis: Superada» o
+					«Ninguna regla lo comprueba») y, debajo, contraídas por defecto, esas comprobaciones: qué
+					evalúa cada una, cuánto de ella deciden las reglas, las herramientas que necesita, los
+					pasos, y qué cumple y qué falla (los{" "}
+					<a href="/conformance/procedures/">procedimientos de prueba</a> de core). Una frase encima
+					dice cuántas comprobaciones y requisitos hay, y que un requisito cuyas reglas se superan
+					todas solo se cumple cuando también se superan sus comprobaciones. El estándar es WCAG, en
+					la versión a la que apuntó el análisis y los niveles de los que informó; cuando el análisis
+					ejecutó el perfil de un pack y el pack, pasado en <code>options.packs</code>, da
+					procedimientos, es el estándar de ese pack, con su propia numeración. Un análisis de varios
+					perfiles tiene una parte por cada estándar y versión. Una nota debajo dice cómo hacer con
+					ellas una hoja de trabajo, para registrar un resultado de cada una (
+					<code>renderProcedures</code>, o el <code>--manual-checks</code> de la CLI). Se genera en
+					Node; el informe del navegador (<code>surea11y.report.js</code>) no la tiene.
 				</li>
 				<li>
 					<strong>Datos técnicos completos</strong> (contraído por defecto): una tarjeta resumen
@@ -134,7 +157,8 @@ export function HtmlReportContent() {
 			<p>
 				La barra de metadatos bajo la cabecera lleva el recuento de reglas, el recuento de
 				ocurrencias, la etiqueta del motor, la versión del esquema, la versión de WCAG a la que
-				apuntó el análisis, el <code>engineOptions.profile</code> que usó (si hubo uno), las
+				apuntó el análisis, el <code>engineOptions.profile</code> que usó (si hubo uno; cada perfil
+				de un análisis de varios, unidos con <code>+</code>, y los que no se ejecutaron), las
 				etiquetas de reglas opcionales que añadió <code>engineOptions.optInRules</code> (si añadió
 				alguna), las condiciones en que se renderizó la página y el idioma al que se resolvió el
 				análisis. Las condiciones son el viewport (con la relación de píxeles del dispositivo cuando
@@ -191,9 +215,12 @@ export function HtmlReportContent() {
 				<code>engineOptions.packs</code>), cuando ejecutó alguno: en Node el informe añade los
 				pasos de «Cómo comprobarlo» a los hallazgos sin decidir que llegan sin ellos, siempre los
 				de una regla de core y los de la regla base de una variante, y los pasos propios de una
-				regla de un pack (su <code>meta.review</code>, en inglés) solo cuando recibe los packs (ver{" "}
-				<a href="/configuration/packs/#rules">Packs</a>). En el navegador (
-				<code>surea11y.report.js</code>) muestra los pasos que el resultado ya lleva.
+				regla de un pack (su <code>meta.review</code>, en inglés, o como los traduzcan los
+				diccionarios de su pack) solo cuando recibe los packs (ver{" "}
+				<a href="/configuration/packs/#review-steps">Packs</a>). En el navegador (
+				<code>surea11y.report.js</code>) muestra los pasos que el resultado ya lleva. Con los packs,
+				«Lo que queda para una persona» sigue también el estándar de un pack cuando el análisis
+				ejecutó su perfil. <code>options.manualChecks: false</code> deja fuera esa sección.
 			</p>
 
 			<h2>Alcance</h2>

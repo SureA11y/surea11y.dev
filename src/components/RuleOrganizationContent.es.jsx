@@ -28,8 +28,9 @@ export function RuleOrganizationContent() {
 					<strong>automática</strong>: decide de forma determinista, sin heurísticas y sin adivinar.
 					Puede informar <code>fail</code>. <code>cantTell</code> igual aparece aquí, en estas
 					situaciones: existe una violación real pero por sí sola no establece que el criterio de
-					WCAG asignado falle (un requisito de autoría de ARIA cuyo nombre/rol/valor expuesto sigue
-					siendo válido); la regla decide de forma determinista que se incumple una buena práctica,
+					WCAG asignado falle (un requisito de autoría de ARIA, o el modelo de contenido de HTML,
+					cuyo nombre/rol/valor expuesto sigue siendo válido: desde core 1.15, incertidumbre{" "}
+					<code>spec-only</code>, en las reglas de estructura ARIA y HTML); la regla decide de forma determinista que se incumple una buena práctica,
 					no reclama ningún Criterio de Éxito, y lo que encontró no tiene por qué perjudicar a nadie,
 					ya que el rol o el elemento sigue llegando tal cual a la tecnología de asistencia (
 					<code>aria-allowed-role</code>, <code>landmark-role-name-present</code>, etiquetadas como
@@ -150,7 +151,10 @@ export function RuleOrganizationContent() {
 				<ResultBadge lang="en" state="unknown" size="sm" />, comprobado en parte:{" "}
 				<strong>las facetas que cubren sus reglas se cumplen, y una persona comprueba el resto</strong>. Consulta{" "}
 				<a href="/conformance/wcag-mapping/">Conformidad</a> para ver las tres capas (reglas atómicas,
-				facetas, compuestos) y cómo se calcula realmente el resultado de un compuesto.
+				facetas, compuestos) y cómo se calcula realmente el resultado de un compuesto. Cada faceta
+				de un criterio que evalúa una regla tiene un procedimiento, cómo la comprueba una persona a
+				mano (ver{" "}
+				<a href="/conformance/procedures/">Procedimientos de prueba</a>).
 			</p>
 		</>
 	);

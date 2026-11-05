@@ -125,8 +125,9 @@ const optionRows = [
 				se descartan, exactamente como en SARIF. Acepta el archivo de línea base tal como se guardó
 				(<code>JSON.parse</code> del mismo) o su lista <code>entries</code>. Una regla cuyos fallos ya son todos conocidos es{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, no una
-				prueba superada: no pasó. Una entrada escrita por la 1.13 con un código de motivo que cambió
-				en la 1.14 <a href="/conformance/baseline/#upgrading">sigue coincidiendo con el hallazgo con su código nuevo</a>. Con{" "}
+				prueba superada: no pasó. Una entrada escrita por la versión menor anterior, con un código
+				de motivo que ha cambiado desde entonces,{" "}
+				<a href="/conformance/baseline/#upgrading">sigue coincidiendo con el hallazgo con su código nuevo</a>. Con{" "}
 				<code>leanFailAs: 'failure'</code>, un hallazgo que tiende a fallo y tiene una entrada
 				marcada con <code>lean: 'fail'</code> (
 				<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>) tampoco condiciona la
@@ -145,6 +146,21 @@ const optionRows = [
 				<code>leanFailAs: 'failure'</code>, los fallos probables de una regla de un pack dan los
 				pasos de su propio <code>meta.review</code>, como en el{" "}
 				<a href="/results-reports/html-report/">informe HTML</a>.
+			</>
+		),
+	},
+	{
+		id: "allowProfilesNotRun",
+		option: <code>allowProfilesNotRun</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				Un análisis de <a href="/configuration/engine-options/#several-profiles">varios perfiles</a>{" "}
+				que ejecutó menos de los que pidió (<code>engine.profilesNotRun</code>) contó menos de lo que
+				se le pidió: cada perfil no ejecutado es un <code>&lt;error&gt;</code> en una suite{" "}
+				<code>Profiles</code>. <code>true</code> los convierte en omisiones. Un valor distinto de{" "}
+				<code>true</code> o <code>false</code> lanza un <code>TypeError</code>. Core 1.15.0 y
+				posteriores.
 			</>
 		),
 	},
@@ -314,7 +330,9 @@ export function JunitReportContent() {
 				</li>
 				<li>
 					<code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
-					<code>profile</code>, <code>optInRules</code>, las condiciones de renderizado de{" "}
+					<code>profile</code> (el primer perfil, en un análisis de varios), <code>profiles</code>{" "}
+					(solo en un análisis de varios perfiles: cada perfil que ejecutó, separados por comas),{" "}
+					<code>optInRules</code>, las condiciones de renderizado de{" "}
 					<a href="/results-reports/output-schema/">
 						<code>engine.environment</code>
 					</a>{" "}
