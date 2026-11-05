@@ -56,11 +56,49 @@ const moreHooksCaveat = (repo) => (
 );
 
 /**
- * Conditions, the severity gate and leaning questions (binding 1.5.0), then a pointer to the
+ * Several profiles and frames (binding 1.6.0), conditions, the severity gate and leaning
+ * questions (binding 1.5.0), then a pointer to the
  * builder methods this page leaves to the binding's README.
  */
 const alsoAvailable = (repo, { logger = true, conditions = null, cypress = false } = {}) => (
 	<>
+		<p>
+			<strong>Mehrere Profile zugleich.</strong> Mit core 1.15 (Binding 1.6.0) nimmt{" "}
+			<code>.options({"{ profile }"})</code> auch eine Liste, das Profil eines Packs neben dem von
+			WCAG oder dem eines anderen Packs:{" "}
+			{cypress ? (
+				<code>{".withPacks('@surea11y/pack-wai-aria').options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			) : (
+				<code>{".withPacks(waiAria).options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			)}{" "}
+			beurteilt die Seite in einem Scan nach WCAG und nach WAI-ARIA. Eine Regel, die beide
+			ausführen, ist eine Prüfung: Ihr Ergebnis ist das schlechteste, und ihre{" "}
+			<code>verdicts</code> sagen, was jedes Profil daraus macht (siehe{" "}
+			<a href="/configuration/engine-options/#several-profiles">Engine-Optionen</a>). Ein Profil,
+			das nicht gelaufen ist, steht in <code>results.engine.profilesNotRun</code>, und{" "}
+			<code>getScanGaps()</code> meldet es als <code>'profile-not-run'</code>.
+		</p>
+		<p>
+			<strong>Frames, gelesen wie der Browser sie liest.</strong> Seit core 1.15 ist ein Dokument in
+			einem Frame keine eigene Seite, daher sind seine Regeln zu Titel, Sprache, Viewport und
+			Landmarks <code>notApplicable</code>; ein Frame unter <code>aria-hidden</code> oder{" "}
+			<code>inert</code> wird als solcher gelesen, einer hinter einem offenen modalen Dialog wird
+			weggelassen, und einer in einem Shadow Root wird über seinen Host gelesen.
+			{cypress ? (
+				<>
+					{" "}
+					Cypress zeigt die getestete App in einem Frame seines Runners, daher übergibt{" "}
+					<code>.analyze()</code> dafür <code>engineOptions.topLevelDocument: true</code>, und die
+					App wird weiterhin als die Seite beurteilt; die Frames darin werden als Frames gelesen.
+				</>
+			) : null}{" "}
+			Und wo nur WAI-ARIA oder das HTML-Inhaltsmodell verletzt ist, fragen die ARIA- und
+			HTML-Strukturregeln jetzt, statt fehlzuschlagen (
+			<a href="/help/faq/#results-changed-1-15">was sich geändert hat</a>); die Befunde behalten
+			ihre Reason-Codes, sodass Baselines weiterhin passen. Ein Befund von{" "}
+			<code>text-spacing-content-loss</code> wird mit <code>.screenshots()</code> außerdem mit dem
+			angewendeten Abstand abgebildet.
+		</p>
 		<p>
 			<strong>Dunkler Modus, Smartphone-Breiten und eine Schwelle nach Schweregrad.</strong>{" "}
 			<code>{".conditions([{ colorScheme: 'dark' }, { width: 320 }])"}</code> scannt die Seite so,

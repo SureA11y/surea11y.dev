@@ -305,6 +305,24 @@ export function TestMatchersUsageContent() {
 				in <code>skippedPacks</code> des Ergebnisses, und die Assertion scheitert daran, statt zu
 				bestehen, während die Regeln des Packs nie gelaufen sind.
 			</p>
+			<p id="several-profiles">
+				Mit <code>@surea11y/core</code> 1.15 und test-matchers 1.5.0 nimmt <code>profile</code> auch
+				eine Liste, um die Komponente{" "}
+				<a href="/configuration/engine-options/#several-profiles">nach mehreren Profilen zugleich</a>{" "}
+				zu beurteilen, das eines Packs neben dem von WCAG: Jedes Profil beurteilt sie so, wie es das
+				allein täte, und ein Fehlschlag unter irgendeinem davon lässt die Assertion scheitern. Ein
+				Profil in der Liste, das nicht gelaufen ist, lässt sie ebenfalls scheitern, da der Scan
+				weniger beurteilt hat, als von ihm verlangt war; ebenso ein einzelnes Profil, das der Scan
+				nicht angewendet hat und der deshalb mit den Standardregeln von core scannt.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"expect(container).toHaveNoA11yViolations({ packs: [waiAria], profile: ['wcag22-aa', 'wai-aria-1.2'] });",
+				]}
+			/>
 
 			<h2>API</h2>
 			<DataTable
@@ -354,8 +372,10 @@ export function TestMatchersUsageContent() {
 				<strong>Ein Scan, der nicht prüfen konnte, was er prüfen sollte, scheitert ebenfalls</strong>,
 				statt über nichts zu bestehen: ein Element, das nicht im Dokument liegt, in dem der Scan
 				läuft (abgetrennt oder aus einem anderen Dokument), eine eigene Regel, die nicht gelaufen
-				ist (aufgeführt in <code>skippedCustomRules</code>), oder ein Pack, das nicht gelaufen ist
-				(aufgeführt in <code>skippedPacks</code>). Die Meldung nennt jedes davon mit dem Grund.
+				ist (aufgeführt in <code>skippedCustomRules</code>), ein Pack, das nicht gelaufen ist
+				(aufgeführt in <code>skippedPacks</code>), oder ein Profil, das nicht gelaufen ist
+				(aufgeführt in <code>engine.profilesNotRun</code>, oder ein einzelnes Profil, das der Scan
+				nicht angewendet hat). Die Meldung nennt jedes davon mit dem Grund.
 				Eine eigene Regel, die der Test selbst ausschließt, ist keine Lücke und lässt
 				ihn nicht scheitern.
 			</p>
@@ -368,6 +388,16 @@ export function TestMatchersUsageContent() {
 				scheitern. Ein Screenreader kündigt diese Überschrift ohne Inhalt an: Geben Sie
 				dem Test echten Inhalt oder beheben Sie die Komponente. Ein Aufruf mit einem
 				WCAG-Ziel, das die Best Practices auslässt, führt sie nicht aus.
+			</p>
+			<p>
+				<strong>Seit <code>@surea11y/core</code> 1.15 scheitert WCAG nur dort, wo WCAG scheitert.</strong>{" "}
+				Wo nur WAI-ARIA oder das HTML-Inhaltsmodell verletzt ist (ein Attribut, das die Rolle nicht
+				unterstützt, ein Grid oder Dialog ohne Namen, eine Überschrift in einer Liste), fragen die
+				ARIA- und HTML-Strukturregeln (<code>cantTell</code>, Unsicherheit <code>spec-only</code>),
+				statt fehlzuschlagen, sodass ein solcher Befund die Assertion nicht mehr scheitern lässt. Die
+				Fehlermeldung führt ihn mit den Fragen auf, und er behält seinen Reason-Code. Um nach
+				WAI-ARIA daran zu scheitern, fügen Sie das Profil des{" "}
+				<a href="/configuration/packs/#wai-aria-pack">WAI-ARIA-Packs</a> hinzu.
 			</p>
 			<p>
 				Der Scan selbst kann eine Ausnahme werfen, und der Test scheitert dann mit dem Fehler der
@@ -608,7 +638,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -637,9 +667,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.14.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0,and this is core 1.15.0.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 				]}
 			/>
 

@@ -682,10 +682,10 @@ export function FaqContent() {
 						<strong>1.14.2 reads the page as the browser draws it.</strong> Content the browser
 						skips off screen with <code>content-visibility: auto</code> is measured as it is laid
 						out, so the false overlaps, background questions, unreachable-focus and target-size
-						findings it gave on pages of cards go away, and 
-						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a> 
-						now fails text such an element cuts off (<code>details.clippedBy</code>). 
-						<a href="/rules/label-in-name/"><code>label-in-name</code></a> 
+						findings it gave on pages of cards go away, and{" "}
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
+						now fails text such an element cuts off (<code>details.clippedBy</code>).{" "}
+						<a href="/rules/label-in-name/"><code>label-in-name</code></a>{" "}
 						no longer fails a label split only across touching boxes, and the rules that read style
 						sheets skip print-only and unsupported CSS and rules that don't reach the element. A
 						baseline entry or Code Scanning alert for a finding it no longer reports closes as a

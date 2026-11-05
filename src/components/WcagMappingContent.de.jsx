@@ -93,7 +93,9 @@ export function WcagMappingContent() {
 					Regel) oder <code>manual</code> (es gibt überhaupt keine sichere automatische
 					Heuristik). Führen Sie <code>npm run coverage</code> aus, um{" "}
 					<code>coverage/coverage-report.md</code> neu zu erzeugen, die Aufschlüsselung der
-					Facetten pro SC.
+					Facetten pro SC. Seit core 1.15.0 hat jede Facette eines Kriteriums, das eine Regel
+					bewertet, auch ein Prüfverfahren, also wie eine Person sie von Hand bewertet (siehe{" "}
+					<a href="/conformance/procedures/">Prüfverfahren</a>).
 				</li>
 				<li>
 					<strong>Zusammengesetzte Regeln (Zusammenfassung pro WCAG-SC)</strong>{" "}
@@ -250,7 +252,8 @@ export function WcagMappingContent() {
 				aus, die einem AA-Kriterium von 2.0 zugeordnet sind, nicht die 105, die ein Ziel 2.0 A +
 				AA ausmachen. Listen Sie jede Stufe auf, die Sie meinen, oder verwenden Sie{" "}
 				<code>runOnly.wcag</code>, das dieses Problem nicht hat. Auch{" "}
-				<code>engineOptions.profile</code> (<code>wcag22-aa</code>, <code>en301549-v4.1.1</code>,{" "}
+				<code>engineOptions.profile</code> (<code>wcag22-a</code>,{" "}
+				<code>wcag22-aa</code>, <code>wcag22-aaa</code>, <code>en301549-v4.1.1</code>,{" "}
 				<code>en301549-v3.2.1</code>, <code>section508</code>) erledigt das für Sie; siehe{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Konformitätsprofile</a>.
 			</p>
@@ -424,6 +427,15 @@ export function WcagMappingContent() {
 					kann dann für eine eigene Prüfung, die WCAG nicht verlangt, <code>fail</code> melden.
 				</li>
 				<li>
+					Seit core 1.15.0 lässt eine Regel ein WCAG-Kriterium nur dort scheitern, wo WCAG es
+					scheitern lässt. Wo nur WAI-ARIA oder das HTML-Inhaltsmodell verletzt ist und Name, Rolle
+					und Wert der Seite das überstehen, fragen die ARIA- und HTML-Strukturregeln stattdessen
+					(<code>cantTell</code>, Unsicherheit <code>spec-only</code>), sodass ein WCAG-Fehlschlag nie
+					für eine Verletzung einer Spezifikation steht, die WCAG nicht zählt. Um diese Befunde nach
+					WAI-ARIA selbst zu beurteilen, führen Sie das Profil des{" "}
+					<a href="/configuration/packs/#wai-aria-pack">WAI-ARIA-Packs</a> neben dem von WCAG aus.
+				</li>
+				<li>
 					Jedes <code>cantTell</code> ist eine ausdrückliche Markierung zur menschlichen Prüfung,
 					keine verschluckte Unsicherheit.
 				</li>
@@ -435,7 +447,9 @@ export function WcagMappingContent() {
 				</li>
 				<li>
 					Die Tabelle zur Facettenabdeckung zeigt Ihnen genau, welche Teile welcher SC gar keine
-					automatische Abdeckung haben, und damit, was einer Person bleibt.
+					automatische Abdeckung haben, und damit, was einer Person bleibt, und die{" "}
+					<a href="/conformance/procedures/">Prüfverfahren</a> von core sagen, wie eine Person jeden
+					davon prüft, für jedes Kriterium, das eine Regel bewertet.
 				</li>
 			</ul>
 			<p>

@@ -240,7 +240,12 @@ export function BaselineContent() {
 				wird zuerst unter dem eigenen Code des Befunds gesucht, geht also nie an einen verschobenen
 				Befund, wenn ein anderer Befund genau diese Identität hat.
 			</p>
-			<p>1.14 verschiebt diese, gegenüber 1.13:</p>
+			<p>
+				Die Tabelle gilt für ein Minor-Release: Eine Verschiebung steht darin ab dem Release, mit
+				dem sie kam, bis zum nächsten Minor-Release, das sie entfernt. 1.15 hat keinen Befund
+				verschoben, seine Tabelle ist also leer.
+			</p>
+			<p>1.14 hat diese verschoben, gegenüber 1.13, und 1.15 hat sie entfernt:</p>
 			<DataTable
 				label="In 1.14 verschobene Reason-Codes"
 				rowKey="id"
@@ -252,9 +257,11 @@ export function BaselineContent() {
 				rows={baselineMoves}
 			/>
 			<p>
-				Die Tabelle gilt für ein Minor-Release: Eine Verschiebung steht darin ab dem Release, mit
-				dem sie kam, bis zum nächsten Minor-Release, das sie entfernt. Eine von 1.13 geschriebene
-				Baseline passt also unter 1.14.x weiter und muss vor 1.15 neu erzeugt werden.
+				Eine von 1.13 geschriebene Baseline passt also unter 1.14.x weiter auf diese, nicht aber
+				unter 1.15: Dort ist ein Eintrag unter einem alten Code veraltet, und sein Befund ist neu.
+				Bringen Sie eine solche Baseline unter 1.14.x auf den aktuellen Stand, wie unten beschrieben,
+				bevor Sie auf 1.15 wechseln; <code>migrateBaselineEntries</code> kennt diese Verschiebungen
+				in 1.15 nicht mehr. Eine von 1.14 geschriebene Baseline passt unter 1.15 weiter.
 			</p>
 			<p>
 				Die Baseline nach einem Upgrade mit <code>--write-baseline</code> (oder{" "}
@@ -288,6 +295,16 @@ export function BaselineContent() {
 				sie mit <code>fail</code> bewertete, gibt einen Befund, den die Baseline nicht enthielt,
 				oder keinen mehr, den sie enthielt, und das{" "}
 				<a href={`${core}/CHANGELOG.md`}>Changelog</a> sagt, warum.
+			</p>
+
+			<h2 id="several-profiles">Ein Scan mehrerer Profile</h2>
+			<p>
+				Ein Ergebnis <a href="/configuration/engine-options/#several-profiles">mehrerer Profile</a>{" "}
+				(<code>engineOptions.profile</code> als Liste, ab core 1.15.0) führt jeden Befund einmal
+				auf, mit dem, was jedes Profil daraus macht, in <code>verdicts</code>. Ein Baseline-Eintrag
+				ist der Befund, nach Regel, Reason-Code und Markup, ein Eintrag deckt ihn also unter jedem
+				Profil ab, und eine aus dem Scan eines einzigen Profils geschriebene Baseline passt weiterhin
+				auf dieselben Befunde in einem Scan mehrerer.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Scannen bei mehreren Viewport-Breiten</h2>

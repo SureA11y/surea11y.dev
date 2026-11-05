@@ -41,7 +41,8 @@ export function ResultsReportsContent() {
 				zusammengesetzte Zusammenfassungen pro WCAG-Erfolgskriterium. Jeder offene Befund einer
 				core-Regel sagt, wie eine Person ihn beantwortet, und manche sagen, in welche Richtung die Anhaltspunkte der
 				Seite weisen (eine <em>Tendenz</em>), sodass eine Prüfung mit den wahrscheinlichen Fehlern
-				beginnt statt mit einer flachen Liste. Es lohnt sich, das einmal zu
+				beginnt statt mit einer flachen Liste. Ein Scan mehrerer Profile führt
+				jeden Befund nur einmal und sagt, was jedes Profil daraus macht. Es lohnt sich, das einmal zu
 				lesen, wenn Sie irgendetwas auf einem rohen Ergebnis aufbauen. Die vollständige Form finden
 				Sie unter <a href="/results-reports/output-schema/">Ausgabeschema</a>.
 			</p>
@@ -53,7 +54,8 @@ export function ResultsReportsContent() {
 				nicht erfüllt, wahrscheinlich erfüllt und solche, die nur eine Person beurteilen kann,
 				bei core-Regeln jeweils mit den Schritten zur Prüfung, darunter eine WCAG-Zusammenfassung nach
 				Konformitätsstufe, die aus den zusammengesetzten Ergebnissen
-				der Engine selbst stammt, und ganz unten eine vollständige, durchsuchbare Tabelle für
+				der Engine selbst stammt, was der Scan Kriterium für Kriterium einer Person überlässt, mit
+				den Schritten für jede Prüfung, und ganz unten eine vollständige, durchsuchbare Tabelle für
 				alle, die tiefer einsteigen wollen. Das ist der Bericht für Prüfende, die keine rohe
 				Ausgabe lesen möchten. Siehe <a href="/results-reports/html-report/">HTML-Bericht</a>.
 			</p>
