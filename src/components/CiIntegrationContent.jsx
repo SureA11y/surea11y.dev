@@ -134,6 +134,26 @@ export function CiIntegrationContent() {
 				associate a finding with a real file in the repository).
 			</p>
 
+			<h3 id="manual-checks-artifact">Publishing what the scan leaves to a person</h3>
+			<p>
+				A gate decides what rules can decide. To hand the rest to a person with each run, write the
+				HTML report and a worksheet of the checks no rule decides in full (
+				<code>--manual-checks</code>, <code>@surea11y/cli</code> 1.5.0 and core 1.15.0 and later),
+				and upload both as an artifact. Neither changes the exit code. See{" "}
+				<a href="/conformance/procedures/">Test procedures</a>.
+			</p>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"      - run: npx @surea11y/cli scan ./dist/index.html --html reports/report.html --manual-checks reports/manual-checks.html",
+					"      - uses: actions/upload-artifact@v4",
+					"        if: always()",
+					"        with:",
+					"          name: accessibility",
+					"          path: reports/",
+				]}
+			/>
+
 			<h2>Bitbucket Pipelines</h2>
 			<p>
 				Bitbucket Pipelines has no built-in SARIF-consuming dashboard equivalent to GitHub Code

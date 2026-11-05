@@ -52,11 +52,47 @@ const moreHooksCaveat = (repo) => (
 );
 
 /**
- * Conditions, the severity gate and leaning questions (binding 1.5.0), then a pointer to the
+ * Several profiles and frames (binding 1.6.0), conditions, the severity gate and leaning
+ * questions (binding 1.5.0), then a pointer to the
  * builder methods this page leaves to the binding's README.
  */
 const alsoAvailable = (repo, { logger = true, conditions = null, cypress = false } = {}) => (
 	<>
+		<p>
+			<strong>Several profiles at once.</strong> With core 1.15 (binding 1.6.0),{" "}
+			<code>.options({"{ profile }"})</code> also takes a list, a pack's profile beside WCAG's or
+			another pack's:{" "}
+			{cypress ? (
+				<code>{".withPacks('@surea11y/pack-wai-aria').options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			) : (
+				<code>{".withPacks(waiAria).options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			)}{" "}
+			judges the page by WCAG and by WAI-ARIA in one scan. A rule both run is one check: its
+			outcome is the worst, and its <code>verdicts</code> say what each profile makes of it (see{" "}
+			<a href="/configuration/engine-options/#several-profiles">Engine options</a>). A profile that
+			didn't run is in <code>results.engine.profilesNotRun</code>, and{" "}
+			<code>getScanGaps()</code> reports it as <code>'profile-not-run'</code>.
+		</p>
+		<p>
+			<strong>Frames, read as the browser reads them.</strong> Since core 1.15, a framed document
+			is no page of its own, so its title, language, viewport and landmark rules are{" "}
+			<code>notApplicable</code>; a frame under <code>aria-hidden</code> or <code>inert</code> is
+			read as such, one behind an open modal dialog is left out, and one in a shadow root is read
+			through its host.
+			{cypress ? (
+				<>
+					{" "}
+					Cypress shows the app under test in a frame of its runner, so <code>.analyze()</code>{" "}
+					passes <code>engineOptions.topLevelDocument: true</code> for it, and the app is still
+					judged as the page; the frames inside it are read as frames.
+				</>
+			) : null}{" "}
+			And where only WAI-ARIA or the HTML content model is broken, the ARIA and HTML structure
+			rules now ask instead of failing (<a href="/help/faq/#results-changed-1-15">what changed</a>
+			); the findings keep their reason codes, so baselines still match. A{" "}
+			<code>text-spacing-content-loss</code> finding is also pictured with the spacing applied,
+			with <code>.screenshots()</code>.
+		</p>
 		<p>
 			<strong>Dark mode, phone widths and a severity gate.</strong>{" "}
 			<code>{".conditions([{ colorScheme: 'dark' }, { width: 320 }])"}</code> scans the page as it

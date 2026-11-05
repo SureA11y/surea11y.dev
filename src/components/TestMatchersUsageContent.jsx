@@ -294,6 +294,23 @@ export function TestMatchersUsageContent() {
 				listed in the result's <code>skippedPacks</code>, and the assertion fails on it rather than
 				passing with the pack's rules never run.
 			</p>
+			<p id="several-profiles">
+				With <code>@surea11y/core</code> 1.15 and test-matchers 1.5.0, <code>profile</code> also
+				takes a list, to judge the component by{" "}
+				<a href="/configuration/engine-options/#several-profiles">several profiles at once</a>, a
+				pack's beside WCAG's: each profile judges it as it would alone, and a failure under any of
+				them fails the assertion. A profile in the list that didn't run fails it too, since the scan
+				judged less than it was asked to; so does a single profile the scan didn't apply, which
+				scans by core's default rules.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"expect(container).toHaveNoA11yViolations({ packs: [waiAria], profile: ['wcag22-aa', 'wai-aria-1.2'] });",
+				]}
+			/>
 
 			<h2>API</h2>
 			<DataTable
@@ -341,8 +358,10 @@ export function TestMatchersUsageContent() {
 				<strong>A scan that could not check what it was asked to fails too</strong>, rather than
 				passing on nothing: an element that is not in the document the scan runs in (detached, or
 				from another document), a custom rule that did not run (listed in{" "}
-				<code>skippedCustomRules</code>), or a pack that did not run (listed in{" "}
-				<code>skippedPacks</code>). The message names each with the reason. A custom rule the
+				<code>skippedCustomRules</code>), a pack that did not run (listed in{" "}
+				<code>skippedPacks</code>), or a profile that did not run (listed in{" "}
+				<code>engine.profilesNotRun</code>, or a single profile the scan didn't apply). The message
+				names each with the reason. A custom rule the
 				test excludes itself is not a gap, and doesn't fail it.
 			</p>
 			<p>
@@ -353,6 +372,15 @@ export function TestMatchersUsageContent() {
 				default call. A screen reader announces that heading with nothing in it: give the test real
 				content or fix the component. A call with a WCAG target, which leaves the best practices
 				out, doesn't run it.
+			</p>
+			<p>
+				<strong>Since <code>@surea11y/core</code> 1.15, WCAG fails only where WCAG fails.</strong>{" "}
+				Where only WAI-ARIA or the HTML content model is broken (an attribute the role doesn't
+				support, an unnamed grid or dialog, a heading in a list), the ARIA and HTML structure rules
+				ask (<code>cantTell</code>, uncertainty <code>spec-only</code>) instead of failing, so such
+				a finding no longer fails the assertion. The failure message lists it with the questions,
+				and it keeps its reason code. To fail on it by WAI-ARIA, add the{" "}
+				<a href="/configuration/packs/#wai-aria-pack">WAI-ARIA pack</a>'s profile.
 			</p>
 			<p>
 				The scan itself can throw, and the test then fails with the engine's error, which carries
@@ -578,7 +606,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -606,9 +634,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.14.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0,and this is core 1.15.0.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 				]}
 			/>
 

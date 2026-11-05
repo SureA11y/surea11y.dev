@@ -167,6 +167,13 @@ export const contentPages: ContentPage[] = [
 		content: "WcagMappingContent",
 	},
 	{
+		href: "/conformance/procedures/",
+		title: "Test procedures",
+		description:
+			"How to assess by hand what a scan can't decide: core's test procedures for each WCAG criterion, as a reference, a worksheet or data, in five languages.",
+		content: "ProceduresContent",
+	},
+	{
 		href: "/conformance/baseline/",
 		title: "Baseline / allowlist",
 		description:
