@@ -65,7 +65,9 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   `#margin`; unlike `@reports`, that is a stable contract.
   Since core 1.14.0 it also writes `src/data/rules.review.generated.json`:
   each rule's "How to check" steps per `cantTell` reason code (`meta.review`
-  keys, in order), in every locale core ships a review dictionary for,
+  keys, in order; since core 1.15 the steps live in core's procedures, and
+  the codes are read from `src/procedures/registry.js`'s `variants`, in
+  their order), in every locale core ships a review dictionary for,
   read through core's own `howToCheckFor` — so no overlay translates them.
   Rule pages render them as "How to check" (`#how-to-check`, one `<h3>`
   per code, `#how-to-check-<code-in-kebab-case>`), after the examples. The
@@ -1099,3 +1101,67 @@ No "How to check" steps changed. Content pages, every language:
   re-generated, came out byte-identical.
 
 The Locales page's key counts (1,336) come from `docs:locales`.
+
+## Core 1.15.0 update (2026-11-05)
+
+Pinned `@surea11y/core` 1.15.0 and `@surea11y/playwright` 1.6.0. Covers
+the bindings at 1.6.0, `@surea11y/cli` 1.5.0, `@surea11y/test-matchers`
+1.5.0, `@surea11y/pack-en301549` 1.2.0 and the new
+`@surea11y/pack-wai-aria` 1.0.0, read from their READMEs, CHANGELOGs and
+the npm packages (the packs and bindings aren't checked out here). 25
+rules' text changed (the ARIA and HTML structure rules ask where only
+WAI-ARIA or the HTML content model is broken, uncertainty `spec-only`;
+the page rules are `notApplicable` in a frame); every overlay follows.
+
+- `generate-rules-data.cjs` reads each rule's review codes from core's
+  procedures registry (1.15 moved `meta.review` out of the rule modules;
+  without it the review file came out empty).
+- New page **Test procedures** (`/conformance/procedures/`,
+  `ProceduresContent.jsx`), between WCAG mapping and Baseline: core's
+  procedures (`proceduresFor`, `listProcedures`, `procedureChecklist`,
+  `renderProcedures`, `relatedRequirements`, `procedureLanguages`, the
+  browser entry `@surea11y/core/procedures`), adapted from
+  `PROCEDURES.md`; "Where they live" and "Writing a general procedure" are
+  contributor-facing and stay on GitHub. `npm run docs:sample-procedures`
+  (`scripts/generate-sample-procedures.mjs`) writes core's own WCAG 2.2 A
+  and AA reference and worksheet, per locale, to
+  `public/[<locale>/]procedures/wcag-22-aa{,-checklist}.html`; pure Node
+  and deterministic, so CI checks it (`docs:sample-procedures:check`).
+  Re-run it on every core update.
+- Packs: `#wai-aria-pack` (after `#en-301-549-pack`; requirements table,
+  `fail`/`cantTell` meaning, the pack's eleven own rules, its English-only
+  text, the multi-profile example), the EN 301 549 pack's 1.2.0
+  (procedures per clause, groups, translations), `#with-other-profiles`,
+  `outcome: 'fail'`, placeholders `{{name|text}}`, `standard.review`,
+  `meta.coverage`, translated steps, and `#procedures` (a standard's
+  `standard.procedures`, four forms). The homepage's package table has a
+  WAI-ARIA row.
+- Scans of several profiles: Engine options `#several-profiles` (an `<h4>`
+  under Conformance profiles), `wcag22-a`/`wcag22-aaa`, the frame options
+  (`embeddedAriaHidden`, `embeddedInert`, `topLevelDocument`); Output
+  schema `#several-profiles` (`verdicts`, `checkOutcome`, `profiles`,
+  `engine.profiles`/`profilesNotRun`), `evidenceState`, steps that name
+  the case, a standard's own words; SARIF/JUnit `allowProfilesNotRun` and
+  `profiles`; EARL `#several-profiles` and its two reports; HTML report
+  verdicts and `#whats-left-for-a-person`; Baseline `#several-profiles`.
+- CLI: `#several-profiles`, `#manual-checks`, `#procedures`; CI
+  integration `#manual-checks-artifact`; binding pages (shared
+  `alsoAvailable`): several profiles, frames, Cypress's
+  `topLevelDocument`; test-matchers `#several-profiles`; Standalone
+  `#procedures-in-a-browser`; Known limitations `#framed-documents` and
+  `evidenceState`; Locales `#procedure-dictionaries`.
+- FAQ: `#results-changed-1-15` first, dated (move or drop it later);
+  `#results-changed-1-14` moved to the end; new `#profile-not-run` and
+  `#framed-page-rules`; `#baseline-after-upgrade` follows core main's
+  BASELINE.md/TROUBLESHOOTING.md (after the v1.15.0 tag): 1.15 moved no
+  code and dropped the 1.13→1.14 moves, so a 1.13 baseline is brought up
+  to date under 1.14.x first. Baseline's `#upgrading` says the same.
+- Quickstart and CLI samples re-run with CLI 1.5.0 on core 1.15.0: same
+  output, version line only. Sample HTML reports re-generated (they now end
+  with "What's left for a person").
+
+Open, not decided: core's new review steps in Spanish use "usted"
+(Inspeccione, Compruebe), which 1.14.1 had moved to infinitives; core's
+I18N.md now says Spanish landmarks are «puntos de referencia»; the
+WAI-ARIA pack's `index.js` says `core: '^1.14.2'` while its README says it
+needs 1.15.0 (the site follows the README).
