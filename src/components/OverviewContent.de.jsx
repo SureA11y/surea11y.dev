@@ -14,6 +14,7 @@ const packageRows = [
 	{ id: "test-matchers", want: "Barrierefreiheit in Komponenten- oder Unit-Tests mit Jest/Vitest prüfen", install: <><code>@surea11y/test-matchers</code> + <code>@surea11y/core</code></> },
 	{ id: "cli", want: "Seiten im Terminal oder in einer CI-Pipeline scannen, als statisches HTML oder in Chromium", install: <code>@surea11y/cli</code> },
 	{ id: "pack-en301549", want: "Gegen die EN 301 549, die europäische Norm, prüfen, mit jedem der obigen", install: <><a href="/configuration/packs/#en-301-549-pack"><code>@surea11y/pack-en301549</code></a> + <code>@surea11y/core</code></> },
+	{ id: "pack-wai-aria", want: "ARIA gegen WAI-ARIA 1.2 selbst prüfen, neben WCAG oder für sich", install: <><a href="/configuration/packs/#wai-aria-pack"><code>@surea11y/pack-wai-aria</code></a> + <code>@surea11y/core</code></> },
 	{ id: "pack-own", want: "Gegen eigene Regeln, Profile oder eine eigene Norm prüfen, öffentlich oder intern", install: <>Ein eigenes Pack: siehe <a href="/configuration/packs/#writing-a-pack">Ein Pack schreiben</a></> },
 	{ id: "core", want: "Die Engine auf ein DOM anwenden, das Sie bereits haben", install: <code>@surea11y/core</code> },
 	{ id: "core-build", want: "Ein eigenes Tool auf der Engine aufbauen: eine CLI, eine Erweiterung, ein Dashboard, einen Berichtsgenerator", install: <code>@surea11y/core</code> },
@@ -139,10 +140,24 @@ export function OverviewContent() {
 				dazu, wann ein Befund eine Tendenz bekommt und wie weit man ihr trauen kann.
 			</p>
 			<p>
+				Ein Scan ist die halbe Bewertung, und die Engine liefert Ihnen auch die andere Hälfte. Für
+				jedes WCAG-Kriterium, das ihre Regeln bewerten, hat core ein Prüfverfahren für jeden Teil
+				davon: die Schritte, denen eine Person im Browser folgt, die Werkzeuge, die es braucht (eine
+				Tastatur, einen Screenreader, den Zoom), und was sie sieht, wenn es bestanden ist und wenn
+				nicht, in fünf Sprachen. Es ist derselbe Text, aus dem „So prüfen Sie es“ eines Befunds
+				stammt. Lesen Sie sie als Daten oder stellen Sie sie als Referenz dar oder als Arbeitsblatt,
+				das jedes Ergebnis festhält und pro Kriterium zusammenfasst, ohne Scan für ein manuelles
+				Audit oder neben einem für das, was er offen lässt. Siehe{" "}
+				<a href="/conformance/procedures/">Prüfverfahren</a>, oder öffnen Sie{" "}
+				<a href="/procedures/wcag-22-aa-checklist.html">das Arbeitsblatt für WCAG 2.2 AA</a>.
+			</p>
+			<p>
 				Der HTML-Bericht ordnet die Fragen so, wie eine prüfende Person sie abarbeitet:
 				„Wahrscheinlich nicht erfüllt: bitte bestätigen“, „Wahrscheinlich erfüllt: bitte
 				bestätigen“ und „Muss eine Person prüfen“. Jede Karte hat ihre Schritte unter „So prüfen Sie es“,
-				und die in den ersten beiden Gruppen sagen, warum sie tendieren. In CI können die JUnit- und SARIF-Berichte außerdem an
+				und die in den ersten beiden Gruppen sagen, warum sie tendieren, und ein letzter Abschnitt,
+				„Was ein Mensch noch prüfen muss“, führt Kriterium für Kriterium die Prüfungen auf, die keine
+				Regel vollständig entscheidet, jeweils neben dem Ergebnis des Scans. In CI können die JUnit- und SARIF-Berichte außerdem an
 				den Befunden scheitern, die zu <code>fail</code> tendieren, standardmäßig ausgeschaltet, und
 				eine Baseline kann die akzeptieren, die eine Seite schon hat, sodass nur neue den Build
 				brechen. Siehe <a href="/results-reports/html-report/">HTML-Bericht</a> und{" "}
@@ -169,6 +184,16 @@ export function OverviewContent() {
 				<a href="/configuration/packs/">Packs</a>.
 			</p>
 			<p>
+				Nennen Sie mehrere Standards, und ein Scan beurteilt die Seite nach jedem.{" "}
+				<code>profile: ['wcag22-aa', 'wai-aria-1.2']</code> beurteilt sie zugleich nach WCAG und
+				nach WAI-ARIA: Jedes Profil entscheidet so, wie es ein Scan nur mit ihm täte, das Ergebnis
+				zählt als ein Scan mit den Regeln aller, und jeder Befund sagt, was jedes Profil daraus
+				macht. Ein Attribut, das eine Rolle nicht unterstützt, ist eine Frage für WCAG 4.1.2 und ein
+				Fehlschlag nach WAI-ARIA, und das Ergebnis sagt beides, sodass nichts doppelt gezählt wird
+				und nichts verloren geht. Siehe{" "}
+				<a href="/configuration/engine-options/#several-profiles">Engine-Optionen</a>.
+			</p>
+			<p>
 				Nennen Sie Prüfungen statt eines Standards, und das Ergebnis zeigt trotzdem, welche
 				WCAG-Kriterien sie betreffen. Ein Scan, der nur <code>link-name-present</code> ausführt,
 				meldet auch 2.4.4 und 4.1.2, dazu das AAA-Kriterium 2.4.9, wenn der Scan keine Stufe festlegt, und ein Kriterium, dessen übrige Prüfungen der Scan ausgelassen
@@ -187,6 +212,15 @@ export function OverviewContent() {
 				Aussage über Konformität. Diese Kriterien als bestanden auszuweisen, wäre genau der
 				trügerische Eindruck vollständiger Abdeckung, den diese Engine vermeiden soll. Siehe{" "}
 				<a href="/conformance/wcag-mapping/">WCAG-Konformitätszuordnung</a>.
+			</p>
+			<p>
+				Ein WCAG-Fehlschlag ist ein WCAG-Fehlschlag, keine verletzte Spezifikation, die WCAG nicht
+				zählt. Wo nur WAI-ARIA oder das HTML-Inhaltsmodell verletzt ist und Name, Rolle und Wert,
+				auf die sich Menschen verlassen, das überstehen, fragen die ARIA- und HTML-Strukturregeln,
+				statt fehlzuschlagen, mit Schritten zur Prüfung. Das{" "}
+				<a href="/configuration/packs/#wai-aria-pack">WAI-ARIA-Pack</a> liest dieselben Befunde
+				nach den eigenen MUSTs von WAI-ARIA, sodass ein Team, das sich an die Spezifikation hält,
+				daran scheitern kann, wenn es das will.
 			</p>
 			<p>
 				Web Components werden nach dem beurteilt, was sie bereitstellen. Ein Custom Element, das
@@ -303,7 +337,9 @@ export function OverviewContent() {
 				muss. Andere Aspekte, darunter Tastaturfallen und Reflow beim Zoomen, prüft die Engine gar
 				nicht; sie brauchen eigene Tests. Kein <code>cantTell</code> steht für sie, ein Ergebnis
 				ohne <code>cantTell</code> heißt also nicht, dass sie abgedeckt wurden. Die vollständige Liste finden Sie unter{" "}
-				<a href="/help/known-limitations/">Bekannte Einschränkungen</a>.
+				<a href="/help/known-limitations/">Bekannte Einschränkungen</a>, und in den{" "}
+				<a href="/conformance/procedures/">Prüfverfahren</a> steht, wie eine Person die Kriterien
+				prüft, die die Regeln bewerten.
 			</p>
 		</>
 	);

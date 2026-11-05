@@ -10,7 +10,7 @@ export function HtmlReportContent() {
 				manueller Prüfung, die die Ergebnisse eines Scans durchblättern möchten, statt rohes JSON oder eine
 				Zusammenfassung im Terminal zu lesen. <a href="/sample-report.html">Öffnen Sie einen Beispielbericht</a>: eine
 				kleine Bezahlseite, gescannt mit dem Listener- und dem Live-Region-Hook, mit einem Befund in
-				jeder Gruppe.
+				jeder Gruppe und dem, was der Scan einer Person überlässt.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
 			<p>
@@ -37,7 +37,9 @@ export function HtmlReportContent() {
 					<strong>Prüfenswert</strong>: eine Karte pro Regel mit <code>fail</code>-/
 					<code>cantTell</code>-Vorkommen (nicht eine pro Vorkommen — eine Regel mit vielen
 					identischen Vorkommen ist eine Sache, die Aufmerksamkeit verdient, nicht viele), jeweils
-					mit Schweregrad, Chip(s) für das WCAG-Erfolgskriterium, einem repräsentativen Vorkommen
+					mit Schweregrad, Chip(s) für das WCAG-Erfolgskriterium, in einem Scan mehrerer Profile dem,
+					was jedes Profil daraus macht („wai-aria-1.2: Nicht bestanden“ neben „wcag22-aa: Prüfung
+					nötig“, seine <code>verdicts</code>), einem repräsentativen Vorkommen
 					und der Gesamtzahl der Vorkommen. Regeln mit dem Ergebnis <code>fail</code> stehen
 					zuerst. Die Befunde, die eine Prüfung brauchen, folgen in drei Gruppen: die, deren
 					Anhaltspunkte auf einen Fehler weisen („Wahrscheinlich nicht erfüllt: bitte
@@ -107,7 +109,9 @@ export function HtmlReportContent() {
 				<li>
 					<strong>Eigene Zusammenfassung einer Norm</strong>: nur wenn der Scan die Regeln einer
 					Norm mit eigenen Zusammenfassungen ausgeführt hat (über ihr Profil oder{" "}
-					<code>engineOptions.optInRules</code>), eine Zeile pro Zusammenfassung, mit dem Wortlaut der
+					<code>engineOptions.optInRules</code>), eine Tabelle pro Norm, und pro Version davon, wenn ein
+					Scan mehrerer Profile die Seite nach zweien beurteilt hat (EN 301 549 V3.2.1 mit V4.1.1,
+					jede nach ihrer Version benannt), mit einer Zeile pro Zusammenfassung, mit dem Wortlaut der
 					Norm, den Anforderungen der Regeln, die das Ergebnis entschieden haben, der
 					Aufschlüsselung und den beitragenden Regeln. Das umfasst die Norm eines{" "}
 					<a href="/configuration/packs/">Packs</a> und die Checkliste eines Packs, deren Punkte
@@ -116,6 +120,26 @@ export function HtmlReportContent() {
 					fehlt diese Liste oder ist sie beschädigt, sagt der Bericht das über der
 					WCAG-Zusammenfassung.
 				</li>
+					<li id="whats-left-for-a-person">
+						<strong>Was ein Mensch noch prüfen muss</strong> (ab core 1.15.0): was der Scan in den
+						Anforderungen, die seine Regeln bewerten, nicht entscheiden kann. Jede Anforderung des
+						gescannten Standards mit einer Prüfung, die keine Regel vollständig entscheidet, jeweils
+						mit ihrem Ergebnis im Scan daneben („Scan: Nicht bestanden“, „Scan: Bestanden“ oder „Keine
+						Regel prüft sie“), und darunter, standardmäßig eingeklappt, diese Prüfungen: was jede
+						bewertet, wie viel davon Regeln entscheiden, welche Werkzeuge sie braucht, die Schritte und
+						was als bestanden und was als nicht bestanden gilt (die{" "}
+						<a href="/conformance/procedures/">Prüfverfahren</a> von core). Ein Satz darüber nennt,
+						wie viele Prüfungen und Anforderungen es sind, und dass eine Anforderung, deren Regeln alle{" "}
+						<code>pass</code> ergeben, erst erfüllt ist, wenn auch ihre Prüfungen bestanden sind. Der
+						Standard ist WCAG, in der Version, auf die der Scan zielte, und mit den Stufen, die er
+						gemeldet hat; wo der Scan das Profil eines Packs ausgeführt hat und das Pack, übergeben in{" "}
+						<code>options.packs</code>, Prüfverfahren mitbringt, ist es der Standard dieses Packs,
+						unter seinen eigenen Nummern. Ein Scan mehrerer Profile hat einen Teil für jeden Standard
+						und jede Version. Ein Hinweis darunter sagt, wie sich daraus ein Arbeitsblatt erstellen
+						lässt, um für jede ein Ergebnis festzuhalten (<code>renderProcedures</code> oder{" "}
+						<code>--manual-checks</code> der CLI). Er wird in Node geschrieben; der Browser-Bericht (
+						<code>surea11y.report.js</code>) hat keinen.
+					</li>
 				<li>
 					<strong>Vollständige technische Daten</strong> (standardmäßig eingeklappt): eine
 					Übersicht (Kacheln pro Ergebnis) und eine durchsuchbare, (nach Ergebnis) filterbare,
@@ -149,7 +173,8 @@ export function HtmlReportContent() {
 			<p>
 				Die Meta-Leiste unter dem Kopf enthält die Anzahl der Regeln, die Anzahl der Vorkommen,
 				das Engine-Tag, die Schema-Version, die WCAG-Version, auf die der Scan zielte, das
-				verwendete <code>engineOptions.profile</code> (falls es eines gab), die Tags der Opt-in-Regeln,
+				verwendete <code>engineOptions.profile</code> (falls es eines gab; bei einem Scan mehrerer
+				jedes Profil, mit <code>+</code> verbunden, und die, die nicht gelaufen sind), die Tags der Opt-in-Regeln,
 				die <code>engineOptions.optInRules</code> hinzugefügt hat (falls welche), die Bedingungen,
 				unter denen die Seite dargestellt wurde, und die Locale, auf die der Scan aufgelöst wurde.
 				Die Bedingungen sind der Viewport (mit dem Gerätepixelverhältnis, wenn es nicht 1 ist) und
@@ -208,10 +233,13 @@ export function HtmlReportContent() {
 				die der Scan ausgeführt hat (<code>engineOptions.packs</code>), falls er welche ausgeführt
 				hat: In Node fügt der Bericht Befunden, die eine Prüfung brauchen und ohne sie kommen, die
 				Schritte „So prüfen Sie es“ hinzu, die einer Core-Regel und der Basisregel einer Variante
-				immer, die eigenen Schritte einer Pack-Regel (ihr <code>meta.review</code>, auf Englisch)
-				nur, wenn er die Packs erhält (siehe <a href="/configuration/packs/#rules">Packs</a>). Im
-				Browser (<code>surea11y.report.js</code>) zeigt er die Schritte, die das Ergebnis bereits
-				mitführt.
+				immer, die eigenen Schritte einer Pack-Regel (ihr <code>meta.review</code>, auf Englisch
+				oder so, wie die Wörterbücher ihres Packs sie übersetzen) nur, wenn er die Packs erhält
+				(siehe <a href="/configuration/packs/#review-steps">Packs</a>). Im Browser (
+				<code>surea11y.report.js</code>) zeigt er die Schritte, die das Ergebnis bereits mitführt.
+				Mit den Packs folgt „Was ein Mensch noch prüfen muss“ auch dem Standard eines Packs, wo der
+				Scan dessen Profil ausgeführt hat. <code>options.manualChecks: false</code> lässt diesen
+				Abschnitt weg.
 			</p>
 
 			<h2>Umfang</h2>

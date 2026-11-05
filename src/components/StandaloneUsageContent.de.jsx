@@ -449,6 +449,28 @@ export function StandaloneUsageContent() {
 				<a href="/results-reports/output-schema/#leans">das Ausgabeschema</a>.
 			</p>
 
+			<h2 id="procedures-in-a-browser">Prüfverfahren im Browser</h2>
+			<p>
+				Seit core 1.15 kommen die <a href="/conformance/procedures/">Prüfverfahren</a>, also wie eine
+				Person jedes Kriterium von Hand bewertet, auch zu Code, der im Browser läuft, aus{" "}
+				<code>@surea11y/core/procedures</code>: Es braucht kein Dateisystem und erreicht keine der
+				Regeln, sodass eine Browser-Erweiterung oder eine eigene Seite sie anzeigen oder ein
+				Arbeitsblatt öffnen kann, mit den Wörterbüchern, die sie importiert:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"import { procedureChecklistFrom, renderProceduresFrom } from '@surea11y/core/procedures';",
+					"import en from '@surea11y/core/procedures/en';",
+					"import fr from '@surea11y/core/procedures/fr';",
+					"",
+					"const dictionaries = { en, fr };",
+					"const checklist = procedureChecklistFrom(dictionaries, { levels: ['A', 'AA'], locale: 'fr' });",
+					"const html = renderProceduresFrom(dictionaries, checklist);",
+					"window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })));",
+				]}
+			/>
+
 			<h2 id="what-a-scan-covers">Wissen, was ein Scan abdeckt</h2>
 			<p>
 				Ein Werkzeug, das nach WCAG-Kriterium berichtet und seine Nutzenden Prüfungen

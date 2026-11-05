@@ -301,6 +301,26 @@ export function KnownLimitationsContent() {
 					setzt; das verbirgt die Seite, teilt den Strukturregeln aber nicht mit, dass ein Dialog
 					offen ist.
 				</li>
+				<li id="framed-documents">
+					<strong>Ein in einem Frame angezeigtes Dokument wird nicht als eigene Seite beurteilt.</strong>{" "}
+					In einem Frame sind die Regeln zur Seite (<code>page-title-present</code>,{" "}
+					<code>page-title-patterns</code>, <code>html-lang-attr-present</code>,{" "}
+					<code>meta-viewport-zoom-enabled</code>, <code>meta-viewport-large</code>,{" "}
+					<code>page-has-heading-one</code>, <code>landmark-one-main</code>,{" "}
+					<code>bypass-blocks-present</code> und <code>region</code>){" "}
+					<code>notApplicable</code>: Die Seite um den Frame ist das, was den Titel, die Sprache und
+					die Landmarks hat, die Menschen nutzen, und ein Browser ignoriert das Viewport-
+					<code>&lt;meta&gt;</code> eines Dokuments in einem Frame. Ein Test-Runner, der die
+					getestete Seite in einem eigenen Frame anzeigt, setzt{" "}
+					<code>engineOptions.topLevelDocument: true</code>, damit diese Seite als die Seite beurteilt
+					wird (<a href="/getting-started/cypress/">@surea11y/cypress</a> tut das).{" "}
+					<code>runa11yCoreAcrossFrames</code> liest einen Frame unter{" "}
+					<code>aria-hidden="true"</code> als aria-hidden-Inhalt und einen unter <code>[inert]</code>{" "}
+					als inerten Inhalt, bei denen nur beurteilt wird, wie Inhalte aussehen, und lässt einen
+					Frame hinter einem offenen modalen Dialog weg; ein Binding, das Frames einzeln scannt,
+					setzt <code>embeddedAriaHidden</code> und <code>embeddedInert</code> selbst (siehe{" "}
+					<a href="/configuration/engine-options/">Engine-Optionen</a>). Ab core 1.15.0.
+				</li>
 				<li>
 					<strong>
 						<code>&lt;dialog&gt;</code> und andere Elemente, die das Standard-Stylesheet des
@@ -484,7 +504,12 @@ export function KnownLimitationsContent() {
 					Markup, das es meldet, bevor es irgendetwas fokussiert. Die Seite bleibt aber so, wie ihre
 					Skripte sie hinterlassen haben, daher kann ein zweiter Scan derselben Seite etwas anderes
 					finden: Wenn Sie eine Seite scannen, die Sie weiter benutzen, oder eine Seite zweimal
-					scannen, laden Sie sie dazwischen neu.
+					scannen, laden Sie sie dazwischen neu. Da der Abstand wieder entfernt wird, zeigt ein
+					Screenshot nach dem Scan Text, den <code>text-spacing-content-loss</code> abgeschnitten
+					fand, als passend; ein solcher Befund nennt den Zustand, in dem er entstand (
+					<code>data.details.evidenceState: 'text-spacing'</code>), und{" "}
+					<code>evidenceState()</code> aus <code>@surea11y/core</code> versetzt die Seite für das Bild
+					wieder in diesen Zustand, wie es <code>.screenshots()</code> der Bindings tut.
 				</li>
 				<li>
 					<strong>Ein Stylesheet von einem anderen Ursprung lässt sich von der Seite aus nicht

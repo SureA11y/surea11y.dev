@@ -130,8 +130,9 @@ const optionRows = [
 				Regel, deren Fehlschläge alle bereits bekannt
 				sind, wird zu{" "}
 				<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>, nicht zu
-				einem bestandenen Test: Sie hat nicht bestanden. Ein Eintrag, den 1.13 unter einem
-				Reason-Code geschrieben hat, der sich in 1.14 geändert hat, <a href="/conformance/baseline/#upgrading">passt weiterhin zum Befund unter
+				einem bestandenen Test: Sie hat nicht bestanden. Ein Eintrag, den das vorherige
+				Minor-Release unter einem Reason-Code geschrieben hat, der sich seitdem geändert hat,{" "}
+				<a href="/conformance/baseline/#upgrading">passt weiterhin zum Befund unter
 				seinem neuen Code</a>. Unter <code>leanFailAs: 'failure'</code> lässt auch ein Befund, der zu{" "}
 				<code>fail</code> tendiert und einen mit <code>lean: 'fail'</code> gekennzeichneten Eintrag
 				hat (<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>), den Build nicht
@@ -150,6 +151,21 @@ const optionRows = [
 				<code>leanFailAs: 'failure'</code> geben die wahrscheinlichen Fehler einer Pack-Regel die
 				Schritte ihres eigenen <code>meta.review</code> an, wie im{" "}
 				<a href="/results-reports/html-report/">HTML-Bericht</a>.
+			</>
+		),
+	},
+	{
+		id: "allowProfilesNotRun",
+		option: <code>allowProfilesNotRun</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				Ein Scan <a href="/configuration/engine-options/#several-profiles">mehrerer Profile</a>,
+				der weniger ausgeführt hat, als er angefordert hat (<code>engine.profilesNotRun</code>),
+				hat weniger gezählt, als von ihm verlangt war: Jedes nicht ausgeführte Profil ist ein{" "}
+				<code>&lt;error&gt;</code> in einer <code>Profiles</code>-Suite. <code>true</code> macht
+				daraus Skips. Ein anderer Wert als <code>true</code> oder <code>false</code> wirft einen{" "}
+				<code>TypeError</code>. Ab core 1.15.0.
 			</>
 		),
 	},
@@ -325,7 +341,9 @@ export function JunitReportContent() {
 				</li>
 				<li>
 					<code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
-					<code>profile</code>, <code>optInRules</code>, die Darstellungsbedingungen aus{" "}
+					<code>profile</code> (bei einem Scan mehrerer Profile das erste), <code>profiles</code> (nur
+					bei einem Scan mehrerer Profile: jedes Profil, das er ausgeführt hat, durch Kommas
+					getrennt), <code>optInRules</code>, die Darstellungsbedingungen aus{" "}
 					<a href="/results-reports/output-schema/">
 						<code>engine.environment</code>
 					</a>{" "}

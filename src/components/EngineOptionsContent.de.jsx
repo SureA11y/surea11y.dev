@@ -83,11 +83,13 @@ const optionRows = [
 		option: <code>profile</code>,
 		meaning: (
 			<>
-				Optionales benanntes Konformitätsziel: <code>'wcag22-aa'</code>,{" "}
-				<code>'en301549-v4.1.1'</code>, <code>'en301549-v3.2.1'</code>,{" "}
-				<code>'section508'</code> oder das eines Packs. Wählt Regeln über das passende Tag-Set aus, wenn nichts anderes
+				Optionales benanntes Konformitätsziel: <code>'wcag22-a'</code>, <code>'wcag22-aa'</code>,{" "}
+				<code>'wcag22-aaa'</code>, <code>'en301549-v4.1.1'</code>, <code>'en301549-v3.2.1'</code>,{" "}
+				<code>'section508'</code> oder das eines Packs; oder eine Liste davon, für einen Scan
+				mehrerer Profile zugleich. Wählt Regeln über das passende Tag-Set aus, wenn nichts anderes
 				welche einschließt, und das WCAG-Ziel ergibt sich aus diesen Tags. Wird als{" "}
-				<code>engine.profile</code> zurückgemeldet, wenn es gewirkt hat; andernfalls mit einer
+				<code>engine.profile</code> zurückgemeldet, wenn es gewirkt hat (bei einer Liste das erste,
+				das gelaufen ist, mit allen in <code>engine.profiles</code>); andernfalls mit einer
 				Konsolenwarnung ignoriert. Siehe <a href="#conformance-profiles">„Konformitätsprofile“</a>{" "}
 				oben.
 			</>
@@ -212,7 +214,62 @@ const optionRows = [
 				allein nicht erkennen kann: ein Scan-Ziel, das das <em>ganze</em> übergebene Dokument
 				ist, aber nie eine echte Seite darstellen sollte (z. B. ein für sich allein geparstes
 				Komponenten-Snippet). Damit gilt dieselbe <code>notApplicable</code>-Sperre auch ohne
-				Eingrenzung.
+				Eingrenzung. Ein in einem Frame angezeigtes Dokument ist ebenfalls keine eigene Seite:{" "}
+				<code>page-title-present</code>, <code>page-title-patterns</code>,{" "}
+				<code>html-lang-attr-present</code>, <code>meta-viewport-zoom-enabled</code>,{" "}
+				<code>meta-viewport-large</code>, <code>region</code>, <code>bypass-blocks-present</code>,{" "}
+				<code>landmark-one-main</code> und <code>page-has-heading-one</code> sind darin{" "}
+				<code>notApplicable</code>, was auch immer diese Option sagt, außer{" "}
+				<code>topLevelDocument: true</code> (unten) sagt, dass es die Seite ist. Ab core 1.15.0.
+			</>
+		),
+	},
+	{
+		id: "embeddedAriaHidden",
+		option: <code>embeddedAriaHidden</code>,
+		meaning: (
+			<>
+				Standard <code>false</code>. <code>true</code> sagt, dass das Dokument in einem Frame unter{" "}
+				<code>aria-hidden="true"</code> angezeigt wird (am <code>&lt;iframe&gt;</code> oder an einem
+				Element darum): Jedes Element wird so gelesen wie aria-hidden-Inhalt, außerhalb des
+				Accessibility Tree, abgesehen von dem, was das aufhebt. Regeln zu Namen und Rollen
+				(<code>img-alt-present</code>, <code>button-name-present</code>, …) gelten dann nicht,
+				die zu dem, was gesehen und bedient wird (Kontrast, Fokus, Tastatur), weiterhin.{" "}
+				<code>runa11yCoreAcrossFrames</code> setzt sie für einen solchen Frame, und ein Binding,
+				das Frames selbst scannt, setzt sie in den <code>engineOptions</code> dieses Frames. Der
+				Fokus, den ein solcher Frame erhält, ist der Befund <code>aria-hidden-focus</code> der
+				obersten Seite am <code>&lt;iframe&gt;</code>. Ab core 1.15.0.
+			</>
+		),
+	},
+	{
+		id: "embeddedInert",
+		option: <code>embeddedInert</code>,
+		meaning: (
+			<>
+				Standard <code>false</code>. <code>true</code> sagt, dass das Dokument in einem Frame unter{" "}
+				<code>[inert]</code> angezeigt wird: Jedes Element wird so gelesen wie inerter Inhalt,
+				außerhalb des Accessibility Tree und ohne Fokus anzunehmen, sodass nur die Regeln dazu, wie
+				Inhalte aussehen (Kontrast, Textabstände), es beurteilen.{" "}
+				<code>runa11yCoreAcrossFrames</code> setzt sie für einen solchen Frame und lässt einen Frame
+				hinter einem offenen modalen Dialog weg, so wie einen verborgenen; ein Binding, das Frames
+				selbst scannt, tut dasselbe. Ab core 1.15.0.
+			</>
+		),
+	},
+	{
+		id: "topLevelDocument",
+		option: <code>topLevelDocument</code>,
+		meaning: (
+			<>
+				Standardmäßig nicht gesetzt: ob das Dokument eine eigene Seite ist. Nicht gesetzt ist es
+				das, wenn es das Dokument des obersten Fensters ist: Ein in einem Frame angezeigtes Dokument
+				ist keine eigene Seite, und die neun Regeln zur Seite, die die Zeile <code>fragment</code>{" "}
+				nennt, sind darin <code>notApplicable</code>. Ein Test-Runner, der die getestete Seite in
+				einem eigenen Frame anzeigt, wie Cypress, setzt sie auf <code>true</code>{" "}
+				(<code>@surea11y/cypress</code> erledigt das für Sie); <code>false</code> liest ein
+				Dokument der obersten Ebene wie das eines Frames. <code>runa11yCoreAcrossFrames</code>{" "}
+				gibt sie nicht an die Frames weiter, die es scannt. Ab core 1.15.0.
 			</>
 		),
 	},
@@ -729,6 +786,17 @@ export function EngineOptionsContent() {
 				]}
 				rows={[
 					{
+						profile: <code>wcag22-a</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag21a</code>, <code>wcag22a</code>
+							</>
+						),
+						target: "2.2",
+						wcagTarget: <code>{"{ version: '2.2', level: 'A' }"}</code>,
+						why: "WCAG 2.2 Stufe A",
+					},
+					{
 						profile: <code>wcag22-aa</code>,
 						tags: (
 							<>
@@ -739,6 +807,18 @@ export function EngineOptionsContent() {
 						target: "2.2",
 						wcagTarget: <code>{"{ version: '2.2', level: 'AA' }"}</code>,
 						why: "WCAG 2.2 Stufe A und AA",
+					},
+					{
+						profile: <code>wcag22-aaa</code>,
+						tags: (
+							<>
+								die Tags von <code>wcag22-aa</code> und <code>wcag2aaa</code>, <code>wcag21aaa</code>,{" "}
+								<code>wcag22aaa</code>
+							</>
+						),
+						target: "2.2",
+						wcagTarget: <code>{"{ version: '2.2', level: 'AAA' }"}</code>,
+						why: "WCAG 2.2 Stufe A, AA und AAA",
 					},
 					{
 						profile: <code>en301549-v4.1.1</code>,
@@ -778,8 +858,12 @@ export function EngineOptionsContent() {
 			<p>
 				<code>getProfileWcagTarget(profile)</code> liefert das <code>runOnly.wcag</code>-Ziel, auf
 				das das Tag-Set eines Profils hinausläuft, oder <code>null</code> für einen Namen, der kein
-				Profil ist. Ein Profil wählt weiterhin über seine Tags aus, wie in der Tabelle: Unter{" "}
-				<code>wcag22-aa</code> läuft <code>duplicate-id</code> (4.1.1) und kann kein{" "}
+				Profil ist. Jede WCAG-Stufe schließt die darunter ein, wie es die Stufen von WCAG tun:{" "}
+				<code>wcag22-aaa</code> führt jede Regel von <code>wcag22-aa</code> aus und fügt die der
+				Stufe AAA hinzu, ein Scan nennt also eine Stufe, nicht mehrere. <code>wcag22-a</code> und{" "}
+				<code>wcag22-aaa</code> sind neu in core 1.15.0. Ein Profil wählt weiterhin über seine Tags
+				aus, wie in der Tabelle: Unter <code>wcag22-aa</code> (und <code>wcag22-a</code> und{" "}
+				<code>wcag22-aaa</code>) läuft <code>duplicate-id</code> (4.1.1) und kann kein{" "}
 				<code>fail</code> ergeben, während{" "}
 				<code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code> die Regel weglässt.
 			</p>
@@ -796,6 +880,44 @@ export function EngineOptionsContent() {
 			<p>
 				Die Norm oder Checkliste eines <a href="/configuration/packs/">Packs</a> bringt eigene
 				Profile in diese Liste ein.
+			</p>
+			<h4 id="several-profiles">Mehrere Profile zugleich</h4>
+			<p>
+				<code>profile</code> nimmt auch eine Liste, mit den Packs, die sie mitbringen, in{" "}
+				<code>packs</code>: Ein Scan beurteilt die Seite dann nach WCAG und nach WAI-ARIA, nach
+				EN 301 549 und Ihrer eigenen Richtlinie oder nach zwei Versionen eines Standards, während Sie
+				von der einen zur anderen wechseln. Jedes Profil beurteilt die Seite so, wie es ein Scan nur
+				mit ihm täte, und das Ergebnis liest sich wie ein einziges Profil mit den Regeln aller: Das{" "}
+				<code>outcome</code> einer Prüfung ist das schlechteste, das ihre Profile ihr geben, und die{" "}
+				<code>verdicts</code> jedes Befunds sagen, was jedes Profil daraus macht (
+				<a href="/results-reports/output-schema/#several-profiles">Ausgabeschema</a>). Ab core
+				1.15.0.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"const result = runDomRulesInPage(url, null, {",
+					"  packs: [waiAria],",
+					"  profile: ['wcag22-aa', 'wai-aria-1.2']",
+					"});",
+					"// <div role=\"group\" aria-checked=\"true\">: an attribute the role doesn't",
+					"// support, a question for WCAG 4.1.2 and a failure of WAI-ARIA.",
+					"result.checksResults.find((c) => c.ruleId === 'aria-allowed-attr').verdicts;",
+					"// { 'wcag22-aa': 'cantTell', 'wai-aria-1.2': 'fail' }",
+				]}
+			/>
+			<p>
+				Jedes Profil wird nacheinander gescannt, auf derselben Seite, der Scan dauert also etwa so
+				lange wie einer pro Profil. Ein Profil, das nicht greift (kein solches Profil, sein Pack
+				übersprungen oder ein <code>runOnly</code>-Include, das stattdessen die Regeln wählt), steht
+				mit dem Grund in <code>engine.profilesNotRun</code>, und die anderen laufen trotzdem; SARIF,
+				JUnit, die CLI und die Test-Matcher behandeln einen solchen Scan als Fehler, da er weniger
+				beurteilt hat, als von ihm verlangt war. Eine Liste mit einem Eintrag ist dieser eine Name
+				und scannt genau wie bisher. Das{" "}
+				<a href="/configuration/packs/#wai-aria-pack">WAI-ARIA-Pack</a> ist der Fall, für den das
+				gebaut wurde.
 			</p>
 			<p>
 				Das WCAG-Ziel ergibt sich aus den Tags wie bei einem von Hand geschriebenen Set (siehe{" "}
@@ -1514,13 +1636,16 @@ export function EngineOptionsContent() {
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
 					"  wcagLevel: 'AA',                 // optional — the level of the criteria reported",
-					"  profile: 'wcag22-aa',            // optional — a named conformance target",
+					"  profile: 'wcag22-aa',            // optional — a named conformance target, or a list of them",
 					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
 					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
 					"  messages: { de: { /* key: text */ } },  // optional caller-supplied dictionaries; win over built-in ones",
 					"  includeHiddenElements: false,    // default false — set true to evaluate hidden/collapsed subtrees too",
 					"  includeShadowDom: true,          // default true — opt OUT with false to skip open shadow roots",
 					"  fragment: false,                 // default false — set true when the scan target isn't a real page",
+					"  embeddedAriaHidden: false,       // default false — a frame's document shown under aria-hidden=\"true\"",
+					"  embeddedInert: false,            // default false — a frame's document shown under [inert]",
+					"  topLevelDocument: true,          // optional — unset, a document shown in a frame is no page of its own",
 					"  excludeSelectors: ['#cookie-banner', '.third-party-widget'],  // array or comma-separated string",
 					"  styleSheetTexts: [{ href: 'https://cdn.example/site.css', text: '/* its CSS */' }],  // sheets the page can't read",
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
