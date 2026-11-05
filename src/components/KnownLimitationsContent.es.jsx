@@ -300,6 +300,27 @@ export function KnownLimitationsContent() {
 					<code>inert</code> o el <code>aria-hidden</code> que la página pone en el resto, que
 					ocultan la página pero no indican a las reglas de estructura que hay un diálogo abierto.
 				</li>
+				<li id="framed-documents">
+					<strong>Un documento mostrado en un frame no se juzga como una página propia.</strong> En
+					un frame, las reglas sobre la página (<code>page-title-present</code>,{" "}
+					<code>page-title-patterns</code>, <code>html-lang-attr-present</code>,{" "}
+					<code>meta-viewport-zoom-enabled</code>, <code>meta-viewport-large</code>,{" "}
+					<code>page-has-heading-one</code>, <code>landmark-one-main</code>,{" "}
+					<code>bypass-blocks-present</code> y <code>region</code>) son{" "}
+					<code>notApplicable</code>: la página que rodea el frame es la que tiene el título, el
+					idioma y las regiones de referencia que usan las personas, y un navegador ignora el{" "}
+					<code>&lt;meta&gt;</code> viewport de un documento en un frame. Un ejecutor de pruebas que
+					muestra la página bajo prueba en un frame propio establece{" "}
+					<code>engineOptions.topLevelDocument: true</code>, para que esa página se juzgue como la
+					página (<a href="/getting-started/cypress/">@surea11y/cypress</a> lo hace).{" "}
+					<code>runa11yCoreAcrossFrames</code> lee un frame bajo <code>aria-hidden="true"</code>{" "}
+					como contenido aria-hidden y uno bajo <code>[inert]</code> como contenido inerte, en los
+					que solo se juzga cómo se ve el contenido, y deja fuera un frame tras un diálogo modal
+					abierto; un binding que analiza los frames uno a uno establece él mismo{" "}
+					<code>embeddedAriaHidden</code> y <code>embeddedInert</code> (ver{" "}
+					<a href="/configuration/engine-options/">Opciones del motor</a>). Core 1.15.0 y
+					posteriores.
+				</li>
 				<li>
 					<strong>
 						<code>&lt;dialog&gt;</code> y otros elementos ocultos por la hoja de estilos
@@ -484,7 +505,13 @@ export function KnownLimitationsContent() {
 					<code>aria-hidden-focus</code> lee qué subárboles están ocultos, y el marcado que informa,
 					antes de enfocar nada. Pero la página queda como la dejaron sus scripts, así que un segundo
 					análisis de la misma página puede encontrar otra cosa: si analizas una página que sigues
-					usando, o analizas una página dos veces, recárgala entre medias.
+					usando, o analizas una página dos veces, recárgala entre medias. Como el espaciado se
+					vuelve a quitar, una captura de pantalla hecha tras el análisis muestra como si cupiera el
+					texto que <code>text-spacing-content-loss</code> encontró cortado; ese hallazgo nombra el
+					estado en que se hizo (
+					<code>data.details.evidenceState: 'text-spacing'</code>), y{" "}
+					<code>evidenceState()</code> de <code>@surea11y/core</code> vuelve a poner la página en ese
+					estado para la imagen, como hacen los <code>.screenshots()</code> de los bindings.
 				</li>
 				<li>
 					<strong>Una hoja de estilo de otro origen no se puede leer desde la página.</strong> El

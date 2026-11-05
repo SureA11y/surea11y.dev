@@ -4,6 +4,26 @@ import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
 const pack = "https://github.com/SureA11y/pack-en301549#readme";
+const ariaPack = "https://github.com/SureA11y/pack-wai-aria";
+const aria = "https://www.w3.org/TR/wai-aria-1.2/";
+
+const ariaRequirementRows = [
+	{ id: "name-required", req: <code>name-required</code>, title: <a href={`${aria}#namecalculation`}>Los roles que requieren un nombre accesible lo tienen</a> },
+	{ id: "roles", req: <code>roles</code>, title: <a href={`${aria}#roles`}>Los roles son concretos y vigentes</a> },
+	{ id: "required-states", req: <code>required-states</code>, title: <a href={`${aria}#requiredState`}>Los estados y propiedades requeridos están presentes</a> },
+	{ id: "supported-attributes", req: <code>supported-attributes</code>, title: <a href={`${aria}#supportedState`}>El rol admite los estados y propiedades</a> },
+	{ id: "prohibited-attributes", req: <code>prohibited-attributes</code>, title: <a href={`${aria}#prohibitedattributes`}>Los estados y propiedades prohibidos están ausentes</a> },
+	{ id: "attribute-values", req: <code>attribute-values</code>, title: <a href={`${aria}#propcharacteristic_value`}>Los estados y propiedades tienen valores válidos</a> },
+	{ id: "owned-elements", req: <code>owned-elements</code>, title: <a href={`${aria}#mustContain`}>Los contenedores poseen los elementos que requiere su rol, cada uno con un solo propietario</a> },
+	{ id: "context-roles", req: <code>context-roles</code>, title: <a href={`${aria}#scope`}>Los elementos están en el contexto que requiere su rol</a> },
+];
+
+const procedureFormRows = [
+	{ id: "restates", form: <code>{"{ wcag: '1.1.1' }"}</code>, means: "Reformula un criterio de WCAG, y toma las facetas, reglas y procedimientos de ese criterio tal como son, en todos los idiomas en que core los tiene." },
+	{ id: "replace", form: <code>{"{ wcag: '1.4.3', replace: { <facet>: { … } } }"}</code>, means: "Reformula un criterio pero prueba una parte a su manera: las facetas que nombra muestran su procedimiento en lugar del de core." },
+	{ id: "own", form: <code>{"{ facets: [ … ] }"}</code>, means: "Es propio del estándar: los objetivos de prueba que comprueba una persona, cada uno con su procedimiento." },
+	{ id: "note", form: <code>{"{ note: '…' }"}</code>, means: "No tiene nada que evaluar, como una cláusula que una versión deja sin efecto: figura con su nota, para que quien la busque sepa por qué." },
+];
 
 // The example pack each binding ships as examples/acme-policy-pack.js.
 const examplePack = [
@@ -84,7 +104,8 @@ const fileRows = [
 	{ id: "examples", file: <code>docs/RULE_EXAMPLES.md</code>, what: "Ejemplos de los resultados de cada regla." },
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Las reglas de lint de core para reglas." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Solo para un estándar: los requisitos y las reglas que comprueban cada uno." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, con <code>@surea11y/core</code> como dependencia peer en la versión que lo escribió (<code>^1.14.2</code>), y eslint, jsdom y Playwright como dependencias de desarrollo.</> },
+	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Solo para un estándar: cómo evalúa una persona a mano cada requisito, y una prueba de que cada requisito tiene un procedimiento para cada una de sus facetas." },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, con <code>@surea11y/core</code> como dependencia peer en la versión que lo escribió (<code>^1.15.0</code>), y eslint, jsdom y Playwright como dependencias de desarrollo.</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "La guía del propio pack sobre estos archivos, y lo que git deja fuera." },
 ];
 
@@ -110,7 +131,8 @@ export function PacksContent() {
 				propias reglas y estándares de core: en Node y en un navegador, desde la CLI, las
 				integraciones y los test matchers, con resultados, resultados agregados y entradas de informe
 				con el mismo formato que las de core. Los packs necesitan <code>@surea11y/core</code> 1.11.1 o
-				posterior.
+				posterior. Hay dos packs de estándar de la familia SureA11y listos para instalar:{" "}
+				<a href="#en-301-549-pack">EN 301 549</a> y <a href="#wai-aria-pack">WAI-ARIA 1.2</a>.
 			</p>
 
 			<h2 id="which-kind-of-pack">Qué tipo de pack</h2>
@@ -155,6 +177,18 @@ export function PacksContent() {
 				primeras reglas (<code>image-of-text</code>, <code>invalid-field-error-message</code>,{" "}
 				<code>live-region-announcements</code>). Con core 1.13 se comporta como sus versiones 1.0.
 			</p>
+			<p>
+				Su versión 1.2.0, con core 1.15.0 o posterior, dice además cómo comprueba una persona a
+				mano cada cláusula: los <a href="/conformance/procedures/">procedimientos</a> del criterio
+				de WCAG que reformula, cuando lo evalúa una regla de core, leídos como la cláusula («which
+				fails EN 301 549 9.1.4.3»). Enumera las cláusulas en el orden propio del estándar, bajo los
+				principios y pautas del capítulo 9, y el estándar está traducido al francés, al alemán, al
+				español y al japonés, así que una lista o una hoja de trabajo de sus procedimientos, y los
+				títulos de cláusula de un análisis, se leen en esos idiomas de principio a fin. El capítulo
+				9 es todo lo que cubre el pack: los demás requisitos del estándar (las declaraciones de
+				prestaciones funcionales del capítulo 4, el capítulo 12, los capítulos sobre lo que no es
+				una página web) no tienen en él ninguna regla, resultado ni procedimiento.
+			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -182,6 +216,110 @@ export function PacksContent() {
 				pack (ver <a href="/conformance/wcag-mapping/#en-301-549">Mapeo de conformidad con WCAG</a>).
 				Como cualquier perfil, los del pack eligen qué se ejecuta: una declaración de conformidad
 				sigue necesitando que una persona revise cada cláusula.
+			</p>
+
+			<h2 id="wai-aria-pack">El pack de WAI-ARIA</h2>
+			<p>
+				<a href={ariaPack}><code>@surea11y/pack-wai-aria</code></a> es WAI-ARIA 1.2 como estándar:
+				un resultado por cada requisito de autoría que las reglas pueden comprobar, a partir de las
+				reglas ARIA de core juzgadas según la propia redacción de WAI-ARIA. Su perfil,{" "}
+				<code>wai-aria-1.2</code>, ejecuta las reglas ARIA de core y las propias del pack, y nada
+				más. Necesita <code>@surea11y/core</code> 1.15.0 o posterior.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// npm install @surea11y/core @surea11y/pack-wai-aria",
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"runDomRulesInPage(url, null, { packs: [waiAria], profile: 'wai-aria-1.2' });",
+				]}
+			/>
+			<p>
+				<strong>Por qué un estándar propio.</strong> Las reglas ARIA de core son reglas de WCAG, y
+				un análisis de WCAG informa de cada infracción de WAI-ARIA que encuentran, como un fallo de
+				WCAG o como una pregunta para una persona. Las dos cosas pueden diferir: un{" "}
+				<code>role="grid"</code> sin nombre incumple con certeza el «Accessible Name Required» de
+				WAI-ARIA, pero si falla el 4.1.2 de WCAG depende de lo que muestra la página, así que WCAG
+				pregunta. Desde core 1.15.0 un análisis de WCAG falla solo donde WCAG falla (
+				<a href="/help/faq/#results-changed-1-15">qué cambió</a>); este pack lee los mismos
+				hallazgos según WAI-ARIA, donde la cuadrícula falla.
+			</p>
+			<DataTable
+				label="Requisitos de WAI-ARIA 1.2 en el pack"
+				rowKey="id"
+				columns={[
+					{ key: "req", label: "Requisito", width: "30%" },
+					{ key: "title", label: "Título", wrap: true },
+				]}
+				rows={ariaRequirementRows}
+			/>
+			<p>
+				Cada uno es un resultado, <code>{"wai-aria-1.2-<requirement>"}</code>: <code>fail</code>{" "}
+				donde una regla encontró lo que WAI-ARIA dice que un autor MUST o MUST NOT hacer, y{" "}
+				<code>cantTell</code> en los demás casos, para un hallazgo que WAI-ARIA solo desaconseja
+				(SHOULD, «not recommended») o ningún hallazgo, ya que las reglas comprueban lo que declara
+				el marcado, no todo lo que cubre un requisito (lo que cambia un script, lo que calcula un
+				navegador). Un requisito nunca se cumple solo con las reglas. Además de las reglas de core,
+				el pack tiene once propias para requisitos que ninguna regla de core comprueba, porque no
+				tienen un impacto plausible en WCAG: el <code>aria-controls</code> de una barra de
+				desplazamiento, los artículos de un feed, el contexto de un caption, la ventana emergente
+				de un combobox, los elementos poseídos de un spinbutton, los índices de tabla,{" "}
+				<code>aria-setsize</code>, <code>aria-keyshortcuts</code>, los nombres de las barras de
+				herramientas, los elementos presentacionales y <code>wai-aria-role-name-present</code>, una
+				variante de <code>aria-role-name-present</code> de core que cubre todos los roles para los
+				que WAI-ARIA exige un nombre (application, marquee, table, tabpanel y treegrid además de
+				los de core). El texto propio del pack está en inglés.
+			</p>
+			<p>
+				<strong>Con WCAG, o con otro estándar.</strong> Un análisis puede juzgar la página con
+				WAI-ARIA y WCAG a la vez (<a href="#with-other-profiles">más abajo</a>), o con EN 301 549 y
+				WAI-ARIA con ambos packs:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = runDomRulesInPage(url, null, {",
+					"  packs: [waiAria],",
+					"  profile: ['wcag22-aa', 'wai-aria-1.2']",
+					"});",
+					"",
+					"// <div role=\"group\" aria-checked=\"true\">: an attribute the role doesn't",
+					"// support, a question for WCAG 4.1.2 and a failure of WAI-ARIA.",
+					"const check = result.checksResults.find((c) => c.ruleId === 'aria-allowed-attr');",
+					"check.verdicts;     // { 'wcag22-aa': 'cantTell', 'wai-aria-1.2': 'fail' }",
+					"check.outcome;      // 'fail', the worst of them, which SARIF and JUnit gate on",
+					"check.checkOutcome; // 'cantTell', the rule's own, which WCAG's criteria read",
+					"",
+					"result.profiles['wai-aria-1.2'].rulesResults; // this standard's results, by id",
+				]}
+			/>
+			<p>
+				Una regla que ejecutan ambos perfiles es una sola comprobación con un veredicto de cada uno.
+				Los nombres son la excepción: con <code>wai-aria-1.2</code> los comprueba la variante del
+				pack, así que un <code>role="grid"</code> sin nombre son dos comprobaciones, la{" "}
+				<code>aria-role-name-present</code> de core (
+				<code>{"{ 'wcag22-aa': 'cantTell' }"}</code>) y la variante (
+				<code>{"{ 'wai-aria-1.2': 'fail' }"}</code>).
+			</p>
+			<p>
+				<strong>Cómo responde una persona a una pregunta.</strong> Con <code>wai-aria-1.2</code>,
+				los pasos de las preguntas de core que hace este estándar están en las palabras de WAI-ARIA
+				y nombran lo que encontró el hallazgo («When the page was scanned, the element it controls
+				had role dialog»); un análisis que ejecuta también un perfil de WCAG conserva los pasos de
+				core, que nombran el criterio de WCAG.{" "}
+				<code>{"proceduresFor('name-required', { packs: [waiAria], standard: 'wai-aria' })"}</code>{" "}
+				da la lista de comprobación de cada requisito, con los roles, estados y valores válidos
+				enumerados por completo, a partir de las tablas de la Recomendación. El{" "}
+				<code>docs/COVERAGE.md</code> del pack enumera cada requisito de autoría de WAI-ARIA 1.2 que
+				una regla puede comprobar a partir del marcado, un caso por rol, estado o propiedad, y qué
+				hace el perfil de cada uno.
+			</p>
+			<p>
+				Es también el ejemplo completo de un estándar que tiene certeza donde WCAG pregunta:{" "}
+				<code>rule-map.js</code> enumera, para cada una de las reglas ARIA de core, qué significa
+				cada código de motivo según WAI-ARIA, con <code>outcome: 'fail'</code> para un MUST (ver{" "}
+				<a href="#sending-findings-to-requirements">Enviar hallazgos a requisitos</a>).
 			</p>
 
 			<h2 id="using-a-pack">Usar un pack</h2>
@@ -344,6 +482,33 @@ export function PacksContent() {
 				versiones, así que genera de nuevo ese archivo para cada versión de core o del pack.
 			</p>
 
+			<h3 id="with-other-profiles">Junto a otros perfiles</h3>
+			<p>
+				El perfil de un pack puede ejecutarse junto al de WCAG, o junto al de otro pack, en un solo
+				análisis: desde core 1.15.0, <code>profile</code> acepta una lista, y cada perfil juzga la
+				página como lo haría por sí solo (ver{" "}
+				<a href="/configuration/engine-options/#several-profiles">Opciones del motor</a>):
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = runDomRulesInPage(url, null, {",
+					"  packs: [acmePolicy, en301549],",
+					"  profile: ['acme-web-2026', 'en301549-v4.1.1']",
+					"});",
+					"result.engine.profiles; // ['acme-web-2026', 'en301549-v4.1.1']",
+					"result.profiles['acme-web-2026'].rulesResults; // the policy's items, by id",
+				]}
+			/>
+			<p>
+				Un hallazgo del que un estándar tiene certeza donde WCAG pregunta (<code>outcome: 'fail'</code>{" "}
+				en su mapa de reglas) hace fallar el análisis, y sus <code>verdicts</code> dicen qué hace de
+				él cada perfil. Un perfil cuyo pack se omite figura en <code>engine.profilesNotRun</code>, y
+				los demás se siguen ejecutando. Las integraciones aceptan la lista en{" "}
+				<code>.options({"{ profile }"})</code>, los test matchers en sus opciones y la CLI como un{" "}
+				<code>--profile</code> repetido.
+			</p>
+
 			<h2 id="what-a-scan-reports">Qué informa un análisis</h2>
 			<ul>
 				<li>
@@ -375,6 +540,17 @@ export function PacksContent() {
 				<li>
 					La gravedad definida por un perfil (<code>severity</code>) aparece en los resultados que
 					cambia, y la gravedad propia de la regla se conserva como <code>ruleSeverity</code>.
+				</li>
+				<li>
+					En un análisis de varios perfiles, <code>engine.profiles</code> enumera los que se
+					ejecutaron, <code>profiles[id]</code> contiene los resultados agregados de cada uno, y los{" "}
+					<code>verdicts</code> de cada hallazgo dicen qué hace de él cada perfil (
+					<a href="/results-reports/output-schema/#several-profiles">Esquema de salida</a>).
+				</li>
+				<li>
+					«Lo que queda para una persona» en el informe HTML sigue el estándar del pack, con su
+					propia numeración, cuando el análisis ejecutó su perfil y el estándar da{" "}
+					<a href="#procedures">procedimientos</a>.
 				</li>
 			</ul>
 
@@ -497,11 +673,13 @@ export function PacksContent() {
 					packs nuevos en 1.11.1: el paquete 1.11.0 omitía un archivo que los packs necesitan en
 					Node. Un análisis
 					con un core fuera de él omite el pack, con el motivo en <code>skippedPacks</code>.{" "}
-					<code>surea11y-pack new</code> escribe la versión que generó el pack (<code>^1.14.2</code>);
+					<code>surea11y-pack new</code> escribe la versión que generó el pack (<code>^1.15.0</code>);
 					mantén un rango que empiece en 1.14 si el pack usa lo que añadió la 1.14:{" "}
 					<code>meta.review</code>, filas con <code>reasonCodes</code> y <code>findings</code>,{" "}
 					<code>meta.contributions</code>, <code>applicability</code>, <code>partial</code> o{" "}
-					<code>keepsParsing</code>.
+					<code>keepsParsing</code>; y uno que empiece en 1.15 si usa{" "}
+					<code>outcome: 'fail'</code>. Lo demás que lee la 1.15 (los procedimientos, grupos y
+					traducciones de un estándar, sus propios pasos de revisión) lo ignora un core anterior.
 				</li>
 				<li>
 					<strong><code>title</code></strong> es como los resultados y los informes llaman a una
@@ -598,10 +776,12 @@ export function PacksContent() {
 				La fila de una regla en <code>rule-map.js</code> puede enviar a otro sitio sus hallazgos de
 				un código de motivo, con <code>{"reasonCodes: { [code]: { requirements, outcome } }"}</code>:{" "}
 				<code>requirements</code> (por defecto, los de la fila) son aquellos a los que cuentan esos
-				hallazgos, <code>[]</code> para ninguno, y <code>outcome: 'cantTell'</code> convierte uno
-				que falla en una pregunta ahí. El resultado agregado de un requisito juzga entonces la regla
-				por los hallazgos que cuentan para él, así que un estándar puede preguntar por una causa
-				donde WCAG la falla, o archivar dos causas en dos pruebas:
+				hallazgos, <code>[]</code> para ninguno; <code>outcome: 'cantTell'</code> convierte uno que
+				falla en una pregunta ahí, y <code>outcome: 'fail'</code> (core 1.15.0 y posteriores)
+				convierte una pregunta en un fallo ahí. El resultado agregado de un requisito juzga
+				entonces la regla por los hallazgos que cuentan para él, así que un estándar puede preguntar
+				por una causa donde WCAG la falla, tener certeza de una donde WCAG pregunta, o archivar dos
+				causas en dos pruebas:
 			</p>
 			<CodeBlock
 				lang="js"
@@ -612,6 +792,28 @@ export function PacksContent() {
 					"}",
 				]}
 			/>
+			<p>
+				<code>outcome: 'fail'</code> es para un estándar que tiene certeza donde WCAG pregunta. Un{" "}
+				<code>role="grid"</code> sin nombre es <code>cantTell</code> para WCAG, cuyo 4.1.2 depende de
+				lo que muestra la página, pero incumple con certeza el «Accessible Name Required» de
+				WAI-ARIA, como dice el <a href="#wai-aria-pack">pack de WAI-ARIA</a>:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'aria-role-name-present': {",
+					"  requirements: ['name-required'],",
+					"  reasonCodes: { name_missing: { outcome: 'fail' } }",
+					"}",
+				]}
+			/>
+			<p>
+				Solo hace fallar el requisito del estándar: el resultado propio de la comprobación, y cada
+				resultado agregado de WCAG, quedan como estaban. Enumera solo los códigos que el estándar
+				declara con certeza; un código que se deja fuera se juzga según el resultado propio de la
+				regla. Un estándar que escribe sus propios resultados agregados usa del mismo modo el acto{" "}
+				<code>'fail'</code> en <code>meta.contributions</code>.
+			</p>
 			<p>
 				Una fila también puede enviar hallazgos según lo que registran, con{" "}
 				<code>{"findings: [{ when, requirements, outcome }]"}</code>: <code>when</code> da valores
@@ -716,13 +918,110 @@ export function PacksContent() {
 				<code>failWhen</code> no vacíos por código de motivo. Una regla que declara sus códigos de
 				motivo en <code>meta.reasonCodes</code> (<code>['GENERIC_LINK_NAME']</code>) da pasos solo
 				para un código que declara ahí o que nombra en su <code>runInPage</code>, así que se rechaza
-				un código mal escrito: declararlos vale la pena por esa comprobación. Los pasos están en
-				inglés, sea cual sea la configuración regional del análisis, y no entran en la página:{" "}
+				un código mal escrito: declararlos vale la pena por esa comprobación. Los pasos se
+				escriben en inglés (los diccionarios de un pack pueden traducirlos, ver más abajo), y no
+				entran en la página:{" "}
 				<code>runDomRulesInPage</code> con <code>engineOptions.packs</code> los añade al resultado,
 				y para un resultado obtenido en una página lo hace{" "}
 				<code>{"addHowToCheck(result, { packs })"}</code>. Una variante tiene los pasos de su regla
 				de core, traducidos, así que no necesita ninguno; una sustitución, como una regla
 				personalizada, no tiene ninguno. Core 1.14.0 y posteriores.
+			</p>
+			<p>
+				Desde core 1.15.0, los diccionarios de un pack pueden traducir sus pasos (
+				<a href="#messages">más abajo</a>), y un paso puede nombrar lo que encontró el hallazgo:{" "}
+				<code>{"{{role|none}}"}</code> se lee como el <code>role</code> del hallazgo, de sus{" "}
+				<code>i18n.params</code> o <code>data.details</code>, y como <code>none</code> donde no hay
+				hallazgo, en una página de procedimientos. <code>definePack</code> rechaza un marcador sin
+				su texto.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"meta.review = {",
+					"  PRESENTATIONAL_ATTRIBUTE_UNSUPPORTED: {",
+					"    steps: ['Find the element the report names, and read its {{attributes|aria-* attributes}}.'],",
+					"    passWhen: 'The element is only for layout, and {{attributes|the attribute}} can be removed.',",
+					"    failWhen: 'The element stands for a control, which role {{role|none}} hides.'",
+					"  }",
+					"};",
+				]}
+			/>
+			<p>
+				Una regla dice qué facetas de un criterio prueba en <code>meta.coverage.facetsBySc</code>{" "}
+				(<code>{"{ '2.4.4': ['link-text-descriptive-evidence'] }"}</code>), y sus pasos se unen
+				entonces a los <a href="/conformance/procedures/">procedimientos</a> de ese criterio como lo
+				hacen los de core. Un estándar que juzga las reglas de core por código de motivo también
+				puede dar sus propios pasos para un código de una regla de core, en{" "}
+				<code>standard.review</code>: un hallazgo por el que solo preguntan sus perfiles los lee en
+				lugar de los de core, que nombran WCAG.
+			</p>
+
+			<h3 id="procedures">Cómo lo evalúa una persona: procedimientos</h3>
+			<p>
+				Core dice cómo evalúa una persona a mano cada criterio de WCAG que evalúan sus reglas,
+				faceta por faceta (ver <a href="/conformance/procedures/">Procedimientos de prueba</a>).
+				Desde core 1.15.0 un pack de estándar da lo mismo para sus propios requisitos, en{" "}
+				<code>standard.procedures</code>, por versión y requisito, cada uno con su{" "}
+				<code>title</code>, en una de cuatro formas:
+			</p>
+			<DataTable
+				label="Formas de los procedimientos de un requisito"
+				rowKey="id"
+				columns={[
+					{ key: "form", label: "Forma", width: "38%", wrap: true },
+					{ key: "means", label: "Qué significa", wrap: true },
+				]}
+				rows={procedureFormRows}
+			/>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"standard: {",
+					"  // ...",
+					"  procedures: {",
+					"    '1.0': {",
+					"      '4.2': { title: 'Images have a text alternative', wcag: '1.1.1' },",
+					"      '7.1': {",
+					"        title: 'Every form has a text version',",
+					"        facets: [{",
+					"          id: 'text-version',",
+					"          label: 'Each form can be had as a text document',",
+					"          automation: 'manual',              // full, partial or manual (the default)",
+					"          tools: ['keyboard'],               // keyboard, pointer, screen-reader, zoom, contrast-theme, devtools",
+					"          steps: ['Find each form on the page.', 'Look next to it for a link to a text version.'],",
+					"          passWhen: 'Every form has a text version.',",
+					"          failWhen: 'A form has no text version, which fails {{requirement}}.'",
+					"        }]",
+					"      }",
+					"    }",
+					"  }",
+					"}",
+				]}
+			/>
+			<p>
+				Escribe un procedimiento para toda la página y para alguien sin formación en
+				accesibilidad: de uno a ocho pasos breves en un navegador, con sus herramientas de
+				desarrollo, un teclado y, cuando importa, un lector de pantalla, y luego lo que ve si cumple
+				y si falla. <code>{"{{requirement}}"}</code> se rellena con el nombre del estándar y el
+				requisito como el que se lee («City Standard 7.1»).{" "}
+				<code>surea11y-pack new --kind standard</code> escribe <code>procedures.js</code> con un
+				ejemplo de cada forma, y una prueba de que cada requisito de cada versión tiene un
+				procedimiento para cada una de sus facetas; un estándar que reformula WCAG uno a uno obtiene
+				la primera forma para cada requisito de <code>ruleMappedStandard</code>.
+			</p>
+			<p>
+				Un estándar también puede dar <code>groups</code> (sus temas o capítulos, por versión),{" "}
+				<code>relatesTo</code> en un requisito propio (los criterios de WCAG con los que se
+				relaciona sin reformularlos) y <code>notes</code> (lo que debe saber quien lee antes de usar
+				los procedimientos de una versión). Su propio texto está escrito en un idioma,{" "}
+				<code>lang</code>, inglés por defecto, y <code>translations</code> lo da en otros, con el
+				texto que traduce como clave, así que una traducción nunca sobrevive al texto del que se
+				hizo. Un estándar que declara sus idiomas se lee en uno de ellos de principio a fin,
+				incluidos los procedimientos de core, así que una página nunca mezcla dos;{" "}
+				<code>packTranslationCoverage(pack)</code> dice hasta dónde llega cada traducción. La{" "}
+				<a href={`${core}/docs/PACKS.md#how-a-person-assesses-it-procedures`}>guía de packs</a> de
+				core, en GitHub, tiene cada campo y lo que comprueba <code>definePack</code>.
 			</p>
 
 			<h3 id="messages">Mensajes e idiomas</h3>
@@ -733,6 +1032,28 @@ export function PacksContent() {
 				incluye un diccionario para el idioma solicitado, se muestran en inglés. Las
 				claves de un pack son propias y empiezan por su espacio de nombres: un pack no puede cambiar
 				un mensaje de core en un idioma que core incluye.
+			</p>
+			<p>
+				Desde core 1.15.0 los pasos de una regla se traducen del mismo modo, con las claves que
+				usan los pasos de core: el prefijo de la regla (su <code>titleKey</code> sin{" "}
+				<code>_title</code>), <code>_review_</code>, el código de motivo y luego{" "}
+				<code>{"step<n>"}</code>, <code>pass</code> o <code>fail</code>:
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={[
+					"{",
+					"  \"acmeLinkTextSpecific_review_GENERIC_LINK_NAME_step1\": \"Trouvez le lien que le rapport désigne.\",",
+					"  \"acmeLinkTextSpecific_review_GENERIC_LINK_NAME_pass\": \"Le texte autour du lien dit où il mène.\",",
+					"  \"acmeLinkTextSpecific_review_GENERIC_LINK_NAME_fail\": \"Rien près du lien ne dit où il mène, ce qui enfreint le critère 2.4.4 des WCAG.\"",
+					"}",
+				]}
+			/>
+			<p>
+				El <code>howToCheck</code> de un hallazgo y los procedimientos los muestran en esa
+				configuración regional, y en inglés cada texto que le falte. Para una configuración regional
+				que core no incluye (<code>pt</code>), el diccionario de un pack también puede dar las
+				claves de core, lo que traduce allí las reglas de core y sus procedimientos.
 			</p>
 
 			<h3 id="test-lint-document">Probarlo, pasarle el lint y documentarlo</h3>

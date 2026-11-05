@@ -112,11 +112,38 @@ const topLevelRows = [
 		meaning: (
 			<>
 				Presente solo cuando un <code>engineOptions.profile</code> seleccionó las reglas de esta
-				ejecución, y nombra el perfil en minúsculas. Ausente cuando no se pidió ninguno, y también
+				ejecución, y nombra el perfil en minúsculas (en un análisis de varios perfiles, el primero
+				que se ejecutó). Ausente cuando no se pidió ninguno, y también
 				cuando se pidió uno pero no se aplicó (nombre desconocido, o un include en{" "}
 				<code>runOnly</code> o <code>engineOptions</code> eligió las reglas en su lugar), así que su
 				presencia es cómo confirmas que una ejecución apuntó de verdad a ese perfil. Ver{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Perfiles de conformidad</a>.
+			</>
+		),
+	},
+	{
+		id: "engine.profiles",
+		field: <code>engine.profiles</code>,
+		meaning: (
+			<>
+				Solo en un análisis de varios perfiles (<code>engineOptions.profile</code> como lista): los
+				perfiles que se ejecutaron, en el orden pedido. <code>engine.profile</code> es entonces el
+				primero de ellos. Ver <a href="#several-profiles">Varios perfiles</a>.
+			</>
+		),
+	},
+	{
+		id: "engine.profilesNotRun",
+		field: <code>engine.profilesNotRun</code>,
+		meaning: (
+			<>
+				Solo en un análisis de varios perfiles, y solo cuando uno de ellos no se ejecutó:{" "}
+				<code>{"[{ profile, reason }]"}</code>, con <code>reason</code>{" "}
+				<code>unknown-profile</code> (no existe ese perfil), <code>pack-skipped</code> (su pack se
+				omitió, ver <code>skippedPacks</code>) u <code>overridden-by-selection</code> (un include en{" "}
+				<code>runOnly</code>, o ids o etiquetas de reglas en <code>engineOptions</code>, eligen las
+				reglas en su lugar, como lo harían para un perfil; lo hacen para el análisis de cada
+				perfil). El conjunto de motivos está abierto.
 			</>
 		),
 	},
@@ -561,9 +588,15 @@ const occurrenceRows = [
 				qué tipo de texto falló, y también lo son <code>element</code> en los hallazgos de{" "}
 				<code>list-children-valid</code>, <code>parentElement</code> en los de{" "}
 				<code>listitem-parent-valid</code> y <code>role</code> en los de{" "}
-				<code>aria-role-name-present</code>, que dicen qué tipo de lista o de widget falló. La
-				página de cada regla enumera los campos que llevan sus hallazgos, en “Qué informa un
-				hallazgo”.
+				<code>aria-role-name-present</code>, que dicen qué tipo de lista o de widget falló. También
+				lo es <code>data.details.evidenceState</code> (core 1.15.0 y posteriores): en un hallazgo
+				que solo se ve en un estado en que la regla puso la página y del que la sacó antes de que
+				el navegador pintara, nombra ese estado (<code>text-spacing</code>, en los hallazgos de{" "}
+				<code>text-spacing-content-loss</code> sobre texto cortado, superpuesto o con el
+				desplazamiento bloqueado), para que una herramienta pueda volver a poner la página en él
+				con <code>evidenceState()</code> y mostrar el hallazgo en imagen, como hacen los{" "}
+				<code>.screenshots()</code> de los bindings. La página de cada regla enumera los campos que
+				llevan sus hallazgos, en “Qué informa un hallazgo”.
 			</>
 		),
 	},
@@ -647,7 +680,9 @@ export function OutputSchemaContent() {
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
 					'    wcagLevel?: "A" | "AA" | "AAA",',
-'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+'    profile?: string,      // "wcag22-a", "wcag22-aa", "wcag22-aaa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a pack\'s own',
+					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
+					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
 					"    optInRules?: string[],",
@@ -680,7 +715,8 @@ export function OutputSchemaContent() {
 					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
 					"  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
-					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
+					"  skippedPacks?: Array<{ name: string | null, reason: string }>,",
+					"  profiles?: { [profile: string]: { wcagVersion, wcagLevel?, standards, rulesResults } }  // a scan of several profiles only",
 					"}",
 				]}
 			/>
@@ -692,6 +728,122 @@ export function OutputSchemaContent() {
 					{ key: "meaning", label: "Significado", wrap: true },
 				]}
 				rows={topLevelRows}
+			/>
+
+			<h2 id="several-profiles">Varios perfiles</h2>
+			<p>
+				Con <code>engineOptions.profile</code> como una lista de dos o más (
+				<code>['wcag22-aa', 'wai-aria-1.2']</code>, ver{" "}
+				<a href="/configuration/engine-options/#several-profiles">Opciones del motor</a>), cada
+				perfil juzga la página como lo haría un análisis solo de él, y el resultado se lee como un
+				análisis de un solo perfil con las reglas de todos. Un único nombre, o una lista de uno, da
+				exactamente el resultado de siempre, sin ninguno de los campos siguientes. Core 1.15.0 y
+				posteriores.
+			</p>
+			<ul>
+				<li>
+					<strong><code>checksResults</code></strong>: cada regla una vez. <code>verdicts</code> es
+					el resultado de cada perfil para ella (<code>{"{ 'wcag22-aa': 'cantTell', 'wai-aria-1.2': 'fail' }"}</code>),
+					por perfil, para los perfiles que la ejecutaron; <code>outcome</code> es el peor de ellos:{" "}
+					<code>fail</code>, luego <code>cantTell</code>, luego <code>pass</code>, luego{" "}
+					<code>notApplicable</code>. Un generador de informes que lee <code>outcome</code> cuenta el
+					análisis como ese único perfil. <code>checkOutcome</code> es el resultado propio de la
+					regla, antes de que ningún estándar juzgue sus hallazgos por código de motivo: lo que
+					indican sus criterios de WCAG, ya que el fallo de un estándar en un hallazgo por el que
+					WCAG solo pregunta no es un fallo de WCAG.
+				</li>
+				<li>
+					<strong>Cada ocurrencia</strong> figura una vez, con <code>verdicts</code>: lo que hace de
+					ella cada perfil. Es su nivel, salvo que los resultados agregados de un estándar juzguen la
+					regla por los códigos de motivo de sus hallazgos: entonces es lo que estos hacen de ella (un{" "}
+					<code>cantTell</code> de WCAG del que un estándar está seguro es <code>fail</code> allí), o{" "}
+					<code>notApplicable</code> donde el estándar no lo cuenta. Un hallazgo que falla en un
+					perfil y es una pregunta para otro dice ambas cosas. <code>occurrenceOutcome</code> es el
+					peor de ellos cuando difiere del de la comprobación.
+				</li>
+				<li>
+					<strong><code>rulesResults</code></strong>: los resultados agregados de todos los perfiles,
+					cada uno una vez, con <code>profiles</code>, los perfiles que lo dan. Uno que dos perfiles
+					dan con resultados distintos (dos versiones de WCAG, por ejemplo) es el peor de ellos.
+				</li>
+				<li>
+					<strong><code>profiles</code></strong>: por cada perfil que se ejecutó,{" "}
+					<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code> (<code>wcagLevel</code>{" "}
+					solo para un perfil que apunta a un nivel de WCAG), siendo <code>rulesResults</code> el
+					resultado de cada uno de sus resultados agregados por id: lo que habría informado un
+					análisis solo de ese perfil.
+				</li>
+				<li>
+					<strong><code>severity</code></strong>: la más alta que le da a la regla cualquier perfil
+					que la hace fallar o pregunta por ella, sea cual sea el orden en que se enumeran los
+					perfiles.
+				</li>
+			</ul>
+			<DataTable
+				label="Qué lee un resultado de varios perfiles"
+				rowKey="id"
+				columns={[
+					{ key: "reader", label: "Lector", width: "22%" },
+					{ key: "does", label: "Qué hace con varios perfiles", wrap: true },
+				]}
+				rows={[
+					{
+						id: "gates",
+						reader: "SARIF, JUnit",
+						does: (
+							<>
+								Condicionan según <code>outcome</code>: el fallo de cualquier perfil hace fallar la
+								compilación. Un perfil pedido y no ejecutado es un error salvo con{" "}
+								<code>allowProfilesNotRun</code> (
+								<a href="/results-reports/sarif-report/#options">SARIF</a>,{" "}
+								<a href="/results-reports/junit-report/#options">JUnit</a>).
+							</>
+						),
+					},
+					{
+						id: "earl",
+						reader: "EARL",
+						does: (
+							<>
+								Afirma cada regla frente a sus criterios de WCAG según <code>checkOutcome</code>, así que
+								el fallo de un estándar nunca se afirma como uno de WCAG (
+								<a href="/results-reports/earl-report/#several-profiles">Informe EARL</a>).
+							</>
+						),
+					},
+					{
+						id: "html",
+						reader: "El informe HTML",
+						does: (
+							<>
+								Nombra cada perfil en su cabecera, y muestra el veredicto de cada perfil sobre un
+								hallazgo en su tarjeta (<code>wai-aria-1.2: Fail</code>) junto a sus criterios de WCAG (
+								<a href="/results-reports/html-report/">Informe HTML</a>).
+							</>
+						),
+					},
+					{
+						id: "baselines",
+						reader: "Baselines",
+						does: (
+							<>
+								Comparan los hallazgos por regla, código de motivo y marcado, como en cualquier
+								resultado: un hallazgo es una entrada, sean cuales sean sus veredictos (
+								<a href="/conformance/baseline/#several-profiles">Baseline</a>).
+							</>
+						),
+					},
+					{
+						id: "bindings",
+						reader: "Bindings",
+						does: (
+							<>
+								Pasan <code>engineOptions</code> tal cual; con frames, el resultado de cada frame es uno
+								fusionado. Un perfil no ejecutado es un hueco de análisis <code>profile-not-run</code>.
+							</>
+						),
+					},
+				]}
 			/>
 
 			<h2 id="cross-frame-result">Resultado entre frames (<code>runa11yCoreAcrossFrames</code>)</h2>
@@ -790,6 +942,8 @@ export function OutputSchemaContent() {
 					'  outcomeNormalized: "pass" | "fail" | "cantTell" | "inapplicable",',
 					'  severity: "minor" | "moderate" | "serious" | "critical",',
 					'  ruleSeverity?: "minor" | "moderate" | "serious" | "critical", // the rule\'s own, when a profile gave it another',
+					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only: each profile's outcome",
+					"  checkOutcome?: string,   // a scan of several profiles only: the rule's own outcome, which its WCAG criteria read",
 					'  policyOutcome?: "pass" | "fail" | "cantTell" | "notApplicable", // what the rule found, when the policy made it cantTell',
 					'  confidence: "high" | "medium" | "low",',
 					'  type: "automatic" | "manual",',
@@ -1028,6 +1182,7 @@ export function OutputSchemaContent() {
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
 					'  occurrenceOutcome?: "fail" | "cantTell",   // present when the rule graded its findings into tiers',
+					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only",
 					"  uncertainty?: {          // present only on a cantTell-tier occurrence",
 					'    code: "not-computable" | "runtime-dependent" | "spec-only"',
 					'        | "equivalence-unknown" | "judgement-required" | "out-of-scope",',
@@ -1166,13 +1321,16 @@ export function OutputSchemaContent() {
 				dice cómo responderla: <code>steps</code>, unas pocas acciones en orden, empezando por el
 				elemento que nombra el hallazgo (“Ve con Tab hasta el elemento.”, “Observa si el indicador de
 				foco se queda en él.”), y luego <code>passWhen</code> y <code>failWhen</code>, lo que ve si cumple
-				y si falla, nombrando el criterio que incumple. Cada regla de core que puede devolver{" "}
-				<code>cantTell</code> los escribe para cada uno de sus códigos de motivo (su{" "}
-				<code>meta.review</code>), y cada ocurrencia de nivel <code>cantTell</code> recibe la
-				entrada de su código, en el idioma del análisis. El hallazgo de una variante (
-				<code>variantOf</code>) recibe los de su regla base cuando no tiene propios. Una regla de
-				un pack también puede escribirlos, en inglés (ver{" "}
-				<a href="/configuration/packs/#rules">Packs</a>); sus hallazgos los reciben cuando se
+				y si falla, nombrando el criterio que incumple. Core los tiene para cada código de motivo
+				de cada regla de core que puede devolver <code>cantTell</code>, guardados con los{" "}
+				<a href="/conformance/procedures/">procedimientos para evaluar a mano cada criterio</a>{" "}
+				(publicados como los diccionarios de revisión,{" "}
+				<code>{"@surea11y/core/review/<locale>"}</code>), y cada ocurrencia de nivel{" "}
+				<code>cantTell</code> recibe la entrada de su código, en el idioma del análisis. El
+				hallazgo de una variante (<code>variantOf</code>) recibe los de su regla base cuando no
+				tiene propios. Una regla de un pack también puede escribirlos, en inglés, y los
+				diccionarios de su pack pueden traducirlos (ver{" "}
+				<a href="/configuration/packs/#review-steps">Packs</a>); sus hallazgos los reciben cuando se
 				conocen los packs, como los conocen <code>runDomRulesInPage</code> con{" "}
 				<code>engineOptions.packs</code> y <code>addHowToCheck(result, {"{ packs }"})</code>. No
 				aparece en una ocurrencia decidida, en el hallazgo de una regla personalizada, en el de una
@@ -1208,6 +1366,27 @@ export function OutputSchemaContent() {
 				<code>uncertainty.needed</code>, que dice en una frase qué resolvería la cuestión, ellos
 				dicen cómo resolverla. Como una tendencia, son una guía, no parte de la identidad de un
 				hallazgo, y su redacción puede mejorar en cualquier versión.
+			</p>
+			<p id="steps-that-name-the-case">
+				<strong>Pasos que nombran el caso.</strong> Desde core 1.15.0 un paso, <code>passWhen</code>{" "}
+				o <code>failWhen</code> puede nombrar lo que encontró su hallazgo:{" "}
+				<code>{"{{name|text}}"}</code> se lee como el valor del hallazgo para <code>name</code>, de
+				sus <code>i18n.params</code> o de sus <code>data.details</code>, y como <code>text</code>{" "}
+				cuando no tiene ninguno. Así, un paso “Open the popup, which aria-haspopup says is a{" "}
+				{"{{expectedRole|menu}}"}” se lee “…is a listbox” en un hallazgo cuyos detalles dan{" "}
+				<code>expectedRole: 'listbox'</code>, y “…is a menu” en <code>howToCheckFor</code>, que no
+				tiene hallazgo, y en una página de procedimientos. Un valor es una línea de 120 caracteres
+				como máximo, y viene de la página: muéstralo como texto, como hace el informe HTML.{" "}
+				<code>howToCheckFor(ruleId, code, locale, {"{ values }"})</code> los rellena con los valores
+				dados.
+			</p>
+			<p>
+				<strong>Las palabras propias de un estándar.</strong> El estándar de un pack puede dar sus
+				propios pasos para un código de una regla de core (<code>standard.review</code>): un
+				hallazgo por el que solo preguntan los perfiles del estándar los lee en lugar de los de
+				core, en inglés, así que la pregunta de un análisis de WAI-ARIA nombra WAI-ARIA, no WCAG
+				4.1.2. Cuando también pregunta un perfil de WCAG, en un análisis de varios, el hallazgo lee
+				los de core.
 			</p>
 
 			<h2 id="composite-result">Un resultado compuesto (<code>rulesResults[i]</code>)</h2>
@@ -1336,7 +1515,10 @@ export function OutputSchemaContent() {
 					dar a una regla otra gravedad (el <code>severity</code> de un perfil en un estándar o en la
 					lista de comprobación de un pack): bajo ese perfil, el resultado muestra la del perfil,
 					conserva la propia de la regla como <code>ruleSeverity</code> (presente solo entonces), y
-					los resultados agregados toman la del perfil.
+					los resultados agregados toman la del perfil. En un análisis de varios perfiles, es la
+					gravedad más alta que le da a la regla cualquier perfil que la hace fallar o pregunta por
+					ella (la más alta de todas cuando ninguno lo hace), sea cual sea el orden en que se
+					enumeran los perfiles.
 				</li>
 				<li>
 					<code>confidence</code>: <code>low</code> &lt; <code>medium</code> &lt;{" "}

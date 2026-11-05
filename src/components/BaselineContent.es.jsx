@@ -234,7 +234,12 @@ export function BaselineContent() {
 				Una entrada se busca primero con el propio código del hallazgo, así que nunca va a un
 				hallazgo movido cuando otro hallazgo tiene exactamente esa identidad.
 			</p>
-			<p>La 1.14 mueve estos, desde la 1.13:</p>
+			<p>
+				La tabla cubre una versión menor: un cambio figura desde la versión en que llegó hasta la
+				siguiente versión menor, que lo quita. La 1.15 no movió ningún hallazgo, así que su tabla
+				está vacía.
+			</p>
+			<p>La 1.14 movió estos, desde la 1.13, y la 1.15 los quitó:</p>
 			<DataTable
 				label="Códigos de motivo movidos en la 1.14"
 				rowKey="id"
@@ -246,9 +251,11 @@ export function BaselineContent() {
 				rows={baselineMoves}
 			/>
 			<p>
-				La tabla cubre una versión menor: un cambio figura desde la versión en que llegó hasta la
-				siguiente versión menor, que lo quita. Así, un baseline escrito por la 1.13 sigue
-				coincidiendo con la 1.14.x, y hay que regenerarlo antes de la 1.15.
+				Así, un baseline escrito por la 1.13 sigue coincidiendo con estos en la 1.14.x, no en la
+				1.15: allí una entrada con un código antiguo está obsoleta y su hallazgo es nuevo. Pon al
+				día ese baseline en la 1.14.x, como se explica abajo, antes de pasar a la 1.15;{" "}
+				<code>migrateBaselineEntries</code> de la 1.15 ya no conoce estos cambios. Un baseline
+				escrito por la 1.14 sigue coincidiendo en la 1.15.
 			</p>
 			<p>
 				Regenerar el baseline con <code>--write-baseline</code> (o{" "}
@@ -280,6 +287,16 @@ export function BaselineContent() {
 				hace fallar lo que antes preguntaba, o pregunta por lo que antes hacía fallar, da un
 				hallazgo que el baseline no tenía, o deja de dar uno que tenía, y el{" "}
 				<a href={`${core}/CHANGELOG.md`}>registro de cambios</a> explica por qué.
+			</p>
+
+			<h2 id="several-profiles">Un análisis de varios perfiles</h2>
+			<p>
+				Un resultado de <a href="/configuration/engine-options/#several-profiles">varios perfiles</a>{" "}
+				(<code>engineOptions.profile</code> como lista, core 1.15.0 y posteriores) recoge cada
+				hallazgo una vez, con lo que cada perfil hace de él en <code>verdicts</code>. Una entrada del
+				baseline es el hallazgo, por regla, código de motivo y marcado, así que una entrada lo
+				cubre en todos los perfiles, y un baseline escrito a partir de un análisis de un perfil
+				sigue coincidiendo con los mismos hallazgos en un análisis de varios.
 			</p>
 
 			<h2 id="scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</h2>

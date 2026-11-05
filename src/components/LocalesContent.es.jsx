@@ -352,7 +352,8 @@ export function LocalesContent() {
 			<p>
 				Un paso que falta en una configuración regional aparece en inglés, como un mensaje. Los{" "}
 				<a href="/configuration/packs/#review-steps">pasos propios de una regla de pack</a> están
-				en inglés en todas. <code>getLocaleCoverage()</code> no cuenta estos diccionarios. Los
+				en inglés salvo que los traduzcan los diccionarios de su pack (core 1.15.0 y
+				posteriores). <code>getLocaleCoverage()</code> no cuenta estos diccionarios. Los
 				pasos no llevan claves, así que para mostrarlos en otra configuración regional, añádelos
 				de nuevo:
 			</p>
@@ -364,6 +365,20 @@ export function LocalesContent() {
 					"const inFrench = addHowToCheck(result, { locale: 'fr' });",
 				]}
 			/>
+
+			<h3 id="procedure-dictionaries">Los diccionarios de procedimientos</h3>
+			<p>
+				Desde core 1.15.0 los pasos de revisión se escriben con los{" "}
+				<a href="/conformance/procedures/">procedimientos de prueba</a> de core, cómo evalúa una
+				persona a mano cada criterio, y los diccionarios de revisión se generan a partir de ellos.
+				Los diccionarios de procedimientos, <code>{"@surea11y/core/procedures/<locale>"}</code>,
+				contienen los procedimientos generales, los nombres de las herramientas, las palabras de
+				una página generada con ellos, y los nombres de los principios, pautas y criterios de WCAG
+				y de cada faceta, en la traducción publicada de WCAG de cada idioma. Las cinco
+				configuraciones regionales tienen todos los textos, así que una página de procedimientos
+				está en un solo idioma de principio a fin; <code>procedureLanguages()</code> lo indica para
+				cada configuración regional, y para el estándar de un pack, que puede leerse en menos.
+			</p>
 
 			<h3>Proporcionar tu propio diccionario</h3>
 			<p>
@@ -446,6 +461,11 @@ export function LocalesContent() {
 					<code>_pass</code> y <code>_fail</code>, en{" "}
 					<a href="#review-dictionaries">los diccionarios de revisión</a>: el{" "}
 					<code>howToCheck</code> de una ocurrencia sin decidir.
+				</li>
+				<li>
+					<strong>Procedimientos</strong>: <code>{"wcag_<criterion>_<facet>_step<n>"}</code>,{" "}
+					<code>_pass</code> y <code>_fail</code>, <code>{"tool_<id>"}</code> y{" "}
+					<code>render_*</code>, en <a href="#procedure-dictionaries">los diccionarios de procedimientos</a>.
 				</li>
 			</ul>
 			<p>
