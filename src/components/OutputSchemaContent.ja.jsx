@@ -65,7 +65,25 @@ const topLevelRows = [
 		field: <code>engine.profile</code>,
 		meaning: (
 			<>
-				<code>engineOptions.profile</code>がこの実行のルールを選んだ場合にだけ含まれ、プロファイル名を小文字で示します。プロファイルを要求しなかった場合はなく、要求しても適用されなかった場合（不明な名前、または<code>runOnly</code>や<code>engineOptions</code>のincludeが代わりにルールを選んだ場合）もありません。そのため、これがあることで、実行が本当にそのプロファイルを対象にしたことを確認できます。<a href="/configuration/engine-options/#conformance-profiles">適合性プロファイル</a>を参照してください。
+				<code>engineOptions.profile</code>がこの実行のルールを選んだ場合にだけ含まれ、プロファイル名を小文字で示します（複数のプロファイルでのスキャンでは、実行された最初のもの）。プロファイルを要求しなかった場合はなく、要求しても適用されなかった場合（不明な名前、または<code>runOnly</code>や<code>engineOptions</code>のincludeが代わりにルールを選んだ場合）もありません。そのため、これがあることで、実行が本当にそのプロファイルを対象にしたことを確認できます。<a href="/configuration/engine-options/#conformance-profiles">適合性プロファイル</a>を参照してください。
+			</>
+		),
+	},
+	{
+		id: "engine.profiles",
+		field: <code>engine.profiles</code>,
+		meaning: (
+			<>
+				複数のプロファイルでのスキャン（<code>engineOptions.profile</code>をリストで指定）のみ。実行されたプロファイルを、求められた順に示します。そのとき<code>engine.profile</code>はその最初のものです。<a href="#several-profiles">複数のプロファイル</a>を参照してください。
+			</>
+		),
+	},
+	{
+		id: "engine.profilesNotRun",
+		field: <code>engine.profilesNotRun</code>,
+		meaning: (
+			<>
+				複数のプロファイルでのスキャンで、そのうちのどれかが実行されなかった場合のみ：<code>{"[{ profile, reason }]"}</code>。<code>reason</code>は<code>unknown-profile</code>（そのようなプロファイルがない）、<code>pack-skipped</code>（そのパックがスキップされた。<code>skippedPacks</code>を参照）、<code>overridden-by-selection</code>（<code>runOnly</code>の含める指定、または<code>engineOptions</code>のルールIDやタグが、1つのプロファイルの場合と同じく代わりにルールを選ぶ。これはすべてのプロファイルのスキャンで起こります）のいずれかです。理由の種類は今後増えることがあります。
 			</>
 		),
 	},
@@ -275,7 +293,7 @@ const occurrenceRows = [
 		field: <code>data.details</code>,
 		meaning: (
 			<>
-				ルール固有の構造化データ（計算した指標、解決済みの参照など）です。<strong>規範的なものではありません</strong>。より詳しいUIの構築やデバッグには役立ちますが、<code>outcome</code>/<code>severity</code>の意味を変えることはありません。形はルールごとに異なるので、安定した契約ではなく、ベストエフォートの補足情報として扱ってください。唯一の例外が<code>data.details.reasonCode</code>で、これは安定して<strong>います</strong>。ルールの検出結果のうち<em>どれ</em>であるかを識別し、<code>ruleId</code>、<code>html</code>とともに、ベースラインとSARIFのキーになるフィンガープリントを構成します。ルールはマイナーリリースで新しい理由コードを得たり、既存のコードを原因ごとに分けたりすることがあります。<a href={`${core}/docs/API_STABILITY.md#finding-identity`}><code>API_STABILITY.md</code></a>を参照してください。コントラストの失敗のサイズと比のフィールド（<code>metrics.ratio</code>、<code>metrics.threshold</code>、<code>typography</code>の<code>fontSizePx</code>、<code>fontSizePt</code>、<code>fontWeight</code>、<code>isBold</code>、<code>isLargeText</code>）も安定しているので、レポートやパックはどの種類のテキストが失敗したかを判別できます。<code>list-children-valid</code>の検出結果の<code>element</code>、<code>listitem-parent-valid</code>の検出結果の<code>parentElement</code>、<code>aria-role-name-present</code>の検出結果の<code>role</code>も同様に安定しており、どの種類のリストやウィジェットが失敗したかを示します。各ルールのページには、その検出結果が持つフィールドが「検出結果が報告する内容」の下に記載されています。
+				ルール固有の構造化データ（計算した指標、解決済みの参照など）です。<strong>規範的なものではありません</strong>。より詳しいUIの構築やデバッグには役立ちますが、<code>outcome</code>/<code>severity</code>の意味を変えることはありません。形はルールごとに異なるので、安定した契約ではなく、ベストエフォートの補足情報として扱ってください。唯一の例外が<code>data.details.reasonCode</code>で、これは安定して<strong>います</strong>。ルールの検出結果のうち<em>どれ</em>であるかを識別し、<code>ruleId</code>、<code>html</code>とともに、ベースラインとSARIFのキーになるフィンガープリントを構成します。ルールはマイナーリリースで新しい理由コードを得たり、既存のコードを原因ごとに分けたりすることがあります。<a href={`${core}/docs/API_STABILITY.md#finding-identity`}><code>API_STABILITY.md</code></a>を参照してください。コントラストの失敗のサイズと比のフィールド（<code>metrics.ratio</code>、<code>metrics.threshold</code>、<code>typography</code>の<code>fontSizePx</code>、<code>fontSizePt</code>、<code>fontWeight</code>、<code>isBold</code>、<code>isLargeText</code>）も安定しているので、レポートやパックはどの種類のテキストが失敗したかを判別できます。<code>list-children-valid</code>の検出結果の<code>element</code>、<code>listitem-parent-valid</code>の検出結果の<code>parentElement</code>、<code>aria-role-name-present</code>の検出結果の<code>role</code>も同様に安定しており、どの種類のリストやウィジェットが失敗したかを示します。<code>data.details.evidenceState</code>（core 1.15.0以降）も同様です。ルールがページをある状態にし、ブラウザーが描画する前にその状態から戻した場合に、その状態でだけ現れる検出結果で、その状態の名前を示します（<code>text-spacing</code>。切れた、重なった、またはスクロールが固定されたテキストについての<code>text-spacing-content-loss</code>の検出結果に付きます）。そのため、ツールは<code>evidenceState()</code>でページを再びその状態にし、バインディングの<code>.screenshots()</code>と同じように検出結果を撮影できます。各ルールのページには、その検出結果が持つフィールドが「検出結果が報告する内容」の下に記載されています。
 			</>
 		),
 	},
@@ -339,7 +357,9 @@ export function OutputSchemaContent() {
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
 					'    wcagLevel?: "A" | "AA" | "AAA",',
-'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+'    profile?: string,      // "wcag22-a", "wcag22-aa", "wcag22-aaa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a pack\'s own',
+					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
+					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
 					"    optInRules?: string[],",
@@ -372,7 +392,8 @@ export function OutputSchemaContent() {
 					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
 "  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
-					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
+					"  skippedPacks?: Array<{ name: string | null, reason: string }>,",
+					"  profiles?: { [profile: string]: { wcagVersion, wcagLevel?, standards, rulesResults } }  // a scan of several profiles only",
 					"}",
 				]}
 			/>
@@ -384,6 +405,88 @@ export function OutputSchemaContent() {
 					{ key: "meaning", label: "意味", wrap: true },
 				]}
 				rows={topLevelRows}
+			/>
+
+			<h2 id="several-profiles">複数のプロファイル</h2>
+			<p>
+				<code>engineOptions.profile</code>を2つ以上のリスト（<code>['wcag22-aa', 'wai-aria-1.2']</code>。<a href="/configuration/engine-options/#several-profiles">エンジンオプション</a>を参照）にすると、各プロファイルはそれだけをスキャンしたときと同じようにページを判定し、結果はすべてのルールを持つ1つのプロファイルのスキャンのように読めます。1つの名前、または要素が1つのリストでは、これまでとまったく同じ結果になり、以下のフィールドは含まれません。core 1.15.0以降。
+			</p>
+			<ul>
+				<li>
+					<strong><code>checksResults</code></strong>
+					：各ルールは1回だけ含まれます。<code>verdicts</code>は、そのルールを実行したプロファイルについて、それぞれのプロファイルでの判定結果をプロファイルをキーにして示します（<code>{"{ 'wcag22-aa': 'cantTell', 'wai-aria-1.2': 'fail' }"}</code>）。<code>outcome</code>はそのうち最も悪いもので、<code>fail</code>、<code>cantTell</code>、<code>pass</code>、<code>notApplicable</code>の順です。<code>outcome</code>を読むレポーターは、スキャンをその1つのプロファイルとして数えます。<code>checkOutcome</code>は、規格が理由コードによってその検出結果を判定する前の、ルール自身の判定結果です。WCAGが確認を求めるだけの検出結果を規格が不合格にしても、それはWCAGの不合格ではないので、そのWCAGの達成基準はこちらを読みます。
+				</li>
+				<li>
+					<strong>各検出箇所</strong>
+					は1回だけ挙げられ、<code>verdicts</code>にそれぞれのプロファイルがその検出箇所をどう判定するかが入ります。それは検出箇所の層ですが、規格の集約がルールをその検出結果の理由コードで判定する場合は、その集約による判定になり（WCAGでは<code>cantTell</code>でも、規格が確信を持つものはそこでは<code>fail</code>です）、規格がそれを数えない場合は<code>notApplicable</code>になります。あるプロファイルでは不合格で、別のプロファイルでは問いになる検出結果は、その両方を示します。<code>occurrenceOutcome</code>は、チェックの判定結果と異なる場合、そのうち最も悪いものです。
+				</li>
+				<li>
+					<strong><code>rulesResults</code></strong>
+					：すべてのプロファイルの集約を、それぞれ1回ずつ、それを与えるプロファイルを示す<code>profiles</code>とともに含みます。2つのプロファイルが異なる判定結果で与える集約（たとえばWCAGの2つのバージョン）は、そのうち最も悪いものになります。
+				</li>
+				<li>
+					<strong><code>profiles</code></strong>
+					：実行されたプロファイルごとに<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code>（<code>wcagLevel</code>はWCAGのレベルを対象にするプロファイルのみ）。<code>rulesResults</code>は、その各集約の判定結果をIDごとに示したもので、そのプロファイルだけをスキャンした場合に報告されたはずのものです。
+				</li>
+				<li>
+					<strong><code>severity</code></strong>
+					：プロファイルの列挙順にかかわらず、そのルールを不合格にするか問いにするプロファイルが与える重大度のうち最も高いものです。
+				</li>
+			</ul>
+			<DataTable
+				label="複数のプロファイルの結果を読むもの"
+				rowKey="id"
+				columns={[
+					{ key: "reader", label: "読むもの", width: "22%" },
+					{ key: "does", label: "複数のプロファイルで行うこと", wrap: true },
+				]}
+				rows={[
+					{
+						id: "gates",
+						reader: "SARIF、JUnit",
+						does: (
+							<>
+								<code>outcome</code>でゲートします。どれかのプロファイルが不合格ならビルドは失敗します。求めたのに実行されなかったプロファイルは、<code>allowProfilesNotRun</code>を指定しない限りエラーです（<a href="/results-reports/sarif-report/#options">SARIF</a>、<a href="/results-reports/junit-report/#options">JUnit</a>）。
+							</>
+						),
+					},
+					{
+						id: "earl",
+						reader: "EARL",
+						does: (
+							<>
+								各ルールを、そのWCAGの達成基準に対して<code>checkOutcome</code>でアサートするので、規格の不合格がWCAGの不合格としてアサートされることはありません（<a href="/results-reports/earl-report/#several-profiles">EARLレポート</a>）。
+							</>
+						),
+					},
+					{
+						id: "html",
+						reader: "HTMLレポート",
+						does: (
+							<>
+								見出しですべてのプロファイルの名前を挙げ、検出結果のカードに、そのWCAGの達成基準と並べて各プロファイルの判定を示します（<code>wai-aria-1.2: Fail</code>。<a href="/results-reports/html-report/">HTMLレポート</a>）。
+							</>
+						),
+					},
+					{
+						id: "baselines",
+						reader: "ベースライン",
+						does: (
+							<>
+								ほかの結果と同じく、ルール、理由コード、マークアップで検出結果を照合します。検出結果は、その判定がどうであれ1つのエントリーです（<a href="/conformance/baseline/#several-profiles">ベースライン</a>）。
+							</>
+						),
+					},
+					{
+						id: "bindings",
+						reader: "バインディング",
+						does: (
+							<>
+								<code>engineOptions</code>をそのまま渡します。フレームがある場合、各フレームの結果は統合されたものです。実行されなかったプロファイルは、<code>profile-not-run</code>のスキャンの抜けになります。
+							</>
+						),
+					},
+				]}
 			/>
 
 			<h2 id="cross-frame-result">フレームをまたぐ結果（<code>runa11yCoreAcrossFrames</code>）</h2>
@@ -432,6 +535,8 @@ export function OutputSchemaContent() {
 					'  outcomeNormalized: "pass" | "fail" | "cantTell" | "inapplicable",',
 					'  severity: "minor" | "moderate" | "serious" | "critical",',
 					'  ruleSeverity?: "minor" | "moderate" | "serious" | "critical", // the rule\'s own, when a profile gave it another',
+					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only: each profile's outcome",
+					"  checkOutcome?: string,   // a scan of several profiles only: the rule's own outcome, which its WCAG criteria read",
 					'  policyOutcome?: "pass" | "fail" | "cantTell" | "notApplicable", // what the rule found, when the policy made it cantTell',
 					'  confidence: "high" | "medium" | "low",',
 					'  type: "automatic" | "manual",',
@@ -539,6 +644,7 @@ export function OutputSchemaContent() {
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
 					'  occurrenceOutcome?: "fail" | "cantTell",   // present when the rule graded its findings into tiers',
+					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only",
 					"  uncertainty?: {          // present only on a cantTell-tier occurrence",
 					'    code: "not-computable" | "runtime-dependent" | "spec-only"',
 					'        | "equivalence-unknown" | "judgement-required" | "out-of-scope",',
@@ -615,13 +721,19 @@ export function OutputSchemaContent() {
 
 			<h3 id="how-to-check">確認方法</h3>
 			<p>
-				<code>cantTell</code>は問いを人に渡します。<code>howToCheck</code>は、それにどう答えるかを示します。<code>steps</code>は、検出結果が示す要素から始まる、順番に行う少数の操作（「Tab to the element.」「Watch whether the focus indicator stays on it.」）で、<code>passWhen</code>と<code>failWhen</code>は、合格の場合と不合格の場合に何が見えるかを、不合格となる達成基準の名前とともに示します。<code>cantTell</code>を報告しうるコアのルールはすべて、理由コードごとにこれを書いており（ルールの<code>meta.review</code>）、<code>cantTell</code>の層の各検出箇所には、そのコードのものがスキャンのロケールで付きます。バリアントの検出結果（<code>variantOf</code>）は、自身のものがなければベースのルールのものを受け取ります。パックのルールも英語で書くことができ（<a href="/configuration/packs/#rules">パック</a>を参照）、その検出結果は、パックが分かっている場合、つまり<code>engineOptions.packs</code>付きの<code>runDomRulesInPage</code>と<code>addHowToCheck(result, {"{ packs }"})</code>で受け取ります。判定済みの検出箇所、カスタムルールの検出結果、オーバーライド（<code>overriddenBuiltinIds</code>にあるカスタムルールまたはパックのルール）の検出結果、何も書いていないパックのルールの検出結果には含まれません。
+				<code>cantTell</code>は問いを人に渡します。<code>howToCheck</code>は、それにどう答えるかを示します。<code>steps</code>は、検出結果が示す要素から始まる、順番に行う少数の操作（「Tab to the element.」「Watch whether the focus indicator stays on it.」）で、<code>passWhen</code>と<code>failWhen</code>は、合格の場合と不合格の場合に何が見えるかを、不合格となる達成基準の名前とともに示します。コアは、<code>cantTell</code>を報告しうるすべてのコアのルールの各理由コードについてこれを持っており、<a href="/conformance/procedures/">各達成基準を手作業で評価するためのテスト手順</a>と一緒に管理しています（確認手順の辞書<code>{"@surea11y/core/review/<locale>"}</code>として公開）。<code>cantTell</code>の層の各検出箇所には、そのコードのものがスキャンのロケールで付きます。バリアントの検出結果（<code>variantOf</code>）は、自身のものがなければベースのルールのものを受け取ります。パックのルールも英語で書くことができ、そのパックの辞書がそれを翻訳することもできます（<a href="/configuration/packs/#review-steps">パック</a>を参照）。その検出結果は、パックが分かっている場合、つまり<code>engineOptions.packs</code>付きの<code>runDomRulesInPage</code>と<code>addHowToCheck(result, {"{ packs }"})</code>で受け取ります。判定済みの検出箇所、カスタムルールの検出結果、オーバーライド（<code>overriddenBuiltinIds</code>にあるカスタムルールまたはパックのルール）の検出結果、何も書いていないパックのルールの検出結果には含まれません。
 			</p>
 			<p>
 				<strong>手順は、ページ内のエンジンではなく、スキャンの後にNodeで追加されます</strong>。エンジンはスキャンが開くすべてのページとフレームに注入されるため、どのルールも読まない何千もの文を持つ必要がないからです。<code>runDomRulesInPage</code>は自分の結果に追加します。ページ内で実行した<code>runa11yCoreInPage</code>の結果（バインディングや拡張機能のもの）には含まれません。<code>addHowToCheck(result)</code>は手順を加えたコピーを返し、<code>howToCheckFor(ruleId, reasonCode, locale)</code>は1つの検出結果の手順を返します。どちらもコアのレビュー用辞書をディスクから読むため、Nodeが必要です。コードがブラウザーで動くバインディング（Cypress）は、<code>{"@surea11y/core/review/<locale>"}</code>からインポートした辞書を使って<code>@surea11y/core/how-to-check</code>の<code>applyHowToCheck(result, {"{ en, fr }"})</code>を呼び、同じ手順を得ます（バインディングでの方法は<a href={`${core}/docs/BINDING_AUTHORS_GUIDE.md`}><code>BINDING_AUTHORS_GUIDE.md</code></a>にあります）。<a href="/results-reports/html-report/">HTMLレポート</a>（<code>renderHtmlReport</code>）は、手順を持たない結果にNodeで追加します。ブラウザー（<code>surea11y.report.js</code>）では、結果が持っている手順を表示します。スキャンとは別の言語で結果を表示するツールは、<code>addHowToCheck</code>または<code>applyHowToCheck</code>に<code>{"{ locale }"}</code>を渡します（<code>{"addHowToCheck(result, { locale: 'de' })"}</code>、または優先度の高い順のロケールのリスト。<code>renderHtmlReport</code>は受け取りません）。手順は、すでにあるものも含めてその言語で示され、そのロケールにない手順は英語になります。
 			</p>
 			<p>
 				手順は、ブラウザー、その開発者ツール（アクセシビリティツリー）、キーボード、場合によってはスクリーンリーダーを前提としています。問いに決着をつけるには何が必要かを1文で述べる<code>uncertainty.needed</code>と違い、どう決着をつけるかを述べます。傾きと同じく助言であって検出結果の同一性の一部ではなく、文言はどのリリースでも改善されることがあります。
+			</p>
+			<p id="steps-that-name-the-case">
+				<strong>ケースを名指しする手順。</strong>core 1.15.0以降、手順、<code>passWhen</code>、<code>failWhen</code>は、その検出結果が見つけたものを名指しできます。<code>{"{{name|text}}"}</code>は、検出結果の<code>i18n.params</code>または<code>data.details</code>にある<code>name</code>の値として読まれ、値がない場合は<code>text</code>として読まれます。そのため、「Open the popup, which aria-haspopup says is a {"{{expectedRole|menu}}"}」という手順は、詳細が<code>expectedRole: 'listbox'</code>を示す検出結果では「…is a listbox」と読まれ、検出結果のない<code>howToCheckFor</code>やテスト手順のページでは「…is a menu」と読まれます。値は最大120文字の1行で、ページから取られたものなので、HTMLレポートと同じくテキストとして表示してください。<code>howToCheckFor(ruleId, code, locale, {"{ values }"})</code>は、与えられた値でそれらを埋めます。
+			</p>
+			<p>
+				<strong>規格自身の言葉。</strong>パックの規格は、コアのルールのコードに対して独自の手順を与えることができます（<code>standard.review</code>）。その規格のプロファイルだけが問いにする検出結果は、コアの手順の代わりにそれを英語で読むので、WAI-ARIAのスキャンの問いはWCAG 4.1.2ではなくWAI-ARIAを名指しします。複数のプロファイルでのスキャンでWCAGのプロファイルも問いにする場合、その検出結果はコアの手順を読みます。
 			</p>
 
 			<h2 id="composite-result">複合ルールの結果（<code>rulesResults[i]</code>）</h2>
@@ -696,7 +808,7 @@ export function OutputSchemaContent() {
 			<h2>重大度と確度の値</h2>
 			<ul>
 				<li>
-					<code>severity</code>：<code>minor</code> &lt; <code>moderate</code> &lt; <code>serious</code> &lt; <code>critical</code>。ユーザーへの影響についてのルール作成者の評価で、<code>confidence</code>とは独立しています。プロファイルはルールに別の重大度を与えることができます（規格やパックのチェックリストにあるプロファイルの<code>severity</code>）。その場合、結果にはプロファイルの重大度が表示され、ルール自身の重大度は<code>ruleSeverity</code>として保持され（このときだけ含まれます）、集約はプロファイルの重大度を使います。
+					<code>severity</code>：<code>minor</code> &lt; <code>moderate</code> &lt; <code>serious</code> &lt; <code>critical</code>。ユーザーへの影響についてのルール作成者の評価で、<code>confidence</code>とは独立しています。プロファイルはルールに別の重大度を与えることができます（規格やパックのチェックリストにあるプロファイルの<code>severity</code>）。その場合、結果にはプロファイルの重大度が表示され、ルール自身の重大度は<code>ruleSeverity</code>として保持され（このときだけ含まれます）、集約はプロファイルの重大度を使います。複数のプロファイルでのスキャンでは、プロファイルの列挙順にかかわらず、そのルールを不合格にするか問いにするプロファイルが与える重大度のうち最も高いもの（どれもそうしない場合はすべてのうち最も高いもの）になります。
 				</li>
 				<li>
 					<code>confidence</code>：<code>low</code> &lt; <code>medium</code> &lt; <code>high</code>。<code>fail</code>/<code>cantTell</code>の判定が正しいことに、エンジンがどれだけ確信を持っているかを示します。どちらも優先順位付けのための情報としてのメタデータで、<code>outcome</code>の意味を変えることはありません。

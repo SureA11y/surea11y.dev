@@ -48,7 +48,7 @@ const optionRows = [
 		option: <code>profile</code>,
 		meaning: (
 			<>
-				名前付きの適合性の目標（省略可）：<code>'wcag22-aa'</code>、<code>'en301549-v4.1.1'</code>、<code>'en301549-v3.2.1'</code>、<code>'section508'</code>、またはパック独自のもの。ほかに含める指定がない場合に、対応するタグセットでルールを選び、WCAGの対象バージョンはそのタグから決まります。効果があった場合は<code>engine.profile</code>として返し、なかった場合はコンソールに警告を出して無視します。前述の<a href="#conformance-profiles">「適合性プロファイル」</a>を参照してください。
+				名前付きの適合性の目標（省略可）：<code>'wcag22-a'</code>、<code>'wcag22-aa'</code>、<code>'wcag22-aaa'</code>、<code>'en301549-v4.1.1'</code>、<code>'en301549-v3.2.1'</code>、<code>'section508'</code>、またはパック独自のもの。あるいは、複数のプロファイルで同時にスキャンするためのそれらのリスト。ほかに含める指定がない場合に、対応するタグセットでルールを選び、WCAGの対象バージョンはそのタグから決まります。効果があった場合は<code>engine.profile</code>として返し（リストの場合は実行された最初のもので、すべてが<code>engine.profiles</code>に入ります）、なかった場合はコンソールに警告を出して無視します。前述の<a href="#conformance-profiles">「適合性プロファイル」</a>を参照してください。
 			</>
 		),
 	},
@@ -111,7 +111,34 @@ const optionRows = [
 		option: <code>fragment</code>,
 		meaning: (
 			<>
-				デフォルトは<code>false</code>です。いくつかのルール（<code>page-title-present</code>、<code>html-lang-attr-present</code>、<code>html-xml-lang-mismatch</code>、<code>aria-hidden-body</code>、<code>css-orientation-lock</code>、<code>meta-refresh-no-exceptions</code>、<code>meta-refresh-timing-absent</code>、<code>meta-viewport-zoom-enabled</code>、<code>meta-viewport-large</code>、<code>page-title-patterns</code>、<code>region</code>、<code>bypass-blocks-present</code>、<code>landmark-one-main</code>、<code>page-has-heading-one</code>）は、実際のページなら1つだけ存在するはずのプロパティの有無を確認します。<code>contextSelector</code>でスキャン範囲をドキュメント全体より狭くした場合（解決されたルートに<code>document.documentElement</code>が含まれない場合）、これらのルールは正しく<code>notApplicable</code>を報告します。範囲を絞ったサブツリーが独自の<code>&lt;title&gt;</code>や<code>&lt;html lang&gt;</code>などを持つことは、そもそも想定されていないからです。<code>fragment: true</code>は、範囲の指定だけでは判別できないケースのためのものです。スキャン対象は渡されたドキュメントの<em>全体</em>だが、もともと実際のページを表すものではない場合（単独でパースしたコンポーネントの断片など）がこれに当たります。この設定により、範囲を絞っていなくても同じように<code>notApplicable</code>になります。
+				デフォルトは<code>false</code>です。いくつかのルール（<code>page-title-present</code>、<code>html-lang-attr-present</code>、<code>html-xml-lang-mismatch</code>、<code>aria-hidden-body</code>、<code>css-orientation-lock</code>、<code>meta-refresh-no-exceptions</code>、<code>meta-refresh-timing-absent</code>、<code>meta-viewport-zoom-enabled</code>、<code>meta-viewport-large</code>、<code>page-title-patterns</code>、<code>region</code>、<code>bypass-blocks-present</code>、<code>landmark-one-main</code>、<code>page-has-heading-one</code>）は、実際のページなら1つだけ存在するはずのプロパティの有無を確認します。<code>contextSelector</code>でスキャン範囲をドキュメント全体より狭くした場合（解決されたルートに<code>document.documentElement</code>が含まれない場合）、これらのルールは正しく<code>notApplicable</code>を報告します。範囲を絞ったサブツリーが独自の<code>&lt;title&gt;</code>や<code>&lt;html lang&gt;</code>などを持つことは、そもそも想定されていないからです。<code>fragment: true</code>は、範囲の指定だけでは判別できないケースのためのものです。スキャン対象は渡されたドキュメントの<em>全体</em>だが、もともと実際のページを表すものではない場合（単独でパースしたコンポーネントの断片など）がこれに当たります。この設定により、範囲を絞っていなくても同じように<code>notApplicable</code>になります。フレーム内に表示された文書も、それ自体で1つのページではありません。<code>page-title-present</code>、<code>page-title-patterns</code>、<code>html-lang-attr-present</code>、<code>meta-viewport-zoom-enabled</code>、<code>meta-viewport-large</code>、<code>region</code>、<code>bypass-blocks-present</code>、<code>landmark-one-main</code>、<code>page-has-heading-one</code>は、このオプションの値にかかわらずその中では<code>notApplicable</code>になります。ただし、<code>topLevelDocument: true</code>（後述）がそれをページだと示す場合は別です。core 1.15.0以降。
+			</>
+		),
+	},
+	{
+		id: "embeddedAriaHidden",
+		option: <code>embeddedAriaHidden</code>,
+		meaning: (
+			<>
+				デフォルトは<code>false</code>です。<code>true</code>は、文書が<code>aria-hidden="true"</code>（<code>&lt;iframe&gt;</code>またはそれを囲む要素に指定）の下にあるフレームに表示されていることを示します。すべての要素はaria-hiddenのコンテンツと同じように、それを上書きするものを除いてアクセシビリティツリーの外にあるものとして読まれます。そのため、名前とロールに関するルール（<code>img-alt-present</code>、<code>button-name-present</code>など）は適用されず、見え方と操作に関するルール（コントラスト、フォーカス、キーボード）は引き続き適用されます。<code>runa11yCoreAcrossFrames</code>はそうしたフレームにこれを設定し、フレームを自分でスキャンするバインディングはそのフレームの<code>engineOptions</code>に設定します。そうしたフレームが受け取るフォーカスは、トップページの<code>&lt;iframe&gt;</code>に対する<code>aria-hidden-focus</code>の検出結果になります。core 1.15.0以降。
+			</>
+		),
+	},
+	{
+		id: "embeddedInert",
+		option: <code>embeddedInert</code>,
+		meaning: (
+			<>
+				デフォルトは<code>false</code>です。<code>true</code>は、文書が<code>[inert]</code>の下にあるフレームに表示されていることを示します。すべての要素は不活性なコンテンツと同じように、アクセシビリティツリーの外にあり、フォーカスを受け取らないものとして読まれるので、それを判定するのはコンテンツの見え方に関するルール（コントラスト、テキストの間隔）だけです。<code>runa11yCoreAcrossFrames</code>はそうしたフレームにこれを設定し、非表示のフレームを除外するのと同じように、開いているモーダルダイアログの背後にあるフレームを除外します。フレームを自分でスキャンするバインディングも同じようにします。core 1.15.0以降。
+			</>
+		),
+	},
+	{
+		id: "topLevelDocument",
+		option: <code>topLevelDocument</code>,
+		meaning: (
+			<>
+				デフォルトでは未設定です。文書がそれ自体で1つのページかどうかを示します。未設定の場合、文書がトップウィンドウのものであればページです。フレーム内に表示された文書はそれ自体で1つのページではなく、<code>fragment</code>の行が挙げるページに関する9つのルールはその中では<code>notApplicable</code>になります。Cypressのように、テスト対象のページを自身のフレームの中に表示するテストランナーは、これを<code>true</code>に設定します（<code>@surea11y/cypress</code>は自動で設定します）。<code>false</code>にすると、トップレベルの文書をフレームの文書として読みます。<code>runa11yCoreAcrossFrames</code>は、スキャンするフレームにこれを渡しません。core 1.15.0以降。
 			</>
 		),
 	},
@@ -398,6 +425,17 @@ export function EngineOptionsContent() {
 				]}
 				rows={[
 					{
+						profile: <code>wcag22-a</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag21a</code>, <code>wcag22a</code>
+							</>
+						),
+						target: "2.2",
+						wcagTarget: <code>{"{ version: '2.2', level: 'A' }"}</code>,
+						why: "WCAG 2.2のレベルA",
+					},
+					{
 						profile: <code>wcag22-aa</code>,
 						tags: (
 							<>
@@ -408,6 +446,18 @@ export function EngineOptionsContent() {
 						target: "2.2",
 						wcagTarget: <code>{"{ version: '2.2', level: 'AA' }"}</code>,
 						why: "WCAG 2.2のレベルAとAA",
+					},
+					{
+						profile: <code>wcag22-aaa</code>,
+						tags: (
+							<>
+								<code>wcag22-aa</code>のタグと<code>wcag2aaa</code>, <code>wcag21aaa</code>,{" "}
+								<code>wcag22aaa</code>
+							</>
+						),
+						target: "2.2",
+						wcagTarget: <code>{"{ version: '2.2', level: 'AAA' }"}</code>,
+						why: "WCAG 2.2のレベルA、AA、AAA",
 					},
 					{
 						profile: <code>en301549-v4.1.1</code>,
@@ -445,7 +495,7 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
-				<code>getProfileWcagTarget(profile)</code>は、プロファイルのタグセットが相当する<code>runOnly.wcag</code>の目標を返し、プロファイルでない名前には<code>null</code>を返します。プロファイルは引き続き表のとおりタグで選択します。<code>wcag22-aa</code>では<code>duplicate-id</code>（4.1.1）が実行されて<code>fail</code>にはならず、<code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code>ではそれが除かれます。
+				<code>getProfileWcagTarget(profile)</code>は、プロファイルのタグセットが相当する<code>runOnly.wcag</code>の目標を返し、プロファイルでない名前には<code>null</code>を返します。WCAGのレベルと同じく、各レベルはその下のレベルを含みます。<code>wcag22-aaa</code>は<code>wcag22-aa</code>のすべてのルールを実行し、AAAのルールを加えるので、スキャンで指定するレベルは1つで、複数ではありません。<code>wcag22-a</code>と<code>wcag22-aaa</code>はcore 1.15.0で追加されました。プロファイルは引き続き表のとおりタグで選択します。<code>wcag22-aa</code>（および<code>wcag22-a</code>と<code>wcag22-aaa</code>）では<code>duplicate-id</code>（4.1.1）が実行されて<code>fail</code>にはならず、<code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code>ではそれが除かれます。
 			</p>
 			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
 			<Callout tone="note" title="非推奨">
@@ -455,6 +505,28 @@ export function EngineOptionsContent() {
 			</Callout>
 			<p>
 				<a href="/configuration/packs/">パック</a>の規格やチェックリストは、独自のプロファイルをこの一覧に加えます。
+			</p>
+			<h4 id="several-profiles">複数のプロファイルを同時に</h4>
+			<p>
+				<code>profile</code>はリストも受け取り、それらをもたらすパックを<code>packs</code>に渡します。そうすると1回のスキャンで、WCAGとWAI-ARIA、EN 301 549と独自の方針、あるいは1つの規格の2つの版（一方から他方へ移行する間）でページを判定できます。各プロファイルはそれだけをスキャンしたときと同じようにページを判定し、結果はすべてのルールを持つ1つのプロファイルのように読めます。チェックの<code>outcome</code>はそのプロファイルが与える最も悪い判定結果で、各検出結果の<code>verdicts</code>は、それぞれのプロファイルがその検出結果をどう判定するかを示します（<a href="/results-reports/output-schema/#several-profiles">出力スキーマ</a>）。core 1.15.0以降。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"const result = runDomRulesInPage(url, null, {",
+					"  packs: [waiAria],",
+					"  profile: ['wcag22-aa', 'wai-aria-1.2']",
+					"});",
+					"// <div role=\"group\" aria-checked=\"true\">: an attribute the role doesn't",
+					"// support, a question for WCAG 4.1.2 and a failure of WAI-ARIA.",
+					"result.checksResults.find((c) => c.ruleId === 'aria-allowed-attr').verdicts;",
+					"// { 'wcag22-aa': 'cantTell', 'wai-aria-1.2': 'fail' }",
+				]}
+			/>
+			<p>
+				各プロファイルは同じページで順にスキャンされるので、スキャンにはプロファイルごとに1回スキャンするのとほぼ同じ時間がかかります。適用されないプロファイル（そのようなプロファイルがない、そのパックがスキップされた、あるいは<code>runOnly</code>の含める指定が代わりにルールを選ぶ）は理由とともに<code>engine.profilesNotRun</code>に列挙され、ほかのプロファイルは引き続き実行されます。SARIF、JUnit、CLI、test-matchersは、そうしたスキャンを求められたより少なく判定したものとしてエラーとして扱います。要素が1つのリストはその1つの名前と同じで、これまでとまったく同じようにスキャンします。<a href="/configuration/packs/#wai-aria-pack">WAI-ARIAのパック</a>は、この機能が作られた目的のケースです。
 			</p>
 			<p>
 				WCAGの対象バージョンは、手書きのタグセットと同じようにタグから決まります（後述の<a href="#filtering-by-wcag-version">「WCAGバージョンによる絞り込み」</a>を参照）。そのため<code>en301549-v3.2.1</code>はWCAG 2.1を、<code>en301549-v4.1.1</code>はWCAG 2.2を対象にします。<code>en301549-v3.2.1</code>では重複したidが今も<code>fail</code>になりえます。そのプロファイルが4.1.1の文言を維持するためです（<code>keepsParsing</code>、<a href="#parsing-errata">後述</a>）。<code>en301549-v4.1.1</code>ではなりません。パックのプロファイルは、代わりに<code>wcagVersion</code>で自身のバージョンを示せます（<a href="/configuration/packs/#profiles">パック</a>）。規格が対応付けたルールだけを実行するプロファイルには、バージョンを示すWCAGのタグがないためです。名前の大文字と小文字は区別しません。プロファイルを使った実行は、それを<code>engine.profile</code>として返します。
@@ -813,13 +885,16 @@ export function EngineOptionsContent() {
 					"  locale: 'en',                    // default 'en'; de-DE falls back to de, then to en per string",
 					"  wcagVersion: '2.2',              // default '2.2' — the conformance target",
 					"  wcagLevel: 'AA',                 // optional — the level of the criteria reported",
-					"  profile: 'wcag22-aa',            // optional — a named conformance target",
+					"  profile: 'wcag22-aa',            // optional — a named conformance target, or a list of them",
 					"  mappings: ['en301549'],          // optional — standards besides WCAG to name on each result",
 					"  optInRules: 'all',               // optional — also run rules other standards add beyond WCAG",
 					"  messages: { de: { /* key: text */ } },  // optional caller-supplied dictionaries; win over built-in ones",
 					"  includeHiddenElements: false,    // default false — set true to evaluate hidden/collapsed subtrees too",
 					"  includeShadowDom: true,          // default true — opt OUT with false to skip open shadow roots",
 					"  fragment: false,                 // default false — set true when the scan target isn't a real page",
+					"  embeddedAriaHidden: false,       // default false — a frame's document shown under aria-hidden=\"true\"",
+					"  embeddedInert: false,            // default false — a frame's document shown under [inert]",
+					"  topLevelDocument: true,          // optional — unset, a document shown in a frame is no page of its own",
 					"  excludeSelectors: ['#cookie-banner', '.third-party-widget'],  // array or comma-separated string",
 					"  styleSheetTexts: [{ href: 'https://cdn.example/site.css', text: '/* its CSS */' }],  // sheets the page can't read",
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",

@@ -92,7 +92,7 @@ const optionRows = [
 		effect: (
 			<>
 				<a href="/conformance/baseline/">ベースライン</a>
-				の<code>buildBaselineEntries()</code>で作るエントリーです。そこに記録された不合格の検出箇所は、SARIFとまったく同じように除外されます。保存したままのベースラインファイル（それを<code>JSON.parse</code>したもの）か、その<code>entries</code>リストを受け取ります。不合格がすべて既知のルールは、合格ではなく<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>になります。合格したわけではないからです。1.13が書いたエントリーのうち、1.14で変わった理由コードのものも、<a href="/conformance/baseline/#upgrading">新しいコードの検出結果に一致します</a>。<code>leanFailAs: 'failure'</code>のもとでは、不適合に傾き、<code>lean: 'fail'</code>と示したエントリー（<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>）がある検出結果もゲートせず、<code>&lt;skipped&gt;</code>のメッセージはそれを<code>known likely failures recorded in the baseline</code>に数えます。
+				の<code>buildBaselineEntries()</code>で作るエントリーです。そこに記録された不合格の検出箇所は、SARIFとまったく同じように除外されます。保存したままのベースラインファイル（それを<code>JSON.parse</code>したもの）か、その<code>entries</code>リストを受け取ります。不合格がすべて既知のルールは、合格ではなく<code>&lt;skipped message="N known failures recorded in the baseline"&gt;</code>になります。合格したわけではないからです。1つ前のマイナーリリースが書いたエントリーのうち、その後に変わった理由コードのものも、<a href="/conformance/baseline/#upgrading">新しいコードの検出結果に一致します</a>。<code>leanFailAs: 'failure'</code>のもとでは、不適合に傾き、<code>lean: 'fail'</code>と示したエントリー（<code>{"buildBaselineEntries(result, { leanFail: true })"}</code>）がある検出結果もゲートせず、<code>&lt;skipped&gt;</code>のメッセージはそれを<code>known likely failures recorded in the baseline</code>に数えます。
 			</>
 		),
 	},
@@ -103,6 +103,16 @@ const optionRows = [
 		effect: (
 			<>
 				スキャンが実行したパック（<code>engineOptions.packs</code>）です。<code>leanFailAs: 'failure'</code>のもとでは、<a href="/results-reports/html-report/">HTMLレポート</a>と同じく、パックのルールの不適合の可能性が高いものに、そのルール自身の<code>meta.review</code>の手順が付きます。
+			</>
+		),
+	},
+	{
+		id: "allowProfilesNotRun",
+		option: <code>allowProfilesNotRun</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				<a href="/configuration/engine-options/#several-profiles">複数のプロファイル</a>でのスキャンが、求めたより少ないプロファイルしか実行しなかった場合（<code>engine.profilesNotRun</code>）、求められたより少なく数えたことになります。実行されなかった各プロファイルは、<code>Profiles</code>スイートの<code>&lt;error&gt;</code>になります。<code>true</code>にするとスキップになります。<code>true</code>と<code>false</code>以外の値を指定すると<code>TypeError</code>が投げられます。core 1.15.0以降。
 			</>
 		),
 	},
@@ -206,7 +216,7 @@ export function JunitReportContent() {
 					<strong>スイートはスキャンのWCAGのレベルとバージョンに従います。</strong>それらによってスキャンが<code>rulesResults</code>から外した達成基準にはスイートがありません。<code>engineOptions.wcagLevel: 'AA'</code>（<code>engine.wcagLevel</code>）のもとでのAAAの達成基準や、WCAG 2.2（<code>engine.wcagVersion</code>）で<code>{"includeRuleIds: ['duplicate-id']"}</code>を実行したときの、2.2で削除された4.1.1（構文解析）です。スキャンが報告する達成基準は残ります。レベルより上でもIDで指定された集約、<a href="/results-reports/output-schema/#partly-checked">一部だけチェックされた</a>達成基準、4.1.1を選んだ2.2のスキャンでの4.1.1などです。外された達成基準だけに対応するルールは<code>Other checks</code>に入り、その失敗は<code>&lt;skipped message="Not counted: WCAG 1.4.6 is outside the scan's target, WCAG 2.2 AA; 1 failing occurrence"&gt;</code>になり、検出箇所は<code>&lt;system-out&gt;</code>に入ります。ルールは実行されて失敗しており、レポートはそれを示しますが、AAのビルドがAAAの達成基準で失敗することはありません。完了しなかったルールは引き続き<code>&lt;error&gt;</code>です。選択が示すレベル（<code>runOnly.wcag.level</code>、またはレベルのタグ）も<code>engine.wcagLevel</code>として記録され、同じようにスイートを絞り込みます。古いエンジンの結果のように、<code>engine.wcagLevel</code>も<code>engine.wcagVersion</code>も記録していない結果では、すべての達成基準が残ります。
 				</li>
 				<li>
-					実行の<code>engine</code>、<code>schemaVersion</code>、<code>wcagVersion</code>、<code>profile</code>、<code>optInRules</code>、<a href="/results-reports/output-schema/"><code>engine.environment</code></a>にあるレンダリングの条件（<code>layout</code>と、ブラウザーでは<code>1280x720</code>の形の<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>）、<code>locale</code>、<code>url</code>は、結果にある場合だけ、各スイートのプロパティとして繰り返されます。ビューポートの幅によって出たり消えたりする失敗は、実行が使った幅までたどれます。上の例はjsdomでのスキャンなので、レイアウトがありません。
+					実行の<code>engine</code>、<code>schemaVersion</code>、<code>wcagVersion</code>、<code>profile</code>（複数のプロファイルでのスキャンでは最初のプロファイル）、<code>profiles</code>（複数のプロファイルでのスキャンのみ。実行したすべてのプロファイルをカンマ区切りで）、<code>optInRules</code>、<a href="/results-reports/output-schema/"><code>engine.environment</code></a>にあるレンダリングの条件（<code>layout</code>と、ブラウザーでは<code>1280x720</code>の形の<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>）、<code>locale</code>、<code>url</code>は、結果にある場合だけ、各スイートのプロパティとして繰り返されます。ビューポートの幅によって出たり消えたりする失敗は、実行が使った幅までたどれます。上の例はjsdomでのスキャンなので、レイアウトがありません。
 				</li>
 				<li>
 					複数のビューポート幅でスキャンしたページは、どの幅でも同じスイート名とテスト名になるため、CIのテスト表示でまとめられてしまうことがあります。幅ごとに1つのファイルを書き出し、CIのレポート設定でファイルを幅ごとに名前付けするかグループ化してください。<code>viewport</code>プロパティには、そのファイルがどの幅を表しているかが記録されます。

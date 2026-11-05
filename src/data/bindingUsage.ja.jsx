@@ -50,11 +50,60 @@ const moreHooksCaveat = (repo) => (
 );
 
 /**
- * Conditions, the severity gate and leaning questions (binding 1.5.0), then a pointer to the
+ * Several profiles and frames (binding 1.6.0), conditions, the severity gate and leaning
+ * questions (binding 1.5.0), then a pointer to the
  * builder methods this page leaves to the binding's README.
  */
 const alsoAvailable = (repo, { logger = true, conditions = null, cypress = false } = {}) => (
 	<>
+		<p>
+			<strong>複数のプロファイルを同時に。</strong>
+			core 1.15（バインディング1.6.0）では、
+			<code>.options({"{ profile }"})</code>
+			もリストを受け取り、WCAGのプロファイルと並べてパックのプロファイルを、あるいは別のパックのプロファイルを指定できます。
+			{cypress ? (
+				<code>{".withPacks('@surea11y/pack-wai-aria').options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			) : (
+				<code>{".withPacks(waiAria).options({ profile: ['wcag22-aa', 'wai-aria-1.2'] })"}</code>
+			)}
+			は、1回のスキャンでWCAGとWAI-ARIAによってページを判定します。両方が実行するルールは1つのチェックになり、その判定結果は最も悪いもので、その
+			<code>verdicts</code>
+			はそれぞれのプロファイルがそのチェックをどう判定するかを示します（
+			<a href="/configuration/engine-options/#several-profiles">エンジンオプション</a>
+			を参照）。実行されなかったプロファイルは
+			<code>results.engine.profilesNotRun</code>
+			に入り、
+			<code>getScanGaps()</code>
+			はそれを
+			<code>'profile-not-run'</code>
+			として報告します。
+		</p>
+		<p>
+			<strong>フレームは、ブラウザーが読むとおりに読みます。</strong>
+			core 1.15から、フレーム内の文書はそれ自体で1つのページではないので、そのタイトル、言語、ビューポート、ランドマークのルールは
+			<code>notApplicable</code>
+			になります。
+			<code>aria-hidden</code>
+			や
+			<code>inert</code>
+			の下にあるフレームはそのとおりに読み、開いているモーダルダイアログの背後にあるフレームは除外し、シャドウルート内のフレームはそのホストを通じて読みます。
+			{cypress ? (
+				<>
+					Cypressはテスト対象のアプリをランナーのフレームの中に表示するので、
+					<code>.analyze()</code>
+					はそのアプリについて
+					<code>engineOptions.topLevelDocument: true</code>
+					を渡し、アプリは引き続きページとして判定されます。アプリの中のフレームはフレームとして読みます。
+				</>
+			) : null}
+			また、WAI-ARIAやHTMLのコンテンツモデルだけが破られている場合、ARIAとHTMLの構造のルールは不合格にせずに問いかけるようになりました（
+			<a href="/help/faq/#results-changed-1-15">変更点</a>
+			）。検出結果の理由コードはそのままなので、ベースラインは引き続き一致します。
+			<code>text-spacing-content-loss</code>
+			の検出結果は、
+			<code>.screenshots()</code>
+			を使うと、間隔を適用した状態で撮影されます。
+		</p>
 		<p>
 			<strong>ダークモード、スマートフォンの幅、重大度によるゲート。</strong>
 			<code>{".conditions([{ colorScheme: 'dark' }, { width: 320 }])"}</code>

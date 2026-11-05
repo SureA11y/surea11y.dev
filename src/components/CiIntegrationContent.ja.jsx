@@ -155,6 +155,24 @@ export function CiIntegrationContent() {
 				をスキャンした場合は付きません（SARIF/<span lang="en">Code Scanning</span>が検出結果を関連付けられるのは、リポジトリ内の実在するファイルだけです）。
 			</p>
 
+			<h3 id="manual-checks-artifact">スキャンが人に任せるものを公開する</h3>
+			<p>
+				ゲートが判定するのは、ルールが判定できるものです。残りを実行のたびに人へ渡すには、HTMLレポートと、どのルールも完全には判定しないチェックのワークシート（<code>--manual-checks</code>。<code>@surea11y/cli</code> 1.5.0かつcore 1.15.0以降）を書き出し、両方を成果物としてアップロードします。どちらも終了コードを変えません。
+				<a href="/conformance/procedures/">テスト手順</a>
+				を参照してください。
+			</p>
+			<CodeBlock
+				lang="yaml"
+				lines={[
+					"      - run: npx @surea11y/cli scan ./dist/index.html --html reports/report.html --manual-checks reports/manual-checks.html",
+					"      - uses: actions/upload-artifact@v4",
+					"        if: always()",
+					"        with:",
+					"          name: accessibility",
+					"          path: reports/",
+				]}
+			/>
+
 			<h2><span lang="en">Bitbucket Pipelines</span></h2>
 			<p>
 				<span lang="en">Bitbucket Pipelines</span>には、<span lang="en">GitHub Code Scanning</span>に相当するSARIF対応の組み込みダッシュボードがありません。そのため、実用的な連携ポイントは

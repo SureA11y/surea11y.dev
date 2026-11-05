@@ -45,15 +45,7 @@ export function EarlReportContent() {
 				<em>「ACT実装として掲載されている」</em>
 				であり、
 				<em>「W3C認定」</em>
-				ではありません。このエンジン自身のレポートは
-				<a href="https://surea11y.github.io/act-report/act-report.jsonld">
-					https://surea11y.github.io/act-report/act-report.jsonld
-				</a>
-				で公開しており、
-				<code>scripts/act-report.js</code>
-				で再生成しています。
-				<code>--runner=chromium</code>
-				は、ブラウザーのバインディングがエンジンを実行するのと同じようにChromiumでのスキャンから同じレポートを生成し、アサーターの名前は「<span lang="en">SureA11y in a browser</span>」、レポートの説明にはChromiumのバージョンが入ります。
+				ではありません。このエンジンは2つのレポートを公開しており、どちらも最新のリリースから<code>scripts/act-report.js</code>で再生成しています。1つはCLIとtest-matchersがエンジンを実行するのと同じjsdomでのスキャンによる<a href="https://surea11y.github.io/act-report/act-report.jsonld">jsdomでのレポート</a>で、アサーターの名前は「<span lang="en">SureA11y</span>」です。もう1つはブラウザーのバインディングが実行するのと同じChromiumでのスキャンによる<a href="https://surea11y.github.io/act-report/act-report-browser.jsonld">Chromiumでのレポート</a>（<code>--runner=chromium</code>）で、アサーターの名前は「<span lang="en">SureA11y in a browser</span>」、レポートの説明にはChromiumのバージョンが入ります。<a href="https://github.com/SureA11y/act-report"><span lang="en">SureA11y/act-report</span></a>のワークフローが毎週月曜日に両方を公開し直し、各リリースの後には手動でも実行されます。
 			</p>
 			<p>
 				<strong>利用者</strong>
@@ -298,6 +290,11 @@ export function EarlReportContent() {
 				出力は決定論的です。対象はsource順、アサーションはルールID順に並び、同じ入力であれば順序を問わずバイト単位で同一の出力になります。唯一の例外はURLのない結果で、リスト内の位置（
 				<code>about:blank#result-2</code>
 				）で区別されます。順序に左右されたくない場合は、各結果にURLを持たせてください。だからこそ、2つのエンジンバージョン間の差分に意味が生まれます。
+			</p>
+
+			<h2 id="several-profiles">複数のプロファイルでのスキャン</h2>
+			<p>
+				<a href="/configuration/engine-options/#several-profiles">複数のプロファイル</a>での結果（core 1.15.0以降）では、チェックの<code>outcome</code>はそのプロファイルが与える最も悪い判定結果で、WCAGが確認を求めるだけの検出結果を、ある規格が不合格にしたものになることがあります。そのため、各アサーションには代わりにルール自身の判定結果である<code>checkOutcome</code>を使います。ロールがサポートしない属性は、WAI-ARIAでは不合格、WCAG 4.1.2では確認を求めるものですが、<code>WCAG2:name-role-value</code>に対して<code>earl:cantTell</code>としてアサートされます。このように、規格の不合格がWCAGの不合格としてアサートされることはありません。
 			</p>
 
 			<h2>オプション</h2>
