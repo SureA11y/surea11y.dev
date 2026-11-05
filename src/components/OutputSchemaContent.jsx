@@ -108,11 +108,38 @@ const topLevelRows = [
 					meaning: (
 						<>
 							Present only when an <code>engineOptions.profile</code> selected this run's rules, and
-							names the profile, lowercased. Absent when none was asked for, and also when one was asked
+							names the profile, lowercased (in a scan of several profiles, the first that ran). Absent
+							when none was asked for, and also when one was asked
 							for but did not apply (unknown name, or an include in <code>runOnly</code> or{" "}
 							<code>engineOptions</code> chose the rules instead), so its presence is how you confirm a
 							run really targeted that profile. See{" "}
 							<a href="/configuration/engine-options/#conformance-profiles">Conformance profiles</a>.
+						</>
+					),
+				},
+				{
+					id: "engine.profiles",
+					field: <code>engine.profiles</code>,
+					meaning: (
+						<>
+							A scan of several profiles only (<code>engineOptions.profile</code> as a list): the
+							profiles that ran, in the order asked. <code>engine.profile</code> is then the first of
+							them. See <a href="#several-profiles">Several profiles</a>.
+						</>
+					),
+				},
+				{
+					id: "engine.profilesNotRun",
+					field: <code>engine.profilesNotRun</code>,
+					meaning: (
+						<>
+							A scan of several profiles only, and only when one of them didn't run:{" "}
+							<code>{"[{ profile, reason }]"}</code>, <code>reason</code>{" "}
+							<code>unknown-profile</code> (no such profile), <code>pack-skipped</code> (its pack was
+							skipped, see <code>skippedPacks</code>) or <code>overridden-by-selection</code> (an
+							include in <code>runOnly</code>, or rule ids or tags in <code>engineOptions</code>,
+							selects the rules instead, as it would for one profile; it does for every profile's
+							scan). The set of reasons is open.
 						</>
 					),
 				},
@@ -535,7 +562,13 @@ const occurrenceRows = [
 				failed, and so are <code>element</code> in <code>list-children-valid</code> findings,{" "}
 				<code>parentElement</code> in <code>listitem-parent-valid</code> findings and{" "}
 				<code>role</code> in <code>aria-role-name-present</code> findings, which say which kind of
-				list or widget failed. Each rule's page lists the fields its findings carry, under “What a finding reports”.
+				list or widget failed. So is <code>data.details.evidenceState</code> (core 1.15.0 and
+				later): on a finding that shows only in a state the rule put the page in and took it out of
+				before the browser painted, it names that state (<code>text-spacing</code>, on the findings
+				of <code>text-spacing-content-loss</code> about cut-off, overlapping or scroll-locked text),
+				so a tool can put the page in it again with <code>evidenceState()</code> to picture the
+				finding, as the bindings' <code>.screenshots()</code> do. Each rule's page lists the fields
+				its findings carry, under “What a finding reports”.
 			</>
 		),
 	},
@@ -617,7 +650,9 @@ export function OutputSchemaContent() {
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
 					'    wcagLevel?: "A" | "AA" | "AAA",',
-'    profile?: string,      // "wcag22-aa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a registered standard\'s own',
+'    profile?: string,      // "wcag22-a", "wcag22-aa", "wcag22-aaa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a pack\'s own',
+					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
+					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
 					"    optInRules?: string[],",
@@ -650,7 +685,8 @@ export function OutputSchemaContent() {
 					"  standards?: Array<{ key: string, standard: string, titleLang?: string, note?: string }>,",
 					"  overriddenBuiltinIds: string[],",
 					"  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
-					"  skippedPacks?: Array<{ name: string | null, reason: string }>",
+					"  skippedPacks?: Array<{ name: string | null, reason: string }>,",
+					"  profiles?: { [profile: string]: { wcagVersion, wcagLevel?, standards, rulesResults } }  // a scan of several profiles only",
 					"}",
 				]}
 			/>
@@ -662,6 +698,116 @@ export function OutputSchemaContent() {
 					{ key: "meaning", label: "Meaning", wrap: true },
 				]}
 				rows={topLevelRows}
+			/>
+
+			<h2 id="several-profiles">Several profiles</h2>
+			<p>
+				With <code>engineOptions.profile</code> a list of two or more (
+				<code>['wcag22-aa', 'wai-aria-1.2']</code>, see{" "}
+				<a href="/configuration/engine-options/#several-profiles">Engine options</a>), each profile
+				judges the page as a scan of it alone would, and the result reads as a scan of one profile
+				with the rules of all. A single name, or a list of one, gives exactly the result it always
+				has, with none of the fields below. Core 1.15.0 and later.
+			</p>
+			<ul>
+				<li>
+					<strong><code>checksResults</code></strong>: each rule once. <code>verdicts</code> is each
+					profile's outcome for it (<code>{"{ 'wcag22-aa': 'cantTell', 'wai-aria-1.2': 'fail' }"}</code>),
+					keyed by profile, for the profiles that ran it; <code>outcome</code> is the worst of them,{" "}
+					<code>fail</code>, then <code>cantTell</code>, then <code>pass</code>, then{" "}
+					<code>notApplicable</code>. A reporter that reads <code>outcome</code> counts the scan as
+					that one profile. <code>checkOutcome</code> is the rule's own outcome, before any standard
+					judges its findings by reason code: what its WCAG criteria read, since a standard's
+					failure of a finding WCAG only asks about is no WCAG failure.
+				</li>
+				<li>
+					<strong>Each occurrence</strong> is listed once, with <code>verdicts</code>: what each
+					profile makes of it. That is its tier, unless a standard's rollups judge the rule by its
+					findings' reason codes: then it is what they make of it (a WCAG <code>cantTell</code> a
+					standard is certain of is <code>fail</code> there), or <code>notApplicable</code> where the
+					standard doesn't count it. A finding that fails one profile and is a question for another
+					says both. <code>occurrenceOutcome</code> is the worst of them where it differs from the
+					check's.
+				</li>
+				<li>
+					<strong><code>rulesResults</code></strong>: every profile's rollups, each once, with{" "}
+					<code>profiles</code>, the profiles that give it. One that two profiles give with different
+					outcomes (two WCAG versions, say) is the worst of them.
+				</li>
+				<li>
+					<strong><code>profiles</code></strong>: per profile that ran,{" "}
+					<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code> (<code>wcagLevel</code>{" "}
+					only for a profile that targets a WCAG level), <code>rulesResults</code> the outcome of
+					each of its rollups by id: what a scan of that profile alone would have reported.
+				</li>
+				<li>
+					<strong><code>severity</code></strong>: the highest any profile that fails or asks about
+					the rule gives it, whatever order the profiles are listed in.
+				</li>
+			</ul>
+			<DataTable
+				label="What reads a result of several profiles"
+				rowKey="id"
+				columns={[
+					{ key: "reader", label: "Reader", width: "22%" },
+					{ key: "does", label: "What it does with several profiles", wrap: true },
+				]}
+				rows={[
+					{
+						id: "gates",
+						reader: "SARIF, JUnit",
+						does: (
+							<>
+								Gate on <code>outcome</code>: any profile's failure fails the build. A profile asked for
+								and not run is an error unless <code>allowProfilesNotRun</code> (
+								<a href="/results-reports/sarif-report/#options">SARIF</a>,{" "}
+								<a href="/results-reports/junit-report/#options">JUnit</a>).
+							</>
+						),
+					},
+					{
+						id: "earl",
+						reader: "EARL",
+						does: (
+							<>
+								Asserts each rule against its WCAG criteria by <code>checkOutcome</code>, so a
+								standard's failure is never asserted as a WCAG one (
+								<a href="/results-reports/earl-report/#several-profiles">EARL report</a>).
+							</>
+						),
+					},
+					{
+						id: "html",
+						reader: "The HTML report",
+						does: (
+							<>
+								Names every profile in its heading, and shows each profile's verdict on a finding's
+								card (<code>wai-aria-1.2: Fail</code>) beside its WCAG criteria (
+								<a href="/results-reports/html-report/">HTML report</a>).
+							</>
+						),
+					},
+					{
+						id: "baselines",
+						reader: "Baselines",
+						does: (
+							<>
+								Match findings by rule, reason code and markup, as for any result: a finding is one
+								entry, whatever its verdicts (<a href="/conformance/baseline/#several-profiles">Baseline</a>).
+							</>
+						),
+					},
+					{
+						id: "bindings",
+						reader: "Bindings",
+						does: (
+							<>
+								Pass <code>engineOptions</code> through; with frames, each frame's result is a merged
+								one. A profile not run is a <code>profile-not-run</code> scan gap.
+							</>
+						),
+					},
+				]}
 			/>
 
 			<h2 id="cross-frame-result">Cross-frame result (<code>runa11yCoreAcrossFrames</code>)</h2>
@@ -753,6 +899,8 @@ export function OutputSchemaContent() {
 					'  outcomeNormalized: "pass" | "fail" | "cantTell" | "inapplicable",',
 					'  severity: "minor" | "moderate" | "serious" | "critical",',
 					'  ruleSeverity?: "minor" | "moderate" | "serious" | "critical", // the rule\'s own, when a profile gave it another',
+					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only: each profile's outcome",
+					"  checkOutcome?: string,   // a scan of several profiles only: the rule's own outcome, which its WCAG criteria read",
 					'  policyOutcome?: "pass" | "fail" | "cantTell" | "notApplicable", // what the rule found, when the policy made it cantTell',
 					'  confidence: "high" | "medium" | "low",',
 					'  type: "automatic" | "manual",',
@@ -983,6 +1131,7 @@ export function OutputSchemaContent() {
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
 					'  occurrenceOutcome?: "fail" | "cantTell",   // present when the rule graded its findings into tiers',
+					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only",
 					"  uncertainty?: {          // present only on a cantTell-tier occurrence",
 					'    code: "not-computable" | "runtime-dependent" | "spec-only"',
 					'        | "equivalence-unknown" | "judgement-required" | "out-of-scope",',
@@ -1114,12 +1263,14 @@ export function OutputSchemaContent() {
 				how to answer it: <code>steps</code>, a few actions in order, starting from the element the
 				finding names (“Tab to the element.”, “Watch whether the focus indicator stays on it.”),
 				then <code>passWhen</code> and <code>failWhen</code>, what they see if it passes and if it
-				fails, naming the criterion it fails. Every core rule that can report{" "}
-				<code>cantTell</code> writes these for each of its reason codes (its{" "}
-				<code>meta.review</code>), and each <code>cantTell</code>-tier occurrence gets its code's
-				entry, in the scan's locale. A variant's finding (<code>variantOf</code>) gets its base
-				rule's where it has none of its own. A pack rule may write them too, in English (see{" "}
-				<a href="/configuration/packs/#rules">Packs</a>); its findings get them when the packs are
+				fails, naming the criterion it fails. Core has these for each reason code of every core
+				rule that can report <code>cantTell</code>, kept with the{" "}
+				<a href="/conformance/procedures/">procedures for assessing each criterion by hand</a>{" "}
+				(published as the review dictionaries, <code>{"@surea11y/core/review/<locale>"}</code>), and
+				each <code>cantTell</code>-tier occurrence gets its code's entry, in the scan's locale. A
+				variant's finding (<code>variantOf</code>) gets its base rule's where it has none of its
+				own. A pack rule may write them too, in English, and its pack's dictionaries may translate
+				them (see <a href="/configuration/packs/#review-steps">Packs</a>); its findings get them when the packs are
 				known, as <code>runDomRulesInPage</code> with <code>engineOptions.packs</code> and{" "}
 				<code>addHowToCheck(result, {"{ packs }"})</code> know them. It is absent on a decided
 				occurrence, on a custom rule's finding, on an override's (a custom or pack rule in{" "}
@@ -1151,6 +1302,25 @@ export function OutputSchemaContent() {
 				for some, a screen reader. Unlike <code>uncertainty.needed</code>, which says in one
 				sentence what would settle the question, they say how to settle it. Like a lean, they are
 				guidance, not part of a finding's identity, and their wording may improve in any release.
+			</p>
+			<p id="steps-that-name-the-case">
+				<strong>Steps that name the case.</strong> Since core 1.15.0 a step, <code>passWhen</code>{" "}
+				or <code>failWhen</code> may name what its finding found: <code>{"{{name|text}}"}</code> reads
+				as the finding's value for <code>name</code>, from its <code>i18n.params</code> or its{" "}
+				<code>data.details</code>, and as <code>text</code> where it has none. So a step “Open the
+				popup, which aria-haspopup says is a {"{{expectedRole|menu}}"}” reads “…is a listbox” on a
+				finding whose details give <code>expectedRole: 'listbox'</code>, and “…is a menu” in{" "}
+				<code>howToCheckFor</code>, which has no finding, and on a procedures page. A value is one
+				line of at most 120 characters, and comes from the page: show it as text, as the HTML report
+				does. <code>howToCheckFor(ruleId, code, locale, {"{ values }"})</code> fills them from the
+				values given.
+			</p>
+			<p>
+				<strong>A standard's own words.</strong> A pack's standard may give its own steps for a core
+				rule's code (<code>standard.review</code>): a finding that only the standard's profiles ask
+				about reads them in place of core's, in English, so a WAI-ARIA scan's question names
+				WAI-ARIA, not WCAG 4.1.2. Where a WCAG profile asks too, in a scan of several, the finding
+				reads core's.
 			</p>
 
 			<h2 id="composite-result">A composite result (<code>rulesResults[i]</code>)</h2>
@@ -1271,7 +1441,9 @@ export function OutputSchemaContent() {
 					impact, independent of <code>confidence</code>. A profile can give a rule another severity
 					(a profile's <code>severity</code> in a standard or a pack's checklist): under it the
 					result shows the profile's, keeps the rule's own as <code>ruleSeverity</code> (present
-					only then), and the rollups take the profile's.
+					only then), and the rollups take the profile's. In a scan of several profiles, it is the
+					highest severity any profile that fails or asks about the rule gives it (the highest of
+					all where none does), whatever order the profiles are listed in.
 				</li>
 				<li>
 					<code>confidence</code>: <code>low</code> &lt; <code>medium</code> &lt;{" "}

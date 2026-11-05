@@ -40,6 +40,8 @@ jobs:
         run: npm run docs:rules:check
       - name: Locale data matches @surea11y/core
         run: npm run docs:locales:check
+      - name: Sample procedures match @surea11y/core
+        run: npm run docs:sample-procedures:check
       - run: npm run build
       - name: Links and anchors
         run: npm run check:links

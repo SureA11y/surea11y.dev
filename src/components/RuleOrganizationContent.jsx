@@ -28,8 +28,9 @@ export function RuleOrganizationContent() {
 					<strong>automatic</strong> — decides deterministically, with no heuristics and no
 					guessing. Can report <code>fail</code>. <code>cantTell</code> still shows up here, in
 					these situations: a real violation exists but doesn't on its own establish that the
-					mapped WCAG criterion fails (an ARIA author requirement whose exposed name/role/value
-					still survives); the rule decides deterministically that a best practice is broken, claims
+					mapped WCAG criterion fails (an ARIA author requirement, or the HTML content model,
+					whose exposed name/role/value still survives: since core 1.15, uncertainty{" "}
+					<code>spec-only</code>, in the ARIA and HTML structure rules); the rule decides deterministically that a best practice is broken, claims
 					no Success Criterion, and what it found need not harm anyone, since the role or element
 					still reaches assistive technology as it is (<code>aria-allowed-role</code>,{" "}
 					<code>landmark-role-name-present</code>, tagged best-practice); or the rule can only confirm
@@ -142,7 +143,9 @@ export function RuleOrganizationContent() {
 				<ResultBadge lang="en" state="unknown" size="sm" />, partly checked:{" "}
 				<strong>the facets its rules cover are met, and a person checks the rest</strong>. See{" "}
 				<a href="/conformance/wcag-mapping/">Conformance</a> for the three layers (atomic rules, facets,
-				composites) and how a composite's outcome is actually computed.
+				composites) and how a composite's outcome is actually computed. Each facet of a criterion a
+				rule evaluates has a procedure, how a person checks it by hand (see{" "}
+				<a href="/conformance/procedures/">Test procedures</a>).
 			</p>
 		</>
 	);

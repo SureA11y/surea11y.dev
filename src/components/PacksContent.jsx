@@ -4,6 +4,26 @@ import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
 const pack = "https://github.com/SureA11y/pack-en301549#readme";
+const ariaPack = "https://github.com/SureA11y/pack-wai-aria";
+const aria = "https://www.w3.org/TR/wai-aria-1.2/";
+
+const ariaRequirementRows = [
+	{ id: "name-required", req: <code>name-required</code>, title: <a href={`${aria}#namecalculation`}>Roles that require an accessible name have one</a> },
+	{ id: "roles", req: <code>roles</code>, title: <a href={`${aria}#roles`}>Roles are concrete and current</a> },
+	{ id: "required-states", req: <code>required-states</code>, title: <a href={`${aria}#requiredState`}>Required states and properties are present</a> },
+	{ id: "supported-attributes", req: <code>supported-attributes</code>, title: <a href={`${aria}#supportedState`}>States and properties are supported by the role</a> },
+	{ id: "prohibited-attributes", req: <code>prohibited-attributes</code>, title: <a href={`${aria}#prohibitedattributes`}>Prohibited states and properties are absent</a> },
+	{ id: "attribute-values", req: <code>attribute-values</code>, title: <a href={`${aria}#propcharacteristic_value`}>States and properties have valid values</a> },
+	{ id: "owned-elements", req: <code>owned-elements</code>, title: <a href={`${aria}#mustContain`}>Containers own the elements their role requires, each with one owner</a> },
+	{ id: "context-roles", req: <code>context-roles</code>, title: <a href={`${aria}#scope`}>Elements are in the context their role requires</a> },
+];
+
+const procedureFormRows = [
+	{ id: "restates", form: <code>{"{ wcag: '1.1.1' }"}</code>, means: "It restates a WCAG criterion, and takes that criterion's facets, rules and procedures as they are, in every language core has them." },
+	{ id: "replace", form: <code>{"{ wcag: '1.4.3', replace: { <facet>: { … } } }"}</code>, means: "It restates a criterion but tests some of it its own way: the facets it names show its procedure instead of core's." },
+	{ id: "own", form: <code>{"{ facets: [ … ] }"}</code>, means: "It is the standard's own: the test objectives a person checks, each with its procedure." },
+	{ id: "note", form: <code>{"{ note: '…' }"}</code>, means: "It has nothing to assess, such as a clause a version leaves void: it is listed with its note, so a person looking for it learns why." },
+];
 
 // The example pack each binding ships as examples/acme-policy-pack.js.
 const examplePack = [
@@ -84,7 +104,8 @@ const fileRows = [
 	{ id: "examples", file: <code>docs/RULE_EXAMPLES.md</code>, what: "Examples of each rule's outcomes." },
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Core's lint rules for rules." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Standard only: the requirements and the rules that check each." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.14.2</code>), and eslint, jsdom and Playwright as development dependencies.</> },
+	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Standard only: how a person assesses each requirement by hand, and a test that every requirement has a procedure for each of its facets." },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.15.0</code>), and eslint, jsdom and Playwright as development dependencies.</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "The pack's own guide to these files, and what git leaves out." },
 ];
 
@@ -109,7 +130,8 @@ export function PacksContent() {
 				<code>engineOptions.packs</code>, and runs them as it runs core's own rules and standards:
 				in Node and in a browser, from the CLI, the bindings and the test matchers, with results,
 				rollups and report entries in the same format as core's. Packs need <code>@surea11y/core</code>{" "}
-				1.11.1 or later.
+				1.11.1 or later. Two standard packs of the SureA11y family are ready to install:{" "}
+				<a href="#en-301-549-pack">EN 301 549</a> and <a href="#wai-aria-pack">WAI-ARIA 1.2</a>.
 			</p>
 
 			<h2 id="which-kind-of-pack">Which kind of pack</h2>
@@ -151,6 +173,17 @@ export function PacksContent() {
 				<code>image-of-text</code>, <code>invalid-field-error-message</code>,{" "}
 				<code>live-region-announcements</code>). With core 1.13 it behaves as its 1.0 releases do.
 			</p>
+			<p>
+				Its 1.2.0 release, with core 1.15.0 or later, also says how a person checks each clause by
+				hand: the <a href="/conformance/procedures/">procedures</a> of the WCAG criterion it
+				restates, where a core rule evaluates it, read as the clause ("which fails EN 301 549
+				9.1.4.3"). It lists the clauses in the standard's own order, under chapter 9's principles
+				and guidelines, and the standard is translated into French, German, Spanish and Japanese,
+				so a list or a worksheet of its procedures, and a scan's clause titles, read in those
+				languages throughout. Chapter 9 is all the pack covers: the standard's other requirements
+				(chapter 4's functional performance statements, chapter 12, the chapters for what is not
+				a web page) have no rule, result or procedure in it.
+			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -177,6 +210,104 @@ export function PacksContent() {
 				Core had EN 301 549 built in until 1.13.0, which deprecates it in favour of this pack (see{" "}
 				<a href="/conformance/wcag-mapping/#en-301-549">WCAG mapping</a>). Like any profile, the
 				pack's profiles choose what runs: a conformance claim still needs a person to check every clause.
+			</p>
+
+			<h2 id="wai-aria-pack">The WAI-ARIA pack</h2>
+			<p>
+				<a href={ariaPack}><code>@surea11y/pack-wai-aria</code></a> is WAI-ARIA 1.2 as a standard:
+				one result per author requirement the rules can check, from core's ARIA rules judged by
+				WAI-ARIA's own wording. Its profile, <code>wai-aria-1.2</code>, runs core's ARIA rules and
+				the pack's own, and nothing else. It needs <code>@surea11y/core</code> 1.15.0 or later.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// npm install @surea11y/core @surea11y/pack-wai-aria",
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"runDomRulesInPage(url, null, { packs: [waiAria], profile: 'wai-aria-1.2' });",
+				]}
+			/>
+			<p>
+				<strong>Why a standard of its own.</strong> Core's ARIA rules are WCAG rules, and a WCAG
+				scan reports every WAI-ARIA violation they find, as a WCAG failure or as a question for a
+				person. The two can differ: an unnamed <code>role="grid"</code> breaks WAI-ARIA's
+				"Accessible Name Required" for certain, but whether it fails WCAG 4.1.2 depends on what the
+				page shows, so WCAG asks. Since core 1.15.0 a WCAG scan fails only where WCAG fails (
+				<a href="/help/faq/#results-changed-1-15">what changed</a>); this pack reads the same
+				findings by WAI-ARIA, where the grid fails.
+			</p>
+			<DataTable
+				label="WAI-ARIA 1.2 requirements in the pack"
+				rowKey="id"
+				columns={[
+					{ key: "req", label: "Requirement", width: "30%" },
+					{ key: "title", label: "Title", wrap: true },
+				]}
+				rows={ariaRequirementRows}
+			/>
+			<p>
+				Each is a result, <code>{"wai-aria-1.2-<requirement>"}</code>: <code>fail</code> where a
+				rule found what WAI-ARIA says an author MUST or MUST NOT do, and <code>cantTell</code>{" "}
+				otherwise, for a finding WAI-ARIA only recommends against (SHOULD, "not recommended") or no
+				finding at all, since the rules check what the markup states, not everything a requirement
+				covers (what script changes, what a browser computes). A requirement never passes on the
+				rules alone. Besides core's rules, the pack has eleven of its own for requirements no core
+				rule checks, because they have no plausible WCAG impact: a scrollbar's{" "}
+				<code>aria-controls</code>, a feed's articles, a caption's context, a combobox's popup, a
+				spinbutton's owned elements, table indexes, <code>aria-setsize</code>,{" "}
+				<code>aria-keyshortcuts</code>, toolbar names, presentational elements, and{" "}
+				<code>wai-aria-role-name-present</code>, a variant of core's{" "}
+				<code>aria-role-name-present</code> that covers every role WAI-ARIA requires a name for
+				(application, marquee, table, tabpanel and treegrid besides core's). The pack's own text
+				is in English.
+			</p>
+			<p>
+				<strong>With WCAG, or another standard.</strong> A scan can judge the page by WAI-ARIA and
+				WCAG at once (<a href="#with-other-profiles">below</a>), or by EN 301 549 and WAI-ARIA with
+				both packs:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = runDomRulesInPage(url, null, {",
+					"  packs: [waiAria],",
+					"  profile: ['wcag22-aa', 'wai-aria-1.2']",
+					"});",
+					"",
+					"// <div role=\"group\" aria-checked=\"true\">: an attribute the role doesn't",
+					"// support, a question for WCAG 4.1.2 and a failure of WAI-ARIA.",
+					"const check = result.checksResults.find((c) => c.ruleId === 'aria-allowed-attr');",
+					"check.verdicts;     // { 'wcag22-aa': 'cantTell', 'wai-aria-1.2': 'fail' }",
+					"check.outcome;      // 'fail', the worst of them, which SARIF and JUnit gate on",
+					"check.checkOutcome; // 'cantTell', the rule's own, which WCAG's criteria read",
+					"",
+					"result.profiles['wai-aria-1.2'].rulesResults; // this standard's results, by id",
+				]}
+			/>
+			<p>
+				A rule both profiles run is one check with a verdict from each. Names are the exception:
+				under <code>wai-aria-1.2</code> they are checked by the pack's variant, so an unnamed{" "}
+				<code>role="grid"</code> is two checks, core's <code>aria-role-name-present</code> (
+				<code>{"{ 'wcag22-aa': 'cantTell' }"}</code>) and the variant (
+				<code>{"{ 'wai-aria-1.2': 'fail' }"}</code>).
+			</p>
+			<p>
+				<strong>How a person answers a question.</strong> Under <code>wai-aria-1.2</code>, the steps
+				of the core questions this standard asks are in WAI-ARIA's words and name what the finding
+				found ("When the page was scanned, the element it controls had role dialog"); a scan that
+				also runs a WCAG profile keeps core's steps, which name the WCAG criterion.{" "}
+				<code>{"proceduresFor('name-required', { packs: [waiAria], standard: 'wai-aria' })"}</code>{" "}
+				gives each requirement's checklist, with the roles, states and values that are valid listed
+				in full, from the Recommendation's tables. The pack's <code>docs/COVERAGE.md</code> lists
+				every WAI-ARIA 1.2 author requirement a rule can check from the markup, one case per role,
+				state or property, and what the profile makes of each.
+			</p>
+			<p>
+				It is also the worked example of a standard that is certain where WCAG asks:{" "}
+				<code>rule-map.js</code> lists, for each of core's ARIA rules, what each reason code means
+				under WAI-ARIA, with <code>outcome: 'fail'</code> for a MUST (see{" "}
+				<a href="#sending-findings-to-requirements">Sending findings to requirements</a>).
 			</p>
 
 			<h2 id="using-a-pack">Using a pack</h2>
@@ -334,6 +465,31 @@ export function PacksContent() {
 				versions, so build that file again for each release of core or of the pack.
 			</p>
 
+			<h3 id="with-other-profiles">Beside other profiles</h3>
+			<p>
+				A pack's profile can run beside WCAG's, or beside another pack's, in one scan: since core
+				1.15.0, <code>profile</code> takes a list, and each profile judges the page as it would
+				alone (see <a href="/configuration/engine-options/#several-profiles">Engine options</a>):
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = runDomRulesInPage(url, null, {",
+					"  packs: [acmePolicy, en301549],",
+					"  profile: ['acme-web-2026', 'en301549-v4.1.1']",
+					"});",
+					"result.engine.profiles; // ['acme-web-2026', 'en301549-v4.1.1']",
+					"result.profiles['acme-web-2026'].rulesResults; // the policy's items, by id",
+				]}
+			/>
+			<p>
+				A finding a standard is certain of where WCAG asks (<code>outcome: 'fail'</code> in its rule
+				map) fails the scan, and its <code>verdicts</code> say what each profile makes of it. A
+				profile whose pack is skipped is listed in <code>engine.profilesNotRun</code>, and the
+				others still run. The bindings take the list in <code>.options({"{ profile }"})</code>, the
+				test matchers in their options and the CLI as a repeated <code>--profile</code>.
+			</p>
+
 			<h2 id="what-a-scan-reports">What a scan reports</h2>
 			<ul>
 				<li>
@@ -362,6 +518,17 @@ export function PacksContent() {
 				<li>
 					A profile's <code>severity</code> shows on the results it changes, with the rule's own
 					kept as <code>ruleSeverity</code>.
+				</li>
+				<li>
+					In a scan of several profiles, <code>engine.profiles</code> lists those that ran,{" "}
+					<code>profiles[id]</code> holds each one's rollups, and each finding's{" "}
+					<code>verdicts</code> say what each profile makes of it (
+					<a href="/results-reports/output-schema/#several-profiles">Output schema</a>).
+				</li>
+				<li>
+					The HTML report's "What's left for a person" follows the pack's standard, under its own
+					numbers, where the scan ran its profile and the standard gives{" "}
+					<a href="#procedures">procedures</a>.
 				</li>
 			</ul>
 
@@ -475,10 +642,12 @@ export function PacksContent() {
 					<code>'^1.11.1'</code>), read as npm reads ranges. Start new packs at 1.11.1: the 1.11.0
 					package left out a file packs need in Node. A scan with a core outside it skips the
 					pack, with the reason in <code>skippedPacks</code>. <code>surea11y-pack new</code> writes
-					the version that generated the pack (<code>^1.14.2</code>); keep a range that starts at
+					the version that generated the pack (<code>^1.15.0</code>); keep a range that starts at
 					1.14 if the pack uses what 1.14 added: <code>meta.review</code>, <code>reasonCodes</code>{" "}
 					and <code>findings</code> rows, <code>meta.contributions</code>, <code>applicability</code>,{" "}
-					<code>partial</code> or <code>keepsParsing</code>.
+					<code>partial</code> or <code>keepsParsing</code>; and one that starts at 1.15 if it uses{" "}
+					<code>outcome: 'fail'</code>. What else 1.15 reads (a standard's procedures, groups and
+					translations, its own review steps) an older core ignores.
 				</li>
 				<li>
 					<strong><code>title</code></strong> is what results and reports call a checklist, and{" "}
@@ -571,10 +740,11 @@ export function PacksContent() {
 				A rule's row in <code>rule-map.js</code> can send its findings of one reason code
 				elsewhere, with <code>{"reasonCodes: { [code]: { requirements, outcome } }"}</code>:{" "}
 				<code>requirements</code> (by default the row's) are the ones those findings count toward,{" "}
-				<code>[]</code> for none, and <code>outcome: 'cantTell'</code> makes a failing one a
-				question there. A requirement's rollup then judges the rule by the findings that count
-				toward it, so a standard can ask about one cause where WCAG fails it, or file two causes
-				under two tests:
+				<code>[]</code> for none; <code>outcome: 'cantTell'</code> makes a failing one a question
+				there, and <code>outcome: 'fail'</code> (core 1.15.0 and later) makes a question a failure
+				there. A requirement's rollup then judges the rule by the findings that count toward it, so
+				a standard can ask about one cause where WCAG fails it, be certain of one where WCAG asks,
+				or file two causes under two tests:
 			</p>
 			<CodeBlock
 				lang="js"
@@ -585,6 +755,27 @@ export function PacksContent() {
 					"}",
 				]}
 			/>
+			<p>
+				<code>outcome: 'fail'</code> is for a standard that is certain where WCAG asks. An unnamed{" "}
+				<code>role="grid"</code> is <code>cantTell</code> for WCAG, whose 4.1.2 depends on what the
+				page shows, but breaks WAI-ARIA's "Accessible Name Required" for certain, as the{" "}
+				<a href="#wai-aria-pack">WAI-ARIA pack</a> says:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'aria-role-name-present': {",
+					"  requirements: ['name-required'],",
+					"  reasonCodes: { name_missing: { outcome: 'fail' } }",
+					"}",
+				]}
+			/>
+			<p>
+				It fails the standard's requirement only: the check result's own outcome, and every WCAG
+				rollup, stay as they were. List only the codes the standard states for certain; a code
+				left out is judged by the rule's own outcome. A standard that writes its own rollups uses
+				the act <code>'fail'</code> in <code>meta.contributions</code> the same way.
+			</p>
 			<p>
 				A row can also send findings by what they record, with{" "}
 				<code>{"findings: [{ when, requirements, outcome }]"}</code>: <code>when</code> gives values
@@ -691,6 +882,98 @@ export function PacksContent() {
 				does. A variant has its core rule's steps, translated, so it needs none; an override,
 				like a custom rule, has none. Core 1.14.0 and later.
 			</p>
+			<p>
+				Since core 1.15.0, a pack's dictionaries can translate its steps (
+				<a href="#messages">below</a>), and a step can name what the finding found:{" "}
+				<code>{"{{role|none}}"}</code> reads as the finding's <code>role</code>, from its{" "}
+				<code>i18n.params</code> or <code>data.details</code>, and as <code>none</code> where there
+				is no finding, on a procedures page. <code>definePack</code> refuses a placeholder without
+				its text.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"meta.review = {",
+					"  PRESENTATIONAL_ATTRIBUTE_UNSUPPORTED: {",
+					"    steps: ['Find the element the report names, and read its {{attributes|aria-* attributes}}.'],",
+					"    passWhen: 'The element is only for layout, and {{attributes|the attribute}} can be removed.',",
+					"    failWhen: 'The element stands for a control, which role {{role|none}} hides.'",
+					"  }",
+					"};",
+				]}
+			/>
+			<p>
+				A rule says which facets of a criterion it tests in <code>meta.coverage.facetsBySc</code>{" "}
+				(<code>{"{ '2.4.4': ['link-text-descriptive-evidence'] }"}</code>), and its steps then join
+				that criterion's <a href="/conformance/procedures/">procedures</a> as core's do. A standard
+				that judges core's rules by reason code can also give its own steps for a core rule's code,
+				in <code>standard.review</code>: a finding only its profiles ask about reads them in place
+				of core's, which name WCAG.
+			</p>
+
+			<h3 id="procedures">How a person assesses it: procedures</h3>
+			<p>
+				Core says how a person assesses every WCAG criterion its rules evaluate by hand, facet by
+				facet (see <a href="/conformance/procedures/">Test procedures</a>). Since core 1.15.0 a
+				standard pack gives the same for its own requirements, in <code>standard.procedures</code>,
+				by version and requirement, each with its <code>title</code>, in one of four forms:
+			</p>
+			<DataTable
+				label="Forms of a requirement's procedures"
+				rowKey="id"
+				columns={[
+					{ key: "form", label: "Form", width: "38%", wrap: true },
+					{ key: "means", label: "What it means", wrap: true },
+				]}
+				rows={procedureFormRows}
+			/>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"standard: {",
+					"  // ...",
+					"  procedures: {",
+					"    '1.0': {",
+					"      '4.2': { title: 'Images have a text alternative', wcag: '1.1.1' },",
+					"      '7.1': {",
+					"        title: 'Every form has a text version',",
+					"        facets: [{",
+					"          id: 'text-version',",
+					"          label: 'Each form can be had as a text document',",
+					"          automation: 'manual',              // full, partial or manual (the default)",
+					"          tools: ['keyboard'],               // keyboard, pointer, screen-reader, zoom, contrast-theme, devtools",
+					"          steps: ['Find each form on the page.', 'Look next to it for a link to a text version.'],",
+					"          passWhen: 'Every form has a text version.',",
+					"          failWhen: 'A form has no text version, which fails {{requirement}}.'",
+					"        }]",
+					"      }",
+					"    }",
+					"  }",
+					"}",
+				]}
+			/>
+			<p>
+				Write a procedure for the whole page and for someone without accessibility training: one
+				to eight short steps in a browser, with its developer tools, a keyboard and, where it
+				matters, a screen reader, then what they see if it passes and if it fails.{" "}
+				<code>{"{{requirement}}"}</code> is filled in with the standard's name and the requirement
+				it is read as ("City Standard 7.1"). <code>surea11y-pack new --kind standard</code> writes{" "}
+				<code>procedures.js</code> with an example of each form, and a test that every requirement
+				of every version has a procedure for each of its facets; a standard that restates WCAG one
+				for one gets the first form for every requirement from <code>ruleMappedStandard</code>.
+			</p>
+			<p>
+				A standard can also give <code>groups</code> (its themes or chapters, by version),{" "}
+				<code>relatesTo</code> on a requirement of its own (the WCAG criteria it relates to without
+				restating), and <code>notes</code> (what a reader should know before using a version's
+				procedures). Its own text is written in one language, <code>lang</code>, English by
+				default, and <code>translations</code> gives it in others, keyed by the text it translates,
+				so a translation never outlives the text it was made from. A standard that declares its
+				languages is read in one of them throughout, core's procedures included, so a page never
+				mixes two; <code>packTranslationCoverage(pack)</code> says how far each translation goes.
+				Core's <a href={`${core}/docs/PACKS.md#how-a-person-assesses-it-procedures`}>pack guide</a>{" "}
+				on GitHub has every field and what <code>definePack</code> checks.
+			</p>
 
 			<h3 id="messages">Messages and languages</h3>
 			<p>
@@ -699,6 +982,28 @@ export function PacksContent() {
 				<code>engineOptions.locale: 'fr'</code> shows the French ones; a locale the pack has no
 				dictionary for shows English. A pack's keys are its own, starting with its namespace: a
 				pack can't change a core message in a locale core ships.
+			</p>
+			<p>
+				Since core 1.15.0 a rule's steps are translated the same way, under the keys core's steps
+				use: the rule's prefix (its <code>titleKey</code> without <code>_title</code>),{" "}
+				<code>_review_</code>, the reason code, then <code>{"step<n>"}</code>, <code>pass</code> or{" "}
+				<code>fail</code>:
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={[
+					"{",
+					"  \"acmeLinkTextSpecific_review_GENERIC_LINK_NAME_step1\": \"Trouvez le lien que le rapport désigne.\",",
+					"  \"acmeLinkTextSpecific_review_GENERIC_LINK_NAME_pass\": \"Le texte autour du lien dit où il mène.\",",
+					"  \"acmeLinkTextSpecific_review_GENERIC_LINK_NAME_fail\": \"Rien près du lien ne dit où il mène, ce qui enfreint le critère 2.4.4 des WCAG.\"",
+					"}",
+				]}
+			/>
+			<p>
+				A finding's <code>howToCheck</code> and the procedures show them in that locale, and in
+				English each text the locale lacks. For a locale core doesn't ship (<code>pt</code>), a
+				pack's dictionary may also give core's keys, which translates core's rules, and its
+				procedures, there.
 			</p>
 
 			<h3 id="test-lint-document">Test, lint and document it</h3>

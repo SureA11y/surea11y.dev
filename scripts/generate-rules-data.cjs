@@ -8,7 +8,8 @@
  * (version/license) from the package's package.json, so pages that display
  * those values never drift from the release the site depends on, and
  * src/data/rules.review.generated.json: each rule's "How to check" steps
- * per cantTell reason code (meta.review, since core 1.14), in every locale
+ * per cantTell reason code (core's procedures registry, since core 1.15;
+ * meta.review in 1.14), in every locale
  * core translates them into, read through core's own howToCheckFor so the
  * site shows the same text a report does. Reading the
  * pinned devDependency rather than a ../core checkout keeps the site's rule
@@ -127,7 +128,6 @@ function readRuleMeta(checksDirAbs) {
       applicability: jsdocTag(source, 'applicability'),
       expectation: jsdocTag(source, 'expectation'),
       reports: jsdocTag(source, 'reports'),
-      reviewCodes: Object.keys((mod.meta && mod.meta.review) || {}),
       sourcePath: path.relative(CORE_DIR, file).split(path.sep).join('/')
     });
   }
@@ -318,9 +318,27 @@ function main() {
     .sort();
   // howToCheckFor is on the package entry point, not src/core.js.
   const { howToCheckFor } = require(CORE_DIR);
+  // A rule's reason codes with steps, in order. Until core 1.15 they were its
+  // meta.review keys; since then the steps live with core's procedures, whose
+  // registry lists each rule's codes (in meta order) as variants under the
+  // facets they test.
+  const { PROCEDURES } = require(path.join(CORE_DIR, 'src', 'procedures', 'registry.js'));
+  const codesByRule = new Map();
+  const walk = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (node.variants) {
+      for (const [ruleId, codes] of Object.entries(node.variants)) {
+        if (!codesByRule.has(ruleId)) codesByRule.set(ruleId, []);
+        const list = codesByRule.get(ruleId);
+        for (const code of codes) if (!list.includes(code)) list.push(code);
+      }
+    }
+    for (const [k, v] of Object.entries(node)) if (k !== 'variants') walk(v);
+  };
+  walk(PROCEDURES);
   const review = {};
   for (const r of rules) {
-    const codes = meta.get(r.ruleId).reviewCodes;
+    const codes = codesByRule.get(r.ruleId) || [];
     if (!codes.length) continue;
     review[r.ruleId] = codes.map((code) => {
       const text = {};

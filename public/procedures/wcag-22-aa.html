@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="@surea11y/core">
+<title>WCAG 2.2: how to assess each requirement</title>
+<style>
+  :root { color-scheme: light dark; --fg: #1a1a1a; --muted: #555b63; --bg: #fafafa; --card: #fff; --line: #dcdfe3; --soft: #f2f3f5; --accent: #1a5fb4; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fg: #e6e6e6; --muted: #b0b4ba; --bg: #16181c; --card: #1f2227; --line: #3a3d44; --soft: #262a30; --accent: #7db6ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0 0 48px; font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--fg); }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .skip { position: absolute; left: 8px; top: -60px; padding: 8px 12px; background: var(--card); color: var(--fg); border: 2px solid var(--accent); border-radius: 6px; z-index: 2; }
+  .skip:focus { top: 8px; }
+  .vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  header.page { padding: 24px 32px; background: #202531; color: #fff; }
+  header.page h1 { margin: 0 0 6px; font-size: 24px; line-height: 1.3; }
+  header.page p, header.page ul { margin: 4px 0 0; color: #e8eaed; font-size: 14px; }
+  header.page ul { padding-left: 20px; }
+  .layout { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+  nav.toc { margin: 24px 0; padding: 16px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  nav.toc h2 { margin: 0 0 8px; font-size: 16px; }
+  nav.toc ol { margin: 0; padding-left: 0; list-style: none; }
+  nav.toc ol ol { padding-left: 20px; }
+  nav.toc li { margin: 2px 0; }
+  main h2, main h3, main h4, main h5, main h6 { line-height: 1.35; }
+  section.group > h2 { font-size: 21px; margin: 36px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
+  section.group section.group > :is(h3, h4) { font-size: 17px; margin: 24px 0 10px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .req, .item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px; margin: 12px 0; }
+  .req > :is(h2, h3, h4, h5, h6), .item > :is(h2, h3, h4, h5, h6) { font-size: 17px; margin: 0 0 8px; }
+  .meta { margin: 0 0 10px; color: var(--muted); font-size: 13.5px; }
+  .meta span + span::before { content: " · "; }
+  .facet { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+  .facet > :is(h3, h4, h5, h6) { font-size: 15.5px; margin: 0 0 6px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; padding: 0; list-style: none; font-size: 12.5px; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--soft); }
+  .badge.auto-full { background: #e9f7e9; color: #0b5d0b; border-color: #9fd09f; }
+  .badge.auto-partial { background: #fdf3d9; color: #6b4d00; border-color: #e5c66b; }
+  .badge.auto-manual { background: #eaf1fb; color: #174a8b; border-color: #a9c4ea; }
+  .badge.level { font-weight: 600; }
+  ol.steps { margin: 6px 0 10px; padding-left: 24px; }
+  ol.steps li { margin: 4px 0; }
+  dl.verdict { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0; }
+  dl.verdict dt { font-weight: 600; }
+  dl.verdict dd { margin: 0; }
+  .rules, .covers, .note { font-size: 13.5px; color: var(--muted); margin: 6px 0 0; }
+  .req-note { margin: 6px 0 0; }
+  .rules code, .covers code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; background: var(--soft); padding: 1px 5px; border-radius: 4px; color: var(--fg); }
+  details.variants { margin-top: 10px; font-size: 14px; }
+  details.variants summary { cursor: pointer; color: var(--accent); }
+  details.variants .variant { margin: 8px 0 0 4px; padding-left: 12px; border-left: 3px solid var(--line); }
+  .results { margin: 24px 0; padding: 14px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  details.technical { margin-top: 8px; font-size: 13.5px; color: var(--muted); }
+  details.technical summary { cursor: pointer; color: var(--accent); }
+  .results h2 { margin: 0 0 4px; font-size: 16px; }
+  .results p { margin: 2px 0; }
+  .before { margin: 24px 0; padding: 14px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  .before h2 { margin: 0 0 6px; font-size: 17px; }
+  .before p { margin: 0 0 6px; }
+  .before ul { margin: 0; padding-left: 20px; }
+  .before li { margin: 4px 0; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  button { font: inherit; font-size: 14px; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--soft); color: var(--fg); cursor: pointer; }
+  button[data-armed] { border-color: #b0441f; color: #b0441f; }
+  fieldset.record { margin: 12px 0 0; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; }
+  fieldset.record legend { font-weight: 600; padding: 0 4px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .choices label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .choices input { width: 18px; height: 18px; margin: 0; }
+  fieldset.record label.notes { display: block; margin: 10px 0 4px; font-weight: 600; }
+  textarea { width: 100%; min-height: 3.2em; font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--fg); }
+  .item[data-outcome="pass"] { border-left: 6px solid #0b7d0b; }
+  .item[data-outcome="fail"] { border-left: 6px solid #b0441f; }
+  .item[data-outcome="notApplicable"] { border-left: 6px solid #5f6368; }
+  .empty { font-style: italic; }
+  @media (forced-colors: active) {
+    .badge, .req, .item, nav.toc, .results, .before, fieldset.record { border: 1px solid CanvasText; }
+    .item[data-outcome] { border-left-width: 6px; }
+  }
+  @media print {
+    body { background: #fff; color: #000; font-size: 11pt; }
+    .skip, nav.toc, .actions, .results .note { display: none; }
+    header.page { background: none; color: #000; padding: 0 0 12px; border-bottom: 2px solid #000; }
+    header.page p, header.page ul { color: #000; }
+    .layout { padding: 0; max-width: none; }
+    details.technical { display: none; }
+    .req, .item { break-inside: avoid; border-color: #999; }
+    details.variants { display: none; }
+    textarea { border: 1px solid #999; min-height: 2.4em; }
+  }
+  @media (max-width: 640px) {
+    header.page, .layout { padding-left: 16px; padding-right: 16px; }
+    dl.verdict { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the procedures</a>
+<header class="page">
+<h1>WCAG 2.2: how to assess each requirement</h1>
+<p>Requirements: 55 · Procedures: 50</p>
+<ul><li>Levels: A, AA</li></ul>
+
+</header>
+<div class="layout">
+<nav class="toc" aria-labelledby="toc-h"><h2 id="toc-h">Contents</h2><ol><li><a href="#g-1">1 <span>Perceivable</span></a><ol><li><a href="#g-1-1">1.1 <span>Text Alternatives</span></a></li><li><a href="#g-1-2">1.2 <span>Time-based Media</span></a></li><li><a href="#g-1-3">1.3 <span>Adaptable</span></a></li><li><a href="#g-1-4">1.4 <span>Distinguishable</span></a></li></ol></li><li><a href="#g-2">2 <span>Operable</span></a><ol><li><a href="#g-2-1">2.1 <span>Keyboard Accessible</span></a></li><li><a href="#g-2-2">2.2 <span>Enough Time</span></a></li><li><a href="#g-2-3">2.3 <span>Seizures and Physical Reactions</span></a></li><li><a href="#g-2-4">2.4 <span>Navigable</span></a></li><li><a href="#g-2-5">2.5 <span>Input Modalities</span></a></li></ol></li><li><a href="#g-3">3 <span>Understandable</span></a><ol><li><a href="#g-3-1">3.1 <span>Readable</span></a></li><li><a href="#g-3-2">3.2 <span>Predictable</span></a></li><li><a href="#g-3-3">3.3 <span>Input Assistance</span></a></li></ol></li><li><a href="#g-4">4 <span>Robust</span></a><ol><li><a href="#g-4-1">4.1 <span>Compatible</span></a></li></ol></li></ol></nav>
+<main id="main" tabindex="-1">
+<section class="before" aria-labelledby="before-h">
+<h2 id="before-h">Before you start</h2>
+<p>These procedures describe what to check and how to decide. A few habits make the results reliable, whichever browser and assistive technology you use.</p>
+<ul><li>Test with at least two pairs of browser and screen reader that your users have. Common pairs are NVDA with Firefox or Chrome and JAWS with Chrome on Windows, VoiceOver with Safari on macOS and iOS, and TalkBack with Chrome on Android. Screen readers and browsers differ in what they announce, so a result in one pair is not a result for all of them. When they disagree, record which pair failed.</li><li>Do keyboard tests with the screen reader turned off. In browse mode a screen reader can activate elements that the keyboard alone can&#39;t reach, which hides keyboard failures.</li><li>On a Mac, turn on Keyboard navigation in System Settings, under Keyboard, and in Safari turn on &quot;Press Tab to highlight each item on a webpage&quot; in the Advanced settings. Without them, Tab skips links and some controls, and you will record failures that are not there.</li><li>To start a keyboard pass at the top of the page, reload it and press Tab without clicking, or click an empty area just above the first link or control. Starting from the address bar is unreliable: some browsers first move focus through their own toolbar or the address bar&#39;s suggestions.</li><li>Each browser shows the accessibility tree in a different place: Chrome and Edge in the Accessibility pane of the Elements panel (turn on the full-page accessibility tree to see the whole page), Firefox in the Accessibility Inspector, and Safari in the Accessibility section of the Elements tab&#39;s Node panel. Where a procedure says &quot;the developer tools&#39; Accessibility pane&quot;, use the one of the browser you are testing.</li><li>The device toolbar of the developer tools changes the size of the viewport, but it doesn&#39;t reproduce a real phone&#39;s zoom, rotation, gestures or screen reader. Confirm mobile results on a real device.</li><li>Test each state the page can be in, not only how it first loads: open menus and dialogs, error messages, empty and full lists, signed-in and signed-out views.</li><li>Rules marked &quot;evidence only&quot; can&#39;t decide on their own. Treat what they report as a list of places to check by hand.</li></ul>
+</section>
+
+<section class="group" aria-labelledby="g-1">
+<h2 id="g-1"><span class="num">1</span> <span>Perceivable</span></h2>
+<section class="group" aria-labelledby="g-1-1">
+<h3 id="g-1-1"><span class="num">1.1</span> <span>Text Alternatives</span></h3>
+<article class="req" id="r-1-1-1" aria-labelledby="req-1-1-1">
+<h4 id="req-1-1-1"><span class="num">1.1.1</span> <span>Non-text Content</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-1-1-1-text-alternative-mechanism">
+<h5 id="facet-1-1-1-text-alternative-mechanism">Non-text content that conveys something has a text alternative</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look through the whole page for content that isn&#39;t text: photos, icons, logos, charts, maps, diagrams, video posters, and the pictures inside buttons and links.</li><li>For each, select it in the developer tools&#39; Elements pane and read the Name in its Accessibility pane.</li><li>Note each one that has no name and isn&#39;t hidden from assistive technology (with alt=&quot;&quot;, aria-hidden=&quot;true&quot;, role=&quot;presentation&quot; or as a CSS background).</li><li>Look also for information that only CSS shows: background images, icon fonts and pictures added with the content property. Inspect each, since there is no alt attribute to read, and check that what it shows is also given in text that a screen reader reads.</li><li>For content that can&#39;t be described in a few words, such as a chart or a map, check that the name at least says what it is, and that a fuller description is on the page or linked beside it.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every piece of non-text content a person needs has a text alternative, or is hidden from assistive technology because it is decorative.</dd><dt>Fails when</dt><dd>Non-text content that conveys something has no text alternative, so a screen reader user meets an unnamed image or nothing at all, which fails WCAG 1.1.1.</dd></dl>
+<p class="rules">Rules that test it: <code>img-alt-present</code>, <code>role-img-text-alternative-present</code>, <code>canvas-text-alternative-present</code>, <code>embed-text-alternative-present</code>, <code>svg-text-alternative-present</code>, <code>svg-image-text-alternative-present</code>, <code>object-text-alternative-present</code>, <code>video-poster-text-alternative-present</code>, <code>meter-name-present</code>, <code>progressbar-name-present</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>&lt;img&gt; has alt attribute</li><li>role=&quot;img&quot; has text alternative</li><li>&lt;canvas&gt; has fallback text or accessible name</li><li>&lt;embed&gt; has fallback text or accessible name</li><li>&lt;svg&gt; has a text alternative mechanism when exposed</li><li>Inline &lt;svg&gt; has a &lt;title&gt; or an accessible name</li><li>SVG &lt;image&gt; has a text alternative mechanism</li><li>&lt;object&gt; has fallback text or accessible name</li><li>&lt;video poster&gt; has a text alternative mechanism</li><li>role=&quot;meter&quot; elements expose an accessible name</li><li>role=&quot;progressbar&quot; elements expose an accessible name</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-1-1-1-functional-nontext-name">
+<h5 id="facet-1-1-1-functional-nontext-name">Images and icons used as controls are named by what they do</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Find every link, button and other control whose only content is an image or icon, such as a logo that links home, a magnifier for search or a cross that closes a dialog.</li><li>For each, select it in the developer tools&#39; Elements pane and read the Name in its Accessibility pane.</li><li>Check that the name says what the control does or where it leads (&quot;Search&quot;, &quot;Close&quot;, &quot;Home&quot;), not what the picture shows (&quot;magnifying glass&quot;) or a file name.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every control made of an image or icon has a name that says what it does or where it goes.</dd><dt>Fails when</dt><dd>A control made of an image or icon has no name, or one that describes the picture rather than what it does, which fails WCAG 1.1.1.</dd></dl>
+<p class="rules">Rules that test it: <code>input-image-alt-present</code>, <code>area-alt-present</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>&lt;input type=&quot;image&quot;&gt; has alt attribute</li><li>&lt;area&gt; has alt attribute</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-1-1-1-decorative-null">
+<h5 id="facet-1-1-1-decorative-null">Decorative images are hidden from assistive technology, and only those</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look through the page for images, icons and graphics that only decorate: borders, dividers, background pictures, ornaments, and pictures whose content the text next to them already gives.</li><li>For each, select it in the developer tools&#39; Elements pane and check in its Accessibility pane that it is ignored (alt=&quot;&quot;, aria-hidden=&quot;true&quot;, role=&quot;presentation&quot;, or a CSS background).</li><li>For a decorative SVG drawn in the page, check that it has aria-hidden=&quot;true&quot;. Without it, some browser and screen reader pairs announce it as an image with no name, or read the text inside it.</li><li>Then do the reverse: for each image that is hidden that way, ask whether a user would miss anything if it were gone: information, a label, a chart&#39;s data.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Decorative images are hidden from assistive technology, and every image that is hidden is truly decorative.</dd><dt>Fails when</dt><dd>A decorative image is announced (often by its file name), or an image that conveys information is hidden from assistive technology, which fails WCAG 1.1.1.</dd></dl>
+
+</section>
+<section class="facet" aria-labelledby="facet-1-1-1-text-alternative-quality">
+<h5 id="facet-1-1-1-text-alternative-quality">Each text alternative gives what its image gives</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>For each image and other non-text content that has a text alternative, read the alternative (the Name in the developer tools&#39; Accessibility pane) and look at the content in its place on the page.</li><li>Ask what the content gives a reader there, and check that the alternative gives the same: the words in an image of text, the point a photo makes, the facts a chart shows.</li><li>Where the alternative only names a complex image, such as a chart or diagram, check that the details are in a caption, text or table next to it, or a link beside it, that a screen reader user can find from the image.</li><li>Note alternatives that are a file name, a web address, a word such as &quot;image&quot; or &quot;photo&quot;, or that repeat the text right next to them.</li><li>Check the language of each alternative: it should be in the language of the page, or marked with its own.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Each text alternative gives what its content gives in that place, directly or through a description a screen reader user can reach from it.</dd><dt>Fails when</dt><dd>A text alternative doesn&#39;t give what the content does, for example a file name, a generic word or a chart named without its data anywhere, which fails WCAG 1.1.1 (F30).</dd></dl>
+<p class="rules">Rules that test it: <code>area-alt-quality</code>, <code>canvas-text-alternative-quality</code>, <code>embed-text-alternative-quality</code>, <code>img-alt-decorative</code>, <code>img-alt-quality</code>, <code>input-image-alt-decorative</code>, <code>input-image-alt-quality</code>, <code>object-text-alternative-quality</code>, <code>svg-text-alternative-quality</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Text alternative is appropriate and equivalent</li><li>Alt text suspicious patterns (e.g., filename/placeholder)</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-1-1-1-captcha-alternative">
+<h5 id="facet-1-1-1-captcha-alternative">A CAPTCHA says what it is for and offers another form that uses a different sense</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A screen reader</span></li></ul>
+<ol class="steps"><li>Find any test the page uses to tell people from programs, such as distorted letters to type, pictures to pick or a puzzle to drag.</li><li>Check that it has a text alternative that says what it is and what to do, without giving the answer away.</li><li>Check that it offers another form that uses a different sense, such as an audio version of a visual test, or another way altogether, such as a code by email.</li><li>Try the other form with a screen reader and the keyboard.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>The page has no such test, or the test says what it is and offers a form that uses another sense and can be completed.</dd><dt>Fails when</dt><dd>The test can only be passed by seeing (or only by hearing), or has no text saying what it is, which fails WCAG 1.1.1.</dd></dl>
+
+</section>
+</article>
+</section>
+<section class="group" aria-labelledby="g-1-2">
+<h3 id="g-1-2"><span class="num">1.2</span> <span>Time-based Media</span></h3>
+<article class="req" id="r-1-2-1" aria-labelledby="req-1-2-1">
+<h4 id="req-1-2-1"><span class="num">1.2.1</span> <span>Audio-only and Video-only (Prerecorded)</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-1-2-1-transcript-evidence">
+<h5 id="facet-1-2-1-transcript-evidence">Prerecorded audio-only and video-only media has a transcript or an equivalent alternative</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: a browser only</li></ul>
+<ol class="steps"><li>Find every audio player and every video without sound on the page, including ones in frames, and play each.</li><li>For audio, look next to the player and elsewhere on the page for a transcript or a link to one.</li><li>For a video without sound, look for a transcript, or an audio version that describes everything shown, that you can find and play from the page with the keyboard.</li><li>Compare each alternative with the media and check that it gives the same information: speech, important sounds and what is shown.</li><li>Leave out media that is itself an alternative for text on the page and is labelled as such.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every prerecorded audio-only or video-only item has a transcript, or for video an audio version, that gives what it gives, or is a labelled alternative for text on the page.</dd><dt>Fails when</dt><dd>Prerecorded audio-only media has no transcript, or prerecorded video-only media has neither a transcript nor an audio version with the same information, which fails WCAG 1.2.1.</dd></dl>
+<p class="rules">Rules that test it: <code>media-alternative-transcript-evidence</code></p>
+</section>
+</article>
+<article class="req" id="r-1-2-2" aria-labelledby="req-1-2-2">
+<h4 id="req-1-2-2"><span class="num">1.2.2</span> <span>Captions (Prerecorded)</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-1-2-2-video-captions-track-evidence">
+<h5 id="facet-1-2-2-video-captions-track-evidence">Prerecorded video with sound has captions</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: a browser only</li></ul>
+<ol class="steps"><li>Find every prerecorded video with sound on the page, including ones in frames and players of other sites.</li><li>Play each with the sound on and note whether its sound carries information: speech, or sounds that matter.</li><li>Where it does, look for captions: the player&#39;s CC button, captions burned into the picture, or a captioned version of the same video linked next to it. A transcript on its own doesn&#39;t replace captions.</li><li>Leave out a video that is itself an alternative for text on the page and is labelled as such.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every prerecorded video whose sound carries information has captions, here or in a captioned version linked next to it, or is a labelled alternative for text on the page.</dd><dt>Fails when</dt><dd>A prerecorded video has dialogue or important sounds and no captions, here or in a linked captioned version, even if a transcript is offered, which fails WCAG 1.2.2.</dd></dl>
+<p class="rules">Rules that test it: <code>video-caption</code></p>
+</section>
+<section class="facet" aria-labelledby="facet-1-2-2-captions-complete">
+<h5 id="facet-1-2-2-captions-complete">Captions give all the dialogue, who is speaking, and the sounds that matter, in time with the video</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: a browser only</li></ul>
+<ol class="steps"><li>Play each captioned video with the sound on and the captions turned on.</li><li>Compare the captions with what is said and heard, all the way through.</li><li>Check that they carry all the dialogue, say who is speaking when that isn&#39;t clear, and describe the sounds that matter (music, alarms, laughter), and that they stay in time with the picture.</li><li>Treat automatically generated captions with care: they often get names, numbers and punctuation wrong and don&#39;t describe sounds, so they rarely meet this criterion without editing.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>The captions carry all dialogue, the speakers where needed, and the important sounds, in time with the video.</dd><dt>Fails when</dt><dd>Captions leave out dialogue or important sounds, don&#39;t say who is speaking where that matters, or run out of time with the video, which fails WCAG 1.2.2 (F8).</dd></dl>
+
+</section>
+</article>
+<article class="req" id="r-1-2-3" aria-labelledby="req-1-2-3">
+<h4 id="req-1-2-3"><span class="num">1.2.3</span> <span>Audio Description or Media Alternative (Prerecorded)</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-1-2-3-audio-description-or-alternative">
+<h5 id="facet-1-2-3-audio-description-or-alternative">Prerecorded video with sound has an audio description or a full text alternative</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-1-2-4" aria-labelledby="req-1-2-4">
+<h4 id="req-1-2-4"><span class="num">1.2.4</span> <span>Captions (Live)</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-2-4-live-captions">
+<h5 id="facet-1-2-4-live-captions">Live video with sound has captions</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-1-2-5" aria-labelledby="req-1-2-5">
+<h4 id="req-1-2-5"><span class="num">1.2.5</span> <span>Audio Description (Prerecorded)</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-2-5-audio-description">
+<h5 id="facet-1-2-5-audio-description">Prerecorded video with sound has an audio description</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+</section>
+<section class="group" aria-labelledby="g-1-3">
+<h3 id="g-1-3"><span class="num">1.3</span> <span>Adaptable</span></h3>
+<article class="req" id="r-1-3-1" aria-labelledby="req-1-3-1">
+<h4 id="req-1-3-1"><span class="num">1.3.1</span> <span>Info and Relationships</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-1-3-1-headings-marked-up">
+<h5 id="facet-1-3-1-headings-marked-up">Text that looks like a heading is marked up as one, at a level that matches the page&#39;s outline</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span></li></ul>
+<ol class="steps"><li>Look through the page and note every piece of text that works as a heading: it is larger or bolder than the text around it and introduces what follows.</li><li>For each, check in the developer tools&#39; Elements pane that it is an &lt;h1&gt; to &lt;h6&gt;, or has role=&quot;heading&quot; with an aria-level.</li><li>Check the reverse: each heading element on the page introduces content, rather than being used only to make text big.</li><li>List the headings with a screen reader&#39;s headings list, a browser extension such as HeadingsMap, or the Accessibility pane, and check that their levels match the structure the page shows: a section&#39;s sub-headings sit below its heading, not at the same level or above it. A skipped level on its own, such as an h2 followed by an h4, doesn&#39;t fail this criterion when the nesting is still right. Record it as a best practice issue.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every visual heading is marked up as a heading, every heading element is one, and the levels follow the outline the page shows.</dd><dt>Fails when</dt><dd>Text that looks like a heading is plain text, a heading element is used only for its size, or the levels contradict the outline, so screen reader users can&#39;t find or follow the sections, which fails WCAG 1.3.1.</dd></dl>
+<p class="rules">Rules that test it: <code>p-as-heading</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Bold, heading-sized &lt;p&gt; text that may need a real heading element (evidence only)</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-1-3-1-lists-marked-up">
+<h5 id="facet-1-3-1-lists-marked-up">Content shown as a list is marked up as a list</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look through the page for content shown as a list: items in a row or column with bullets, numbers or the same layout, such as menus, steps and groups of links.</li><li>For each, check in the developer tools&#39; Elements pane that it is a &lt;ul&gt;, &lt;ol&gt; or &lt;dl&gt; (or has role=&quot;list&quot; with role=&quot;listitem&quot; items).</li><li>Check that each list holds only list items directly, and each list item sits in a list.</li><li>If you test with VoiceOver and Safari, know that Safari does not expose a list whose bullets are removed with list-style: none unless it has role=&quot;list&quot;. This is a choice of the browser, not a failure of the page, but note it when the list&#39;s structure matters to the user.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Content shown as a list is marked up as a list, and list markup is complete.</dd><dt>Fails when</dt><dd>Content shown as a list is a run of paragraphs, line breaks or divs, or list markup is broken, so a screen reader doesn&#39;t say it is a list or how many items it has, which fails WCAG 1.3.1.</dd></dl>
+<p class="rules">Rules that test it: <code>list-children-valid</code>, <code>listitem-parent-valid</code>, <code>definition-list-children-valid</code>, <code>dlitem-parent-valid</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>&lt;ul&gt;/&lt;ol&gt; only directly contain &lt;li&gt; (or &lt;script&gt;/&lt;template&gt;)</li><li>&lt;li&gt; elements are contained by a list container (&lt;ul&gt;/&lt;ol&gt;/role=&quot;list&quot;)</li><li>&lt;dl&gt; only directly contains &lt;dt&gt;/&lt;dd&gt; groups (optionally wrapped in one &lt;div&gt;), &lt;script&gt;, &lt;template&gt;, or &lt;style&gt;</li><li>&lt;dt&gt;/&lt;dd&gt; elements are contained by a &lt;dl&gt;, directly or via one wrapping &lt;div&gt;</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-1-3-1-tables-marked-up">
+<h5 id="facet-1-3-1-tables-marked-up">Data tables mark up their headers and caption, and tables used only for layout carry no header markup</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span></li></ul>
+<ol class="steps"><li>Find every table on the page, and every grid of data drawn without a table.</li><li>For a table of data, check in the developer tools&#39; Elements pane that its header cells are &lt;th&gt; (with scope where a header is not plainly a row or column header) and that a title shown above it is its &lt;caption&gt;.</li><li>For a complex table, with headers on more than one level, check that each data cell names its headers with a headers attribute or scope.</li><li>With a screen reader, move through a few data cells and check that it reads their headers with them.</li><li>For a table used only to lay things out, check that it has no &lt;th&gt;, &lt;caption&gt; or summary.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Data is in tables whose headers and caption are marked up, a screen reader reads each cell&#39;s headers, and layout tables carry no header markup.</dd><dt>Fails when</dt><dd>A table of data has no header markup or a fake caption in a cell, data is laid out as a grid without a table, or a layout table is marked up as data, which fails WCAG 1.3.1.</dd></dl>
+<p class="rules">Rules that test it: <code>table-headers-attr-valid</code>, <code>table-th-has-data-cells</code>, <code>table-fake-caption</code>, <code>td-has-header</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Table cell headers attribute references valid &lt;th&gt; cells within the same table</li><li>Tables with &lt;th&gt; cells also have data cells for them to describe</li><li>Table first-row cell that may be standing in for a real &lt;caption&gt; (evidence only)</li><li>Data cells in large, simple tables have an associated header</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-1-3-1-form-labels-associated">
+<h5 id="facet-1-3-1-form-labels-associated">Form fields are tied to their visible labels, and groups of fields to the text that names the group</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span></li></ul>
+<ol class="steps"><li>Find every form field on the page: text fields, check boxes, radio buttons, drop-downs and custom controls.</li><li>For each, select it in the developer tools&#39; Elements pane and check that the Name in its Accessibility pane contains its visible label.</li><li>For a group of fields under one question, such as radio buttons or a date in three parts, check that the group is a &lt;fieldset&gt; with a &lt;legend&gt;, or has role=&quot;group&quot; with a name, so the question is read with each field.</li><li>Check that instructions shown next to a field (a format, a required mark) are tied to it with aria-describedby or are in its label.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every field&#39;s name includes its visible label, groups of fields are named by their question, and a field&#39;s instructions are tied to it.</dd><dt>Fails when</dt><dd>A field is labelled only by nearby text that isn&#39;t tied to it, or a group&#39;s question isn&#39;t tied to its fields, so a screen reader reads a field without saying what it is for, which fails WCAG 1.3.1.</dd></dl>
+<p class="rules">Rules that test it: <code>form-control-programmatic-label-present</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Form controls have a programmatic label (label/aria-label/aria-labelledby/title/placeholder)</li><li>Form control labels are appropriate</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-1-3-1-aria-structure-valid">
+<h5 id="facet-1-3-1-aria-structure-valid">ARIA roles and relationships give the same structure the page shows</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Find the parts of the page built with ARIA roles: custom menus, tabs, trees, grids, lists and listboxes.</li><li>For each, open the developer tools&#39; Accessibility tree and check that the structure it shows matches what is on screen: a tablist holding tabs, a menu holding menu items, a grid holding rows and cells.</li><li>Check that no element with a role is missing the parent or children its role needs, and that aria-owns, where used, gives each element a single owner.</li><li>Check that &lt;body&gt; is not hidden with aria-hidden=&quot;true&quot;.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>The accessibility tree gives the structure the page shows, with every role in the place its role needs.</dd><dt>Fails when</dt><dd>A role is missing its required parent or children, owned twice, or the page is hidden from the tree, so assistive technology gives a structure that doesn&#39;t match the screen, which fails WCAG 1.3.1.</dd></dl>
+<p class="rules">Rules that test it: <code>aria-hidden-body</code>, <code>aria-required-children</code>, <code>aria-prohibited-children</code>, <code>aria-required-parent</code>, <code>aria-roles-valid</code>, <code>aria-owns-valid</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>The document &lt;body&gt; does not have aria-hidden=&quot;true&quot;</li><li>Container roles (list, listbox, menu, table, tablist, tree, ...) own at least one required child role</li><li>Container roles do not own an accessible-tree child with a disallowed role</li><li>Roles requiring a specific context role (listitem, option, tab, treeitem, row, cell, ...) have an acceptable ancestor/owner</li><li>Explicit role attribute resolves to a real, non-abstract ARIA role, so the structure it conveys is programmatically determined</li><li>aria-owns gives each element one owner, and never an ancestor of the owner</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-1-3-1-visual-cues-conveyed">
+<h5 id="facet-1-3-1-visual-cues-conveyed">Meaning shown by styling or layout, such as bold, colour, position or an asterisk, is also given in the markup or the text</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span></li></ul>
+<ol class="steps"><li>Look for meaning that the page shows only by how things look: required fields marked by an asterisk or colour, emphasised or struck-through words, a selected item shown by its style, text set apart in a box.</li><li>For each, check whether the same meaning is in the markup (such as required, aria-current, &lt;em&gt;, &lt;del&gt;) or in the text itself (&quot;required&quot;, &quot;current page&quot;).</li><li>Look at text and icons added with CSS, through the content property. Browsers differ in whether screen readers read them, so information that only CSS adds must also be in the markup or the text.</li><li>Read the parts with a screen reader and check that what the styling shows is said.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Whatever the styling or layout conveys is also in the markup or the text.</dd><dt>Fails when</dt><dd>Meaning is given only by styling or position, such as required fields marked only by colour or an unexplained asterisk, so a screen reader user misses it, which fails WCAG 1.3.1.</dd></dl>
+
+</section>
+</article>
+<article class="req" id="r-1-3-2" aria-labelledby="req-1-3-2">
+<h4 id="req-1-3-2"><span class="num">1.3.2</span> <span>Meaningful Sequence</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-1-3-2-reading-order-meaningful">
+<h5 id="facet-1-3-2-reading-order-meaningful">The order assistive technology reads the content in keeps its meaning, and spaces don&#39;t lay out text</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-1-3-3" aria-labelledby="req-1-3-3">
+<h4 id="req-1-3-3"><span class="num">1.3.3</span> <span>Sensory Characteristics</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-1-3-3-instructions-not-sensory-only">
+<h5 id="facet-1-3-3-instructions-not-sensory-only">Instructions don&#39;t rely only on shape, colour, size, position, orientation or sound</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-1-3-4" aria-labelledby="req-1-3-4">
+<h4 id="req-1-3-4"><span class="num">1.3.4</span> <span>Orientation</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-3-4-orientation-not-locked">
+<h5 id="facet-1-3-4-orientation-not-locked">The page works in both portrait and landscape, unless one orientation is essential</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Open the page in the developer tools&#39; device toolbar, or on a phone or tablet.</li><li>View it in portrait, then rotate it to landscape (or the reverse), and use its main content and controls in each.</li><li>Confirm the result on a real phone or tablet with its rotation lock turned off. The device toolbar can&#39;t show whether the page locks orientation with script or, for an installed web app, through its manifest.</li><li>Check that the page doesn&#39;t ask you to rotate the device, turn its content sideways, or hide content in one orientation.</li><li>Where it does, ask whether that orientation is essential, as for a bank cheque or a piano keyboard.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>The page shows and works in both orientations, or one orientation is essential to it.</dd><dt>Fails when</dt><dd>The page works in only one orientation, by asking to rotate the device, turning its content or hiding it, with no essential reason, which fails WCAG 1.3.4.</dd></dl>
+<p class="rules">Rules that test it: <code>css-orientation-lock</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>No CSS orientation media query rotates the page to lock its display orientation</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-1-3-5" aria-labelledby="req-1-3-5">
+<h4 id="req-1-3-5"><span class="num">1.3.5</span> <span>Identify Input Purpose</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-3-5-input-purpose-identified">
+<h5 id="facet-1-3-5-input-purpose-identified">Fields that ask for information about the user name its purpose with the right autocomplete value</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Find every field that asks for information about the person using the page: name, email, phone, address, birthday, username, password, card details.</li><li>For each, read its autocomplete attribute in the developer tools&#39; Elements pane.</li><li>Check that it is the value that matches what the field asks for (name, email, tel, street-address, postal-code, bday, username, new-password, cc-number and so on).</li><li>A field with autocomplete=&quot;off&quot;, or with no autocomplete attribute, doesn&#39;t identify its purpose, even when the browser still offers to fill it in.</li><li>Leave out fields that ask about someone else, such as a gift recipient, unless they say so with the right section or value.</li><li>Only the purposes in WCAG&#39;s list of input purposes are in scope. A field for a membership or customer number, for example, has no value in that list and needs none.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every field that asks for the user&#39;s own information has the autocomplete value that matches it.</dd><dt>Fails when</dt><dd>A field that asks for the user&#39;s own information has no autocomplete value, or a wrong one, so the browser and assistive tools can&#39;t fill it in or mark its purpose, which fails WCAG 1.3.5.</dd></dl>
+<p class="rules">Rules that test it: <code>autocomplete-valid</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>A non-empty autocomplete attribute is a valid autofill value</li></ul></div>
+</section>
+</article>
+</section>
+<section class="group" aria-labelledby="g-1-4">
+<h3 id="g-1-4"><span class="num">1.4</span> <span>Distinguishable</span></h3>
+<article class="req" id="r-1-4-1" aria-labelledby="req-1-4-1">
+<h4 id="req-1-4-1"><span class="num">1.4.1</span> <span>Use of Color</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-1-4-1-color-not-only-means">
+<h5 id="facet-1-4-1-color-not-only-means">Colour is not the only way information is shown, a choice is asked for or an element is set apart</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look for information the page gives by color: links in a paragraph, required or invalid fields, the selected tab or day, chart series, status in red or green.</li><li>For each, check whether something besides colour gives it too: an underline, an icon, a text label, a pattern, a border or a change of shape.</li><li>For links in a paragraph that differ only by colour, check that they get an underline or other mark when hovered and focused, and that their colour has a contrast of at least 3:1 with the text around them.</li><li>View the page in greyscale (in the developer tools&#39; Rendering pane, emulate achromatopsia) and check that nothing is lost.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Everything the page gives by colour is also given another way.</dd><dt>Fails when</dt><dd>Information, such as which fields have errors or which text is a link, is given only by colour, which fails WCAG 1.4.1.</dd></dl>
+<p class="rules">Rules that test it: <code>link-in-text-block</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Links inside blocks of text are distinguishable from surrounding text by non-color means (underline, weight/style difference, or &gt;=3:1 contrast)</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-1-4-2" aria-labelledby="req-1-4-2">
+<h4 id="req-1-4-2"><span class="num">1.4.2</span> <span>Audio Control</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-1-4-2-no-autoplay-audio-evidence">
+<h5 id="facet-1-4-2-no-autoplay-audio-evidence">Sound that plays by itself for more than 3 seconds can be paused, stopped or turned down</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A keyboard</span></li></ul>
+<ol class="steps"><li>Load the page with the sound on and listen for sound that starts by itself: music, a video, an advertisement.</li><li>Where sound plays for more than 3 seconds, look near the top of the page or the player for a way to pause or stop it, or to turn its volume down apart from the computer&#39;s volume.</li><li>Check that the control can be found and used with the keyboard.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>No sound plays by itself for more than 3 seconds, or a control near the start of the page pauses, stops or lowers it.</dd><dt>Fails when</dt><dd>Sound plays by itself for more than 3 seconds with no way to pause, stop or lower it apart from the computer&#39;s volume, so it drowns out a screen reader, which fails WCAG 1.4.2.</dd></dl>
+<p class="rules">Rules that test it: <code>no-autoplay-audio</code></p>
+</section>
+</article>
+<article class="req" id="r-1-4-3" aria-labelledby="req-1-4-3">
+<h4 id="req-1-4-3"><span class="num">1.4.3</span> <span>Contrast (Minimum)</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-4-3-contrast-minimum-text">
+<h5 id="facet-1-4-3-contrast-minimum-text">Text has a contrast of at least 4.5:1 with its background, or 3:1 when large</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look through the page for text that seems faint against its background: light grey text, text on coloured panels, placeholders, text over images or gradients, text in buttons.</li><li>For each, inspect it and click the swatch of its colour in the developer tools&#39; Styles pane: the picker shows its contrast ratio with the background.</li><li>The colour picker measures against the background colour set in CSS. Where text sits on an image, a gradient or a semi-transparent layer, or its colour comes from opacity or a blend mode, the picker&#39;s figure is not reliable: use the next step instead.</li><li>Where the background is an image, a gradient or a semi-transparent layer, measure the text against the part of the background where it is least visible, with a colour contrast checker.</li><li>Check the ratio is at least 4.5:1, or 3:1 for large text: at least 24 pixels (18pt), or 18.66 pixels (14pt) and bold.</li><li>Don&#39;t round the result: 4.49:1 fails. Check text in its other states too, such as on hover, on focus and when selected, since a state can lower the contrast.</li><li>Leave out logos and brand names, text on controls that are disabled, text that is only decoration or that nobody can see, and text that is part of a picture with other important content, such as a street sign in a photo.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>All text and images of text have a contrast of at least 4.5:1 with their background, or 3:1 when large.</dd><dt>Fails when</dt><dd>Text has less contrast with its background than 4.5:1 (3:1 for large text), so people with low vision can&#39;t read it, which fails WCAG 1.4.3.</dd></dl>
+<p class="rules">Rules that test it: <code>contrast-minimum</code>, <code>contrast-computable</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Text contrast is computable from CSS for 1.4.3 (no images/gradients/blending ambiguity)</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-1-4-4" aria-labelledby="req-1-4-4">
+<h4 id="req-1-4-4"><span class="num">1.4.4</span> <span>Resize Text</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-4-4-text-resizes-200">
+<h5 id="facet-1-4-4-text-resizes-200">Text can be resized to 200% without losing content or function</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s zoom</span></li></ul>
+<ol class="steps"><li>Zoom the browser to 200%.</li><li>Go through the whole page and check that all text has grown, and none is cut off, overlapped or hidden.</li><li>Use the page&#39;s controls, menus and forms at that size and check that they all still work.</li><li>On a phone, check that you can pinch to zoom the page to 200%. Use Chrome on Android with its &quot;Force enable zoom&quot; accessibility setting turned off: Safari on iOS ignores a viewport that blocks zoom, so it can hide this failure.</li><li>Leave out captions and images of text.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>At 200% all text has grown and stays readable, and everything still works.</dd><dt>Fails when</dt><dd>At 200% text is cut off, overlaps or doesn&#39;t grow, a control stops working, or pinch zoom is blocked, which fails WCAG 1.4.4.</dd></dl>
+<p class="rules">Rules that test it: <code>meta-viewport-zoom-enabled</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; does not disable or cap pinch-zoom below 200%</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-1-4-5" aria-labelledby="req-1-4-5">
+<h4 id="req-1-4-5"><span class="num">1.4.5</span> <span>Images of Text</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-4-5-text-not-as-image">
+<h5 id="facet-1-4-5-text-not-as-image">Text is shown as text, not in an image, unless its look is essential, as in a logo</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look for images that contain words: banners, headings, buttons, quotes, menus.</li><li>Try to select a word of it with the pointer, or inspect it: text that can&#39;t be selected is usually in an image, an SVG drawing or a canvas.</li><li>For each, ask whether the same could be shown with real text styled with CSS.</li><li>Leave out logos and brand names, images where the particular look of the text is essential, such as a font sample, and images of text that the user can change to suit them, such as a page that lets the user set the font, size and colours of the text in the image.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Text is real text, or an image of text is a logo or needs its exact look.</dd><dt>Fails when</dt><dd>Words are shown as an image where styled text would look the same, so people can&#39;t resize, recolor or respace them, which fails WCAG 1.4.5.</dd></dl>
+<p class="rules">Rules that test it: <code>image-of-text</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Images markup shows likely to hold text (&lt;input type=&quot;image&quot;&gt;, an &lt;img&gt; of an SVG with &lt;text&gt;) are asked about (evidence only: text in an image&#39;s pixels is not seen)</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-1-4-10" aria-labelledby="req-1-4-10">
+<h4 id="req-1-4-10"><span class="num">1.4.10</span> <span>Reflow</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-4-10-reflow-320">
+<h5 id="facet-1-4-10-reflow-320">At 320 CSS pixels wide, content needs no scrolling in two directions and nothing is lost</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-1-4-11" aria-labelledby="req-1-4-11">
+<h4 id="req-1-4-11"><span class="num">1.4.11</span> <span>Non-text Contrast</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-4-11-ui-component-contrast">
+<h5 id="facet-1-4-11-ui-component-contrast">The parts of a control that show it is there and its state have a contrast of at least 3:1</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+<section class="facet" aria-labelledby="facet-1-4-11-graphics-contrast">
+<h5 id="facet-1-4-11-graphics-contrast">The parts of a graphic needed to understand it have a contrast of at least 3:1</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-1-4-12" aria-labelledby="req-1-4-12">
+<h4 id="req-1-4-12"><span class="num">1.4.12</span> <span>Text Spacing</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-4-12-avoid-inline-spacing">
+<h5 id="facet-1-4-12-avoid-inline-spacing">Spacing forced in a style attribute doesn&#39;t stop text from taking the user&#39;s spacing</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>In the developer tools&#39; Elements pane, search the page&#39;s markup (Ctrl+F, or Cmd+F on a Mac) for !important, and note each match in a style attribute that sets line-height, letter-spacing or word-spacing.</li><li>For each, read the resulting value in the Computed tab and compare it with 1.5 times the font size for line-height, 0.12 times for letter-spacing and 0.16 times for word-spacing.</li><li>Where the value is lower, narrow the window to 320 CSS pixels wide and check whether that text wraps onto more than one line.</li><li>In the developer tools&#39; Styles pane, add a new style rule for * setting line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important, and a rule for p setting margin-bottom: 2em !important. The element keeps its own value, since its style attribute wins.</li><li>Check whether that text is cut off, overlaps other text or is hidden.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>No style attribute forces spacing below those values on text that wraps, or the text it forces still shows in full with the spacing applied.</dd><dt>Fails when</dt><dd>A style attribute forces spacing below those values on wrapping text, so a bookmarklet or browser extension can&#39;t apply the person&#39;s spacing, and with that spacing the text overlaps or is cut off, which fails WCAG 1.4.12.</dd></dl>
+<p class="rules">Rules that test it: <code>avoid-inline-spacing</code></p>
+</section>
+<section class="facet" aria-labelledby="facet-1-4-12-text-spacing-content-loss">
+<h5 id="facet-1-4-12-text-spacing-content-loss">With the 1.4.12 spacing applied, no text is cut off or made to overlap (measured in a browser)</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A keyboard</span></li></ul>
+<ol class="steps"><li>In the developer tools&#39; Styles pane, add a new style rule for * setting line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important, and a rule for p setting margin-bottom: 2em !important. Rules added in the Styles pane are not blocked by the page&#39;s security policy.</li><li>Scroll through the whole page and look for text that is cut off, overlaps other text or disappears. Text that is part of an image doesn&#39;t count.</li><li>Do this at the widths you test elsewhere, including 320 CSS pixels wide, where text wraps most and is most often cut off.</li><li>Where text is cut off, check whether the page offers a way to show all of it, such as a &quot;Read more&quot; link or a button that expands the box. It only counts if you can use it with the keyboard and, with the spacing still applied, it shows the whole text.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>All text stays visible and readable, or any text that is cut off can be shown in full with the keyboard.</dd><dt>Fails when</dt><dd>Some text is cut off, overlaps or is lost with the spacing applied and cannot be shown in full another way, which fails WCAG 1.4.12.</dd></dl>
+<p class="rules">Rules that test it: <code>text-spacing-content-loss</code></p>
+</section>
+<section class="facet" aria-labelledby="facet-1-4-12-text-spacing-functionality-kept">
+<h5 id="facet-1-4-12-text-spacing-functionality-kept">With the 1.4.12 spacing applied, controls, menus and forms keep working and show all their text</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A keyboard</span>, <span>A mouse or other pointer</span></li></ul>
+<ol class="steps"><li>In the developer tools&#39; Styles pane, add a new style rule for * setting line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important, and a rule for p setting margin-bottom: 2em !important.</li><li>Use each control on the page: open its menus and drop-downs, fill in and submit its forms, switch its tabs, and open and close its dialogs.</li><li>Check that each still responds, that no text pushed out of place covers a control, and that every label and button shows all its text.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every control still works and shows all its text with the spacing applied.</dd><dt>Fails when</dt><dd>With the spacing applied, a control stops working, is covered so it can&#39;t be used, or loses text that says what it does, which fails WCAG 1.4.12.</dd></dl>
+
+</section>
+<section class="facet" aria-labelledby="facet-1-4-12-text-spacing-other-states">
+<h5 id="facet-1-4-12-text-spacing-other-states">With the 1.4.12 spacing applied, content shown only after interaction (menus, dialogs, tabs, messages) keeps all its text</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A keyboard</span>, <span>A mouse or other pointer</span></li></ul>
+<ol class="steps"><li>In the developer tools&#39; Styles pane, add a new style rule for * setting line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important, and a rule for p setting margin-bottom: 2em !important.</li><li>Bring up the content the page shows only after you do something: open each menu and dialog, switch to each tab, expand each collapsed section, show each tooltip, and submit a form with a mistake in it to see its error messages.</li><li>Check each for text that is cut off, overlaps other text or disappears, as on the page itself.</li><li>Where text is cut off, check whether the page offers a way to show all of it, such as a &quot;Read more&quot; link or a button that expands the box. It only counts if you can use it with the keyboard and, with the spacing still applied, it shows the whole text.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Content shown after you do something keeps all its text visible and readable with the spacing applied, or the text that is cut off can be shown in full with the keyboard.</dd><dt>Fails when</dt><dd>Text in a menu, dialog, tab, tooltip or message is cut off or overlaps with the spacing applied and can&#39;t be shown in full another way, which fails WCAG 1.4.12.</dd></dl>
+
+</section>
+</article>
+<article class="req" id="r-1-4-13" aria-labelledby="req-1-4-13">
+<h4 id="req-1-4-13"><span class="num">1.4.13</span> <span>Content on Hover or Focus</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-1-4-13-hover-focus-content-dismissible">
+<h5 id="facet-1-4-13-hover-focus-content-dismissible">Extra content that appears on hover or focus can be dismissed without moving the pointer or focus</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+<section class="facet" aria-labelledby="facet-1-4-13-hover-content-hoverable">
+<h5 id="facet-1-4-13-hover-content-hoverable">The pointer can move onto extra content that appears on hover without it disappearing</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+<section class="facet" aria-labelledby="facet-1-4-13-hover-focus-content-persistent">
+<h5 id="facet-1-4-13-hover-focus-content-persistent">Extra content that appears on hover or focus stays until it is dismissed, the pointer or focus leaves, or it is no longer true</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+</section>
+</section>
+<section class="group" aria-labelledby="g-2">
+<h2 id="g-2"><span class="num">2</span> <span>Operable</span></h2>
+<section class="group" aria-labelledby="g-2-1">
+<h3 id="g-2-1"><span class="num">2.1</span> <span>Keyboard Accessible</span></h3>
+<article class="req" id="r-2-1-1" aria-labelledby="req-2-1-1">
+<h4 id="req-2-1-1"><span class="num">2.1.1</span> <span>Keyboard</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-1-1-keyboard-operable-all-functionality">
+<h5 id="facet-2-1-1-keyboard-operable-all-functionality">All functionality can be operated from a keyboard alone</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A keyboard</span></li></ul>
+<ol class="steps"><li>Turn off any screen reader. In browse mode a screen reader can activate elements that the keyboard alone can&#39;t reach, which hides failures.</li><li>Reload the page and, without clicking, press Tab repeatedly through the whole page. Note every link, button, field and other control you pass.</li><li>Compare with what you can click or drag with the pointer, and note anything the keyboard never reaches: a control, a menu item, a scrollable box, a part of a map or a custom widget.</li><li>Use each control with the keyboard: Enter or Space to activate it, arrow keys inside menus, tabs, lists and sliders, Escape to close what opens.</li><li>For custom widgets, compare the keys with those the WAI-ARIA Authoring Practices give for that kind of widget, such as the arrow keys in a tab list. A widget that works only with unusual keys may still pass this criterion if the page explains them, but record it as a usability issue.</li><li>Where something can&#39;t be reached or used with the keyboard, check whether the page offers another way to do the same with the keyboard alone, such as previous and next buttons for a carousel. It only counts if it does everything the pointer can.</li><li>Leave out what depends on the path the pointer takes, such as freehand drawing.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Everything the page lets you do with a pointer can be done with the keyboard alone, directly or through another way that does the same job.</dd><dt>Fails when</dt><dd>Something can only be done with a pointer, with no keyboard way to do the same, which fails WCAG 2.1.1.</dd></dl>
+<p class="rules">Rules that test it: <code>iframe-focusable-content</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable</code>, <code>mouse-only-event-handlers</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable</code>, <code>focus-not-removed-by-script</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Same-origin frames with tabindex=&quot;-1&quot; contain no focusable content</li><li>&lt;img&gt; does not use a server-side image map (ismap)</li><li>A CSS-scrollable region with no focusable descendant is itself keyboard-focusable (evidence only: actual overflow not statically knowable)</li><li>Pointer-only inline event handlers have a keyboard-reachable equivalent (evidence only: JS-attached listeners are not statically visible)</li><li>An inline click handler on an element that is not a native control can be reached and run by keyboard</li><li>An element with a widget role, or one item of a composite widget, is in the tab order (evidence only: a script may move focus in ways the markup doesn&#39;t show)</li><li>An inline focus handler does not remove focus from the element that receives it (evidence only: listeners added from script are not statically visible)</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-2-1-2" aria-labelledby="req-2-1-2">
+<h4 id="req-2-1-2"><span class="num">2.1.2</span> <span>No Keyboard Trap</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-1-2-no-keyboard-trap">
+<h5 id="facet-2-1-2-no-keyboard-trap">Focus can always be moved away from any part of the page with the keyboard</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-2-1-4" aria-labelledby="req-2-1-4">
+<h4 id="req-2-1-4"><span class="num">2.1.4</span> <span>Character Key Shortcuts</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-1-4-character-key-shortcuts">
+<h5 id="facet-2-1-4-character-key-shortcuts">Shortcuts made of a single letter, number or symbol can be turned off or remapped, or work only while their control has focus</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-2">
+<h3 id="g-2-2"><span class="num">2.2</span> <span>Enough Time</span></h3>
+<article class="req" id="r-2-2-1" aria-labelledby="req-2-2-1">
+<h4 id="req-2-2-1"><span class="num">2.2.1</span> <span>Timing Adjustable</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-2-1-time-limits-adjustable">
+<h5 id="facet-2-2-1-time-limits-adjustable">Each time limit can be turned off, adjusted or extended, unless it is real-time, essential or over 20 hours</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: a browser only</li></ul>
+<ol class="steps"><li>Look for anything on the page that happens after a set time: a session that ends, a form that expires, a page that refreshes or moves on by itself, content that disappears.</li><li>Check the page&#39;s source and wait on it for a while to find limits that aren&#39;t announced, such as a &lt;meta http-equiv=&quot;refresh&quot;&gt; or a sign-out after inactivity.</li><li>For a session that ends on the server, ask the team how long it lasts rather than guessing, then wait for the warning at that point. Check the warning with a screen reader: it must be announced, not only shown.</li><li>For each limit, check that at least one of these holds: you can turn it off before you meet it; you can adjust it to at least ten times its length; or you are warned before it ends, have at least 20 seconds to extend it with a simple action such as pressing a key, and can extend it at least ten times.</li><li>Leave out limits that are part of a real-time event such as an auction, that are essential such as a timed test, or that are longer than 20 hours.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every time limit can be turned off, adjusted or extended, or is real-time, essential or over 20 hours.</dd><dt>Fails when</dt><dd>A time limit ends a session, a form or a page with no way to turn it off, adjust it or extend it, which fails WCAG 2.2.1.</dd></dl>
+<p class="rules">Rules that test it: <code>meta-refresh-timing-absent</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>&lt;meta http-equiv=&quot;refresh&quot;&gt; does not impose a delayed page refresh</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-2-2-2" aria-labelledby="req-2-2-2">
+<h4 id="req-2-2-2"><span class="num">2.2.2</span> <span>Pause, Stop, Hide</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-2-2-auto-moving-content-pausable">
+<h5 id="facet-2-2-2-auto-moving-content-pausable">Animations that start by themselves and last over five seconds can be paused, stopped or hidden</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A keyboard</span></li></ul>
+<ol class="steps"><li>Load the page and watch for anything that moves, blinks or scrolls by itself: carousels, scrolling text, animations, background videos.</li><li>For each that starts by itself, lasts more than 5 seconds and is shown alongside other content, look for a control to pause, stop or hide it.</li><li>Check that the control can be found and used with the keyboard, and that it stops the movement rather than only slowing it.</li><li>Leave out movement that is essential, such as a progress indicator while something loads.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Everything that moves, blinks or scrolls by itself for more than 5 seconds next to other content can be paused, stopped or hidden.</dd><dt>Fails when</dt><dd>Content moves, blinks or scrolls by itself for more than 5 seconds next to other content with no way to pause, stop or hide it, which fails WCAG 2.2.2.</dd></dl>
+<p class="rules">Rules that test it: <code>moving-content-pausable</code>, <code>deprecated-elements-not-used</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Obsolete non-stoppable elements (&lt;blink&gt;, &lt;marquee&gt;) are not present</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-2-2-2-auto-updating-content-controllable">
+<h5 id="facet-2-2-2-auto-updating-content-controllable">Content that updates by itself can be paused, stopped, hidden or set to update less often</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A keyboard</span></li></ul>
+<ol class="steps"><li>Watch the page for content that changes by itself: news tickers, live scores, prices, feeds, timers.</li><li>For each that starts by itself and is shown alongside other content, look for a control to pause, stop or hide it, or to choose how often it updates.</li><li>Check that the control can be found and used with the keyboard.</li><li>Leave out updates that are essential to what the page is for.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every part that updates by itself next to other content can be paused, stopped, hidden or slowed, or its updates are essential.</dd><dt>Fails when</dt><dd>Content updates by itself next to other content with no way to pause, stop, hide it or change how often, which fails WCAG 2.2.2.</dd></dl>
+
+</section>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-3">
+<h3 id="g-2-3"><span class="num">2.3</span> <span>Seizures and Physical Reactions</span></h3>
+<article class="req" id="r-2-3-1" aria-labelledby="req-2-3-1">
+<h4 id="req-2-3-1"><span class="num">2.3.1</span> <span>Three Flashes or Below Threshold</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-3-1-flashing-below-threshold">
+<h5 id="facet-2-3-1-flashing-below-threshold">Nothing flashes more than three times in any one second, or the flashes are small and dim enough</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-4">
+<h3 id="g-2-4"><span class="num">2.4</span> <span>Navigable</span></h3>
+<article class="req" id="r-2-4-1" aria-labelledby="req-2-4-1">
+<h4 id="req-2-4-1"><span class="num">2.4.1</span> <span>Bypass Blocks</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-4-1-bypass-blocks-present">
+<h5 id="facet-2-4-1-bypass-blocks-present">Blocks repeated on several pages can be skipped</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>A keyboard</span>, <span>A screen reader</span>, <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Close any dialog or overlay, then note the blocks the page repeats from other pages of the site: header, navigation, search, sidebars.</li><li>Reload the page and press Tab once: check whether a skip link appears that moves focus past those blocks to the main content, and follow it with Enter.</li><li>Check, in the developer tools&#39; Accessibility pane or a screen reader&#39;s lists, whether the main content is a main landmark or starts with a heading outside the navigation.</li><li>Where the page has a skip link, check that its target exists and that the next Tab after following it goes into the main content.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>The page repeats no blocks, or a working skip link, a main landmark or headings let keyboard and screen reader users jump past them.</dd><dt>Fails when</dt><dd>Repeated blocks have no way to skip them, so keyboard and screen reader users must go through them on every page, which fails WCAG 2.4.1.</dd></dl>
+<p class="rules">Rules that test it: <code>bypass-blocks-present</code></p>
+</section>
+</article>
+<article class="req" id="r-2-4-2" aria-labelledby="req-2-4-2">
+<h4 id="req-2-4-2"><span class="num">2.4.2</span> <span>Page Titled</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-4-2-page-title-descriptive">
+<h5 id="facet-2-4-2-page-title-descriptive">The page has a title that says what it is about or for, and tells it apart from the site&#39;s other pages</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: a browser only</li></ul>
+<ol class="steps"><li>Read the page&#39;s title in the browser tab, or in &lt;title&gt; in the developer tools&#39; Elements pane.</li><li>Check that it says what this page is about or what it is for, such as the article&#39;s headline or the step of a process (&quot;Delivery address - Checkout - Shop&quot;).</li><li>Open two or three other pages of the site and check that their titles tell the pages apart. Putting the page&#39;s own part first, before the site&#39;s name, is good practice but isn&#39;t required.</li><li>Where the page changes its content without loading a new page, as a single-page app does, check that the title changes with it.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>The page&#39;s title says what it is about or for and tells it apart from other pages.</dd><dt>Fails when</dt><dd>The page has no title, or one that is generic, a file name, or the same as other pages&#39;, which fails WCAG 2.4.2.</dd></dl>
+<p class="rules">Rules that test it: <code>page-title-present</code>, <code>page-title-patterns</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>&lt;title&gt; element is present and non-empty</li><li>Page title patterns review (generic / duplicated / overly templated across pages)</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-2-4-3" aria-labelledby="req-2-4-3">
+<h4 id="req-2-4-3"><span class="num">2.4.3</span> <span>Focus Order</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-4-3-focus-order-preserves-meaning">
+<h5 id="facet-2-4-3-focus-order-preserves-meaning">Moving focus with Tab and Shift+Tab follows an order that keeps the page&#39;s meaning and lets it be used</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A keyboard</span></li></ul>
+<ol class="steps"><li>Reload the page and press Tab repeatedly until focus has been through the whole page, watching where it goes.</li><li>Compare the order with the order in which you would read and use the page: a form&#39;s fields in the order of their labels, for example, and the steps of a task in their sequence.</li><li>Press Shift+Tab back through the page and check that focus goes back the same way in reverse.</li><li>Where the order differs from the reading order, check whether that changes what something means or keeps you from using it, such as reaching a form&#39;s Submit button before its fields.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Focus moves through the page in an order that keeps its meaning and lets every part be used, even where it differs from the visual order in small ways.</dd><dt>Fails when</dt><dd>Focus jumps around the page so that its meaning or use changes, such as fields filled in out of their order, which fails WCAG 2.4.3.</dd></dl>
+
+</section>
+<section class="facet" aria-labelledby="facet-2-4-3-focus-order-opened-content">
+<h5 id="facet-2-4-3-focus-order-opened-content">Focus moves into a dialog, menu or section that opens, stays in a dialog while it covers the page, and comes back when it closes</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A keyboard</span></li></ul>
+<ol class="steps"><li>With the keyboard, open each dialog, menu, drop-down and collapsed section the page has, by pressing Enter or Space on the control that opens it.</li><li>Press Tab once and check that focus goes into what opened, or is already in it, rather than to something behind it or far from it.</li><li>In a dialog that covers the page, press Tab until you have been through all its controls, and check that focus stays in the dialog rather than going to the page behind it.</li><li>Close it with Escape or its close button, and check that focus goes back to the control that opened it, or to the next sensible place.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Focus goes into what opens, stays in a dialog while it covers the page, and comes back to where it was when it closes.</dd><dt>Fails when</dt><dd>Focus stays behind what opens, leaves a dialog for the page behind it, or lands at the top of the page when it closes, so the order no longer follows what is on screen, which fails WCAG 2.4.3.</dd></dl>
+
+</section>
+<section class="facet" aria-labelledby="facet-2-4-3-focus-order-no-hidden-stops">
+<h5 id="facet-2-4-3-focus-order-no-hidden-stops">Focus does not stop on content that is closed, hidden or off screen</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A keyboard</span>, <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Close any menu or dialog, reload the page, then press Tab through the whole page, watching where focus is.</li><li>Note each time focus seems to disappear for one or more presses.</li><li>At each such stop, type document.activeElement in the developer tools&#39; Console and check whether the element it shows is in a closed menu, a hidden panel or off screen.</li><li>Leave out a skip link that appears when it receives focus: it is shown once focused.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every Tab stop is on something you can see, or on something that appears when it receives focus, such as a skip link.</dd><dt>Fails when</dt><dd>Focus stops on controls in closed menus, hidden panels or off screen, so the order passes through things that aren&#39;t there, which fails WCAG 2.4.3.</dd></dl>
+
+</section>
+</article>
+<article class="req" id="r-2-4-4" aria-labelledby="req-2-4-4">
+<h4 id="req-2-4-4"><span class="num">2.4.4</span> <span>Link Purpose (In Context)</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-4-4-link-purpose-clear">
+<h5 id="facet-2-4-4-link-purpose-clear">Each link&#39;s purpose can be told from its text, or from its text with the sentence, paragraph, list item or table cell it is in</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span></li></ul>
+<ol class="steps"><li>List the page&#39;s links with a screen reader&#39;s links list, or go through them with Tab and read the Name of each in the developer tools&#39; Accessibility pane.</li><li>Note links whose name doesn&#39;t say where they go or what they do: empty names, &quot;click here&quot;, &quot;read more&quot;, &quot;PDF&quot;, an icon&#39;s file name.</li><li>For each, read the sentence, paragraph, list item or table cell the link is in, or the table header of its cell, and check whether that makes its purpose clear.</li><li>The context that counts is the link&#39;s sentence, paragraph, list item or table cell, the header cells of its table cell, the heading the link sits under, and text tied to the link with aria-describedby. Text that is only near the link, such as a paragraph in another column, doesn&#39;t count.</li><li>Check that links with the same name that lead to different places are told apart by their context.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every link&#39;s purpose is clear from its name, or from its name with the sentence, paragraph, list item or table cell it is in.</dd><dt>Fails when</dt><dd>A link has no name, or a name such as &quot;read more&quot; whose purpose nothing around it explains, which fails WCAG 2.4.4.</dd></dl>
+<p class="rules">Rules that test it: <code>link-name-present</code>, <code>link-name-quality</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Links expose an accessible name (a link with no name has no purpose to determine)</li><li>Link text is not a known non-descriptive/generic phrase (evidence only: surrounding-context sufficiency not verified)</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-2-4-5" aria-labelledby="req-2-4-5">
+<h4 id="req-2-4-5"><span class="num">2.4.5</span> <span>Multiple Ways</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-2-4-5-multiple-ways">
+<h5 id="facet-2-4-5-multiple-ways">There is more than one way to find a page in the site</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-2-4-6" aria-labelledby="req-2-4-6">
+<h4 id="req-2-4-6"><span class="num">2.4.6</span> <span>Headings and Labels</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-2-4-6-heading-text-descriptive-evidence">
+<h5 id="facet-2-4-6-heading-text-descriptive-evidence">Headings describe the content that follows them</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A screen reader</span></li></ul>
+<ol class="steps"><li>List the page&#39;s headings with a screen reader&#39;s headings list, a browser extension such as HeadingsMap, or the developer tools&#39; Accessibility tree.</li><li>Read each heading and the content under it.</li><li>Check that each heading says what that content is about, not a placeholder, a file name or a word that could head anything.</li><li>Check that headings next to each other at the same level can be told apart.</li><li>This criterion only asks that headings and labels which exist describe their content. A missing heading or label is checked under 1.3.1 or 3.3.2, not here.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every heading says what the content under it is about.</dd><dt>Fails when</dt><dd>A heading doesn&#39;t describe the content under it, such as &quot;Section 1&quot; or a file name, which fails WCAG 2.4.6.</dd></dl>
+<p class="rules">Rules that test it: <code>heading-quality</code></p>
+</section>
+<section class="facet" aria-labelledby="facet-2-4-6-form-control-label-descriptive-evidence">
+<h5 id="facet-2-4-6-form-control-label-descriptive-evidence">Labels describe their fields, and fields with the same label can be told apart</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: a browser only</li></ul>
+<ol class="steps"><li>Read the visible label of every field and control on the page.</li><li>Check that each says what to enter or choose, such as &quot;Email address&quot; rather than &quot;Field 1&quot; or &quot;Text&quot;.</li><li>Where several fields share a label, such as &quot;Name&quot; twice, check that the page makes clear which is which, by a group heading or the rest of the label.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every label says what its field or control is for, and fields with the same label are told apart.</dd><dt>Fails when</dt><dd>A label doesn&#39;t say what its field is for, or several fields have the same label with nothing telling them apart, which fails WCAG 2.4.6.</dd></dl>
+<p class="rules">Rules that test it: <code>form-control-label-quality</code></p>
+</section>
+</article>
+<article class="req" id="r-2-4-7" aria-labelledby="req-2-4-7">
+<h4 id="req-2-4-7"><span class="num">2.4.7</span> <span>Focus Visible</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-2-4-7-focus-indicator-visible">
+<h5 id="facet-2-4-7-focus-indicator-visible">Every element that takes keyboard focus shows that it has it</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>A keyboard</span></li></ul>
+<ol class="steps"><li>Reload the page and press Tab slowly through the whole page.</li><li>At each stop, check that you can see which element has focus: an outline, a change of colour, an underline or another visible change.</li><li>Use the keyboard, not the mouse, to move focus. Browsers show the focus of an element clicked with the mouse differently from one reached with Tab, so a mouse test proves nothing here.</li><li>Note each stop where you can&#39;t tell where focus is, and each time focus seems to disappear for a press or more.</li><li>Do the same inside menus, dialogs and widgets that use the arrow keys.</li><li>Turn on a contrast theme in Windows and repeat a few stops. A focus style drawn only with box-shadow or a background colour disappears in that mode. WCAG doesn&#39;t require it to show there, but record it as a best practice issue.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>At every stop you can see which element has focus.</dd><dt>Fails when</dt><dd>Focus reaches an element with no visible change, or lands on something hidden or off screen, so keyboard users lose track of where they are, which fails WCAG 2.4.7.</dd></dl>
+<p class="rules">Rules that test it: <code>css-hidden-focus</code>, <code>css-focus-indicator-suppressed</code>, <code>focus-not-removed-by-script</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>tabbable element is visually hidden by CSS</li><li>CSS does not remove the focus indicator without drawing a replacement</li><li>An inline focus handler does not remove focus from the element that receives it (evidence only: listeners added from script are not statically visible)</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-2-4-11" aria-labelledby="req-2-4-11">
+<h4 id="req-2-4-11"><span class="num">2.4.11</span> <span>Focus Not Obscured (Minimum)</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-2-4-11-focus-not-obscured">
+<h5 id="facet-2-4-11-focus-not-obscured">An element that receives focus is not entirely hidden by content the page puts over it</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+</section>
+<section class="group" aria-labelledby="g-2-5">
+<h3 id="g-2-5"><span class="num">2.5</span> <span>Input Modalities</span></h3>
+<article class="req" id="r-2-5-1" aria-labelledby="req-2-5-1">
+<h4 id="req-2-5-1"><span class="num">2.5.1</span> <span>Pointer Gestures</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-5-1-single-pointer-alternative">
+<h5 id="facet-2-5-1-single-pointer-alternative">What a path or multipoint gesture does can also be done with a single tap or click</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-2-5-2" aria-labelledby="req-2-5-2">
+<h4 id="req-2-5-2"><span class="num">2.5.2</span> <span>Pointer Cancellation</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-5-2-pointer-cancellation">
+<h5 id="facet-2-5-2-pointer-cancellation">Actions run when the pointer is released, not pressed, or can be cancelled or undone</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-2-5-3" aria-labelledby="req-2-5-3">
+<h4 id="req-2-5-3"><span class="num">2.5.3</span> <span>Label in Name</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-5-3-label-in-name">
+<h5 id="facet-2-5-3-label-in-name">A control&#39;s name contains the text of its visible label</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Find every control with a visible label made of text: buttons, links, fields, tabs, menu items, and controls labelled by text next to them.</li><li>For each, read its Name in the developer tools&#39; Accessibility pane.</li><li>Check that the name contains the visible label&#39;s words, in the same order, ideally at the start (a button showing &quot;Send&quot; named &quot;Send message&quot;, not &quot;Submit&quot;).</li><li>Ignore differences of case and punctuation when you compare. Text shown as an image counts as a visible label too.</li><li>Leave out a label made only of symbols, such as &quot;×&quot; or &quot;&gt;&quot;: the name should say what it does.</li><li>Leave out controls with no visible text, such as an icon-only button: they have no visible label to match.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every control&#39;s name contains the words of its visible label, in order.</dd><dt>Fails when</dt><dd>A control&#39;s name doesn&#39;t contain its visible label, so someone who uses speech input can&#39;t activate it by saying what they see, which fails WCAG 2.5.3.</dd></dl>
+<p class="rules">Rules that test it: <code>label-in-name</code></p>
+</section>
+</article>
+<article class="req" id="r-2-5-4" aria-labelledby="req-2-5-4">
+<h4 id="req-2-5-4"><span class="num">2.5.4</span> <span>Motion Actuation</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-2-5-4-motion-actuation">
+<h5 id="facet-2-5-4-motion-actuation">What is done by moving the device can also be done with controls, and the motion response can be turned off</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-2-5-7" aria-labelledby="req-2-5-7">
+<h4 id="req-2-5-7"><span class="num">2.5.7</span> <span>Dragging Movements</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-2-5-7-dragging-alternative">
+<h5 id="facet-2-5-7-dragging-alternative">What is done by dragging can also be done with single taps or clicks</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-2-5-8" aria-labelledby="req-2-5-8">
+<h4 id="req-2-5-8"><span class="num">2.5.8</span> <span>Target Size (Minimum)</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-2-5-8-target-size-minimum-pointer">
+<h5 id="facet-2-5-8-target-size-minimum-pointer">Targets are at least 24 by 24 CSS pixels, or far enough apart</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look for small controls: icons, close buttons, pagination, links in a row, small check boxes.</li><li>Inspect each and read the size of the area that responds to the pointer, which can be larger than the visible icon, in the developer tools&#39; box model. Check that it is at least 24 by 24 CSS pixels.</li><li>Where it is smaller, check whether a 24-pixel circle centred on it would touch another target, or the circle of another small target.</li><li>Leave out links in a sentence or paragraph, controls the browser draws unstyled, controls with a full-size equivalent elsewhere on the page, and targets whose size is essential, such as a map&#39;s pins.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every target is at least 24 by 24 CSS pixels, or far enough from others, or one of the exceptions.</dd><dt>Fails when</dt><dd>A target smaller than 24 by 24 CSS pixels sits so close to another that their 24-pixel circles overlap, with no exception that applies, which fails WCAG 2.5.8.</dd></dl>
+<p class="rules">Rules that test it: <code>target-size-minimum</code></p>
+</section>
+</article>
+</section>
+</section>
+<section class="group" aria-labelledby="g-3">
+<h2 id="g-3"><span class="num">3</span> <span>Understandable</span></h2>
+<section class="group" aria-labelledby="g-3-1">
+<h3 id="g-3-1"><span class="num">3.1</span> <span>Readable</span></h3>
+<article class="req" id="r-3-1-1" aria-labelledby="req-3-1-1">
+<h4 id="req-3-1-1"><span class="num">3.1.1</span> <span>Language of Page</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-3-1-1-page-language-correct">
+<h5 id="facet-3-1-1-page-language-correct">The page&#39;s main language is given in its markup, and is the right one</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Read the lang attribute of the &lt;html&gt; element in the developer tools&#39; Elements pane.</li><li>Check that it is a language code (en, fr, pt-BR) and that it is the language most of the page&#39;s text is in.</li><li>Where &lt;html&gt; also has xml:lang, check that both give the same language.</li><li>In a single-page application, change the interface language and check that lang changes with it. A screen reader switches voice only if one for that language is installed, so judge by the markup, not only by what you hear.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>The &lt;html&gt; element&#39;s lang gives the language most of the page is in.</dd><dt>Fails when</dt><dd>The page has no lang, a wrong or invalid one, so screen readers read it with the wrong voice and pronunciation, which fails WCAG 3.1.1.</dd></dl>
+<p class="rules">Rules that test it: <code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>&lt;html&gt; has a valid non-empty lang attribute</li><li>lang and xml:lang on &lt;html&gt; declare the same primary language, when both are present</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-3-1-2" aria-labelledby="req-3-1-2">
+<h4 id="req-3-1-2"><span class="num">3.1.2</span> <span>Language of Parts</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-3-1-2-parts-language-marked">
+<h5 id="facet-3-1-2-parts-language-marked">Passages and phrases in a language other than the page&#39;s are marked with their own language</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span></li></ul>
+<ol class="steps"><li>Read through the page and note passages, quotes, phrases and names of things written in another language than the page&#39;s, including a language picker&#39;s options.</li><li>For each, check in the developer tools&#39; Elements pane that it, or an element around it, has a lang attribute with that language&#39;s code.</li><li>Leave out proper names, technical terms, and words that have become part of the page&#39;s language, such as &quot;café&quot; in English.</li><li>Listen to a few with a screen reader to check it switches pronunciation.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every passage or phrase in another language is marked with a valid lang attribute for that language.</dd><dt>Fails when</dt><dd>A passage or phrase in another language isn&#39;t marked with its language, or is marked with a wrong code, so it is read with the wrong pronunciation, which fails WCAG 3.1.2.</dd></dl>
+<p class="rules">Rules that test it: <code>valid-lang</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Any element&#39;s lang attribute (when present) is a syntactically valid language tag</li></ul></div>
+</section>
+</article>
+</section>
+<section class="group" aria-labelledby="g-3-2">
+<h3 id="g-3-2"><span class="num">3.2</span> <span>Predictable</span></h3>
+<article class="req" id="r-3-2-1" aria-labelledby="req-3-2-1">
+<h4 id="req-3-2-1"><span class="num">3.2.1</span> <span>On Focus</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-3-2-1-focus-no-change-of-context">
+<h5 id="facet-3-2-1-focus-no-change-of-context">Moving focus onto an element doesn&#39;t change the context by itself</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-3-2-2" aria-labelledby="req-3-2-2">
+<h4 id="req-3-2-2"><span class="num">3.2.2</span> <span>On Input</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-3-2-2-input-no-unexpected-change">
+<h5 id="facet-3-2-2-input-no-unexpected-change">Changing a setting doesn&#39;t change the context unless the user is told beforehand</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-3-2-3" aria-labelledby="req-3-2-3">
+<h4 id="req-3-2-3"><span class="num">3.2.3</span> <span>Consistent Navigation</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-3-2-3-navigation-consistent">
+<h5 id="facet-3-2-3-navigation-consistent">Navigation repeated on several pages comes in the same relative order each time</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-3-2-4" aria-labelledby="req-3-2-4">
+<h4 id="req-3-2-4"><span class="num">3.2.4</span> <span>Consistent Identification</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-3-2-4-identification-consistent">
+<h5 id="facet-3-2-4-identification-consistent">Components that do the same thing across pages are identified the same way</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-3-2-6" aria-labelledby="req-3-2-6">
+<h4 id="req-3-2-6"><span class="num">3.2.6</span> <span>Consistent Help</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-3-2-6-help-consistent">
+<h5 id="facet-3-2-6-help-consistent">Help offered on several pages is in the same relative place each time</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+</section>
+<section class="group" aria-labelledby="g-3-3">
+<h3 id="g-3-3"><span class="num">3.3</span> <span>Input Assistance</span></h3>
+<article class="req" id="r-3-3-1" aria-labelledby="req-3-3-1">
+<h4 id="req-3-3-1"><span class="num">3.3.1</span> <span>Error Identification</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-3-3-1-errors-identified">
+<h5 id="facet-3-3-1-errors-identified">An input error the page detects is shown in text that says which field is wrong and what is wrong</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>A keyboard</span>, <span>A screen reader</span></li></ul>
+<ol class="steps"><li>Find each form on the page and send it empty, then with wrong values: a malformed email, letters in a number field, a date in the past.</li><li>Check that each error the page detects is shown in text, not only by colour or an icon, next to the field or in a list at the top.</li><li>Check that the text says which field is wrong and what is wrong with it.</li><li>The browser&#39;s own validation messages count as text, but their wording and how long they stay on screen differ between browsers. Check them in each browser you test.</li><li>Check with a screen reader that the error is announced or reached easily, and that each wrong field is marked invalid.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every input error the page detects is shown in text that names the field and the problem.</dd><dt>Fails when</dt><dd>An input error is shown only by colour or an icon, not at all, or without saying which field is wrong, which fails WCAG 3.3.1.</dd></dl>
+<p class="rules">Rules that test it: <code>invalid-field-error-message</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>A field marked invalid with aria-invalid has a shown error message in text tied to it</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-3-3-2" aria-labelledby="req-3-3-2">
+<h4 id="req-3-3-2"><span class="num">3.3.2</span> <span>Labels or Instructions</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-3-3-2-labels-instructions-provided">
+<h5 id="facet-3-3-2-labels-instructions-provided">Fields that ask for input have a visible label, and instructions where the input needs them</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Find every field and control that asks for input on the page.</li><li>Check that each has a label you can see without hovering or typing: not only a placeholder that disappears when you type, or a title shown on hover.</li><li>Where the input must follow rules, such as a date format, a password&#39;s requirements or which fields are required, check that the page says so before the user sends it.</li><li>This criterion asks only that labels and instructions are shown. Whether a label is tied to its field in the markup is checked under 1.3.1 and 4.1.2.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every field has a visible label, and the page gives the instructions the input needs before it is sent.</dd><dt>Fails when</dt><dd>A field has no visible label, only a placeholder or a hover title, or input rules are given only after an error, which fails WCAG 3.3.2.</dd></dl>
+<p class="rules">Rules that test it: <code>form-control-programmatic-label-present</code>, <code>form-control-single-label</code>, <code>form-control-programmatic-label-quality</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Form controls provide labels or instructions (label/aria-label/aria-labelledby/title/placeholder)</li><li>Form controls are associated with at most one &lt;label&gt;</li><li>Form controls have a label presented to all users, not only a title or placeholder</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-3-3-3" aria-labelledby="req-3-3-3">
+<h4 id="req-3-3-3"><span class="num">3.3.3</span> <span>Error Suggestion</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-3-3-3-error-suggestions">
+<h5 id="facet-3-3-3-error-suggestions">When the page knows how to fix an input error, it says how</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-3-3-4" aria-labelledby="req-3-3-4">
+<h4 id="req-3-3-4"><span class="num">3.3.4</span> <span>Error Prevention (Legal, Financial, Data)</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-3-3-4-submission-reversible-checked-confirmed">
+<h5 id="facet-3-3-4-submission-reversible-checked-confirmed">Submissions with legal or financial effect, or that change stored data, can be reversed, checked or reviewed and confirmed</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-3-3-7" aria-labelledby="req-3-3-7">
+<h4 id="req-3-3-7"><span class="num">3.3.7</span> <span>Redundant Entry</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-3-3-7-redundant-entry">
+<h5 id="facet-3-3-7-redundant-entry">Information the user already gave in a process is filled in or offered to pick, not asked for again</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
+<p class="empty">No procedure for this yet.</p>
+
+</section>
+</article>
+<article class="req" id="r-3-3-8" aria-labelledby="req-3-3-8">
+<h4 id="req-3-3-8"><span class="num">3.3.8</span> <span>Accessible Authentication (Minimum)</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-3-3-8-authentication-no-cognitive-test">
+<h5 id="facet-3-3-8-authentication-no-cognitive-test">Signing in doesn&#39;t require remembering, transcribing or solving something, unless a way around it is offered</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: a browser only</li></ul>
+<ol class="steps"><li>Go through each way the site lets you sign in or verify yourself, with a test account.</li><li>Note each step that asks you to remember something (a password), transcribe it (a code from another device), or solve something (a puzzle, a calculation, picking images).</li><li>For a password or code, check that you can paste it and that a password manager can fill it, so it needn&#39;t be remembered or retyped.</li><li>Check that a password manager actually fills the fields: the username and password fields need autocomplete=&quot;username&quot; and autocomplete=&quot;current-password&quot; (or new-password), and a one-time code field works best with autocomplete=&quot;one-time-code&quot;.</li><li>Where a code is split into one box per digit, paste the whole code into the first box and check that it fills them all. Boxes that block pasting, or take only one character each, fail.</li><li>For other tests, check that another method is offered, or that the test only asks to recognise objects or something you gave the site.</li><li>Count a CAPTCHA shown during sign-in as part of the sign-in. Other methods that need no cognitive test, such as a passkey, a sign-in link sent by email or signing in through a third party, are valid alternatives.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every sign-in step that asks to remember, transcribe or solve something allows pasting and password managers, or offers another way, or only asks to recognise objects or your own content.</dd><dt>Fails when</dt><dd>Signing in requires remembering, transcribing or solving something with no way around it, such as a code field that blocks pasting, which fails WCAG 3.3.8.</dd></dl>
+<p class="rules">Rules that test it: <code>password-paste-enabled</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>A password or one-time-code field does not cancel pasting, so a password manager or the clipboard can still fill it</li></ul></div>
+</section>
+</article>
+</section>
+</section>
+<section class="group" aria-labelledby="g-4">
+<h2 id="g-4"><span class="num">4</span> <span>Robust</span></h2>
+<section class="group" aria-labelledby="g-4-1">
+<h3 id="g-4-1"><span class="num">4.1</span> <span>Compatible</span></h3>
+<article class="req" id="r-4-1-2" aria-labelledby="req-4-1-2">
+<h4 id="req-4-1-2"><span class="num">4.1.2</span> <span>Name, Role, Value</span></h4>
+<p class="meta"><span>Level A</span></p>
+<section class="facet" aria-labelledby="facet-4-1-2-components-named">
+<h5 id="facet-4-1-2-components-named">Every link, control, frame and dialog has a name that says what it is for</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span></li></ul>
+<ol class="steps"><li>Go through every link, button, field, frame and custom control on the page, by pressing Tab and inside widgets with the arrow keys.</li><li>For each, read the Name in the developer tools&#39; Accessibility pane, or listen to what a screen reader says.</li><li>Check names in two browser and screen reader pairs. Names built from aria-labelledby, from a label that wraps the control, or from CSS content can differ between them.</li><li>Check that each has a name that says what it is for, including icon-only buttons, frames (&quot;Video player&quot;, &quot;Map&quot;) and dialogs.</li><li>Check that frames with the same name show the same thing, and that names given only for braille have a spoken equivalent.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every link, control, frame and dialog has a name that says what it is for.</dd><dt>Fails when</dt><dd>A link, control, frame or dialog has no name, or one that doesn&#39;t say what it is for, so assistive technology announces only its role, which fails WCAG 4.1.2.</dd></dl>
+<p class="rules">Rules that test it: <code>form-control-programmatic-label-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-alt-present</code>, <code>binary-control-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>iframe-title-unique</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Form controls expose an accessible name (label/aria-label/aria-labelledby/title/placeholder)</li><li>Links expose an accessible name (content text / aria-label / aria-labelledby / title)</li><li>Buttons expose an accessible name (content text / aria-label / aria-labelledby / title / value)</li><li>Image buttons (&lt;input type=&quot;image&quot;&gt;) expose an accessible name (aria-labelledby / aria-label / alt / title)</li><li>Checkboxes expose an accessible name (label / aria-label / aria-labelledby / title)</li><li>Radio buttons expose an accessible name (label / aria-label / aria-labelledby / title)</li><li>Switches expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Comboboxes expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Dialogs expose an accessible name (aria-labelledby / aria-label / title / content)</li><li>Menu items expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Tabs expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Sliders expose an accessible name (label / aria-label / aria-labelledby / title / content)</li><li>Textboxes (role=&quot;textbox&quot;) expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Searchboxes (role=&quot;searchbox&quot;) expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Spinbuttons (role=&quot;spinbutton&quot;) expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Listboxes (role=&quot;listbox&quot;) expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Options (role=&quot;option&quot;) expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Tree items (role=&quot;treeitem&quot;) expose an accessible name (content / aria-label / aria-labelledby / title)</li><li>Selected ARIA widget/container roles (scrollbar, toolbar, tablist, radiogroup, tree, grid, menu, menubar) expose an accessible name</li><li>&lt;iframe&gt;/&lt;frame&gt; elements expose an accessible name (aria-label / aria-labelledby / title)</li><li>&lt;iframe&gt;/&lt;frame&gt; elements sharing an accessible name embed the same resource</li><li>&lt;summary&gt; elements expose an accessible name</li><li>role=&quot;tooltip&quot; elements expose an accessible name</li><li>aria-braillelabel/aria-brailleroledescription have a non-braille equivalent</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-4-1-2-roles-match-behavior">
+<h5 id="facet-4-1-2-roles-match-behavior">Every control&#39;s role says what it does, and controls aren&#39;t nested inside one another</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span></li></ul>
+<ol class="steps"><li>For each control on the page, note what it does when used: opens a page (a link), acts on the page (a button), toggles (a check box or switch), opens a list (a menu or combo box).</li><li>Read its Role in the developer tools&#39; Accessibility pane, or listen to a screen reader, and check that the role matches what it does.</li><li>Pay attention to custom controls built from divs and spans, links used as buttons and buttons used as links.</li><li>Check that no control holds another one inside it, such as a button inside a link, and that controls whose children are presentational, such as a tab or a button, hold nothing focusable.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every control&#39;s role says what it does, and no control is nested inside another.</dd><dt>Fails when</dt><dd>A control has no role, a wrong one (a clickable div with no role, a link that acts as a button), or holds another control inside it, which fails WCAG 4.1.2.</dd></dl>
+<p class="rules">Rules that test it: <code>aria-roles-valid</code>, <code>aria-deprecated-role</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Explicit role attribute resolves to a real, non-abstract ARIA role</li><li>Explicit role attribute does not use a deprecated ARIA role</li><li>Interactive controls do not contain other interactive controls</li><li>Roles with presentational children contain no content in sequential focus navigation</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-4-1-2-states-values-exposed">
+<h5 id="facet-4-1-2-states-values-exposed">Every control&#39;s state and value are exposed and change with what is on screen</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span>, <span>A keyboard</span></li></ul>
+<ol class="steps"><li>Find the controls that have a state or value: check boxes, switches, radio buttons, expandable sections and menus, tabs, sliders, selected items, pressed buttons.</li><li>Read each one&#39;s state and value in the developer tools&#39; Accessibility pane, or listen with a screen reader: checked, expanded, selected, pressed, the current item (aria-current), and the current value of a slider or spin button.</li><li>Change each with the keyboard and check that the state or value read changes with what you see.</li><li>For an expandable control, check that it says expanded only while what it opens is shown.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every control&#39;s state and value are exposed and change with what is on screen.</dd><dt>Fails when</dt><dd>A control&#39;s state or value isn&#39;t exposed, or doesn&#39;t change when it changes on screen, such as a custom check box always read as not checked, which fails WCAG 4.1.2.</dd></dl>
+<p class="rules">Rules that test it: <code>aria-required-attr</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Roles with an unambiguous required state/property carry it (e.g. role=&quot;checkbox&quot; has aria-checked)</li><li>aria-errormessage is only used when aria-invalid is not false/absent</li><li>Native checkbox/radio aria-checked matches its actual checked/indeterminate state (evidence only: static markup can&#39;t rule out later JS hydration)</li><li>aria-expanded matches whether the content aria-controls names is shown (evidence only: static markup may catch a transition or a script that hasn&#39;t run)</li></ul></div>
+</section>
+<section class="facet" aria-labelledby="facet-4-1-2-aria-used-validly">
+<h5 id="facet-4-1-2-aria-used-validly">ARIA attributes are real, valid and allowed where they are, and nothing focusable is hidden from assistive technology</h5>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>In the developer tools&#39; Elements pane, search the markup for aria- and role= and look at each use.</li><li>Check that each aria-* attribute is a real one, has a valid value, and is allowed on its element&#39;s role.</li><li>Check that ids that aria-labelledby, aria-describedby, aria-controls and the like point to exist once each.</li><li>Check that nothing that takes focus is inside an element with aria-hidden=&quot;true&quot;, and that &lt;body&gt; isn&#39;t hidden.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>ARIA attributes are real, valid and allowed where they are, their ids are unique, and nothing focusable is hidden.</dd><dt>Fails when</dt><dd>An ARIA attribute is misspelt, has an invalid value or is not allowed on its role, an id it points to is missing or repeated, or something focusable is hidden from assistive technology, which fails WCAG 4.1.2.</dd></dl>
+<p class="rules">Rules that test it: <code>aria-hidden-focus</code>, <code>aria-valid-attr</code>, <code>aria-valid-attr-value</code>, <code>aria-allowed-attr</code>, <code>aria-prohibited-attr</code>, <code>aria-hidden-body</code>, <code>duplicate-id-aria</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>aria-hidden subtree has focusable content</li><li>Every aria-* attribute name present is a real, defined ARIA attribute</li><li>Every recognised aria-* attribute has a value matching its declared type</li><li>aria-* attributes present are permitted for the element&#39;s explicit role</li><li>ARIA naming attributes are not used on roles that prohibit them</li><li>The document &lt;body&gt; does not have aria-hidden=&quot;true&quot;</li><li>IDs referenced by ARIA ID-reference attributes are unique in the document</li></ul></div>
+</section>
+</article>
+<article class="req" id="r-4-1-3" aria-labelledby="req-4-1-3">
+<h4 id="req-4-1-3"><span class="num">4.1.3</span> <span>Status Messages</span></h4>
+<p class="meta"><span>Level AA</span></p>
+<section class="facet" aria-labelledby="facet-4-1-3-status-messages-announced">
+<h5 id="facet-4-1-3-status-messages-announced">Status messages are announced by assistive technology without taking focus</h5>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>A screen reader</span></li></ul>
+<ol class="steps"><li>Find the messages the page shows without moving focus: &quot;Added to cart&quot;, search result counts, &quot;Saved&quot;, progress, form errors listed after sending.</li><li>Turn on a screen reader and cause each message, by the action that shows it.</li><li>Check that the screen reader says the message without focus moving to it.</li><li>Repeat in a second browser and screen reader pair. Live regions are among the least consistent parts of screen reader support.</li><li>Where it says nothing, check in the developer tools that the message is in an element with role=&quot;status&quot;, role=&quot;alert&quot; or aria-live, and that the element is not hidden. A role=&quot;status&quot; or aria-live region must already be on the page, empty, before the message is put in it. An element with role=&quot;alert&quot; is usually announced even when it is added together with its message.</li><li>Leave out messages that receive focus, or that come with a new page: those are not status messages, and are checked under other criteria.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every status message is announced by a screen reader without focus moving to it.</dd><dt>Fails when</dt><dd>A status message appears on screen but a screen reader doesn&#39;t say it, which fails WCAG 4.1.3.</dd></dl>
+<p class="rules">Rules that test it: <code>live-region-announcements</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>A live region is not hidden from assistive technology by aria-hidden or inert, and is not left busy (evidence only: whether the page uses it for status messages is a person&#39;s call)</li><li>A live region gets its status message after it is in the accessibility tree, not added with it or shown with it (evidence only: needs the live-region hook, and screen readers differ)</li></ul></div>
+</section>
+</article>
+</section>
+</section>
+</main>
+</div>
+
+</body>
+</html>

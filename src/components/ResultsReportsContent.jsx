@@ -39,7 +39,8 @@ export function ResultsReportsContent() {
 				detail down to the flagged element, explicit uncertainty codes for anything a rule couldn't
 				decide, and composite WCAG-SC rollups. Every undecided finding of a core rule says how a person answers
 				it, and some say which way the page's evidence points (a <em>lean</em>), so a review
-				starts with the likely failures rather than a flat list. Worth reading once if you're building anything on
+				starts with the likely failures rather than a flat list. A scan of several profiles keeps
+				each finding once and says what each profile makes of it. Worth reading once if you're building anything on
 				top of a raw result. See <a href="/results-reports/output-schema/">Output schema</a> for
 				the full shape.
 			</p>
@@ -50,6 +51,7 @@ export function ResultsReportsContent() {
 				summary up top, the failures, then the findings that need review sorted into likely
 				fails, likely passes and the ones only a person can judge, each core rule's with the steps to check it,
 				a WCAG rollup grouped by conformance level sourced from the engine's own composite results,
+				what the scan leaves to a person criterion by criterion, with the steps for each check,
 				and a full searchable table underneath for anyone who wants to dig in.
 				This is the report to hand a reviewer who doesn't want to read raw output. See{" "}
 				<a href="/results-reports/html-report/">HTML report</a>.

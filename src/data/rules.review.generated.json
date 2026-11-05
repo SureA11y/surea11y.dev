@@ -158,6 +158,106 @@
           "failWhen": "状態が非推奨の属性だけで伝えられ、スクリーンリーダーも読み上げないため、要素の状態が公開されていません（WCAG 4.1.2）。"
         }
       }
+    },
+    {
+      "code": "ARIA_ATTR_NOT_ALLOWED",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte Element und notieren Sie das Attribut und die Rolle des Elements.",
+            "Ermitteln Sie, was das Attribut vermitteln sollte, etwa einen Zustand wie aktiviert, gedrückt oder ausgewählt, oder einen Wert.",
+            "Prüfen Sie, ob das Element ein Bedienelement ist und ob dieser Zustand oder Wert auf andere, von seiner Rolle unterstützte Weise vermittelt wird, etwa aria-pressed auf einer Schaltfläche oder der eigene Zustand des nativen Elements."
+          ],
+          "passWhen": "Das Attribut vermittelt nichts, was das Element braucht, oder derselbe Zustand oder Wert wird auf unterstützte Weise vermittelt. Entfernen Sie es trotzdem: WAI-ARIA erlaubt es für diese Rolle nicht.",
+          "failWhen": "Das Element ist ein Bedienelement, dessen Zustand oder Wert nur durch dieses Attribut vermittelt wird, das seine Rolle nicht unterstützt, daher wird dieser Zustand oder Wert nicht bereitgestellt (WCAG 4.1.2)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the element the report names and note the attribute and the element's role.",
+            "Work out what the attribute was meant to convey, such as a checked, pressed or selected state, or a value.",
+            "Check whether the element is a control and whether that state or value is conveyed some other way its role supports, such as aria-pressed on a button or the native control's own state."
+          ],
+          "passWhen": "The attribute conveys nothing the element needs, or the same state or value is conveyed a supported way. Still remove it: WAI-ARIA does not allow it on this role.",
+          "failWhen": "The element is a control whose state or value is conveyed only by this attribute, which its role does not support, so that state or value is not exposed (WCAG 4.1.2)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el elemento que indica el informe y anote el atributo y el rol del elemento.",
+            "Determine qué pretendía transmitir el atributo, como un estado marcado, pulsado o seleccionado, o un valor.",
+            "Compruebe si el elemento es un control y si ese estado o valor se transmite de otra forma que su rol admita, como aria-pressed en un botón o el estado propio del control nativo."
+          ],
+          "passWhen": "El atributo no transmite nada que el elemento necesite, o el mismo estado o valor se transmite de una forma admitida. Aun así, elimínelo: WAI-ARIA no lo permite en este rol.",
+          "failWhen": "El elemento es un control cuyo estado o valor solo se transmite con este atributo, que su rol no admite, así que ese estado o valor no se expone (WCAG 4.1.2)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez l’élément indiqué par le rapport et notez l’attribut et le rôle de l’élément.",
+            "Déterminez ce que l’attribut devait transmettre, comme un état coché, enfoncé ou sélectionné, ou une valeur.",
+            "Vérifiez si l’élément est un contrôle et si cet état ou cette valeur est transmis d’une autre manière que son rôle prend en charge, comme aria-pressed sur un bouton ou l’état propre du contrôle natif."
+          ],
+          "passWhen": "L’attribut ne transmet rien dont l’élément a besoin, ou le même état ou la même valeur est transmis d’une manière prise en charge. Retirez-le tout de même : WAI-ARIA ne l’autorise pas sur ce rôle.",
+          "failWhen": "L’élément est un contrôle dont l’état ou la valeur n’est transmis que par cet attribut, que son rôle ne prend pas en charge : cet état ou cette valeur n’est donc pas exposé (WCAG 4.1.2)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された要素を調べ、属性と要素のロールを控えてください。",
+            "属性が何を伝えるためのものだったか（チェック、押下、選択などの状態や値）を判断してください。",
+            "要素がコントロールかどうか、そしてその状態や値がロールのサポートする別の方法（ボタンのaria-pressedやネイティブコントロール自身の状態など）で伝えられているか確認してください。"
+          ],
+          "passWhen": "属性は要素に必要なものを何も伝えていないか、同じ状態や値がサポートされた方法で伝えられています。それでも削除してください。WAI-ARIAはこのロールでの使用を認めていません。",
+          "failWhen": "要素はコントロールで、その状態や値がロールのサポートしないこの属性でしか伝えられていないため、状態や値が公開されていません（WCAG 4.1.2）。"
+        }
+      }
+    },
+    {
+      "code": "ARIA_ATTR_NOT_ALLOWED_ROLELESS",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte Element, das keine Rolle hat, und notieren Sie das Attribut.",
+            "Prüfen Sie, ob das Element als Bedienelement funktioniert: Es erhält den Fokus oder reagiert auf Klicks oder Tasten.",
+            "Falls ja, prüfen Sie, ob der Zustand oder Wert, den das Attribut vermitteln sollte, auf andere Weise vermittelt wird."
+          ],
+          "passWhen": "Das Element ist kein Bedienelement, oder sein Zustand oder Wert wird auf andere Weise vermittelt. Entfernen Sie das Attribut trotzdem: Auf einem Element ohne Rolle unterstützt es nichts.",
+          "failWhen": "Das Element funktioniert als Bedienelement und vermittelt seinen Zustand oder Wert nur über dieses Attribut, das auf einem Element ohne Rolle nichts unterstützt (WCAG 4.1.2)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the element the report names, which has no role, and note the attribute.",
+            "Check whether the element works as a control: it takes focus or responds to clicks or keys.",
+            "If it does, check whether the state or value the attribute was meant to convey is conveyed any other way."
+          ],
+          "passWhen": "The element is not a control, or its state or value is conveyed another way. Still remove the attribute: nothing supports it on an element with no role.",
+          "failWhen": "The element works as a control and conveys its state or value only through this attribute, which nothing supports on an element with no role (WCAG 4.1.2)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el elemento que indica el informe, que no tiene rol, y anote el atributo.",
+            "Compruebe si el elemento funciona como un control: recibe el foco o responde a clics o teclas.",
+            "Si es así, compruebe si el estado o valor que el atributo pretendía transmitir se transmite de alguna otra forma."
+          ],
+          "passWhen": "El elemento no es un control, o su estado o valor se transmite de otra forma. Aun así, elimine el atributo: nada lo admite en un elemento sin rol.",
+          "failWhen": "El elemento funciona como un control y transmite su estado o valor solo con este atributo, que nada admite en un elemento sin rol (WCAG 4.1.2)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez l’élément indiqué par le rapport, qui n’a pas de rôle, et notez l’attribut.",
+            "Vérifiez si l’élément fonctionne comme un contrôle : il reçoit le focus ou réagit aux clics ou aux touches.",
+            "Si c’est le cas, vérifiez si l’état ou la valeur que l’attribut devait transmettre l’est d’une autre manière."
+          ],
+          "passWhen": "L’élément n’est pas un contrôle, ou son état ou sa valeur est transmis d’une autre manière. Retirez tout de même l’attribut : rien ne le prend en charge sur un élément sans rôle.",
+          "failWhen": "L’élément fonctionne comme un contrôle et ne transmet son état ou sa valeur que par cet attribut, que rien ne prend en charge sur un élément sans rôle (WCAG 4.1.2)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された、ロールのない要素を調べ、属性を控えてください。",
+            "要素がコントロールとして動作するか（フォーカスを受け取る、クリックやキーに反応する）確認してください。",
+            "動作する場合は、属性が伝えるはずだった状態や値が別の方法で伝えられているか確認してください。"
+          ],
+          "passWhen": "要素はコントロールではないか、状態や値が別の方法で伝えられています。それでも属性を削除してください。ロールのない要素では何もサポートしません。",
+          "failWhen": "要素はコントロールとして動作し、状態や値をこの属性だけで伝えていますが、ロールのない要素では何もサポートしません（WCAG 4.1.2）。"
+        }
+      }
     }
   ],
   "aria-allowed-role": [
@@ -704,7 +804,159 @@
       }
     }
   ],
+  "aria-owns-valid": [
+    {
+      "code": "ARIA_OWNS_ANCESTOR",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte Element und notieren Sie die ID, die sein aria-owns nennt: das Element selbst oder einen seiner Vorfahren.",
+            "Ermitteln Sie, welche Beziehung aria-owns angeben sollte, und vergleichen Sie sie mit der Position der beiden Elemente auf der Seite.",
+            "Prüfen Sie, ob die Seite eine Beziehung zwischen ihnen zeigt, die ihre Position im Dokument nicht bereits ergibt."
+          ],
+          "passWhen": "Die eigene Struktur des Dokuments ergibt bereits die Beziehung, die die Seite zeigt. Entfernen Sie die ID trotzdem aus aria-owns: WAI-ARIA erlaubt nicht, dass ein Element seinen Vorfahren besitzt.",
+          "failWhen": "Die Seite zeigt eine Beziehung, die nur das unmögliche aria-owns angeben sollte, daher ist sie nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the element the report names and note the id its aria-owns names, which is the element itself or one of its ancestors.",
+            "Work out what relationship the aria-owns was meant to state, and compare it with where the two elements sit in the page.",
+            "Check whether the page shows a relationship between them that their place in the document does not already give."
+          ],
+          "passWhen": "The document's own structure already gives the relationship the page shows. Still remove the id from aria-owns: WAI-ARIA does not allow an element to own its ancestor.",
+          "failWhen": "The page shows a relationship that only the impossible aria-owns tried to state, so it is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el elemento que indica el informe y anote el id que nombra su aria-owns, que es el propio elemento o uno de sus antecesores.",
+            "Determine qué relación pretendía indicar aria-owns y compárela con la posición de ambos elementos en la página.",
+            "Compruebe si la página muestra una relación entre ellos que su posición en el documento no dé ya."
+          ],
+          "passWhen": "La propia estructura del documento ya da la relación que muestra la página. Aun así, quite el id de aria-owns: WAI-ARIA no permite que un elemento posea a su antecesor.",
+          "failWhen": "La página muestra una relación que solo el aria-owns imposible intentaba indicar, así que no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez l’élément indiqué par le rapport et notez l’id que nomme son aria-owns, qui est l’élément lui-même ou l’un de ses ancêtres.",
+            "Déterminez quelle relation aria-owns devait indiquer et comparez-la avec la place des deux éléments dans la page.",
+            "Vérifiez si la page montre entre eux une relation que leur place dans le document ne donne pas déjà."
+          ],
+          "passWhen": "La structure du document donne déjà la relation que la page montre. Retirez tout de même l’id d’aria-owns : WAI-ARIA n’autorise pas un élément à posséder son ancêtre.",
+          "failWhen": "La page montre une relation que seul l’aria-owns impossible tentait d’indiquer : elle n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された要素を調べ、そのaria-ownsが指すid（要素自身または祖先）を控えてください。",
+            "aria-ownsがどの関係を示すためのものだったかを判断し、ページ内での2つの要素の位置と比べてください。",
+            "文書内の位置だけでは表せない関係を、ページがそれらの間に表示しているか確認してください。"
+          ],
+          "passWhen": "文書自体の構造がページの示す関係をすでに表しています。それでもaria-ownsからidを削除してください。WAI-ARIAは要素が祖先を所有することを認めていません。",
+          "failWhen": "ページが示す関係は実現できないaria-ownsだけが表そうとしていたため、プログラムで判別できません（WCAG 1.3.1）。"
+        }
+      }
+    }
+  ],
   "aria-prohibited-attr": [
+    {
+      "code": "ARIA_ATTR_PROHIBITED",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte Element und notieren Sie das Attribut, seinen Wert und die Rolle des Elements.",
+            "Vergleichen Sie eine Beschriftung mit dem sichtbaren Text des Elements und prüfen Sie, ob sie etwas sagt, was der Text nicht sagt.",
+            "Falls ja, prüfen Sie, ob diese Information auf andere Weise gegeben wird, die ein Screenreader ebenfalls liest, etwa eine Kopfzeile oder Text neben dem Element."
+          ],
+          "passWhen": "Der sichtbare Text sagt bereits alles, was die Beschriftung sagt, oder das Attribut ist eine Rollenbeschreibung, die kein Bedienelement verfeinert. Entfernen Sie es trotzdem: WAI-ARIA verbietet es für diese Rolle.",
+          "failWhen": "Die Beschriftung enthält Information, die nirgendwo sonst gegeben wird und verloren geht, weil die Rolle nicht benannt werden kann (WCAG 4.1.2)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the element the report names and note the attribute, its value and the element's role.",
+            "For a label, compare it with the element's visible text and check whether it says anything the text does not.",
+            "If it does, check whether that information is given another way a screen reader also reads, such as a header or text next to the element."
+          ],
+          "passWhen": "The visible text already says everything the label says, or the attribute is a role description, which refines no control. Still remove it: WAI-ARIA prohibits it on this role.",
+          "failWhen": "The label carries information given nowhere else, which is lost because the role cannot be named (WCAG 4.1.2)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el elemento que indica el informe y anote el atributo, su valor y el rol del elemento.",
+            "Si es una etiqueta, compárela con el texto visible del elemento y compruebe si dice algo que el texto no diga.",
+            "Si es así, compruebe si esa información se da de otra forma que un lector de pantalla también lea, como un encabezado o un texto junto al elemento."
+          ],
+          "passWhen": "El texto visible ya dice todo lo que dice la etiqueta, o el atributo es una descripción de rol, que no precisa ningún control. Aun así, elimínelo: WAI-ARIA lo prohíbe en este rol.",
+          "failWhen": "La etiqueta contiene información que no se da en ningún otro sitio y que se pierde porque el rol no puede tener nombre (WCAG 4.1.2)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez l’élément indiqué par le rapport et notez l’attribut, sa valeur et le rôle de l’élément.",
+            "Pour une étiquette, comparez-la avec le texte visible de l’élément et vérifiez si elle dit quelque chose que le texte ne dit pas.",
+            "Si c’est le cas, vérifiez si cette information est donnée d’une autre manière qu’un lecteur d’écran lit aussi, comme un en-tête ou un texte à côté de l’élément."
+          ],
+          "passWhen": "Le texte visible dit déjà tout ce que dit l’étiquette, ou l’attribut est une description de rôle, qui ne précise aucun contrôle. Retirez-le tout de même : WAI-ARIA l’interdit sur ce rôle.",
+          "failWhen": "L’étiquette porte une information donnée nulle part ailleurs, qui est perdue parce que le rôle ne peut pas être nommé (WCAG 4.1.2)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された要素を調べ、属性とその値、要素のロールを控えてください。",
+            "ラベルの場合は要素の表示テキストと比べ、テキストにない内容を述べているか確認してください。",
+            "述べている場合は、その情報がスクリーンリーダーも読み上げる別の方法（見出しや要素の隣のテキストなど）で示されているか確認してください。"
+          ],
+          "passWhen": "表示テキストがラベルの内容をすべて述べているか、属性がどのコントロールも補足しないロール説明です。それでも削除してください。WAI-ARIAはこのロールでの使用を禁止しています。",
+          "failWhen": "ラベルには他のどこにもない情報が含まれていますが、このロールは名前を持てないため失われます（WCAG 4.1.2）。"
+        }
+      }
+    },
+    {
+      "code": "ARIA_ATTR_PROHIBITED_ROLELESS",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte Element, das keine Rolle hat, und notieren Sie sein aria-roledescription oder aria-brailleroledescription.",
+            "Prüfen Sie, ob das Element als Bedienelement funktioniert: Es erhält den Fokus oder reagiert auf Klicks oder Tasten.",
+            "Falls ja, prüfen Sie, ob es eine Rolle hat, die sagt, um welche Art Bedienelement es sich handelt."
+          ],
+          "passWhen": "Das Element ist kein Bedienelement, daher beschreibt die Rollenbeschreibung nichts, was jemand bedient. Entfernen Sie sie trotzdem: WAI-ARIA verbietet sie ohne Rolle.",
+          "failWhen": "Das Element funktioniert als Bedienelement, hat aber keine Rolle, daher wird nicht bereitgestellt, um welche Art Bedienelement es sich handelt (WCAG 4.1.2)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the element the report names, which has no role, and note its aria-roledescription or aria-brailleroledescription.",
+            "Check whether the element works as a control: it takes focus or responds to clicks or keys.",
+            "If it does, check whether it has a role that says what kind of control it is."
+          ],
+          "passWhen": "The element is not a control, so the role description describes nothing a user operates. Still remove it: WAI-ARIA prohibits it without a role.",
+          "failWhen": "The element works as a control but has no role, so what kind of control it is is not exposed (WCAG 4.1.2)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el elemento que indica el informe, que no tiene rol, y anote su aria-roledescription o aria-brailleroledescription.",
+            "Compruebe si el elemento funciona como un control: recibe el foco o responde a clics o teclas.",
+            "Si es así, compruebe si tiene un rol que diga qué tipo de control es."
+          ],
+          "passWhen": "El elemento no es un control, así que la descripción de rol no describe nada que el usuario maneje. Aun así, elimínela: WAI-ARIA la prohíbe sin rol.",
+          "failWhen": "El elemento funciona como un control pero no tiene rol, así que no se expone qué tipo de control es (WCAG 4.1.2)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez l’élément indiqué par le rapport, qui n’a pas de rôle, et notez son aria-roledescription ou aria-brailleroledescription.",
+            "Vérifiez si l’élément fonctionne comme un contrôle : il reçoit le focus ou réagit aux clics ou aux touches.",
+            "Si c’est le cas, vérifiez qu’il a un rôle qui dit de quel type de contrôle il s’agit."
+          ],
+          "passWhen": "L’élément n’est pas un contrôle : la description de rôle ne décrit rien qu’un utilisateur manipule. Retirez-la tout de même : WAI-ARIA l’interdit sans rôle.",
+          "failWhen": "L’élément fonctionne comme un contrôle mais n’a pas de rôle : le type de contrôle n’est donc pas exposé (WCAG 4.1.2)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された、ロールのない要素を調べ、そのaria-roledescriptionまたはaria-brailleroledescriptionを控えてください。",
+            "要素がコントロールとして動作するか（フォーカスを受け取る、クリックやキーに反応する）確認してください。",
+            "動作する場合は、どの種類のコントロールかを示すロールがあるか確認してください。"
+          ],
+          "passWhen": "要素はコントロールではないため、ロール説明は利用者が操作するものを何も説明していません。それでも削除してください。WAI-ARIAはロールなしでの使用を禁止しています。",
+          "failWhen": "要素はコントロールとして動作しますがロールがないため、どの種類のコントロールかが公開されていません（WCAG 4.1.2）。"
+        }
+      }
+    },
     {
       "code": "ARIA_ATTR_PROHIBITED_ROLELESS_NEEDS_REVIEW",
       "text": {
@@ -941,7 +1193,7 @@
             "Navigieren Sie mit einem Screenreader zum Element und hören Sie sich den angesagten Namen an."
           ],
           "passWhen": "Der Barrierefreiheitsbaum zeigt einen Namen für das Element, über die Internals oder anders gesetzt, und der Screenreader sagt ihn an.",
-          "failWhen": "Das Element hat keinen Namen im Barrierefreiheitsbaum, und der Screenreader sagt nur die Rolle an; das verstößt gegen WCAG 4.1.2."
+          "failWhen": "Das Element hat keinen Namen im Barrierefreiheitsbaum, und der Screenreader sagt nur die Rolle an. Das verstößt gegen WAI-ARIA; gegen WCAG verstößt es nur, wenn die Seite einen Titel oder eine Frage für das Element zeigt, die nicht mit ihm verknüpft ist (WCAG 1.3.1)."
         },
         "en": {
           "steps": [
@@ -950,7 +1202,7 @@
             "With a screen reader, move to the element and listen to the name announced."
           ],
           "passWhen": "The accessibility tree shows a name for the element, set through its internals or otherwise, and the screen reader announces it.",
-          "failWhen": "The element has no name in the accessibility tree and the screen reader announces only its role, which fails WCAG 4.1.2."
+          "failWhen": "The element has no name in the accessibility tree and the screen reader announces only its role. That breaks WAI-ARIA; it fails WCAG only where the page shows a title or question for the element that is not tied to it (WCAG 1.3.1)."
         },
         "es": {
           "steps": [
@@ -959,7 +1211,7 @@
             "Con un lector de pantalla, desplazarse hasta el elemento y escuchar el nombre que se anuncia."
           ],
           "passWhen": "El árbol de accesibilidad muestra un nombre para el elemento, establecido mediante sus internals o de otro modo, y el lector de pantalla lo anuncia.",
-          "failWhen": "El elemento no tiene nombre en el árbol de accesibilidad y el lector de pantalla solo anuncia su rol, lo que incumple WCAG 4.1.2."
+          "failWhen": "El elemento no tiene nombre en el árbol de accesibilidad y el lector de pantalla solo anuncia su rol. Eso incumple WAI-ARIA; incumple WCAG solo si la página muestra un título o una pregunta para el elemento que no está vinculado a él (WCAG 1.3.1)."
         },
         "fr": {
           "steps": [
@@ -968,7 +1220,7 @@
             "Avec un lecteur d’écran, placez-vous sur l’élément et écoutez le nom annoncé."
           ],
           "passWhen": "L’arbre d’accessibilité montre un nom pour l’élément, défini par ses internals ou autrement, et le lecteur d’écran l’annonce.",
-          "failWhen": "L’élément n’a pas de nom dans l’arbre d’accessibilité et le lecteur d’écran n’annonce que son rôle, ce qui ne respecte pas le critère WCAG 4.1.2."
+          "failWhen": "L’élément n’a pas de nom dans l’arbre d’accessibilité et le lecteur d’écran n’annonce que son rôle. Cela enfreint WAI-ARIA ; cela ne respecte pas WCAG seulement si la page affiche pour l’élément un titre ou une question qui ne lui est pas relié (WCAG 1.3.1)."
         },
         "ja": {
           "steps": [
@@ -977,7 +1229,57 @@
             "スクリーンリーダーで要素に移動し、読み上げられる名前を聞いてください。"
           ],
           "passWhen": "アクセシビリティツリーに要素の名前が表示され（internalsで設定されたものでも、それ以外でもかまいません）、スクリーンリーダーがそれを読み上げます。",
-          "failWhen": "要素にはアクセシビリティツリー上の名前がなく、スクリーンリーダーはロールしか読み上げないため、WCAG 4.1.2を満たしません。"
+          "failWhen": "要素にはアクセシビリティツリー上の名前がなく、スクリーンリーダーはロールしか読み上げません。これはWAI-ARIAに違反しますが、WCAGを満たさないのは、ページが要素のタイトルや質問を表示しているのに要素に関連付けられていない場合だけです（WCAG 1.3.1）。"
+        }
+      }
+    },
+    {
+      "code": "name_missing",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte Element und notieren Sie seine Rolle (grid, tree, radiogroup, meter oder progressbar).",
+            "Prüfen Sie, was die Seite dazu zeigt: einen sichtbaren Titel, eine Überschrift, eine Beschriftung oder eine Frage, die sagt, worum es sich handelt.",
+            "Falls ja, prüfen Sie, ob sie mit dem Element verknüpft ist, über aria-labelledby oder die eigene HTML-Beschriftung des Elements (legend oder caption)."
+          ],
+          "passWhen": "Nichts Sichtbares benennt das Element oder stellt eine Frage dazu, daher fehlt keine auf der Seite gezeigte Information im Barrierefreiheitsbaum. Geben Sie ihm trotzdem einen Namen: WAI-ARIA verlangt ihn.",
+          "failWhen": "Die Seite zeigt einen Titel oder eine Frage für das Element, die nicht mit ihm verknüpft ist, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the element the report names and note its role (grid, tree, radiogroup, meter or progressbar).",
+            "Look at what the page shows for it: a visible title, heading, caption or question that tells people what it is.",
+            "If it shows one, check whether it is tied to the element, with aria-labelledby or the element's own HTML label (a legend or caption)."
+          ],
+          "passWhen": "Nothing visible names the element or asks a question about it, so no information shown on the page is missing from the accessibility tree. Still give it a name: WAI-ARIA requires one.",
+          "failWhen": "The page shows a title or question for the element that is not tied to it, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el elemento que indica el informe y anote su rol (grid, tree, radiogroup, meter o progressbar).",
+            "Observe lo que la página muestra para él: un título, encabezado, leyenda o pregunta visible que diga qué es.",
+            "Si lo muestra, compruebe si está vinculado al elemento, con aria-labelledby o con la etiqueta HTML propia del elemento (legend o caption)."
+          ],
+          "passWhen": "Nada visible nombra el elemento ni plantea una pregunta sobre él, así que no falta en el árbol de accesibilidad ninguna información que muestre la página. Aun así, dele un nombre: WAI-ARIA lo exige.",
+          "failWhen": "La página muestra un título o una pregunta para el elemento que no está vinculado a él, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez l’élément indiqué par le rapport et notez son rôle (grid, tree, radiogroup, meter ou progressbar).",
+            "Regardez ce que la page affiche pour lui : un titre, un intitulé, une légende ou une question visible qui dit ce que c’est.",
+            "Si c’est le cas, vérifiez qu’il est relié à l’élément, par aria-labelledby ou par l’étiquette HTML propre de l’élément (legend ou caption)."
+          ],
+          "passWhen": "Rien de visible ne nomme l’élément ni ne pose de question à son sujet : aucune information affichée ne manque dans l’arbre d’accessibilité. Donnez-lui tout de même un nom : WAI-ARIA l’exige.",
+          "failWhen": "La page affiche pour l’élément un titre ou une question qui ne lui est pas relié : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された要素を調べ、そのロール（grid、tree、radiogroup、meter、progressbar）を控えてください。",
+            "ページがその要素について何を表示しているかを確認してください。何であるかを伝える見出し、タイトル、キャプション、質問などが見えるかどうかです。",
+            "表示されている場合は、aria-labelledbyまたは要素自身のHTMLラベル（legendやcaption）でその要素に関連付けられているか確認してください。"
+          ],
+          "passWhen": "要素を示す表示やそれに関する質問が何もないため、ページに表示された情報でアクセシビリティツリーに欠けているものはありません。それでも名前を付けてください。WAI-ARIAでは必須です。",
+          "failWhen": "ページには要素のタイトルや質問が表示されていますが要素に関連付けられていないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
         }
       }
     }
@@ -1251,6 +1553,56 @@
           ],
           "passWhen": "矢印キーで移動するたびに、アクティブな項目が読み上げられます。",
           "failWhen": "アクティブな項目が変わってもスクリーンリーダーが何も読み上げないか誤った項目を読み上げるため、キーボードの利用者が追従できず、WCAG 4.1.2を満たしません。"
+        }
+      }
+    },
+    {
+      "code": "ARIA_ATTR_VALUE_INVALID",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte Element und notieren Sie das Attribut, seinen Wert und die Art von Wert, die WAI-ARIA dafür erwartet.",
+            "Ermitteln Sie, was das Attribut vermitteln sollte, etwa eine Überschriftenebene, eine Live-Region-Einstellung oder eine Position in einer Gruppe.",
+            "Prüfen Sie, ob die Seite diese Information zeigt und ob sie auf andere Weise vermittelt wird, die assistive Technologien lesen."
+          ],
+          "passWhen": "Die Information wird auf der Seite nicht gezeigt oder auch auf andere Weise vermittelt. Korrigieren Sie den Wert trotzdem: WAI-ARIA gibt ihm keine Bedeutung.",
+          "failWhen": "Die Seite zeigt Information, etwa eine Überschriftenebene, die nur dieses Attribut vermitteln sollte, und sein ungültiger Wert vermittelt nichts (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the element the report names and note the attribute, its value and the type of value WAI-ARIA expects for it.",
+            "Work out what the attribute was meant to convey, such as a heading level, a live-region setting or a position in a set.",
+            "Check whether the page shows that information and whether it is conveyed any other way that assistive technology reads."
+          ],
+          "passWhen": "The information is not shown on the page, or it is also conveyed another way. Still fix the value: WAI-ARIA gives it no meaning.",
+          "failWhen": "The page shows information, such as a heading level, that only this attribute was meant to convey, and its invalid value conveys nothing (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el elemento que indica el informe y anote el atributo, su valor y el tipo de valor que WAI-ARIA espera para él.",
+            "Determine qué pretendía transmitir el atributo, como un nivel de encabezado, un ajuste de región activa o una posición en un conjunto.",
+            "Compruebe si la página muestra esa información y si se transmite de alguna otra forma que lean los productos de apoyo."
+          ],
+          "passWhen": "La información no se muestra en la página o también se transmite de otra forma. Aun así, corrija el valor: WAI-ARIA no le da ningún significado.",
+          "failWhen": "La página muestra información, como un nivel de encabezado, que solo este atributo pretendía transmitir, y su valor no válido no transmite nada (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez l’élément indiqué par le rapport et notez l’attribut, sa valeur et le type de valeur que WAI-ARIA attend pour lui.",
+            "Déterminez ce que l’attribut devait transmettre, comme un niveau de titre, un réglage de région live ou une position dans un ensemble.",
+            "Vérifiez si la page affiche cette information et si elle est transmise d’une autre manière que les technologies d’assistance lisent."
+          ],
+          "passWhen": "L’information n’est pas affichée sur la page, ou elle est aussi transmise d’une autre manière. Corrigez tout de même la valeur : WAI-ARIA ne lui donne aucun sens.",
+          "failWhen": "La page affiche une information, comme un niveau de titre, que seul cet attribut devait transmettre, et sa valeur non valide ne transmet rien (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された要素を調べ、属性とその値、WAI-ARIAがその属性に求める値の種類を控えてください。",
+            "属性が何を伝えるためのものだったか（見出しレベル、ライブリージョンの設定、セット内の位置など）を判断してください。",
+            "ページがその情報を表示しているか、支援技術が読み取れる別の方法で伝えられているか確認してください。"
+          ],
+          "passWhen": "情報はページに表示されていないか、別の方法でも伝えられています。それでも値を修正してください。WAI-ARIAはこの値に意味を与えていません。",
+          "failWhen": "ページには見出しレベルなど、この属性だけが伝えるはずだった情報が表示されていますが、無効な値は何も伝えません（WCAG 1.3.1）。"
         }
       }
     },
@@ -4203,6 +4555,158 @@
       }
     }
   ],
+  "definition-list-children-valid": [
+    {
+      "code": "DL_DT_DD_ORDER",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie die im Bericht genannte Beschreibungsliste und notieren Sie die Definition vor dem ersten Begriff oder den letzten Begriff ohne nachfolgende Definition.",
+            "Prüfen Sie, wie die Seite die Begriffe und Definitionen zeigt: ob jede Definition durch Position, Einrückung oder Gestaltung als zu einem Begriff gehörig gezeigt wird.",
+            "Lesen Sie den Inhalt mit einem Screenreader und notieren Sie, ob jede Definition mit dem Begriff angesagt wird, zu dem sie gehört."
+          ],
+          "passWhen": "Die Seite zeigt keine Zuordnung, die das Markup verliert: Begriffe und Definitionen werden nicht als zusammengehörig gezeigt, oder das Markup ordnet sie weiterhin zu. Korrigieren Sie das Markup trotzdem: HTML erlaubt es nicht.",
+          "failWhen": "Die Seite zeigt eine Definition als zu einem Begriff gehörig, mit dem das Markup sie nicht verbindet, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the description list the report names and note the definition that comes before the first term, or the last term with no definition after it.",
+            "Look at how the page shows the terms and definitions: whether each definition is shown as belonging to a term, by position, indentation or style.",
+            "With a screen reader, read the content and note whether each definition is announced with the term it belongs to."
+          ],
+          "passWhen": "The page shows no pairing that the markup loses: the terms and definitions are not shown as belonging together, or the markup still pairs them. Still fix the markup: HTML does not allow it.",
+          "failWhen": "The page shows a definition belonging to a term that the markup does not pair it with, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione la lista de descripción que indica el informe y anote la definición que va antes del primer término, o el último término sin definición después.",
+            "Observe cómo muestra la página los términos y las definiciones: si cada definición se muestra como perteneciente a un término, por su posición, sangría o estilo.",
+            "Con un lector de pantalla, lea el contenido y anote si cada definición se anuncia con el término al que pertenece."
+          ],
+          "passWhen": "La página no muestra ningún emparejamiento que el marcado pierda: los términos y las definiciones no se muestran como relacionados, o el marcado aún los empareja. Aun así, corrija el marcado: HTML no lo permite.",
+          "failWhen": "La página muestra una definición como perteneciente a un término con el que el marcado no la empareja, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez la liste de descriptions indiquée par le rapport et notez la définition qui précède le premier terme, ou le dernier terme sans définition après lui.",
+            "Regardez comment la page affiche les termes et les définitions : si chaque définition est montrée comme appartenant à un terme, par sa position, son retrait ou sa mise en forme.",
+            "Avec un lecteur d’écran, lisez le contenu et notez si chaque définition est annoncée avec le terme auquel elle appartient."
+          ],
+          "passWhen": "La page ne montre aucune association que le balisage perd : les termes et les définitions ne sont pas montrés comme liés, ou le balisage les associe encore. Corrigez tout de même le balisage : HTML ne l’autorise pas.",
+          "failWhen": "La page montre une définition comme appartenant à un terme auquel le balisage ne l’associe pas : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された説明リストを調べ、最初の用語より前にある定義、または後に定義のない最後の用語を控えてください。",
+            "用語と定義がどう表示されているか、つまり位置、字下げ、スタイルによって各定義がある用語に属するものとして示されているかを確認してください。",
+            "スクリーンリーダーで内容を読み、各定義がそれが属する用語とともに読み上げられるか確認してください。"
+          ],
+          "passWhen": "ページはマークアップで失われる対応関係を示していません。用語と定義が対応するものとして表示されていないか、マークアップがまだ対応付けています。それでもマークアップを修正してください。HTMLでは認められていません。",
+          "failWhen": "ページはある用語に属する定義を表示していますが、マークアップではその用語と対応付けられていないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
+        }
+      }
+    },
+    {
+      "code": "DL_INVALID_CHILD",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie die im Bericht genannte Beschreibungsliste und notieren Sie das Kind, das keine <dt>/<dd>-Gruppe, kein einzelnes umschließendes <div>, kein Skript, Template oder Style ist, oder den direkt darin stehenden Text.",
+            "Prüfen Sie, wie die Seite die Begriffe und Definitionen zeigt: ob jede Definition durch Position, Einrückung oder Gestaltung als zu einem Begriff gehörig gezeigt wird.",
+            "Lesen Sie den Inhalt mit einem Screenreader und notieren Sie, ob jede Definition mit dem Begriff angesagt wird, zu dem sie gehört."
+          ],
+          "passWhen": "Die Seite zeigt keine Zuordnung, die das Markup verliert: Begriffe und Definitionen werden nicht als zusammengehörig gezeigt, oder das Markup ordnet sie weiterhin zu. Korrigieren Sie das Markup trotzdem: HTML erlaubt es nicht.",
+          "failWhen": "Die Seite zeigt eine Definition als zu einem Begriff gehörig, mit dem das Markup sie nicht verbindet, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the description list the report names and note the child that is not a <dt>/<dd> group, a single wrapping <div>, a script, template or style, or the text placed directly inside it.",
+            "Look at how the page shows the terms and definitions: whether each definition is shown as belonging to a term, by position, indentation or style.",
+            "With a screen reader, read the content and note whether each definition is announced with the term it belongs to."
+          ],
+          "passWhen": "The page shows no pairing that the markup loses: the terms and definitions are not shown as belonging together, or the markup still pairs them. Still fix the markup: HTML does not allow it.",
+          "failWhen": "The page shows a definition belonging to a term that the markup does not pair it with, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione la lista de descripción que indica el informe y anote el hijo que no es un grupo <dt>/<dd>, un único <div> envolvente, un script, una plantilla ni un style, o el texto colocado directamente en ella.",
+            "Observe cómo muestra la página los términos y las definiciones: si cada definición se muestra como perteneciente a un término, por su posición, sangría o estilo.",
+            "Con un lector de pantalla, lea el contenido y anote si cada definición se anuncia con el término al que pertenece."
+          ],
+          "passWhen": "La página no muestra ningún emparejamiento que el marcado pierda: los términos y las definiciones no se muestran como relacionados, o el marcado aún los empareja. Aun así, corrija el marcado: HTML no lo permite.",
+          "failWhen": "La página muestra una definición como perteneciente a un término con el que el marcado no la empareja, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez la liste de descriptions indiquée par le rapport et notez l’enfant qui n’est ni un groupe <dt>/<dd>, ni un unique <div> englobant, ni un script, un template ou un style, ou le texte placé directement dedans.",
+            "Regardez comment la page affiche les termes et les définitions : si chaque définition est montrée comme appartenant à un terme, par sa position, son retrait ou sa mise en forme.",
+            "Avec un lecteur d’écran, lisez le contenu et notez si chaque définition est annoncée avec le terme auquel elle appartient."
+          ],
+          "passWhen": "La page ne montre aucune association que le balisage perd : les termes et les définitions ne sont pas montrés comme liés, ou le balisage les associe encore. Corrigez tout de même le balisage : HTML ne l’autorise pas.",
+          "failWhen": "La page montre une définition comme appartenant à un terme auquel le balisage ne l’associe pas : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された説明リストを調べ、<dt>/<dd>のグループ、単一の包む<div>、script、template、styleのいずれでもない子要素、または直接置かれたテキストを控えてください。",
+            "用語と定義がどう表示されているか、つまり位置、字下げ、スタイルによって各定義がある用語に属するものとして示されているかを確認してください。",
+            "スクリーンリーダーで内容を読み、各定義がそれが属する用語とともに読み上げられるか確認してください。"
+          ],
+          "passWhen": "ページはマークアップで失われる対応関係を示していません。用語と定義が対応するものとして表示されていないか、マークアップがまだ対応付けています。それでもマークアップを修正してください。HTMLでは認められていません。",
+          "failWhen": "ページはある用語に属する定義を表示していますが、マークアップではその用語と対応付けられていないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
+        }
+      }
+    },
+    {
+      "code": "DL_NO_DT_DD",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie die im Bericht genannte Beschreibungsliste und notieren Sie die Begriffe ohne Definition oder die Definitionen ohne Begriff.",
+            "Prüfen Sie, wie die Seite die Begriffe und Definitionen zeigt: ob jede Definition durch Position, Einrückung oder Gestaltung als zu einem Begriff gehörig gezeigt wird.",
+            "Lesen Sie den Inhalt mit einem Screenreader und notieren Sie, ob jede Definition mit dem Begriff angesagt wird, zu dem sie gehört."
+          ],
+          "passWhen": "Die Seite zeigt keine Zuordnung, die das Markup verliert: Begriffe und Definitionen werden nicht als zusammengehörig gezeigt, oder das Markup ordnet sie weiterhin zu. Korrigieren Sie das Markup trotzdem: HTML erlaubt es nicht.",
+          "failWhen": "Die Seite zeigt eine Definition als zu einem Begriff gehörig, mit dem das Markup sie nicht verbindet, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the description list the report names and note the terms with no definition, or the definitions with no term.",
+            "Look at how the page shows the terms and definitions: whether each definition is shown as belonging to a term, by position, indentation or style.",
+            "With a screen reader, read the content and note whether each definition is announced with the term it belongs to."
+          ],
+          "passWhen": "The page shows no pairing that the markup loses: the terms and definitions are not shown as belonging together, or the markup still pairs them. Still fix the markup: HTML does not allow it.",
+          "failWhen": "The page shows a definition belonging to a term that the markup does not pair it with, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione la lista de descripción que indica el informe y anote los términos sin definición o las definiciones sin término.",
+            "Observe cómo muestra la página los términos y las definiciones: si cada definición se muestra como perteneciente a un término, por su posición, sangría o estilo.",
+            "Con un lector de pantalla, lea el contenido y anote si cada definición se anuncia con el término al que pertenece."
+          ],
+          "passWhen": "La página no muestra ningún emparejamiento que el marcado pierda: los términos y las definiciones no se muestran como relacionados, o el marcado aún los empareja. Aun así, corrija el marcado: HTML no lo permite.",
+          "failWhen": "La página muestra una definición como perteneciente a un término con el que el marcado no la empareja, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez la liste de descriptions indiquée par le rapport et notez les termes sans définition ou les définitions sans terme.",
+            "Regardez comment la page affiche les termes et les définitions : si chaque définition est montrée comme appartenant à un terme, par sa position, son retrait ou sa mise en forme.",
+            "Avec un lecteur d’écran, lisez le contenu et notez si chaque définition est annoncée avec le terme auquel elle appartient."
+          ],
+          "passWhen": "La page ne montre aucune association que le balisage perd : les termes et les définitions ne sont pas montrés comme liés, ou le balisage les associe encore. Corrigez tout de même le balisage : HTML ne l’autorise pas.",
+          "failWhen": "La page montre une définition comme appartenant à un terme auquel le balisage ne l’associe pas : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された説明リストを調べ、定義のない用語、または用語のない定義を控えてください。",
+            "用語と定義がどう表示されているか、つまり位置、字下げ、スタイルによって各定義がある用語に属するものとして示されているかを確認してください。",
+            "スクリーンリーダーで内容を読み、各定義がそれが属する用語とともに読み上げられるか確認してください。"
+          ],
+          "passWhen": "ページはマークアップで失われる対応関係を示していません。用語と定義が対応するものとして表示されていないか、マークアップがまだ対応付けています。それでもマークアップを修正してください。HTMLでは認められていません。",
+          "failWhen": "ページはある用語に属する定義を表示していますが、マークアップではその用語と対応付けられていないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
+        }
+      }
+    }
+  ],
   "deprecated-elements-not-used": [
     {
       "code": "MARQUEE_PAUSE_MECHANISM_UNKNOWN",
@@ -4271,7 +4775,7 @@
             "Navigieren Sie mit einem Screenreader zum Element und hören Sie sich den angesagten Namen an."
           ],
           "passWhen": "Der Barrierefreiheitsbaum zeigt einen Namen für den Dialog, über die Internals oder anders gesetzt, und der Screenreader sagt ihn an.",
-          "failWhen": "Der Dialog hat keinen Namen im Barrierefreiheitsbaum, und der Screenreader sagt nur die Rolle an; das verstößt gegen WCAG 4.1.2."
+          "failWhen": "Der Dialog hat keinen Namen im Barrierefreiheitsbaum, und der Screenreader sagt nur die Rolle an. Das verstößt gegen WAI-ARIA; gegen WCAG verstößt es nur, wenn der Dialog einen Titel zeigt, der nicht mit ihm verknüpft ist (WCAG 1.3.1)."
         },
         "en": {
           "steps": [
@@ -4280,7 +4784,7 @@
             "With a screen reader, move to the element and listen to the name announced."
           ],
           "passWhen": "The accessibility tree shows a name for the dialog, set through its internals or otherwise, and the screen reader announces it.",
-          "failWhen": "The dialog has no name in the accessibility tree and the screen reader announces only its role, which fails WCAG 4.1.2."
+          "failWhen": "The dialog has no name in the accessibility tree and the screen reader announces only its role. That breaks WAI-ARIA; it fails WCAG only where the dialog shows a title that is not tied to it (WCAG 1.3.1)."
         },
         "es": {
           "steps": [
@@ -4289,7 +4793,7 @@
             "Con un lector de pantalla, desplazarse hasta el elemento y escuchar el nombre que se anuncia."
           ],
           "passWhen": "El árbol de accesibilidad muestra un nombre para el diálogo, establecido mediante sus internals o de otro modo, y el lector de pantalla lo anuncia.",
-          "failWhen": "El diálogo no tiene nombre en el árbol de accesibilidad y el lector de pantalla solo anuncia su rol, lo que incumple WCAG 4.1.2."
+          "failWhen": "El diálogo no tiene nombre en el árbol de accesibilidad y el lector de pantalla solo anuncia su rol. Eso incumple WAI-ARIA; incumple WCAG solo si el diálogo muestra un título que no está vinculado a él (WCAG 1.3.1)."
         },
         "fr": {
           "steps": [
@@ -4298,7 +4802,7 @@
             "Avec un lecteur d’écran, placez-vous sur l’élément et écoutez le nom annoncé."
           ],
           "passWhen": "L’arbre d’accessibilité montre un nom pour la boîte de dialogue, défini par ses internals ou autrement, et le lecteur d’écran l’annonce.",
-          "failWhen": "La boîte de dialogue n’a pas de nom dans l’arbre d’accessibilité et le lecteur d’écran n’annonce que son rôle, ce qui ne respecte pas le critère WCAG 4.1.2."
+          "failWhen": "La boîte de dialogue n’a pas de nom dans l’arbre d’accessibilité et le lecteur d’écran n’annonce que son rôle. Cela enfreint WAI-ARIA ; cela ne respecte pas WCAG seulement si la boîte de dialogue affiche un titre qui ne lui est pas relié (WCAG 1.3.1)."
         },
         "ja": {
           "steps": [
@@ -4307,7 +4811,109 @@
             "スクリーンリーダーで要素に移動し、読み上げられる名前を聞いてください。"
           ],
           "passWhen": "アクセシビリティツリーにダイアログの名前が表示され（internalsで設定されたものでも、それ以外でもかまいません）、スクリーンリーダーがそれを読み上げます。",
-          "failWhen": "ダイアログにはアクセシビリティツリー上の名前がなく、スクリーンリーダーはロールしか読み上げないため、WCAG 4.1.2を満たしません。"
+          "failWhen": "ダイアログにはアクセシビリティツリー上の名前がなく、スクリーンリーダーはロールしか読み上げません。これはWAI-ARIAに違反しますが、WCAGを満たさないのは、ダイアログがタイトルを表示しているのに関連付けられていない場合だけです（WCAG 1.3.1）。"
+        }
+      }
+    },
+    {
+      "code": "name_missing",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie den im Bericht genannten Dialog und notieren Sie seine Rolle (dialog oder alertdialog).",
+            "Suchen Sie oben im Dialog nach einem sichtbaren Titel oder einer Überschrift.",
+            "Falls vorhanden, prüfen Sie, ob der Dialog mit aria-labelledby darauf verweist."
+          ],
+          "passWhen": "Der Dialog zeigt keinen Titel, daher fehlt nichts Sichtbares im Barrierefreiheitsbaum. Geben Sie ihm trotzdem einen Namen: WAI-ARIA verlangt ihn.",
+          "failWhen": "Der Dialog zeigt einen Titel, der nicht mit ihm verknüpft ist, daher ist die Beziehung zwischen Dialog und Titel nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the dialog the report names and note its role (dialog or alertdialog).",
+            "Look for a visible title or heading at the top of the dialog.",
+            "If there is one, check whether the dialog points at it with aria-labelledby."
+          ],
+          "passWhen": "The dialog shows no title, so nothing visible is missing from the accessibility tree. Still give it a name: WAI-ARIA requires one.",
+          "failWhen": "The dialog shows a title that is not tied to it, so the relationship between the dialog and its title is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el diálogo que indica el informe y anote su rol (dialog o alertdialog).",
+            "Busque un título o encabezado visible en la parte superior del diálogo.",
+            "Si lo hay, compruebe si el diálogo lo referencia con aria-labelledby."
+          ],
+          "passWhen": "El diálogo no muestra ningún título, así que no falta nada visible en el árbol de accesibilidad. Aun así, dele un nombre: WAI-ARIA lo exige.",
+          "failWhen": "El diálogo muestra un título que no está vinculado a él, así que la relación entre el diálogo y su título no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez la boîte de dialogue indiquée par le rapport et notez son rôle (dialog ou alertdialog).",
+            "Cherchez un titre ou un intitulé visible en haut de la boîte de dialogue.",
+            "S’il y en a un, vérifiez que la boîte de dialogue y renvoie avec aria-labelledby."
+          ],
+          "passWhen": "La boîte de dialogue n’affiche aucun titre : rien de visible ne manque dans l’arbre d’accessibilité. Donnez-lui tout de même un nom : WAI-ARIA l’exige.",
+          "failWhen": "La boîte de dialogue affiche un titre qui ne lui est pas relié : la relation entre la boîte de dialogue et son titre n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたダイアログを調べ、そのロール（dialogまたはalertdialog）を控えてください。",
+            "ダイアログの上部に見えるタイトルや見出しがあるか探してください。",
+            "ある場合は、ダイアログがaria-labelledbyでそれを参照しているか確認してください。"
+          ],
+          "passWhen": "ダイアログにはタイトルが表示されていないため、アクセシビリティツリーに欠けている表示内容はありません。それでも名前を付けてください。WAI-ARIAでは必須です。",
+          "failWhen": "ダイアログにはタイトルが表示されていますが関連付けられていないため、ダイアログとタイトルの関係がプログラムで判別できません（WCAG 1.3.1）。"
+        }
+      }
+    }
+  ],
+  "dlitem-parent-valid": [
+    {
+      "code": "DLITEM_INVALID_PARENT",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte <dt> oder <dd> und stellen Sie fest, dass es von keinem <dl> umschlossen ist.",
+            "Prüfen Sie, wie die Seite die Begriffe und Definitionen zeigt: ob jede Definition durch Position, Einrückung oder Gestaltung als zu einem Begriff gehörig gezeigt wird.",
+            "Lesen Sie den Inhalt mit einem Screenreader und notieren Sie, ob jede Definition mit dem Begriff angesagt wird, zu dem sie gehört."
+          ],
+          "passWhen": "Die Seite zeigt keine Zuordnung, die das Markup verliert: Begriffe und Definitionen werden nicht als zusammengehörig gezeigt, oder das Markup ordnet sie weiterhin zu. Korrigieren Sie das Markup trotzdem: HTML erlaubt es nicht.",
+          "failWhen": "Die Seite zeigt eine Definition als zu einem Begriff gehörig, mit dem das Markup sie nicht verbindet, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the <dt> or <dd> the report names and note that no <dl> contains it.",
+            "Look at how the page shows the terms and definitions: whether each definition is shown as belonging to a term, by position, indentation or style.",
+            "With a screen reader, read the content and note whether each definition is announced with the term it belongs to."
+          ],
+          "passWhen": "The page shows no pairing that the markup loses: the terms and definitions are not shown as belonging together, or the markup still pairs them. Still fix the markup: HTML does not allow it.",
+          "failWhen": "The page shows a definition belonging to a term that the markup does not pair it with, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el <dt> o <dd> que indica el informe y compruebe que ningún <dl> lo contiene.",
+            "Observe cómo muestra la página los términos y las definiciones: si cada definición se muestra como perteneciente a un término, por su posición, sangría o estilo.",
+            "Con un lector de pantalla, lea el contenido y anote si cada definición se anuncia con el término al que pertenece."
+          ],
+          "passWhen": "La página no muestra ningún emparejamiento que el marcado pierda: los términos y las definiciones no se muestran como relacionados, o el marcado aún los empareja. Aun así, corrija el marcado: HTML no lo permite.",
+          "failWhen": "La página muestra una definición como perteneciente a un término con el que el marcado no la empareja, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez le <dt> ou le <dd> indiqué par le rapport et constatez qu’aucun <dl> ne le contient.",
+            "Regardez comment la page affiche les termes et les définitions : si chaque définition est montrée comme appartenant à un terme, par sa position, son retrait ou sa mise en forme.",
+            "Avec un lecteur d’écran, lisez le contenu et notez si chaque définition est annoncée avec le terme auquel elle appartient."
+          ],
+          "passWhen": "La page ne montre aucune association que le balisage perd : les termes et les définitions ne sont pas montrés comme liés, ou le balisage les associe encore. Corrigez tout de même le balisage : HTML ne l’autorise pas.",
+          "failWhen": "La page montre une définition comme appartenant à un terme auquel le balisage ne l’associe pas : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された<dt>または<dd>を調べ、どの<dl>にも含まれていないことを確認してください。",
+            "用語と定義がどう表示されているか、つまり位置、字下げ、スタイルによって各定義がある用語に属するものとして示されているかを確認してください。",
+            "スクリーンリーダーで内容を読み、各定義がそれが属する用語とともに読み上げられるか確認してください。"
+          ],
+          "passWhen": "ページはマークアップで失われる対応関係を示していません。用語と定義が対応するものとして表示されていないか、マークアップがまだ対応付けています。それでもマークアップを修正してください。HTMLでは認められていません。",
+          "failWhen": "ページはある用語に属する定義を表示していますが、マークアップではその用語と対応付けられていないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
         }
       }
     }
@@ -8703,6 +9309,108 @@
       }
     }
   ],
+  "list-children-valid": [
+    {
+      "code": "LIST_INVALID_CHILD",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie die im Bericht genannte Liste und notieren Sie das Kind, das kein Listeneintrag, Skript oder Template ist, oder den direkt darin stehenden Text.",
+            "Prüfen Sie, wie die Seite den nicht dazugehörenden Inhalt zeigt: als einen der Listeneinträge (mit Aufzählungszeichen oder Nummer oder wie die Einträge gestaltet) oder als etwas anderes, etwa eine Überschrift, eine Trennlinie oder losen Text.",
+            "Lesen Sie die Liste mit einem Screenreader und notieren Sie, wie viele Einträge angesagt werden und ob dieser Inhalt als einer davon angesagt wird."
+          ],
+          "passWhen": "Der Inhalt wird nicht als einer der Listeneinträge gezeigt, daher fehlt kein auf der Seite gezeigter Eintrag im Markup. Verschieben Sie ihn trotzdem in ein <li> oder aus der Liste: HTML erlaubt ihn dort nicht.",
+          "failWhen": "Die Seite zeigt den Inhalt als einen der Listeneinträge, das Markup macht ihn aber nicht dazu, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the list the report names and note the child that is not a list item, script or template, or the text placed directly inside it.",
+            "Look at how the page shows the content that does not belong: as one of the list's items (with a bullet or number, or styled like the items), or as something else such as a heading, a separator or loose text.",
+            "With a screen reader, read the list and note how many items it announces and whether that content is announced as one of them."
+          ],
+          "passWhen": "The content is not shown as one of the list's items, so no item the page shows is missing from the markup. Still move it inside an <li> or out of the list: HTML does not allow it there.",
+          "failWhen": "The page shows the content as one of the list's items, but the markup does not make it one, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione la lista que indica el informe y anote el hijo que no es un elemento de lista, un script ni una plantilla, o el texto colocado directamente en ella.",
+            "Observe cómo muestra la página el contenido que no corresponde: como uno de los elementos de la lista (con viñeta o número, o con el estilo de los elementos) o como otra cosa, por ejemplo un encabezado, un separador o texto suelto.",
+            "Con un lector de pantalla, lea la lista y anote cuántos elementos anuncia y si ese contenido se anuncia como uno de ellos."
+          ],
+          "passWhen": "El contenido no se muestra como uno de los elementos de la lista, así que no falta en el marcado ningún elemento que muestre la página. Aun así, muévalo dentro de un <li> o fuera de la lista: HTML no lo permite ahí.",
+          "failWhen": "La página muestra el contenido como uno de los elementos de la lista, pero el marcado no lo convierte en uno, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez la liste indiquée par le rapport et notez l’enfant qui n’est ni un élément de liste, ni un script, ni un template, ou le texte placé directement dedans.",
+            "Regardez comment la page affiche le contenu qui n’a pas sa place : comme l’un des éléments de la liste (avec une puce ou un numéro, ou mis en forme comme les éléments), ou comme autre chose, par exemple un titre, un séparateur ou du texte isolé.",
+            "Avec un lecteur d’écran, lisez la liste et notez combien d’éléments sont annoncés et si ce contenu est annoncé comme l’un d’eux."
+          ],
+          "passWhen": "Le contenu n’est pas affiché comme l’un des éléments de la liste : aucun élément affiché ne manque dans le balisage. Déplacez-le tout de même dans un <li> ou hors de la liste : HTML ne l’autorise pas à cet endroit.",
+          "failWhen": "La page affiche le contenu comme l’un des éléments de la liste, mais le balisage n’en fait pas un : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたリストを調べ、リスト項目、script、templateのいずれでもない子要素、または直接置かれたテキストを控えてください。",
+            "該当しない内容がどう表示されているか確認してください。リストの項目の1つとして（行頭記号や番号付き、または項目と同じスタイルで）表示されているか、見出し、区切り、単独のテキストなど別のものとして表示されているかです。",
+            "スクリーンリーダーでリストを読み、項目がいくつと読み上げられるか、その内容が項目の1つとして読み上げられるかを確認してください。"
+          ],
+          "passWhen": "内容はリストの項目として表示されていないため、ページに表示された項目でマークアップに欠けているものはありません。それでも<li>の中かリストの外に移してください。HTMLではそこに置けません。",
+          "failWhen": "ページは内容をリストの項目の1つとして表示していますが、マークアップでは項目になっていないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
+        }
+      }
+    },
+    {
+      "code": "LIST_ITEM_ROLE_OVERRIDDEN",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie die im Bericht genannte Liste und notieren Sie jedes <li>, dessen role-Attribut listitem ersetzt.",
+            "Prüfen Sie, ob die Seite dieses <li> weiterhin als einen der Listeneinträge zeigt, mit Aufzählungszeichen oder Nummer oder wie die anderen gestaltet.",
+            "Lesen Sie die Liste mit einem Screenreader und notieren Sie, wie viele Einträge angesagt werden und ob dieser Inhalt als einer davon angesagt wird."
+          ],
+          "passWhen": "Der Inhalt wird nicht als einer der Listeneinträge gezeigt, daher fehlt kein auf der Seite gezeigter Eintrag im Markup. Verschieben Sie ihn trotzdem in ein <li> oder aus der Liste: HTML erlaubt ihn dort nicht.",
+          "failWhen": "Die Seite zeigt den Inhalt als einen der Listeneinträge, das Markup macht ihn aber nicht dazu, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the list the report names and note each <li> whose role attribute replaces listitem.",
+            "Look at whether the page still shows that <li> as one of the list's items, with a bullet or number or styled like the others.",
+            "With a screen reader, read the list and note how many items it announces and whether that content is announced as one of them."
+          ],
+          "passWhen": "The content is not shown as one of the list's items, so no item the page shows is missing from the markup. Still move it inside an <li> or out of the list: HTML does not allow it there.",
+          "failWhen": "The page shows the content as one of the list's items, but the markup does not make it one, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione la lista que indica el informe y anote cada <li> cuyo atributo role sustituye a listitem.",
+            "Observe si la página sigue mostrando ese <li> como uno de los elementos de la lista, con viñeta o número o con el estilo de los demás.",
+            "Con un lector de pantalla, lea la lista y anote cuántos elementos anuncia y si ese contenido se anuncia como uno de ellos."
+          ],
+          "passWhen": "El contenido no se muestra como uno de los elementos de la lista, así que no falta en el marcado ningún elemento que muestre la página. Aun así, muévalo dentro de un <li> o fuera de la lista: HTML no lo permite ahí.",
+          "failWhen": "La página muestra el contenido como uno de los elementos de la lista, pero el marcado no lo convierte en uno, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez la liste indiquée par le rapport et notez chaque <li> dont l’attribut role remplace listitem.",
+            "Regardez si la page affiche encore ce <li> comme l’un des éléments de la liste, avec une puce ou un numéro, ou mis en forme comme les autres.",
+            "Avec un lecteur d’écran, lisez la liste et notez combien d’éléments sont annoncés et si ce contenu est annoncé comme l’un d’eux."
+          ],
+          "passWhen": "Le contenu n’est pas affiché comme l’un des éléments de la liste : aucun élément affiché ne manque dans le balisage. Déplacez-le tout de même dans un <li> ou hors de la liste : HTML ne l’autorise pas à cet endroit.",
+          "failWhen": "La page affiche le contenu comme l’un des éléments de la liste, mais le balisage n’en fait pas un : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたリストを調べ、role属性でlistitemが置き換えられている<li>をすべて控えてください。",
+            "その<li>が、行頭記号や番号付き、または他の項目と同じスタイルで、まだリストの項目の1つとして表示されているか確認してください。",
+            "スクリーンリーダーでリストを読み、項目がいくつと読み上げられるか、その内容が項目の1つとして読み上げられるかを確認してください。"
+          ],
+          "passWhen": "内容はリストの項目として表示されていないため、ページに表示された項目でマークアップに欠けているものはありません。それでも<li>の中かリストの外に移してください。HTMLではそこに置けません。",
+          "failWhen": "ページは内容をリストの項目の1つとして表示していますが、マークアップでは項目になっていないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
+        }
+      }
+    }
+  ],
   "listbox-name-present": [
     {
       "code": "name_internals",
@@ -8751,6 +9459,108 @@
           ],
           "passWhen": "アクセシビリティツリーにリストボックスの名前が表示され（internalsで設定されたものでも、それ以外でもかまいません）、スクリーンリーダーがそれを読み上げます。",
           "failWhen": "リストボックスにはアクセシビリティツリー上の名前がなく、スクリーンリーダーはロールしか読み上げないため、WCAG 4.1.2を満たしません。"
+        }
+      }
+    }
+  ],
+  "listitem-parent-valid": [
+    {
+      "code": "LISTITEM_INVALID_PARENT",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte <li> und notieren Sie sein Elternelement, das weder <ul>, <ol>, <menu> noch ein Element mit der Rolle list ist.",
+            "Prüfen Sie, ob die Seite es als Eintrag einer Liste zeigt, mit Aufzählungszeichen oder Nummer, neben anderen Einträgen.",
+            "Lesen Sie den Inhalt mit einem Screenreader und notieren Sie, ob eine Liste und die Anzahl ihrer Einträge angesagt werden."
+          ],
+          "passWhen": "Das Element wird nicht als Eintrag einer Liste gezeigt, daher fehlt keine auf der Seite gezeigte Liste im Markup. Korrigieren Sie das Markup trotzdem: HTML erlaubt <li> nur in einer Liste.",
+          "failWhen": "Die Seite zeigt das Element als Eintrag einer Liste, das Markup setzt es aber in keine Liste, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the <li> the report names and note its parent, which is not a <ul>, <ol>, <menu> or an element with role list.",
+            "Look at whether the page shows it as an item of a list, with a bullet or number, next to other items.",
+            "With a screen reader, read the content and note whether a list and its number of items are announced."
+          ],
+          "passWhen": "The element is not shown as an item of a list, so no list the page shows is missing from the markup. Still fix the markup: HTML allows an <li> only in a list.",
+          "failWhen": "The page shows the element as an item of a list, but the markup puts it in no list, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el <li> que indica el informe y anote su padre, que no es <ul>, <ol>, <menu> ni un elemento con rol list.",
+            "Observe si la página lo muestra como un elemento de una lista, con viñeta o número, junto a otros elementos.",
+            "Con un lector de pantalla, lea el contenido y anote si se anuncian una lista y su número de elementos."
+          ],
+          "passWhen": "El elemento no se muestra como un elemento de una lista, así que no falta en el marcado ninguna lista que muestre la página. Aun así, corrija el marcado: HTML solo permite <li> en una lista.",
+          "failWhen": "La página muestra el elemento como un elemento de una lista, pero el marcado no lo pone en ninguna lista, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez le <li> indiqué par le rapport et notez son parent, qui n’est ni <ul>, ni <ol>, ni <menu>, ni un élément de rôle list.",
+            "Regardez si la page l’affiche comme élément d’une liste, avec une puce ou un numéro, à côté d’autres éléments.",
+            "Avec un lecteur d’écran, lisez le contenu et notez si une liste et son nombre d’éléments sont annoncés."
+          ],
+          "passWhen": "L’élément n’est pas affiché comme élément d’une liste : aucune liste affichée ne manque dans le balisage. Corrigez tout de même le balisage : HTML n’autorise <li> que dans une liste.",
+          "failWhen": "La page affiche l’élément comme élément d’une liste, mais le balisage ne le place dans aucune liste : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された<li>を調べ、その親要素（<ul>、<ol>、<menu>、roleがlistの要素のいずれでもない）を控えてください。",
+            "行頭記号や番号付きで、他の項目と並んでリストの項目として表示されているか確認してください。",
+            "スクリーンリーダーで内容を読み、リストとその項目数が読み上げられるか確認してください。"
+          ],
+          "passWhen": "要素はリストの項目として表示されていないため、ページに表示されたリストでマークアップに欠けているものはありません。それでもマークアップを修正してください。HTMLでは<li>はリストの中にしか置けません。",
+          "failWhen": "ページは要素をリストの項目として表示していますが、マークアップではどのリストにも属していないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
+        }
+      }
+    },
+    {
+      "code": "LIST_ROLE_OVERRIDDEN",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte <li> und notieren Sie die Rolle, die sein Elternelement <ul>, <ol> oder <menu> anstelle von list hat.",
+            "Prüfen Sie, ob die Seite es als Eintrag einer Liste zeigt, mit Aufzählungszeichen oder Nummer, neben anderen Einträgen.",
+            "Lesen Sie den Inhalt mit einem Screenreader und notieren Sie, ob eine Liste und die Anzahl ihrer Einträge angesagt werden."
+          ],
+          "passWhen": "Das Element wird nicht als Eintrag einer Liste gezeigt, daher fehlt keine auf der Seite gezeigte Liste im Markup. Korrigieren Sie das Markup trotzdem: HTML erlaubt <li> nur in einer Liste.",
+          "failWhen": "Die Seite zeigt das Element als Eintrag einer Liste, das Markup setzt es aber in keine Liste, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the <li> the report names and note the role its <ul>, <ol> or <menu> parent has in place of list.",
+            "Look at whether the page shows it as an item of a list, with a bullet or number, next to other items.",
+            "With a screen reader, read the content and note whether a list and its number of items are announced."
+          ],
+          "passWhen": "The element is not shown as an item of a list, so no list the page shows is missing from the markup. Still fix the markup: HTML allows an <li> only in a list.",
+          "failWhen": "The page shows the element as an item of a list, but the markup puts it in no list, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el <li> que indica el informe y anote el rol que tiene su padre <ul>, <ol> o <menu> en lugar de list.",
+            "Observe si la página lo muestra como un elemento de una lista, con viñeta o número, junto a otros elementos.",
+            "Con un lector de pantalla, lea el contenido y anote si se anuncian una lista y su número de elementos."
+          ],
+          "passWhen": "El elemento no se muestra como un elemento de una lista, así que no falta en el marcado ninguna lista que muestre la página. Aun así, corrija el marcado: HTML solo permite <li> en una lista.",
+          "failWhen": "La página muestra el elemento como un elemento de una lista, pero el marcado no lo pone en ninguna lista, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez le <li> indiqué par le rapport et notez le rôle que son parent <ul>, <ol> ou <menu> a à la place de list.",
+            "Regardez si la page l’affiche comme élément d’une liste, avec une puce ou un numéro, à côté d’autres éléments.",
+            "Avec un lecteur d’écran, lisez le contenu et notez si une liste et son nombre d’éléments sont annoncés."
+          ],
+          "passWhen": "L’élément n’est pas affiché comme élément d’une liste : aucune liste affichée ne manque dans le balisage. Corrigez tout de même le balisage : HTML n’autorise <li> que dans une liste.",
+          "failWhen": "La page affiche l’élément comme élément d’une liste, mais le balisage ne le place dans aucune liste : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された<li>を調べ、親の<ul>、<ol>、<menu>がlistの代わりに持つロールを控えてください。",
+            "行頭記号や番号付きで、他の項目と並んでリストの項目として表示されているか確認してください。",
+            "スクリーンリーダーで内容を読み、リストとその項目数が読み上げられるか確認してください。"
+          ],
+          "passWhen": "要素はリストの項目として表示されていないため、ページに表示されたリストでマークアップに欠けているものはありません。それでもマークアップを修正してください。HTMLでは<li>はリストの中にしか置けません。",
+          "failWhen": "ページは要素をリストの項目として表示していますが、マークアップではどのリストにも属していないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
         }
       }
     }
@@ -9684,6 +10494,58 @@
           ],
           "passWhen": "キーボードで使えるコントロールが、ページのどこにあっても、動きを一時停止、停止、または非表示にできるか、その動きは必須です。",
           "failWhen": "コンテンツが動き続け、ページ上にキーボードで使えてそれを一時停止、停止、または非表示にできるものがないため、WCAG 2.2.2を満たしません。"
+        }
+      }
+    }
+  ],
+  "nested-interactive-controls-absent": [
+    {
+      "code": "NESTED_INTERACTIVE_CONTROL",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie das im Bericht genannte Bedienelement, etwa einen Link, und notieren Sie das darin verschachtelte Bedienelement.",
+            "Wechseln Sie mit der Tastatur zu jedem der beiden und aktivieren Sie es; prüfen Sie, ob jedes seine eigene Aufgabe erfüllt und ob das Aktivieren des inneren nicht auch das äußere aktiviert.",
+            "Wechseln Sie mit einem Screenreader zu jedem und notieren Sie, ob beide mit eigener Rolle und eigenem Namen angesagt werden oder ob der Name des äußeren den des inneren verschluckt."
+          ],
+          "passWhen": "Beide Bedienelemente sind einzeln erreichbar und bedienbar, jedes mit eigener Rolle und eigenem Namen. Verschieben Sie das innere trotzdem nach außen: HTML erlaubt es dort nicht.",
+          "failWhen": "Das innere Bedienelement ist nicht einzeln erreichbar oder bedienbar, oder es wird nicht mit eigener Rolle und eigenem Namen angesagt, daher sind Name, Rolle oder Bedienung nicht verfügbar (WCAG 4.1.2, 2.1.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the control the report names, such as a link, and note the control nested inside it.",
+            "With the keyboard, tab to each of the two and activate it, and check that each does its own job and that activating the inner one does not also activate the outer one.",
+            "With a screen reader, move to each and note whether both are announced with their own role and name, or whether the outer control's name swallows the inner one's."
+          ],
+          "passWhen": "Both controls can be reached and operated on their own, each with its own role and name. Still move the inner control out: HTML does not allow it there.",
+          "failWhen": "The inner control cannot be reached or operated on its own, or it is not announced with its own role and name, so its name, role or operation is not available (WCAG 4.1.2, 2.1.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione el control que indica el informe, como un enlace, y anote el control anidado dentro de él.",
+            "Con el teclado, vaya a cada uno de los dos y actívelo, y compruebe que cada uno hace su propia tarea y que activar el interior no activa también el exterior.",
+            "Con un lector de pantalla, vaya a cada uno y anote si ambos se anuncian con su propio rol y nombre, o si el nombre del control exterior absorbe el del interior."
+          ],
+          "passWhen": "Ambos controles se pueden alcanzar y manejar por separado, cada uno con su propio rol y nombre. Aun así, saque el control interior: HTML no lo permite ahí.",
+          "failWhen": "El control interior no se puede alcanzar ni manejar por separado, o no se anuncia con su propio rol y nombre, así que su nombre, rol o manejo no están disponibles (WCAG 4.1.2, 2.1.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez le contrôle indiqué par le rapport, par exemple un lien, et notez le contrôle imbriqué à l’intérieur.",
+            "Au clavier, passez sur chacun des deux et activez-le, puis vérifiez que chacun fait sa propre action et qu’activer l’intérieur n’active pas aussi l’extérieur.",
+            "Avec un lecteur d’écran, passez sur chacun et notez si les deux sont annoncés avec leur propre rôle et nom, ou si le nom du contrôle extérieur absorbe celui de l’intérieur."
+          ],
+          "passWhen": "Les deux contrôles peuvent être atteints et utilisés séparément, chacun avec son propre rôle et nom. Sortez tout de même le contrôle intérieur : HTML ne l’autorise pas à cet endroit.",
+          "failWhen": "Le contrôle intérieur ne peut pas être atteint ou utilisé séparément, ou il n’est pas annoncé avec son propre rôle et nom : son nom, son rôle ou son fonctionnement ne sont donc pas disponibles (WCAG 4.1.2, 2.1.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたコントロール（リンクなど）を調べ、その中に入れ子になったコントロールを控えてください。",
+            "キーボードで2つのコントロールそれぞれに移動して操作し、それぞれが自分の機能を果たし、内側を操作しても外側が同時に操作されないことを確認してください。",
+            "スクリーンリーダーでそれぞれに移動し、両方が独自のロールと名前で読み上げられるか、外側の名前に内側の名前が含まれてしまっているかを確認してください。"
+          ],
+          "passWhen": "両方のコントロールに個別に到達して操作でき、それぞれ独自のロールと名前があります。それでも内側のコントロールを外に出してください。HTMLではそこに置けません。",
+          "failWhen": "内側のコントロールに個別に到達または操作できないか、独自のロールと名前で読み上げられないため、その名前、ロール、操作が利用できません（WCAG 4.1.2、2.1.1）。"
         }
       }
     }
@@ -12480,7 +13342,7 @@
             "Navigieren Sie mit einem Screenreader zum Element und hören Sie sich den angesagten Namen an."
           ],
           "passWhen": "Der Barrierefreiheitsbaum zeigt einen Namen für den Tooltip, aus dem Inhalt gewonnen, und der Screenreader sagt ihn an.",
-          "failWhen": "Der Tooltip hat keinen Namen im Barrierefreiheitsbaum, da der Inhalt keinen ergibt; das verstößt gegen WCAG 4.1.2."
+          "failWhen": "Der Tooltip hat keinen Namen im Barrierefreiheitsbaum, da der Inhalt keinen ergibt. Das verstößt gegen WAI-ARIA; gegen WCAG verstößt es nur, wenn der Tooltip Information, etwa ein Bild, ohne Textalternative zeigt (WCAG 1.1.1)."
         },
         "en": {
           "steps": [
@@ -12489,7 +13351,7 @@
             "With a screen reader, move to the element and listen to the name announced."
           ],
           "passWhen": "The accessibility tree shows a name for the tooltip, taken from its content, and the screen reader announces it.",
-          "failWhen": "The tooltip has no name in the accessibility tree, since its content gives none, which fails WCAG 4.1.2."
+          "failWhen": "The tooltip has no name in the accessibility tree, since its content gives none. That breaks WAI-ARIA; it fails WCAG only where the tooltip shows information, such as an image, with no text alternative (WCAG 1.1.1)."
         },
         "es": {
           "steps": [
@@ -12498,7 +13360,7 @@
             "Con un lector de pantalla, desplazarse hasta el elemento y escuchar el nombre que se anuncia."
           ],
           "passWhen": "El árbol de accesibilidad muestra un nombre para la descripción emergente, tomado de su contenido, y el lector de pantalla lo anuncia.",
-          "failWhen": "La descripción emergente no tiene nombre en el árbol de accesibilidad, porque su contenido no le da ninguno, lo que incumple WCAG 4.1.2."
+          "failWhen": "La descripción emergente no tiene nombre en el árbol de accesibilidad, porque su contenido no le da ninguno. Eso incumple WAI-ARIA; incumple WCAG solo si la descripción emergente muestra información, como una imagen, sin alternativa textual (WCAG 1.1.1)."
         },
         "fr": {
           "steps": [
@@ -12507,7 +13369,7 @@
             "Avec un lecteur d’écran, placez-vous sur l’élément et écoutez le nom annoncé."
           ],
           "passWhen": "L’arbre d’accessibilité montre un nom pour l’infobulle, tiré de son contenu, et le lecteur d’écran l’annonce.",
-          "failWhen": "L’infobulle n’a pas de nom dans l’arbre d’accessibilité, car son contenu n’en donne aucun, ce qui ne respecte pas le critère WCAG 4.1.2."
+          "failWhen": "L’infobulle n’a pas de nom dans l’arbre d’accessibilité, car son contenu n’en donne aucun. Cela enfreint WAI-ARIA ; cela ne respecte pas WCAG seulement si l’infobulle affiche une information, comme une image, sans alternative textuelle (WCAG 1.1.1)."
         },
         "ja": {
           "steps": [
@@ -12516,7 +13378,7 @@
             "スクリーンリーダーで要素に移動し、読み上げられる名前を聞いてください。"
           ],
           "passWhen": "アクセシビリティツリーに、内容から得たツールチップの名前が表示され、スクリーンリーダーがそれを読み上げます。",
-          "failWhen": "内容から名前が得られず、ツールチップにはアクセシビリティツリー上の名前がないため、WCAG 4.1.2を満たしません。"
+          "failWhen": "内容から名前が得られず、ツールチップにはアクセシビリティツリー上の名前がありません。これはWAI-ARIAに違反しますが、WCAGを満たさないのは、ツールチップが画像などの情報を代替テキストなしで表示している場合だけです（WCAG 1.1.1）。"
         }
       }
     },
@@ -12530,7 +13392,7 @@
             "Navigieren Sie mit einem Screenreader zum Element und hören Sie sich den angesagten Namen an."
           ],
           "passWhen": "Der Barrierefreiheitsbaum zeigt einen Namen für den Tooltip, aus dem verschachtelten Inhalt gewonnen, und der Screenreader sagt ihn an.",
-          "failWhen": "Der Tooltip hat keinen Namen im Barrierefreiheitsbaum, da der Inhalt keinen ergibt; das verstößt gegen WCAG 4.1.2."
+          "failWhen": "Der Tooltip hat keinen Namen im Barrierefreiheitsbaum, da der Inhalt keinen ergibt. Das verstößt gegen WAI-ARIA; gegen WCAG verstößt es nur, wenn der Tooltip Information, etwa ein Bild, ohne Textalternative zeigt (WCAG 1.1.1)."
         },
         "en": {
           "steps": [
@@ -12539,7 +13401,7 @@
             "With a screen reader, move to the element and listen to the name announced."
           ],
           "passWhen": "The accessibility tree shows a name for the tooltip, taken from its nested content, and the screen reader announces it.",
-          "failWhen": "The tooltip has no name in the accessibility tree, since its content gives none, which fails WCAG 4.1.2."
+          "failWhen": "The tooltip has no name in the accessibility tree, since its content gives none. That breaks WAI-ARIA; it fails WCAG only where the tooltip shows information, such as an image, with no text alternative (WCAG 1.1.1)."
         },
         "es": {
           "steps": [
@@ -12548,7 +13410,7 @@
             "Con un lector de pantalla, desplazarse hasta el elemento y escuchar el nombre que se anuncia."
           ],
           "passWhen": "El árbol de accesibilidad muestra un nombre para la descripción emergente, tomado de su contenido anidado, y el lector de pantalla lo anuncia.",
-          "failWhen": "La descripción emergente no tiene nombre en el árbol de accesibilidad, porque su contenido no le da ninguno, lo que incumple WCAG 4.1.2."
+          "failWhen": "La descripción emergente no tiene nombre en el árbol de accesibilidad, porque su contenido no le da ninguno. Eso incumple WAI-ARIA; incumple WCAG solo si la descripción emergente muestra información, como una imagen, sin alternativa textual (WCAG 1.1.1)."
         },
         "fr": {
           "steps": [
@@ -12557,7 +13419,7 @@
             "Avec un lecteur d’écran, placez-vous sur l’élément et écoutez le nom annoncé."
           ],
           "passWhen": "L’arbre d’accessibilité montre un nom pour l’infobulle, tiré de son contenu imbriqué, et le lecteur d’écran l’annonce.",
-          "failWhen": "L’infobulle n’a pas de nom dans l’arbre d’accessibilité, car son contenu n’en donne aucun, ce qui ne respecte pas le critère WCAG 4.1.2."
+          "failWhen": "L’infobulle n’a pas de nom dans l’arbre d’accessibilité, car son contenu n’en donne aucun. Cela enfreint WAI-ARIA ; cela ne respecte pas WCAG seulement si l’infobulle affiche une information, comme une image, sans alternative textuelle (WCAG 1.1.1)."
         },
         "ja": {
           "steps": [
@@ -12566,7 +13428,7 @@
             "スクリーンリーダーで要素に移動し、読み上げられる名前を聞いてください。"
           ],
           "passWhen": "アクセシビリティツリーに、入れ子の内容から得たツールチップの名前が表示され、スクリーンリーダーがそれを読み上げます。",
-          "failWhen": "内容から名前が得られず、ツールチップにはアクセシビリティツリー上の名前がないため、WCAG 4.1.2を満たしません。"
+          "failWhen": "内容から名前が得られず、ツールチップにはアクセシビリティツリー上の名前がありません。これはWAI-ARIAに違反しますが、WCAGを満たさないのは、ツールチップが画像などの情報を代替テキストなしで表示している場合だけです（WCAG 1.1.1）。"
         }
       }
     },
@@ -12580,7 +13442,7 @@
             "Navigieren Sie mit einem Screenreader zum Element und hören Sie sich den angesagten Namen an."
           ],
           "passWhen": "Der Barrierefreiheitsbaum zeigt einen Namen für den Tooltip, über die Internals oder anders gesetzt, und der Screenreader sagt ihn an.",
-          "failWhen": "Der Tooltip hat keinen Namen im Barrierefreiheitsbaum, und der Screenreader sagt nur die Rolle an; das verstößt gegen WCAG 4.1.2."
+          "failWhen": "Der Tooltip hat keinen Namen im Barrierefreiheitsbaum, und der Screenreader sagt nur die Rolle an. Das verstößt gegen WAI-ARIA; gegen WCAG verstößt es nur, wenn der Tooltip Information, etwa ein Bild, ohne Textalternative zeigt (WCAG 1.1.1)."
         },
         "en": {
           "steps": [
@@ -12589,7 +13451,7 @@
             "With a screen reader, move to the element and listen to the name announced."
           ],
           "passWhen": "The accessibility tree shows a name for the tooltip, set through its internals or otherwise, and the screen reader announces it.",
-          "failWhen": "The tooltip has no name in the accessibility tree and the screen reader announces only its role, which fails WCAG 4.1.2."
+          "failWhen": "The tooltip has no name in the accessibility tree and the screen reader announces only its role. That breaks WAI-ARIA; it fails WCAG only where the tooltip shows information, such as an image, with no text alternative (WCAG 1.1.1)."
         },
         "es": {
           "steps": [
@@ -12598,7 +13460,7 @@
             "Con un lector de pantalla, desplazarse hasta el elemento y escuchar el nombre que se anuncia."
           ],
           "passWhen": "El árbol de accesibilidad muestra un nombre para la descripción emergente, establecido mediante sus internals o de otro modo, y el lector de pantalla lo anuncia.",
-          "failWhen": "La descripción emergente no tiene nombre en el árbol de accesibilidad y el lector de pantalla solo anuncia su rol, lo que incumple WCAG 4.1.2."
+          "failWhen": "La descripción emergente no tiene nombre en el árbol de accesibilidad y el lector de pantalla solo anuncia su rol. Eso incumple WAI-ARIA; incumple WCAG solo si la descripción emergente muestra información, como una imagen, sin alternativa textual (WCAG 1.1.1)."
         },
         "fr": {
           "steps": [
@@ -12607,7 +13469,7 @@
             "Avec un lecteur d’écran, placez-vous sur l’élément et écoutez le nom annoncé."
           ],
           "passWhen": "L’arbre d’accessibilité montre un nom pour l’infobulle, défini par ses internals ou autrement, et le lecteur d’écran l’annonce.",
-          "failWhen": "L’infobulle n’a pas de nom dans l’arbre d’accessibilité et le lecteur d’écran n’annonce que son rôle, ce qui ne respecte pas le critère WCAG 4.1.2."
+          "failWhen": "L’infobulle n’a pas de nom dans l’arbre d’accessibilité et le lecteur d’écran n’annonce que son rôle. Cela enfreint WAI-ARIA ; cela ne respecte pas WCAG seulement si l’infobulle affiche une information, comme une image, sans alternative textuelle (WCAG 1.1.1)."
         },
         "ja": {
           "steps": [
@@ -12616,7 +13478,57 @@
             "スクリーンリーダーで要素に移動し、読み上げられる名前を聞いてください。"
           ],
           "passWhen": "アクセシビリティツリーにツールチップの名前が表示され（internalsで設定されたものでも、それ以外でもかまいません）、スクリーンリーダーがそれを読み上げます。",
-          "failWhen": "ツールチップにはアクセシビリティツリー上の名前がなく、スクリーンリーダーはロールしか読み上げないため、WCAG 4.1.2を満たしません。"
+          "failWhen": "ツールチップにはアクセシビリティツリー上の名前がなく、スクリーンリーダーはロールしか読み上げません。これはWAI-ARIAに違反しますが、WCAGを満たさないのは、ツールチップが画像などの情報を代替テキストなしで表示している場合だけです（WCAG 1.1.1）。"
+        }
+      }
+    },
+    {
+      "code": "name_missing",
+      "text": {
+        "de": {
+          "steps": [
+            "Untersuchen Sie den im Bericht genannten Tooltip und lassen Sie ihn erscheinen, indem Sie auf das auslösende Element zeigen oder es fokussieren.",
+            "Prüfen Sie, was er zeigt: Text, ein Bild oder gestalteten Inhalt.",
+            "Falls er ein Bild oder Symbol zeigt, prüfen Sie, ob es eine Textalternative hat."
+          ],
+          "passWhen": "Der Tooltip zeigt nichts oder nur Dekoration, daher fehlt nichts, worauf sich jemand verlässt. Geben Sie ihm trotzdem Text oder entfernen Sie ihn: WAI-ARIA verlangt einen Namen.",
+          "failWhen": "Der Tooltip zeigt Information, etwa ein Bild, ohne Textalternative (WCAG 1.1.1)."
+        },
+        "en": {
+          "steps": [
+            "Inspect the tooltip the report names and make it appear, by hovering over or focusing the element that shows it.",
+            "Look at what it shows: text, an image or styled content.",
+            "If it shows an image or icon, check whether it has a text alternative."
+          ],
+          "passWhen": "The tooltip shows nothing, or only decoration, so nothing people rely on is missing. Still give it text or remove it: WAI-ARIA requires a name.",
+          "failWhen": "The tooltip shows information, such as an image, that has no text alternative (WCAG 1.1.1)."
+        },
+        "es": {
+          "steps": [
+            "Inspeccione la información sobre herramientas que indica el informe y hágala aparecer pasando el puntero o poniendo el foco en el elemento que la muestra.",
+            "Observe lo que muestra: texto, una imagen o contenido con estilo.",
+            "Si muestra una imagen o un icono, compruebe si tiene una alternativa textual."
+          ],
+          "passWhen": "La información sobre herramientas no muestra nada, o solo decoración, así que no falta nada en lo que la gente confíe. Aun así, dele texto o elimínela: WAI-ARIA exige un nombre.",
+          "failWhen": "La información sobre herramientas muestra información, como una imagen, sin alternativa textual (WCAG 1.1.1)."
+        },
+        "fr": {
+          "steps": [
+            "Inspectez l’infobulle indiquée par le rapport et faites-la apparaître en survolant ou en donnant le focus à l’élément qui l’affiche.",
+            "Regardez ce qu’elle affiche : du texte, une image ou un contenu stylé.",
+            "Si elle affiche une image ou une icône, vérifiez qu’elle a une alternative textuelle."
+          ],
+          "passWhen": "L’infobulle n’affiche rien, ou seulement de la décoration : rien de ce dont on a besoin ne manque. Donnez-lui tout de même du texte ou retirez-la : WAI-ARIA exige un nom.",
+          "failWhen": "L’infobulle affiche une information, comme une image, sans alternative textuelle (WCAG 1.1.1)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたツールチップを調べ、それを表示する要素にポインターを重ねるかフォーカスして表示させてください。",
+            "表示内容がテキスト、画像、スタイルで描かれた内容のどれかを確認してください。",
+            "画像やアイコンを表示している場合は、代替テキストがあるか確認してください。"
+          ],
+          "passWhen": "ツールチップは何も表示していないか装飾だけなので、利用者が頼る情報は欠けていません。それでもテキストを入れるか削除してください。WAI-ARIAでは名前が必須です。",
+          "failWhen": "ツールチップが画像などの情報を代替テキストなしで表示しています（WCAG 1.1.1）。"
         }
       }
     }

@@ -329,8 +329,9 @@ export function LocalesContent() {
 			/>
 			<p>
 				A step a locale lacks shows in English, as a message does. A{" "}
-				<a href="/configuration/packs/#review-steps">pack rule's own steps</a> are English in
-				every locale. <code>getLocaleCoverage()</code> doesn't count these dictionaries. The steps
+				<a href="/configuration/packs/#review-steps">pack rule's own steps</a> are English unless
+				its pack's dictionaries translate them (core 1.15.0 and later).{" "}
+				<code>getLocaleCoverage()</code> doesn't count these dictionaries. The steps
 				carry no keys, so to show them in another locale, add them again:
 			</p>
 			<CodeBlock
@@ -341,6 +342,19 @@ export function LocalesContent() {
 					"const inFrench = addHowToCheck(result, { locale: 'fr' });",
 				]}
 			/>
+
+			<h3 id="procedure-dictionaries">The procedure dictionaries</h3>
+			<p>
+				Since core 1.15.0 the review steps are written with core's{" "}
+				<a href="/conformance/procedures/">test procedures</a>, how a person assesses each
+				criterion by hand, and the review dictionaries are made from them. The procedure
+				dictionaries, <code>{"@surea11y/core/procedures/<locale>"}</code>, hold the general
+				procedures, the tools' names, the words of a page made from them, and the names of WCAG's
+				principles, guidelines and criteria and of each facet, in each language's published
+				translation of WCAG. All five locales have every text, so a page of procedures is in one
+				language throughout; <code>procedureLanguages()</code> says so for each locale, and for a
+				pack's standard, which may be read in fewer.
+			</p>
 
 			<h3>Supplying a dictionary yourself</h3>
 			<p>
@@ -418,6 +432,11 @@ export function LocalesContent() {
 					<code>_pass</code> and <code>_fail</code>, in{" "}
 					<a href="#review-dictionaries">the review dictionaries</a> — an undecided occurrence's{" "}
 					<code>howToCheck</code>.
+				</li>
+				<li>
+					<strong>Procedures</strong>: <code>{"wcag_<criterion>_<facet>_step<n>"}</code>,{" "}
+					<code>_pass</code> and <code>_fail</code>, <code>{"tool_<id>"}</code> and{" "}
+					<code>render_*</code>, in <a href="#procedure-dictionaries">the procedure dictionaries</a>.
 				</li>
 			</ul>
 			<p>

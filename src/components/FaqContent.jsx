@@ -7,96 +7,70 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-14">"My results changed after upgrading to core 1.14"</h2>
+				<h2 id="results-changed-1-15">"My results changed after upgrading to core 1.15"</h2>
 				<p>
-					1.14 reports more <code>cantTell</code> and claims less, on purpose. The changes most
-					likely to show in a pipeline:
+					1.15 fails a WCAG criterion only where WCAG fails, and reads frames as the browser shows
+					them. The changes most likely to show in a pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>No WCAG rollup passes.</strong> A criterion passes only when its rules check all
-						it asks, and none is listed as checked in full yet, so a criterion whose rules all pass
-						is <code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>). One
-						whose rules all found nothing is <code>notApplicable</code> only for 2.4.3, 2.4.4,
-						2.4.7, 2.4.9, 2.5.3 and 4.1.1, and <code>cantTell</code> otherwise (
-						<code>composite.rollup.cantTell.partialCoverage</code>). A failing rule still fails its
-						criterion. A dashboard or gate that counts passed criteria sees none; see{" "}
-						<a href="#why-criterion-canttell">the entry below</a> and{" "}
-						<a href="/conformance/wcag-mapping/#when-a-criterion-passes">WCAG conformance mapping</a>.
+						<strong>Fewer ARIA and HTML structure failures.</strong> Eight ARIA rules and the HTML
+						structure rules no longer fail a criterion where only WAI-ARIA or the HTML content
+						model is broken: those findings are <code>cantTell</code>, with uncertainty{" "}
+						<code>spec-only</code> and steps to check. Affected:{" "}
+						<a href="/rules/aria-role-name-present/"><code>aria-role-name-present</code></a> (grid,
+						tree, radiogroup, meter, progressbar),{" "}
+						<a href="/rules/dialog-name-present/"><code>dialog-name-present</code></a>,{" "}
+						<a href="/rules/tooltip-name-present/"><code>tooltip-name-present</code></a>,{" "}
+						<a href="/rules/aria-allowed-attr/"><code>aria-allowed-attr</code></a>,{" "}
+						<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a> (except
+						for a control's state, value or focus),{" "}
+						<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a>,{" "}
+						<a href="/rules/aria-roles-valid/"><code>aria-roles-valid</code></a> (except on a
+						focusable element), <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a>{" "}
+						(an ancestor; it maps to 1.3.1 only now),{" "}
+						<a href="/rules/list-children-valid/"><code>list-children-valid</code></a> and{" "}
+						<a href="/rules/listitem-parent-valid/"><code>listitem-parent-valid</code></a> (except
+						where the page draws the broken item),{" "}
+						<a href="/rules/definition-list-children-valid/"><code>definition-list-children-valid</code></a>,{" "}
+						<a href="/rules/dlitem-parent-valid/"><code>dlitem-parent-valid</code></a> and{" "}
+						<a href="/rules/nested-interactive-controls-absent/"><code>nested-interactive-controls-absent</code></a>{" "}
+						(except inside a control with presentational children). Every finding keeps its reason
+						code, so baselines still match, but a gate or a rollup that only these failed now
+						passes or is <code>cantTell</code>. To judge the same findings by WAI-ARIA, where they
+						fail, add the <a href="/configuration/packs/#wai-aria-pack">WAI-ARIA pack</a>.
 					</li>
 					<li>
-						<strong>Two rules ask more.</strong>{" "}
-						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> asks about
-						every page title, not only generic or templated ones, since whether a title describes
-						its page is for a person (G88).{" "}
-						<a href="/rules/duplicate-id/"><code>duplicate-id</code></a> asks about 4.1.1 under WCAG
-						2.0 and 2.1 too, as the 2023 errata count it satisfied, unless a profile says{" "}
-						<code>keepsParsing: true</code>, as <code>en301549-v3.2.1</code> does.
+						<strong>A framed document is no page of its own.</strong> In a frame,{" "}
+						<code>page-title-present</code>, <code>html-lang-attr-present</code>, the viewport,
+						bypass and landmark rules are <code>notApplicable</code> (see{" "}
+						<a href="#framed-page-rules">the entry below</a>). A frame under{" "}
+						<code>aria-hidden</code> or <code>inert</code> is read as such, and one behind an open
+						modal dialog is left out.
 					</li>
 					<li>
-						<strong>Eleven new rules</strong>, among them the first for 3.3.1 (
-						<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>),
-						4.1.3 (<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>)
-						and 1.4.5 (<a href="/rules/image-of-text/"><code>image-of-text</code></a>). Most ask;{" "}
-						<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>,{" "}
-						<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>{" "}
-						and <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a> can fail, and so
-						can <a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>, which
-						now checks the constraints between attributes (<code>aria-valuemin</code> above{" "}
-						<code>aria-valuemax</code>, say). See <a href="/rules/">the rule catalog</a>.
+						<strong>Roles follow WAI-ARIA more closely.</strong> <code>role="text"</code> names no
+						valid role; an image with a presentational role and a global ARIA attribute keeps its
+						role, and fails <a href="/rules/img-alt-present/"><code>img-alt-present</code></a>{" "}
+						without <code>alt</code>; the four globals WAI-ARIA 1.2 deprecates no longer give a
+						presentational element its role back.
 					</li>
 					<li>
-						<strong>Some failures became questions, and some new failures appear.</strong>{" "}
-						<code>td-has-header</code> asks once about a large table with no header cell instead of
-						failing every cell, and <code>form-control-single-label</code> asks about a field with
-						two labels. Contrast is measured on more of what the page draws (text on the page's
-						canvas in each color scheme, <code>::first-line</code>, <code>font-size-adjust</code>, a
-						placeholder whose colors the page chose), so new contrast failures can appear.
+						<strong>A skipped heading level is a best practice issue</strong>, not a 1.3.1 failure,
+						in the reviewed <a href="/conformance/procedures/">test procedures</a>, which also give
+						the "How to check" steps of six new questions.
 					</li>
 					<li>
-						<strong>Some findings have a new reason code.</strong> Seventeen rules that gave none
-						now do, and a few codes are split by cause. A baseline written by 1.13 still matches
-						them until 1.15; rewrite it with <code>migrateBaselineEntries</code> (see{" "}
-						<a href="#baseline-after-upgrade">the entry below</a>). A Code Scanning alert for such a
-						finding closes and comes back as new.
-					</li>
-					<li>
-						<strong>Every <code>cantTell</code> says how to answer it.</strong> A core rule's
-						finding carries <code>howToCheck</code> steps, and some carry a <code>lean</code>, which
-						way the page's evidence points. The outcome stays <code>cantTell</code>, and nothing
-						gates on a lean unless you ask (<code>leanFailAs</code>). The{" "}
-						<a href="/results-reports/html-report/">HTML report</a> groups these findings into
-						likely fails, likely passes and those that need a person. See{" "}
-						<a href="/results-reports/output-schema/#leans">Leans</a>.
-					</li>
-					<li>
-						<strong>1.14.1 fails less on text spacing.</strong>{" "}
-						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
-						no longer fails text the page doesn't lose. A page scroll-locked with{" "}
-						<code>{"body { position: fixed }"}</code>, as many are behind a consent banner, and a
-						fixed box taller than the viewport are asked about as{" "}
-						<code>VIEWPORT_SCROLL_LOCKED</code>; text cut off by a box the page's script sizes to
-						fit it, such as an Angular Material form field's floating label, as{" "}
-						<code>TEXT_CLIPPED_SCRIPT_SIZED</code>. A baseline entry or Code Scanning alert for one
-						of those closes as a fixed bug does. The steps of 36 questions also ask whether
-						another way on the page does the same before they lead to a fail.
-					</li>
-					<li>
-						<strong>1.14.2 reads the page as the browser draws it.</strong> Content the browser
-						skips off screen with <code>content-visibility: auto</code> is measured as it is laid
-						out, so the false overlaps, background questions, unreachable-focus and target-size
-						findings it gave on pages of cards go away, and 
-						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a> 
-						now fails text such an element cuts off (<code>details.clippedBy</code>). 
-						<a href="/rules/label-in-name/"><code>label-in-name</code></a> 
-						no longer fails a label split only across touching boxes, and the rules that read style
-						sheets skip print-only and unsupported CSS and rules that don't reach the element. A
-						baseline entry or Code Scanning alert for a finding it no longer reports closes as a
-						fixed bug does.
+						<strong>A baseline from 1.13 needs updating first.</strong> 1.15 moved no reason code,
+						and dropped the moves from 1.13 to 1.14 (see{" "}
+						<a href="#baseline-after-upgrade">the entry below</a>).
 					</li>
 				</ul>
 				<p>
-					The full list is in core's{" "}
+					New, and changing nothing unless you use it: scans of several profiles at once (
+					<a href="/configuration/engine-options/#several-profiles">Engine options</a>), the{" "}
+					<code>wcag22-a</code> and <code>wcag22-aaa</code> profiles, test procedures for assessing
+					by hand, and the HTML report's "What's left for a person". The full list is in core's{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>
@@ -333,6 +307,30 @@ export function FaqContent() {
 					is measured. A rule that is slower and finds more may be paying for what it now finds; one
 					that is slower with the same results is a regression worth <a href="https://github.com/SureA11y/core/issues">reporting</a>.
 				</p>
+				<p>
+					A scan of several profiles at once (<code>profile: ['wcag22-aa', 'wai-aria-1.2']</code>)
+					scans the page once per profile, so it takes about as long as that many scans.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="profile-not-run">
+					"A profile did not run", or <code>engine.profilesNotRun</code> is not empty
+				</h2>
+				<p>
+					In a scan of several profiles, a profile that couldn't run is listed in{" "}
+					<code>engine.profilesNotRun</code> with its reason, and the others still run:{" "}
+					<code>unknown-profile</code> (no such profile: a pack's profile needs its pack in{" "}
+					<code>packs</code>), <code>pack-skipped</code> (its pack didn't run, see{" "}
+					<a href="#pack-did-not-run">the entry below</a>) or{" "}
+					<code>overridden-by-selection</code> (a <code>runOnly</code> include, or rule ids or tags
+					in <code>engineOptions</code>, chose the rules instead, for every profile). Such a scan
+					judged less than it was asked to, so SARIF and JUnit report an error unless{" "}
+					<code>allowProfilesNotRun: true</code>, the CLI exits <code>2</code> unless{" "}
+					<code>--allow-profiles-not-run</code>, the bindings report a{" "}
+					<code>'profile-not-run'</code> gap, and the test matchers fail the assertion. See{" "}
+					<a href="/configuration/engine-options/#several-profiles">Engine options</a>.
+				</p>
 			</article>
 
 			<article>
@@ -380,6 +378,25 @@ export function FaqContent() {
 					<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a> Pattern 2) to
 					get real findings from these rules. See{" "}
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="framed-page-rules">
+					"The title, language and landmark rules are <code>notApplicable</code> in a frame"
+				</h2>
+				<p>
+					Since 1.15, a document shown in a frame is no page of its own:{" "}
+					<code>page-title-present</code>, <code>page-title-patterns</code>,{" "}
+					<code>html-lang-attr-present</code>, <code>meta-viewport-zoom-enabled</code>,{" "}
+					<code>meta-viewport-large</code>, <code>region</code>,{" "}
+					<code>bypass-blocks-present</code>, <code>landmark-one-main</code> and{" "}
+					<code>page-has-heading-one</code> are <code>notApplicable</code> in it. The page around
+					the frame is what has the title, language and landmarks people use, and a browser ignores
+					a framed document's viewport <code>&lt;meta&gt;</code>. A test runner that shows the page
+					under test in a frame of its own sets <code>engineOptions.topLevelDocument: true</code>;{" "}
+					<a href="/getting-started/cypress/">@surea11y/cypress</a> 1.6.0 does it for you. See{" "}
+					<a href="/configuration/engine-options/">Engine options</a>.
 				</p>
 			</article>
 
@@ -495,7 +512,9 @@ export function FaqContent() {
 					fraction of WCAG requires human judgment (accurate alt text, understandable error
 					messages) or dynamic testing this engine's architecture can't do at all (keyboard traps,
 					reflow at zoom) — see <a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a> for
-					the explicit, non-exhaustive-on-purpose list.
+					the explicit, non-exhaustive-on-purpose list. What's left is a person's to check, and
+					core's <a href="/conformance/procedures/">test procedures</a> say how, criterion by
+					criterion.
 				</p>
 			</article>
 
@@ -556,11 +575,13 @@ export function FaqContent() {
 				<p>
 					A finding's identity includes its reason code, and 1.14 gave codes to seventeen rules
 					that had none and split a few codes by cause. A baseline written by 1.13 keeps matching
-					those findings under 1.14.x, through <code>src/baseline-moves.json</code>; a finding whose
-					outcome changed with the upgrade is new or gone all the same, and the changelog says why.
-					Rewrite the file's codes with <code>migrateBaselineEntries</code> from{" "}
-					<code>@surea11y/core/baseline</code>, or regenerate it and review the diff, before 1.15.
-					See <a href="/conformance/baseline/#upgrading">Baseline / allowlist</a>.
+					those findings under 1.14.x, through <code>src/baseline-moves.json</code>, but not under
+					1.15, which dropped those moves: there an entry under an old code is stale and its finding
+					is new. Rewrite the file's codes under 1.14.x with <code>migrateBaselineEntries</code>{" "}
+					from <code>@surea11y/core/baseline</code>, then upgrade, or regenerate it under 1.15 and
+					review the diff. 1.15 itself moved no code, so a baseline written by 1.14 keeps matching;
+					a finding whose outcome changed with the upgrade is new or gone all the same, and the
+					changelog says why. See <a href="/conformance/baseline/#upgrading">Baseline / allowlist</a>.
 				</p>
 			</article>
 
@@ -579,6 +600,104 @@ export function FaqContent() {
 						<code>INTEGRATION.md</code>
 					</a>
 					, the integration guide on GitHub.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="results-changed-1-14">"My results changed after upgrading to core 1.14"</h2>
+				<p>
+					1.14 reports more <code>cantTell</code> and claims less, on purpose. The changes most
+					likely to show in a pipeline:
+				</p>
+				<ul>
+					<li>
+						<strong>No WCAG rollup passes.</strong> A criterion passes only when its rules check all
+						it asks, and none is listed as checked in full yet, so a criterion whose rules all pass
+						is <code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>). One
+						whose rules all found nothing is <code>notApplicable</code> only for 2.4.3, 2.4.4,
+						2.4.7, 2.4.9, 2.5.3 and 4.1.1, and <code>cantTell</code> otherwise (
+						<code>composite.rollup.cantTell.partialCoverage</code>). A failing rule still fails its
+						criterion. A dashboard or gate that counts passed criteria sees none; see{" "}
+						<a href="#why-criterion-canttell">the entry above</a> and{" "}
+						<a href="/conformance/wcag-mapping/#when-a-criterion-passes">WCAG conformance mapping</a>.
+					</li>
+					<li>
+						<strong>Two rules ask more.</strong>{" "}
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> asks about
+						every page title, not only generic or templated ones, since whether a title describes
+						its page is for a person (G88).{" "}
+						<a href="/rules/duplicate-id/"><code>duplicate-id</code></a> asks about 4.1.1 under WCAG
+						2.0 and 2.1 too, as the 2023 errata count it satisfied, unless a profile says{" "}
+						<code>keepsParsing: true</code>, as <code>en301549-v3.2.1</code> does.
+					</li>
+					<li>
+						<strong>Eleven new rules</strong>, among them the first for 3.3.1 (
+						<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>),
+						4.1.3 (<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>)
+						and 1.4.5 (<a href="/rules/image-of-text/"><code>image-of-text</code></a>). Most ask;{" "}
+						<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>,{" "}
+						<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>{" "}
+						and <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a> can fail, and so
+						can <a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>, which
+						now checks the constraints between attributes (<code>aria-valuemin</code> above{" "}
+						<code>aria-valuemax</code>, say). See <a href="/rules/">the rule catalog</a>.
+					</li>
+					<li>
+						<strong>Some failures became questions, and some new failures appear.</strong>{" "}
+						<code>td-has-header</code> asks once about a large table with no header cell instead of
+						failing every cell, and <code>form-control-single-label</code> asks about a field with
+						two labels. Contrast is measured on more of what the page draws (text on the page's
+						canvas in each color scheme, <code>::first-line</code>, <code>font-size-adjust</code>, a
+						placeholder whose colors the page chose), so new contrast failures can appear.
+					</li>
+					<li>
+						<strong>Some findings have a new reason code.</strong> Seventeen rules that gave none
+						now do, and a few codes are split by cause. A baseline written by 1.13 still matches
+						them until 1.15; rewrite it with <code>migrateBaselineEntries</code> (see{" "}
+						<a href="#baseline-after-upgrade">the entry above</a>). A Code Scanning alert for such a
+						finding closes and comes back as new.
+					</li>
+					<li>
+						<strong>Every <code>cantTell</code> says how to answer it.</strong> A core rule's
+						finding carries <code>howToCheck</code> steps, and some carry a <code>lean</code>, which
+						way the page's evidence points. The outcome stays <code>cantTell</code>, and nothing
+						gates on a lean unless you ask (<code>leanFailAs</code>). The{" "}
+						<a href="/results-reports/html-report/">HTML report</a> groups these findings into
+						likely fails, likely passes and those that need a person. See{" "}
+						<a href="/results-reports/output-schema/#leans">Leans</a>.
+					</li>
+					<li>
+						<strong>1.14.1 fails less on text spacing.</strong>{" "}
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
+						no longer fails text the page doesn't lose. A page scroll-locked with{" "}
+						<code>{"body { position: fixed }"}</code>, as many are behind a consent banner, and a
+						fixed box taller than the viewport are asked about as{" "}
+						<code>VIEWPORT_SCROLL_LOCKED</code>; text cut off by a box the page's script sizes to
+						fit it, such as an Angular Material form field's floating label, as{" "}
+						<code>TEXT_CLIPPED_SCRIPT_SIZED</code>. A baseline entry or Code Scanning alert for one
+						of those closes as a fixed bug does. The steps of 36 questions also ask whether
+						another way on the page does the same before they lead to a fail.
+					</li>
+					<li>
+						<strong>1.14.2 reads the page as the browser draws it.</strong> Content the browser
+						skips off screen with <code>content-visibility: auto</code> is measured as it is laid
+						out, so the false overlaps, background questions, unreachable-focus and target-size
+						findings it gave on pages of cards go away, and 
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a> 
+						now fails text such an element cuts off (<code>details.clippedBy</code>). 
+						<a href="/rules/label-in-name/"><code>label-in-name</code></a> 
+						no longer fails a label split only across touching boxes, and the rules that read style
+						sheets skip print-only and unsupported CSS and rules that don't reach the element. A
+						baseline entry or Code Scanning alert for a finding it no longer reports closes as a
+						fixed bug does.
+					</li>
+				</ul>
+				<p>
+					The full list is in core's{" "}
+					<a href={`${core}/CHANGELOG.md`}>
+						<code>CHANGELOG.md</code>
+					</a>
+					.
 				</p>
 			</article>
 		</>

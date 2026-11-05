@@ -9,7 +9,7 @@ export function HtmlReportContent() {
 				external assets, no network requests. Built for QA/manual testers who want a browsable
 				view of a scan's results rather than raw JSON or a terminal summary. <a href="/sample-report.html">Open a sample
 				report</a>: a small checkout page scanned with the listener and live-region hooks, with a
-				finding in every group.
+				finding in every group and what the scan leaves to a person.
 			</p>
 			<CodeBlock lines={[{ text: "surea11y scan ./dist/index.html --html report.html", command: true }]} />
 			<p>
@@ -33,7 +33,9 @@ export function HtmlReportContent() {
 					<strong>Worth reviewing</strong>: one card per rule with <code>fail</code>/
 					<code>cantTell</code> occurrences (not one per occurrence — a rule with many identical
 					occurrences is one thing worth attention, not many), each showing severity, WCAG SC
-					chip(s), a representative occurrence, and the total occurrence count. Failing rules come
+					chip(s), in a scan of several profiles what each profile makes of it (“wai-aria-1.2:
+					Fail” beside “wcag22-aa: Needs review”, its <code>verdicts</code>), a representative
+					occurrence, and the total occurrence count. Failing rules come
 					first. The findings that need review follow in three groups: those whose evidence points
 					to a failure (“Likely fails: confirm”), those whose evidence points to a pass (“Likely
 					passes: confirm”), and those only a person can judge (“Needs a person”), as{" "}
@@ -88,12 +90,31 @@ export function HtmlReportContent() {
 					<li>
 						<strong>A standard's own rollup</strong>: only when the scan ran the rules of a standard
 						that has rollups of its own (its profile, or <code>engineOptions.optInRules</code>), one
+						table per standard, and per version of it when a scan of several profiles judged the
+						page by two (EN 301 549 V3.2.1 with V4.1.1, each named by its version), with one
 						row per rollup, with the standard's wording, the requirements of the rules that decided
 						the outcome, the breakdown and the contributing rules. This covers a{" "}
 						<a href="/configuration/packs/">pack</a>'s standard and a pack's checklist, whose items
 						are its rollups. Each such standard is one listed in the result's{" "}
 						<code>standards</code>, so a stored result renders the same wherever it is rendered;
 						when that list is missing or damaged, the report says so above the WCAG rollup.
+					</li>
+					<li id="whats-left-for-a-person">
+						<strong>What's left for a person</strong> (core 1.15.0 and later): what the scan can't
+						decide in the requirements its rules evaluate. Every requirement of the standard
+						scanned with a check no rule decides in full, each with its outcome in the scan beside
+						it (“Scan: Fail”, “Scan: Pass”, or “No rule tests it”), and under it, collapsed by
+						default, those checks: what each assesses, how much of it rules decide, the tools it
+						needs, the steps, and what passes and what fails (core's{" "}
+						<a href="/conformance/procedures/">test procedures</a>). A sentence above says how many
+						checks and requirements there are, and that a requirement whose rules all pass is met
+						only once its checks pass too. The standard is WCAG, at the version the scan targeted
+						and the levels it reported; where the scan ran a pack's profile and the pack, passed in{" "}
+						<code>options.packs</code>, gives procedures, it is that pack's standard, under its own
+						numbers. A scan of several profiles has a part for each standard and version. A note
+						below says how to make a worksheet of them, to record a result for each (
+						<code>renderProcedures</code>, or the CLI's <code>--manual-checks</code>). It is written
+						in Node; the browser report (<code>surea11y.report.js</code>) has none.
 					</li>
 				<li>
 					<strong>Full technical data</strong> (collapsed by default): a scorecard (tiles per
@@ -123,7 +144,8 @@ export function HtmlReportContent() {
 			<p>
 				The meta bar under the header carries the rule count, occurrence count, engine tag, schema
 				version, the WCAG version the scan targeted, the <code>engineOptions.profile</code> it used
-				(when there was one), the opt-in rule tags <code>engineOptions.optInRules</code> added (when
+				(when there was one; every profile of a scan of several, joined with <code>+</code>, and
+				those that did not run), the opt-in rule tags <code>engineOptions.optInRules</code> added (when
 				it added any), the conditions the page was rendered under, and the locale the scan resolved
 				to. The conditions are the viewport (with the device pixel ratio when it isn't 1) and the
 				color scheme, and the web fonts when they were still loading; a scan with no layout, in
@@ -178,9 +200,11 @@ export function HtmlReportContent() {
 				packs the scan ran (<code>engineOptions.packs</code>), when it ran any: in Node the report
 				adds the “How to check” steps to undecided findings that come without them, a core rule's
 				and a variant's base rule's always, and a pack rule's own steps (its{" "}
-				<code>meta.review</code>, in English) only when given the packs (see{" "}
-				<a href="/configuration/packs/#rules">Packs</a>). In the browser (
-				<code>surea11y.report.js</code>) it shows the steps the result already carries.
+				<code>meta.review</code>, in English, or as its pack's dictionaries translate them) only
+				when given the packs (see <a href="/configuration/packs/#review-steps">Packs</a>). In the
+				browser (<code>surea11y.report.js</code>) it shows the steps the result already carries.
+				With the packs, “What's left for a person” also follows a pack's standard where the scan
+				ran its profile. <code>options.manualChecks: false</code> leaves that section out.
 			</p>
 
 			<h2>Scope</h2>
