@@ -7,51 +7,34 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-14">「core 1.14にアップグレードしたら、結果が変わった」</h2>
+				<h2 id="results-changed-1-15">「core 1.15にアップグレードしたら、結果が変わった」</h2>
 				<p>
-					1.14は、意図して<code>cantTell</code>を多く報告し、主張することを減らしています。パイプラインに表れやすい変更は次のとおりです。
+					1.15では、WCAGの達成基準を不合格にするのはWCAG自体が不合格とする場合だけになり、フレームはブラウザーが表示するとおりに読まれます。パイプラインに表れやすい変更は次のとおりです。
 				</p>
 				<ul>
 					<li>
-						<strong>WCAGの集約は<code>pass</code>になりません。</strong>
-						達成基準が<code>pass</code>になるのは、その達成基準が求めることをすべてルールがチェックする場合だけで、完全にチェックできるものとして挙げられた達成基準はまだありません。そのため、ルールがすべて<code>pass</code>の達成基準は<code>cantTell</code>（<code>composite.rollup.cantTell.partialCheck</code>）になります。ルールが何も見つけなかった達成基準が<code>notApplicable</code>になるのは2.4.3、2.4.4、2.4.7、2.4.9、2.5.3、4.1.1だけで、それ以外は<code>cantTell</code>（<code>composite.rollup.cantTell.partialCoverage</code>）です。不合格のルールがあれば、その達成基準は引き続き不合格になります。満たされた達成基準を数えるダッシュボードやゲートには、1つも表示されません。<a href="#why-criterion-canttell">後述の項目</a>と<a href="/conformance/wcag-mapping/#when-a-criterion-passes">WCAG適合性との対応</a>を参照してください。
+						<strong>ARIAとHTMLの構造の不合格が減ります。</strong>
+						8つのARIAのルールとHTMLの構造のルールは、WAI-ARIAやHTMLのコンテンツモデルだけが破られている場合に、達成基準を不合格にしなくなりました。そうした検出結果は、不確実性<code>spec-only</code>と確認の手順を伴う<code>cantTell</code>になります。対象は、<a href="/rules/aria-role-name-present/"><code>aria-role-name-present</code></a>（grid、tree、radiogroup、meter、progressbar）、<a href="/rules/dialog-name-present/"><code>dialog-name-present</code></a>、<a href="/rules/tooltip-name-present/"><code>tooltip-name-present</code></a>、<a href="/rules/aria-allowed-attr/"><code>aria-allowed-attr</code></a>、<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>（コントロールの状態、値、フォーカスを除く）、<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a>、<a href="/rules/aria-roles-valid/"><code>aria-roles-valid</code></a>（フォーカス可能な要素の場合を除く）、<a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a>（祖先。現在は1.3.1にだけ対応します）、<a href="/rules/list-children-valid/"><code>list-children-valid</code></a>と<a href="/rules/listitem-parent-valid/"><code>listitem-parent-valid</code></a>（壊れた項目をページが描画する場合を除く）、<a href="/rules/definition-list-children-valid/"><code>definition-list-children-valid</code></a>、<a href="/rules/dlitem-parent-valid/"><code>dlitem-parent-valid</code></a>、<a href="/rules/nested-interactive-controls-absent/"><code>nested-interactive-controls-absent</code></a>（子要素がプレゼンテーションになるコントロールの中を除く）です。すべての検出結果は理由コードを保つので、ベースラインは引き続き一致しますが、これらだけが不合格にしていたゲートや集約は、合格になるか<code>cantTell</code>になります。同じ検出結果を、それが不合格になるWAI-ARIAで判定するには、<a href="/configuration/packs/#wai-aria-pack">WAI-ARIAのパック</a>を追加してください。
 					</li>
 					<li>
-						<strong>2つのルールが確認を求める範囲が広がります。</strong>
-						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a>は、汎用的なタイトルやテンプレートのタイトルだけでなく、すべてのページタイトルについて確認を求めます。タイトルがページを説明しているかどうかは人が判断することだからです（G88）。<a href="/rules/duplicate-id/"><code>duplicate-id</code></a>は、WCAG 2.0と2.1でも4.1.1について確認を求めます。2023年の正誤表が4.1.1を満たされているものとみなしているからです。ただし、<code>en301549-v3.2.1</code>のように<code>keepsParsing: true</code>を宣言したプロファイルは例外です。
+						<strong>フレーム内の文書は、それ自体で1つのページではありません。</strong>
+						フレームの中では、<code>page-title-present</code>、<code>html-lang-attr-present</code>、ビューポート、ブロックスキップ、ランドマークのルールは<code>notApplicable</code>になります（<a href="#framed-page-rules">後述の項目</a>を参照）。<code>aria-hidden</code>や<code>inert</code>の下にあるフレームはそのとおりに読まれ、開いているモーダルダイアログの背後にあるフレームは除外されます。
 					</li>
 					<li>
-						<strong>11の新しいルール</strong>
-						が追加され、その中には3.3.1（<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>）、4.1.3（<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>）、1.4.5（<a href="/rules/image-of-text/"><code>image-of-text</code></a>）の最初のルールがあります。ほとんどは確認を求めるものですが、<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>、<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>、<a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a>は不合格を報告することがあります。属性間の制約（<code>aria-valuemax</code>を上回る<code>aria-valuemin</code>など）をチェックするようになった<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>も同様です。<a href="/rules/">ルールカタログ</a>を参照してください。
+						<strong>ロールがWAI-ARIAにより忠実になります。</strong>
+						<code>role="text"</code>は妥当なロールを示しません。プレゼンテーションのロールとグローバルなARIA属性を持つ画像はそのロールを保ち、<code>alt</code>がなければ<a href="/rules/img-alt-present/"><code>img-alt-present</code></a>で不合格になります。WAI-ARIA 1.2が非推奨にした4つのグローバル属性は、プレゼンテーションの要素にロールを戻さなくなりました。
 					</li>
 					<li>
-						<strong>一部の不合格は確認に変わり、新しい不合格も出ます。</strong>
-						<code>td-has-header</code>は、見出しセルのない大きな表について、すべてのセルを不合格にする代わりに一度だけ確認を求めます。<code>form-control-single-label</code>は、ラベルが2つあるフィールドについて確認を求めます。コントラストは、ページが描画するもののより多くの部分で計測されるようになった（各配色でのページのキャンバス上のテキスト、<code>::first-line</code>、<code>font-size-adjust</code>、ページが色を選んだプレースホルダー）ため、新たにコントラストの不合格が出ることがあります。
+						<strong>見出しレベルの飛びはベストプラクティスの問題です</strong>
+						。1.3.1の不合格ではありません。これは見直された<a href="/conformance/procedures/">テスト手順</a>によるもので、6つの新しい問いの「確認方法」の手順もそこから来ています。
 					</li>
 					<li>
-						<strong>一部の検出結果に新しい理由コードが付きます。</strong>
-						理由コードを付けていなかった17のルールが付けるようになり、いくつかのコードは原因ごとに分割されました。1.13で書いたベースラインは1.15まで引き続き一致します。<code>migrateBaselineEntries</code>で書き換えてください（<a href="#baseline-after-upgrade">後述の項目</a>を参照）。そうした検出結果のCode Scanningのアラートは、いったん閉じて新しいものとして再び表示されます。
-					</li>
-					<li>
-						<strong>すべての<code>cantTell</code>に、答え方が示されます。</strong>
-						coreのルールの検出結果には<code>howToCheck</code>の手順が付き、一部にはページの手がかりがどちらを示しているかを表す<code>lean</code>が付きます。判定結果は<code>cantTell</code>のままで、指定しない限り（<code>leanFailAs</code>）<code>lean</code>でビルドが止まることはありません。<a href="/results-reports/html-report/">HTMLレポート</a>は、これらの検出結果を、不適合の可能性が高いもの、適合の可能性が高いもの、人による確認が必要なものに分けて表示します。<a href="/results-reports/output-schema/#leans">出力スキーマ</a>を参照してください。
-					</li>
-					<li>
-						<strong>1.14.1では、テキストの間隔による不合格が減ります。</strong>
-						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>
-						は、ページが失っていないテキストを不合格にしなくなりました。同意バナーの裏でよくあるように<code>{"body { position: fixed }"}</code>でスクロールを固定したページと、ビューポートより高い固定ボックスは、<code>VIEWPORT_SCROLL_LOCKED</code>として確認を求めます。Angular Materialのフィールドのフローティングラベルのように、ページのスクリプトがテキストに合わせて大きさを決めるボックスで切れたテキストは、<code>TEXT_CLIPPED_SCRIPT_SIZED</code>として確認を求めます。それらのベースラインの項目やCode Scanningのアラートは、修正されたバグと同じように閉じます。また、36の質問の手順は、不合格につながる前に、ページ上の別の方法で同じことができるかどうかも確認するようになりました。
-					</li>
-					<li>
-						<strong>1.14.2では、ブラウザーが描画するとおりにページを読み取ります。</strong>
-						ブラウザーが<code>content-visibility: auto</code>で画面外のレイアウトを省略する内容は、実際にレイアウトされた状態で計測されます。そのため、カードが並ぶページで出ていた誤った重なり、背景についての質問、到達できないフォーカスやターゲットサイズの検出結果はなくなり、
-						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>
-						は、そうした要素が切り取るテキストを不合格にするようになりました（<code>details.clippedBy</code>）。
-						<a href="/rules/label-in-name/"><code>label-in-name</code></a>
-						は、接したボックスにまたがっているだけのラベルを不合格にしなくなり、スタイルシートを読むルールは、印刷専用やサポートされていないCSSと、要素に届かないルールを読み飛ばします。報告されなくなった検出結果のベースラインの項目やCode Scanningのアラートは、修正されたバグと同じように閉じます。
+						<strong>1.13のベースラインは、先に更新が必要です。</strong>
+						1.15は理由コードを移動しておらず、1.13から1.14への移動を削除しました（<a href="#baseline-after-upgrade">後述の項目</a>を参照）。
 					</li>
 				</ul>
 				<p>
-					変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
+					新しく追加され、使わない限り何も変えないもの：複数のプロファイルでの同時のスキャン（<a href="/configuration/engine-options/#several-profiles">エンジンオプション</a>）、<code>wcag22-a</code>と<code>wcag22-aaa</code>のプロファイル、手作業で評価するためのテスト手順、HTMLレポートの「人による確認が残っているもの」。変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
 				</p>
 			</article>
 
@@ -193,6 +176,18 @@ export function FaqContent() {
 				<p>
 					スキャンにかかる時間の大半はブラウザーでのスタイルとレイアウトの処理なので、エンジンだけでなく、ページ、マシン、ブラウザーにも左右されます。それでもリリースによって変わることはあります。ページのより多くの部分を確認するようになったルールは、その分時間がかかります。リリースでルールのコストが変わったときは、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>に記載されます。GitHub上の<a href={`${core}/docs/PERFORMANCE.md`}><code>PERFORMANCE.md</code></a>には、リリースごとのスキャン時間が、同じページでの以前のリリースに対する比率として、計測方法とともに記録されています。遅くなっても検出が増えたルールは、新たに見つけるものの分だけ時間がかかっているのかもしれません。結果が同じなのに遅くなったルールは退行なので、<a href="https://github.com/SureA11y/core/issues">報告</a>してください。
 				</p>
+				<p>
+					複数のプロファイルでの同時のスキャン（<code>profile: ['wcag22-aa', 'wai-aria-1.2']</code>）は、プロファイルごとに1回ページをスキャンするので、その回数分のスキャンとほぼ同じ時間がかかります。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="profile-not-run">
+					「プロファイルが実行されなかった」、または<code>engine.profilesNotRun</code>が空でない
+				</h2>
+				<p>
+					複数のプロファイルでのスキャンでは、実行できなかったプロファイルが理由とともに<code>engine.profilesNotRun</code>に列挙され、ほかのプロファイルは引き続き実行されます。理由は、<code>unknown-profile</code>（そのようなプロファイルがない。パックのプロファイルには、そのパックを<code>packs</code>に渡す必要があります）、<code>pack-skipped</code>（そのパックが実行されなかった。<a href="#pack-did-not-run">後述の項目</a>を参照）、<code>overridden-by-selection</code>（<code>runOnly</code>の含める指定、または<code>engineOptions</code>のルールIDやタグが、すべてのプロファイルについて代わりにルールを選んだ）のいずれかです。そうしたスキャンは求められたより少なく判定したことになるので、SARIFとJUnitは<code>allowProfilesNotRun: true</code>を指定しない限りエラーを報告し、CLIは<code>--allow-profiles-not-run</code>を付けない限り終了コード<code>2</code>で終了し、バインディングは<code>'profile-not-run'</code>のスキャンギャップを報告し、test-matchersはアサーションを失敗させます。<a href="/configuration/engine-options/#several-profiles">エンジンオプション</a>を参照してください。
+				</p>
 			</article>
 
 			<article>
@@ -253,6 +248,15 @@ export function FaqContent() {
 					の<span lang="en">Pattern 2</span>を参照）で実行してください。
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>
 					も参照してください。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="framed-page-rules">
+					「フレームの中で、タイトル、言語、ランドマークのルールが<code>notApplicable</code>になる」
+				</h2>
+				<p>
+					1.15以降、フレーム内に表示された文書はそれ自体で1つのページではありません。その中では、<code>page-title-present</code>、<code>page-title-patterns</code>、<code>html-lang-attr-present</code>、<code>meta-viewport-zoom-enabled</code>、<code>meta-viewport-large</code>、<code>region</code>、<code>bypass-blocks-present</code>、<code>landmark-one-main</code>、<code>page-has-heading-one</code>が<code>notApplicable</code>になります。人々が使うタイトル、言語、ランドマークを持つのはフレームを囲むページであり、ブラウザーはフレーム内の文書のビューポートの<code>&lt;meta&gt;</code>を無視するからです。テスト対象のページを自身のフレームの中に表示するテストランナーは、<code>engineOptions.topLevelDocument: true</code>を設定します。<a href="/getting-started/cypress/">@surea11y/cypress</a> 1.6.0は自動で設定します。<a href="/configuration/engine-options/">エンジンオプション</a>を参照してください。
 				</p>
 			</article>
 
@@ -361,7 +365,7 @@ export function FaqContent() {
 					</strong>
 					ページの一部に絞ったスキャン、一部のルールに限ったスキャン、jsdomで実行したスキャンは、チェックできる範囲が狭くなります。WCAGのかなりの部分は、人の判断（正確な代替テキスト、理解しやすいエラーメッセージ）や、このエンジンの設計ではまったく行えない動的なテスト（キーボードトラップ、ズーム時のリフロー）を必要とします。明示的な、意図的に網羅を目指していない一覧は
 					<a href="/help/known-limitations/"><code>LIMITATIONS.md</code></a>
-					を参照してください。
+					を参照してください。残りは人が確認するもので、その方法はコアの<a href="/conformance/procedures/">テスト手順</a>が達成基準ごとに示しています。
 				</p>
 			</article>
 
@@ -417,7 +421,7 @@ export function FaqContent() {
 			<article>
 				<h2 id="baseline-after-upgrade">「アップグレード後、ベースラインが既知の検出結果を新規として、そのエントリーをstaleとして報告する」</h2>
 				<p>
-					検出結果の識別子には理由コードが含まれます。1.14では、理由コードを付けていなかった17のルールにコードが付き、いくつかのコードが原因ごとに分割されました。1.13で書いたベースラインは、<code>src/baseline-moves.json</code>によって、1.14.xでも引き続きそれらの検出結果と一致します。アップグレードで判定結果が変わった検出結果は、それでも新規になったり消えたりします。その理由は変更履歴に書かれています。1.15より前に、<code>@surea11y/core/baseline</code>の<code>migrateBaselineEntries</code>でファイルのコードを書き換えるか、ベースラインを再生成して差分を確認してください。<a href="/conformance/baseline/#upgrading">ベースライン／許可リスト</a>を参照してください。
+					検出結果の識別子には理由コードが含まれます。1.14では、理由コードを付けていなかった17のルールにコードが付き、いくつかのコードが原因ごとに分割されました。1.13で書いたベースラインは、<code>src/baseline-moves.json</code>によって、1.14.xでは引き続きそれらの検出結果と一致しますが、それらの移動を削除した1.15では一致しません。1.15では、古いコードのエントリーは古くなったものであり、その検出結果は新しいものになります。1.14.xのもとで<code>@surea11y/core/baseline</code>の<code>migrateBaselineEntries</code>でファイルのコードを書き換えてからアップグレードするか、1.15のもとでベースラインを再生成して差分を確認してください。1.15自体は理由コードを移動していないので、1.14で書いたベースラインは引き続き一致します。アップグレードで判定結果が変わった検出結果は、それでも新規になったり消えたりします。その理由は変更履歴に書かれています。<a href="/conformance/baseline/#upgrading">ベースライン／許可リスト</a>を参照してください。
 				</p>
 			</article>
 
@@ -425,6 +429,55 @@ export function FaqContent() {
 				<h2 id="stylesheets-not-readable">「<code>css-orientation-lock</code>が<code>STYLESHEETS_NOT_READABLE</code>で確認を求める」</h2>
 				<p>
 					ページのスクリプトは、別のオリジン（CDN、フォントサービス）が配信するスタイルシートを読めないため、CSSを読むルールはその内容がわかりません。そのテキストを<code>engineOptions.styleSheetTexts</code>でスキャンに渡してください。<code>preloadStyleSheets()</code>、またはブラウザーバンドルの<code>runa11yCoreInPageAsync</code>は、サーバーが共有しているものを取得します。ブラウザーを操作するツールなら、それ以外のものもページの外から取得できます。GitHub上の統合ガイド<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}><code>INTEGRATION.md</code></a>の「<span lang="en">Style sheets from another origin</span>」を参照してください。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="results-changed-1-14">「core 1.14にアップグレードしたら、結果が変わった」</h2>
+				<p>
+					1.14は、意図して<code>cantTell</code>を多く報告し、主張することを減らしています。パイプラインに表れやすい変更は次のとおりです。
+				</p>
+				<ul>
+					<li>
+						<strong>WCAGの集約は<code>pass</code>になりません。</strong>
+						達成基準が<code>pass</code>になるのは、その達成基準が求めることをすべてルールがチェックする場合だけで、完全にチェックできるものとして挙げられた達成基準はまだありません。そのため、ルールがすべて<code>pass</code>の達成基準は<code>cantTell</code>（<code>composite.rollup.cantTell.partialCheck</code>）になります。ルールが何も見つけなかった達成基準が<code>notApplicable</code>になるのは2.4.3、2.4.4、2.4.7、2.4.9、2.5.3、4.1.1だけで、それ以外は<code>cantTell</code>（<code>composite.rollup.cantTell.partialCoverage</code>）です。不合格のルールがあれば、その達成基準は引き続き不合格になります。満たされた達成基準を数えるダッシュボードやゲートには、1つも表示されません。<a href="#why-criterion-canttell">前述の項目</a>と<a href="/conformance/wcag-mapping/#when-a-criterion-passes">WCAG適合性との対応</a>を参照してください。
+					</li>
+					<li>
+						<strong>2つのルールが確認を求める範囲が広がります。</strong>
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a>は、汎用的なタイトルやテンプレートのタイトルだけでなく、すべてのページタイトルについて確認を求めます。タイトルがページを説明しているかどうかは人が判断することだからです（G88）。<a href="/rules/duplicate-id/"><code>duplicate-id</code></a>は、WCAG 2.0と2.1でも4.1.1について確認を求めます。2023年の正誤表が4.1.1を満たされているものとみなしているからです。ただし、<code>en301549-v3.2.1</code>のように<code>keepsParsing: true</code>を宣言したプロファイルは例外です。
+					</li>
+					<li>
+						<strong>11の新しいルール</strong>
+						が追加され、その中には3.3.1（<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>）、4.1.3（<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>）、1.4.5（<a href="/rules/image-of-text/"><code>image-of-text</code></a>）の最初のルールがあります。ほとんどは確認を求めるものですが、<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>、<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>、<a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a>は不合格を報告することがあります。属性間の制約（<code>aria-valuemax</code>を上回る<code>aria-valuemin</code>など）をチェックするようになった<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>も同様です。<a href="/rules/">ルールカタログ</a>を参照してください。
+					</li>
+					<li>
+						<strong>一部の不合格は確認に変わり、新しい不合格も出ます。</strong>
+						<code>td-has-header</code>は、見出しセルのない大きな表について、すべてのセルを不合格にする代わりに一度だけ確認を求めます。<code>form-control-single-label</code>は、ラベルが2つあるフィールドについて確認を求めます。コントラストは、ページが描画するもののより多くの部分で計測されるようになった（各配色でのページのキャンバス上のテキスト、<code>::first-line</code>、<code>font-size-adjust</code>、ページが色を選んだプレースホルダー）ため、新たにコントラストの不合格が出ることがあります。
+					</li>
+					<li>
+						<strong>一部の検出結果に新しい理由コードが付きます。</strong>
+						理由コードを付けていなかった17のルールが付けるようになり、いくつかのコードは原因ごとに分割されました。1.13で書いたベースラインは1.15まで引き続き一致します。<code>migrateBaselineEntries</code>で書き換えてください（<a href="#baseline-after-upgrade">前述の項目</a>を参照）。そうした検出結果のCode Scanningのアラートは、いったん閉じて新しいものとして再び表示されます。
+					</li>
+					<li>
+						<strong>すべての<code>cantTell</code>に、答え方が示されます。</strong>
+						coreのルールの検出結果には<code>howToCheck</code>の手順が付き、一部にはページの手がかりがどちらを示しているかを表す<code>lean</code>が付きます。判定結果は<code>cantTell</code>のままで、指定しない限り（<code>leanFailAs</code>）<code>lean</code>でビルドが止まることはありません。<a href="/results-reports/html-report/">HTMLレポート</a>は、これらの検出結果を、不適合の可能性が高いもの、適合の可能性が高いもの、人による確認が必要なものに分けて表示します。<a href="/results-reports/output-schema/#leans">出力スキーマ</a>を参照してください。
+					</li>
+					<li>
+						<strong>1.14.1では、テキストの間隔による不合格が減ります。</strong>
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>
+						は、ページが失っていないテキストを不合格にしなくなりました。同意バナーの裏でよくあるように<code>{"body { position: fixed }"}</code>でスクロールを固定したページと、ビューポートより高い固定ボックスは、<code>VIEWPORT_SCROLL_LOCKED</code>として確認を求めます。Angular Materialのフィールドのフローティングラベルのように、ページのスクリプトがテキストに合わせて大きさを決めるボックスで切れたテキストは、<code>TEXT_CLIPPED_SCRIPT_SIZED</code>として確認を求めます。それらのベースラインの項目やCode Scanningのアラートは、修正されたバグと同じように閉じます。また、36の質問の手順は、不合格につながる前に、ページ上の別の方法で同じことができるかどうかも確認するようになりました。
+					</li>
+					<li>
+						<strong>1.14.2では、ブラウザーが描画するとおりにページを読み取ります。</strong>
+						ブラウザーが<code>content-visibility: auto</code>で画面外のレイアウトを省略する内容は、実際にレイアウトされた状態で計測されます。そのため、カードが並ぶページで出ていた誤った重なり、背景についての質問、到達できないフォーカスやターゲットサイズの検出結果はなくなり、
+						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>
+						は、そうした要素が切り取るテキストを不合格にするようになりました（<code>details.clippedBy</code>）。
+						<a href="/rules/label-in-name/"><code>label-in-name</code></a>
+						は、接したボックスにまたがっているだけのラベルを不合格にしなくなり、スタイルシートを読むルールは、印刷専用やサポートされていないCSSと、要素に届かないルールを読み飛ばします。報告されなくなった検出結果のベースラインの項目やCode Scanningのアラートは、修正されたバグと同じように閉じます。
+					</li>
+				</ul>
+				<p>
+					変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
 				</p>
 			</article>
 		</>

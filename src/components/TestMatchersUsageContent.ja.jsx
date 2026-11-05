@@ -364,6 +364,17 @@ export function TestMatchersUsageContent() {
 				<code>skippedPacks</code>
 				に列挙され、パックのルールが一度も実行されないまま合格するのではなく、アサーションが失敗します。
 			</p>
+			<p id="several-profiles">
+				<code>@surea11y/core</code> 1.15とtest-matchers 1.5.0では、<code>profile</code>はリストも受け取り、コンポーネントを<a href="/configuration/engine-options/#several-profiles">複数のプロファイルで同時に</a>、たとえばWCAGのプロファイルと並べてパックのプロファイルで判定できます。各プロファイルは単独で使ったときと同じように判定し、どれかのプロファイルで不合格になればアサーションは失敗します。リスト内のプロファイルが実行されなかった場合も、スキャンが求められたより少なく判定したことになるので失敗します。スキャンが適用しなかった単一のプロファイルも同様で、その場合はコアのデフォルトのルールでスキャンします。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"expect(container).toHaveNoA11yViolations({ packs: [waiAria], profile: ['wcag22-aa', 'wai-aria-1.2'] });",
+				]}
+			/>
 
 			<h2>API</h2>
 			<DataTable
@@ -436,7 +447,9 @@ export function TestMatchersUsageContent() {
 				<code>skippedCustomRules</code>
 				に列挙されます）、実行されなかったパック（
 				<code>skippedPacks</code>
-				に列挙されます）が該当します。メッセージはそれぞれを理由とともに示します。テスト自身が除外したカスタムルールは抜け漏れではないので、テストは失敗しません。
+				に列挙されます）、実行されなかったプロファイル（
+				<code>engine.profilesNotRun</code>
+				に列挙されるもの、またはスキャンが適用しなかった単一のプロファイル）が該当します。メッセージはそれぞれを理由とともに示します。テスト自身が除外したカスタムルールは抜け漏れではないので、テストは失敗しません。
 			</p>
 			<p>
 				<strong>選択を指定しない呼び出しでは、ベストプラクティスのルールも実行されます</strong>
@@ -447,6 +460,10 @@ export function TestMatchersUsageContent() {
 				は、アクセシブルな名前のない見出しについて、以前のように問いかけるのではなく不合格にします。そのため、
 				<code>&lt;h2&gt;&lt;/h2&gt;</code>
 				を描画するコンポーネント（テストでタイトルのpropが空になっていることがよくあります）は、オプションなしの呼び出しで失敗します。スクリーンリーダーは中身のない見出しとして読み上げるので、テストに実際の内容を与えるか、コンポーネントを修正してください。ベストプラクティスを含まないWCAGの目標を指定した呼び出しでは、このルールは実行されません。
+			</p>
+			<p>
+				<strong><code>@surea11y/core</code> 1.15から、WCAGの不合格になるのは、WCAG自体が不合格とする場合だけです。</strong>
+				WAI-ARIAやHTMLのコンテンツモデルだけが破られている場合（ロールがサポートしない属性、名前のないgridやdialog、リスト内の見出し）、ARIAとHTMLの構造のルールは不合格にせずに問いかける（<code>cantTell</code>、不確実性<code>spec-only</code>）ので、そうした検出結果でアサーションが失敗することはなくなりました。失敗のメッセージはそれを問いとともに一覧にし、理由コードもそのまま保たれます。WAI-ARIAに基づいて不合格にするには、<a href="/configuration/packs/#wai-aria-pack">WAI-ARIAのパック</a>のプロファイルを追加してください。
 			</p>
 			<p>
 				スキャン自体が例外を投げることもあり、その場合テストはエンジンのエラーで失敗します。エラーは
@@ -736,7 +753,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -766,9 +783,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.14.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0,and this is core 1.15.0.",
 					"",
-					"Scanned with @surea11y/core 1.14.2.",
+					"Scanned with @surea11y/core 1.15.0.",
 				]}
 			/>
 

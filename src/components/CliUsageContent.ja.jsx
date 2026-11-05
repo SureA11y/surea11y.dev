@@ -31,7 +31,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.14.2",
+					"  engine: @surea11y/core 1.15.0",
 					"  pass: 16   fail: 4   cantTell: 4   notApplicable: 121",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 4",
@@ -304,7 +304,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.14.2",
+					"  engine: @surea11y/core 1.15.0",
 					"  WCAG level reported: AA",
 					"  pass: 1   fail: 0   cantTell: 0   notApplicable: 0",
 					"",
@@ -371,6 +371,19 @@ export function CliUsageContent() {
 				で終了します。そのため、パックのチェックが実行されないままスキャンが合格することはありません。
 			</p>
 
+			<h2 id="several-profiles">複数のプロファイル</h2>
+			<p>
+				<code>--profile</code>は複数回指定でき、各ページを複数のプロファイルで同時に判定できます。WCAGのプロファイルと並べてパックのプロファイルを、あるいは別のパックのプロファイルを使えます（<code>@surea11y/cli</code> 1.5.0、core 1.15.0以降）。
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan ./dist/index.html --pack @surea11y/pack-wai-aria --profile wcag22-aa --profile wai-aria-1.2", command: true },
+				]}
+			/>
+			<p>
+				各プロファイルは単独で使ったときと同じようにページを判定し、結果はすべてのルールを持つ1つのプロファイルのように読めます。ルールの判定結果はそのプロファイルが与える最も悪いものなので、どれかのプロファイルで不合格になれば終了コードは<code>1</code>になり、<code>--json</code>では各検出結果の<code>verdicts</code>が、それぞれのプロファイルがその検出結果をどう判定するかを示します（<a href="/results-reports/output-schema/#several-profiles">出力スキーマ</a>を参照）。概要はそれらを列挙し（<code>profiles: wcag22-aa, wai-aria-1.2</code>）、<code>--html</code>はそれぞれの名前を挙げて検出結果に対する各プロファイルの判定を示し、<code>--sarif</code>と<code>--junit</code>は最も悪い判定結果でゲートします。実行されなかったプロファイルは理由とともに列挙され、終了コード<code>2</code>で終了します。<code>--allow-profiles-not-run</code>を付けると警告になりますが、エンジンがパックをスキップしたプロファイルは例外です。スキップされたパック自体が終了コード<code>2</code>になるからです。
+			</p>
+
 			<h2 id="failing-only-on-serious-problems">重大な問題でだけ失敗させる</h2>
 			<p>
 				<code>--fail-on-severity</code>
@@ -417,6 +430,62 @@ export function CliUsageContent() {
 				]}
 			/>
 
+			<h2 id="manual-checks">手動のチェック</h2>
+			<p>
+				スキャンが判定するのは、ルールが判定できるものです。<code>--manual-checks &lt;path&gt;</code>は、その横に残りを書き出します。どのルールも完全には判定しないチェックを人が手作業で行うためのワークシートで、各チェックの手順、何が合格で何が不合格か、記録する結果とメモの欄があります（コアの<a href="/conformance/procedures/">テスト手順</a>）。レポートの最後に「人による確認が残っているもの」が付くようになった<code>--html</code>と組み合わせれば、チームは1回の実行で評価の両方の半分を手にできます。
+			</p>
+			<CodeBlock
+				lines={[
+					{ text: "surea11y scan https://example.com/ --wcag 2.2 --html report.html --manual-checks manual-checks.html", command: true },
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>どの規格についてか：</strong>
+					スキャンした規格です。パックのプロファイルは、パックが手順を提供する場合、その規格とバージョンを、その規格自身の番号で示します。それ以外はWCAGで、<code>--wcag</code>と<code>--wcag-level</code>、または<code>--profile</code>の目標のバージョンとレベル、デフォルトではWCAG 2.2のAとAAです。<code>--profile</code>を複数指定した場合は、規格とバージョンごとに1つのワークシートになります。
+				</li>
+				<li>
+					<strong>どの言語でか：</strong>
+					<code>--locale</code>の言語です。<code>.md</code>で終わるパスを指定すると、代わりにMarkdownで、チェックごとに1つのタスク項目を書き出します。
+				</li>
+				<li>
+					<strong>複数のページ：</strong>
+					ページごとに1つのワークシートを、<code>--html</code>と同じように番号を付け、それぞれにそのページのタイトルを付けて書き出すので、ページごとの結果が混ざりません。
+				</li>
+			</ul>
+			<p>
+				終了コードは変わりません。ワークシートをディスクから開き、各結果とメモを記録して、チェックから集約した各達成基準の結果を含むJSON、またはCSVとしてダウンロードします。
+			</p>
+
+			<h2 id="procedures">スキャンなしの手順</h2>
+			<p>
+				<code>surea11y procedures</code>は、スキャンなしで、規格の各要件を人が手作業でどう評価するかを書き出します。読むためのリファレンス、または順に進めるためのワークシート（<code>--checklist</code>）で、HTML、Markdown、JSONの形式で出力できます。
+			</p>
+			<CodeBlock
+				lines={[
+					"# How to assess every WCAG 2.2 A and AA criterion, as a page",
+					{ text: "surea11y procedures --wcag 2.2 --wcag-level AA -o wcag-22-aa.html", command: true },
+					"",
+					"# A worksheet for a manual audit, titled for it",
+					{ text: 'surea11y procedures --wcag-level AA --checklist --title "Audit: example.com" -o audit.html', command: true },
+					"",
+					"# Only what no rule decides in full, as Markdown for a repository",
+					{ text: "surea11y procedures --wcag-level AA --automation manual,partial -o left-to-a-person.md", command: true },
+					"",
+					"# What needs a screen reader, for a session with a person who uses one",
+					{ text: "surea11y procedures --wcag-level AA --tools screen-reader -o screen-reader-session.html", command: true },
+					"",
+					"# One criterion, in French, with the steps a scan's questions give",
+					{ text: "surea11y procedures 1.4.12 --locale fr --variants -o 1.4.12.html", command: true },
+					"",
+					"# A pack's standard, under its own numbers",
+					{ text: "surea11y procedures --pack @surea11y/pack-en301549 --profile en301549-v4.1.1 --checklist -o en-301-549.html", command: true },
+				]}
+			/>
+			<p>
+				<code>--standard</code>と<code>--standard-version</code>はパックの規格をキーとバージョンで指定し、<code>--rules</code>は一部のルールが検査するものだけを残し、<code>--no-record</code>は記録欄のないワークシートを、<code>--json</code>はページの代わりにデータを出力します。スキャンのオプションはここでは使い方の誤りになります。それらは<code>scan</code>のオプションだからです。すべてのフラグについては、GitHub上の<a href={`${cliDocs}#procedures-how-to-assess-by-hand`}>CLIリファレンス</a>を参照してください。
+			</p>
+
 			<h2 id="compact-results">コンパクトな結果</h2>
 			<p>
 				<code>--compact</code>
@@ -462,9 +531,9 @@ export function CliUsageContent() {
 				<code>--context</code>
 				のセレクター、実行されなかったカスタムルールやパック、適用されなかった
 				<code>--profile</code>
-				がこれに当たります。core 1.13で書き出したベースラインは、1.14が原因ごとに分けた理由コードの検出結果にも引き続き一致します。
+				（複数指定した場合は、<code>--allow-profiles-not-run</code>を付けない限り、実行されなかったプロファイル）がこれに当たります。1つ前のマイナーリリースで書き出したベースラインは、その後に理由コードが移動した検出結果にも引き続き一致します。
 				<code>--migrate-baseline baseline.json</code>
-				で新しいコードに書き直せます。
+				で新しいコードに書き直せます（<a href="/conformance/baseline/#upgrading">アップグレード</a>を参照）。
 			</p>
 			<p>
 				<code>--browser</code>
