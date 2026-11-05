@@ -4,6 +4,26 @@ import { DataTable } from "./design-system/data/DataTable.jsx";
 
 const core = "https://github.com/SureA11y/core/blob/main";
 const pack = "https://github.com/SureA11y/pack-en301549#readme";
+const ariaPack = "https://github.com/SureA11y/pack-wai-aria";
+const aria = "https://www.w3.org/TR/wai-aria-1.2/";
+
+const ariaRequirementRows = [
+	{ id: "name-required", req: <code>name-required</code>, title: <a href={`${aria}#namecalculation`}>アクセシブルな名前を必要とするロールが名前を持つ</a> },
+	{ id: "roles", req: <code>roles</code>, title: <a href={`${aria}#roles`}>ロールが具象で、現行のものである</a> },
+	{ id: "required-states", req: <code>required-states</code>, title: <a href={`${aria}#requiredState`}>必須の状態とプロパティがある</a> },
+	{ id: "supported-attributes", req: <code>supported-attributes</code>, title: <a href={`${aria}#supportedState`}>状態とプロパティがロールでサポートされている</a> },
+	{ id: "prohibited-attributes", req: <code>prohibited-attributes</code>, title: <a href={`${aria}#prohibitedattributes`}>禁止された状態とプロパティがない</a> },
+	{ id: "attribute-values", req: <code>attribute-values</code>, title: <a href={`${aria}#propcharacteristic_value`}>状態とプロパティが妥当な値を持つ</a> },
+	{ id: "owned-elements", req: <code>owned-elements</code>, title: <a href={`${aria}#mustContain`}>コンテナーが、そのロールが必要とする要素を、それぞれ1つの所有者のもとで所有する</a> },
+	{ id: "context-roles", req: <code>context-roles</code>, title: <a href={`${aria}#scope`}>要素が、そのロールが必要とするコンテキストの中にある</a> },
+];
+
+const procedureFormRows = [
+	{ id: "restates", form: <code>{"{ wcag: '1.1.1' }"}</code>, means: "WCAGの達成基準を再掲し、その達成基準のファセット、ルール、テスト手順を、コアが持つすべての言語でそのまま使います。" },
+	{ id: "replace", form: <code>{"{ wcag: '1.4.3', replace: { <facet>: { … } } }"}</code>, means: "達成基準を再掲しますが、その一部を独自の方法でテストします。名前を挙げたファセットは、コアの手順の代わりにその規格の手順を示します。" },
+	{ id: "own", form: <code>{"{ facets: [ … ] }"}</code>, means: "規格独自の要件です。人が確認するテストの目的を、それぞれの手順とともに持ちます。" },
+	{ id: "note", form: <code>{"{ note: '…' }"}</code>, means: "評価するものがありません。たとえば、ある版で空になった条項です。注記とともに列挙されるので、それを探す人は理由を知ることができます。" },
+];
 
 // The example pack each binding ships as examples/acme-policy-pack.js.
 const examplePack = [
@@ -84,7 +104,8 @@ const fileRows = [
 	{ id: "examples", file: <code>docs/RULE_EXAMPLES.md</code>, what: "各ルールの判定結果の例です。" },
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "ルールに対するコアのlintルールです。" },
 	{ id: "standard", file: <><code>requirements.js</code>、<code>rule-map.js</code></>, what: "規格の場合のみ：要件と、それぞれを検査するルールです。" },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>で、<code>@surea11y/core</code>を、それを書き出したバージョン（<code>^1.14.2</code>）でpeer依存関係に、eslint、jsdom、Playwrightを開発用の依存関係に持ちます。</> },
+	{ id: "procedures", file: <><code>procedures.js</code>、<code>tests/procedures.test.js</code></>, what: "規格の場合のみ：人が各要件を手作業でどう評価するかと、すべての要件がその各ファセットについて手順を持つことを確かめるテストです。" },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>で、<code>@surea11y/core</code>を、それを書き出したバージョン（<code>^1.15.0</code>）でpeer依存関係に、eslint、jsdom、Playwrightを開発用の依存関係に持ちます。</> },
 	{ id: "readme", file: <><code>README.md</code>、<code>.gitignore</code></>, what: "これらのファイルについてのパック自身のガイドと、gitが対象外にするものです。" },
 ];
 
@@ -102,7 +123,7 @@ export function PacksContent() {
 	return (
 		<>
 			<p>
-				<strong>パック</strong>は、ルール、コアのルールのバリアント、規格やチェックリストと、それらのプロファイルやメッセージを、コアをフォークもビルドもせずに、それ自身のパッケージとして<code>@surea11y/core</code>に提供します。RGAAのような国の規格もパックにでき、組織のアクセシビリティ方針もパックにできます。スキャンは<code>engineOptions.packs</code>でパックを受け取り、コア自身のルールや規格と同じように実行します。Nodeでもブラウザーでも、CLI、バインディング、test-matchersのどこからでも動作し、結果、集約、レポートの項目はコアのものと同じ形式になります。パックには<code>@surea11y/core</code> 1.11.1以降が必要です。
+				<strong>パック</strong>は、ルール、コアのルールのバリアント、規格やチェックリストと、それらのプロファイルやメッセージを、コアをフォークもビルドもせずに、それ自身のパッケージとして<code>@surea11y/core</code>に提供します。RGAAのような国の規格もパックにでき、組織のアクセシビリティ方針もパックにできます。スキャンは<code>engineOptions.packs</code>でパックを受け取り、コア自身のルールや規格と同じように実行します。Nodeでもブラウザーでも、CLI、バインディング、test-matchersのどこからでも動作し、結果、集約、レポートの項目はコアのものと同じ形式になります。パックには<code>@surea11y/core</code> 1.11.1以降が必要です。SureA11yファミリーの規格パックで、すぐにインストールできるものが2つあります。<a href="#en-301-549-pack">EN 301 549</a>と<a href="#wai-aria-pack">WAI-ARIA 1.2</a>です。
 			</p>
 
 			<h2 id="which-kind-of-pack">パックの種類</h2>
@@ -127,6 +148,9 @@ export function PacksContent() {
 			<p>
 				core 1.14.0に合わせた1.1.0では、各条項を、それが再掲するWCAGの達成基準をコアが判定するのと同じように判定します。そのため、まだ合格する条項はありません。ルールがすべて合格した条項は、残りを人が確認するよう、その達成基準と同じく<code>cantTell</code>になります（<a href="/conformance/wcag-mapping/">WCAG適合性との対応</a>を参照）。<code>en301549-v3.2.1</code>プロファイルは4.1.1「構文解析」を維持するため、そこでは重複したidは引き続き9.4.1.1を不合格にします。また、9.1.4.5、9.3.3.1、9.4.1.3に最初のルールが加わりました（<code>image-of-text</code>、<code>invalid-field-error-message</code>、<code>live-region-announcements</code>）。core 1.13では、1.0系と同じように動作します。
 			</p>
+			<p>
+				core 1.15.0以降と組み合わせた1.2.0では、人が各条項を手作業でどう確認するかも示します。コアのルールが評価する場合は、それが再掲するWCAGの達成基準の<a href="/conformance/procedures/">テスト手順</a>を、その条項として読み替えたもの（「which fails EN 301 549 9.1.4.3」）です。条項は規格自身の順に、第9章の原則とガイドラインのもとに並び、規格はフランス語、ドイツ語、スペイン語、日本語に翻訳されているので、テスト手順の一覧やワークシート、スキャンの条項のタイトルは、最初から最後までそれらの言語で読めます。パックが扱うのは第9章だけです。規格のほかの要件（第4章の機能的パフォーマンスの記述、第12章、Webページではないものの章）については、ルールも結果も手順もありません。
+			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -142,6 +166,65 @@ export function PacksContent() {
 			</p>
 			<p>
 				コアは1.13.0までEN 301 549を内蔵していましたが、1.13.0でこのパックに置き換える形で非推奨にしました（<a href="/conformance/wcag-mapping/#en-301-549">WCAG適合性との対応</a>を参照）。ほかのプロファイルと同じく、パックのプロファイルが決めるのは何を実行するかです。適合を表明するには、引き続き人がすべての条項を確認する必要があります。
+			</p>
+
+			<h2 id="wai-aria-pack">WAI-ARIAのパック</h2>
+			<p>
+				<a href={ariaPack}><code>@surea11y/pack-wai-aria</code></a>は、WAI-ARIA 1.2を規格として扱います。ルールが確認できる作成者要件ごとに結果を1つ、コアのARIAのルールをWAI-ARIA自身の文言で判定して報告します。そのプロファイル<code>wai-aria-1.2</code>は、コアのARIAのルールとパック独自のルールを実行し、それ以外は実行しません。<code>@surea11y/core</code> 1.15.0以降が必要です。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// npm install @surea11y/core @surea11y/pack-wai-aria",
+					"const waiAria = require('@surea11y/pack-wai-aria');",
+					"",
+					"runDomRulesInPage(url, null, { packs: [waiAria], profile: 'wai-aria-1.2' });",
+				]}
+			/>
+			<p>
+				<strong>なぜ独自の規格なのか。</strong>コアのARIAのルールはWCAGのルールであり、WCAGのスキャンは、それらが見つけたWAI-ARIAの違反をすべて、WCAGの不合格か、人への問いとして報告します。この2つは食い違うことがあります。名前のない<code>role="grid"</code>はWAI-ARIAの「<span lang="en">Accessible Name Required</span>」に確実に違反しますが、WCAG 4.1.2の不合格になるかどうかはページが示すものによるので、WCAGは問いかけます。core 1.15.0以降、WCAGのスキャンが不合格にするのはWCAG自体が不合格とする場合だけです（<a href="/help/faq/#results-changed-1-15">変更点</a>）。このパックは同じ検出結果をWAI-ARIAに基づいて読み、そこではgridは不合格になります。
+			</p>
+			<DataTable
+				label="パックにあるWAI-ARIA 1.2の要件"
+				rowKey="id"
+				columns={[
+					{ key: "req", label: "要件", width: "30%" },
+					{ key: "title", label: "タイトル", wrap: true },
+				]}
+				rows={ariaRequirementRows}
+			/>
+			<p>
+				それぞれが1つの結果<code>{"wai-aria-1.2-<requirement>"}</code>になります。WAI-ARIAが、作成者がしなければならない（MUST）、またはしてはならない（MUST NOT）と定めることをルールが見つけた場合は<code>fail</code>、それ以外は<code>cantTell</code>です。WAI-ARIAが推奨しないだけのもの（SHOULD、「<span lang="en">not recommended</span>」）の検出結果や、検出結果がまったくない場合がこれに当たります。ルールが確認するのはマークアップが示すものであり、要件がカバーするすべて（スクリプトが変えるもの、ブラウザーが計算するもの）ではないからです。ルールだけで要件が合格になることはありません。パックはコアのルールに加えて、もっともらしいWCAGへの影響がないためにコアのどのルールも確認しない要件のための独自のルールを11個持っています。スクロールバーの<code>aria-controls</code>、フィードの記事、キャプションのコンテキスト、コンボボックスのポップアップ、スピンボタンが所有する要素、表のインデックス、<code>aria-setsize</code>、<code>aria-keyshortcuts</code>、ツールバーの名前、プレゼンテーション用の要素、そして<code>wai-aria-role-name-present</code>です。最後のものはコアの<code>aria-role-name-present</code>のバリアントで、WAI-ARIAが名前を必要とするすべてのロール（コアのものに加えて、application、marquee、table、tabpanel、treegrid）をカバーします。パック独自のテキストは英語です。
+			</p>
+			<p>
+				<strong>WCAGや別の規格と一緒に。</strong>1回のスキャンで、WAI-ARIAとWCAGで同時にページを判定することも（<a href="#with-other-profiles">後述</a>）、両方のパックを使ってEN 301 549とWAI-ARIAで判定することもできます。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = runDomRulesInPage(url, null, {",
+					"  packs: [waiAria],",
+					"  profile: ['wcag22-aa', 'wai-aria-1.2']",
+					"});",
+					"",
+					"// <div role=\"group\" aria-checked=\"true\">: an attribute the role doesn't",
+					"// support, a question for WCAG 4.1.2 and a failure of WAI-ARIA.",
+					"const check = result.checksResults.find((c) => c.ruleId === 'aria-allowed-attr');",
+					"check.verdicts;     // { 'wcag22-aa': 'cantTell', 'wai-aria-1.2': 'fail' }",
+					"check.outcome;      // 'fail', the worst of them, which SARIF and JUnit gate on",
+					"check.checkOutcome; // 'cantTell', the rule's own, which WCAG's criteria read",
+					"",
+					"result.profiles['wai-aria-1.2'].rulesResults; // this standard's results, by id",
+				]}
+			/>
+			<p>
+				両方のプロファイルが実行するルールは、それぞれから判定を受ける1つのチェックです。名前は例外です。<code>wai-aria-1.2</code>のもとではパックのバリアントで確認されるので、名前のない<code>role="grid"</code>は2つのチェックになります。コアの<code>aria-role-name-present</code>（<code>{"{ 'wcag22-aa': 'cantTell' }"}</code>）とバリアント（<code>{"{ 'wai-aria-1.2': 'fail' }"}</code>）です。
+			</p>
+			<p>
+				<strong>人が問いにどう答えるか。</strong><code>wai-aria-1.2</code>のもとでは、この規格が問いにするコアの問いの手順はWAI-ARIAの言葉で書かれ、検出結果が見つけたものを名指しします（「<span lang="en">When the page was scanned, the element it controls had role dialog</span>」）。WCAGのプロファイルも実行するスキャンでは、WCAGの達成基準を名指しするコアの手順のままです。<code>{"proceduresFor('name-required', { packs: [waiAria], standard: 'wai-aria' })"}</code>は各要件のチェックリストを返し、妥当なロール、状態、値を、勧告の表からすべて列挙します。パックの<code>docs/COVERAGE.md</code>は、ルールがマークアップから確認できるWAI-ARIA 1.2のすべての作成者要件を、ロール、状態、プロパティごとに1つのケースとして挙げ、それぞれをプロファイルがどう判定するかを示します。
+			</p>
+			<p>
+				WCAGが問いかけるところで確信を持つ規格の実例でもあります。<code>rule-map.js</code>は、コアの各ARIAのルールについて、各理由コードがWAI-ARIAのもとで何を意味するかを列挙し、MUSTには<code>outcome: 'fail'</code>を付けています（<a href="#sending-findings-to-requirements">検出結果を要件に振り分ける</a>を参照）。
 			</p>
 
 			<h2 id="using-a-pack">パックを使う</h2>
@@ -262,6 +345,25 @@ export function PacksContent() {
 				別のコアのバンドルを持つページはパックをスキップし、<code>skippedPacks</code>が2つのバージョンを示します。そのため、そのファイルはコアかパックのリリースごとに作り直してください。
 			</p>
 
+			<h3 id="with-other-profiles">ほかのプロファイルと並べて</h3>
+			<p>
+				パックのプロファイルは、1回のスキャンでWCAGのプロファイルや別のパックのプロファイルと並べて実行できます。core 1.15.0以降、<code>profile</code>はリストを受け取り、各プロファイルは単独で使ったときと同じようにページを判定します（<a href="/configuration/engine-options/#several-profiles">エンジンオプション</a>を参照）。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = runDomRulesInPage(url, null, {",
+					"  packs: [acmePolicy, en301549],",
+					"  profile: ['acme-web-2026', 'en301549-v4.1.1']",
+					"});",
+					"result.engine.profiles; // ['acme-web-2026', 'en301549-v4.1.1']",
+					"result.profiles['acme-web-2026'].rulesResults; // the policy's items, by id",
+				]}
+			/>
+			<p>
+				WCAGが問いかけるところで規格が確信を持つ検出結果（そのルールの対応表で<code>outcome: 'fail'</code>）はスキャンを不合格にし、その<code>verdicts</code>はそれぞれのプロファイルがその検出結果をどう判定するかを示します。パックがスキップされたプロファイルは<code>engine.profilesNotRun</code>に列挙され、ほかのプロファイルは引き続き実行されます。リストは、バインディングでは<code>.options({"{ profile }"})</code>で、test-matchersではそのオプションで、CLIでは<code>--profile</code>の繰り返しで指定します。
+			</p>
+
 			<h2 id="what-a-scan-reports">スキャンが報告するもの</h2>
 			<ul>
 				<li>
@@ -275,6 +377,12 @@ export function PacksContent() {
 				</li>
 				<li>
 					プロファイルの<code>severity</code>は、それが変更する結果に表示され、ルール自身の重大度は<code>ruleSeverity</code>として保持されます。
+				</li>
+				<li>
+					複数のプロファイルでのスキャンでは、<code>engine.profiles</code>が実行されたプロファイルを列挙し、<code>profiles[id]</code>がそれぞれの集約を持ち、各検出結果の<code>verdicts</code>がそれぞれのプロファイルがその検出結果をどう判定するかを示します（<a href="/results-reports/output-schema/#several-profiles">出力スキーマ</a>）。
+				</li>
+				<li>
+					HTMLレポートの「人による確認が残っているもの」は、スキャンがそのプロファイルを実行し、規格が<a href="#procedures">テスト手順</a>を提供する場合、パックの規格に、その規格自身の番号で従います。
 				</li>
 			</ul>
 
@@ -347,7 +455,7 @@ export function PacksContent() {
 					<strong>名前空間</strong>（<code>namespace: 'acme'</code>）は、パックのIDをコアやほかのパックのIDと区別します。すべてのルール、集約、プロファイルのIDは、名前空間と<code>-</code>で始まります。コアのルールIDの接頭辞になる名前（<code>img-alt-present</code>に対する<code>img</code>のように、<code>img</code>、<code>aria</code>、<code>link</code>）や、<code>wcag</code>で始まる名前は使えず、1つのスキャンにある2つのパックが同じ名前空間を持つことはできません。名前空間は、パック自身のルールをオプトインにするタグでもあります。このタグを持つルールは、パックのいずれかのプロファイルのもとか、IDか、タグ（<code>optInRules: ['acme']</code>）で選択されたときだけ実行されます。そのため、デフォルトでは、WCAGを対象とするスキャンでは実行されません。<code>optInRules</code>でこのタグを有効にしても、スキャンのプロファイルやフィルターはなくなりません。WCAGのプロファイルのもとでは、有効にしたルールは、そのタグがプロファイルにも一致するときだけ実行されます。パックを使うすべてのスキャンで実行すべきルールには、このタグを付けないでください。そうすると、そのルールはコアのルールと同じように選択され、タグが一致すれば、WCAGを対象とするスキャンでも実行されて不合格を報告することがあります。
 				</li>
 				<li>
-					<strong><code>core</code></strong>は、パックが動作するコアのバージョンの範囲（<code>'^1.11.1'</code>）で、npmと同じように範囲として読まれます。新しいパックは1.11.1から始めてください。1.11.0のパッケージには、Nodeでパックに必要なファイルが含まれていませんでした。範囲外のコアでのスキャンはパックをスキップし、理由を<code>skippedPacks</code>に示します。<code>surea11y-pack new</code>は、パックを生成したバージョン（<code>^1.14.2</code>）を書き出します。1.14で追加されたもの（<code>meta.review</code>、<code>reasonCodes</code>や<code>findings</code>の行、<code>meta.contributions</code>、<code>applicability</code>、<code>partial</code>、<code>keepsParsing</code>）をパックが使う場合は、1.14から始まる範囲のままにしてください。
+					<strong><code>core</code></strong>は、パックが動作するコアのバージョンの範囲（<code>'^1.11.1'</code>）で、npmと同じように範囲として読まれます。新しいパックは1.11.1から始めてください。1.11.0のパッケージには、Nodeでパックに必要なファイルが含まれていませんでした。範囲外のコアでのスキャンはパックをスキップし、理由を<code>skippedPacks</code>に示します。<code>surea11y-pack new</code>は、パックを生成したバージョン（<code>^1.15.0</code>）を書き出します。1.14で追加されたもの（<code>meta.review</code>、<code>reasonCodes</code>や<code>findings</code>の行、<code>meta.contributions</code>、<code>applicability</code>、<code>partial</code>、<code>keepsParsing</code>）をパックが使う場合は、1.14から始まる範囲のままにし、<code>outcome: 'fail'</code>を使う場合は1.15から始まる範囲にしてください。1.15が読むそのほかのもの（規格のテスト手順、グループ、翻訳、独自の確認手順）は、古いコアでは無視されます。
 				</li>
 				<li>
 					<strong><code>title</code></strong>は結果やレポートでのチェックリストの呼び名、<strong><code>description</code></strong>はパックが何をチェックするかを述べる1文で、利用者にパックを選ばせるツールのためのものです（<code>describePacks</code>がそれを返します）。
@@ -412,7 +520,7 @@ export function PacksContent() {
 
 			<h3 id="sending-findings-to-requirements">検出結果を要件に振り分ける</h3>
 			<p>
-				<code>rule-map.js</code>のルールの行は、<code>{"reasonCodes: { [code]: { requirements, outcome } }"}</code>で、ある理由コードの検出結果を別の要件に振り分けられます。<code>requirements</code>（デフォルトは行のもの）はその検出結果を数える要件で、<code>[]</code>ならどこにも数えません。<code>outcome: 'cantTell'</code>は、そこで不合格の検出結果を確認の問いにします。要件の集約は、その要件に数える検出結果でルールを判定するため、規格は、WCAGが不合格にする原因について確認を求めたり、2つの原因を2つのテストに振り分けたりできます。
+				<code>rule-map.js</code>のルールの行は、<code>{"reasonCodes: { [code]: { requirements, outcome } }"}</code>で、ある理由コードの検出結果を別の要件に振り分けられます。<code>requirements</code>（デフォルトは行のもの）はその検出結果を数える要件で、<code>[]</code>ならどこにも数えません。<code>outcome: 'cantTell'</code>は、そこで不合格の検出結果を確認の問いにし、<code>outcome: 'fail'</code>（core 1.15.0以降）は、そこで問いを不合格にします。要件の集約は、その要件に数える検出結果でルールを判定するため、規格は、WCAGが不合格にする原因について確認を求めたり、WCAGが問いかける原因について確信を持ったり、2つの原因を2つのテストに振り分けたりできます。
 			</p>
 			<CodeBlock
 				lang="js"
@@ -423,6 +531,21 @@ export function PacksContent() {
 					"}",
 				]}
 			/>
+			<p>
+				<code>outcome: 'fail'</code>は、WCAGが問いかけるところで確信を持つ規格のためのものです。名前のない<code>role="grid"</code>は、4.1.2がページの示すものによるWCAGにとっては<code>cantTell</code>ですが、<a href="#wai-aria-pack">WAI-ARIAのパック</a>が示すとおり、WAI-ARIAの「<span lang="en">Accessible Name Required</span>」には確実に違反します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"'aria-role-name-present': {",
+					"  requirements: ['name-required'],",
+					"  reasonCodes: { name_missing: { outcome: 'fail' } }",
+					"}",
+				]}
+			/>
+			<p>
+				これが不合格にするのは規格の要件だけです。チェック結果自身の判定結果と、すべてのWCAGの集約はそのままです。規格が確実に述べるコードだけを列挙してください。列挙しなかったコードは、ルール自身の判定結果で判定されます。独自の集約を書く規格は、<code>meta.contributions</code>で同じように<code>'fail'</code>の作用を使います。
+			</p>
 			<p>
 				行は、検出結果が記録している内容で振り分けることもできます。<code>{"findings: [{ when, requirements, outcome }]"}</code>の<code>when</code>は、検出結果の<code>data.details</code>のフィールドが等しくなければならない値を、ドット区切りのパスで示します。検出結果は、最初に一致したエントリーに従い、なければ理由コード、それもなければ行に従います。そのため、規格はあるルールの不合格を、理由コードが同じでも、テキストの大きさごとのテストに振り分けられます。
 			</p>
@@ -470,12 +593,91 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				<code>definePack</code>は形を確認します。理由コードごとに1〜6の手順と、空でない<code>passWhen</code>と<code>failWhen</code>が必要です。<code>meta.reasonCodes</code>で理由コードを宣言したルール（<code>['GENERIC_LINK_NAME']</code>）は、そこで宣言したか<code>runInPage</code>で使うコードにだけ手順を示せるため、書き間違えたコードは拒否されます。この確認のために宣言する価値があります。手順はスキャンのロケールにかかわらず英語で、ページには入りません。<code>engineOptions.packs</code>を指定した<code>runDomRulesInPage</code>は結果に手順を追加し、ページから得た結果には<code>{"addHowToCheck(result, { packs })"}</code>が追加します。バリアントはコアのルールの翻訳済みの手順を持つため、自分の手順は要りません。上書きは、カスタムルールと同じく手順を持ちません。core 1.14.0以降です。
+				<code>definePack</code>は形を確認します。理由コードごとに1〜6の手順と、空でない<code>passWhen</code>と<code>failWhen</code>が必要です。<code>meta.reasonCodes</code>で理由コードを宣言したルール（<code>['GENERIC_LINK_NAME']</code>）は、そこで宣言したか<code>runInPage</code>で使うコードにだけ手順を示せるため、書き間違えたコードは拒否されます。この確認のために宣言する価値があります。手順は英語で書き（パックの辞書で翻訳することもできます。後述）、ページには入りません。<code>engineOptions.packs</code>を指定した<code>runDomRulesInPage</code>は結果に手順を追加し、ページから得た結果には<code>{"addHowToCheck(result, { packs })"}</code>が追加します。バリアントはコアのルールの翻訳済みの手順を持つため、自分の手順は要りません。上書きは、カスタムルールと同じく手順を持ちません。core 1.14.0以降です。
+			</p>
+			<p>
+				core 1.15.0以降、パックの辞書はその手順を翻訳でき（<a href="#messages">後述</a>）、手順は検出結果が見つけたものを名指しできます。<code>{"{{role|none}}"}</code>は、検出結果の<code>i18n.params</code>または<code>data.details</code>にある<code>role</code>として読まれ、検出結果がないテスト手順のページでは<code>none</code>として読まれます。<code>definePack</code>は、テキストのないプレースホルダーを拒否します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"meta.review = {",
+					"  PRESENTATIONAL_ATTRIBUTE_UNSUPPORTED: {",
+					"    steps: ['Find the element the report names, and read its {{attributes|aria-* attributes}}.'],",
+					"    passWhen: 'The element is only for layout, and {{attributes|the attribute}} can be removed.',",
+					"    failWhen: 'The element stands for a control, which role {{role|none}} hides.'",
+					"  }",
+					"};",
+				]}
+			/>
+			<p>
+				ルールは、達成基準のどのファセットをテストするかを<code>meta.coverage.facetsBySc</code>（<code>{"{ '2.4.4': ['link-text-descriptive-evidence'] }"}</code>）で示し、その手順はコアのものと同じように、その達成基準の<a href="/conformance/procedures/">テスト手順</a>に加わります。コアのルールを理由コードで判定する規格は、<code>standard.review</code>で、コアのルールのコードに独自の手順を与えることもできます。その規格のプロファイルだけが問いにする検出結果は、WCAGを名指しするコアの手順の代わりにそれを読みます。
+			</p>
+
+			<h3 id="procedures">人がどう評価するか：テスト手順</h3>
+			<p>
+				コアは、そのルールが評価するすべてのWCAGの達成基準を人が手作業でどう評価するかを、ファセットごとに示しています（<a href="/conformance/procedures/">テスト手順</a>を参照）。core 1.15.0以降、規格パックは自身の要件について同じものを<code>standard.procedures</code>で、バージョンと要件ごとに、それぞれの<code>title</code>とともに、次の4つの形のいずれかで提供します。
+			</p>
+			<DataTable
+				label="要件のテスト手順の形"
+				rowKey="id"
+				columns={[
+					{ key: "form", label: "形", width: "38%", wrap: true },
+					{ key: "means", label: "意味", wrap: true },
+				]}
+				rows={procedureFormRows}
+			/>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"standard: {",
+					"  // ...",
+					"  procedures: {",
+					"    '1.0': {",
+					"      '4.2': { title: 'Images have a text alternative', wcag: '1.1.1' },",
+					"      '7.1': {",
+					"        title: 'Every form has a text version',",
+					"        facets: [{",
+					"          id: 'text-version',",
+					"          label: 'Each form can be had as a text document',",
+					"          automation: 'manual',              // full, partial or manual (the default)",
+					"          tools: ['keyboard'],               // keyboard, pointer, screen-reader, zoom, contrast-theme, devtools",
+					"          steps: ['Find each form on the page.', 'Look next to it for a link to a text version.'],",
+					"          passWhen: 'Every form has a text version.',",
+					"          failWhen: 'A form has no text version, which fails {{requirement}}.'",
+					"        }]",
+					"      }",
+					"    }",
+					"  }",
+					"}",
+				]}
+			/>
+			<p>
+				手順は、ページ全体について、アクセシビリティの訓練を受けていない人に向けて書いてください。ブラウザー、その開発者ツール、キーボード、必要な場合はスクリーンリーダーを使う1〜8個の短い手順と、合格の場合と不合格の場合にそれぞれ何が見えるかです。<code>{"{{requirement}}"}</code>には、規格の名前と、それとして読まれる要件（「City Standard 7.1」）が入ります。<code>surea11y-pack new --kind standard</code>は、各形の例を含む<code>procedures.js</code>と、すべてのバージョンのすべての要件がその各ファセットについて手順を持つことを確かめるテストを書き出します。WCAGを1対1で再掲する規格は、<code>ruleMappedStandard</code>から、すべての要件について最初の形を得ます。
+			</p>
+			<p>
+				規格は、<code>groups</code>（バージョンごとのテーマや章）、独自の要件に対する<code>relatesTo</code>（再掲はせずに関連するWCAGの達成基準）、<code>notes</code>（あるバージョンのテスト手順を使う前に読み手が知っておくべきこと）も提供できます。規格自身のテキストは1つの言語<code>lang</code>（デフォルトは英語）で書き、<code>translations</code>がそれをほかの言語で、翻訳元のテキストをキーにして提供するので、翻訳が元のテキストより長く残ることはありません。言語を宣言した規格は、コアのテスト手順も含めて最初から最後までそのいずれかの言語で読まれるので、ページに2つの言語が混ざることはありません。<code>packTranslationCoverage(pack)</code>は、各翻訳がどこまでそろっているかを示します。すべてのフィールドと<code>definePack</code>が確認する内容は、GitHub上のコアの<a href={`${core}/docs/PACKS.md#how-a-person-assesses-it-procedures`}>パックのガイド</a>にあります。
 			</p>
 
 			<h3 id="messages">メッセージと言語</h3>
 			<p>
 				ルールが表示する各テキストはキーを持ち、ロケールごとに<code>i18n/&lt;locale&gt;.json</code>に置かれ、パックの<code>dictionaries</code>に列挙されます。<code>engineOptions.locale: 'fr'</code>でのスキャンはフランス語のテキストを表示し、パックに辞書がないロケールでは英語が表示されます。パックのキーは名前空間で始まるパック独自のもので、パックがコアの同梱するロケールのコアのメッセージを変更することはできません。
+			</p>
+			<p>
+				core 1.15.0以降、ルールの手順も同じように、コアの手順が使うキーで翻訳します。ルールの接頭辞（<code>_title</code>を除いた<code>titleKey</code>）、<code>_review_</code>、理由コード、そして<code>{"step<n>"}</code>、<code>pass</code>、<code>fail</code>のいずれかです。
+			</p>
+			<CodeBlock
+				lang="json"
+				lines={[
+					"{",
+					"  \"acmeLinkTextSpecific_review_GENERIC_LINK_NAME_step1\": \"Trouvez le lien que le rapport désigne.\",",
+					"  \"acmeLinkTextSpecific_review_GENERIC_LINK_NAME_pass\": \"Le texte autour du lien dit où il mène.\",",
+					"  \"acmeLinkTextSpecific_review_GENERIC_LINK_NAME_fail\": \"Rien près du lien ne dit où il mène, ce qui enfreint le critère 2.4.4 des WCAG.\"",
+					"}",
+				]}
+			/>
+			<p>
+				検出結果の<code>howToCheck</code>とテスト手順は、それらをそのロケールで示し、ロケールにないテキストは英語で示します。コアが同梱しないロケール（<code>pt</code>）では、パックの辞書がコアのキーも提供でき、それによってそこでコアのルールとそのテスト手順が翻訳されます。
 			</p>
 
 			<h3 id="test-lint-document">テスト、lint、ドキュメント</h3>

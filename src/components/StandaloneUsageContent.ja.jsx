@@ -508,6 +508,24 @@ export function StandaloneUsageContent() {
 				を参照してください。
 			</p>
 
+			<h2 id="procedures-in-a-browser">ブラウザーでのテスト手順</h2>
+			<p>
+				core 1.15以降、人が各達成基準を手作業で評価する方法である<a href="/conformance/procedures/">テスト手順</a>は、ブラウザーで動くコードからも<code>@surea11y/core/procedures</code>を通じて使えます。ファイルシステムを必要とせず、ルールにも一切触れないので、ブラウザー拡張機能や独自のページが、インポートした辞書を使ってテスト手順を表示したり、ワークシートを開いたりできます。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"import { procedureChecklistFrom, renderProceduresFrom } from '@surea11y/core/procedures';",
+					"import en from '@surea11y/core/procedures/en';",
+					"import fr from '@surea11y/core/procedures/fr';",
+					"",
+					"const dictionaries = { en, fr };",
+					"const checklist = procedureChecklistFrom(dictionaries, { levels: ['A', 'AA'], locale: 'fr' });",
+					"const html = renderProceduresFrom(dictionaries, checklist);",
+					"window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })));",
+				]}
+			/>
+
 			<h2 id="what-a-scan-covers">スキャンの対象を事前に知る</h2>
 			<p>
 				WCAGの達成基準ごとに報告し、利用者にチェックを選ばせるツールでは、スキャンの目標を指定できます。

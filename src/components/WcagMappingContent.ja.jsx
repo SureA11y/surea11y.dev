@@ -111,7 +111,7 @@ export function WcagMappingContent() {
 					<code>npm run coverage</code>
 					を実行すると、達成基準ごとのファセットの内訳である
 					<code>coverage/coverage-report.md</code>
-					が再生成されます。
+					が再生成されます。core 1.15.0以降、ルールが評価する達成基準の各ファセットには、人が手作業で評価する方法である手順もあります（<a href="/conformance/procedures/">テスト手順</a>を参照）。
 				</li>
 				<li>
 					<strong>複合ルール（WCAG達成基準ごとの集約ルール）</strong>
@@ -245,7 +245,7 @@ export function WcagMappingContent() {
 				<code>runOnly.wcag</code>
 				を使ってください。
 				<code>engineOptions.profile</code>
-				（<code>wcag22-aa</code>、<code>en301549-v4.1.1</code>、<code>en301549-v3.2.1</code>、<code>section508</code>）に任せることもできます。
+				（<code>wcag22-a</code>、<code>wcag22-aa</code>、<code>wcag22-aaa</code>、<code>en301549-v4.1.1</code>、<code>en301549-v3.2.1</code>、<code>section508</code>）に任せることもできます。
 				<a href="/configuration/engine-options/#conformance-profiles">適合性プロファイル</a>
 				を参照してください。
 			</p>
@@ -389,6 +389,9 @@ export function WcagMappingContent() {
 					は各ルールの確度を示します。カスタムルール、パックのルール、上書きがどれだけ正確かは、それがどう書かれたかによります。デフォルトではその規格はWCAGです。ほかの規格だけが求める要件のルールはオプトインで、デフォルトではその規格を対象にしたときだけ実行されます（<a href="/configuration/engine-options/#opt-in-rules">オプトインルール</a>を参照）。<code>engineOptions.optInRules</code>は、スキャンのプロファイルやフィルターをなくさずにオプトインルールを有効にします。<code>optInRules: 'all'</code>を指定し、プロファイルもフィルターもない場合、実行はすべてのルールを対象にし、特定の規格を対象にしません。タグのリストを指定した場合は、そのオプトインのグループだけが有効になります。<code>engine.optInRules</code>は、ルールが実行されたタグを列挙します。WCAGのプロファイルのもとでは、有効にしたルールはそのタグがプロファイルに一致するときだけ実行され、実行は引き続きWCAGを対象にします。そのため、コアのルールのうち、WCAGを対象にしたスキャンが実行するのは、対象の達成基準のルールと、追加した場合のベストプラクティスのルールだけです。ベストプラクティスのルールは達成基準を示しませんが、見つけたもの自体がバリアである場合は<code>fail</code>を報告することがあります。空の見出し（<a href="/rules/empty-heading/"><code>empty-heading</code></a>）がその例で、WCAGの複合ルールはそれを算入しません。オプトインのタグを持たないカスタムルール、上書き、パックのルールは、選択に含まれれば実行され、WCAGが求めていない独自のチェックについて<code>fail</code>を報告することがあります。
 				</li>
 				<li>
+					core 1.15.0以降、ルールがWCAGの達成基準を不合格にするのは、WCAG自体が不合格とする場合だけです。WAI-ARIAやHTMLのコンテンツモデルだけが破られていて、ページの名前・役割・値がそれでも保たれている場合、ARIAとHTMLの構造のルールは代わりに問いかけます（<code>cantTell</code>、不確実性<code>spec-only</code>）。そのため、WCAGの不合格が、WCAGが数えない仕様違反を表すことはありません。そうした検出結果をWAI-ARIA自体に基づいて判定するには、WCAGのプロファイルと並べて<a href="/configuration/packs/#wai-aria-pack">WAI-ARIAのパック</a>のプロファイルを実行してください。
+				</li>
+				<li>
 					すべての
 					<code>cantTell</code>
 					は、不確かさを握りつぶしたものではなく、人間によるレビューが必要だという明示的なフラグです。
@@ -397,7 +400,7 @@ export function WcagMappingContent() {
 					ルールが一部しかチェックしない達成基準を、複合ルールが<code>pass</code>にすることはありません。ルールがすべて<code>pass</code>でも<code>cantTell</code>（<code>composite.rollup.cantTell.partialCheck</code>）になるので、どのルールもチェックしない部分について<code>pass</code>が黙っていることはありません。
 				</li>
 				<li>
-					ファセットのカバレッジ表を見れば、どの達成基準のどの部分に自動カバレッジがまったくないか、つまり人に残されているのは何かが正確にわかります。
+					ファセットのカバレッジ表を見れば、どの達成基準のどの部分に自動カバレッジがまったくないか、つまり人に残されているのは何かが正確にわかります。そしてコアの<a href="/conformance/procedures/">テスト手順</a>が、ルールが評価するすべての達成基準について、人がそれぞれをどう確認するかを示します。
 				</li>
 			</ul>
 			<p>

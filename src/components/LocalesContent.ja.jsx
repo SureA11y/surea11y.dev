@@ -367,7 +367,7 @@ export function LocalesContent() {
 				rows={reviewDictionaryRows}
 			/>
 			<p>
-				ロケールにない手順は、メッセージと同じく英語で表示されます。<a href="/configuration/packs/#review-steps">パックのルール独自の手順</a>は、どのロケールでも英語です。<code>getLocaleCoverage()</code>はこれらの辞書を数えません。手順はキーを持たないので、別のロケールで表示するには、もう一度追加します。
+				ロケールにない手順は、メッセージと同じく英語で表示されます。<a href="/configuration/packs/#review-steps">パックのルール独自の手順</a>は、そのパックの辞書が翻訳しない限り英語です（core 1.15.0以降）。<code>getLocaleCoverage()</code>はこれらの辞書を数えません。手順はキーを持たないので、別のロケールで表示するには、もう一度追加します。
 			</p>
 			<CodeBlock
 				lang="js"
@@ -377,6 +377,11 @@ export function LocalesContent() {
 					"const inFrench = addHowToCheck(result, { locale: 'fr' });",
 				]}
 			/>
+
+			<h3 id="procedure-dictionaries">テスト手順の辞書</h3>
+			<p>
+				core 1.15.0以降、確認手順は、人が各達成基準を手作業で評価する方法であるコアの<a href="/conformance/procedures/">テスト手順</a>をもとに書かれ、確認手順の辞書はそれから作られています。テスト手順の辞書（<code>{"@surea11y/core/procedures/<locale>"}</code>）は、一般的な手順、ツールの名前、それらから作るページの文言、そしてWCAGの原則、ガイドライン、達成基準と各ファセットの名前を、各言語で公開されているWCAGの翻訳で持っています。5つのロケールはどれもすべてのテキストを持つので、テスト手順のページは最初から最後まで1つの言語になります。<code>procedureLanguages()</code>は、各ロケールについてそのことを示し、より少ない言語でしか読めないことがあるパックの規格についても示します。
+			</p>
 
 			<h3>辞書を自分で渡す</h3>
 			<p>
@@ -510,6 +515,21 @@ export function LocalesContent() {
 					<code>_fail</code>
 					。判定できなかった検出箇所の
 					<code>howToCheck</code>
+					です。
+				</li>
+				<li>
+					<strong>テスト手順</strong>：
+					<a href="#procedure-dictionaries">テスト手順の辞書</a>
+					の
+					<code>{"wcag_<criterion>_<facet>_step<n>"}</code>
+					、
+					<code>_pass</code>
+					、
+					<code>_fail</code>
+					、
+					<code>{"tool_<id>"}</code>
+					、
+					<code>render_*</code>
 					です。
 				</li>
 			</ul>
