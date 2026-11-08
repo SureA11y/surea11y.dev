@@ -19,7 +19,10 @@ export function FaqContent() {
 						<code>&lt;dialog open aria-modal="true"&gt;</code> is now judged, so a jsdom test that
 						fakes a modal that way sees findings behind it;{" "}
 						<code>engineOptions.assumeModal: true</code> keeps the old behaviour (see{" "}
-						<a href="/help/known-limitations/">Known limitations</a>). Nothing behind a modal
+						<a href="/help/known-limitations/">Known limitations</a>; with test-matchers 1.6.0,
+						give it to <code>installLiveRegionHook()</code> too, see{" "}
+						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
+						Nothing behind a modal
 						dialog takes focus, and of several opened with <code>showModal()</code> only the
 						topmost is judged.
 					</li>
@@ -296,7 +299,9 @@ export function FaqContent() {
 					When <code>broken</code> is only <code>Array.from</code>, the page replaced it
 					(Prototype and MooTools do) and a pack's or custom rule in the scan uses it: core's own
 					rules don't, since 1.16. Write that rule with spread (<code>[...x]</code>,{" "}
-					<code>[...x].map(f)</code>), or leave it out of the selection.
+					<code>[...x].map(f)</code>), or leave it out of the selection. The{" "}
+					<a href="/configuration/packs/#wai-aria-pack">WAI-ARIA pack</a> did this until its 1.0.2
+					release: update it.
 				</p>
 			</article>
 

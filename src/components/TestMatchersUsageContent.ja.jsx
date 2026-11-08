@@ -414,7 +414,7 @@ export function TestMatchersUsageContent() {
 				向けの
 				<code>installListenerHook(win?)</code>
 				、
-				<code>installLiveRegionHook(win?)</code>
+				<code>installLiveRegionHook(win?, options?)</code>
 				、
 				<code>toHaveAnnounced()</code>
 				マッチャーもエクスポートしています。
@@ -738,6 +738,22 @@ export function TestMatchersUsageContent() {
 				</a>
 				を参照してください。
 			</p>
+			<p id="modal-dialogs-in-jsdom">
+				<strong>jsdomでのモーダルダイアログ。</strong><code>showModal()</code>で開いたダイアログは、その背後のページを不活性にします。スキャンはそこを判定せず、そこにあるライブリージョンのアナウンスも届きません。jsdomには<code>showModal()</code>がなく、<code>@surea11y/core</code> 1.16以降、jsdomでは開いている<code>&lt;dialog aria-modal="true"&gt;</code>をモーダルとして扱いません。ブラウザーでも扱わないからです。<code>open</code>と<code>aria-modal="true"</code>を設定して<code>showModal()</code>の代わりにするテストは、test-matchers 1.6.0以降で、両方にそう伝えます。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// setup file",
+					"installLiveRegionHook(window, { assumeModal: true });",
+					"",
+					"// in a test",
+					"expect(container).toHaveNoA11yViolations({ assumeModal: true });",
+				]}
+			/>
+			<p>
+				モーダルダイアログの背後にあるリージョンに渡されたテキストは、<code>{"{ includeBehindModal: true }"}</code>を渡さない限り<code>toHaveAnnounced()</code>では数えられず、失敗メッセージにはどちらの場合も挙げられます。フックにほかのオプションを渡したり、真偽値でない値を渡したりすると、<code>TypeError</code>が投げられます。
+			</p>
 
 			<h2>失敗メッセージ</h2>
 			<p>
@@ -753,7 +769,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.15.0.",
+					"Scanned with @surea11y/core 1.16.1.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -783,9 +799,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0,and this is core 1.15.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0,and this is core 1.16.1.",
 					"",
-					"Scanned with @surea11y/core 1.15.0.",
+					"Scanned with @surea11y/core 1.16.1.",
 				]}
 			/>
 

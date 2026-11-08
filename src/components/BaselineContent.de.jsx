@@ -347,7 +347,9 @@ export function BaselineContent() {
 			<p>
 				<code>--baseline &lt;path&gt;</code> lehnt eine Datei, die nicht{" "}
 				<code>{"{ version: 1, entries: [...] }"}</code> ist, mit einem klaren Fehler (Exit-Code 2)
-				ab, statt ein älteres oder anderes Format zu erraten. <code>matchBaseline</code> und die
+				ab, statt ein älteres oder anderes Format zu erraten, und seit <code>@surea11y/cli</code>{" "}
+				1.6.0 auch eine mit einem Eintrag, der keiner ist, vor dem Scan, mit Datei und Eintrag
+				im Fehler. <code>matchBaseline</code> und die
 				Option <code>baselineEntries</code> der SARIF- und JUnit-Reporter nehmen die Datei so, wie
 				sie gespeichert ist (<code>JSON.parse</code> davon), oder ihre <code>entries</code>-Liste.{" "}
 				<code>null</code> oder keine Baseline hat keine Einträge, also ist jeder Fehlschlag neu.

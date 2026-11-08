@@ -1211,3 +1211,25 @@ from core. Content pages, every language:
   dropped (nothing linked to it); Array.from under
   `#page-builtins-broken`.
 - Sample HTML reports re-generated; sample procedures unchanged.
+
+## Core 1.16.1 update (2026-11-08)
+
+Pinned `@surea11y/core` 1.16.1, a fix for packs: a standard written in
+another language reads its own steps for core's codes (`standard.review`)
+in that language again where its pack translates them, as the Packs and
+Locales pages already said. No rule text, review step, locale count or
+sample procedure changed; the sample HTML reports came out byte-identical.
+Covers `@surea11y/cli` 1.6.0, `@surea11y/test-matchers` 1.6.0 and
+`@surea11y/pack-wai-aria` 1.0.2, released with it. Every language:
+
+- Samples re-run with CLI 1.6.0 on core 1.16.1: the version line, and the
+  quickstart's `page-title-present` now points at `html > head` (core
+  1.16's selector change, which the 1.16.0 update hadn't re-captured).
+  test-matchers and Packs (`^1.16.1` from `surea11y-pack new`) follow.
+- CLI exit codes and Baseline: a baseline file with an entry that isn't
+  one exits `2` before the scan, naming the file and the entry.
+- test-matchers: `#modal-dialogs-in-jsdom` (`installLiveRegionHook(window,
+  { assumeModal: true })` and the scan's `assumeModal`,
+  `includeBehindModal`); the FAQ's 1.16 modal bullet links to it.
+- FAQ `#page-builtins-broken`: the WAI-ARIA pack used `Array.from` until
+  1.0.2.

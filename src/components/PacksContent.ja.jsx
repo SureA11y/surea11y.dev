@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "ルールに対するコアのlintルールです。" },
 	{ id: "standard", file: <><code>requirements.js</code>、<code>rule-map.js</code></>, what: "規格の場合のみ：要件と、それぞれを検査するルールです。" },
 	{ id: "procedures", file: <><code>procedures.js</code>、<code>tests/procedures.test.js</code></>, what: "規格の場合のみ：人が各要件を手作業でどう評価するかと、すべての要件がその各ファセットについて手順を持つことを確かめるテストです。" },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>で、<code>@surea11y/core</code>を、それを書き出したバージョン（<code>^1.16.0</code>）でpeer依存関係に、eslint、jsdom、Playwrightを開発用の依存関係に持ちます。</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>で、<code>@surea11y/core</code>を、それを書き出したバージョン（<code>^1.16.1</code>）でpeer依存関係に、eslint、jsdom、Playwrightを開発用の依存関係に持ちます。</> },
 	{ id: "readme", file: <><code>README.md</code>、<code>.gitignore</code></>, what: "これらのファイルについてのパック自身のガイドと、gitが対象外にするものです。" },
 ];
 
@@ -455,7 +455,7 @@ export function PacksContent() {
 					<strong>名前空間</strong>（<code>namespace: 'acme'</code>）は、パックのIDをコアやほかのパックのIDと区別します。すべてのルール、集約、プロファイルのIDは、名前空間と<code>-</code>で始まります。コアのルールIDの接頭辞になる名前（<code>img-alt-present</code>に対する<code>img</code>のように、<code>img</code>、<code>aria</code>、<code>link</code>）や、<code>wcag</code>で始まる名前は使えず、1つのスキャンにある2つのパックが同じ名前空間を持つことはできません。名前空間は、パック自身のルールをオプトインにするタグでもあります。このタグを持つルールは、パックのいずれかのプロファイルのもとか、IDか、タグ（<code>optInRules: ['acme']</code>）で選択されたときだけ実行されます。そのため、デフォルトでは、WCAGを対象とするスキャンでは実行されません。<code>optInRules</code>でこのタグを有効にしても、スキャンのプロファイルやフィルターはなくなりません。WCAGのプロファイルのもとでは、有効にしたルールは、そのタグがプロファイルにも一致するときだけ実行されます。パックを使うすべてのスキャンで実行すべきルールには、このタグを付けないでください。そうすると、そのルールはコアのルールと同じように選択され、タグが一致すれば、WCAGを対象とするスキャンでも実行されて不合格を報告することがあります。
 				</li>
 				<li>
-					<strong><code>core</code></strong>は、パックが動作するコアのバージョンの範囲（<code>'^1.11.1'</code>）で、npmと同じように範囲として読まれます。新しいパックは1.11.1から始めてください。1.11.0のパッケージには、Nodeでパックに必要なファイルが含まれていませんでした。範囲外のコアでのスキャンはパックをスキップし、理由を<code>skippedPacks</code>に示します。<code>surea11y-pack new</code>は、パックを生成したバージョン（<code>^1.16.0</code>）を書き出します。1.14で追加されたもの（<code>meta.review</code>、<code>reasonCodes</code>や<code>findings</code>の行、<code>meta.contributions</code>、<code>applicability</code>、<code>partial</code>、<code>keepsParsing</code>）をパックが使う場合は、1.14から始まる範囲のままにし、<code>outcome: 'fail'</code>を使う場合は1.15から始まる範囲にしてください。1.15が読むそのほかのもの（規格のテスト手順、グループ、翻訳、独自の確認手順）は、古いコアでは無視されます。コアが実験的とするAPIを使うパックは、それ以降のマイナーを含まない範囲（<code>'~1.16.0'</code>）を宣言します。<a href="#experimental">実験的なAPI</a>を参照してください。
+					<strong><code>core</code></strong>は、パックが動作するコアのバージョンの範囲（<code>'^1.11.1'</code>）で、npmと同じように範囲として読まれます。新しいパックは1.11.1から始めてください。1.11.0のパッケージには、Nodeでパックに必要なファイルが含まれていませんでした。範囲外のコアでのスキャンはパックをスキップし、理由を<code>skippedPacks</code>に示します。<code>surea11y-pack new</code>は、パックを生成したバージョン（<code>^1.16.1</code>）を書き出します。1.14で追加されたもの（<code>meta.review</code>、<code>reasonCodes</code>や<code>findings</code>の行、<code>meta.contributions</code>、<code>applicability</code>、<code>partial</code>、<code>keepsParsing</code>）をパックが使う場合は、1.14から始まる範囲のままにし、<code>outcome: 'fail'</code>を使う場合は1.15から始まる範囲にしてください。1.15が読むそのほかのもの（規格のテスト手順、グループ、翻訳、独自の確認手順）は、古いコアでは無視されます。コアが実験的とするAPIを使うパックは、それ以降のマイナーを含まない範囲（<code>'~1.16.0'</code>）を宣言します。<a href="#experimental">実験的なAPI</a>を参照してください。
 				</li>
 				<li>
 					<strong><code>title</code></strong>は結果やレポートでのチェックリストの呼び名、<strong><code>description</code></strong>はパックが何をチェックするかを述べる1文で、利用者にパックを選ばせるツールのためのものです（<code>describePacks</code>がそれを返します）。

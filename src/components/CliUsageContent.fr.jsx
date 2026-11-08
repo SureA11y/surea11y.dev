@@ -29,7 +29,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  pass: 16   fail: 4   cantTell: 4   notApplicable: 121",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 4",
@@ -244,7 +244,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  WCAG level reported: AA",
 					"  pass: 1   fail: 0   cantTell: 0   notApplicable: 0",
 					"",
@@ -452,7 +452,11 @@ export function CliUsageContent() {
 				<code>--rules</code>/<code>--tags</code> qui ne nomme aucune règle ni aucun tag connu, un
 				sélecteur <code>--context</code> qui ne correspond à rien, une règle personnalisée ou un
 				pack qui ne s’est pas exécuté, un <code>--profile</code> qui n’a pas été appliqué (avec plusieurs, un qui
-				ne s’est pas exécuté, sauf avec <code>--allow-profiles-not-run</code>). Une baseline écrite
+				ne s’est pas exécuté, sauf avec <code>--allow-profiles-not-run</code>). Un fichier de{" "}
+				<code>--baseline</code> ou de <code>--migrate-baseline</code> dont une entrée n’en est pas
+				une (<code>null</code>, pas de <code>ruleId</code>, un <code>selector</code> qui n’est pas
+				une chaîne) sort avec <code>2</code> avant l’analyse, en nommant le fichier et l’entrée (
+				<code>@surea11y/cli</code> 1.6.0 et versions ultérieures). Une baseline écrite
 				par la version mineure précédente correspond toujours aux constats dont les codes de raison
 				ont été déplacés depuis ; <code>--migrate-baseline baseline.json</code> la réécrit avec les
 				nouveaux codes (voir <a href="/conformance/baseline/#upgrading">Mettre à jour</a>).

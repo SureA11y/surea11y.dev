@@ -258,7 +258,7 @@ export function BaselineContent() {
 				<code>--baseline &lt;path&gt;</code>
 				は、
 				<code>{"{ version: 1, entries: [...] }"}</code>
-				の形でないファイルを、古い形式や別の形式だと推測せず、終了コード2の明確なエラーで拒否します。
+				の形でないファイルを、古い形式や別の形式だと推測せず、終了コード2の明確なエラーで拒否します。<code>@surea11y/cli</code> 1.6.0以降は、エントリーとして成り立たないエントリーを含むファイルも、スキャンの前に、ファイルとエントリーを示して拒否します。
 				<code>matchBaseline</code>
 				と、SARIFおよびJUnitのレポーターの
 				<code>baselineEntries</code>

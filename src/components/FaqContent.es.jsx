@@ -19,7 +19,10 @@ export function FaqContent() {
 						<code>&lt;dialog open aria-modal="true"&gt;</code> se juzga ahora, así que una prueba
 						con jsdom que simula un modal de esa manera ve hallazgos detrás de él;{" "}
 						<code>engineOptions.assumeModal: true</code> mantiene el comportamiento anterior
-						(consulta <a href="/help/known-limitations/">Limitaciones conocidas</a>). Nada detrás
+						(consulta <a href="/help/known-limitations/">Limitaciones conocidas</a>; con
+						test-matchers 1.6.0, pásalo también a <code>installLiveRegionHook()</code>, consulta{" "}
+						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
+						Nada detrás
 						de un diálogo modal recibe el foco, y de varios abiertos con <code>showModal()</code>{" "}
 						solo se juzga el superior.
 					</li>
@@ -313,7 +316,8 @@ export function FaqContent() {
 					(Prototype y MooTools lo hacen) y una regla de un pack o personalizada del análisis lo
 					usa: las reglas propias de core no lo usan, desde la 1.16. Escribe esa regla con
 					spread (<code>[...x]</code>, <code>[...x].map(f)</code>), o déjala fuera de la
-					selección.
+					selección. El <a href="/configuration/packs/#wai-aria-pack">pack de WAI-ARIA</a> lo
+					hacía hasta su versión 1.0.2: actualízalo.
 				</p>
 			</article>
 

@@ -89,7 +89,7 @@ export function GettingStartedContent() {
 				lines={[
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  pass: 14   fail: 3   cantTell: 2   notApplicable: 126",
 					"",
 					"  occurrences by tier: fail: 3   cantTell: 2",
@@ -114,7 +114,7 @@ export function GettingStartedContent() {
 					"      contrast ratio reaches at least 4.5:1.",
 					"",
 					"  page-title-present  (serious, 1 fail occurrence(s))",
-					"    - head > title",
+					"    - html > head",
 					"      This page has no <title> element.",
 					"      hint: Add a <title> that says what the page is about or what it is for.",
 					"",
