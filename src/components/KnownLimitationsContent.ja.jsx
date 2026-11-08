@@ -141,7 +141,7 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>エンジンはページ自身のJavaScriptの組み込みオブジェクトの上で動作します。</strong>
-					ページのスクリプトが、エンジンが依存する組み込みオブジェクト（<code>Array.prototype.filter</code>、<code>Map</code>、<code>JSON.stringify</code>、<code>String.prototype.toLowerCase</code>など）を壊している場合、もっともらしく見えて誤っている結果を返すのではなく、それぞれを示す<code>PAGE_BUILTINS_BROKEN</code>というコードのエラーでスキャンを止めます。バンドルを注入する前に壊されたもの（<code>Object.keys</code>）は、バンドルの読み込みを止めます。<code>Object.prototype</code>に<code>then</code>を追加するページは、ほかのページと同じようにスキャンされます。ページが置き換えたDOMのメソッド（<code>getComputedStyle</code>、<code>querySelectorAll</code>、<code>getBoundingClientRect</code>）は確認しません。ルールはそれらが返すものを読みます。
+					ページのスクリプトが、エンジンが依存する組み込みオブジェクト（<code>Array.prototype.filter</code>、<code>Map</code>、<code>JSON.stringify</code>、<code>String.prototype.toLowerCase</code>など）を壊している場合、もっともらしく見えて誤っている結果を返すのではなく、それぞれを示す<code>PAGE_BUILTINS_BROKEN</code>というコードのエラーでスキャンを止めます。バンドルを注入する前に壊されたもの（<code>Object.keys</code>）は、バンドルの読み込みを止めます。<code>Object.prototype</code>に<code>then</code>を追加するページは、ほかのページと同じようにスキャンされます。PrototypeやMooToolsのように<code>Array.from</code>を置き換えるページも、スキャンされます（core 1.16.0以降）。coreのコード自体はそれを使わないからです。それを使うパックのルールやカスタムルールは、選択がそのルールを外さない限り、<code>Array.from</code>を示す<code>PAGE_BUILTINS_BROKEN</code>でその時点でスキャンを止めます。ページが置き換えたDOMのメソッド（<code>getComputedStyle</code>、<code>querySelectorAll</code>、<code>getBoundingClientRect</code>）は確認しません。ルールはそれらが返すものを読みます。
 				</li>
 				<li>
 					<strong>256階層より深く入れ子になったコンテンツからは、名前を求めません。</strong>
@@ -165,7 +165,7 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>モーダルダイアログが開いている間に行ったスキャンは、ページではなくダイアログを見ます。</strong>
-					<code>showModal()</code>で開いた<code>&lt;dialog&gt;</code>は文書の残りの部分を不活性にし、ブラウザーは支援技術にダイアログだけを渡します。<code>open</code>属性や<code>show()</code>で開いたダイアログは、<code>aria-modal="true"</code>があってもモーダルではありません。背後のページには引き続き到達でき、エンジンもそれを判定します。トップレイヤーのないjsdomでは、開いている<code>&lt;dialog aria-modal="true"&gt;</code>を代わりにモーダルとみなします。そこでエンジンが判断できる中では最も近いものだからです。エンジンはこれに従います。ダイアログの背後にあるコンテンツは、ほかの非表示のコンテンツと同じようにすべてのルールの対象外になり、ページ自体の構造に関するルール（<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>、<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>、<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>、<a href="/rules/region/"><code>region</code></a>）は、スキャンからその構造が見えないため<code>notApplicable</code>を報告します。背後にあるものを判断するには、ダイアログを閉じた状態でもう一度ページをスキャンしてください。独自のモーダル、つまり<code>role="dialog"</code>または<code>role="alertdialog"</code>と<code>aria-modal="true"</code>を持つ表示中の要素も、これらの構造に関するルールを<code>notApplicable</code>にします。<code>aria-modal</code>は何も不活性にしないので、ほかのすべてのルールは背後のページを引き続き判定します。開いたシャドウルート内のモーダルダイアログは、文書内のものと同じように扱います。閉じたシャドウルート内のものは見つけられません。<code>aria-modal="true"</code>のない独自のモーダルは、ページが残りの部分に付けた<code>inert</code>や<code>aria-hidden</code>を通じてしか扱われません。これらはページを隠しますが、ダイアログが開いていることを構造に関するルールに伝えません。
+					<code>showModal()</code>で開いた<code>&lt;dialog&gt;</code>は文書の残りの部分を不活性にし、ブラウザーは支援技術にダイアログだけを渡します。<code>open</code>属性や<code>show()</code>で開いたダイアログは、<code>aria-modal="true"</code>があってもモーダルではありません。背後のページには引き続き到達でき、エンジンもそれを判定します。jsdomにはトップレイヤーがなく、モーダルダイアログを開けないので、jsdomではその背後にあるものはなく、同じマークアップはブラウザーと同じ判定になります（core 1.16.0以降）。jsdomで<code>showModal()</code>の代わりにダイアログに<code>open</code>と<code>aria-modal="true"</code>を設定するテストは、<a href="/configuration/engine-options/"><code>engineOptions.assumeModal: true</code></a>を設定すると、そうしたダイアログをモーダルとして扱わせることができます。モーダルダイアログが複数ある場合は、最前面のものだけが判定されます。エンジンはモーダルダイアログに従います。その背後にあるコンテンツは、ほかの非表示のコンテンツと同じようにすべてのルールの対象外になってフォーカスを受け取らず、ページ自体の構造に関するルール（<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>、<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>、<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>、<a href="/rules/region/"><code>region</code></a>）は、スキャンからその構造が見えないため<code>notApplicable</code>を報告します。背後にあるものを判断するには、ダイアログを閉じた状態でもう一度ページをスキャンしてください。独自のモーダル、つまり<code>role="dialog"</code>または<code>role="alertdialog"</code>と<code>aria-modal="true"</code>を持つ表示中の要素も、これらの構造に関するルールを<code>notApplicable</code>にします。<code>aria-modal</code>は何も不活性にしないので、ほかのすべてのルールは背後のページを引き続き判定します。開いたシャドウルート内のモーダルダイアログは、文書内のものと同じように扱います。閉じたシャドウルート内のものは見つけられません。<code>aria-modal="true"</code>のない独自のモーダルは、ページが残りの部分に付けた<code>inert</code>や<code>aria-hidden</code>を通じてしか扱われません。これらはページを隠しますが、ダイアログが開いていることを構造に関するルールに伝えません。
 				</li>
 				<li id="framed-documents">
 					<strong>フレーム内に表示された文書は、それ自体で1つのページとしては判定されません。</strong>
@@ -252,7 +252,7 @@ export function KnownLimitationsContent() {
 					<code>getComputedStyle</code>
 					を呼ぶたびに要素の祖先をたどって継承されたCSSを解決するので、要素ごとに1回呼ぶとO(要素数×深さ)のコストがかかります。エンジンのコードを一切介さずにjsdom 29.1.1で計測したところ、1本の祖先チェーンに並んだ4000個の要素では
 					<code>getComputedStyle</code>
-					だけで8.3秒かかり、同じ4000個を兄弟要素として並べた場合は0.25秒でした。エンジン自身が祖先をたどる処理には上限があり線形のままなので、これはルールではなくjsdomのコストです。影響を受けるのは
+					だけで8.3秒かかり、同じ4000個を兄弟要素として並べた場合は0.25秒でした。エンジンは各要素の祖先をルートまで、スキャンごとに1回読みますが、コントラストのルールは各テキストをその上にあるすべての背景に対して計測します。それでも時間の大半はjsdomのものです。jsdomは継承された値を上の要素へ再帰して解決するため、1000階層ほどの深さでスタックを使い果たします。エンジンは、100階層より深い要素のプロパティを、その上の要素を先に解決してから読むので、どのスキャンも同じ値を読みます。影響を受けるのは
 					<code>runDomRulesInPage</code>
 					と、それを土台にしたすべてのもの（
 					<code>@surea11y/test-matchers</code>
@@ -261,6 +261,10 @@ export function KnownLimitationsContent() {
 				<li>
 					<strong>jsdomでは、スキャン時間はスタイルシートの大きさにも比例して増えます。</strong>
 					jsdomは、すべてのCSSルールを要素と照合してスタイルを計算します。エンジンはスキャン中にDOMを変更しないので、各要素の計算は1回だけですが、その1回にO(ルール数)のコストがかかります。保存したニュースサイトのページ（要素7,916個、CSSルール2,683個、jsdom 29.1.1）では、243秒のスキャンのうち約224秒が、5,735個の要素の最初の計算にかかりました。これはjsdomのコストで、本物のブラウザーは同じページを1秒もかからずに計算します。jsdomはカスタムプロパティも置換しないため、<code>var()</code>で指定した色はそこでは読み取れません。そのテキストや背景は計測されず、確認が求められます（<code>contrast-computable</code>）。大規模な本番のページには本物のブラウザーを使ってください。
+				</li>
+				<li>
+					<strong>jsdomでは、要素を隠すものについて、レイヤーや条件付きのCSSをjsdomのメディアのもとで適用します。</strong>
+					jsdomの<code>getComputedStyle</code>は<code>@layer</code>、<code>@supports</code>、<code>@container</code>の中のルールを読まないため、Tailwind v4のページの<code>hidden</code>や<code>sr-only</code>は、そこでは何も隠していませんでした。core 1.16.0以降、エンジンは要素が表示されているかどうかを判断するために読むプロパティについて、それらのルールを自分で適用しますが、<code>@media</code>はjsdomと同じように扱います。適用されるのは<code>all</code>と<code>screen</code>だけなので、<code>(width &gt;= 48rem)</code>の下のルールは、レイヤーの外と同じくレイヤーの中でも効きません。Tailwindの<code>hidden md:block</code>は、デスクトップのブラウザーなら表示されるところでも、jsdomでは隠れたままです。<code>@supports</code>はどのプロパティのテストでも、解析できる<code>selector()</code>でも成り立つものとし、<code>@container</code>は適用せず、<code>revert</code>、<code>revert-layer</code>、<code>var()</code>の値はjsdomの値のままにします。ほかのプロパティは、色も含めて引き続きjsdomの値です。ビューポートによって表示を変えるページは、ブラウザーでスキャンしてください。
 				</li>
 				<li>
 					<strong>jsdomでは、リンクの色をページ自身のルールから求めます。</strong>

@@ -97,6 +97,15 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "engine.law",
+		field: <code>engine.law</code>,
+		meaning: (
+			<>
+				実験的（core 1.16.0から1.18.0まで）。適用されたプロファイルが法律、つまりパックの規格の評価の根拠となる法律を示す場合にだけ含まれます（<a href="/configuration/packs/#laws">パック</a>を参照）。<code>{"{ id, name, jurisdiction, lang }"}</code>で、<code>lang</code>は<code>name</code>の言語です。coreは法律を示すだけで、その法律が誰に適用されるかを決めることはありません。
+			</>
+		),
+	},
+	{
 		id: "engine.optInRules",
 		field: <code>engine.optInRules</code>,
 		meaning: (
@@ -237,7 +246,7 @@ const occurrenceRows = [
 		field: <code>selector</code>,
 		meaning: (
 			<>
-				フラグが立った要素を指し戻せるように組み立てた、ベストエフォートのCSSセレクターです（<code>RULE_AUTHORING.md</code>の<code>helpers.buildSelector</code>を参照）。ID、テストID、<code>name</code>、<code>aria-label</code>を起点にするのは、非表示の要素、除外された要素、範囲外の要素も含めて、ドキュメント内のほかのどの要素もそれを持っていない場合だけです。<code>querySelector</code>はそれをドキュメント全体に対して解決するためです。それ以外の場合、セレクターはパスになります。どのDOM構造でも一意であるとは保証されません。シャドウルート内の要素はそれ自身のツリーの中で名前が付けられ（その位置は<code>structuralPath</code>が示します）、非常に深い要素のパスは上から短縮されます。テスト用と実際のページ255件で、39,857個のセレクターのうち15個が自身の要素をちょうど指していませんでしたが、すべてこうした種類のものでした。例外は、要素が存在しないこと<em>そのもの</em>が検出結果であるルールです。<code>page-title-present</code>は<code>head &gt; title</code>と、<code>html</code>として<code>&lt;title&gt;(missing)&lt;/title&gt;</code>を報告しますが、どちらもページ上には存在しません。どちらも定数なので、これらから作られるフィンガープリントは安定しています。ただし、<strong>ルールが実在するものを報告したことを確かめずに、<code>selector</code>を解決可能なもの、<code>html</code>を実際のマークアップとして扱わないでください</strong>。シャドウツリー内の要素では、<code>selector</code>はそのシャドウルートの中で解決され、そこまでのたどり方は<code>shadowHostSelectors</code>が示します。
+				フラグが立った要素を指し戻せるように組み立てた、ベストエフォートのCSSセレクターです（<code>RULE_AUTHORING.md</code>の<code>helpers.buildSelector</code>を参照）。ID、テストID、<code>name</code>、<code>aria-label</code>を起点にするのは、非表示の要素、除外された要素、範囲外の要素も含めて、ドキュメント内のほかのどの要素もそれを持っていない場合だけです。<code>querySelector</code>はそれをドキュメント全体に対して解決するためです。それ以外の場合、セレクターはパスになります。どのDOM構造でも一意であるとは保証されません。シャドウルート内の要素はそれ自身のツリーの中で名前が付けられ（その位置は<code>structuralPath</code>が示します）、非常に深い要素のパスは上から短縮されます。テスト用と実際のページ255件で、39,857個のセレクターのうち15個が自身の要素をちょうど指していませんでしたが、すべてこうした種類のものでした。256文字を超える値も起点にならないので、ページが属性に何を入れてもセレクターは短く保たれます。値の中の制御文字は、CSSが読むとおりにエスケープされます（改行は<code>\a </code>）。例外は、要素が存在しないこと<em>そのもの</em>が検出結果であるルールです。<code>page-title-present</code>は、存在しない<code>&lt;title&gt;</code>を、それが属するはずの<code>&lt;head&gt;</code>のセレクター（<code>&lt;head&gt;</code>がなければ<code>&lt;html&gt;</code>）と、ページ上には存在しない<code>&lt;title&gt;(missing)&lt;/title&gt;</code>という<code>html</code>で報告します。その<code>html</code>は定数なので、それから作られるフィンガープリントは安定しています。ただし、<strong>ルールが実在するものを報告したことを確かめずに、それを実際のマークアップとして扱わないでください</strong>。シャドウツリー内の要素では、<code>selector</code>はそのシャドウルートの中で解決され、そこまでのたどり方は<code>shadowHostSelectors</code>が示します。
 			</>
 		),
 	},
@@ -293,7 +302,7 @@ const occurrenceRows = [
 		field: <code>data.details</code>,
 		meaning: (
 			<>
-				ルール固有の構造化データ（計算した指標、解決済みの参照など）です。<strong>規範的なものではありません</strong>。より詳しいUIの構築やデバッグには役立ちますが、<code>outcome</code>/<code>severity</code>の意味を変えることはありません。形はルールごとに異なるので、安定した契約ではなく、ベストエフォートの補足情報として扱ってください。唯一の例外が<code>data.details.reasonCode</code>で、これは安定して<strong>います</strong>。ルールの検出結果のうち<em>どれ</em>であるかを識別し、<code>ruleId</code>、<code>html</code>とともに、ベースラインとSARIFのキーになるフィンガープリントを構成します。ルールはマイナーリリースで新しい理由コードを得たり、既存のコードを原因ごとに分けたりすることがあります。<a href={`${core}/docs/API_STABILITY.md#finding-identity`}><code>API_STABILITY.md</code></a>を参照してください。コントラストの失敗のサイズと比のフィールド（<code>metrics.ratio</code>、<code>metrics.threshold</code>、<code>typography</code>の<code>fontSizePx</code>、<code>fontSizePt</code>、<code>fontWeight</code>、<code>isBold</code>、<code>isLargeText</code>）も安定しているので、レポートやパックはどの種類のテキストが失敗したかを判別できます。<code>list-children-valid</code>の検出結果の<code>element</code>、<code>listitem-parent-valid</code>の検出結果の<code>parentElement</code>、<code>aria-role-name-present</code>の検出結果の<code>role</code>も同様に安定しており、どの種類のリストやウィジェットが失敗したかを示します。<code>data.details.evidenceState</code>（core 1.15.0以降）も同様です。ルールがページをある状態にし、ブラウザーが描画する前にその状態から戻した場合に、その状態でだけ現れる検出結果で、その状態の名前を示します（<code>text-spacing</code>。切れた、重なった、またはスクロールが固定されたテキストについての<code>text-spacing-content-loss</code>の検出結果に付きます）。そのため、ツールは<code>evidenceState()</code>でページを再びその状態にし、バインディングの<code>.screenshots()</code>と同じように検出結果を撮影できます。各ルールのページには、その検出結果が持つフィールドが「検出結果が報告する内容」の下に記載されています。
+				ルール固有の構造化データ（計算した指標、解決済みの参照など）です。<strong>規範的なものではありません</strong>。より詳しいUIの構築やデバッグには役立ちますが、<code>outcome</code>/<code>severity</code>の意味を変えることはありません。形はルールごとに異なるので、安定した契約ではなく、ベストエフォートの補足情報として扱ってください。唯一の例外が<code>data.details.reasonCode</code>で、これは安定して<strong>います</strong>。ルールの検出結果のうち<em>どれ</em>であるかを識別し、<code>ruleId</code>、<code>html</code>とともに、ベースラインとSARIFのキーになるフィンガープリントを構成します。ルールはマイナーリリースで新しい理由コードを得たり、既存のコードを原因ごとに分けたりすることがあります。<a href={`${core}/docs/API_STABILITY.md#finding-identity`}><code>API_STABILITY.md</code></a>を参照してください。コントラストの失敗のサイズと比のフィールド（<code>metrics.ratio</code>、<code>metrics.threshold</code>、<code>typography</code>の<code>fontSizePx</code>、<code>fontSizePt</code>、<code>fontWeight</code>、<code>isBold</code>、<code>isLargeText</code>）も安定しているので、レポートやパックはどの種類のテキストが失敗したかを判別できます。<code>list-children-valid</code>の検出結果の<code>element</code>、<code>listitem-parent-valid</code>の検出結果の<code>parentElement</code>、<code>aria-role-name-present</code>の検出結果の<code>role</code>も同様に安定しており、どの種類のリストやウィジェットが失敗したかを示します。core 1.16.0以降は、<code>contrast-computable</code>の検出結果の同じ<code>typography</code>のフィールド（コントラストを計算できなかったテキスト。<code>isLargeText</code>はcoreの定義で24px、または14ptかつ太字）、<code>link-name-quality</code>と<code>identical-links-same-purpose</code>の検出結果の<code>linkKind</code>（リンクが何でできているか：<code>text</code>、<code>image</code>、<code>composite</code>、<code>svg</code>）、<code>live-region-announcements</code>の検出結果の<code>messageKind</code>（領域が伝えると宣言しているメッセージの種類。テキストからではなく、ロールとライブリージョンの属性から読みます：<code>status</code>、<code>alert</code>、<code>log</code>、<code>progress</code>、<code>unknown</code>）も同様です。<code>linkKind</code>と<code>messageKind</code>は、マイナーリリースで値が増えることがあります。<code>data.details.evidenceState</code>（core 1.15.0以降）も同様です。ルールがページをある状態にし、ブラウザーが描画する前にその状態から戻した場合に、その状態でだけ現れる検出結果で、その状態の名前を示します（<code>text-spacing</code>。切れた、重なった、またはスクロールが固定されたテキストについての<code>text-spacing-content-loss</code>の検出結果に付きます）。そのため、ツールは<code>evidenceState()</code>でページを再びその状態にし、バインディングの<code>.screenshots()</code>と同じように検出結果を撮影できます。各ルールのページには、その検出結果が持つフィールドが「検出結果が報告する内容」の下に記載されています。
 			</>
 		),
 	},
@@ -302,7 +311,7 @@ const occurrenceRows = [
 		field: <code>occurrenceOutcome</code>,
 		meaning: (
 			<>
-				検出結果を確実な<code>fail</code>の層と、レビューが必要な<code>cantTell</code>の層に分けて評価するルールで、この検出箇所がどちらの層に属するかを示します。1つの層しか報告しないルールでは省略され、その場合は結果自体の<code>outcome</code>が検出箇所の層になります。<code>@surea11y/core</code>の<code>occurrenceOutcome(check, occurrence)</code>は、どちらの場合でも、すべてのレポーターが読むとおりの層を返します。判定結果は常に層と一致します。<code>fail</code>の層の検出箇所が1つでもあれば<code>fail</code>になり、検出箇所がすべて<code>cantTell</code>の層である<code>fail</code>は<code>cantTell</code>になるため、SARIF、JUnit、EARL、ベースラインは同じ答えを返します。カスタムルールやパックのルールが食い違うものを返した場合はエンジンが整合させます。デフォルトのポリシーでは、手動ルールが<code>fail</code>になることはありません。レポーターは、エンジンがこれを行う前に保存された結果も、その<code>engineOptions</code>が記録するポリシーのもとで同じ規則で読み、読んだものからWCAGの集約をまとめ直します。
+				検出結果を確実な<code>fail</code>の層と、レビューが必要な<code>cantTell</code>の層に分けて評価するルールで、この検出箇所がどちらの層に属するかを示します。1つの層しか報告しないルールでは省略され、その場合は結果自体の<code>outcome</code>が検出箇所の層になります。<code>@surea11y/core</code>の<code>occurrenceOutcome(check, occurrence)</code>は、どちらの場合でも、すべてのレポーターが読むとおりの層を返します。core 1.16.0以降、合格したチェックの検出箇所には、<code>null</code>ではなく<code>'pass'</code>を返します。判定結果は常に層と一致します。<code>fail</code>の層の検出箇所が1つでもあれば<code>fail</code>になり、検出箇所がすべて<code>cantTell</code>の層である<code>fail</code>は<code>cantTell</code>になるため、SARIF、JUnit、EARL、ベースラインは同じ答えを返します。カスタムルールやパックのルールが食い違うものを返した場合はエンジンが整合させます。デフォルトのポリシーでは、手動ルールが<code>fail</code>になることはありません。レポーターは、エンジンがこれを行う前に保存された結果も、その<code>engineOptions</code>が記録するポリシーのもとで同じ規則で読み、読んだものからWCAGの集約をまとめ直します。
 </>
 		),
 	},
@@ -357,11 +366,12 @@ export function OutputSchemaContent() {
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
 					'    wcagLevel?: "A" | "AA" | "AAA",',
-'    profile?: string,      // "wcag22-a", "wcag22-aa", "wcag22-aaa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a pack\'s own',
+'    profile?: string,      // "wcag20-a" … "wcag22-aaa" (wcag<version>-<level>), the deprecated "en301549-v4.1.1", "en301549-v3.2.1" and "section508", or a pack\'s own',
 					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
 					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
+					"    law?: { id: string, name: string, jurisdiction: string, lang: string },  // experimental",
 					"    optInRules?: string[],",
 					'    outputDetail?: "findings",',
 					"    packs?: string[],      // name@version",
@@ -426,7 +436,7 @@ export function OutputSchemaContent() {
 				</li>
 				<li>
 					<strong><code>profiles</code></strong>
-					：実行されたプロファイルごとに<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code>（<code>wcagLevel</code>はWCAGのレベルを対象にするプロファイルのみ）。<code>rulesResults</code>は、その各集約の判定結果をIDごとに示したもので、そのプロファイルだけをスキャンした場合に報告されたはずのものです。
+					：実行されたプロファイルごとに<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code>（<code>wcagLevel</code>はWCAGのレベルを対象にするプロファイルのみ）。<code>rulesResults</code>は、その各集約の判定結果をIDごとに示したもので、そのプロファイルだけをスキャンした場合に報告されたはずのものです。法律を示すプロファイルには、<code>engine.law</code>と同じ<code>law</code>もあります（実験的）。
 				</li>
 				<li>
 					<strong><code>severity</code></strong>
@@ -588,6 +598,11 @@ export function OutputSchemaContent() {
 					'    coercedFrom: "fail",',
 					'    by?: "errata"         // 2.0 or 2.1: their errata count the criterion as always satisfied',
 					"  },",
+					"  ancestorWalkLimit?: {    // present only when a failed element is nested deeper than the engine walks up from it",
+					"    limit: number,         // 10000: the ancestors read, the element included",
+					"    occurrences: number,   // the fail-tier occurrences made cantTell-tier",
+					'    coercedFrom?: "fail"   // no fail-tier occurrence was left, so the outcome went from fail to cantTell',
+					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
 				]}
@@ -610,13 +625,16 @@ export function OutputSchemaContent() {
 					<strong><code>wcagVersionScope</code></strong>：スキャンの対象WCAGバージョンによって、このルールの<code>fail</code>が<code>cantTell</code>に変わった場合にだけ含まれます。現時点では、SC 4.1.1（構文解析）に対応するルール（<code>duplicate-id</code>）がこれに当たります。2.2ではその達成基準が削除されたため、2.0と2.1では2023年の正誤表がHTMLとXMLについて常に満たされているものとして扱うためです（<code>by: "errata"</code>）。4.1.1の文言を残す規格のプロファイル（<code>en301549-v3.2.1</code>、または<code>keepsParsing</code>を持つパックのプロファイル）では変更されません。<code>removedSc</code>は該当する達成基準、<code>target</code>はスキャンのバージョン、<code>coercedFrom</code>はルール自身が報告した判定結果です。検出箇所はルール自身のもので、手を加えていません。捨てられたものは何もなく、変わったのは適合の判定だけです。それ以外の結果には含まれず、<code>error</code>で報告されることも<strong>ありません</strong>。何も問題は起きていないからです。<a href="/configuration/engine-options/#filtering-by-wcag-version">WCAGバージョンによる絞り込み</a>を参照してください。
 				</li>
 				<li>
+					<strong><code>ancestorWalkLimit</code></strong>（core 1.16.0以降）：エンジンは、周囲の何かが要素を隠しているかどうかを判断するために、シャドウルートやスロットを通じて要素のすべての祖先を、10,000個まで読みます。これはどのブラウザーが描画するよりもはるかに深い階層です。それより深くネストした要素での不合格は確かではありません。エンジンが読まなかった要素がそれを隠しているかもしれないからです。そのため、その検出箇所は理由コードを保ったまま<code>cantTell</code>の層になり、<code>uncertainty.code: "not-computable"</code>と、要素が公開されているかどうかを問うエンジン独自の手順が付きます。ほかのすべての要素についてのルールの判定はそのままなので、<code>fail</code>の層の検出箇所が1つでも残っていれば判定結果は<code>fail</code>のままで、残っていなければ<code>cantTell</code>になります（<code>coercedFrom: "fail"</code>）。<code>wcagVersionScope</code>と同じく、<code>error</code>では報告されません。ルールは完了しているからです。
+				</li>
+				<li>
 					<strong><code>data</code></strong>：判定結果にかかわらずページ全体について何かを報告するルールにだけ含まれます。現在、コアのルールでこれを使うものはありません。検出箇所の<code>data.details</code>と同じく、安定した契約ではありません。
 				</li>
 				<li id="margin">
 					<strong><code>margin</code></strong>：カタログでmarginを宣言しているルール（<code>getChecksCatalog()[i].margin</code>、<code>{"{ measure, unit, limit, band? }"}</code>）で、少なくとも1つの要素がルールのしきい値を満たし、宣言に<code>band</code>があればその範囲内に入った場合にだけ含まれます。<code>band.relative</code>はしきい値に対する割合です。<code>contrast-minimum</code>、<code>contrast-enhanced</code>、<code>link-in-text-block</code>は<code>0.1</code>で、必要な比の10%以内の比についてだけmarginを報告します（4.5:1に対して4.5〜4.95、3:1に対して3〜3.3）。<code>band.absolute</code>は<code>unit</code>での量です。<code>target-size-minimum</code>は<code>6</code>で30 pxまでのターゲットだけを、<code>text-spacing-content-loss</code>は<code>8</code>でボックスの端から6 px以内の行だけを報告します。21:1のテキストや48 pxのボタンは何にも近くないので、それを示すmarginはありません。しきい値を満たしつつ最もしきい値に近づいた要素を示すので、4.5:1に対して4.52:1での<code>pass</code>や、テキストが切れるまであと0.4 pxでの<code>pass</code>を、余裕のある<code>pass</code>と区別できます。判定結果に添えられる情報で、検出結果ではありません。検出箇所を追加、削除、変更することはなく、ベースライン、SARIF、JUnit、EARLはこれを無視します。一部の要素が合格していれば、<code>fail</code>や<code>cantTell</code>の結果にも含まれます。<code>limit</code>は、値がしきい値に達する必要がある場合（コントラスト、サイズ）は<code>min</code>、しきい値を下回る必要がある場合（はみ出し）は<code>max</code>です。<code>headroom</code>はしきい値の内側にどれだけ余裕があるかを<code>unit</code>で表したもので、<code>min</code>なら<code>value - threshold</code>、<code>max</code>なら<code>threshold - value</code>となり、負になることはありません。<code>threshold</code>はその要素の判定に使われたしきい値で、要素ごとに異なることがあります（大きな文字なら3:1）。ピクセルは小数点以下1桁で示されます。CSSピクセルや、15pxのフォントの半分といったしきい値は小数になり、表示する側が人のために丸めるからです。比は丸めません。WCAGはコントラストを丸めないためです。同じ値の要素が複数あれば文書順で最初の要素が選ばれるので、同じページでは常に同じmarginになります。<code>measure</code>と<code>unit</code>はオープンな集合で、マイナーリリースで増えることがあります。<code>context</code>はルール固有で、<code>data.details</code>と同じく安定した契約ではありません。<code>getMargins(result)</code>は、結果に含まれるすべてのmarginを<code>ruleId</code>順に並べた<code>{"[{ ruleId, ...margin }]"}</code>として返します。フレームをまたぐ結果ではすべてのフレームのmarginを返し、子フレームのものには、そのフレームへのパスである<code>frame</code>が付きます。
 				</li>
 				<li>
-					<strong><code>error</code></strong>：ルールが完了しなかった場合、またはルールが返したものの一部をエンジンが変更したり無視したりした場合に含まれます。例外を投げた（または結果でないものを返した）ルールは、必ず<code>outcome: "cantTell"</code>、<code>occurrences: []</code>、例外メッセージを設定した<code>error</code>として現れます。そのため、検出箇所がなく<code>error</code>を持つ<code>cantTell</code>が、完了しなかったルールの見分け方です。エンジンは、壊れたルール1つでスキャン全体をクラッシュさせることはありません。それ以外の場合、<code>error</code>はエンジンの注記を保持し、ルール自身が返した<code>error</code>があればその後に<code>|</code>でつなげます。注記の対象は、上記の手動ルールの強制変換、集合の外にある<code>outcome</code>や<code>severity</code>、metaと異なる<code>type</code>、オブジェクトでない検出箇所（除外されます）、ルールが返した<code>policyOutcome</code>や<code>ruleSeverity</code>（どちらもエンジンが設定するため採用されません）、閉じた集合の外にある<code>uncertainty.code</code>、そして200段階の祖先をたどる処理が報告されたすべての要素に届かずに止まったために<code>cantTell</code>に格下げされた<code>fail</code>です。これらの結果は検出箇所を保持します。ルールは完了しているからです。
+					<strong><code>error</code></strong>：ルールが完了しなかった場合、またはルールが返したものの一部をエンジンが変更したり無視したりした場合に含まれます。例外を投げた（または結果でないものを返した）ルールは、必ず<code>outcome: "cantTell"</code>、<code>occurrences: []</code>、例外メッセージを設定した<code>error</code>として現れます。そのため、検出箇所がなく<code>error</code>を持つ<code>cantTell</code>が、完了しなかったルールの見分け方です。エンジンは、壊れたルール1つでスキャン全体をクラッシュさせることはありません。それ以外の場合、<code>error</code>はエンジンの注記を保持し、ルール自身が返した<code>error</code>があればその後に<code>|</code>でつなげます。注記の対象は、上記の手動ルールの強制変換、集合の外にある<code>outcome</code>や<code>severity</code>、metaと異なる<code>type</code>、オブジェクトでない検出箇所（除外されます）、ルールが返した<code>policyOutcome</code>や<code>ruleSeverity</code>（どちらもエンジンが設定するため採用されません）、閉じた集合の外にある<code>uncertainty.code</code>です。これらの結果は検出箇所を保持します。ルールは完了しているからです。（1.16.0より前は、200段階の祖先をたどる処理が届かずに止まった<code>fail</code>もここに記録されていました。前述の<code>ancestorWalkLimit</code>を参照してください。）
 				</li>
 				<li>
 					<strong><code>policyOutcome</code></strong>：ポリシーの<code>allowedOutcomes</code>が、ルールの見つけた判定結果を許可しない場合に含まれます。その場合、結果は<code>cantTell</code>になり、ルール自身の判定結果がここに入り、<code>error</code>は付きません。そのため、レポーターがこれを完了しなかったルールとして読むことはありません。
@@ -631,7 +649,7 @@ export function OutputSchemaContent() {
 				<code>fail</code>には必ず1つ以上あります。要素を示さないカスタムルールの<code>fail</code>には、ドキュメント要素に1つ付きます（<code>selector: "html"</code>、理由コード<code>FAIL_WITHOUT_OCCURRENCE</code>）。通常は<code>outcome</code>が<code>fail</code>または<code>cantTell</code>のときにだけ含まれます。このエンジンは合格した要素を列挙せず、フラグを立てた要素だけを報告するため、<code>pass</code>の結果は<code>occurrences: []</code>になります。例外はコントラストのルールで、その<code>pass</code>には、スキャンについて述べる検出箇所（対象となり計算できたテキストの量）が<code>selector</code>を空にして1つ付きます。テキストがまったくない<code>pass</code>と、テキストの多いページでの<code>pass</code>を区別できるようにするためです。
 			</p>
 			<p>
-				唯一の例外が<code>notApplicable</code>です。判定対象が何もなかったルールは、その理由を示す検出箇所を1つ付けることがあり、コントラストのルールは、背景を計算できるテキストが1つもなかった場合に実際にそうします。「チェックしたが、フラグを立てるものはなかった」と「チェックできなかった」の違いを、このエンジンは隠さずに報告します。このような検出箇所は要素ではなくスキャンについて述べるものなので、<code>selector</code>は空です。<strong><code>outcome</code>を先に確認せずに、<code>occurrences.length</code>を違反の件数として読まないでください。</strong>
+				coreの<code>notApplicable</code>は検出箇所を挙げません。背景を計算できるテキストが1つもなかったためにコントラストのルールが<code>notApplicable</code>になる場合は、見たテキストの量を結果自体の<code>data.details</code>（<code>eligibleTextCount</code>、<code>computableTextCount</code>）で示し、<code>contrast-computable</code>は計測できなかったテキストをそれぞれ<code>cantTell</code>として報告します。「チェックしたが、フラグを立てるものはなかった」と「チェックできなかった」の違いを、このエンジンは隠さずに報告します。判定対象が何もなかったパックのルールやカスタムルールは、今でもその理由を示す検出箇所を1つ付けることがあります。このような検出箇所は要素ではなくスキャンについて述べるものなので、<code>selector</code>は空です。<strong><code>outcome</code>を先に確認せずに、<code>occurrences.length</code>を違反の件数として読まないでください。</strong>
 			</p>
 			<CodeBlock
 				lines={[
@@ -717,6 +735,9 @@ export function OutputSchemaContent() {
 			</p>
 			<p>
 				新しい傾きはマイナーリリースでルールごとに追加され、測定で誤りが多すぎると分かった傾きは削除されることがあります。傾きは、あるかないかが変わりうる助言として扱い、<strong>検出結果の同一性の一部として扱わないでください</strong>。フィンガープリントには含まれません。
+			</p>
+			<p>
+				規格の対応付けは検出結果をその<code>data.details</code>で振り分けますが（<a href="/configuration/packs/#sending-findings-to-requirements">パック</a>を参照）、傾きはその外にあります。そのため、<code>skip-link</code>は傾きの向きをそこにも写します（core 1.16.0、1.18.0まで実験的）。<code>data.details.lean</code>は<code>fail</code>または<code>pass</code>で、<code>lean.toward</code>と同じです。検出結果に傾きがない場合は含まれません。
 			</p>
 
 			<h3 id="how-to-check">確認方法</h3>

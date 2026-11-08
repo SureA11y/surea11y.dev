@@ -392,7 +392,37 @@ export function StandaloneUsageContent() {
 				install them for test and audit runs. In a jsdom setup file, pass{" "}
 				<code>{"{ early: true }"}</code>, and for the listener hook run one selector first (
 				<code>document.querySelector('*')</code>), since jsdom adds key listeners of its own the
-				first time a selector runs. The{" "}
+				first time a selector runs. A jsdom test that stands in for <code>showModal()</code> by
+				setting <code>open</code> and <code>aria-modal="true"</code> on a dialog installs the
+				live-region hook with <code>{"{ early: true, assumeModal: true }"}</code> and scans with{" "}
+				<code>engineOptions.assumeModal: true</code> (core 1.16.0 and later).
+			</p>
+			<p>
+				<strong>Playwright's <code>setContent()</code> is no navigation.</strong> It writes the
+				markup into the page's current document, which has already loaded, so an init script
+				doesn't run while that document is loading. One added to the context before the page was
+				opened runs in the page's first, blank document: the hook is there when{" "}
+				<code>setContent()</code> writes the page, but it is recorded as <code>'late'</code>, and{" "}
+				<code>click-handler-keyboard-operable</code> asks where an early hook would have failed the
+				element. One added to a page that is already open waits for its next document, and{" "}
+				<code>setContent()</code> doesn't make one, so the scan runs with no hook. For early
+				capture, load the page with a real navigation: <code>page.goto()</code> to a server or a{" "}
+				<code>file://</code> URL, or <code>page.route()</code> to answer a URL with the markup. The
+				same holds for the internals hook:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"await context.addInitScript({ content: listenerHookScript() });",
+					"const page = await context.newPage();",
+					"await page.route('https://test.local/', (route) =>",
+					"  route.fulfill({ body: html, contentType: 'text/html' })",
+					");",
+					"await page.goto('https://test.local/'); // listenerHook: 'early'",
+				]}
+			/>
+			<p>
+				The{" "}
 				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
 					listener hook
 				</a>{" "}

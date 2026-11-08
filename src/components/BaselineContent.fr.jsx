@@ -238,8 +238,8 @@ export function BaselineContent() {
 			</p>
 			<p>
 				Le tableau couvre une version mineure : un déplacement y figure depuis la version qui l’a
-				apporté jusqu’à la version mineure suivante, qui le retire. La 1.15 n’a déplacé aucun
-				constat, son tableau est donc vide.
+				apporté jusqu’à la version mineure suivante, qui le retire. La 1.15 et la 1.16 n’ont
+				déplacé aucun constat, le tableau est donc vide.
 			</p>
 			<p>La 1.14 a déplacé ceux-ci, depuis la 1.13, et la 1.15 les a retirés :</p>
 			<DataTable
@@ -257,7 +257,7 @@ export function BaselineContent() {
 				mais pas avec la 1.15 : là, une entrée sous un ancien code est périmée et son constat est
 				nouveau. Mettez une telle baseline à jour avec la 1.14.x, comme ci-dessous, avant de passer
 				à la 1.15 ; <code>migrateBaselineEntries</code> ne connaît plus ces déplacements en 1.15.
-				Une baseline écrite par la 1.14 continue de correspondre avec la 1.15.
+				Une baseline écrite par la 1.14 continue de correspondre avec la 1.15 et la 1.16.
 			</p>
 			<p>
 				Régénérer la baseline avec <code>--write-baseline</code> (ou{" "}
@@ -346,7 +346,16 @@ export function BaselineContent() {
 				plutôt que d’essayer de deviner un format plus ancien ou différent.{" "}
 				<code>matchBaseline</code>, ainsi que l’option <code>baselineEntries</code> des
 				reporters SARIF et JUnit, acceptent le fichier tel qu’il est enregistré (son{" "}
-				<code>JSON.parse</code>) ou sa liste <code>entries</code>.
+				<code>JSON.parse</code>) ou sa liste <code>entries</code>.{" "}
+				<code>null</code> ou l’absence de baseline n’a aucune entrée, donc chaque échec est
+				nouveau. Depuis core 1.16.0, toute autre valeur lève une <code>TypeError</code> avec{" "}
+				<code>code: 'INVALID_BASELINE'</code> et un message qui dit ce qui ne va pas : une chaîne
+				ou un objet sans liste <code>entries</code>, une entrée qui n’est pas un objet ou n’a pas
+				de <code>ruleId</code>, un <code>reasonCode</code>, un <code>selector</code> ou un{" "}
+				<code>html</code> qui n’est ni une chaîne ni <code>null</code>, ou un <code>frame</code>{" "}
+				qui n’est pas une liste de chaînes. <code>migrateBaselineEntries</code> le vérifie de la
+				même façon. Auparavant, une telle valeur était lue comme une baseline vide, ce qui rendait
+				chaque échec nouveau sans un mot.
 			</p>
 
 			<h2>Combinaison avec <code>--json</code></h2>

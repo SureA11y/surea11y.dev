@@ -170,7 +170,11 @@ export function KnownLimitationsContent() {
 					código <code>PAGE_BUILTINS_BROKEN</code> que nombra cada uno, en lugar de dar un resultado
 					que parece correcto y es erróneo; uno roto antes de inyectar el bundle (
 					<code>Object.keys</code>) impide que el bundle se cargue. Una página que añade{" "}
-					<code>then</code> a <code>Object.prototype</code> se analiza como cualquier otra. Los
+					<code>then</code> a <code>Object.prototype</code> se analiza como cualquier otra. Una
+					página que sustituye <code>Array.from</code>, como hacen Prototype y MooTools, también se
+					analiza (desde core 1.16.0): el código propio de core no lo usa. Una regla de un pack o
+					personalizada que lo usa detiene ahí el análisis, con <code>PAGE_BUILTINS_BROKEN</code>{" "}
+					nombrando <code>Array.from</code>, salvo que la selección deje fuera la regla. Los
 					métodos del DOM que una página sustituye (<code>getComputedStyle</code>,{" "}
 					<code>querySelectorAll</code>, <code>getBoundingClientRect</code>) no se comprueban: las
 					reglas leen lo que devuelven.
@@ -280,11 +284,15 @@ export function KnownLimitationsContent() {
 					del documento, y los navegadores solo exponen el diálogo a la tecnología de asistencia. Un
 					diálogo abierto con el atributo <code>open</code> o con <code>show()</code> no es modal,
 					aunque tenga <code>aria-modal="true"</code>: la página de detrás sigue siendo alcanzable, y
-					el motor la juzga. Bajo jsdom, que no tiene capa superior, un{" "}
-					<code>&lt;dialog aria-modal="true"&gt;</code> abierto se toma en cambio como modal, lo más
-					cercano que el motor puede saber ahí. El motor hace lo mismo que el navegador: el
-					contenido detrás del diálogo queda fuera de todas las reglas, igual que el resto del
-					contenido oculto, y las reglas sobre la estructura de la propia página (
+					el motor la juzga. jsdom no tiene capa superior y no puede abrir un diálogo modal, así que
+					con jsdom nada queda detrás de uno, y el mismo marcado recibe los mismos veredictos que en
+					un navegador (desde core 1.16.0); una prueba con jsdom que sustituye{" "}
+					<code>showModal()</code> poniendo <code>open</code> y <code>aria-modal="true"</code> en el
+					diálogo pone{" "}
+					<a href="/configuration/engine-options/"><code>engineOptions.assumeModal: true</code></a>{" "}
+					para que ese diálogo se tome como modal. De varios diálogos modales, solo se juzga el
+					superior. El motor sigue al diálogo modal: el contenido detrás de él queda fuera de todas
+					las reglas, igual que el resto del contenido oculto, y no recibe el foco, y las reglas sobre la estructura de la propia página (
 					<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
 					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
 					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
@@ -435,9 +443,13 @@ export function KnownLimitationsContent() {
 					llamada a <code>getComputedStyle</code>, así que una llamada por elemento cuesta O(número de
 					elementos × profundidad). Medido en jsdom 29.1.1 sin código del motor involucrado: 4000 elementos
 					en una sola cadena tardan 8,3s solo en <code>getComputedStyle</code>, frente a 0,25s para
-					esos mismos 4000 como hermanos. Los propios recorridos de ancestros del motor están
-					acotados y se mantienen lineales, así que este es un coste de jsdom y no de las reglas.
-					Afecta a <code>runDomRulesInPage</code> y a todo lo construido sobre él, incluido{" "}
+					esos mismos 4000 como hermanos. El motor lee los ancestros de cada elemento hasta la raíz,
+					una vez por análisis, aunque las reglas de contraste miden cada texto frente a cada fondo
+					que tiene encima; la mayor parte del tiempo sigue siendo de jsdom. jsdom además resuelve
+					un valor heredado recorriendo recursivamente los elementos de encima, lo que agota la pila
+					a unos mil niveles de profundidad: el motor lee una propiedad de un elemento a más de 100
+					niveles de profundidad resolviendo primero los elementos de encima, así que todo análisis
+					lee el mismo valor. Afecta a <code>runDomRulesInPage</code> y a todo lo construido sobre él, incluido{" "}
 					<code>@surea11y/test-matchers</code>; un navegador real calcula el estilo heredado de
 					forma nativa y no tiene esta forma de coste. Los frameworks de componentes anidan
 					habitualmente entre 100 y 300 niveles, lo cual sigue siendo cómodamente rápido; se
@@ -454,6 +466,25 @@ export function KnownLimitationsContent() {
 					color definido con <code>var()</code> no se puede leer ahí: se pregunta por el texto o el
 					fondo (<code>contrast-computable</code>) en lugar de medirlo. Usa un navegador real para
 					páginas grandes de producción.
+				</li>
+				<li>
+					<strong>
+						Bajo jsdom, el CSS en capas y condicional se aplica a lo que oculta un elemento, con los
+						medios de jsdom.
+					</strong>{" "}
+					El <code>getComputedStyle</code> de jsdom no lee ninguna regla dentro de{" "}
+					<code>@layer</code>, <code>@supports</code> o <code>@container</code>, así que{" "}
+					<code>hidden</code> y <code>sr-only</code> de una página con Tailwind v4 no ocultaban nada
+					ahí. Desde core 1.16.0 el motor aplica él mismo esas reglas a las propiedades que lee para
+					saber si un elemento se muestra, pero toma <code>@media</code> como jsdom: solo se aplican{" "}
+					<code>all</code> y <code>screen</code>, así que una regla bajo{" "}
+					<code>(width &gt;= 48rem)</code> no cuenta dentro de una capa más que fuera de ella, y{" "}
+					<code>hidden md:block</code> de Tailwind sigue oculto con jsdom donde un navegador de
+					escritorio lo muestra. <code>@supports</code> se cumple para cualquier prueba de propiedad
+					y para un <code>selector()</code> que se pueda analizar, <code>@container</code> no se
+					aplica, y un valor <code>revert</code>, <code>revert-layer</code> o <code>var()</code>{" "}
+					deja el de jsdom. Las demás propiedades, entre ellas los colores, siguen siendo las de
+					jsdom. Analiza en un navegador una página que cambia lo que muestra según el viewport.
 				</li>
 				<li>
 					<strong>Bajo jsdom, el color de un enlace se calcula a partir de las reglas de la propia

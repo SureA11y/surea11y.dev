@@ -7,75 +7,83 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-15">"Mis resultados cambiaron al actualizar a core 1.15"</h2>
+				<h2 id="results-changed-1-16">"Mis resultados cambiaron al actualizar a core 1.16"</h2>
 				<p>
-					La 1.15 hace fallar un criterio de WCAG solo donde WCAG falla, y lee los frames como los
-					muestra el navegador. Los cambios que más probablemente se noten en un pipeline:
+					La 1.16 acerca jsdom al navegador y redacta sus mensajes para cualquier estándar. Los
+					cambios que más probablemente se noten en un pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>Menos fallos de estructura ARIA y HTML.</strong> Ocho reglas de ARIA y las reglas
-						de estructura HTML ya no hacen fallar un criterio donde solo se incumple WAI-ARIA o el
-						modelo de contenido de HTML: esos hallazgos son <code>cantTell</code>, con incertidumbre{" "}
-						<code>spec-only</code> y pasos para comprobarlo. Afectadas:{" "}
-						<a href="/rules/aria-role-name-present/"><code>aria-role-name-present</code></a> (grid,
-						tree, radiogroup, meter, progressbar),{" "}
-						<a href="/rules/dialog-name-present/"><code>dialog-name-present</code></a>,{" "}
-						<a href="/rules/tooltip-name-present/"><code>tooltip-name-present</code></a>,{" "}
-						<a href="/rules/aria-allowed-attr/"><code>aria-allowed-attr</code></a>,{" "}
-						<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a> (salvo
-						para el estado, el valor o el foco de un control),{" "}
-						<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a>,{" "}
-						<a href="/rules/aria-roles-valid/"><code>aria-roles-valid</code></a> (salvo en un
-						elemento enfocable), <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a>{" "}
-						(un ancestro; ahora solo se asocia al 1.3.1),{" "}
-						<a href="/rules/list-children-valid/"><code>list-children-valid</code></a> y{" "}
-						<a href="/rules/listitem-parent-valid/"><code>listitem-parent-valid</code></a> (salvo
-						donde la página dibuja el elemento defectuoso),{" "}
-						<a href="/rules/definition-list-children-valid/"><code>definition-list-children-valid</code></a>,{" "}
-						<a href="/rules/dlitem-parent-valid/"><code>dlitem-parent-valid</code></a> y{" "}
-						<a href="/rules/nested-interactive-controls-absent/"><code>nested-interactive-controls-absent</code></a>{" "}
-						(salvo dentro de un control con hijos presentacionales). Cada hallazgo conserva su
-						código de motivo, así que los baselines siguen coincidiendo, pero una validación o un
-						resultado agregado que solo fallaban por estos ahora se cumplen o quedan en{" "}
-						<code>cantTell</code>. Para juzgar los mismos hallazgos según WAI-ARIA, donde fallan,
-						añade el <a href="/configuration/packs/#wai-aria-pack">pack de WAI-ARIA</a>.
+						<strong>Con jsdom, solo un diálogo abierto con <code>showModal()</code> es
+						modal</strong>, como en un navegador. La página detrás de un{" "}
+						<code>&lt;dialog open aria-modal="true"&gt;</code> se juzga ahora, así que una prueba
+						con jsdom que simula un modal de esa manera ve hallazgos detrás de él;{" "}
+						<code>engineOptions.assumeModal: true</code> mantiene el comportamiento anterior
+						(consulta <a href="/help/known-limitations/">Limitaciones conocidas</a>). Nada detrás
+						de un diálogo modal recibe el foco, y de varios abiertos con <code>showModal()</code>{" "}
+						solo se juzga el superior.
 					</li>
 					<li>
-						<strong>Un documento en un frame no es una página propia.</strong> En un frame,{" "}
-						<code>page-title-present</code>, <code>html-lang-attr-present</code> y las reglas de
-						viewport, de bloques que saltar y de regiones de referencia son{" "}
-						<code>notApplicable</code> (consulta{" "}
-						<a href="#framed-page-rules">la entrada de más abajo</a>). Un frame bajo{" "}
-						<code>aria-hidden</code> o <code>inert</code> se lee como tal, y uno tras un diálogo
-						modal abierto se deja fuera.
+						<strong>jsdom oculta lo que oculta un navegador.</strong> Las reglas dentro de{" "}
+						<code>@layer</code>, <code>@supports</code> y <code>@container</code> ocultan
+						elementos, así que <code>hidden</code> y <code>sr-only</code> de Tailwind v4
+						funcionan; <code>clip: rect(0 0 0 0)</code> cuenta como recortado; el{" "}
+						<code>&lt;area&gt;</code> de un mapa de imagen está en la página. Desaparecen los
+						hallazgos sobre contenido que siempre estuvo oculto.
 					</li>
 					<li>
-						<strong>Los roles siguen WAI-ARIA más de cerca.</strong> <code>role="text"</code> no
-						nombra ningún rol válido; una imagen con un rol presentacional y un atributo ARIA global
-						conserva su rol, y falla{" "}
-						<a href="/rules/img-alt-present/"><code>img-alt-present</code></a> sin{" "}
-						<code>alt</code>; los cuatro globales que WAI-ARIA 1.2 declara obsoletos ya no devuelven
-						su rol a un elemento presentacional.
+						<strong>Los mensajes y los pasos describen la comprobación</strong> en lugar de nombrar
+						el criterio de WCAG, en todas las configuraciones regionales, así que un informe para
+						otro estándar se lee bien. Los mapeos y <code>failWhen</code> no cambian; una prueba
+						que compare el texto de los mensajes necesita actualizarse.
 					</li>
 					<li>
-						<strong>Un nivel de encabezado saltado es un problema de buenas prácticas</strong>, no
-						un fallo del 1.3.1, en los{" "}
-						<a href="/conformance/procedures/">procedimientos de prueba</a> revisados, que también
-						dan los pasos de «Cómo comprobarlo» de seis preguntas nuevas.
+						<strong>Se juzgan las páginas profundas.</strong> Un elemento a 200 o más niveles de
+						profundidad se juzga con todo lo que tiene encima, hasta 10.000 niveles, donde un fallo
+						tan profundo pasaba a ser una pregunta anotada en <code>error</code>; así que pueden
+						aparecer fallos ahí. Más allá de 10.000 es una pregunta, informada en{" "}
+						<a href="/results-reports/output-schema/">
+							<code>ancestorWalkLimit</code>
+						</a>
+						.
 					</li>
 					<li>
-						<strong>Un baseline de la 1.13 necesita ponerse al día primero.</strong> La 1.15 no
-						movió ningún código de motivo, y quitó los cambios de la 1.13 a la 1.14 (consulta{" "}
-						<a href="#baseline-after-upgrade">la entrada de más abajo</a>).
+						<strong>Las páginas que sustituyen <code>Array.from</code></strong> (Prototype.js,
+						MooTools) se analizan, donde antes el análisis se detenía con{" "}
+						<code>PAGE_BUILTINS_BROKEN</code> (consulta{" "}
+						<a href="#page-builtins-broken">la entrada de más abajo</a>).
+					</li>
+					<li>
+						<strong>Algunos selectores son distintos.</strong> Los caracteres de control se
+						escapan, un valor de más de 256 caracteres deja paso a la ruta del elemento, y{" "}
+						<a href="/rules/page-title-present/"><code>page-title-present</code></a> y{" "}
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> apuntan al
+						propio elemento del título, o a <code>&lt;head&gt;</code> cuando no hay ninguno. La
+						identidad de un hallazgo no incluye su selector, así que los baselines siguen
+						coincidiendo. Las reglas de contraste son <code>notApplicable</code> sin ninguna
+						ocurrencia cuando no se pudo calcular ningún contraste.
+					</li>
+					<li>
+						<strong>Los errores se informan en lugar de leerse como nada.</strong> Un{" "}
+						<code>contextSelector</code> vacío sigue analizando toda la página, pero avisa; algo
+						que no es un baseline lanza <code>INVALID_BASELINE</code> en lugar de hacer nuevo cada
+						fallo; y con <code>strictOptions</code>, un nombre de perfil desconocido lanza un error.
+						El perfil <code>section508</code> está obsoleto: usa <code>wcag20-aa</code>, que
+						ejecuta las mismas reglas.
+					</li>
+					<li>
+						<strong>Análisis más rápidos</strong>, con los mismos hallazgos: un pequeño porcentaje
+						en Chromium en páginas corrientes, del 10 al 25 % con jsdom, y mucho más donde era peor
+						(miles de enlaces o campos idénticos, tablas largas, muchas reglas de estilo).
 					</li>
 				</ul>
 				<p>
-					Nuevo, y sin cambiar nada salvo que lo uses: análisis de varios perfiles a la vez (
-					<a href="/configuration/engine-options/#several-profiles">Opciones del motor</a>), los
-					perfiles <code>wcag22-a</code> y <code>wcag22-aaa</code>, los procedimientos de prueba
-					para evaluar a mano, y «Lo que queda para una persona» en el informe HTML. La lista
-					completa está en el{" "}
+					Nuevo, y sin cambiar nada salvo que lo uses: los perfiles de WCAG 2.0 y 2.1 (
+					<a href="/configuration/engine-options/#conformance-profiles">Opciones del motor</a>) y,
+					experimentales hasta la 1.18.0, los estándares como datos, las pruebas bajo los
+					requisitos, los estándares construidos sobre otros y las leyes bajo las que se evalúa un
+					estándar (<a href="/configuration/packs/#experimental">Packs</a>). La lista completa está
+					en el{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>{" "}
@@ -299,6 +307,13 @@ export function FaqContent() {
 					nombran cada uno. Analiza la página antes de que sus scripts los cambien (inyecta el bundle
 					antes, o analiza una compilación sin el script que lo hace). Consulta{" "}
 					<a href="/help/known-limitations/">Limitaciones conocidas</a>.
+				</p>
+				<p>
+					Cuando <code>broken</code> es solo <code>Array.from</code>, la página lo sustituyó
+					(Prototype y MooTools lo hacen) y una regla de un pack o personalizada del análisis lo
+					usa: las reglas propias de core no lo usan, desde la 1.16. Escribe esa regla con
+					spread (<code>[...x]</code>, <code>[...x].map(f)</code>), o déjala fuera de la
+					selección.
 				</p>
 			</article>
 
@@ -620,8 +635,8 @@ export function FaqContent() {
 					una entrada con un código antiguo está obsoleta y su hallazgo es nuevo. Reescribe los
 					códigos del archivo con la 1.14.x con <code>migrateBaselineEntries</code> de{" "}
 					<code>@surea11y/core/baseline</code> y después actualiza, o regenéralo con la 1.15 y revisa
-					el diff. La 1.15 en sí no movió ningún código, así que un baseline escrito por la 1.14
-					sigue coincidiendo; un hallazgo cuyo resultado cambió con la actualización es nuevo o
+					el diff. Ni la 1.15 ni la 1.16 movieron ningún código, así que un baseline escrito por la
+					1.14 sigue coincidiendo; un hallazgo cuyo resultado cambió con la actualización es nuevo o
 					desaparece igualmente, y el registro de cambios explica por qué. Consulta <a href="/conformance/baseline/#upgrading">Baseline / allowlist</a>.
 				</p>
 			</article>
@@ -646,104 +661,75 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2 id="results-changed-1-14">"Mis resultados cambiaron al actualizar a core 1.14"</h2>
+				<h2 id="results-changed-1-15">"Mis resultados cambiaron al actualizar a core 1.15"</h2>
 				<p>
-					La 1.14 informa de más <code>cantTell</code> y afirma menos, a propósito. Los cambios que
-					más probablemente se noten en un pipeline:
+					La 1.15 hace fallar un criterio de WCAG solo donde WCAG falla, y lee los frames como los
+					muestra el navegador. Los cambios que más probablemente se noten en un pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>Ningún resultado agregado de WCAG se cumple.</strong> Un criterio se cumple solo
-						cuando sus reglas comprueban todo lo que pide, y todavía no hay ninguno marcado como
-						comprobado por completo, así que un criterio cuyas reglas se cumplen todas queda en{" "}
-						<code>cantTell</code> (<code>composite.rollup.cantTell.partialCheck</code>). Uno cuyas
-						reglas no encontraron nada es <code>notApplicable</code> solo para 2.4.3, 2.4.4, 2.4.7,
-						2.4.9, 2.5.3 y 4.1.1, y <code>cantTell</code> en los demás (
-						<code>composite.rollup.cantTell.partialCoverage</code>). Una regla que falla sigue
-						haciendo fallar su criterio. Un panel o una validación que cuente criterios cumplidos no
-						verá ninguno; consulta <a href="#why-criterion-canttell">la entrada de más arriba</a> y{" "}
-						<a href="/conformance/wcag-mapping/#when-a-criterion-passes">Mapeo de conformidad con WCAG</a>.
+						<strong>Menos fallos de estructura ARIA y HTML.</strong> Ocho reglas de ARIA y las reglas
+						de estructura HTML ya no hacen fallar un criterio donde solo se incumple WAI-ARIA o el
+						modelo de contenido de HTML: esos hallazgos son <code>cantTell</code>, con incertidumbre{" "}
+						<code>spec-only</code> y pasos para comprobarlo. Afectadas:{" "}
+						<a href="/rules/aria-role-name-present/"><code>aria-role-name-present</code></a> (grid,
+						tree, radiogroup, meter, progressbar),{" "}
+						<a href="/rules/dialog-name-present/"><code>dialog-name-present</code></a>,{" "}
+						<a href="/rules/tooltip-name-present/"><code>tooltip-name-present</code></a>,{" "}
+						<a href="/rules/aria-allowed-attr/"><code>aria-allowed-attr</code></a>,{" "}
+						<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a> (salvo
+						para el estado, el valor o el foco de un control),{" "}
+						<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a>,{" "}
+						<a href="/rules/aria-roles-valid/"><code>aria-roles-valid</code></a> (salvo en un
+						elemento enfocable), <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a>{" "}
+						(un ancestro; ahora solo se asocia al 1.3.1),{" "}
+						<a href="/rules/list-children-valid/"><code>list-children-valid</code></a> y{" "}
+						<a href="/rules/listitem-parent-valid/"><code>listitem-parent-valid</code></a> (salvo
+						donde la página dibuja el elemento defectuoso),{" "}
+						<a href="/rules/definition-list-children-valid/"><code>definition-list-children-valid</code></a>,{" "}
+						<a href="/rules/dlitem-parent-valid/"><code>dlitem-parent-valid</code></a> y{" "}
+						<a href="/rules/nested-interactive-controls-absent/"><code>nested-interactive-controls-absent</code></a>{" "}
+						(salvo dentro de un control con hijos presentacionales). Cada hallazgo conserva su
+						código de motivo, así que los baselines siguen coincidiendo, pero una validación o un
+						resultado agregado que solo fallaban por estos ahora se cumplen o quedan en{" "}
+						<code>cantTell</code>. Para juzgar los mismos hallazgos según WAI-ARIA, donde fallan,
+						añade el <a href="/configuration/packs/#wai-aria-pack">pack de WAI-ARIA</a>.
 					</li>
 					<li>
-						<strong>Dos reglas preguntan más.</strong>{" "}
-						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> pregunta por
-						cada título de página, no solo por los genéricos o de plantilla, ya que si un título
-						describe su página lo decide una persona (G88).{" "}
-						<a href="/rules/duplicate-id/"><code>duplicate-id</code></a> pregunta por el 4.1.1 también
-						con WCAG 2.0 y 2.1, ya que las erratas de 2023 lo dan por satisfecho, salvo que un
-						perfil declare <code>keepsParsing: true</code>, como hace <code>en301549-v3.2.1</code>.
+						<strong>Un documento en un frame no es una página propia.</strong> En un frame,{" "}
+						<code>page-title-present</code>, <code>html-lang-attr-present</code> y las reglas de
+						viewport, de bloques que saltar y de regiones de referencia son{" "}
+						<code>notApplicable</code> (consulta{" "}
+						<a href="#framed-page-rules">la entrada de más arriba</a>). Un frame bajo{" "}
+						<code>aria-hidden</code> o <code>inert</code> se lee como tal, y uno tras un diálogo
+						modal abierto se deja fuera.
 					</li>
 					<li>
-						<strong>Once reglas nuevas</strong>, entre ellas las primeras para el 3.3.1 (
-						<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>),
-						el 4.1.3 (<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>)
-						y el 1.4.5 (<a href="/rules/image-of-text/"><code>image-of-text</code></a>). La mayoría
-						pregunta;{" "}
-						<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>,{" "}
-						<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>{" "}
-						y <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a> pueden fallar, igual
-						que <a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>, que
-						ahora comprueba las restricciones entre atributos (<code>aria-valuemin</code> por encima
-						de <code>aria-valuemax</code>, por ejemplo). Consulta{" "}
-						<a href="/rules/">el catálogo de reglas</a>.
+						<strong>Los roles siguen WAI-ARIA más de cerca.</strong> <code>role="text"</code> no
+						nombra ningún rol válido; una imagen con un rol presentacional y un atributo ARIA global
+						conserva su rol, y falla{" "}
+						<a href="/rules/img-alt-present/"><code>img-alt-present</code></a> sin{" "}
+						<code>alt</code>; los cuatro globales que WAI-ARIA 1.2 declara obsoletos ya no devuelven
+						su rol a un elemento presentacional.
 					</li>
 					<li>
-						<strong>Algunos fallos pasan a ser preguntas, y aparecen fallos nuevos.</strong>{" "}
-						<code>td-has-header</code> pregunta una vez por una tabla grande sin celdas de
-						encabezado en lugar de hacer fallar cada celda, y <code>form-control-single-label</code>{" "}
-						pregunta por un campo con dos etiquetas. El contraste se mide en más de lo que dibuja la
-						página (el texto sobre el lienzo de la página en cada esquema de color,{" "}
-						<code>::first-line</code>, <code>font-size-adjust</code>, un placeholder cuyos colores
-						eligió la página), así que pueden aparecer fallos de contraste nuevos.
+						<strong>Un nivel de encabezado saltado es un problema de buenas prácticas</strong>, no
+						un fallo del 1.3.1, en los{" "}
+						<a href="/conformance/procedures/">procedimientos de prueba</a> revisados, que también
+						dan los pasos de «Cómo comprobarlo» de seis preguntas nuevas.
 					</li>
 					<li>
-						<strong>Algunos hallazgos tienen un código de motivo nuevo.</strong> Diecisiete reglas
-						que no daban ninguno ahora lo dan, y algunos códigos se dividen según la causa. Un
-						baseline escrito por la 1.13 sigue coincidiendo con ellos hasta la 1.15; reescríbelo con{" "}
-						<code>migrateBaselineEntries</code> (consulta{" "}
-						<a href="#baseline-after-upgrade">la entrada de más arriba</a>). Una alerta de Code
-						Scanning de un hallazgo así se cierra y vuelve como nueva.
-					</li>
-					<li>
-						<strong>Cada <code>cantTell</code> dice cómo responderlo.</strong> El hallazgo de una
-						regla de core lleva los pasos de <code>howToCheck</code>, y algunos llevan un{" "}
-						<code>lean</code>, hacia dónde apunta la evidencia de la página. El resultado sigue
-						siendo <code>cantTell</code>, y nada bloquea por un <code>lean</code> salvo que lo pidas
-						(<code>leanFailAs</code>). El <a href="/results-reports/html-report/">informe HTML</a>{" "}
-						agrupa estos hallazgos en probables fallos, probables cumplimientos y los que debe
-						revisar una persona. Consulta el{" "}
-						<a href="/results-reports/output-schema/#leans">esquema de salida</a>.
-					</li>
-					<li>
-						<strong>La 1.14.1 falla menos en el espaciado del texto.</strong>{" "}
-						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
-						ya no falla texto que la página no pierde. Una página con el desplazamiento bloqueado
-						con <code>{"body { position: fixed }"}</code>, como muchas detrás de un banner de
-						consentimiento, y una caja fija más alta que el viewport se preguntan como{" "}
-						<code>VIEWPORT_SCROLL_LOCKED</code>; el texto cortado por una caja que el script de la
-						página ajusta a él, como la etiqueta flotante de un campo de Angular Material, como{" "}
-						<code>TEXT_CLIPPED_SCRIPT_SIZED</code>. Una entrada de baseline o una alerta de Code
-						Scanning de uno de ellos se cierra como lo hace un error corregido. Los pasos de 36
-						preguntas también piden comprobar si otra vía de la página hace lo mismo antes de
-						llevar a un fallo.
-					</li>
-					<li>
-						<strong>La 1.14.2 lee la página como la dibuja el navegador.</strong> El contenido que
-						el navegador omite fuera de la pantalla con <code>content-visibility: auto</code> se
-						mide tal como queda dispuesto, así que desaparecen los solapamientos falsos, las
-						preguntas sobre el fondo y los hallazgos de foco inalcanzable y de tamaño del objetivo
-						que daba en páginas de tarjetas, y{" "}
-						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
-						ahora falla el texto que un elemento así corta (<code>details.clippedBy</code>).{" "}
-						<a href="/rules/label-in-name/"><code>label-in-name</code></a>{" "}
-						ya no falla una etiqueta partida solo entre cajas que se tocan, y las reglas que leen
-						hojas de estilo omiten el CSS solo de impresión o no admitido y las reglas que no llegan
-						al elemento. Una entrada de baseline o una alerta de Code Scanning de un hallazgo que ya
-						no se informa se cierra como lo hace un error corregido.
+						<strong>Un baseline de la 1.13 necesita ponerse al día primero.</strong> La 1.15 no
+						movió ningún código de motivo, y quitó los cambios de la 1.13 a la 1.14 (consulta{" "}
+						<a href="#baseline-after-upgrade">la entrada de más arriba</a>).
 					</li>
 				</ul>
 				<p>
-					La lista completa está en el{" "}
+					Nuevo, y sin cambiar nada salvo que lo uses: análisis de varios perfiles a la vez (
+					<a href="/configuration/engine-options/#several-profiles">Opciones del motor</a>), los
+					perfiles <code>wcag22-a</code> y <code>wcag22-aaa</code>, los procedimientos de prueba
+					para evaluar a mano, y «Lo que queda para una persona» en el informe HTML. La lista
+					completa está en el{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>{" "}

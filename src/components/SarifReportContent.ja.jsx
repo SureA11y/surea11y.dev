@@ -122,7 +122,7 @@ export function SarifReportContent() {
 			</p>
 			<p>
 				<code>notApplicable</code>
-				のチェックが常に空とは限りません。ルールは、判定する対象がなかった理由を説明する検出箇所を1つ付けることがあり、コントラストのルールは、背景を計算できるテキストが1つもなかったときにそうします。これらがresultになることはありません（利用側はすべてのresultをアラートとして扱いますが、「評価されなかった」はアラートではないからです）。ただし、捨てられもしません。
+				のチェックが常に空とは限りません。パックのルールやカスタムルールは、判定する対象がなかった理由を説明する検出箇所を1つ付けることがあります（1.16.0以降、coreのルールは付けません）。これらがresultになることはありません（利用側はすべてのresultをアラートとして扱いますが、「評価されなかった」はアラートではないからです）。ただし、捨てられもしません。
 				<code>runs[0].invocations[0].toolExecutionNotifications</code>
 				に
 				<code>note</code>
@@ -139,8 +139,8 @@ export function SarifReportContent() {
 					'    "toolExecutionNotifications": [',
 					"      {",
 					'        "level": "note",',
-					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
-					'        "associatedRule": { "id": "contrast-minimum" }',
+					'        "message": { "text": "No form on this page could be checked: each is inside a closed shadow root." },',
+					'        "associatedRule": { "id": "acme-form-review" }',
 					"      }",
 					"    ]",
 					"  }",
@@ -149,7 +149,9 @@ export function SarifReportContent() {
 			/>
 			<p>
 				<strong>これにより、SARIFだけを使うパイプラインが、何も報告がないことを問題なしと読み違えずに済みます</strong>
-				。コントラストのアラートがないのは、ページに問題がないからかもしれませんし、コントラストがそもそも計算できなかったからかもしれません。その2つを区別できるのはこの通知だけです。このブロックは伝えることがあるときにだけ出力されるので、報告することがない実行では
+				。coreのコントラストのルールには、そのための通知は要りません。コントラストを計算できなかったテキストは、
+				<code>contrast-computable</code>
+				の結果になるからです。このブロックは伝えることがあるときにだけ出力されるので、報告することがない実行では
 				<code>invocations</code>
 				キー自体がありません。合格したルールは通知を書き出しません。
 			</p>

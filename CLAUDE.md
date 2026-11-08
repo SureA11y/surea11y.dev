@@ -1162,6 +1162,49 @@ the page rules are `notApplicable` in a frame); every overlay follows.
 
 Open, not decided: core's new review steps in Spanish use "usted"
 (Inspeccione, Compruebe), which 1.14.1 had moved to infinitives; core's
-I18N.md now says Spanish landmarks are «puntos de referencia»; the
-WAI-ARIA pack's `index.js` says `core: '^1.14.2'` while its README says it
-needs 1.15.0 (the site follows the README).
+I18N.md now says Spanish landmarks are «puntos de referencia». (The
+WAI-ARIA pack's `index.js` said `core: '^1.14.2'` while its README said
+1.15.0; 1.0.1 fixed it to `^1.15.0`.)
+
+## Core 1.16.0 update (2026-11-08)
+
+Pinned `@surea11y/core` 1.16.0 (bindings, CLI, test-matchers and the
+EN 301 549 pack unchanged; `@surea11y/pack-wai-aria` 1.0.1 only fixed its
+`core` range). 16 rules' text changed, mostly descriptions that now say
+what the check does instead of naming the WCAG criterion
+(`avoid-inline-spacing`'s title too), and new `reports` fields
+(`linkKind`, `messageKind`, `typography` on `contrast-computable`,
+`skip-link`'s `lean`); every overlay follows. Review steps regenerated
+from core. Content pages, every language:
+
+- Engine options: the WCAG 2.0 and 2.1 profiles (`wcag20-a` …
+  `wcag21-aaa`), `section508` deprecated (table row and the Deprecated
+  callout), the selection table's profile rows (`wcag21-aa` by name; EN
+  301 549 from its pack), `strictOptions` throwing on an unknown profile,
+  the `assumeModal` option, an empty `contextSelector`. WCAG mapping,
+  Output schema's profile comment and Configuration's intro follow;
+  the homepage's "Name the standard" paragraph names the profiles.
+- Output schema: `engine.law` and `profiles[].law` (experimental),
+  `ancestorWalkLimit`, `notApplicable` from core names no occurrence,
+  selector changes (long values, `page-title-present` on `<head>`), the
+  new stable `data.details` fields, `skip-link`'s `data.details.lean`,
+  `occurrenceOutcome()` returning `'pass'`. SARIF's notification example is
+  a pack rule's now (core's contrast rules attach none).
+- Packs: `#experimental` (APIs that may change in a minor; `~1.16.0`
+  ranges), tests under requirements, `#standards-as-data` (format
+  `surea11y-standard/1`, `standardFromData`, `deriveStandard`), `#laws`
+  (facts, never logic), translations by id, `_standardReview_` keys,
+  `reviewByVersion`, mapped rules in procedures, `^1.16.0` from `new`.
+  RGAA is core's example of a tests-under-requirements standard; the site
+  names it only as that, since no RGAA pack is published.
+- Baseline (`INVALID_BASELINE`; 1.15 and 1.16 moved no code), Known
+  limitations (Array.from, modal dialogs under jsdom, layered CSS under
+  jsdom, deep DOMs), HTML report (the law beside the profile), Standalone
+  (Playwright's `setContent()` is no navigation, from INTEGRATION.md;
+  `assumeModal` for the live-region hook), Procedures (`profile` option,
+  `mappedRules`).
+- FAQ: `#results-changed-1-16` first, dated (move or drop it later);
+  `#results-changed-1-15` moved to the end; `#results-changed-1-14`
+  dropped (nothing linked to it); Array.from under
+  `#page-builtins-broken`.
+- Sample HTML reports re-generated; sample procedures unchanged.

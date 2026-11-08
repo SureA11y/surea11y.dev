@@ -174,7 +174,9 @@ export function HtmlReportContent() {
 				Die Meta-Leiste unter dem Kopf enthält die Anzahl der Regeln, die Anzahl der Vorkommen,
 				das Engine-Tag, die Schema-Version, die WCAG-Version, auf die der Scan zielte, das
 				verwendete <code>engineOptions.profile</code> (falls es eines gab; bei einem Scan mehrerer
-				jedes Profil, mit <code>+</code> verbunden, und die, die nicht gelaufen sind), die Tags der Opt-in-Regeln,
+				jedes Profil, mit <code>+</code> verbunden, und die, die nicht gelaufen sind) und daneben das
+				Gesetz, nach dem das Profil bewertet wird, wenn das Profil eines Packs eines nennt (core
+				1.16.0, experimentell), die Tags der Opt-in-Regeln,
 				die <code>engineOptions.optInRules</code> hinzugefügt hat (falls welche), die Bedingungen,
 				unter denen die Seite dargestellt wurde, und die Locale, auf die der Scan aufgelöst wurde.
 				Die Bedingungen sind der Viewport (mit dem Gerätepixelverhältnis, wenn es nicht 1 ist) und

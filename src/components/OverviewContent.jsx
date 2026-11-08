@@ -162,7 +162,9 @@ export function OverviewContent() {
 				Name the standard, and the engine picks the rules.{" "}
 				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code> runs the rules for WCAG 2.2's A
 				and AA criteria, by the level each criterion has in that version, and{" "}
-				<code>bestPractices: true</code> adds the checks WCAG doesn't require. A standard beyond
+				<code>bestPractices: true</code> adds the checks WCAG doesn't require.{" "}
+				<code>profile: 'wcag21-aa'</code> does the same by name, for WCAG 2.0, 2.1 and 2.2 at each
+				level, and can be scanned beside a pack's profile. A standard beyond
 				WCAG, such as a national one or your organisation's own policy, comes as a pack: its rules,
 				profiles and checklist items run beside core's and show in every report. See{" "}
 				<a href="/configuration/engine-options/#selecting-which-rules-run">Engine options</a> and{" "}

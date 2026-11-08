@@ -110,9 +110,9 @@ export function SarifReportContent() {
 				wurde, und es ist keine Konformitätsaussage. Dafür bewahren Sie das JSON-Ergebnis auf.
 			</p>
 			<p>
-				Eine <code>notApplicable</code>-Prüfung ist nicht immer leer: Eine Regel kann ein
-				Vorkommen anhängen, das erklärt, warum sie nichts zu beurteilen hatte; die Kontrastregeln
-				tun das, wenn kein Text einen berechenbaren Hintergrund hatte. Diese Vorkommen werden nie
+				Eine <code>notApplicable</code>-Prüfung ist nicht immer leer: Eine Regel eines Packs oder
+				eine eigene Regel kann ein Vorkommen anhängen, das erklärt, warum sie nichts zu beurteilen
+				hatte (die Regeln von core hängen seit 1.16.0 keines an). Diese Vorkommen werden nie
 				zu Ergebnissen (ein Konsument behandelt jedes Ergebnis als Alarm, und „wurde nicht
 				ausgewertet“ ist keiner), aber sie werden auch nicht verworfen. Sie stehen als Einträge
 				der Stufe <code>note</code> in{" "}
@@ -128,8 +128,8 @@ export function SarifReportContent() {
 					'    "toolExecutionNotifications": [',
 					"      {",
 					'        "level": "note",',
-					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
-					'        "associatedRule": { "id": "contrast-minimum" }',
+					'        "message": { "text": "No form on this page could be checked: each is inside a closed shadow root." },',
+					'        "associatedRule": { "id": "acme-form-review" }',
 					"      }",
 					"    ]",
 					"  }",
@@ -138,9 +138,9 @@ export function SarifReportContent() {
 			/>
 			<p>
 				<strong>So liest eine Pipeline, die nur SARIF auswertet, Stille nicht als
-				Unbedenklichkeitsbescheinigung</strong>: Keine Kontrast-Alarme können bedeuten, dass die
-				Seite in Ordnung ist, oder dass der Kontrast nie berechenbar war, und nur der Hinweis
-				unterscheidet die beiden Fälle. Der Block wird nur ausgegeben, wenn es etwas zu sagen gibt;
+				Unbedenklichkeitsbescheinigung</strong>. Die Kontrastregeln von core brauchen dafür keinen
+				Hinweis: Text, dessen Kontrast sich nicht berechnen ließ, ist ein Ergebnis von{" "}
+				<code>contrast-computable</code>. Der Block wird nur ausgegeben, wenn es etwas zu sagen gibt;
 				ein Lauf ohne Meldungen hat also gar keinen <code>invocations</code>-Schlüssel. Eine Regel,
 				die bestanden hat, schreibt keinen Hinweis.
 			</p>

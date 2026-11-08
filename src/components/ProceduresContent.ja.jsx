@@ -31,6 +31,7 @@ const listOptionRows = [
 	{ id: "automation", option: <code>automation</code>, what: <>ルールが完全に、一部だけ、またはまったく判定しないファセットだけ。<code>['manual', 'partial']</code>は、スキャンが人に任せるものです。</> },
 	{ id: "rules", option: <code>rules</code>, what: <>これらのルールのいずれかが対象とするファセットだけ（<code>'img-alt-present'</code>）。</> },
 	{ id: "packs", option: <code>packs</code>, what: "規格やルールを読むパック。" },
+	{ id: "profile", option: <code>profile</code>, what: <>法律を示すパックのプロファイル。その法律が求める要件だけを、一覧の見出しにその法律の名前を添えて返します（core 1.16.0、実験的。<a href="/configuration/packs/#laws">パック</a>を参照）。</> },
 ];
 
 const renderOptionRows = [
@@ -313,7 +314,7 @@ export function ProceduresContent() {
 
 			<h2 id="a-packs-standard">パックの規格</h2>
 			<p>
-				<a href="/configuration/packs/#procedures">パック</a>の規格は、人がその独自の要件をどう評価するかを示すことができ、上のすべての関数は、パックを渡せばそれを読みます。その規格自身の番号とグループで、言語を宣言していればその言語で読みます。WCAGの達成基準を再掲する要件は、その達成基準のテスト手順を、その要件として読み替えて使います（「which fails EN 301 549 9.1.4.3」）。
+				<a href="/configuration/packs/#procedures">パック</a>の規格は、人がその独自の要件をどう評価するかを示すことができ、上のすべての関数は、パックを渡せばそれを読みます。その規格自身の番号とグループで、言語を宣言していればその言語で読みます。WCAGの達成基準を再掲する要件は、その達成基準のテスト手順を、その要件として読み替えて使います（「which fails EN 301 549 9.1.4.3」）。core 1.16.0以降、ファセットは、規格の対応付けがそれが評価するものに振り分けるコアのルールも列挙します（<code>mappedRules</code>。チェックリスト項目の<code>mappedRules</code>にも）。そのため、コアのルールだけがチェックする要件やテストが、チェックされていないように見えることはありません。
 			</p>
 			<CodeBlock
 				lang="js"

@@ -16,12 +16,13 @@ export function ConfigurationContent() {
 				Beschränken Sie einen Scan auf genau die Regeln, die Sie wollen — durch Angabe einer
 				WCAG-Version und -Stufe (WCAG 2.2 AA in einer Option, auf Wunsch Best Practices dazu), nach
 				ID, nach Tag oder über ein benanntes Konformitätsprofil wie
-				WCAG 2.2 AA oder Section 508 —, damit ein Lauf das meldet, wofür Sie tatsächlich
+				WCAG 2.1 AA, für jede WCAG-Version und -Stufe —, damit ein Lauf das meldet, wofür Sie tatsächlich
 				verantwortlich sind, nicht mehr und nicht weniger. Beurteilen Sie einen Scan nach
 				mehreren Profilen zugleich, WCAG neben WAI-ARIA oder Ihrer eigenen Richtlinie, und sehen Sie,
 				was jedes aus jedem Befund macht. Die EN-301-549-Profile von core
 				funktionieren weiterhin, sind aber veraltet: Dieser Standard kommt jetzt als{" "}
-				<a href="/configuration/packs/#en-301-549-pack">Pack</a>. Führen Sie nur einige Prüfungen aus und
+				<a href="/configuration/packs/#en-301-549-pack">Pack</a>, und das Section-508-Profil, nur
+				WCAG 2.0 AA unter anderem Namen, weicht <code>wcag20-aa</code>. Führen Sie nur einige Prüfungen aus und
 				erhalten Sie trotzdem die WCAG-Kriterien, zu denen sie gehören, auf der Stufe, an der Sie
 				gemessen werden, und lassen Sie sich vor dem Scan auflisten, was er melden wird. Nehmen Sie Widgets, die
 				bekanntermaßen störende Befunde liefern, global oder für eine einzelne Regel vom Scan

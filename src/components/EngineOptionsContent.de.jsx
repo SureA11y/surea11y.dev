@@ -83,14 +83,19 @@ const optionRows = [
 		option: <code>profile</code>,
 		meaning: (
 			<>
-				Optionales benanntes Konformitätsziel: <code>'wcag22-a'</code>, <code>'wcag22-aa'</code>,{" "}
-				<code>'wcag22-aaa'</code>, <code>'en301549-v4.1.1'</code>, <code>'en301549-v3.2.1'</code>,{" "}
-				<code>'section508'</code> oder das eines Packs; oder eine Liste davon, für einen Scan
-				mehrerer Profile zugleich. Wählt Regeln über das passende Tag-Set aus, wenn nichts anderes
-				welche einschließt, und das WCAG-Ziel ergibt sich aus diesen Tags. Wird als{" "}
-				<code>engine.profile</code> zurückgemeldet, wenn es gewirkt hat (bei einer Liste das erste,
-				das gelaufen ist, mit allen in <code>engine.profiles</code>); andernfalls mit einer
-				Konsolenwarnung ignoriert. Siehe <a href="#conformance-profiles">„Konformitätsprofile“</a>{" "}
+				Optionales benanntes Konformitätsziel: <code>'wcag20-a'</code>, <code>'wcag20-aa'</code>,{" "}
+				<code>'wcag20-aaa'</code>, <code>'wcag21-a'</code>, <code>'wcag21-aa'</code>,{" "}
+				<code>'wcag21-aaa'</code>, <code>'wcag22-a'</code>, <code>'wcag22-aa'</code>,{" "}
+				<code>'wcag22-aaa'</code>, die veralteten <code>'en301549-v4.1.1'</code>,{" "}
+				<code>'en301549-v3.2.1'</code> und <code>'section508'</code> oder das eines Packs; oder
+				eine Liste davon, für einen Scan mehrerer Profile zugleich. Wählt Regeln über das passende
+				Tag-Set aus, wenn nichts anderes welche einschließt, und das WCAG-Ziel ergibt sich aus
+				diesen Tags. Wird als <code>engine.profile</code> zurückgemeldet, wenn es gewirkt hat (bei
+				einer Liste das erste, das gelaufen ist, mit allen in <code>engine.profiles</code>);
+				andernfalls mit einer Konsolenwarnung ignoriert. Ein Name, den kein Profil hat, wirft unter{" "}
+				<code>strictOptions</code> <code>INVALID_ENGINE_OPTIONS</code>, auch in einer Liste, mit
+				einer Meldung, die die vorhandenen Profile nennt (auch in <code>knownProfiles</code> des
+				Fehlers): Ohne Profil würde der Scan jede Regel ausführen. Siehe <a href="#conformance-profiles">„Konformitätsprofile“</a>{" "}
 				oben.
 			</>
 		),
@@ -270,6 +275,27 @@ const optionRows = [
 				(<code>@surea11y/cypress</code> erledigt das für Sie); <code>false</code> liest ein
 				Dokument der obersten Ebene wie das eines Frames. <code>runa11yCoreAcrossFrames</code>{" "}
 				gibt sie nicht an die Frames weiter, die es scannt. Ab core 1.15.0.
+			</>
+		),
+	},
+	{
+		id: "assumeModal",
+		option: <code>assumeModal</code>,
+		meaning: (
+			<>
+				Standardmäßig <code>false</code>. Nur ein mit <code>showModal()</code> geöffneter{" "}
+				<code>{"<dialog>"}</code> (einer, auf den <code>:modal</code> zutrifft) ist modal: Der
+				Browser macht den Rest der Seite inert, und die Engine lässt ihn in jeder
+				Regel weg und zählt nichts darin als fokussierbar. Ein mit dem Attribut <code>open</code>{" "}
+				oder <code>show()</code> geöffneter Dialog ist nicht modal, auch mit{" "}
+				<code>aria-modal="true"</code>, sodass dasselbe Markup in jsdom und im Browser dieselben
+				Ergebnisse erhält. jsdom kann keinen modalen Dialog öffnen (es hat kein{" "}
+				<code>showModal()</code>); ein Test dort, der <code>showModal()</code> nachbildet, indem er{" "}
+				<code>open</code> und <code>aria-modal="true"</code> auf den Dialog setzt, setzt daher{" "}
+				<code>assumeModal: true</code>: Ein solcher Dialog gilt dann als modal, wie ihn Releases
+				vor 1.16.0 unter jsdom behandelt haben. Ein DOM, das einen modalen Dialog öffnen kann (jeder
+				Browser), ignoriert die Option. Siehe{" "}
+				<a href="/help/known-limitations/">Bekannte Einschränkungen</a>.
 			</>
 		),
 	},
@@ -615,16 +641,21 @@ export function EngineOptionsContent() {
 					},
 					{ id: "bp", run: "Nur die Best-Practice-Regeln", pass: <code>{"runOnly: { bestPractices: true }"}</code> },
 					{
+						id: "profile-wcag",
+						run: "Eine WCAG-Version und -Stufe über ihren Namen",
+						pass: <code>{"engineOptions: { profile: 'wcag21-aa' }"}</code>,
+					},
+					{
 						id: "profile",
-						run: "Eine auf WCAG aufbauende Norm (EN 301 549, Section 508)",
-						pass: <code>{"engineOptions: { profile: 'en301549-v4.1.1' }"}</code>,
+						run: "Eine auf WCAG aufbauende Norm, aus einem Pack (EN 301 549)",
+						pass: <code>{"engineOptions: { packs: [en301549], profile: 'en301549-v4.1.1' }"}</code>,
 					},
 					{
 						id: "profile-bp",
 						run: "Dasselbe, und die Best-Practice-Regeln",
 						pass: (
 							<>
-								<code>{"engineOptions: { profile: 'en301549-v4.1.1' }"}</code>,{" "}
+								<code>{"engineOptions: { packs: [en301549], profile: 'en301549-v4.1.1' }"}</code>,{" "}
 								<code>{"runOnly: { bestPractices: true }"}</code>
 							</>
 						),
@@ -772,7 +803,8 @@ export function EngineOptionsContent() {
 			<h3 id="conformance-profiles">Konformitätsprofile</h3>
 			<p>
 				<code>engineOptions.profile</code> benennt ein Konformitätsziel, statt dessen Tag-Set
-				auszuschreiben:
+				auszuschreiben. Jede WCAG-Version hat ein Profil pro Stufe, benannt als{" "}
+				<code>{"wcag<version>-<level>"}</code>:
 			</p>
 			<DataTable
 				label="Konformitätsprofile"
@@ -785,6 +817,68 @@ export function EngineOptionsContent() {
 					{ key: "why", label: "Warum", wrap: true },
 				]}
 				rows={[
+					{
+						profile: <code>wcag20-a</code>,
+						tags: <code>wcag2a</code>,
+						target: "2.0",
+						wcagTarget: <code>{"{ version: '2.0', level: 'A' }"}</code>,
+						why: "WCAG 2.0 Stufe A",
+					},
+					{
+						profile: <code>wcag20-aa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>
+							</>
+						),
+						target: "2.0",
+						wcagTarget: <code>{"{ version: '2.0', level: 'AA' }"}</code>,
+						why: "WCAG 2.0 Stufe A und AA",
+					},
+					{
+						profile: <code>wcag20-aaa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag2aaa</code>
+							</>
+						),
+						target: "2.0",
+						wcagTarget: <code>{"{ version: '2.0', level: 'AAA' }"}</code>,
+						why: "WCAG 2.0 Stufe A, AA und AAA",
+					},
+					{
+						profile: <code>wcag21-a</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag21a</code>
+							</>
+						),
+						target: "2.1",
+						wcagTarget: <code>{"{ version: '2.1', level: 'A' }"}</code>,
+						why: "WCAG 2.1 Stufe A",
+					},
+					{
+						profile: <code>wcag21-aa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>
+							</>
+						),
+						target: "2.1",
+						wcagTarget: <code>{"{ version: '2.1', level: 'AA' }"}</code>,
+						why: "WCAG 2.1 Stufe A und AA",
+					},
+					{
+						profile: <code>wcag21-aaa</code>,
+						tags: (
+							<>
+								die Tags von <code>wcag21-aa</code> und <code>wcag2aaa</code>, <code>wcag21aaa</code>
+							</>
+						),
+						target: "2.1",
+						wcagTarget: <code>{"{ version: '2.1', level: 'AAA' }"}</code>,
+						why: "WCAG 2.1 Stufe A, AA und AAA",
+					},
 					{
 						profile: <code>wcag22-a</code>,
 						tags: (
@@ -829,29 +923,48 @@ export function EngineOptionsContent() {
 						),
 						target: "2.2",
 						wcagTarget: <code>{"{ version: '2.2', level: 'AA' }"}</code>,
-						why: "Kapitel 9 der EN 301 549 V4.1.1 gibt WCAG 2.2 A und AA wieder",
+						why: (
+							<>
+								Veraltet seit 1.13.0, entfällt in 2.0.0: Verwenden Sie <code>@surea11y/pack-en301549</code>{" "}
+								oder <code>wcag22-aa</code> für WCAG allein. Kapitel 9 der EN 301 549 V4.1.1 gibt WCAG
+								2.2 A und AA wieder
+							</>
+						),
 					},
 					{
 						profile: <code>en301549-v3.2.1</code>,
 						tags: (
 							<>
-								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>
+								wie <code>wcag21-aa</code>
 							</>
 						),
 						target: "2.1",
 						wcagTarget: <code>{"{ version: '2.1', level: 'AA' }"}</code>,
-						why: "Kapitel 9 der EN 301 549 V3.2.1 gibt WCAG 2.1 A und AA wieder, einschließlich 4.1.1 Syntaxanalyse",
+						why: (
+							<>
+								Veraltet seit 1.13.0, entfällt in 2.0.0: Verwenden Sie <code>@surea11y/pack-en301549</code>{" "}
+								oder <code>wcag21-aa</code> für WCAG allein (das 4.1.1 Syntaxanalyse als erfüllt
+								zählt, wie es die Errata von WCAG 2.1 tun). Kapitel 9 der EN 301 549 V3.2.1 gibt WCAG
+								2.1 A und AA wieder, einschließlich 4.1.1 Syntaxanalyse
+							</>
+						),
 					},
 					{
 						profile: <code>section508</code>,
 						tags: (
 							<>
-								<code>wcag2a</code>, <code>wcag2aa</code>
+								wie <code>wcag20-aa</code>
 							</>
 						),
 						target: "2.0",
 						wcagTarget: <code>{"{ version: '2.0', level: 'AA' }"}</code>,
-						why: "Die überarbeiteten Section-508-Standards übernehmen WCAG 2.0 A und AA",
+						why: (
+							<>
+								Veraltet seit 1.16.0, entfällt in 2.0.0: Verwenden Sie <code>wcag20-aa</code>, das
+								dieselben Regeln ausführt und dieselben Ergebnisse liefert. Ein Scan, der es nennt,
+								weist einmal pro Prozess darauf hin
+							</>
+						),
 					},
 				]}
 			/>
@@ -861,25 +974,31 @@ export function EngineOptionsContent() {
 				Profil ist. Jede WCAG-Stufe schließt die darunter ein, wie es die Stufen von WCAG tun:{" "}
 				<code>wcag22-aaa</code> führt jede Regel von <code>wcag22-aa</code> aus und fügt die der
 				Stufe AAA hinzu, ein Scan nennt also eine Stufe, nicht mehrere. <code>wcag22-a</code> und{" "}
-				<code>wcag22-aaa</code> sind neu in core 1.15.0. Ein Profil wählt weiterhin über seine Tags
+				<code>wcag22-aaa</code> sind neu in core 1.15.0, die Profile für WCAG 2.0 und 2.1 in
+				1.16.0: Jedes führt aus, was <code>{"runOnly: { wcag: { version, level } }"}</code>{" "}
+				ausführt, und lässt sich anders als <code>runOnly</code> neben dem Profil eines Packs
+				scannen. Ein Profil wählt weiterhin über seine Tags
 				aus, wie in der Tabelle: Unter <code>wcag22-aa</code> (und <code>wcag22-a</code> und{" "}
 				<code>wcag22-aaa</code>) läuft <code>duplicate-id</code> (4.1.1) und kann kein{" "}
 				<code>fail</code> ergeben, während{" "}
 				<code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code> die Regel weglässt.
 			</p>
-			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'wcag21-aa' }, null);"]} />
 			<Callout tone="note" title="Veraltet">
 				<p>
 					<code>en301549-v4.1.1</code> und <code>en301549-v3.2.1</code> ziehen in das Pack der
 					EN 301 549 um, <a href={pack}><code>@surea11y/pack-en301549</code></a>, und entfallen in core 2.0.0. Sie funktionieren wie bisher, mit
 					einem <code>console.warn</code> pro Prozess. Mit dem Pack (<code>{"packs: [en301549]"}</code>) übernimmt ein Scan dieselben Namen daraus und zeigt
 					keinen Hinweis; die Profile des Packs melden ein Ergebnis pro Klausel anstelle der
-					WCAG-Zusammenfassungen. Siehe <a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>wie core eine Norm abkündigt</a>.
+					WCAG-Zusammenfassungen. Auch <code>section508</code> entfällt in core 2.0.0, veraltet
+					seit 1.16.0: Es war nur WCAG 2.0 A und AA unter anderem Namen, verwenden Sie also{" "}
+					<code>wcag20-aa</code>, das dieselben Regeln ausführt. Siehe <a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>wie core eine Norm abkündigt</a>.
 				</p>
 			</Callout>
 			<p>
-				Die Norm oder Checkliste eines <a href="/configuration/packs/">Packs</a> bringt eigene
-				Profile in diese Liste ein.
+				Die eigenen Profile von core sind die von WCAG: Sobald die veralteten in 2.0.0 entfallen,
+				kommt das Profil jeder anderen Norm aus einem <a href="/configuration/packs/">Pack</a>,
+				dessen Norm oder Checkliste eigene Profile in diese Liste einbringt.
 			</p>
 			<h4 id="several-profiles">Mehrere Profile zugleich</h4>
 			<p>
@@ -1646,6 +1765,7 @@ export function EngineOptionsContent() {
 					"  embeddedAriaHidden: false,       // default false — a frame's document shown under aria-hidden=\"true\"",
 					"  embeddedInert: false,            // default false — a frame's document shown under [inert]",
 					"  topLevelDocument: true,          // optional — unset, a document shown in a frame is no page of its own",
+					"  assumeModal: false,              // default false — under jsdom, take an open <dialog aria-modal=\"true\"> as modal",
 					"  excludeSelectors: ['#cookie-banner', '.third-party-widget'],  // array or comma-separated string",
 					"  styleSheetTexts: [{ href: 'https://cdn.example/site.css', text: '/* its CSS */' }],  // sheets the page can't read",
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
@@ -2184,6 +2304,16 @@ export function EngineOptionsContent() {
 					<code>contextSelector[1] must be a CSS selector, not the number 5.</code>). Übergeben Sie
 					stattdessen einen Selektor, der auf das Element passt, und setzen Sie, was ein{" "}
 					<code>exclude</code> weglassen würde, in <code>engineOptions.excludeSelectors</code>.
+				</li>
+				<li>
+					<strong>Ein leerer Selektor oder eine leere Liste scannt die ganze Seite und sagt
+					es.</strong> <code>''</code>, <code>'   '</code>, <code>[]</code> und eine Liste leerer
+					Strings bezeichnen keinen Teil der Seite, also deckt der Scan alles ab, wie bei{" "}
+					<code>null</code>, und gibt ein <code>console.warn</code> aus. Unter{" "}
+					<code>strictOptions</code> wirft er stattdessen <code>INVALID_CONTEXT_SELECTOR</code>, da
+					eine versehentlich leer gebaute Liste als „nichts zu scannen“ gemeint gewesen sein kann.
+					Übergeben Sie <code>null</code> für die ganze Seite. <code>contextMatch</code> im
+					Ergebnis ist <code>null</code>, wie ohne Selektor. Ab core 1.16.0.
 				</li>
 				<li>
 					<strong>Ein einzelner String</strong> kann selbst eine kommagetrennte Selektorliste sein

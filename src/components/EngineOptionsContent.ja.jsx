@@ -48,7 +48,7 @@ const optionRows = [
 		option: <code>profile</code>,
 		meaning: (
 			<>
-				名前付きの適合性の目標（省略可）：<code>'wcag22-a'</code>、<code>'wcag22-aa'</code>、<code>'wcag22-aaa'</code>、<code>'en301549-v4.1.1'</code>、<code>'en301549-v3.2.1'</code>、<code>'section508'</code>、またはパック独自のもの。あるいは、複数のプロファイルで同時にスキャンするためのそれらのリスト。ほかに含める指定がない場合に、対応するタグセットでルールを選び、WCAGの対象バージョンはそのタグから決まります。効果があった場合は<code>engine.profile</code>として返し（リストの場合は実行された最初のもので、すべてが<code>engine.profiles</code>に入ります）、なかった場合はコンソールに警告を出して無視します。前述の<a href="#conformance-profiles">「適合性プロファイル」</a>を参照してください。
+				名前付きの適合性の目標（省略可）：<code>'wcag20-a'</code>、<code>'wcag20-aa'</code>、<code>'wcag20-aaa'</code>、<code>'wcag21-a'</code>、<code>'wcag21-aa'</code>、<code>'wcag21-aaa'</code>、<code>'wcag22-a'</code>、<code>'wcag22-aa'</code>、<code>'wcag22-aaa'</code>、非推奨の<code>'en301549-v4.1.1'</code>、<code>'en301549-v3.2.1'</code>、<code>'section508'</code>、またはパック独自のもの。あるいは、複数のプロファイルで同時にスキャンするためのそれらのリスト。ほかに含める指定がない場合に、対応するタグセットでルールを選び、WCAGの対象バージョンはそのタグから決まります。効果があった場合は<code>engine.profile</code>として返し（リストの場合は実行された最初のもので、すべてが<code>engine.profiles</code>に入ります）、なかった場合はコンソールに警告を出して無視します。どのプロファイルにもない名前は、<code>strictOptions</code>のもとではリストの中でも<code>INVALID_ENGINE_OPTIONS</code>を投げ、存在するプロファイルをメッセージで示します（エラーの<code>knownProfiles</code>にも入ります）。プロファイルがなければ、スキャンはすべてのルールを実行してしまうためです。前述の<a href="#conformance-profiles">「適合性プロファイル」</a>を参照してください。
 			</>
 		),
 	},
@@ -139,6 +139,15 @@ const optionRows = [
 		meaning: (
 			<>
 				デフォルトでは未設定です。文書がそれ自体で1つのページかどうかを示します。未設定の場合、文書がトップウィンドウのものであればページです。フレーム内に表示された文書はそれ自体で1つのページではなく、<code>fragment</code>の行が挙げるページに関する9つのルールはその中では<code>notApplicable</code>になります。Cypressのように、テスト対象のページを自身のフレームの中に表示するテストランナーは、これを<code>true</code>に設定します（<code>@surea11y/cypress</code>は自動で設定します）。<code>false</code>にすると、トップレベルの文書をフレームの文書として読みます。<code>runa11yCoreAcrossFrames</code>は、スキャンするフレームにこれを渡しません。core 1.15.0以降。
+			</>
+		),
+	},
+	{
+		id: "assumeModal",
+		option: <code>assumeModal</code>,
+		meaning: (
+			<>
+				デフォルトは<code>false</code>です。モーダルなのは、<code>showModal()</code>で開いた<code>{"<dialog>"}</code>（<code>:modal</code>に一致するもの）だけです。ブラウザーはページの残りを不活性にし、エンジンはそのページをすべてのルールから除き、その中のものをフォーカス可能とは数えません。<code>open</code>属性や<code>show()</code>で開いたダイアログは、<code>aria-modal="true"</code>があってもモーダルではないので、同じマークアップはjsdomでもブラウザーでも同じ判定になります。jsdomはモーダルダイアログを開けない（<code>showModal()</code>がない）ため、jsdomで<code>showModal()</code>の代わりにダイアログに<code>open</code>と<code>aria-modal="true"</code>を設定するテストは、<code>assumeModal: true</code>を設定します。そうしたダイアログはモーダルとして扱われ、1.16.0より前のリリースがjsdomで扱っていたのと同じになります。モーダルダイアログを開けるDOM（すべてのブラウザー）では無視されます。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
 			</>
 		),
 	},
@@ -323,16 +332,21 @@ export function EngineOptionsContent() {
 					},
 					{ id: "bp", run: "ベストプラクティスのルールだけ", pass: <code>{"runOnly: { bestPractices: true }"}</code> },
 					{
+						id: "profile-wcag",
+						run: "WCAGのバージョンとレベルを名前で",
+						pass: <code>{"engineOptions: { profile: 'wcag21-aa' }"}</code>,
+					},
+					{
 						id: "profile",
-						run: "WCAGを基にした規格（EN 301 549、Section 508）",
-						pass: <code>{"engineOptions: { profile: 'en301549-v4.1.1' }"}</code>,
+						run: "WCAGを基にした、パックの規格（EN 301 549）",
+						pass: <code>{"engineOptions: { packs: [en301549], profile: 'en301549-v4.1.1' }"}</code>,
 					},
 					{
 						id: "profile-bp",
 						run: "同じものと、ベストプラクティスのルール",
 						pass: (
 							<>
-								<code>{"engineOptions: { profile: 'en301549-v4.1.1' }"}</code>、<code>{"runOnly: { bestPractices: true }"}</code>
+								<code>{"engineOptions: { packs: [en301549], profile: 'en301549-v4.1.1' }"}</code>、<code>{"runOnly: { bestPractices: true }"}</code>
 							</>
 						),
 					},
@@ -411,7 +425,7 @@ export function EngineOptionsContent() {
 
 			<h3 id="conformance-profiles">適合性プロファイル</h3>
 			<p>
-				<code>engineOptions.profile</code>は、タグセットを書き出す代わりに適合性の目標を名前で指定します。
+				<code>engineOptions.profile</code>は、タグセットを書き出す代わりに適合性の目標を名前で指定します。WCAGの各バージョンにはレベルごとのプロファイルがあり、名前は<code>{"wcag<version>-<level>"}</code>です。
 			</p>
 			<DataTable
 				label="適合性のプロファイル"
@@ -424,6 +438,68 @@ export function EngineOptionsContent() {
 					{ key: "why", label: "理由", wrap: true },
 				]}
 				rows={[
+					{
+						profile: <code>wcag20-a</code>,
+						tags: <code>wcag2a</code>,
+						target: "2.0",
+						wcagTarget: <code>{"{ version: '2.0', level: 'A' }"}</code>,
+						why: "WCAG 2.0のレベルA",
+					},
+					{
+						profile: <code>wcag20-aa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>
+							</>
+						),
+						target: "2.0",
+						wcagTarget: <code>{"{ version: '2.0', level: 'AA' }"}</code>,
+						why: "WCAG 2.0のレベルAとAA",
+					},
+					{
+						profile: <code>wcag20-aaa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag2aaa</code>
+							</>
+						),
+						target: "2.0",
+						wcagTarget: <code>{"{ version: '2.0', level: 'AAA' }"}</code>,
+						why: "WCAG 2.0のレベルA、AA、AAA",
+					},
+					{
+						profile: <code>wcag21-a</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag21a</code>
+							</>
+						),
+						target: "2.1",
+						wcagTarget: <code>{"{ version: '2.1', level: 'A' }"}</code>,
+						why: "WCAG 2.1のレベルA",
+					},
+					{
+						profile: <code>wcag21-aa</code>,
+						tags: (
+							<>
+								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>
+							</>
+						),
+						target: "2.1",
+						wcagTarget: <code>{"{ version: '2.1', level: 'AA' }"}</code>,
+						why: "WCAG 2.1のレベルAとAA",
+					},
+					{
+						profile: <code>wcag21-aaa</code>,
+						tags: (
+							<>
+								<code>wcag21-aa</code>のタグと<code>wcag2aaa</code>, <code>wcag21aaa</code>
+							</>
+						),
+						target: "2.1",
+						wcagTarget: <code>{"{ version: '2.1', level: 'AAA' }"}</code>,
+						why: "WCAG 2.1のレベルA、AA、AAA",
+					},
 					{
 						profile: <code>wcag22-a</code>,
 						tags: (
@@ -468,43 +544,55 @@ export function EngineOptionsContent() {
 						),
 						target: "2.2",
 						wcagTarget: <code>{"{ version: '2.2', level: 'AA' }"}</code>,
-						why: "EN 301 549 V4.1.1の第9章はWCAG 2.2のAとAAを再掲しています",
+						why: (
+							<>
+								1.13.0から非推奨で、2.0.0で削除されます。<code>@surea11y/pack-en301549</code>を使うか、WCAGだけなら<code>wcag22-aa</code>を使ってください。EN 301 549 V4.1.1の第9章はWCAG 2.2のAとAAを再掲しています
+							</>
+						),
 					},
 					{
 						profile: <code>en301549-v3.2.1</code>,
 						tags: (
 							<>
-								<code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code>, <code>wcag21aa</code>
+								<code>wcag21-aa</code>と同じ
 							</>
 						),
 						target: "2.1",
 						wcagTarget: <code>{"{ version: '2.1', level: 'AA' }"}</code>,
-						why: "EN 301 549 V3.2.1の第9章はWCAG 2.1のAとAAを再掲しています（4.1.1構文解析を含む）",
+						why: (
+							<>
+								1.13.0から非推奨で、2.0.0で削除されます。<code>@surea11y/pack-en301549</code>を使うか、WCAGだけなら<code>wcag21-aa</code>を使ってください（こちらはWCAG 2.1の正誤表と同じく、4.1.1構文解析を満たしたものとして扱います）。EN 301 549 V3.2.1の第9章はWCAG 2.1のAとAAを再掲しています（4.1.1構文解析を含む）
+							</>
+						),
 					},
 					{
 						profile: <code>section508</code>,
 						tags: (
 							<>
-								<code>wcag2a</code>, <code>wcag2aa</code>
+								<code>wcag20-aa</code>と同じ
 							</>
 						),
 						target: "2.0",
 						wcagTarget: <code>{"{ version: '2.0', level: 'AA' }"}</code>,
-						why: "改訂版のSection 508基準はWCAG 2.0のAとAAを取り込んでいます",
+						why: (
+							<>
+								1.16.0から非推奨で、2.0.0で削除されます。同じルールを実行し、同じ結果になる<code>wcag20-aa</code>を使ってください。これを指定したスキャンは、プロセスごとに1回そのことを通知します
+							</>
+						),
 					},
 				]}
 			/>
 			<p>
-				<code>getProfileWcagTarget(profile)</code>は、プロファイルのタグセットが相当する<code>runOnly.wcag</code>の目標を返し、プロファイルでない名前には<code>null</code>を返します。WCAGのレベルと同じく、各レベルはその下のレベルを含みます。<code>wcag22-aaa</code>は<code>wcag22-aa</code>のすべてのルールを実行し、AAAのルールを加えるので、スキャンで指定するレベルは1つで、複数ではありません。<code>wcag22-a</code>と<code>wcag22-aaa</code>はcore 1.15.0で追加されました。プロファイルは引き続き表のとおりタグで選択します。<code>wcag22-aa</code>（および<code>wcag22-a</code>と<code>wcag22-aaa</code>）では<code>duplicate-id</code>（4.1.1）が実行されて<code>fail</code>にはならず、<code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code>ではそれが除かれます。
+				<code>getProfileWcagTarget(profile)</code>は、プロファイルのタグセットが相当する<code>runOnly.wcag</code>の目標を返し、プロファイルでない名前には<code>null</code>を返します。WCAGのレベルと同じく、各レベルはその下のレベルを含みます。<code>wcag22-aaa</code>は<code>wcag22-aa</code>のすべてのルールを実行し、AAAのルールを加えるので、スキャンで指定するレベルは1つで、複数ではありません。<code>wcag22-a</code>と<code>wcag22-aaa</code>はcore 1.15.0で、WCAG 2.0と2.1のプロファイルは1.16.0で追加されました。どれも<code>{"runOnly: { wcag: { version, level } }"}</code>と同じものを実行し、<code>runOnly</code>と違ってパックのプロファイルと並べてスキャンできます。プロファイルは引き続き表のとおりタグで選択します。<code>wcag22-aa</code>（および<code>wcag22-a</code>と<code>wcag22-aaa</code>）では<code>duplicate-id</code>（4.1.1）が実行されて<code>fail</code>にはならず、<code>{"{ wcag: getProfileWcagTarget('wcag22-aa') }"}</code>ではそれが除かれます。
 			</p>
-			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'en301549-v3.2.1' }, null);"]} />
+			<CodeBlock lang="js" lines={["runDomRulesInPage(url, null, { profile: 'wcag21-aa' }, null);"]} />
 			<Callout tone="note" title="非推奨">
 				<p>
-					<code>en301549-v4.1.1</code>と<code>en301549-v3.2.1</code>はEN 301 549のパック<a href={pack}><code>@surea11y/pack-en301549</code></a>に移り、core 2.0.0で削除されます。それまでは従来どおり動作し、プロセスごとに1回<code>console.warn</code>を出します。パックを渡すと（<code>{"packs: [en301549]"}</code>）、スキャンは同じ名前をパックから取り、通知は出しません。パックのプロファイルは、WCAGの集約の代わりに条項ごとに結果を1つ報告します。<a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>coreが規格を非推奨にする手順</a>を参照してください。
+					<code>en301549-v4.1.1</code>と<code>en301549-v3.2.1</code>はEN 301 549のパック<a href={pack}><code>@surea11y/pack-en301549</code></a>に移り、core 2.0.0で削除されます。それまでは従来どおり動作し、プロセスごとに1回<code>console.warn</code>を出します。パックを渡すと（<code>{"packs: [en301549]"}</code>）、スキャンは同じ名前をパックから取り、通知は出しません。パックのプロファイルは、WCAGの集約の代わりに条項ごとに結果を1つ報告します。<code>section508</code>も1.16.0から非推奨で、core 2.0.0で削除されます。WCAG 2.0のAとAAに別の名前を付けただけのものだったので、同じルールを実行する<code>wcag20-aa</code>を使ってください。<a href={`${core}/docs/API_STABILITY.md#deprecating-a-standard-a-profile-or-an-entry-point`}>coreが規格を非推奨にする手順</a>を参照してください。
 				</p>
 			</Callout>
 			<p>
-				<a href="/configuration/packs/">パック</a>の規格やチェックリストは、独自のプロファイルをこの一覧に加えます。
+				coreのプロファイルはWCAGのものです。非推奨のものが2.0.0でなくなると、ほかの規格のプロファイルはすべて<a href="/configuration/packs/">パック</a>から提供され、その規格やチェックリストが独自のプロファイルをこの一覧に加えます。
 			</p>
 			<h4 id="several-profiles">複数のプロファイルを同時に</h4>
 			<p>
@@ -895,6 +983,7 @@ export function EngineOptionsContent() {
 					"  embeddedAriaHidden: false,       // default false — a frame's document shown under aria-hidden=\"true\"",
 					"  embeddedInert: false,            // default false — a frame's document shown under [inert]",
 					"  topLevelDocument: true,          // optional — unset, a document shown in a frame is no page of its own",
+					"  assumeModal: false,              // default false — under jsdom, take an open <dialog aria-modal=\"true\"> as modal",
 					"  excludeSelectors: ['#cookie-banner', '.third-party-widget'],  // array or comma-separated string",
 					"  styleSheetTexts: [{ href: 'https://cdn.example/site.css', text: '/* its CSS */' }],  // sheets the page can't read",
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
@@ -1148,6 +1237,9 @@ export function EngineOptionsContent() {
 				</li>
 				<li>
 					<strong>セレクター、セレクターの配列、<code>null</code>以外のものは、同じエラーを投げます。</strong>エラーは渡されたものを示します。要素、NodeList、<code>{"{ include, exclude }"}</code>オブジェクト、数値、文字列でない配列の項目（<code>contextSelector[1] must be a CSS selector, not the number 5.</code>）がこれに当たります。代わりにその要素に一致するセレクターを渡し、<code>exclude</code>で除くはずだったものは<code>engineOptions.excludeSelectors</code>に指定してください。
+				</li>
+				<li>
+					<strong>空のセレクターやリストはページ全体をスキャンし、そのことを通知します。</strong><code>''</code>、<code>'   '</code>、<code>[]</code>、空白の文字列だけのリストはページのどの部分も指定しないので、<code>null</code>と同じくスキャンはページ全体を対象にし、<code>console.warn</code>を出します。<code>strictOptions</code>のもとでは代わりに<code>INVALID_CONTEXT_SELECTOR</code>を投げます。誤って空になったリストは「スキャン対象なし」のつもりだったかもしれないためです。ページ全体には<code>null</code>を渡してください。結果の<code>contextMatch</code>は、セレクターがない場合と同じく<code>null</code>です。core 1.16.0以降。
 				</li>
 				<li>
 					<strong>単一の文字列</strong>自体をカンマ区切りのセレクターリストにできます（通常のCSSと同じく和集合として扱われます）。<code>'#a, #b'</code>は<code>#a</code>と<code>#b</code>の両方をスキャンします。

@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "ルールに対するコアのlintルールです。" },
 	{ id: "standard", file: <><code>requirements.js</code>、<code>rule-map.js</code></>, what: "規格の場合のみ：要件と、それぞれを検査するルールです。" },
 	{ id: "procedures", file: <><code>procedures.js</code>、<code>tests/procedures.test.js</code></>, what: "規格の場合のみ：人が各要件を手作業でどう評価するかと、すべての要件がその各ファセットについて手順を持つことを確かめるテストです。" },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>で、<code>@surea11y/core</code>を、それを書き出したバージョン（<code>^1.15.0</code>）でpeer依存関係に、eslint、jsdom、Playwrightを開発用の依存関係に持ちます。</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>で、<code>@surea11y/core</code>を、それを書き出したバージョン（<code>^1.16.0</code>）でpeer依存関係に、eslint、jsdom、Playwrightを開発用の依存関係に持ちます。</> },
 	{ id: "readme", file: <><code>README.md</code>、<code>.gitignore</code></>, what: "これらのファイルについてのパック自身のガイドと、gitが対象外にするものです。" },
 ];
 
@@ -455,7 +455,7 @@ export function PacksContent() {
 					<strong>名前空間</strong>（<code>namespace: 'acme'</code>）は、パックのIDをコアやほかのパックのIDと区別します。すべてのルール、集約、プロファイルのIDは、名前空間と<code>-</code>で始まります。コアのルールIDの接頭辞になる名前（<code>img-alt-present</code>に対する<code>img</code>のように、<code>img</code>、<code>aria</code>、<code>link</code>）や、<code>wcag</code>で始まる名前は使えず、1つのスキャンにある2つのパックが同じ名前空間を持つことはできません。名前空間は、パック自身のルールをオプトインにするタグでもあります。このタグを持つルールは、パックのいずれかのプロファイルのもとか、IDか、タグ（<code>optInRules: ['acme']</code>）で選択されたときだけ実行されます。そのため、デフォルトでは、WCAGを対象とするスキャンでは実行されません。<code>optInRules</code>でこのタグを有効にしても、スキャンのプロファイルやフィルターはなくなりません。WCAGのプロファイルのもとでは、有効にしたルールは、そのタグがプロファイルにも一致するときだけ実行されます。パックを使うすべてのスキャンで実行すべきルールには、このタグを付けないでください。そうすると、そのルールはコアのルールと同じように選択され、タグが一致すれば、WCAGを対象とするスキャンでも実行されて不合格を報告することがあります。
 				</li>
 				<li>
-					<strong><code>core</code></strong>は、パックが動作するコアのバージョンの範囲（<code>'^1.11.1'</code>）で、npmと同じように範囲として読まれます。新しいパックは1.11.1から始めてください。1.11.0のパッケージには、Nodeでパックに必要なファイルが含まれていませんでした。範囲外のコアでのスキャンはパックをスキップし、理由を<code>skippedPacks</code>に示します。<code>surea11y-pack new</code>は、パックを生成したバージョン（<code>^1.15.0</code>）を書き出します。1.14で追加されたもの（<code>meta.review</code>、<code>reasonCodes</code>や<code>findings</code>の行、<code>meta.contributions</code>、<code>applicability</code>、<code>partial</code>、<code>keepsParsing</code>）をパックが使う場合は、1.14から始まる範囲のままにし、<code>outcome: 'fail'</code>を使う場合は1.15から始まる範囲にしてください。1.15が読むそのほかのもの（規格のテスト手順、グループ、翻訳、独自の確認手順）は、古いコアでは無視されます。
+					<strong><code>core</code></strong>は、パックが動作するコアのバージョンの範囲（<code>'^1.11.1'</code>）で、npmと同じように範囲として読まれます。新しいパックは1.11.1から始めてください。1.11.0のパッケージには、Nodeでパックに必要なファイルが含まれていませんでした。範囲外のコアでのスキャンはパックをスキップし、理由を<code>skippedPacks</code>に示します。<code>surea11y-pack new</code>は、パックを生成したバージョン（<code>^1.16.0</code>）を書き出します。1.14で追加されたもの（<code>meta.review</code>、<code>reasonCodes</code>や<code>findings</code>の行、<code>meta.contributions</code>、<code>applicability</code>、<code>partial</code>、<code>keepsParsing</code>）をパックが使う場合は、1.14から始まる範囲のままにし、<code>outcome: 'fail'</code>を使う場合は1.15から始まる範囲にしてください。1.15が読むそのほかのもの（規格のテスト手順、グループ、翻訳、独自の確認手順）は、古いコアでは無視されます。コアが実験的とするAPIを使うパックは、それ以降のマイナーを含まない範囲（<code>'~1.16.0'</code>）を宣言します。<a href="#experimental">実験的なAPI</a>を参照してください。
 				</li>
 				<li>
 					<strong><code>title</code></strong>は結果やレポートでのチェックリストの呼び名、<strong><code>description</code></strong>はパックが何をチェックするかを述べる1文で、利用者にパックを選ばせるツールのためのものです（<code>describePacks</code>がそれを返します）。
@@ -562,10 +562,45 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				比べるのは、ルールが安定して保つフィールドだけにしてください。すべてのルールの<code>reasonCode</code>と、GitHub上のコアの<a href={`${core}/docs/API_STABILITY.md`}>APIの安定性ポリシー</a>が挙げる少数のフィールド（<code>contrast-minimum</code>のコントラスト比、しきい値、文字組みなど）です。変わったりなくなったりしたフィールドは何にも一致せず、検出結果は理由コードか行に従います。各ルールの理由コードは、GitHub上のコアの<a href={`${core}/docs/RULE_CATALOG.md`}>ルールカタログ</a>の「<span lang="en">What a finding reports</span>」に一覧があります。
+				比べるのは、ルールが安定して保つフィールドだけにしてください。すべてのルールの<code>reasonCode</code>と、GitHub上のコアの<a href={`${core}/docs/API_STABILITY.md`}>APIの安定性ポリシー</a>が挙げるほかのフィールドです。<code>contrast-minimum</code>のコントラスト比、しきい値、文字組み、<code>contrast-computable</code>の文字組み、リストのルールの<code>element</code>と<code>parentElement</code>、<code>aria-role-name-present</code>の<code>role</code>、リンクのルールの<code>linkKind</code>、<code>live-region-announcements</code>の<code>messageKind</code>、そして実験的な<code>skip-link</code>の<code>lean</code>です（<a href="/results-reports/output-schema/#occurrence">出力スキーマ</a>を参照）。このうち<code>contrast-computable</code>の文字組み、<code>linkKind</code>、<code>messageKind</code>、<code>lean</code>はcore 1.16.0で追加されたもので、検出結果を独自のテストに振り分ける規格（画像のリンクをテキストのリンクと、ステータスメッセージをアラートと分けるなど）のためのものです。<code>linkKind</code>と<code>messageKind</code>は、マイナーリリースで値が増えることがあります。振り分ける値を名前で指定すれば、ほかの値は理由コードか行に従います。変わったりなくなったりしたフィールドは何にも一致せず、検出結果は理由コードか行に従います。各ルールの理由コードは、GitHub上のコアの<a href={`${core}/docs/RULE_CATALOG.md`}>ルールカタログ</a>の「<span lang="en">What a finding reports</span>」に一覧があります。
 			</p>
 			<p>
 				要件の判定方法を変えるフィールドがさらに2つあります。EN 301 549の第9章のように、要件がWCAGの達成基準を1対1で再掲する規格は、<code>ruleMappedStandard</code>に<code>applicability: 'wcag'</code>を渡します。すると要件の集約は、その達成基準のWCAGの集約がそうなる場合にだけ<code>notApplicable</code>や<code>pass</code>になり、1つのレポートの中で両者が一致します。達成基準を再掲してはいないものの、コアのルールでは完全には検査できない要件は、要件の表で<code>partial: true</code>とします。すると、その集約は、ルールがすべて合格した場合も、すべて何も見つけなかった場合も<code>cantTell</code>になります。ルールが検査したのはその一部だけだからです。独自の集約を書く規格は、各集約の<code>meta</code>で両方を示し、<code>meta.contributions</code>で検出結果を振り分けます。形は<code>pack.d.ts</code>の<code>StandardRollup</code>が示し、GitHub上のコアの<a href={`${core}/docs/PACKS.md`}>パックのガイド</a>が順を追って説明しています。どれもcore 1.14.0が必要です。
+			</p>
+			<p>
+				<strong>要件の下のテスト</strong>（core 1.16.0、<a href="#experimental">実験的</a>）。RGAAが各基準の下でテストを判定するように、要件の下でテストを判定する規格は、<code>ruleMappedStandard</code>にバージョンごとに3つ目の表<code>tests</code>を渡します。各テストの<code>title</code>と、それが属する<code>requirements</code>です。そうするとルールの対応表の行はテストを指定し、<code>asks</code>で、その検出結果が問いにしかならない場所を示せます。集約は引き続き要件ごとに1つで、そのテストのルールをまとめます。各検出結果は不合格にしたテストに数えられ、結果は各テストを、それが属する要件（<code>criterion</code>）とともに示します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"requirements: { '1.0': { '4.2': { title: 'Images have a text alternative', wcagSc: ['1.1.1'], tests: ['4.2.1', '4.2.2'] } } },",
+					"tests: { '1.0': {",
+					"  '4.2.1': { title: 'Each image has an alt attribute', requirements: ['4.2'] },",
+					"  '4.2.2': { title: 'Each alternative describes the image', requirements: ['4.2'] }",
+					"} },",
+					"ruleMap: { '1.0': {",
+					"  'img-alt-present': { requirements: ['4.2.1'] },",
+					"  'img-alt-quality': { requirements: [], asks: ['4.2.2'] }",
+					"} }",
+				]}
+			/>
+
+			<h3 id="standards-as-data">データとしての規格、ほかの規格を基にした規格</h3>
+			<p>
+				core 1.16.0以降（<a href="#experimental">実験的</a>）、同じ表は、規格のバージョン、グループ、プロファイル、テキストとあわせて、<code>@surea11y/core/schemas/standard.schema.json</code>が記述する<code>surea11y-standard/1</code>形式の1つのJSONオブジェクトにできます。そのため、どのツールもパックを実行せずに規格を読めます。<code>checkStandardData(data)</code>はその誤りを列挙し、<code>standardFromData(data)</code>はそれからパックの<code>standard</code>を作り、<code>standardDataOf(standard)</code>はそれを返します。データから作った<a href="#en-301-549-pack">EN 301 549のパック</a>は、現在と同じ結果になります。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { definePack, standardFromData } = require('@surea11y/core/pack');",
+					"const data = require('./standard.json');   // { format: 'surea11y-standard/1', key: 'city', ... }",
+					"",
+					"module.exports = definePack({ name, version, namespace: 'city', core: '~1.16.0',",
+					"  standard: standardFromData(data) });",
+				]}
+			/>
+			<p>
+				EN 301 549を基にしたり、その条項を手順に分けたりする国の規格のように、1つ以上のほかの規格を基にした規格は、保つものと変えるものだけを宣言します。<code>deriveStandard(bases, own)</code>が、基の規格のデータからそれを補います。そのバージョン、要件、テストはそれぞれ何を<code>basedOn</code>にしているかを示し、基にしたもののフィールド、テスト、ルールの対応表の行を受け継ぎます。独自の行は受け継いだ行を置き換えたり削除したりし、基の規格が答えられない<code>basedOn</code>は例外を投げます。そのため、基の規格が変わったときには、派生したパックの結果ではなくテストが失敗します。結果の各エントリーはその要件やテストの<code>basedOn</code>を持つので、手順の結果はその元になった条項を示します。形式と派生のすべての規則は、GitHub上のコアの<a href={`${core}/docs/PACKS.md`}>パックのガイド</a>にあります。
 			</p>
 
 			<h3 id="rules">ルール</h3>
@@ -611,7 +646,7 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				ルールは、達成基準のどのファセットをテストするかを<code>meta.coverage.facetsBySc</code>（<code>{"{ '2.4.4': ['link-text-descriptive-evidence'] }"}</code>）で示し、その手順はコアのものと同じように、その達成基準の<a href="/conformance/procedures/">テスト手順</a>に加わります。コアのルールを理由コードで判定する規格は、<code>standard.review</code>で、コアのルールのコードに独自の手順を与えることもできます。その規格のプロファイルだけが問いにする検出結果は、WCAGを名指しするコアの手順の代わりにそれを読みます。
+				ルールは、達成基準のどのファセットをテストするかを<code>meta.coverage.facetsBySc</code>（<code>{"{ '2.4.4': ['link-text-descriptive-evidence'] }"}</code>）で示し、その手順はコアのものと同じように、その達成基準の<a href="/conformance/procedures/">テスト手順</a>に加わります。コアのルールを理由コードで判定する規格は、<code>standard.review</code>で、コアのルールのコードに独自の手順を与えることもできます。その規格のプロファイルだけが問いにする検出結果は、WCAGを名指しするコアの手順の代わりにそれを読みます。core 1.16.0以降、<code>{"howToCheckFor(ruleId, code, locale, { packs, profile })"}</code>は検出結果がなくても同じようにそれを読み、<code>reviewByVersion</code>は規格のバージョンごとに独自の手順を与えるので、要件を名指しする手順がそのバージョンの番号付けに従えます。
 			</p>
 
 			<h3 id="procedures">人がどう評価するか：テスト手順</h3>
@@ -656,6 +691,9 @@ export function PacksContent() {
 				手順は、ページ全体について、アクセシビリティの訓練を受けていない人に向けて書いてください。ブラウザー、その開発者ツール、キーボード、必要な場合はスクリーンリーダーを使う1〜8個の短い手順と、合格の場合と不合格の場合にそれぞれ何が見えるかです。<code>{"{{requirement}}"}</code>には、規格の名前と、それとして読まれる要件（「City Standard 7.1」）が入ります。<code>surea11y-pack new --kind standard</code>は、各形の例を含む<code>procedures.js</code>と、すべてのバージョンのすべての要件がその各ファセットについて手順を持つことを確かめるテストを書き出します。WCAGを1対1で再掲する規格は、<code>ruleMappedStandard</code>から、すべての要件について最初の形を得ます。
 			</p>
 			<p>
+				core 1.16.0以降、ファセットは、規格の対応付けがそれが評価するものに振り分けるコアのルールも、その<code>rules</code>と<code>mappedRules</code>に列挙します。そのため、コアのルールだけがチェックするテストが、チェックされていないように見えることはなくなりました。対応表がルールをテスト手順の要件より細かいもの（達成基準のテストなど）に結び付ける規格は、各ファセットで、その対応付けが使うIDを<code>mappedRequirements</code>に指定します。
+			</p>
+			<p>
 				規格は、<code>groups</code>（バージョンごとのテーマや章）、独自の要件に対する<code>relatesTo</code>（再掲はせずに関連するWCAGの達成基準）、<code>notes</code>（あるバージョンのテスト手順を使う前に読み手が知っておくべきこと）も提供できます。規格自身のテキストは1つの言語<code>lang</code>（デフォルトは英語）で書き、<code>translations</code>がそれをほかの言語で、翻訳元のテキストをキーにして提供するので、翻訳が元のテキストより長く残ることはありません。言語を宣言した規格は、コアのテスト手順も含めて最初から最後までそのいずれかの言語で読まれるので、ページに2つの言語が混ざることはありません。<code>packTranslationCoverage(pack)</code>は、各翻訳がどこまでそろっているかを示します。すべてのフィールドと<code>definePack</code>が確認する内容は、GitHub上のコアの<a href={`${core}/docs/PACKS.md#how-a-person-assesses-it-procedures`}>パックのガイド</a>にあります。
 			</p>
 
@@ -677,7 +715,40 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				検出結果の<code>howToCheck</code>とテスト手順は、それらをそのロケールで示し、ロケールにないテキストは英語で示します。コアが同梱しないロケール（<code>pt</code>）では、パックの辞書がコアのキーも提供でき、それによってそこでコアのルールとそのテスト手順が翻訳されます。
+				検出結果の<code>howToCheck</code>とテスト手順は、それらをそのロケールで示し、ロケールにないテキストは英語で示します。core 1.16.0以降、<code>checkPack</code>は、エントリーの一部だけ（手順の一部だけ）を翻訳する辞書を報告します。そうした辞書では、人が2つの言語で手順を読むことになるからです。コアが同梱しないロケール（<code>pt</code>）では、パックの辞書がコアのキーも提供でき、それによってそこでコアのルールとそのテスト手順が翻訳されます。
+			</p>
+			<p>
+				コアのコードに対する規格独自の手順（<code>standard.review</code>）は、規格の<code>key</code>、<code>_standardReview_</code>、コアのルールのID、理由コード、そして<code>{"step<n>"}</code>、<code>pass</code>、<code>fail</code>のいずれかからなるキーで翻訳します（<code>acme_standardReview_aria-valid-attr-value_ARIA_HASPOPUP_ROLE_MISMATCH_step1</code>）。検出結果がそれを読むのは、辞書がエントリー全体を翻訳している場合だけで、そうでなければ英語を読みます。これらのキーは<a href="#experimental">実験的</a>です（core 1.16.0）。
+			</p>
+			<p>
+				<strong>IDによる翻訳</strong>（core 1.16.0、<a href="#experimental">実験的</a>）。<code>standard.texts</code>は、規格をバージョンごとに、各テキストの文言ではなく、それが何であるかで翻訳します（<code>requirements.4.2.title</code>、<code>groups.4.title</code>、<code>review.&lt;rule&gt;.&lt;CODE&gt;.steps</code>）。そのため、同じ文言の2つのテキストを別々に翻訳でき、バージョンはIDを独自の文言で表せます。キーが<code>texts</code>にあるテキストはそこから、ないテキストは<code>translations</code>から読まれるので、規格は一方から他方へテキストごとに移行できます。
+			</p>
+
+			<h3 id="laws">規格の評価の根拠となる法律</h3>
+			<p>
+				1つの規格が複数の法律に対応しうるため、core 1.16.0以降（<a href="#experimental">実験的</a>）、規格は<code>standard.laws</code>で対応する法律を示し、各プロファイルはそれが対象とする法律を<code>law</code>で指定します。必須なのは<code>name</code>と<code>jurisdiction</code>だけです。<code>appliesTo</code>、<code>exemptions</code>、<code>since</code>、<code>enforcement</code>、<code>sources</code>（httpsのリンクのみ）がさらに詳しく記述し、<code>standard.lawTexts</code>がIDでそれらを翻訳します。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"laws: {",
+					"  'city-public': {",
+					"    name: 'City Accessibility Act, section 4',",
+					"    jurisdiction: 'DE-BY',                 // 'FR', 'DE-BY', 'EU'…",
+					"    appliesTo: 'Public bodies of the city',",
+					"    sources: [{ title: 'Official journal', url: 'https://example.org/act' }]",
+					"  }",
+					"},",
+					"profiles: { 'city-1.0': { version: '1.0', tags: ['city'], mappedRules: true, law: 'city-public' } }",
+				]}
+			/>
+			<p>
+				これらは表示するための事実であり、ロジックではありません。<strong>coreは、法律が誰に適用されるかを決めることはありません</strong>。結果はプロファイルの法律を示し（<code>engine.law</code>。<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）、<a href="/results-reports/html-report/">HTMLレポート</a>はそれをプロファイルの横に表示します。<code>{"listProcedures({ profile })"}</code>はその法律が求める要件だけを列挙し（一部の法律だけが求める要件は、それらの法律を<code>laws</code>に列挙します）、<code>describePacks</code>は各規格の法律を、それに対応するプロファイルとともに列挙します。<code>@surea11y/core/pack</code>の<code>lawOf(standard, id, locale)</code>は、法律を指定した言語で返します。ほかの規格から派生した規格は独自の法律を指定し、それを受け継ぎません。
+			</p>
+
+			<h3 id="experimental">実験的なAPI</h3>
+			<p>
+				core 1.16.0は、一部のAPIを実験的としています。それらはマイナーリリースで変わることがありますが、パッチリリースで変わることはなく、2つのマイナーリリースのうちに安定版になるか削除されます。現在は、データとしての規格、要件の下のテスト、ほかの規格を基にした規格、IDによる翻訳と<code>reviewByVersion</code>、法律、<code>_standardReview_</code>の辞書のキー、<code>skip-link</code>の<code>data.details.lean</code>がこれに当たり、すべて1.18.0まで実験的です。それらを使うパックは、次のマイナーで変わる可能性があるため、それ以降のマイナーを含まない<code>core</code>の範囲（<code>'~1.16.0'</code>）を宣言します。<code>checkPack</code>はそれより広い範囲を報告し、<code>describePacks</code>は各パックが何を使っているかを列挙します。このページのそれ以外のものはすべて、1.xを通じて安定しています。一覧は、GitHub上のコアの<a href={`${core}/docs/API_STABILITY.md#experimental-may-change-in-a-minor`}>APIの安定性ポリシー</a>にあります。
 			</p>
 
 			<h3 id="test-lint-document">テスト、lint、ドキュメント</h3>

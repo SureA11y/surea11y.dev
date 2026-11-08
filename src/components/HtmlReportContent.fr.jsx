@@ -165,7 +165,9 @@ export function HtmlReportContent() {
 				La barre de métadonnées sous l’en-tête indique le nombre de règles, le nombre
 				d’occurrences, le tag du moteur, la version du schéma, la version de WCAG visée par
 				l’analyse, le <code>engineOptions.profile</code> utilisé (s’il y en a un ; chaque profil d’une analyse
-				de plusieurs, joints par <code>+</code>, et ceux qui ne se sont pas exécutés), les tags de règles
+				de plusieurs, joints par <code>+</code>, et ceux qui ne se sont pas exécutés) et, à côté, la loi
+				au titre de laquelle le profil est évalué quand le profil d’un pack en nomme une (core 1.16.0,
+				expérimental), les tags de règles
 				optionnelles ajoutés par <code>engineOptions.optInRules</code> (s’il en a ajouté), les
 				conditions dans lesquelles la page a été rendue et la langue retenue pour l’analyse. Ces
 				conditions sont le viewport (avec le ratio de pixels de l’appareil lorsqu’il ne vaut pas 1)

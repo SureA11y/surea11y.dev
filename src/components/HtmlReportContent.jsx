@@ -145,7 +145,8 @@ export function HtmlReportContent() {
 				The meta bar under the header carries the rule count, occurrence count, engine tag, schema
 				version, the WCAG version the scan targeted, the <code>engineOptions.profile</code> it used
 				(when there was one; every profile of a scan of several, joined with <code>+</code>, and
-				those that did not run), the opt-in rule tags <code>engineOptions.optInRules</code> added (when
+				those that did not run) and, beside it, the law the profile is assessed under when a pack's
+				profile names one (core 1.16.0, experimental), the opt-in rule tags <code>engineOptions.optInRules</code> added (when
 				it added any), the conditions the page was rendered under, and the locale the scan resolved
 				to. The conditions are the viewport (with the device pixel ratio when it isn't 1) and the
 				color scheme, and the web fonts when they were still loading; a scan with no layout, in

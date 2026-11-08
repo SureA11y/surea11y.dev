@@ -242,8 +242,8 @@ export function BaselineContent() {
 			</p>
 			<p>
 				Die Tabelle gilt für ein Minor-Release: Eine Verschiebung steht darin ab dem Release, mit
-				dem sie kam, bis zum nächsten Minor-Release, das sie entfernt. 1.15 hat keinen Befund
-				verschoben, seine Tabelle ist also leer.
+				dem sie kam, bis zum nächsten Minor-Release, das sie entfernt. 1.15 und 1.16 haben keinen
+				Befund verschoben, die Tabelle ist also leer.
 			</p>
 			<p>1.14 hat diese verschoben, gegenüber 1.13, und 1.15 hat sie entfernt:</p>
 			<DataTable
@@ -261,7 +261,8 @@ export function BaselineContent() {
 				unter 1.15: Dort ist ein Eintrag unter einem alten Code veraltet, und sein Befund ist neu.
 				Bringen Sie eine solche Baseline unter 1.14.x auf den aktuellen Stand, wie unten beschrieben,
 				bevor Sie auf 1.15 wechseln; <code>migrateBaselineEntries</code> kennt diese Verschiebungen
-				in 1.15 nicht mehr. Eine von 1.14 geschriebene Baseline passt unter 1.15 weiter.
+				in 1.15 nicht mehr. Eine von 1.14 geschriebene Baseline passt unter 1.15 und
+				1.16 weiter.
 			</p>
 			<p>
 				Die Baseline nach einem Upgrade mit <code>--write-baseline</code> (oder{" "}
@@ -348,7 +349,16 @@ export function BaselineContent() {
 				<code>{"{ version: 1, entries: [...] }"}</code> ist, mit einem klaren Fehler (Exit-Code 2)
 				ab, statt ein älteres oder anderes Format zu erraten. <code>matchBaseline</code> und die
 				Option <code>baselineEntries</code> der SARIF- und JUnit-Reporter nehmen die Datei so, wie
-				sie gespeichert ist (<code>JSON.parse</code> davon), oder ihre <code>entries</code>-Liste.
+				sie gespeichert ist (<code>JSON.parse</code> davon), oder ihre <code>entries</code>-Liste.{" "}
+				<code>null</code> oder keine Baseline hat keine Einträge, also ist jeder Fehlschlag neu.
+				Seit core 1.16.0 wirft alles andere einen <code>TypeError</code> mit{" "}
+				<code>code: 'INVALID_BASELINE'</code> und einer Meldung, die sagt, was falsch ist: ein
+				String oder ein Objekt ohne <code>entries</code>-Liste, ein Eintrag, der kein Objekt ist
+				oder keine <code>ruleId</code> hat, ein <code>reasonCode</code>, <code>selector</code> oder{" "}
+				<code>html</code>, der weder ein String noch <code>null</code> ist, oder ein{" "}
+				<code>frame</code>, der keine Liste von Strings ist. <code>migrateBaselineEntries</code>{" "}
+				prüft ihn genauso. Früher wurde ein solcher Wert als leere Baseline gelesen, wodurch jeder
+				Fehlschlag kommentarlos neu war.
 			</p>
 
 			<h2>Kombination mit <code>--json</code></h2>

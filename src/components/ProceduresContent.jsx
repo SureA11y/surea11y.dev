@@ -31,6 +31,7 @@ const listOptionRows = [
 	{ id: "automation", option: <code>automation</code>, what: <>Only facets rules decide in full, in part or not at all: <code>['manual', 'partial']</code> is what a scan leaves to a person.</> },
 	{ id: "rules", option: <code>rules</code>, what: <>Only facets one of these rules claims (<code>'img-alt-present'</code>).</> },
 	{ id: "packs", option: <code>packs</code>, what: "The packs whose standard or rules to read." },
+	{ id: "profile", option: <code>profile</code>, what: <>A pack's profile that names a law: only the requirements that law asks for, with the law named in the list's head (core 1.16.0, experimental; see <a href="/configuration/packs/#laws">Packs</a>).</> },
 ];
 
 const renderOptionRows = [
@@ -405,7 +406,10 @@ export function ProceduresContent() {
 				assesses its own requirements, and every function above reads it given the packs: by its
 				own numbers and groups, in its own language where it declares one. A requirement that
 				restates a WCAG criterion takes that criterion's procedures, read as the requirement (“which
-				fails EN 301 549 9.1.4.3”).
+				fails EN 301 549 9.1.4.3”). Since core 1.16.0, a facet also lists the core rules the
+				standard's mapping sends to what it assesses (<code>mappedRules</code>, and in a
+				checklist item's <code>mappedRules</code>), so a requirement or test only core's rules
+				check doesn't look unchecked.
 			</p>
 			<CodeBlock
 				lang="js"

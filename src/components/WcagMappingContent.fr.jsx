@@ -251,9 +251,8 @@ export function WcagMappingContent() {
 				exécute donc les 11 règles associées à un critère AA de la version 2.0, et non les 105
 				qui constituent une cible A + AA en 2.0. Listez chaque niveau que vous visez, ou utilisez{" "}
 				<code>runOnly.wcag</code>, qui n’a pas ce problème. <code>engineOptions.profile</code>{" "}
-				(<code>wcag22-a</code>, <code>wcag22-aa</code>, <code>wcag22-aaa</code>,{" "}
-				<code>en301549-v4.1.1</code>, <code>en301549-v3.2.1</code>,{" "}
-				<code>section508</code>) le fait aussi pour vous ; voir{" "}
+				(<code>wcag20-aa</code>, <code>wcag21-aa</code>, <code>wcag22-aa</code> et les autres
+				versions et niveaux WCAG) le fait aussi pour vous ; voir{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Profils de conformité</a>.
 			</p>
 			<p>

@@ -15,13 +15,14 @@ export function ConfigurationContent() {
 			<p>
 				Limitez une analyse exactement aux règles voulues, en nommant une version et un niveau WCAG
 				(WCAG 2.2 AA en une seule option, avec les bonnes pratiques en plus si vous le souhaitez),
-				par identifiant, par tag, ou en nommant un profil de conformité comme WCAG 2.2 AA ou
-				Section 508, pour qu’une exécution rapporte ce dont vous êtes réellement responsable, ni
+				par identifiant, par tag, ou en nommant un profil de conformité comme WCAG 2.1 AA (il en
+				existe un pour chaque version et chaque niveau WCAG), pour qu’une exécution rapporte ce dont vous êtes réellement responsable, ni
 				plus ni moins. Jugez une même analyse selon plusieurs
 				profils à la fois, WCAG à côté de WAI-ARIA ou de votre propre politique, et voyez ce que
 				chacun conclut de chaque constat. Les profils EN 301 549 de core fonctionnent encore mais sont obsolètes :
 				cette norme est désormais fournie sous forme{" "}
-				<a href="/configuration/packs/#en-301-549-pack">de pack</a>. N’exécutez que quelques vérifications tout en
+				<a href="/configuration/packs/#en-301-549-pack">de pack</a>, et le profil Section 508, qui
+				n’est que WCAG 2.0 AA sous un autre nom, cède la place à <code>wcag20-aa</code>. N’exécutez que quelques vérifications tout en
 				obtenant les critères WCAG auxquels elles appartiennent, au niveau qui vous est demandé, et
 				listez ce qu’une analyse rapportera avant de la lancer. Faites taire des widgets connus pour être bruyants,
 				globalement ou pour une seule règle, sans perdre la couverture ailleurs, ajustez le degré d’exigence

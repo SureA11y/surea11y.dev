@@ -402,7 +402,39 @@ export function StandaloneUsageContent() {
 				puede leerlo: instálalos para ejecuciones de pruebas y auditorías. En un archivo de
 				configuración de jsdom, pasa <code>{"{ early: true }"}</code> y, para el hook de listeners,
 				ejecuta antes un selector (<code>document.querySelector('*')</code>), porque jsdom añade
-				listeners de teclado propios la primera vez que se ejecuta un selector. Las secciones del{" "}
+				listeners de teclado propios la primera vez que se ejecuta un selector. Una prueba con jsdom
+				que sustituye <code>showModal()</code> poniendo <code>open</code> y{" "}
+				<code>aria-modal="true"</code> en un diálogo instala el hook de regiones vivas con{" "}
+				<code>{"{ early: true, assumeModal: true }"}</code> y analiza con{" "}
+				<code>engineOptions.assumeModal: true</code> (core 1.16.0 y posteriores).
+			</p>
+			<p>
+				<strong><code>setContent()</code> de Playwright no es una navegación.</strong> Escribe el
+				marcado en el documento actual de la página, que ya se ha cargado, así que un script de
+				inicio no se ejecuta mientras se carga ese documento. Uno añadido al contexto antes de abrir
+				la página se ejecuta en el primer documento de la página, en blanco: el hook está ahí cuando{" "}
+				<code>setContent()</code> escribe la página, pero se registra como <code>'late'</code>, y{" "}
+				<code>click-handler-keyboard-operable</code> pregunta donde un hook temprano habría hecho
+				fallar el elemento. Uno añadido a una página que ya está abierta espera a su siguiente
+				documento, y <code>setContent()</code> no crea ninguno, así que el análisis se ejecuta sin
+				hook. Para una captura temprana, carga la página con una navegación real:{" "}
+				<code>page.goto()</code> a un servidor o a una URL <code>file://</code>, o{" "}
+				<code>page.route()</code> para responder a una URL con el marcado. Lo mismo vale para el
+				hook de internals:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"await context.addInitScript({ content: listenerHookScript() });",
+					"const page = await context.newPage();",
+					"await page.route('https://test.local/', (route) =>",
+					"  route.fulfill({ body: html, contentType: 'text/html' })",
+					");",
+					"await page.goto('https://test.local/'); // listenerHook: 'early'",
+				]}
+			/>
+			<p>
+				Las secciones del{" "}
 				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
 					hook de listeners
 				</a>{" "}

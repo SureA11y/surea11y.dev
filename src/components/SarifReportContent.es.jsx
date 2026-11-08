@@ -117,9 +117,9 @@ export function SarifReportContent() {
 				declaración de conformidad. Para eso, conserva el resultado JSON.
 			</p>
 			<p>
-				Una comprobación <code>notApplicable</code> no siempre está vacía: una regla puede adjuntar
-				una ocurrencia que explica por qué no tuvo nada que juzgar, algo que hacen las reglas de
-				contraste cuando ningún texto tenía un fondo con el que calcular el contraste. Esas nunca se
+				Una comprobación <code>notApplicable</code> no siempre está vacía: una regla de un pack o
+				personalizada puede adjuntar una ocurrencia que explica por qué no tuvo nada que juzgar (las
+				reglas de core no adjuntan ninguna, desde la 1.16.0). Esas nunca se
 				convierten en resultados: un consumidor trata cada resultado como una alerta, y "esto no se
 				evaluó" no lo es. Pero tampoco se descartan. Se incluyen como entradas de nivel{" "}
 				<code>note</code> en <code>runs[0].invocations[0].toolExecutionNotifications</code>, cada una
@@ -134,8 +134,8 @@ export function SarifReportContent() {
 					'    "toolExecutionNotifications": [',
 					"      {",
 					'        "level": "note",',
-					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
-					'        "associatedRule": { "id": "contrast-minimum" }',
+					'        "message": { "text": "No form on this page could be checked: each is inside a closed shadow root." },',
+					'        "associatedRule": { "id": "acme-form-review" }',
 					"      }",
 					"    ]",
 					"  }",
@@ -147,8 +147,8 @@ export function SarifReportContent() {
 					Esto evita que un flujo que solo lee SARIF interprete el silencio como un buen estado de
 					salud
 				</strong>
-				: que no haya alertas de contraste puede significar que la página está bien o que el
-				contraste nunca fue calculable, y solo la notificación distingue entre ambos casos. El
+				. Las reglas de contraste de core no necesitan ninguna notificación para ello: el texto cuyo
+				contraste no se pudo calcular es un resultado de <code>contrast-computable</code>. El
 				bloque se emite solo cuando hay algo que decir, así que una ejecución sin nada que indicar
 				no tiene ninguna clave <code>invocations</code>. Una regla que pasó no escribe ninguna
 				notificación.

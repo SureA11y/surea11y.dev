@@ -31,6 +31,7 @@ const listOptionRows = [
 	{ id: "automation", option: <code>automation</code>, what: <>Solo las facetas que las reglas deciden por completo, en parte o nada: <code>['manual', 'partial']</code> es lo que un análisis deja a una persona.</> },
 	{ id: "rules", option: <code>rules</code>, what: <>Solo las facetas que reclama una de estas reglas (<code>'img-alt-present'</code>).</> },
 	{ id: "packs", option: <code>packs</code>, what: "Los packs cuyo estándar o reglas se leen." },
+	{ id: "profile", option: <code>profile</code>, what: <>El perfil de un pack que nombra una ley: solo los requisitos que pide esa ley, con la ley nombrada en la cabecera de la lista (core 1.16.0, experimental; consulta <a href="/configuration/packs/#laws">Packs</a>).</> },
 ];
 
 const renderOptionRows = [
@@ -418,7 +419,11 @@ export function ProceduresContent() {
 				evalúa una persona sus propios requisitos, y cada función anterior lo lee si recibe los
 				packs: con su propia numeración y grupos, en su propio idioma cuando declara uno. Un
 				requisito que reformula un criterio de WCAG toma los procedimientos de ese criterio, leídos
-				como el requisito («which fails EN 301 549 9.1.4.3»).
+				como el requisito («which fails EN 301 549 9.1.4.3»). Desde core 1.16.0, una faceta también
+				enumera las reglas de core que el mapeo del estándar envía a lo que evalúa (
+				<code>mappedRules</code>, también en el <code>mappedRules</code> de un elemento de la lista
+				de comprobación), así que un requisito o una prueba que solo comprueban reglas de core no
+				parece sin comprobar.
 			</p>
 			<CodeBlock
 				lang="js"

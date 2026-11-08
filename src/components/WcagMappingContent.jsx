@@ -235,9 +235,9 @@ export function WcagMappingContent() {
 				<code>wcag2a</code>. Asking for <code>{"{ tags: ['wcag2aa'] }"}</code> on its own
 				therefore runs the 11 rules mapped to a 2.0 AA criterion, not the 105 that make up a 2.0
 				A + AA target. List every level you mean, or use <code>runOnly.wcag</code>, which does not
-				have the problem. <code>engineOptions.profile</code> (<code>wcag22-a</code>,{" "}
-				<code>wcag22-aa</code>, <code>wcag22-aaa</code>, <code>en301549-v4.1.1</code>,{" "}
-				<code>en301549-v3.2.1</code>, <code>section508</code>) does it for you too; see{" "}
+				have the problem. <code>engineOptions.profile</code> (<code>wcag20-aa</code>,{" "}
+				<code>wcag21-aa</code>, <code>wcag22-aa</code> and the other WCAG versions and levels)
+				does it for you too; see{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Conformance profiles</a>.
 				</p>
 			<p>

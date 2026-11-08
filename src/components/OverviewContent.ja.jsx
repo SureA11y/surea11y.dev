@@ -187,7 +187,9 @@ export function OverviewContent() {
 				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code>
 				は、WCAG 2.2のAとAAの達成基準のルールを、各達成基準がそのバージョンで持つレベルに従って実行し、
 				<code>bestPractices: true</code>
-				はWCAGが求めていないチェックを追加します。国の規格や組織独自の方針など、WCAGを超える規格はパックとして提供されます。パックのルール、プロファイル、チェックリスト項目はコアのものと並んで実行され、すべてのレポートに表示されます。詳しくは
+				はWCAGが求めていないチェックを追加します。
+				<code>profile: 'wcag21-aa'</code>
+				は同じことを名前で行い、WCAG 2.0、2.1、2.2の各レベルに使え、パックのプロファイルと並べてスキャンできます。国の規格や組織独自の方針など、WCAGを超える規格はパックとして提供されます。パックのルール、プロファイル、チェックリスト項目はコアのものと並んで実行され、すべてのレポートに表示されます。詳しくは
 				<a href="/configuration/engine-options/#selecting-which-rules-run">エンジンオプション</a>
 				と
 				<a href="/configuration/packs/">パック</a>

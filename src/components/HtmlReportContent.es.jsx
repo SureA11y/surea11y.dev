@@ -158,8 +158,9 @@ export function HtmlReportContent() {
 				La barra de metadatos bajo la cabecera lleva el recuento de reglas, el recuento de
 				ocurrencias, la etiqueta del motor, la versión del esquema, la versión de WCAG a la que
 				apuntó el análisis, el <code>engineOptions.profile</code> que usó (si hubo uno; cada perfil
-				de un análisis de varios, unidos con <code>+</code>, y los que no se ejecutaron), las
-				etiquetas de reglas opcionales que añadió <code>engineOptions.optInRules</code> (si añadió
+				de un análisis de varios, unidos con <code>+</code>, y los que no se ejecutaron) y, junto a
+				él, la ley bajo la que se evalúa el perfil cuando el perfil de un pack nombra una (core
+				1.16.0, experimental), las etiquetas de reglas opcionales que añadió <code>engineOptions.optInRules</code> (si añadió
 				alguna), las condiciones en que se renderizó la página y el idioma al que se resolvió el
 				análisis. Las condiciones son el viewport (con la relación de píxeles del dispositivo cuando
 				no es 1) y el esquema de color, y las fuentes web cuando aún se estaban cargando; un

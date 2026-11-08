@@ -104,9 +104,9 @@ export function SarifReportContent() {
 				the JSON result for that.
 			</p>
 			<p>
-				A <code>notApplicable</code> check is not always empty: a rule may attach one occurrence
-				explaining why it had nothing to judge, which the contrast rules do when no text had a
-				computable background. Those never become results — a consumer treats every result as an
+				A <code>notApplicable</code> check is not always empty: a pack's or custom rule may attach
+				one occurrence explaining why it had nothing to judge (core's rules attach none, since
+				1.16.0). Those never become results — a consumer treats every result as an
 				alert, and "this was not evaluated" is not one — but they are not dropped either. They are
 				carried as <code>note</code>-level entries in{" "}
 				<code>runs[0].invocations[0].toolExecutionNotifications</code>, each naming the rule it came
@@ -121,8 +121,8 @@ export function SarifReportContent() {
 					'    "toolExecutionNotifications": [',
 					"      {",
 					'        "level": "note",',
-					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
-					'        "associatedRule": { "id": "contrast-minimum" }',
+					'        "message": { "text": "No form on this page could be checked: each is inside a closed shadow root." },',
+					'        "associatedRule": { "id": "acme-form-review" }',
 					"      }",
 					"    ]",
 					"  }",
@@ -131,8 +131,8 @@ export function SarifReportContent() {
 			/>
 			<p>
 				<strong>That keeps a SARIF-only pipeline from reading silence as a clean bill of
-				health</strong>: no contrast alerts can mean the page is fine, or that contrast was never
-				computable, and only the notice separates the two. The block is emitted only when there is something to say, so
+				health</strong>. Core's contrast rules need no notice for it: text whose contrast could
+				not be computed is a <code>contrast-computable</code> result. The block is emitted only when there is something to say, so
 				a run with nothing to report has no <code>invocations</code> key at all. A rule that
 				passed writes no notification.
 			</p>

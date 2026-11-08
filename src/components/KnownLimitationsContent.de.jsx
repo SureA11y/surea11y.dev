@@ -170,7 +170,11 @@ export function KnownLimitationsContent() {
 					liefern, das sich gut liest und falsch ist; ist eines schon beschädigt, bevor das Bundle
 					eingefügt wird (<code>Object.keys</code>), lädt das Bundle nicht. Eine Seite, die{" "}
 					<code>Object.prototype</code> um <code>then</code> ergänzt, wird wie jede andere gescannt.
-					DOM-Methoden, die eine Seite ersetzt (<code>getComputedStyle</code>,{" "}
+					Eine Seite, die <code>Array.from</code> ersetzt, wie es Prototype und MooTools tun, wird
+					ebenfalls gescannt (ab core 1.16.0): Der eigene Code von core verwendet es nicht. Eine
+					Regel eines Packs oder eine eigene Regel, die es verwendet, beendet den Scan dort, mit{" "}
+					<code>PAGE_BUILTINS_BROKEN</code>, das <code>Array.from</code> nennt, es sei denn, die
+					Auswahl lässt die Regel weg. DOM-Methoden, die eine Seite ersetzt (<code>getComputedStyle</code>,{" "}
 					<code>querySelectorAll</code>, <code>getBoundingClientRect</code>), werden nicht geprüft:
 					Regeln lesen, was sie zurückgeben.
 				</li>
@@ -281,10 +285,15 @@ export function KnownLimitationsContent() {
 					Dokuments inert, und Browser geben assistiven Technologien nur den Dialog. Ein Dialog, der
 					mit dem Attribut <code>open</code> oder mit <code>show()</code> geöffnet wurde, ist nicht
 					modal, auch mit <code>aria-modal="true"</code>: Die Seite dahinter bleibt erreichbar, und
-					die Engine beurteilt sie. Unter jsdom, das keinen Top Layer hat, gilt ein offener{" "}
-					<code>&lt;dialog aria-modal="true"&gt;</code> stattdessen als modal, so nah, wie die Engine
-					es dort erkennen kann. Die Engine folgt dem: Inhalt hinter dem Dialog bleibt bei jeder
-					Regel außen vor, wie anderer verborgener Inhalt, und die Regeln zur Struktur der Seite
+					die Engine beurteilt sie. jsdom hat keinen Top Layer und kann keinen modalen Dialog
+					öffnen, unter jsdom liegt also nichts hinter einem, und dasselbe Markup erhält dieselben
+					Ergebnisse wie im Browser (ab core 1.16.0); ein jsdom-Test, der <code>showModal()</code>{" "}
+					nachbildet, indem er <code>open</code> und <code>aria-modal="true"</code> auf den Dialog
+					setzt, setzt{" "}
+					<a href="/configuration/engine-options/"><code>engineOptions.assumeModal: true</code></a>,
+					damit ein solcher Dialog als modal gilt. Von mehreren modalen Dialogen wird nur der
+					oberste beurteilt. Die Engine folgt dem modalen Dialog: Inhalt dahinter bleibt bei jeder
+					Regel außen vor, wie anderer verborgener Inhalt, und erhält keinen Fokus, und die Regeln zur Struktur der Seite
 					selbst (<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
 					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
 					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
@@ -435,8 +444,13 @@ export function KnownLimitationsContent() {
 					die Kette der Vorfahren eines Elements durchläuft; ein Aufruf pro Element kostet also
 					O(Elemente x Tiefe). Gemessen mit jsdom 29.1.1 ohne jeglichen Engine-Code: 4000 Elemente
 					in einer Kette brauchen allein für <code>getComputedStyle</code> 8,3 s, gegenüber 0,25 s
-					für dieselben 4000 als Geschwister. Die eigenen Durchläufe der Engine über Vorfahren sind
-					begrenzt und bleiben linear; das sind also die Kosten von jsdom, nicht die der Regeln.
+					für dieselben 4000 als Geschwister. Die Engine liest die Vorfahren jedes Elements bis zur
+					Wurzel, einmal pro Scan, auch wenn die Kontrastregeln jeden Text gegen jeden Hintergrund
+					darüber messen; der größte Teil der Zeit entfällt weiterhin auf jsdom. jsdom löst einen
+					geerbten Wert außerdem auf, indem es rekursiv die Elemente darüber hinaufsteigt, was
+					etwa tausend Ebenen tief den Stack erschöpft: Die Engine liest eine Eigenschaft eines
+					Elements, das mehr als 100 Ebenen tief liegt, erst, nachdem die Elemente darüber aufgelöst
+					sind, sodass jeder Scan denselben Wert liest.
 					Betroffen sind <code>runDomRulesInPage</code> und alles, was darauf aufbaut, einschließlich{" "}
 					<code>@surea11y/test-matchers</code>; ein echter Browser berechnet geerbte Styles nativ und
 					zeigt dieses Verhalten nicht. Komponenten-Frameworks verschachteln üblicherweise 100 bis
@@ -453,6 +467,26 @@ export function KnownLimitationsContent() {
 					Properties nicht ein, daher ist eine mit <code>var()</code> gesetzte Farbe dort nicht
 					lesbar: Zum Text oder Hintergrund wird nachgefragt (<code>contrast-computable</code>),
 					statt ihn zu messen. Verwenden Sie für große Produktionsseiten einen echten Browser.
+				</li>
+				<li>
+					<strong>
+						Unter jsdom wird geschichtetes und bedingtes CSS darauf angewendet, was ein Element
+						verbirgt, mit den Medien von jsdom.
+					</strong>{" "}
+					<code>getComputedStyle</code> von jsdom liest keine Regel innerhalb von{" "}
+					<code>@layer</code>, <code>@supports</code> oder <code>@container</code>, daher
+					verbargen <code>hidden</code> und <code>sr-only</code> auf einer Seite mit Tailwind v4
+					dort nichts. Seit core 1.16.0 wendet die Engine diese Regeln selbst auf die Eigenschaften
+					an, die sie liest, um zu erkennen, ob ein Element angezeigt wird, nimmt{" "}
+					<code>@media</code> aber so, wie jsdom es tut: Nur <code>all</code> und{" "}
+					<code>screen</code> gelten, eine Regel unter <code>(width &gt;= 48rem)</code> zählt also
+					in einer Ebene so wenig wie außerhalb, und Tailwinds <code>hidden md:block</code> bleibt
+					unter jsdom verborgen, wo ein Desktop-Browser es zeigt. <code>@supports</code> gilt für
+					jeden Eigenschaftstest und für ein <code>selector()</code>, das sich parsen lässt,{" "}
+					<code>@container</code> gilt nicht, und ein Wert <code>revert</code>,{" "}
+					<code>revert-layer</code> oder <code>var()</code> belässt den von jsdom. Andere
+					Eigenschaften, darunter Farben, sind weiterhin die von jsdom. Scannen Sie eine Seite, die
+					je nach Viewport ändert, was sie zeigt, im Browser.
 				</li>
 				<li>
 					<strong>Unter jsdom wird die Farbe eines Links aus den Regeln der Seite ermittelt.</strong>{" "}

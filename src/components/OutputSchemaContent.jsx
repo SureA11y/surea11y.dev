@@ -157,6 +157,19 @@ const topLevelRows = [
 					),
 				},
 				{
+					id: "engine.law",
+					field: <code>engine.law</code>,
+					meaning: (
+						<>
+							Experimental (core 1.16.0, until 1.18.0). Present only when the applied profile names
+							a law, the one a pack's standard is assessed under (see{" "}
+							<a href="/configuration/packs/#laws">Packs</a>):{" "}
+							<code>{"{ id, name, jurisdiction, lang }"}</code>, <code>lang</code> the language{" "}
+							<code>name</code> is in. Core states the law; it never decides whom the law applies to.
+						</>
+					),
+				},
+				{
 					id: "engine.optInRules",
 					field: <code>engine.optInRules</code>,
 					meaning: (
@@ -450,12 +463,17 @@ const occurrenceRows = [
 				is a path. Not guaranteed unique in every DOM shape: an element in a shadow root is named
 				within its own tree (<code>structuralPath</code> places it), and a very deep element's
 				path is shortened from the top. On 255 test and real pages, 15 of 39,857 selectors did not
-				name exactly their element, all of those kinds. The exception is a rule whose finding <em>is</em> an
-				absent element: <code>page-title-present</code> reports <code>head &gt; title</code> with
-				an <code>html</code> of <code>&lt;title&gt;(missing)&lt;/title&gt;</code>, neither of which
-				is on the page. Both are constants, so the fingerprint they feed stays stable, but{" "}
-				<strong>do not treat <code>selector</code> as resolvable or <code>html</code> as real
-				markup without checking the rule reported something that exists</strong>. For an element
+				name exactly their element, all of those kinds. A value longer than 256 characters is no
+				anchor either, so a selector stays short whatever the page puts in an attribute, and a
+				control character in a value is escaped as CSS reads it (<code>\a </code> for a newline).
+				The exception is a rule whose finding <em>is</em> an absent element:{" "}
+				<code>page-title-present</code> reports a missing <code>&lt;title&gt;</code> with the
+				selector of <code>&lt;head&gt;</code>, where it belongs (<code>&lt;html&gt;</code> without a{" "}
+				<code>&lt;head&gt;</code>), and an <code>html</code> of{" "}
+				<code>&lt;title&gt;(missing)&lt;/title&gt;</code>, which is not on the page. That{" "}
+				<code>html</code> is a constant, so the fingerprint it feeds stays stable, but{" "}
+				<strong>do not treat it as real markup without checking the rule reported something that
+				exists</strong>. For an element
 				in a shadow tree, <code>selector</code> resolves inside its shadow root, and{" "}
 				<code>shadowHostSelectors</code> says how to get there.
 				</>
@@ -562,7 +580,18 @@ const occurrenceRows = [
 				failed, and so are <code>element</code> in <code>list-children-valid</code> findings,{" "}
 				<code>parentElement</code> in <code>listitem-parent-valid</code> findings and{" "}
 				<code>role</code> in <code>aria-role-name-present</code> findings, which say which kind of
-				list or widget failed. So is <code>data.details.evidenceState</code> (core 1.15.0 and
+				list or widget failed. Since core 1.16.0, so are the same <code>typography</code> fields on
+				a <code>contrast-computable</code> finding (the text whose contrast could not be computed;{" "}
+				<code>isLargeText</code> by core's definition, 24px, or 14pt and bold),{" "}
+				<code>linkKind</code> in <code>link-name-quality</code> and{" "}
+				<code>identical-links-same-purpose</code> findings (what the link is made of:{" "}
+				<code>text</code>, <code>image</code>, <code>composite</code> or <code>svg</code>), and{" "}
+				<code>messageKind</code> in <code>live-region-announcements</code> findings (the kind of
+				message the region declares it carries, read from its role and live-region attributes,
+				never from its text: <code>status</code>, <code>alert</code>, <code>log</code>,{" "}
+				<code>progress</code> or <code>unknown</code>). <code>linkKind</code> and{" "}
+				<code>messageKind</code> may gain values in a minor release. So is{" "}
+				<code>data.details.evidenceState</code> (core 1.15.0 and
 				later): on a finding that shows only in a state the rule put the page in and took it out of
 				before the browser painted, it names that state (<code>text-spacing</code>, on the findings
 				of <code>text-spacing-content-loss</code> about cut-off, overlapping or scroll-locked text),
@@ -581,7 +610,9 @@ const occurrenceRows = [
 				confident <code>fail</code> tier and a needs-review <code>cantTell</code> tier. A rule
 				reporting one tier only omits it, in which case the result's own <code>outcome</code> is
 				the occurrence's tier. <code>occurrenceOutcome(check, occurrence)</code>, from{" "}
-				<code>@surea11y/core</code>, gives the tier as every reporter reads it, either way. The
+				<code>@surea11y/core</code>, gives the tier as every reporter reads it, either way; since
+				core 1.16.0 it gives <code>'pass'</code> for an occurrence of a passing check, where it gave{" "}
+				<code>null</code>. The
 				outcome always agrees with the tiers: any{" "}
 				<code>fail</code>-tier occurrence makes it <code>fail</code>, and a <code>fail</code> whose
 				occurrences are all <code>cantTell</code>-tier is <code>cantTell</code>, so SARIF, JUnit,
@@ -650,11 +681,12 @@ export function OutputSchemaContent() {
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
 					'    wcagLevel?: "A" | "AA" | "AAA",',
-'    profile?: string,      // "wcag22-a", "wcag22-aa", "wcag22-aaa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a pack\'s own',
+'    profile?: string,      // "wcag20-a" … "wcag22-aaa" (wcag<version>-<level>), the deprecated "en301549-v4.1.1", "en301549-v3.2.1" and "section508", or a pack\'s own',
 					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
 					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
+					"    law?: { id: string, name: string, jurisdiction: string, lang: string },  // experimental",
 					"    optInRules?: string[],",
 					'    outputDetail?: "findings",',
 					"    packs?: string[],      // name@version",
@@ -738,7 +770,9 @@ export function OutputSchemaContent() {
 					<strong><code>profiles</code></strong>: per profile that ran,{" "}
 					<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code> (<code>wcagLevel</code>{" "}
 					only for a profile that targets a WCAG level), <code>rulesResults</code> the outcome of
-					each of its rollups by id: what a scan of that profile alone would have reported.
+					each of its rollups by id: what a scan of that profile alone would have reported. A
+					profile that names a law has <code>law</code> too, as <code>engine.law</code>{" "}
+					(experimental).
 				</li>
 				<li>
 					<strong><code>severity</code></strong>: the highest any profile that fails or asks about
@@ -952,6 +986,11 @@ export function OutputSchemaContent() {
 					'    coercedFrom: "fail",',
 					'    by?: "errata"         // 2.0 or 2.1: their errata count the criterion as always satisfied',
 					"  },",
+					"  ancestorWalkLimit?: {    // present only when a failed element is nested deeper than the engine walks up from it",
+					"    limit: number,         // 10000: the ancestors read, the element included",
+					"    occurrences: number,   // the fail-tier occurrences made cantTell-tier",
+					'    coercedFrom?: "fail"   // no fail-tier occurrence was left, so the outcome went from fail to cantTell',
+					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
 				]}
@@ -1016,6 +1055,19 @@ export function OutputSchemaContent() {
 					<code>error</code>: nothing went wrong. See{" "}
 					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtering by WCAG version</a>.
 					</li>
+				<li>
+					<strong><code>ancestorWalkLimit</code></strong> (core 1.16.0 and later): the engine reads
+					every ancestor of an element, through shadow roots and slots, to tell whether something
+					around it hides it, up to 10,000 of them: far deeper than any browser renders. A fail on
+					an element nested deeper is not certain, since an element the engine didn't read may hide
+					it, so its occurrence becomes <code>cantTell</code>-tier, keeping its reason code, with{" "}
+					<code>uncertainty.code: "not-computable"</code> and steps of the engine's own that ask
+					whether the element is exposed. The rule's verdict on every other element stands, so the
+					outcome stays <code>fail</code> while one fail-tier occurrence is left, and becomes{" "}
+					<code>cantTell</code> otherwise (<code>coercedFrom: "fail"</code>). Like{" "}
+					<code>wcagVersionScope</code>, it is not reported through <code>error</code>: the rule
+					completed.
+				</li>
 					<li>
 						<strong><code>data</code></strong>: present only on a rule that reports something about
 						the whole page, whatever its outcome. No core rule does today. Like{" "}
@@ -1065,10 +1117,10 @@ export function OutputSchemaContent() {
 					<code>outcome</code> or <code>severity</code> outside its set, a <code>type</code> that
 					differs from its meta's, occurrences that are not objects (left out), a{" "}
 					<code>policyOutcome</code> or <code>ruleSeverity</code> the rule returned (not taken: the
-					engine sets both), an <code>uncertainty.code</code> outside the closed set, and a{" "}
-					<code>fail</code> downgraded to <code>cantTell</code> because the 200-step ancestor walk
-					stopped short of every reported element. Those results keep their occurrences: the rule
-					completed.
+					engine sets both), and an <code>uncertainty.code</code> outside the closed set. Those
+					results keep their occurrences: the rule completed. (Before 1.16.0, a{" "}
+					<code>fail</code> that the 200-step ancestor walk stopped short of was noted here too; see{" "}
+					<code>ancestorWalkLimit</code> above.)
 				</li>
 				<li>
 					<strong><code>policyOutcome</code></strong>: present when the policy's{" "}
@@ -1112,10 +1164,14 @@ export function OutputSchemaContent() {
 				it.
 				</p>
 			<p>
-				<code>notApplicable</code> is the one exception. A rule that had nothing to judge may
-				attach a single occurrence saying why, and the contrast rules do exactly that when no text
-				had a computable background — the difference between "checked, nothing to flag" and
-				"could not check" is one this engine reports rather than hides. Such an occurrence
+				A <code>notApplicable</code> from core names no occurrence. When the contrast rules are{" "}
+				<code>notApplicable</code> because no text had a computable background, they say how much
+				text they looked at in the result's own <code>data.details</code> (
+				<code>eligibleTextCount</code>, <code>computableTextCount</code>), and{" "}
+				<code>contrast-computable</code> reports each text it could not measure as{" "}
+				<code>cantTell</code>: the difference between "checked, nothing to flag" and "could not
+				check" is one this engine reports rather than hides. A pack's or custom rule that had
+				nothing to judge may still attach a single occurrence saying why; such an occurrence
 				describes the scan, not an element, so its <code>selector</code> is empty.{" "}
 				<strong>Do not read <code>occurrences.length</code> as a violation count without checking{" "}
 				<code>outcome</code> first.</strong>
@@ -1255,6 +1311,14 @@ export function OutputSchemaContent() {
 				New leans arrive in minor releases, rule by rule, and a lean may be removed if measuring
 				shows it is wrong too often: treat a lean as present-or-absent advice,{" "}
 				<strong>never as part of a finding's identity</strong>. It does not enter the fingerprint.
+			</p>
+			<p>
+				A standard's mapping routes findings by their <code>data.details</code> (see{" "}
+				<a href="/configuration/packs/#sending-findings-to-requirements">Packs</a>), and a lean sits
+				outside them, so <code>skip-link</code> copies its lean's direction there as well (core
+				1.16.0, experimental until 1.18.0): <code>data.details.lean</code> is <code>fail</code> or{" "}
+				<code>pass</code>, the same as <code>lean.toward</code>, and is absent when the finding has
+				no lean.
 			</p>
 
 			<h3 id="how-to-check">How to check</h3>

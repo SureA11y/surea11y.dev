@@ -7,75 +7,81 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-15">„Meine Ergebnisse haben sich nach dem Update auf core 1.15 geändert“</h2>
+				<h2 id="results-changed-1-16">„Meine Ergebnisse haben sich nach dem Update auf core 1.16 geändert“</h2>
 				<p>
-					1.15 lässt ein WCAG-Kriterium nur dort fehlschlagen, wo WCAG es fehlschlagen lässt, und
-					liest Frames so, wie der Browser sie zeigt. Die Änderungen, die sich am ehesten in einer
-					Pipeline zeigen:
+					1.16 bringt jsdom näher an den Browser und formuliert seine Meldungen für jede Norm. Die
+					Änderungen, die sich am ehesten in einer Pipeline zeigen:
 				</p>
 				<ul>
 					<li>
-						<strong>Weniger Fehlschläge bei ARIA- und HTML-Struktur.</strong> Acht ARIA-Regeln und
-						die HTML-Strukturregeln lassen ein Kriterium nicht mehr fehlschlagen, wo nur WAI-ARIA
-						oder das HTML-Inhaltsmodell verletzt ist: Diese Befunde sind <code>cantTell</code>, mit
-						der Unsicherheit <code>spec-only</code> und Schritten zur Prüfung. Betroffen sind{" "}
-						<a href="/rules/aria-role-name-present/"><code>aria-role-name-present</code></a> (grid,
-						tree, radiogroup, meter, progressbar),{" "}
-						<a href="/rules/dialog-name-present/"><code>dialog-name-present</code></a>,{" "}
-						<a href="/rules/tooltip-name-present/"><code>tooltip-name-present</code></a>,{" "}
-						<a href="/rules/aria-allowed-attr/"><code>aria-allowed-attr</code></a>,{" "}
-						<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a> (außer
-						beim Zustand, Wert oder Fokus eines Bedienelements),{" "}
-						<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a>,{" "}
-						<a href="/rules/aria-roles-valid/"><code>aria-roles-valid</code></a> (außer an einem
-						fokussierbaren Element), <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a>{" "}
-						(ein Vorfahre; es ist jetzt nur noch 1.3.1 zugeordnet),{" "}
-						<a href="/rules/list-children-valid/"><code>list-children-valid</code></a> und{" "}
-						<a href="/rules/listitem-parent-valid/"><code>listitem-parent-valid</code></a> (außer
-						wo die Seite das fehlerhafte Element zeichnet),{" "}
-						<a href="/rules/definition-list-children-valid/"><code>definition-list-children-valid</code></a>,{" "}
-						<a href="/rules/dlitem-parent-valid/"><code>dlitem-parent-valid</code></a> und{" "}
-						<a href="/rules/nested-interactive-controls-absent/"><code>nested-interactive-controls-absent</code></a>{" "}
-						(außer innerhalb eines Bedienelements mit präsentationalen Kindern). Jeder Befund behält
-						seinen Reason-Code, Baselines passen also weiterhin, aber ein Gate oder eine
-						Zusammenfassung, an der nur diese scheiterten, besteht jetzt oder ist{" "}
-						<code>cantTell</code>. Um dieselben Befunde nach WAI-ARIA zu beurteilen, wo sie
-						scheitern, fügen Sie das <a href="/configuration/packs/#wai-aria-pack">WAI-ARIA-Pack</a>{" "}
-						hinzu.
+						<strong>Unter jsdom ist nur ein mit <code>showModal()</code> geöffneter Dialog
+						modal</strong>, wie im Browser. Die Seite hinter einem{" "}
+						<code>&lt;dialog open aria-modal="true"&gt;</code> wird jetzt beurteilt, ein jsdom-Test,
+						der so ein Modal nachbildet, sieht also Befunde dahinter;{" "}
+						<code>engineOptions.assumeModal: true</code> behält das alte Verhalten bei (siehe{" "}
+						<a href="/help/known-limitations/">Bekannte Einschränkungen</a>). Nichts hinter einem
+						modalen Dialog erhält den Fokus, und von mehreren mit <code>showModal()</code>{" "}
+						geöffneten wird nur der oberste beurteilt.
 					</li>
 					<li>
-						<strong>Ein Dokument in einem Frame ist keine eigene Seite.</strong> In einem Frame sind{" "}
-						<code>page-title-present</code>, <code>html-lang-attr-present</code> sowie die Regeln zu
-						Viewport, Umgehung von Blöcken und Landmarks <code>notApplicable</code> (siehe{" "}
-						<a href="#framed-page-rules">den Eintrag weiter unten</a>). Ein Frame unter{" "}
-						<code>aria-hidden</code> oder <code>inert</code> wird als solcher gelesen, und einer
-						hinter einem offenen modalen Dialog wird weggelassen.
+						<strong>jsdom verbirgt, was ein Browser verbirgt.</strong> Regeln innerhalb von{" "}
+						<code>@layer</code>, <code>@supports</code> und <code>@container</code> verbergen
+						Elemente, sodass <code>hidden</code> und <code>sr-only</code> von Tailwind v4
+						funktionieren; <code>clip: rect(0 0 0 0)</code> zählt als abgeschnitten; das{" "}
+						<code>&lt;area&gt;</code> einer Image-Map ist auf der Seite. Befunde zu Inhalten, die von
+						Anfang an verborgen waren, fallen weg.
 					</li>
 					<li>
-						<strong>Rollen folgen WAI-ARIA genauer.</strong> <code>role="text"</code> nennt keine
-						gültige Rolle; ein Bild mit einer präsentationalen Rolle und einem globalen
-						ARIA-Attribut behält seine Rolle und lässt{" "}
-						<a href="/rules/img-alt-present/"><code>img-alt-present</code></a> ohne{" "}
-						<code>alt</code> fehlschlagen; die vier globalen Attribute, die WAI-ARIA 1.2 abkündigt,
-						geben einem präsentationalen Element seine Rolle nicht mehr zurück.
+						<strong>Meldungen und Schritte beschreiben die Prüfung</strong>, statt das
+						WCAG-Kriterium zu nennen, in jeder Locale, sodass sich ein Bericht für eine andere Norm
+						richtig liest. Zuordnungen und <code>failWhen</code> sind unverändert; ein Test, der
+						Meldungstexte vergleicht, muss angepasst werden.
 					</li>
 					<li>
-						<strong>Eine übersprungene Überschriftenebene ist ein Best-Practice-Problem</strong>,
-						kein Fehlschlag von 1.3.1, in den überarbeiteten{" "}
-						<a href="/conformance/procedures/">Prüfverfahren</a>, die auch die Schritte „So prüfen
-						Sie es“ von sechs neuen Fragen liefern.
+						<strong>Tief verschachtelte Seiten werden beurteilt.</strong> Ein Element 200 oder mehr
+						Ebenen tief wird mit allem darüber beurteilt, bis zu 10.000 Ebenen, wo ein Fehlschlag in
+						dieser Tiefe früher zu einer in <code>error</code> vermerkten Frage wurde; dort können
+						also Fehlschläge erscheinen. Jenseits von 10.000 ist es eine Frage, gemeldet in{" "}
+						<a href="/results-reports/output-schema/">
+							<code>ancestorWalkLimit</code>
+						</a>
+						.
 					</li>
 					<li>
-						<strong>Eine Baseline aus 1.13 muss zuerst aktualisiert werden.</strong> 1.15 hat keinen
-						Reason-Code verschoben und die Verschiebungen von 1.13 zu 1.14 entfernt (siehe{" "}
-						<a href="#baseline-after-upgrade">den Eintrag weiter unten</a>).
+						<strong>Seiten, die <code>Array.from</code> ersetzen</strong> (Prototype.js, MooTools),
+						werden gescannt, wo der Scan mit <code>PAGE_BUILTINS_BROKEN</code> abbrach (siehe{" "}
+						<a href="#page-builtins-broken">den Eintrag weiter unten</a>).
+					</li>
+					<li>
+						<strong>Manche Selektoren sind anders.</strong> Steuerzeichen werden maskiert, ein Wert
+						über 256 Zeichen weicht dem Pfad des Elements, und{" "}
+						<a href="/rules/page-title-present/"><code>page-title-present</code></a> und{" "}
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> zeigen auf
+						das title-Element selbst, oder auf <code>&lt;head&gt;</code>, wenn es keines gibt. Die
+						Identität eines Befunds enthält seinen Selektor nicht, Baselines passen also weiterhin.
+						Die Kontrastregeln sind <code>notApplicable</code> ohne Vorkommen, wenn sich kein
+						Kontrast berechnen ließ.
+					</li>
+					<li>
+						<strong>Fehler werden gemeldet, statt als nichts gelesen zu werden.</strong> Ein leerer{" "}
+						<code>contextSelector</code> scannt weiterhin die ganze Seite, warnt aber; etwas, das
+						keine Baseline ist, wirft <code>INVALID_BASELINE</code>, statt jeden Fehlschlag neu zu
+						machen; und unter <code>strictOptions</code> wirft ein unbekannter Profilname. Das Profil{" "}
+						<code>section508</code> ist veraltet: Verwenden Sie <code>wcag20-aa</code>, das dieselben
+						Regeln ausführt.
+					</li>
+					<li>
+						<strong>Schnellere Scans</strong>, mit denselben Befunden: einige Prozent in Chromium auf
+						gewöhnlichen Seiten, 10 bis 25 % unter jsdom, und viel mehr, wo es am schlechtesten war
+						(Tausende gleicher Links oder Felder, lange Tabellen, viele Stilregeln).
 					</li>
 				</ul>
 				<p>
-					Neu, und ohne Änderung, solange Sie es nicht nutzen: Scans mehrerer Profile zugleich (
-					<a href="/configuration/engine-options/#several-profiles">Engine-Optionen</a>), die Profile{" "}
-					<code>wcag22-a</code> und <code>wcag22-aaa</code>, Prüfverfahren für die Bewertung von
-					Hand und „Was ein Mensch noch prüfen muss“ im HTML-Bericht. Die vollständige Liste steht im{" "}
+					Neu, und ohne Änderung, solange Sie es nicht nutzen: die Profile für WCAG 2.0 und 2.1 (
+					<a href="/configuration/engine-options/#conformance-profiles">Engine-Optionen</a>), und,
+					experimentell bis 1.18.0, Normen als Daten, Tests unter Anforderungen, auf anderen
+					aufbauende Normen und die Gesetze, nach denen eine Norm bewertet wird (
+					<a href="/configuration/packs/#experimental">Packs</a>). Die vollständige Liste steht im{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>{" "}
@@ -297,6 +303,13 @@ export function FaqContent() {
 					<code>broken</code> nennen jedes davon. Scannen Sie die Seite, bevor ihre Skripte sie
 					verändern (fügen Sie das Bundle früher ein, oder scannen Sie einen Build ohne das Skript,
 					das es tut). Siehe <a href="/help/known-limitations/">Bekannte Einschränkungen</a>.
+				</p>
+				<p>
+					Wenn <code>broken</code> nur <code>Array.from</code> ist, hat die Seite es ersetzt (Prototype
+					und MooTools tun das), und eine Regel eines Packs oder eine eigene Regel im Scan verwendet
+					es: Die eigenen Regeln von core tun das seit 1.16 nicht mehr. Schreiben Sie diese Regel mit
+					Spread (<code>[...x]</code>, <code>[...x].map(f)</code>), oder lassen Sie sie aus der
+					Auswahl weg.
 				</p>
 			</article>
 
@@ -620,8 +633,8 @@ export function FaqContent() {
 					ein Eintrag unter einem alten Code veraltet, und sein Befund ist neu. Schreiben Sie die
 					Codes der Datei unter 1.14.x mit <code>migrateBaselineEntries</code> aus{" "}
 					<code>@surea11y/core/baseline</code> um und machen Sie dann das Update, oder erzeugen Sie
-					sie unter 1.15 neu und prüfen Sie den Diff. 1.15 selbst hat keinen Code verschoben, eine
-					von 1.14 geschriebene Baseline passt also weiter; ein Befund, dessen Ergebnis sich mit dem
+					sie unter 1.15 neu und prüfen Sie den Diff. 1.15 und 1.16 haben keinen Code verschoben,
+					eine von 1.14 geschriebene Baseline passt also weiter; ein Befund, dessen Ergebnis sich mit dem
 					Update geändert hat, ist trotzdem neu oder fällt weg, und das Changelog sagt, warum. Siehe <a href="/conformance/baseline/#upgrading">Baseline / Allowlist</a>.
 				</p>
 			</article>
@@ -646,109 +659,75 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2 id="results-changed-1-14">„Meine Ergebnisse haben sich nach dem Update auf core 1.14 geändert“</h2>
+				<h2 id="results-changed-1-15">„Meine Ergebnisse haben sich nach dem Update auf core 1.15 geändert“</h2>
 				<p>
-					1.14 meldet mehr <code>cantTell</code> und behauptet weniger, mit Absicht. Die Änderungen,
-					die sich am ehesten in einer Pipeline zeigen:
+					1.15 lässt ein WCAG-Kriterium nur dort fehlschlagen, wo WCAG es fehlschlagen lässt, und
+					liest Frames so, wie der Browser sie zeigt. Die Änderungen, die sich am ehesten in einer
+					Pipeline zeigen:
 				</p>
 				<ul>
 					<li>
-						<strong>Keine zusammengesetzte WCAG-Regel ergibt <code>pass</code>.</strong> Ein
-						Kriterium gilt nur als erfüllt, wenn seine Regeln alles prüfen, was es verlangt, und
-						noch keines ist als vollständig geprüft aufgeführt. Ein Kriterium, dessen Regeln alle{" "}
-						<code>pass</code> ergeben, ist daher <code>cantTell</code> (
-						<code>composite.rollup.cantTell.partialCheck</code>). Eines, dessen Regeln nichts
-						gefunden haben, ist nur bei 2.4.3, 2.4.4, 2.4.7, 2.4.9, 2.5.3 und 4.1.1{" "}
-						<code>notApplicable</code>, sonst <code>cantTell</code> (
-						<code>composite.rollup.cantTell.partialCoverage</code>). Eine Regel mit{" "}
-						<code>fail</code> lässt ihr Kriterium weiterhin fehlschlagen. Ein Dashboard oder Gate,
-						das erfüllte Kriterien zählt, sieht keines; siehe{" "}
-						<a href="#why-criterion-canttell">den Eintrag weiter oben</a> und{" "}
-						<a href="/conformance/wcag-mapping/#when-a-criterion-passes">WCAG-Konformitätszuordnung</a>.
+						<strong>Weniger Fehlschläge bei ARIA- und HTML-Struktur.</strong> Acht ARIA-Regeln und
+						die HTML-Strukturregeln lassen ein Kriterium nicht mehr fehlschlagen, wo nur WAI-ARIA
+						oder das HTML-Inhaltsmodell verletzt ist: Diese Befunde sind <code>cantTell</code>, mit
+						der Unsicherheit <code>spec-only</code> und Schritten zur Prüfung. Betroffen sind{" "}
+						<a href="/rules/aria-role-name-present/"><code>aria-role-name-present</code></a> (grid,
+						tree, radiogroup, meter, progressbar),{" "}
+						<a href="/rules/dialog-name-present/"><code>dialog-name-present</code></a>,{" "}
+						<a href="/rules/tooltip-name-present/"><code>tooltip-name-present</code></a>,{" "}
+						<a href="/rules/aria-allowed-attr/"><code>aria-allowed-attr</code></a>,{" "}
+						<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a> (außer
+						beim Zustand, Wert oder Fokus eines Bedienelements),{" "}
+						<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a>,{" "}
+						<a href="/rules/aria-roles-valid/"><code>aria-roles-valid</code></a> (außer an einem
+						fokussierbaren Element), <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a>{" "}
+						(ein Vorfahre; es ist jetzt nur noch 1.3.1 zugeordnet),{" "}
+						<a href="/rules/list-children-valid/"><code>list-children-valid</code></a> und{" "}
+						<a href="/rules/listitem-parent-valid/"><code>listitem-parent-valid</code></a> (außer
+						wo die Seite das fehlerhafte Element zeichnet),{" "}
+						<a href="/rules/definition-list-children-valid/"><code>definition-list-children-valid</code></a>,{" "}
+						<a href="/rules/dlitem-parent-valid/"><code>dlitem-parent-valid</code></a> und{" "}
+						<a href="/rules/nested-interactive-controls-absent/"><code>nested-interactive-controls-absent</code></a>{" "}
+						(außer innerhalb eines Bedienelements mit präsentationalen Kindern). Jeder Befund behält
+						seinen Reason-Code, Baselines passen also weiterhin, aber ein Gate oder eine
+						Zusammenfassung, an der nur diese scheiterten, besteht jetzt oder ist{" "}
+						<code>cantTell</code>. Um dieselben Befunde nach WAI-ARIA zu beurteilen, wo sie
+						scheitern, fügen Sie das <a href="/configuration/packs/#wai-aria-pack">WAI-ARIA-Pack</a>{" "}
+						hinzu.
 					</li>
 					<li>
-						<strong>Zwei Regeln fragen mehr.</strong>{" "}
-						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> fragt nach
-						jedem Seitentitel, nicht nur nach generischen oder aus Vorlagen stammenden, denn ob ein
-						Titel seine Seite beschreibt, entscheidet eine Person (G88).{" "}
-						<a href="/rules/duplicate-id/"><code>duplicate-id</code></a> fragt auch unter WCAG 2.0
-						und 2.1 nach 4.1.1, da die Errata von 2023 es als erfüllt werten, außer ein Profil gibt{" "}
-						<code>keepsParsing: true</code> an, wie <code>en301549-v3.2.1</code>.
+						<strong>Ein Dokument in einem Frame ist keine eigene Seite.</strong> In einem Frame sind{" "}
+						<code>page-title-present</code>, <code>html-lang-attr-present</code> sowie die Regeln zu
+						Viewport, Umgehung von Blöcken und Landmarks <code>notApplicable</code> (siehe{" "}
+						<a href="#framed-page-rules">den Eintrag weiter oben</a>). Ein Frame unter{" "}
+						<code>aria-hidden</code> oder <code>inert</code> wird als solcher gelesen, und einer
+						hinter einem offenen modalen Dialog wird weggelassen.
 					</li>
 					<li>
-						<strong>Elf neue Regeln</strong>, darunter die ersten für 3.3.1 (
-						<a href="/rules/invalid-field-error-message/"><code>invalid-field-error-message</code></a>),
-						4.1.3 (<a href="/rules/live-region-announcements/"><code>live-region-announcements</code></a>)
-						und 1.4.5 (<a href="/rules/image-of-text/"><code>image-of-text</code></a>). Die meisten
-						fragen;{" "}
-						<a href="/rules/click-handler-keyboard-operable/"><code>click-handler-keyboard-operable</code></a>,{" "}
-						<a href="/rules/focus-not-removed-by-script/"><code>focus-not-removed-by-script</code></a>{" "}
-						und <a href="/rules/aria-owns-valid/"><code>aria-owns-valid</code></a> können{" "}
-						<code>fail</code> ergeben, ebenso{" "}
-						<a href="/rules/aria-valid-attr-value/"><code>aria-valid-attr-value</code></a>, das jetzt
-						die Bedingungen zwischen Attributen prüft (etwa <code>aria-valuemin</code> über{" "}
-						<code>aria-valuemax</code>). Siehe <a href="/rules/">den Regelkatalog</a>.
+						<strong>Rollen folgen WAI-ARIA genauer.</strong> <code>role="text"</code> nennt keine
+						gültige Rolle; ein Bild mit einer präsentationalen Rolle und einem globalen
+						ARIA-Attribut behält seine Rolle und lässt{" "}
+						<a href="/rules/img-alt-present/"><code>img-alt-present</code></a> ohne{" "}
+						<code>alt</code> fehlschlagen; die vier globalen Attribute, die WAI-ARIA 1.2 abkündigt,
+						geben einem präsentationalen Element seine Rolle nicht mehr zurück.
 					</li>
 					<li>
-						<strong>Manche Fehlschläge werden zu Fragen, und neue Fehlschläge kommen
-						hinzu.</strong> <code>td-has-header</code> fragt einmal nach einer großen Tabelle ohne
-						Kopfzelle, statt jede Zelle fehlschlagen zu lassen, und{" "}
-						<code>form-control-single-label</code> fragt nach einem Feld mit zwei Labels. Kontrast
-						wird an mehr von dem gemessen, was die Seite zeichnet (Text auf der Leinwand der Seite in
-						jedem Farbschema, <code>::first-line</code>, <code>font-size-adjust</code>, ein
-						Platzhalter, dessen Farben die Seite gewählt hat), es können also neue
-						Kontrast-Fehlschläge erscheinen.
+						<strong>Eine übersprungene Überschriftenebene ist ein Best-Practice-Problem</strong>,
+						kein Fehlschlag von 1.3.1, in den überarbeiteten{" "}
+						<a href="/conformance/procedures/">Prüfverfahren</a>, die auch die Schritte „So prüfen
+						Sie es“ von sechs neuen Fragen liefern.
 					</li>
 					<li>
-						<strong>Manche Befunde haben einen neuen Reason-Code.</strong> Siebzehn Regeln, die
-						keinen gaben, geben jetzt einen, und einige Codes sind nach Ursache geteilt. Eine von
-						1.13 geschriebene Baseline passt bis 1.15 weiter auf sie; schreiben Sie sie mit{" "}
-						<code>migrateBaselineEntries</code> um (siehe{" "}
-						<a href="#baseline-after-upgrade">den Eintrag weiter oben</a>). Eine
-						Code-Scanning-Warnung zu einem solchen Befund wird geschlossen und erscheint neu.
-					</li>
-					<li>
-						<strong>Jedes <code>cantTell</code> sagt, wie es zu beantworten ist.</strong> Der Befund
-						einer Core-Regel trägt Schritte in <code>howToCheck</code>, und manche tragen ein{" "}
-						<code>lean</code>: wohin die Hinweise der Seite deuten. Das Ergebnis bleibt{" "}
-						<code>cantTell</code>, und nichts scheitert an einem <code>lean</code>, außer Sie
-						verlangen es (<code>leanFailAs</code>). Der{" "}
-						<a href="/results-reports/html-report/">HTML-Bericht</a> gruppiert diese Befunde in
-						wahrscheinlich nicht erfüllt, wahrscheinlich erfüllt und solche, die eine Person prüfen
-						muss. Siehe <a href="/results-reports/output-schema/#leans">Ausgabeschema</a>.
-					</li>
-					<li>
-						<strong>1.14.1 meldet beim Textabstand weniger Fehlschläge.</strong>{" "}
-						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
-						lässt keinen Text mehr fehlschlagen, den die Seite nicht verliert. Zu einer Seite,
-						deren Scrollen mit <code>{"body { position: fixed }"}</code> gesperrt ist, wie bei
-						vielen hinter einem Consent-Banner, und zu einer fixierten Box, die höher als der
-						Viewport ist, wird als <code>VIEWPORT_SCROLL_LOCKED</code> nachgefragt; zu Text, den
-						eine Box abschneidet, die das Skript der Seite an ihn anpasst, etwa das schwebende
-						Label eines Angular-Material-Felds, als <code>TEXT_CLIPPED_SCRIPT_SIZED</code>. Ein
-						Baseline-Eintrag oder eine Code-Scanning-Warnung dazu wird geschlossen wie bei einem
-						behobenen Fehler. Die Schritte von 36 Fragen fragen außerdem, ob ein anderer Weg auf
-						der Seite dasselbe leistet, bevor sie zu einem Fehlschlag führen.
-					</li>
-					<li>
-						<strong>1.14.2 liest die Seite so, wie der Browser sie zeichnet.</strong> Inhalt, den
-						der Browser mit <code>content-visibility: auto</code> außerhalb des Bildschirms
-						überspringt, wird so gemessen, wie er angeordnet ist. Damit entfallen die falschen
-						Überlappungen, Fragen zum Hintergrund und Befunde zu unerreichbarem Fokus und
-						Zielgröße, die er auf Seiten mit Karten ergab, und{" "}
-						<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>{" "}
-						lässt jetzt Text fehlschlagen, den ein solches Element abschneidet
-						(<code>details.clippedBy</code>).{" "}
-						<a href="/rules/label-in-name/"><code>label-in-name</code></a>{" "}
-						lässt keine Beschriftung mehr fehlschlagen, die nur über aneinanderstoßende Boxen
-						verteilt ist, und die Regeln, die Stylesheets lesen, überspringen CSS nur für den Druck
-						oder ohne Unterstützung und Regeln, die das Element nicht erreichen. Ein
-						Baseline-Eintrag oder eine Code-Scanning-Warnung zu einem Befund, der nicht mehr
-						gemeldet wird, wird geschlossen wie bei einem behobenen Fehler.
+						<strong>Eine Baseline aus 1.13 muss zuerst aktualisiert werden.</strong> 1.15 hat keinen
+						Reason-Code verschoben und die Verschiebungen von 1.13 zu 1.14 entfernt (siehe{" "}
+						<a href="#baseline-after-upgrade">den Eintrag weiter oben</a>).
 					</li>
 				</ul>
 				<p>
-					Die vollständige Liste steht im{" "}
+					Neu, und ohne Änderung, solange Sie es nicht nutzen: Scans mehrerer Profile zugleich (
+					<a href="/configuration/engine-options/#several-profiles">Engine-Optionen</a>), die Profile{" "}
+					<code>wcag22-a</code> und <code>wcag22-aaa</code>, Prüfverfahren für die Bewertung von
+					Hand und „Was ein Mensch noch prüfen muss“ im HTML-Bericht. Die vollständige Liste steht im{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>{" "}
