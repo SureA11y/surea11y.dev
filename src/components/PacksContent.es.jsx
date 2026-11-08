@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Las reglas de lint de core para reglas." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Solo para un estándar: los requisitos y las reglas que comprueban cada uno." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Solo para un estándar: cómo evalúa una persona a mano cada requisito, y una prueba de que cada requisito tiene un procedimiento para cada una de sus facetas." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, con <code>@surea11y/core</code> como dependencia peer en la versión que lo escribió (<code>^1.16.0</code>), y eslint, jsdom y Playwright como dependencias de desarrollo.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, con <code>@surea11y/core</code> como dependencia peer en la versión que lo escribió (<code>^1.16.1</code>), y eslint, jsdom y Playwright como dependencias de desarrollo.</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "La guía del propio pack sobre estos archivos, y lo que git deja fuera." },
 ];
 
@@ -673,7 +673,7 @@ export function PacksContent() {
 					packs nuevos en 1.11.1: el paquete 1.11.0 omitía un archivo que los packs necesitan en
 					Node. Un análisis
 					con un core fuera de él omite el pack, con el motivo en <code>skippedPacks</code>.{" "}
-					<code>surea11y-pack new</code> escribe la versión que generó el pack (<code>^1.16.0</code>);
+					<code>surea11y-pack new</code> escribe la versión que generó el pack (<code>^1.16.1</code>);
 					mantén un rango que empiece en 1.14 si el pack usa lo que añadió la 1.14:{" "}
 					<code>meta.review</code>, filas con <code>reasonCodes</code> y <code>findings</code>,{" "}
 					<code>meta.contributions</code>, <code>applicability</code>, <code>partial</code> o{" "}

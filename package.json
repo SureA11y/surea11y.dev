@@ -39,7 +39,7 @@
     "esbuild": true
   },
   "devDependencies": {
-    "@surea11y/core": "1.16.0",
+    "@surea11y/core": "1.16.1",
     "@surea11y/playwright": "1.6.0",
     "playwright": "1.64.0",
     "wrangler": "^4.149.0"

@@ -19,7 +19,10 @@ export function FaqContent() {
 						<code>&lt;dialog open aria-modal="true"&gt;</code> est désormais jugée : un test jsdom
 						qui simule ainsi un dialogue modal voit des constats derrière lui ;{" "}
 						<code>engineOptions.assumeModal: true</code> conserve l’ancien comportement (voir{" "}
-						<a href="/help/known-limitations/">Limites connues</a>). Rien derrière un dialogue
+						<a href="/help/known-limitations/">Limites connues</a> ; avec test-matchers 1.6.0,
+						passez-la aussi à <code>installLiveRegionHook()</code>, voir{" "}
+						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
+						Rien derrière un dialogue
 						modal ne reçoit le focus et, de plusieurs dialogues ouverts avec{" "}
 						<code>showModal()</code>, seul celui du dessus est jugé.
 					</li>
@@ -316,7 +319,9 @@ export function FaqContent() {
 					(Prototype et MooTools le font) et une règle de pack ou personnalisée de l’analyse
 					l’utilise : les règles propres à core ne l’utilisent plus depuis la 1.16. Écrivez cette
 					règle avec la syntaxe de décomposition (<code>[...x]</code>,{" "}
-					<code>[...x].map(f)</code>), ou laissez-la hors de la sélection.
+					<code>[...x].map(f)</code>), ou laissez-la hors de la sélection. Le{" "}
+					<a href="/configuration/packs/#wai-aria-pack">pack WAI-ARIA</a> le faisait jusqu’à sa
+					version 1.0.2 : mettez-le à jour.
 				</p>
 			</article>
 

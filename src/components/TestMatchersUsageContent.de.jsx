@@ -349,7 +349,7 @@ export function TestMatchersUsageContent() {
 				exportiert außerdem <code>configureA11yMatchers(options)</code> für Standardwerte in der
 				ganzen Suite, <code>installInternalsHook(win?)</code> für{" "}
 				<a href="#web-components">Web Components</a> sowie <code>installListenerHook(win?)</code>,{" "}
-				<code>installLiveRegionHook(win?)</code> und den Matcher <code>toHaveAnnounced()</code> für{" "}
+				<code>installLiveRegionHook(win?, options?)</code> und den Matcher <code>toHaveAnnounced()</code> für{" "}
 				<a href="#listener-and-live-region-hooks">Klick-Handler und Live-Regionen</a>.
 			</p>
 
@@ -620,6 +620,32 @@ export function TestMatchersUsageContent() {
 				</a>
 				.
 			</p>
+			<p id="modal-dialogs-in-jsdom">
+				<strong>Modale Dialoge in jsdom.</strong> Ein mit <code>showModal()</code> geöffneter
+				Dialog macht die Seite dahinter inert: Der Scan beurteilt sie nicht, und eine Live-Region
+				dort bringt keine Ansage durch. jsdom hat kein <code>showModal()</code>, und seit{" "}
+				<code>@surea11y/core</code> 1.16 gilt ein offenes{" "}
+				<code>&lt;dialog aria-modal="true"&gt;</code> unter jsdom nicht als modal, so wenig wie in
+				einem Browser. Ein Test, der <code>showModal()</code> nachbildet, indem er{" "}
+				<code>open</code> und <code>aria-modal="true"</code> setzt, sagt das beiden, mit
+				test-matchers 1.6.0 und neuer:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// setup file",
+					"installLiveRegionHook(window, { assumeModal: true });",
+					"",
+					"// in a test",
+					"expect(container).toHaveNoA11yViolations({ assumeModal: true });",
+				]}
+			/>
+			<p>
+				Einen Text, den eine Region hinter einem modalen Dialog erhält, zählt{" "}
+				<code>toHaveAnnounced()</code> nur mit <code>{"{ includeBehindModal: true }"}</code>, und
+				die Fehlermeldung listet ihn in jedem Fall auf. Eine andere Option für den Hook oder ein
+				Wert, der kein Boolean ist, wirft einen <code>TypeError</code>.
+			</p>
 
 			<h2>Fehlermeldungen</h2>
 			<p>
@@ -638,7 +664,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.15.0.",
+					"Scanned with @surea11y/core 1.16.1.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -667,9 +693,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0,and this is core 1.15.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0,and this is core 1.16.1.",
 					"",
-					"Scanned with @surea11y/core 1.15.0.",
+					"Scanned with @surea11y/core 1.16.1.",
 				]}
 			/>
 

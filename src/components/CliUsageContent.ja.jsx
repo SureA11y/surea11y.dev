@@ -31,7 +31,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  pass: 16   fail: 4   cantTell: 4   notApplicable: 121",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 4",
@@ -304,7 +304,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  WCAG level reported: AA",
 					"  pass: 1   fail: 0   cantTell: 0   notApplicable: 0",
 					"",
@@ -531,7 +531,7 @@ export function CliUsageContent() {
 				<code>--context</code>
 				のセレクター、実行されなかったカスタムルールやパック、適用されなかった
 				<code>--profile</code>
-				（複数指定した場合は、<code>--allow-profiles-not-run</code>を付けない限り、実行されなかったプロファイル）がこれに当たります。1つ前のマイナーリリースで書き出したベースラインは、その後に理由コードが移動した検出結果にも引き続き一致します。
+				（複数指定した場合は、<code>--allow-profiles-not-run</code>を付けない限り、実行されなかったプロファイル）がこれに当たります。エントリーとして成り立たないエントリー（<code>null</code>、<code>ruleId</code>がないもの、<code>selector</code>が文字列でないもの）を含む<code>--baseline</code>や<code>--migrate-baseline</code>のファイルは、スキャンの前に、ファイルとエントリーを示して終了コード<code>2</code>で終了します（<code>@surea11y/cli</code> 1.6.0以降）。1つ前のマイナーリリースで書き出したベースラインは、その後に理由コードが移動した検出結果にも引き続き一致します。
 				<code>--migrate-baseline baseline.json</code>
 				で新しいコードに書き直せます（<a href="/conformance/baseline/#upgrading">アップグレード</a>を参照）。
 			</p>

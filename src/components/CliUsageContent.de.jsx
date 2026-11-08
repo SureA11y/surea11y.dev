@@ -29,7 +29,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  pass: 16   fail: 4   cantTell: 4   notApplicable: 121",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 4",
@@ -243,7 +243,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  WCAG level reported: AA",
 					"  pass: 1   fail: 0   cantTell: 0   notApplicable: 0",
 					"",
@@ -450,7 +450,11 @@ export function CliUsageContent() {
 				bekanntes Tag nennt, ein <code>--context</code>-Selektor, der auf nichts passt, eine eigene
 				Regel oder ein Pack, die nicht gelaufen sind, ein <code>--profile</code>, das nicht
 				angewendet wurde (bei mehreren eines, das nicht gelaufen ist, außer mit{" "}
-				<code>--allow-profiles-not-run</code>). Eine vom vorherigen Minor-Release geschriebene
+				<code>--allow-profiles-not-run</code>). Eine <code>--baseline</code>- oder{" "}
+				<code>--migrate-baseline</code>-Datei mit einem Eintrag, der keiner ist (<code>null</code>,
+				kein <code>ruleId</code>, ein <code>selector</code>, der kein String ist), endet vor dem
+				Scan mit <code>2</code> und nennt Datei und Eintrag (<code>@surea11y/cli</code> 1.6.0 und
+				neuer). Eine vom vorherigen Minor-Release geschriebene
 				Baseline passt weiterhin zu Befunden, deren Reason-Codes sich seitdem verschoben haben;{" "}
 				<code>--migrate-baseline baseline.json</code> schreibt sie mit den neuen Codes neu (siehe{" "}
 				<a href="/conformance/baseline/#upgrading">Upgrade</a>).

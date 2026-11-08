@@ -346,7 +346,7 @@ export function TestMatchersUsageContent() {
 				también exporta <code>configureA11yMatchers(options)</code>, para valores por defecto en
 				toda la suite; <code>installInternalsHook(win?)</code>, para{" "}
 				<a href="#web-components">componentes web</a>; y <code>installListenerHook(win?)</code>,{" "}
-				<code>installLiveRegionHook(win?)</code> y el matcher <code>toHaveAnnounced()</code>, para{" "}
+				<code>installLiveRegionHook(win?, options?)</code> y el matcher <code>toHaveAnnounced()</code>, para{" "}
 				<a href="#listener-and-live-region-hooks">manejadores de clic y regiones vivas</a>.
 			</p>
 
@@ -612,6 +612,32 @@ export function TestMatchersUsageContent() {
 				</a>{" "}
 				tiene los detalles.
 			</p>
+			<p id="modal-dialogs-in-jsdom">
+				<strong>Diálogos modales en jsdom.</strong> Un diálogo abierto con{" "}
+				<code>showModal()</code> vuelve inerte la página que hay detrás: el análisis no la juzga, y
+				una región viva que esté ahí no hace llegar ningún anuncio. jsdom no tiene{" "}
+				<code>showModal()</code>, y desde <code>@surea11y/core</code> 1.16 un{" "}
+				<code>&lt;dialog aria-modal="true"&gt;</code> abierto no se toma como modal en jsdom, como
+				tampoco en un navegador. Un test que sustituye a <code>showModal()</code> poniendo{" "}
+				<code>open</code> y <code>aria-modal="true"</code> se lo indica a ambos, con test-matchers
+				1.6.0 y posteriores:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// setup file",
+					"installLiveRegionHook(window, { assumeModal: true });",
+					"",
+					"// in a test",
+					"expect(container).toHaveNoA11yViolations({ assumeModal: true });",
+				]}
+			/>
+			<p>
+				Un texto dado a una región detrás de un diálogo modal no lo cuenta{" "}
+				<code>toHaveAnnounced()</code> salvo que pases <code>{"{ includeBehindModal: true }"}</code>,
+				y el mensaje de fallo lo lista en cualquier caso. Otra opción al hook, o un valor que no es
+				booleano, lanza un <code>TypeError</code>.
+			</p>
 
 			<h2>Mensajes de fallo</h2>
 			<p>
@@ -630,7 +656,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.15.0.",
+					"Scanned with @surea11y/core 1.16.1.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -658,9 +684,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.15.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.16.1.",
 					"",
-					"Scanned with @surea11y/core 1.15.0.",
+					"Scanned with @surea11y/core 1.16.1.",
 				]}
 			/>
 

@@ -326,7 +326,8 @@ export function BaselineContent() {
 			<p>
 				<code>--baseline &lt;path&gt;</code> rejects a file that isn't{" "}
 				<code>{"{ version: 1, entries: [...] }"}</code> with a clear exit-2 error rather than
-				guessing at an older/different format. <code>matchBaseline</code>, and the{" "}
+				guessing at an older/different format, and since <code>@surea11y/cli</code> 1.6.0 one
+				with an entry that isn't one too, before the scan, naming the file and the entry. <code>matchBaseline</code>, and the{" "}
 				<code>baselineEntries</code> option of the SARIF and JUnit reporters, take the file as
 				saved (<code>JSON.parse</code> of it) or its <code>entries</code> list.{" "}
 				<code>null</code> or no baseline has no entries, so every failure is new. Since core

@@ -29,7 +29,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  pass: 16   fail: 4   cantTell: 4   notApplicable: 121",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 4",
@@ -233,7 +233,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  WCAG level reported: AA",
 					"  pass: 1   fail: 0   cantTell: 0   notApplicable: 0",
 					"",
@@ -426,7 +426,11 @@ export function CliUsageContent() {
 				nothing or less than asked: a <code>--rules</code>/<code>--tags</code> list naming no known
 				rule or tag, a <code>--context</code> selector that matches nothing, a custom rule or a
 				pack that didn't run, a <code>--profile</code> that wasn't applied (with several, one that
-				didn't run, unless <code>--allow-profiles-not-run</code>). A baseline written by the
+				didn't run, unless <code>--allow-profiles-not-run</code>). A <code>--baseline</code> or{" "}
+				<code>--migrate-baseline</code> file with an entry that isn't one (<code>null</code>, no{" "}
+				<code>ruleId</code>, a <code>selector</code> that isn't a string) exits <code>2</code>{" "}
+				before the scan, naming the file and the entry (<code>@surea11y/cli</code> 1.6.0 and
+				later). A baseline written by the
 				minor release before keeps matching findings whose reason codes moved since;{" "}
 				<code>--migrate-baseline baseline.json</code> rewrites it under the new codes (see{" "}
 				<a href="/conformance/baseline/#upgrading">Upgrading</a>).

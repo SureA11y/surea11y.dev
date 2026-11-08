@@ -19,7 +19,10 @@ export function FaqContent() {
 						<code>&lt;dialog open aria-modal="true"&gt;</code> wird jetzt beurteilt, ein jsdom-Test,
 						der so ein Modal nachbildet, sieht also Befunde dahinter;{" "}
 						<code>engineOptions.assumeModal: true</code> behält das alte Verhalten bei (siehe{" "}
-						<a href="/help/known-limitations/">Bekannte Einschränkungen</a>). Nichts hinter einem
+						<a href="/help/known-limitations/">Bekannte Einschränkungen</a>; mit test-matchers
+						1.6.0 geben Sie es auch <code>installLiveRegionHook()</code> mit, siehe{" "}
+						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
+						Nichts hinter einem
 						modalen Dialog erhält den Fokus, und von mehreren mit <code>showModal()</code>{" "}
 						geöffneten wird nur der oberste beurteilt.
 					</li>
@@ -309,7 +312,8 @@ export function FaqContent() {
 					und MooTools tun das), und eine Regel eines Packs oder eine eigene Regel im Scan verwendet
 					es: Die eigenen Regeln von core tun das seit 1.16 nicht mehr. Schreiben Sie diese Regel mit
 					Spread (<code>[...x]</code>, <code>[...x].map(f)</code>), oder lassen Sie sie aus der
-					Auswahl weg.
+					Auswahl weg. Das <a href="/configuration/packs/#wai-aria-pack">WAI-ARIA-Pack</a> tat das
+					bis zu seinem Release 1.0.2: Aktualisieren Sie es.
 				</p>
 			</article>
 

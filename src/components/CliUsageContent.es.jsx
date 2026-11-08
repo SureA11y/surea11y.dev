@@ -30,7 +30,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  pass: 16   fail: 4   cantTell: 4   notApplicable: 121",
 					"",
 					"  occurrences by tier: fail: 4   cantTell: 4",
@@ -243,7 +243,7 @@ export function CliUsageContent() {
 					"$ surea11y scan ./index.html --rules contrast-computable --wcag-level AA",
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.15.0",
+					"  engine: @surea11y/core 1.16.1",
 					"  WCAG level reported: AA",
 					"  pass: 1   fail: 0   cantTell: 0   notApplicable: 0",
 					"",
@@ -443,7 +443,11 @@ export function CliUsageContent() {
 				ninguna regla ni etiqueta conocida, un selector <code>--context</code> que no coincide con
 				nada, una regla personalizada o un pack que no se ejecutó, un <code>--profile</code> que no
 				se aplicó (con varios, uno que no se ejecutó, salvo con{" "}
-				<code>--allow-profiles-not-run</code>). El resultado <code>fail</code> es el caso que condiciona CI (
+				<code>--allow-profiles-not-run</code>). Un archivo de <code>--baseline</code> o de{" "}
+				<code>--migrate-baseline</code> con una entrada que no lo es (<code>null</code>, sin{" "}
+				<code>ruleId</code>, un <code>selector</code> que no es una cadena) sale con <code>2</code>{" "}
+				antes del análisis, nombrando el archivo y la entrada (<code>@surea11y/cli</code> 1.6.0 y
+				posteriores). El resultado <code>fail</code> es el caso que condiciona CI (
 				<code>--fail-on-severity</code> solo cuenta los de su nivel o más); consulta{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a> para saber qué cuenta como
 				"conocido" frente a "nuevo". Una baseline escrita por la versión menor anterior sigue

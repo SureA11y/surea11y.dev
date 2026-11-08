@@ -346,7 +346,7 @@ export function TestMatchersUsageContent() {
 				configuration ci-dessus. Le paquet exporte aussi <code>configureA11yMatchers(options)</code>,
 				pour des valeurs par défaut dans toute la suite ; <code>installInternalsHook(win?)</code>,
 				pour les <a href="#web-components">composants web</a> ; et{" "}
-				<code>installListenerHook(win?)</code>, <code>installLiveRegionHook(win?)</code> et le
+				<code>installListenerHook(win?)</code>, <code>installLiveRegionHook(win?, options?)</code> et le
 				matcher <code>toHaveAnnounced()</code>, pour les{" "}
 				<a href="#listener-and-live-region-hooks">gestionnaires de clic et régions live</a>.
 			</p>
@@ -615,6 +615,33 @@ export function TestMatchersUsageContent() {
 				</a>{" "}
 				donne les détails.
 			</p>
+			<p id="modal-dialogs-in-jsdom">
+				<strong>Dialogues modaux dans jsdom.</strong> Un dialogue ouvert avec{" "}
+				<code>showModal()</code> rend inerte la page derrière lui : l’analyse ne la juge pas, et
+				une région live qui s’y trouve ne transmet aucune annonce. jsdom n’a pas de{" "}
+				<code>showModal()</code> et, depuis <code>@surea11y/core</code> 1.16, un{" "}
+				<code>&lt;dialog aria-modal="true"&gt;</code> ouvert n’est pas considéré comme modal sous
+				jsdom, pas plus que dans un navigateur. Un test qui remplace <code>showModal()</code> en
+				posant <code>open</code> et <code>aria-modal="true"</code> l’indique aux deux, avec
+				test-matchers 1.6.0 et versions ultérieures :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"// setup file",
+					"installLiveRegionHook(window, { assumeModal: true });",
+					"",
+					"// in a test",
+					"expect(container).toHaveNoA11yViolations({ assumeModal: true });",
+				]}
+			/>
+			<p>
+				Un texte donné à une région derrière un dialogue modal n’est pas compté par{" "}
+				<code>toHaveAnnounced()</code>, sauf si vous passez{" "}
+				<code>{"{ includeBehindModal: true }"}</code>, et le message d’échec le liste dans tous les
+				cas. Une autre option du hook, ou une valeur qui n’est pas un booléen, lève une{" "}
+				<code>TypeError</code>.
+			</p>
 
 			<h2>Messages d’échec</h2>
 			<p>
@@ -633,7 +660,7 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.15.0.",
+					"Scanned with @surea11y/core 1.16.1.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
@@ -662,9 +689,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.15.0.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.16.1.",
 					"",
-					"Scanned with @surea11y/core 1.15.0.",
+					"Scanned with @surea11y/core 1.16.1.",
 				]}
 			/>
 

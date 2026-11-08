@@ -338,7 +338,9 @@ export function BaselineContent() {
 			<p>
 				<code>--baseline &lt;path&gt;</code> rechaza un archivo que no sea{" "}
 				<code>{"{ version: 1, entries: [...] }"}</code> con un error claro de salida 2 en lugar de
-				adivinar un formato más antiguo o distinto. <code>matchBaseline</code>, y la opción{" "}
+				adivinar un formato más antiguo o distinto, y desde <code>@surea11y/cli</code> 1.6.0
+				también uno con una entrada que no lo es, antes del análisis, nombrando el archivo y la
+				entrada. <code>matchBaseline</code>, y la opción{" "}
 				<code>baselineEntries</code> de los generadores de informes SARIF y JUnit, aceptan el archivo tal como se
 				guardó (<code>JSON.parse</code> del mismo) o su lista <code>entries</code>.{" "}
 				<code>null</code> o la ausencia de baseline no tiene entradas, así que todo fallo es nuevo.

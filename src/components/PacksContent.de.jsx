@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Die Lint-Regeln von core für Regeln." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Nur bei einer Norm: die Anforderungen und die Regeln, die jede prüfen." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Nur bei einer Norm: wie eine Person jede Anforderung von Hand bewertet, und ein Test, dass jede Anforderung für jede ihrer Facetten ein Prüfverfahren hat." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, mit <code>@surea11y/core</code> als Peer-Dependency in der Version, die es geschrieben hat (<code>^1.16.0</code>), und eslint, jsdom und Playwright als Entwicklungsabhängigkeiten.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, mit <code>@surea11y/core</code> als Peer-Dependency in der Version, die es geschrieben hat (<code>^1.16.1</code>), und eslint, jsdom und Playwright als Entwicklungsabhängigkeiten.</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "Die eigene Anleitung des Packs zu diesen Dateien, und was git auslässt." },
 ];
 
@@ -681,7 +681,7 @@ export function PacksContent() {
 					Scan mit
 					einem core außerhalb davon überspringt das Pack, mit dem Grund in{" "}
 					<code>skippedPacks</code>. <code>surea11y-pack new</code> schreibt die Version, die das
-					Pack erzeugt hat (<code>^1.16.0</code>); behalten Sie einen Bereich, der bei 1.14 beginnt,
+					Pack erzeugt hat (<code>^1.16.1</code>); behalten Sie einen Bereich, der bei 1.14 beginnt,
 					wenn das Pack nutzt, was 1.14 hinzugefügt hat: <code>meta.review</code>, Zeilen mit{" "}
 					<code>reasonCodes</code> und <code>findings</code>, <code>meta.contributions</code>,{" "}
 					<code>applicability</code>, <code>partial</code> oder <code>keepsParsing</code>; und einen,

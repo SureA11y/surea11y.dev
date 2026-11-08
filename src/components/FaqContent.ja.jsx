@@ -14,7 +14,7 @@ export function FaqContent() {
 				<ul>
 					<li>
 						<strong>jsdomでも、ブラウザーと同じく<code>showModal()</code>で開いたダイアログだけがモーダルになります。</strong>
-						<code>&lt;dialog open aria-modal="true"&gt;</code>の背後にあるページも判定されるようになったため、そのようにモーダルを模したjsdomのテストでは、その背後の検出結果が出ます。<code>engineOptions.assumeModal: true</code>で従来の動作を保てます（<a href="/help/known-limitations/">既知の制限事項</a>を参照）。モーダルダイアログの背後にあるものはフォーカスを受け取らず、<code>showModal()</code>で複数開いた場合は最前面のものだけが判定されます。
+						<code>&lt;dialog open aria-modal="true"&gt;</code>の背後にあるページも判定されるようになったため、そのようにモーダルを模したjsdomのテストでは、その背後の検出結果が出ます。<code>engineOptions.assumeModal: true</code>で従来の動作を保てます（<a href="/help/known-limitations/">既知の制限事項</a>を参照。test-matchers 1.6.0では<code>installLiveRegionHook()</code>にも渡します。<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>を参照）。モーダルダイアログの背後にあるものはフォーカスを受け取らず、<code>showModal()</code>で複数開いた場合は最前面のものだけが判定されます。
 					</li>
 					<li>
 						<strong>jsdomでも、ブラウザーが隠すものは隠されます。</strong>
@@ -175,7 +175,7 @@ export function FaqContent() {
 					ページ自身のスクリプトが、エンジンが依存するJavaScriptの組み込みオブジェクト（<code>Array.prototype.filter</code>、<code>Map</code>、<code>JSON.stringify</code>など）を変更しているため、そのページのスキャンは、もっともらしく見えて誤っている結果を返す可能性があります。エラーのメッセージとその<code>broken</code>リストが、それぞれを示します。ページのスクリプトがそれらを変更する前にスキャンしてください（バンドルをもっと早く注入するか、それを行うスクリプトを含まないビルドをスキャンします）。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
 				</p>
 				<p>
-					<code>broken</code>が<code>Array.from</code>だけの場合は、ページがそれを置き換えていて（PrototypeとMooToolsがそうします）、スキャン中のパックのルールかカスタムルールがそれを使っています。coreのルールは1.16以降、それを使いません。そのルールをスプレッド構文（<code>[...x]</code>、<code>[...x].map(f)</code>）で書くか、選択から外してください。
+					<code>broken</code>が<code>Array.from</code>だけの場合は、ページがそれを置き換えていて（PrototypeとMooToolsがそうします）、スキャン中のパックのルールかカスタムルールがそれを使っています。coreのルールは1.16以降、それを使いません。そのルールをスプレッド構文（<code>[...x]</code>、<code>[...x].map(f)</code>）で書くか、選択から外してください。<a href="/configuration/packs/#wai-aria-pack">WAI-ARIAのパック</a>は1.0.2より前のリリースでこれを使っていました。更新してください。
 				</p>
 			</article>
 
