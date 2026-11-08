@@ -176,7 +176,9 @@ export function OverviewContent() {
 				Nennen Sie den Standard, und die Engine wählt die Regeln.{" "}
 				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code> führt die Regeln für die A- und
 				AA-Kriterien von WCAG 2.2 aus, nach der Stufe, die jedes Kriterium in dieser Version hat, und{" "}
-				<code>bestPractices: true</code> ergänzt die Prüfungen, die WCAG nicht verlangt. Ein Standard
+				<code>bestPractices: true</code> ergänzt die Prüfungen, die WCAG nicht verlangt.{" "}
+				<code>profile: 'wcag21-aa'</code> tut dasselbe über einen Namen, für WCAG 2.0, 2.1 und 2.2
+				auf jeder Stufe, und lässt sich neben dem Profil eines Packs scannen. Ein Standard
 				über WCAG hinaus, etwa ein nationaler oder die eigene Richtlinie Ihrer Organisation, kommt als
 				Pack: Seine Regeln, Profile und Checklistenpunkte laufen neben denen von core und erscheinen
 				in jedem Bericht. Siehe{" "}

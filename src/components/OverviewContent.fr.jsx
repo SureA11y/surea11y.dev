@@ -176,7 +176,9 @@ export function OverviewContent() {
 				Nommez la norme, et le moteur choisit les règles.{" "}
 				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code> exécute les règles des critères A
 				et AA de WCAG 2.2, selon le niveau de chaque critère dans cette version, et{" "}
-				<code>bestPractices: true</code> ajoute les vérifications que WCAG n’exige pas. Une norme
+				<code>bestPractices: true</code> ajoute les vérifications que WCAG n’exige pas.{" "}
+				<code>profile: 'wcag21-aa'</code> fait de même par son nom, pour WCAG 2.0, 2.1 et 2.2 à
+				chaque niveau, et peut être analysé à côté du profil d’un pack. Une norme
 				au-delà de WCAG, comme une norme nationale ou la politique propre à votre organisation, prend
 				la forme d’un pack : ses règles, ses profils et les points de sa liste de contrôle s’exécutent à côté de
 				celles de core et apparaissent dans chaque rapport. Voir{" "}

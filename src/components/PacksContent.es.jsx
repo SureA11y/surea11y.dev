@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Las reglas de lint de core para reglas." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Solo para un estándar: los requisitos y las reglas que comprueban cada uno." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Solo para un estándar: cómo evalúa una persona a mano cada requisito, y una prueba de que cada requisito tiene un procedimiento para cada una de sus facetas." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, con <code>@surea11y/core</code> como dependencia peer en la versión que lo escribió (<code>^1.15.0</code>), y eslint, jsdom y Playwright como dependencias de desarrollo.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, con <code>@surea11y/core</code> como dependencia peer en la versión que lo escribió (<code>^1.16.0</code>), y eslint, jsdom y Playwright como dependencias de desarrollo.</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "La guía del propio pack sobre estos archivos, y lo que git deja fuera." },
 ];
 
@@ -673,13 +673,16 @@ export function PacksContent() {
 					packs nuevos en 1.11.1: el paquete 1.11.0 omitía un archivo que los packs necesitan en
 					Node. Un análisis
 					con un core fuera de él omite el pack, con el motivo en <code>skippedPacks</code>.{" "}
-					<code>surea11y-pack new</code> escribe la versión que generó el pack (<code>^1.15.0</code>);
+					<code>surea11y-pack new</code> escribe la versión que generó el pack (<code>^1.16.0</code>);
 					mantén un rango que empiece en 1.14 si el pack usa lo que añadió la 1.14:{" "}
 					<code>meta.review</code>, filas con <code>reasonCodes</code> y <code>findings</code>,{" "}
 					<code>meta.contributions</code>, <code>applicability</code>, <code>partial</code> o{" "}
 					<code>keepsParsing</code>; y uno que empiece en 1.15 si usa{" "}
 					<code>outcome: 'fail'</code>. Lo demás que lee la 1.15 (los procedimientos, grupos y
 					traducciones de un estándar, sus propios pasos de revisión) lo ignora un core anterior.
+					Un pack que usa una API que core marca como experimental declara un rango que no admite
+					ninguna versión menor posterior (<code>'~1.16.0'</code>); consulta{" "}
+					<a href="#experimental">API experimentales</a>.
 				</li>
 				<li>
 					<strong><code>title</code></strong> es como los resultados y los informes llaman a una
@@ -836,9 +839,20 @@ export function PacksContent() {
 			/>
 			<p>
 				Compara solo campos que una regla mantiene estables: <code>reasonCode</code> en todas las
-				reglas, y los pocos más que nombra la{" "}
+				reglas, y los demás que nombra la{" "}
 				<a href={`${core}/docs/API_STABILITY.md`}>política de estabilidad de la API</a> de core en
-				GitHub (entre ellos, la ratio, el umbral y la tipografía de <code>contrast-minimum</code>).
+				GitHub: la ratio, el umbral y la tipografía de <code>contrast-minimum</code>, la tipografía
+				de <code>contrast-computable</code>, <code>element</code> y <code>parentElement</code> de
+				las reglas de listas, <code>role</code> de <code>aria-role-name-present</code>,{" "}
+				<code>linkKind</code> de las reglas de enlaces, <code>messageKind</code> de{" "}
+				<code>live-region-announcements</code> y, de forma experimental, <code>lean</code> de{" "}
+				<code>skip-link</code> (consulta el{" "}
+				<a href="/results-reports/output-schema/#occurrence">esquema de salida</a>). La tipografía de
+				<code>contrast-computable</code>, <code>linkKind</code>, <code>messageKind</code> y{" "}
+				<code>lean</code> son nuevos en core 1.16.0, para un estándar que clasifica los hallazgos bajo
+				pruebas propias (un enlace de imagen aparte de un enlace de texto, un mensaje de estado
+				aparte de una alerta). <code>linkKind</code> y <code>messageKind</code> pueden ganar valores
+				en una versión menor: nombra los que diriges, y los demás van según su código o la fila.
 				Un campo que cambia o desaparece no coincide con nada, y el hallazgo va según su código o
 				la fila. Los códigos de motivo de cada regla figuran en «What a finding reports» en el{" "}
 				<a href={`${core}/docs/RULE_CATALOG.md`}>catálogo de reglas</a> de core en GitHub.
@@ -857,6 +871,69 @@ export function PacksContent() {
 				<code>meta.contributions</code>; <code>StandardRollup</code> en <code>pack.d.ts</code> da la
 				forma, y la <a href={`${core}/docs/PACKS.md`}>guía de packs</a> de core en GitHub lo
 				explica paso a paso. Todo esto necesita core 1.14.0.
+			</p>
+			<p>
+				<strong>Pruebas bajo los requisitos</strong> (core 1.16.0,{" "}
+				<a href="#experimental">experimental</a>). Un estándar que juzga pruebas bajo sus
+				requisitos, como RGAA juzga pruebas bajo cada criterio, da a{" "}
+				<code>ruleMappedStandard</code> una tercera tabla, <code>tests</code>, por versión: el{" "}
+				<code>title</code> de cada prueba y los <code>requirements</code> a los que pertenece. Una
+				fila del mapa de reglas nombra entonces pruebas, y puede indicar dónde sus hallazgos son
+				solo preguntas, con <code>asks</code>. Sigue habiendo un resultado agregado por requisito,
+				que agrupa las reglas de sus pruebas; cada hallazgo cuenta para la prueba que hace fallar,
+				y los resultados nombran cada prueba con el requisito al que pertenece (
+				<code>criterion</code>):
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"requirements: { '1.0': { '4.2': { title: 'Images have a text alternative', wcagSc: ['1.1.1'], tests: ['4.2.1', '4.2.2'] } } },",
+					"tests: { '1.0': {",
+					"  '4.2.1': { title: 'Each image has an alt attribute', requirements: ['4.2'] },",
+					"  '4.2.2': { title: 'Each alternative describes the image', requirements: ['4.2'] }",
+					"} },",
+					"ruleMap: { '1.0': {",
+					"  'img-alt-present': { requirements: ['4.2.1'] },",
+					"  'img-alt-quality': { requirements: [], asks: ['4.2.2'] }",
+					"} }",
+				]}
+			/>
+
+			<h3 id="standards-as-data">Un estándar como datos, o construido sobre otros</h3>
+			<p>
+				Desde core 1.16.0 (<a href="#experimental">experimental</a>), las mismas tablas, con las
+				versiones, los grupos, los perfiles y los textos del estándar, pueden ser un solo objeto
+				JSON en el formato <code>surea11y-standard/1</code>, que describe{" "}
+				<code>@surea11y/core/schemas/standard.schema.json</code>, de modo que cualquier herramienta
+				puede leer el estándar sin ejecutar el pack. <code>checkStandardData(data)</code> enumera
+				lo que está mal en él, <code>standardFromData(data)</code> construye a partir de él el{" "}
+				<code>standard</code> del pack, y <code>standardDataOf(standard)</code> lo devuelve. El{" "}
+				<a href="#en-301-549-pack">pack de EN 301 549</a> construido a partir de sus datos da los
+				mismos resultados que hoy.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { definePack, standardFromData } = require('@surea11y/core/pack');",
+					"const data = require('./standard.json');   // { format: 'surea11y-standard/1', key: 'city', ... }",
+					"",
+					"module.exports = definePack({ name, version, namespace: 'city', core: '~1.16.0',",
+					"  standard: standardFromData(data) });",
+				]}
+			/>
+			<p>
+				Un estándar construido sobre uno o más estándares, como algunos estándares nacionales que
+				se basan en EN 301 549 o dividen sus cláusulas en pasos, declara solo lo que conserva y lo
+				que cambia: <code>deriveStandard(bases, own)</code> lo completa a partir de los datos de las
+				bases. Cada una de sus versiones, requisitos y pruebas dice en qué se basa (
+				<code>basedOn</code>); toma los campos, las pruebas y las filas del mapa de reglas de
+				aquello en lo que se basa, sus propias filas sustituyen o quitan las heredadas, y un{" "}
+				<code>basedOn</code> que las bases no pueden resolver lanza un error, así que cuando una
+				base cambia fallan las pruebas del pack derivado y no sus resultados. Cada entrada de un
+				resultado lleva el <code>basedOn</code> de su requisito o prueba, así que el resultado de
+				un paso nombra la cláusula de la que viene. La{" "}
+				<a href={`${core}/docs/PACKS.md`}>guía de packs</a> de core en GitHub tiene el formato y
+				cada regla de la derivación.
 			</p>
 
 			<h3 id="rules">Reglas</h3>
@@ -954,7 +1031,11 @@ export function PacksContent() {
 				hacen los de core. Un estándar que juzga las reglas de core por código de motivo también
 				puede dar sus propios pasos para un código de una regla de core, en{" "}
 				<code>standard.review</code>: un hallazgo por el que solo preguntan sus perfiles los lee en
-				lugar de los de core, que nombran WCAG.
+				lugar de los de core, que nombran WCAG. Desde core 1.16.0,{" "}
+				<code>{"howToCheckFor(ruleId, code, locale, { packs, profile })"}</code> los lee del mismo
+				modo sin un hallazgo, y <code>reviewByVersion</code> da a cada versión del estándar sus
+				propios pasos, para que los pasos que nombran un requisito puedan seguir la numeración de
+				la versión.
 			</p>
 
 			<h3 id="procedures">Cómo lo evalúa una persona: procedimientos</h3>
@@ -1011,6 +1092,14 @@ export function PacksContent() {
 				la primera forma para cada requisito de <code>ruleMappedStandard</code>.
 			</p>
 			<p>
+				Desde core 1.16.0, una faceta también enumera las reglas de core que el mapeo del estándar
+				envía a lo que evalúa, en sus <code>rules</code> y sus <code>mappedRules</code>, así que una
+				prueba que solo comprueban reglas de core ya no parece sin comprobar. Un estándar cuyo mapa
+				vincula reglas a algo más fino que los requisitos de sus procedimientos, por ejemplo las
+				pruebas de un criterio, nombra en cada faceta los ids que usa su mapeo, en{" "}
+				<code>mappedRequirements</code>.
+			</p>
+			<p>
 				Un estándar también puede dar <code>groups</code> (sus temas o capítulos, por versión),{" "}
 				<code>relatesTo</code> en un requisito propio (los criterios de WCAG con los que se
 				relaciona sin reformularlos) y <code>notes</code> (lo que debe saber quien lee antes de usar
@@ -1051,9 +1140,83 @@ export function PacksContent() {
 			/>
 			<p>
 				El <code>howToCheck</code> de un hallazgo y los procedimientos los muestran en esa
-				configuración regional, y en inglés cada texto que le falte. Para una configuración regional
-				que core no incluye (<code>pt</code>), el diccionario de un pack también puede dar las
-				claves de core, lo que traduce allí las reglas de core y sus procedimientos.
+				configuración regional, y en inglés cada texto que le falte. Desde core 1.16.0,{" "}
+				<code>checkPack</code> informa de un diccionario que traduce solo una parte de una entrada
+				(algunos de sus pasos y no los demás), lo que haría que una persona leyera sus pasos en
+				dos idiomas. Para una configuración regional que core no incluye (<code>pt</code>), el
+				diccionario de un pack también puede dar las claves de core, lo que traduce allí las
+				reglas de core y sus procedimientos.
+			</p>
+			<p>
+				Los pasos propios de un estándar para los códigos de core (<code>standard.review</code>) se
+				traducen con claves formadas por la <code>key</code> del estándar,{" "}
+				<code>_standardReview_</code>, el id de la regla de core y el código de motivo, y luego{" "}
+				<code>{"step<n>"}</code>, <code>pass</code> o <code>fail</code> (
+				<code>acme_standardReview_aria-valid-attr-value_ARIA_HASPOPUP_ROLE_MISMATCH_step1</code>);
+				un hallazgo los lee solo donde el diccionario traduce la entrada entera, y el inglés en
+				caso contrario. Estas claves son <a href="#experimental">experimentales</a> (core 1.16.0).
+			</p>
+			<p>
+				<strong>Traducciones por id</strong> (core 1.16.0,{" "}
+				<a href="#experimental">experimental</a>). <code>standard.texts</code> traduce un estándar
+				por versión según qué es cada texto y no según su redacción (
+				<code>requirements.4.2.title</code>, <code>groups.4.title</code>,{" "}
+				<code>review.&lt;rule&gt;.&lt;CODE&gt;.steps</code>), así que dos textos redactados igual
+				pueden traducirse por separado y una versión puede redactar un id a su manera. Un texto con
+				su clave en <code>texts</code> se lee de ahí; uno sin ella, de <code>translations</code>,
+				así que un estándar puede pasar de uno a otro texto a texto.
+			</p>
+
+			<h3 id="laws">Las leyes bajo las que se evalúa un estándar</h3>
+			<p>
+				Desde core 1.16.0 (<a href="#experimental">experimental</a>), un estándar puede decir a qué
+				leyes sirve en <code>standard.laws</code>, ya que un estándar puede servir a más de una ley,
+				y cada perfil nombra aquella para la que es (<code>law</code>). Solo son obligatorios{" "}
+				<code>name</code> y <code>jurisdiction</code>; <code>appliesTo</code>,{" "}
+				<code>exemptions</code>, <code>since</code>, <code>enforcement</code> y{" "}
+				<code>sources</code> (solo enlaces https) la describen con más detalle, y{" "}
+				<code>standard.lawTexts</code> los traduce por id.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"laws: {",
+					"  'city-public': {",
+					"    name: 'City Accessibility Act, section 4',",
+					"    jurisdiction: 'DE-BY',                 // 'FR', 'DE-BY', 'EU'…",
+					"    appliesTo: 'Public bodies of the city',",
+					"    sources: [{ title: 'Official journal', url: 'https://example.org/act' }]",
+					"  }",
+					"},",
+					"profiles: { 'city-1.0': { version: '1.0', tags: ['city'], mappedRules: true, law: 'city-public' } }",
+				]}
+			/>
+			<p>
+				Son hechos que mostrar, nunca lógica: <strong>core nunca decide a quién se aplica una
+				ley</strong>. Los resultados nombran la ley del perfil (<code>engine.law</code>, consulta el{" "}
+				<a href="/results-reports/output-schema/">esquema de salida</a>), el{" "}
+				<a href="/results-reports/html-report/">informe HTML</a> la muestra junto al perfil,{" "}
+				<code>{"listProcedures({ profile })"}</code> enumera solo los requisitos que pide esa ley
+				(un requisito que solo piden algunas de las leyes las enumera en <code>laws</code>), y{" "}
+				<code>describePacks</code> enumera las leyes de cada estándar con los perfiles que les
+				sirven. <code>lawOf(standard, id, locale)</code> de <code>@surea11y/core/pack</code> da una
+				ley en un idioma. Un estándar derivado de otro nombra sus propias leyes; no las hereda.
+			</p>
+
+			<h3 id="experimental">API experimentales</h3>
+			<p>
+				Core 1.16.0 marca algunas API como experimentales: pueden cambiar en una versión menor,
+				nunca en un parche, y pasan a ser estables o se eliminan en un plazo de dos versiones
+				menores. Hoy son los estándares como datos, las pruebas bajo los requisitos, los estándares
+				construidos sobre otros, las traducciones por id y <code>reviewByVersion</code>, las leyes,
+				las claves de diccionario <code>_standardReview_</code> y el{" "}
+				<code>data.details.lean</code> de <code>skip-link</code>, todas experimentales hasta la
+				1.18.0. Un pack que usa una declara un rango de <code>core</code> que no admite ninguna
+				versión menor posterior (<code>'~1.16.0'</code>), ya que la siguiente versión menor puede
+				cambiarla: <code>checkPack</code> informa de uno más amplio, y <code>describePacks</code>{" "}
+				enumera lo que usa cada pack. Todo lo demás de esta página es estable en toda la 1.x. La{" "}
+				<a href={`${core}/docs/API_STABILITY.md#experimental-may-change-in-a-minor`}>política de estabilidad de la API</a>{" "}
+				de core en GitHub mantiene la lista.
 			</p>
 
 			<h3 id="test-lint-document">Probarlo, pasarle el lint y documentarlo</h3>

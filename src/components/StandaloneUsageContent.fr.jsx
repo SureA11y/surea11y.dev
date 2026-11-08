@@ -413,7 +413,39 @@ export function StandaloneUsageContent() {
 				d’audit. Dans un fichier de configuration jsdom, passez <code>{"{ early: true }"}</code> et,
 				pour le hook d’écouteurs, exécutez d’abord un sélecteur (
 				<code>document.querySelector('*')</code>), car jsdom ajoute ses propres écouteurs de clavier
-				la première fois qu’un sélecteur s’exécute. Les sections du{" "}
+				la première fois qu’un sélecteur s’exécute. Un test jsdom qui remplace{" "}
+				<code>showModal()</code> en définissant <code>open</code> et <code>aria-modal="true"</code>{" "}
+				sur une boîte de dialogue installe le hook de régions live avec{" "}
+				<code>{"{ early: true, assumeModal: true }"}</code> et analyse avec{" "}
+				<code>engineOptions.assumeModal: true</code> (core 1.16.0 et ultérieur).
+			</p>
+			<p>
+				<strong>Le <code>setContent()</code> de Playwright n’est pas une navigation.</strong> Il
+				écrit le balisage dans le document courant de la page, qui est déjà chargé, si bien qu’un
+				script d’initialisation ne s’exécute pas pendant le chargement de ce document. Un script
+				ajouté au contexte avant l’ouverture de la page s’exécute dans le premier document de la
+				page, vide : le hook est là quand <code>setContent()</code> écrit la page, mais il est
+				enregistré comme <code>'late'</code>, et <code>click-handler-keyboard-operable</code> pose
+				une question là où un hook précoce aurait fait échouer l’élément. Un script ajouté à une
+				page déjà ouverte attend son document suivant, et <code>setContent()</code> n’en crée pas :
+				l’analyse s’exécute donc sans hook. Pour une capture précoce, chargez la page par une vraie
+				navigation : <code>page.goto()</code> vers un serveur ou une URL <code>file://</code>, ou{" "}
+				<code>page.route()</code> pour répondre à une URL avec le balisage. Il en va de même pour
+				le hook d’internals :
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"await context.addInitScript({ content: listenerHookScript() });",
+					"const page = await context.newPage();",
+					"await page.route('https://test.local/', (route) =>",
+					"  route.fulfill({ body: html, contentType: 'text/html' })",
+					");",
+					"await page.goto('https://test.local/'); // listenerHook: 'early'",
+				]}
+			/>
+			<p>
+				Les sections du{" "}
 				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
 					hook d’écouteurs
 				</a>{" "}

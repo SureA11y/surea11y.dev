@@ -245,7 +245,7 @@ export function WcagMappingContent() {
 				<code>runOnly.wcag</code>
 				を使ってください。
 				<code>engineOptions.profile</code>
-				（<code>wcag22-a</code>、<code>wcag22-aa</code>、<code>wcag22-aaa</code>、<code>en301549-v4.1.1</code>、<code>en301549-v3.2.1</code>、<code>section508</code>）に任せることもできます。
+				（<code>wcag20-aa</code>、<code>wcag21-aa</code>、<code>wcag22-aa</code>と、ほかのWCAGのバージョンとレベル）に任せることもできます。
 				<a href="/configuration/engine-options/#conformance-profiles">適合性プロファイル</a>
 				を参照してください。
 			</p>

@@ -168,6 +168,19 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "engine.law",
+		field: <code>engine.law</code>,
+		meaning: (
+			<>
+				Experimentell (core 1.16.0, bis 1.18.0). Nur vorhanden, wenn das angewendete Profil ein
+				Gesetz nennt, das, nach dem die Norm eines Packs bewertet wird (siehe{" "}
+				<a href="/configuration/packs/#laws">Packs</a>):{" "}
+				<code>{"{ id, name, jurisdiction, lang }"}</code>, <code>lang</code> die Sprache, in der{" "}
+				<code>name</code> steht. Core nennt das Gesetz; es entscheidet nie, für wen das Gesetz gilt.
+			</>
+		),
+	},
+	{
 		id: "engine.optInRules",
 		field: <code>engine.optInRules</code>,
 		meaning: (
@@ -480,14 +493,18 @@ const occurrenceRows = [
 				einer Shadow Root wird innerhalb seines eigenen Baums benannt (<code>structuralPath</code>{" "}
 				verortet es), und der Pfad eines sehr tief liegenden Elements wird von oben her gekürzt. Auf
 				255 Test- und echten Seiten benannten 15 von 39.857 Selektoren nicht genau ihr Element, alle
-				von diesen Arten. Die Ausnahme ist eine Regel, deren Befund ein <em>fehlendes</em>{" "}
-				Element ist: <code>page-title-present</code> meldet <code>head &gt; title</code> mit dem{" "}
-				<code>html</code> <code>&lt;title&gt;(missing)&lt;/title&gt;</code>, und keins von
-				beiden steht auf der Seite. Beides sind Konstanten, der daraus gebildete Fingerprint
-				bleibt also stabil, aber{" "}
-				<strong>behandeln Sie <code>selector</code> nicht als auflösbar und <code>html</code>{" "}
-				nicht als echtes Markup, ohne zu prüfen, dass die Regel etwas Existierendes gemeldet
-				hat</strong>. Bei einem Element in einem Shadow Tree löst <code>selector</code> innerhalb
+				von diesen Arten. Ein Wert, der länger als 256 Zeichen ist, dient ebenfalls nicht als
+				Anker, sodass ein Selektor kurz bleibt, was immer die Seite in ein Attribut schreibt, und
+				ein Steuerzeichen in einem Wert wird so maskiert, wie CSS es liest (<code>\a </code> für
+				einen Zeilenumbruch). Die Ausnahme ist eine Regel, deren Befund ein <em>fehlendes</em>{" "}
+				Element ist: <code>page-title-present</code> meldet ein fehlendes{" "}
+				<code>&lt;title&gt;</code> mit dem Selektor von <code>&lt;head&gt;</code>, wo es hingehört
+				(<code>&lt;html&gt;</code> ohne <code>&lt;head&gt;</code>), und dem <code>html</code>{" "}
+				<code>&lt;title&gt;(missing)&lt;/title&gt;</code>, das nicht auf der Seite steht. Dieses{" "}
+				<code>html</code> ist eine Konstante, der daraus gebildete Fingerprint bleibt also stabil,
+				aber{" "}
+				<strong>behandeln Sie es nicht als echtes Markup, ohne zu prüfen, dass die Regel etwas
+				Existierendes gemeldet hat</strong>. Bei einem Element in einem Shadow Tree löst <code>selector</code> innerhalb
 				seiner Shadow Root auf, und <code>shadowHostSelectors</code> gibt an, wie man dorthin
 				gelangt.
 				</>
@@ -598,7 +615,18 @@ const occurrenceRows = [
 				Befunden von <code>list-children-valid</code>, <code>parentElement</code> in Befunden von{" "}
 				<code>listitem-parent-valid</code> und <code>role</code> in Befunden von{" "}
 				<code>aria-role-name-present</code>, die angeben, um welche Art von Liste oder Widget es
-				geht. Ebenso <code>data.details.evidenceState</code> (ab core 1.15.0): Bei einem Befund,
+				geht. Seit core 1.16.0 sind es auch dieselben <code>typography</code>-Felder bei einem
+				Befund von <code>contrast-computable</code> (der Text, dessen Kontrast sich nicht berechnen
+				ließ; <code>isLargeText</code> nach der Definition von core, 24px, oder 14pt und fett),{" "}
+				<code>linkKind</code> in Befunden von <code>link-name-quality</code> und{" "}
+				<code>identical-links-same-purpose</code> (woraus der Link besteht: <code>text</code>,{" "}
+				<code>image</code>, <code>composite</code> oder <code>svg</code>) und{" "}
+				<code>messageKind</code> in Befunden von <code>live-region-announcements</code> (die Art
+				von Meldung, die die Region nach eigener Angabe trägt, gelesen aus ihrer Rolle und ihren
+				Live-Region-Attributen, nie aus ihrem Text: <code>status</code>, <code>alert</code>,{" "}
+				<code>log</code>, <code>progress</code> oder <code>unknown</code>). <code>linkKind</code>{" "}
+				und <code>messageKind</code> können in einem Minor-Release neue Werte erhalten. Ebenso{" "}
+				<code>data.details.evidenceState</code> (ab core 1.15.0): Bei einem Befund,
 				der sich nur in einem Zustand zeigt, in den die Regel die Seite versetzt und aus dem sie sie
 				wieder herausgeholt hat, bevor der Browser zeichnete, nennt es diesen Zustand
 				(<code>text-spacing</code>, bei den Befunden von <code>text-spacing-content-loss</code> zu
@@ -619,7 +647,9 @@ const occurrenceRows = [
 				eingeteilt hat. Eine Regel, die nur eine Stufe meldet, lässt das Feld weg; dann ist das{" "}
 				<code>outcome</code> des Ergebnisses selbst die Stufe des Vorkommens.{" "}
 				<code>occurrenceOutcome(check, occurrence)</code> aus <code>@surea11y/core</code> liefert
-				die Stufe so, wie jeder Reporter sie liest, in beiden Fällen. Das Ergebnis stimmt
+				die Stufe so, wie jeder Reporter sie liest, in beiden Fällen; seit core 1.16.0 liefert es{" "}
+				<code>'pass'</code> für ein Vorkommen einer bestandenen Prüfung, wo es{" "}
+				<code>null</code> lieferte. Das Ergebnis stimmt
 				immer mit den Stufen überein: Jedes Vorkommen der <code>fail</code>-Stufe macht es zu{" "}
 				<code>fail</code>, und ein <code>fail</code>, dessen Vorkommen alle zur{" "}
 				<code>cantTell</code>-Stufe gehören, ist <code>cantTell</code>, sodass SARIF, JUnit, EARL
@@ -690,11 +720,12 @@ export function OutputSchemaContent() {
 					"    locale: { requested: string, resolved: string, reason: string },",
 					'    wcagVersion: "2.0" | "2.1" | "2.2",',
 					'    wcagLevel?: "A" | "AA" | "AAA",',
-'    profile?: string,      // "wcag22-a", "wcag22-aa", "wcag22-aaa", "en301549-v4.1.1", "en301549-v3.2.1", "section508", or a pack\'s own',
+'    profile?: string,      // "wcag20-a" … "wcag22-aaa" (wcag<version>-<level>), the deprecated "en301549-v4.1.1", "en301549-v3.2.1" and "section508", or a pack\'s own',
 					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
 					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
 					"    profileExcludes?: { rules: string[], criteria: string[] },",
+					"    law?: { id: string, name: string, jurisdiction: string, lang: string },  // experimental",
 					"    optInRules?: string[],",
 					'    outputDetail?: "findings",',
 					"    packs?: string[],      // name@version",
@@ -782,7 +813,8 @@ export function OutputSchemaContent() {
 					<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code> (<code>wcagLevel</code>{" "}
 					nur bei einem Profil, das eine WCAG-Stufe zum Ziel hat), <code>rulesResults</code> das
 					Ergebnis jeder seiner Zusammenfassungen nach ID: das, was ein Scan nur mit diesem Profil
-					gemeldet hätte.
+					gemeldet hätte. Ein Profil, das ein Gesetz nennt, hat auch <code>law</code>, wie{" "}
+					<code>engine.law</code> (experimentell).
 				</li>
 				<li>
 					<strong><code>severity</code></strong>: der höchste, den ein Profil, das die Regel
@@ -1010,6 +1042,11 @@ export function OutputSchemaContent() {
 					'    coercedFrom: "fail",',
 					'    by?: "errata"         // 2.0 or 2.1: their errata count the criterion as always satisfied',
 					"  },",
+					"  ancestorWalkLimit?: {    // present only when a failed element is nested deeper than the engine walks up from it",
+					"    limit: number,         // 10000: the ancestors read, the element included",
+					"    occurrences: number,   // the fail-tier occurrences made cantTell-tier",
+					'    coercedFrom?: "fail"   // no fail-tier occurrence was left, so the outcome went from fail to cantTell',
+					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
 				]}
@@ -1078,6 +1115,20 @@ export function OutputSchemaContent() {
 					<a href="/configuration/engine-options/#filtering-by-wcag-version">Filtern nach WCAG-Version</a>.
 				</li>
 				<li>
+					<strong><code>ancestorWalkLimit</code></strong> (ab core 1.16.0): Die Engine liest jeden
+					Vorfahren eines Elements, durch Shadow Roots und Slots hindurch, um zu erkennen, ob etwas
+					um es herum es verbirgt, bis zu 10.000 davon: weit tiefer, als irgendein Browser
+					darstellt. Ein Fehlschlag an einem tiefer verschachtelten Element ist nicht sicher, da ein
+					Element, das die Engine nicht gelesen hat, es verbergen kann; sein Vorkommen kommt daher
+					in die <code>cantTell</code>-Stufe, behält seinen Reason-Code, mit{" "}
+					<code>uncertainty.code: "not-computable"</code> und eigenen Schritten der Engine, die
+					fragen, ob das Element zugänglich ist. Das Urteil der Regel über jedes andere Element
+					bleibt bestehen, das Ergebnis bleibt also <code>fail</code>, solange ein Vorkommen der{" "}
+					<code>fail</code>-Stufe übrig ist, und wird sonst <code>cantTell</code>{" "}
+					(<code>coercedFrom: "fail"</code>). Wie <code>wcagVersionScope</code> wird es nicht über{" "}
+					<code>error</code> gemeldet: Die Regel wurde abgeschlossen.
+				</li>
+				<li>
 					<strong><code>data</code></strong>: nur bei einer Regel vorhanden, die unabhängig von
 					ihrem Ergebnis etwas über die ganze Seite meldet. Keine Core-Regel tut das derzeit. Wie{" "}
 					<code>data.details</code> bei einem Vorkommen ist es kein stabiler Vertrag.
@@ -1134,10 +1185,10 @@ export function OutputSchemaContent() {
 					außerhalb ihrer Menge, ein <code>type</code>, der von dem in ihrem meta abweicht,
 					Vorkommen, die keine Objekte sind (weggelassen), ein <code>policyOutcome</code> oder eine{" "}
 					<code>ruleSeverity</code>, die die Regel zurückgegeben hat (nicht übernommen: Die Engine
-					setzt beide), ein <code>uncertainty.code</code> außerhalb der geschlossenen Menge und ein{" "}
-					<code>fail</code>, das zu <code>cantTell</code> herabgestuft wurde, weil der Durchlauf über
-					die Vorfahren nach 200 Schritten vor jedem gemeldeten Element abgebrochen ist. Diese
-					Ergebnisse behalten ihre Vorkommen: Die Regel wurde abgeschlossen.
+					setzt beide) und ein <code>uncertainty.code</code> außerhalb der geschlossenen Menge.
+					Diese Ergebnisse behalten ihre Vorkommen: Die Regel wurde abgeschlossen. (Vor 1.16.0
+					wurde hier auch ein <code>fail</code> vermerkt, vor dem der Durchlauf über die Vorfahren
+					nach 200 Schritten abbrach; siehe <code>ancestorWalkLimit</code> oben.)
 				</li>
 				<li>
 					<strong><code>policyOutcome</code></strong>: vorhanden, wenn{" "}
@@ -1186,12 +1237,16 @@ export function OutputSchemaContent() {
 				ohne jeden Text von einem über eine Seite voller Text unterscheiden lässt.
 				</p>
 			<p>
-				<code>notApplicable</code> ist die einzige Ausnahme. Eine Regel, die nichts zu beurteilen
-				hatte, kann ein einzelnes Vorkommen mit der Begründung anhängen, und die Kontrastregeln
-				tun genau das, wenn kein Text einen berechenbaren Hintergrund hatte. Den Unterschied
-				zwischen „geprüft, nichts zu melden“ und „konnte nicht prüfen“ meldet diese Engine, statt
-				ihn zu verbergen. Ein solches Vorkommen beschreibt den Scan, kein Element, deshalb ist
-				sein <code>selector</code> leer.{" "}
+				Ein <code>notApplicable</code> von core nennt kein Vorkommen. Wenn die Kontrastregeln{" "}
+				<code>notApplicable</code> sind, weil kein Text einen berechenbaren Hintergrund hatte,
+				geben sie in <code>data.details</code> des Ergebnisses selbst an, wie viel Text sie
+				betrachtet haben (<code>eligibleTextCount</code>, <code>computableTextCount</code>), und{" "}
+				<code>contrast-computable</code> meldet jeden Text, den sie nicht messen konnte, als{" "}
+				<code>cantTell</code>: Den Unterschied zwischen „geprüft, nichts zu melden“ und „konnte
+				nicht prüfen“ meldet diese Engine, statt ihn zu verbergen. Eine Regel eines Packs oder
+				eine eigene Regel, die nichts zu beurteilen hatte, kann weiterhin ein einzelnes Vorkommen
+				mit der Begründung anhängen; ein solches Vorkommen beschreibt den Scan, kein Element,
+				deshalb ist sein <code>selector</code> leer.{" "}
 				<strong>Lesen Sie <code>occurrences.length</code> nicht als Anzahl der Verstöße, ohne
 				vorher <code>outcome</code> zu prüfen.</strong>
 			</p>
@@ -1341,6 +1396,14 @@ export function OutputSchemaContent() {
 				Tendenz als Hinweis, der da sein kann oder nicht,{" "}
 				<strong>nie als Teil der Identität eines Befunds</strong>. Sie geht nicht in den
 				Fingerprint ein.
+			</p>
+			<p>
+				Die Zuordnung einer Norm verteilt Befunde nach ihren <code>data.details</code> (siehe{" "}
+				<a href="/configuration/packs/#sending-findings-to-requirements">Packs</a>), und eine
+				Tendenz steht außerhalb davon, daher kopiert <code>skip-link</code> die Richtung seiner
+				Tendenz auch dorthin (core 1.16.0, experimentell bis 1.18.0):{" "}
+				<code>data.details.lean</code> ist <code>fail</code> oder <code>pass</code>, dasselbe wie{" "}
+				<code>lean.toward</code>, und fehlt, wenn der Befund keine Tendenz hat.
 			</p>
 
 			<h3 id="how-to-check">So prüfen Sie es</h3>

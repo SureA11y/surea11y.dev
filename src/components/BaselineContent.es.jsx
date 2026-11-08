@@ -236,8 +236,8 @@ export function BaselineContent() {
 			</p>
 			<p>
 				La tabla cubre una versión menor: un cambio figura desde la versión en que llegó hasta la
-				siguiente versión menor, que lo quita. La 1.15 no movió ningún hallazgo, así que su tabla
-				está vacía.
+				siguiente versión menor, que lo quita. Ni la 1.15 ni la 1.16 movieron ningún hallazgo, así
+				que la tabla está vacía.
 			</p>
 			<p>La 1.14 movió estos, desde la 1.13, y la 1.15 los quitó:</p>
 			<DataTable
@@ -255,7 +255,7 @@ export function BaselineContent() {
 				1.15: allí una entrada con un código antiguo está obsoleta y su hallazgo es nuevo. Pon al
 				día ese baseline en la 1.14.x, como se explica abajo, antes de pasar a la 1.15;{" "}
 				<code>migrateBaselineEntries</code> de la 1.15 ya no conoce estos cambios. Un baseline
-				escrito por la 1.14 sigue coincidiendo en la 1.15.
+				escrito por la 1.14 sigue coincidiendo en la 1.15 y la 1.16.
 			</p>
 			<p>
 				Regenerar el baseline con <code>--write-baseline</code> (o{" "}
@@ -340,7 +340,15 @@ export function BaselineContent() {
 				<code>{"{ version: 1, entries: [...] }"}</code> con un error claro de salida 2 en lugar de
 				adivinar un formato más antiguo o distinto. <code>matchBaseline</code>, y la opción{" "}
 				<code>baselineEntries</code> de los generadores de informes SARIF y JUnit, aceptan el archivo tal como se
-				guardó (<code>JSON.parse</code> del mismo) o su lista <code>entries</code>.
+				guardó (<code>JSON.parse</code> del mismo) o su lista <code>entries</code>.{" "}
+				<code>null</code> o la ausencia de baseline no tiene entradas, así que todo fallo es nuevo.
+				Desde core 1.16.0, cualquier otra cosa lanza un <code>TypeError</code> con{" "}
+				<code>code: 'INVALID_BASELINE'</code> y un mensaje que dice qué falla: una cadena o un
+				objeto sin lista <code>entries</code>, una entrada que no es un objeto o no tiene{" "}
+				<code>ruleId</code>, un <code>reasonCode</code>, <code>selector</code> o <code>html</code>{" "}
+				que no es ni una cadena ni <code>null</code>, o un <code>frame</code> que no es una lista
+				de cadenas. <code>migrateBaselineEntries</code> lo comprueba de la misma manera. Antes, ese
+				valor se leía como un baseline vacío, lo que hacía nuevo cada fallo sin avisar.
 			</p>
 
 			<h2>

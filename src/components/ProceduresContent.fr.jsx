@@ -31,6 +31,7 @@ const listOptionRows = [
 	{ id: "automation", option: <code>automation</code>, what: <>Uniquement les facettes que les règles tranchent entièrement, en partie ou pas du tout : <code>['manual', 'partial']</code> correspond à ce qu’une analyse laisse à une personne.</> },
 	{ id: "rules", option: <code>rules</code>, what: <>Uniquement les facettes que revendique l’une de ces règles (<code>'img-alt-present'</code>).</> },
 	{ id: "packs", option: <code>packs</code>, what: "Les packs dont lire la norme ou les règles." },
+	{ id: "profile", option: <code>profile</code>, what: <>Le profil d’un pack qui nomme une loi : seules les exigences que cette loi demande, avec la loi nommée dans l’en-tête de la liste (core 1.16.0, expérimental ; voir <a href="/configuration/packs/#laws">Packs</a>).</> },
 ];
 
 const renderOptionRows = [
@@ -420,7 +421,11 @@ export function ProceduresContent() {
 				personne évalue ses propres exigences, et chaque fonction ci-dessus la lit quand on lui
 				donne les packs : avec ses propres numéros et groupes, dans sa propre langue quand elle en
 				déclare une. Une exigence qui reprend un critère WCAG prend les procédures de ce critère,
-				lues comme celles de l’exigence (« ce qui ne respecte pas EN 301 549 9.1.4.3 »).
+				lues comme celles de l’exigence (« ce qui ne respecte pas EN 301 549 9.1.4.3 »). Depuis
+				core 1.16.0, une facette liste aussi les règles de core que la correspondance de la norme
+				envoie vers ce qu’elle évalue (<code>mappedRules</code>, et le <code>mappedRules</code>{" "}
+				d’un point de la liste de contrôle), si bien qu’une exigence ou un test que seules les
+				règles de core vérifient ne paraît pas non vérifié.
 			</p>
 			<CodeBlock
 				lang="js"

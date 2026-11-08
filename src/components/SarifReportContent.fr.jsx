@@ -111,9 +111,9 @@ export function SarifReportContent() {
 				n’est pas une déclaration de conformité. Conservez le résultat JSON pour cela.
 			</p>
 			<p>
-				Une vérification <code>notApplicable</code> n’est pas toujours vide : une règle peut
-				joindre une occurrence expliquant pourquoi elle n’avait rien à juger, ce que font les
-				règles de contraste lorsqu’aucun texte n’avait d’arrière-plan calculable. Ces occurrences
+				Une vérification <code>notApplicable</code> n’est pas toujours vide : une règle de pack ou
+				personnalisée peut joindre une occurrence expliquant pourquoi elle n’avait rien à juger
+				(les règles de core n’en joignent aucune, depuis la 1.16.0). Ces occurrences
 				ne deviennent jamais des résultats (un consommateur traite chaque résultat comme une
 				alerte, et « ceci n’a pas été évalué » n’en est pas une), mais elles ne sont pas non plus
 				abandonnées. Elles sont transmises comme entrées de niveau <code>note</code> dans{" "}
@@ -129,8 +129,8 @@ export function SarifReportContent() {
 					'    "toolExecutionNotifications": [',
 					"      {",
 					'        "level": "note",',
-					'        "message": { "text": "No eligible text had computable contrast (eligible text nodes: 13). See the contrast computability rule for details." },',
-					'        "associatedRule": { "id": "contrast-minimum" }',
+					'        "message": { "text": "No form on this page could be checked: each is inside a closed shadow root." },',
+					'        "associatedRule": { "id": "acme-form-review" }',
 					"      }",
 					"    ]",
 					"  }",
@@ -139,9 +139,9 @@ export function SarifReportContent() {
 			/>
 			<p>
 				<strong>Cela évite qu’un pipeline uniquement SARIF interprète le silence comme un
-				certificat de bonne santé</strong> : l’absence d’alerte de contraste peut signifier que la
-				page est correcte, ou que le contraste n’a jamais pu être calculé, et seule la notice
-				permet de distinguer les deux. Le bloc n’est émis que s’il y a quelque chose à signaler :
+				certificat de bonne santé</strong>. Les règles de contraste de core n’ont pas besoin de
+				notice pour cela : un texte dont le contraste n’a pas pu être calculé est un résultat de{" "}
+				<code>contrast-computable</code>. Le bloc n’est émis que s’il y a quelque chose à signaler :
 				une exécution sans rien à rapporter n’a donc aucune clé <code>invocations</code>. Une
 				règle qui a réussi n’écrit aucune notification.
 			</p>

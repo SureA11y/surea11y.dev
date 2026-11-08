@@ -14,12 +14,13 @@ export function ConfigurationContent() {
 			<p>
 				Scope a scan to exactly the rules you want — by naming a WCAG version and level (WCAG 2.2
 				AA in one option, best practices on top if you want them), by id, by tag, or by naming a
-				conformance profile such as WCAG 2.2 AA or Section 508 — so a run reports what you're
+				conformance profile such as WCAG 2.1 AA, for any WCAG version and level — so a run reports what you're
 				actually accountable for, nothing more and nothing less. Judge one scan by several
 				profiles at once, WCAG beside WAI-ARIA or your own policy, and see what each makes of
 				every finding. Core's EN 301 549 profiles still
 				work but are deprecated: that standard now comes as{" "}
-				<a href="/configuration/packs/#en-301-549-pack">a pack</a>. Run only a few checks and still get the WCAG criteria they belong to, at
+				<a href="/configuration/packs/#en-301-549-pack">a pack</a>, and the Section 508 profile, only
+				WCAG 2.0 AA under another name, gives way to <code>wcag20-aa</code>. Run only a few checks and still get the WCAG criteria they belong to, at
 				the level you're held to, and list what a scan will report before it runs. Silence
 				known-noisy widgets globally or for a single rule without losing
 				coverage everywhere else, tune how aggressive the contrast checks are for a human auditor

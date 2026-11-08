@@ -31,6 +31,7 @@ const listOptionRows = [
 	{ id: "automation", option: <code>automation</code>, what: <>Nur Facetten, die Regeln vollständig, teilweise oder gar nicht entscheiden: <code>['manual', 'partial']</code> ist das, was ein Scan einer Person überlässt.</> },
 	{ id: "rules", option: <code>rules</code>, what: <>Nur Facetten, die eine dieser Regeln beansprucht (<code>'img-alt-present'</code>).</> },
 	{ id: "packs", option: <code>packs</code>, what: "Die Packs, deren Standard oder Regeln gelesen werden." },
+	{ id: "profile", option: <code>profile</code>, what: <>Das Profil eines Packs, das ein Gesetz nennt: nur die Anforderungen, die dieses Gesetz verlangt, mit dem Gesetz im Kopf der Liste genannt (core 1.16.0, experimentell; siehe <a href="/configuration/packs/#laws">Packs</a>).</> },
 ];
 
 const renderOptionRows = [
@@ -426,7 +427,11 @@ export function ProceduresContent() {
 				Person seine eigenen Anforderungen bewertet, und jede der obigen Funktionen liest ihn, wenn
 				sie die Packs erhält: nach seinen eigenen Nummern und Gruppen, in seiner eigenen Sprache,
 				wo er eine angibt. Eine Anforderung, die ein WCAG-Kriterium wiedergibt, übernimmt dessen
-				Prüfverfahren, gelesen als die Anforderung („which fails EN 301 549 9.1.4.3“).
+				Prüfverfahren, gelesen als die Anforderung („which fails EN 301 549 9.1.4.3“). Seit core
+				1.16.0 listet eine Facette auch die Regeln von core auf, die die Zuordnung des Standards
+				dem zuweist, was sie bewertet (<code>mappedRules</code>, und im <code>mappedRules</code>{" "}
+				eines Checklistenpunkts), sodass eine Anforderung oder ein Test, den nur Regeln von core
+				prüfen, nicht ungeprüft aussieht.
 			</p>
 			<CodeBlock
 				lang="js"

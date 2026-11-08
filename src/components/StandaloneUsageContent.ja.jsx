@@ -455,7 +455,24 @@ export function StandaloneUsageContent() {
 				<code>{"{ early: true }"}</code>
 				を渡し、リスナーフックの前にセレクターを1回実行してください（
 				<code>document.querySelector('*')</code>
-				）。jsdomは最初にセレクターを実行したときに独自のキーリスナーを追加するためです。残りは、GitHubにある連携ガイド
+				）。jsdomは最初にセレクターを実行したときに独自のキーリスナーを追加するためです。jsdomで<code>showModal()</code>の代わりにダイアログに<code>open</code>と<code>aria-modal="true"</code>を設定するテストは、ライブリージョンフックを<code>{"{ early: true, assumeModal: true }"}</code>でインストールし、<code>engineOptions.assumeModal: true</code>でスキャンします（core 1.16.0以降）。
+			</p>
+			<p>
+				<strong>Playwrightの<code>setContent()</code>はナビゲーションではありません。</strong>マークアップを、すでに読み込みを終えたページの現在の文書に書き込むので、その文書の読み込み中に初期化スクリプトが実行されることはありません。ページを開く前にコンテキストに追加したスクリプトは、ページの最初の空の文書で実行されます。<code>setContent()</code>がページを書き込むときにフックはありますが、<code>'late'</code>として記録され、早期のフックなら要素を不合格にしていたところで、<code>click-handler-keyboard-operable</code>は確認を求めます。すでに開いているページに追加したスクリプトは次の文書を待ちますが、<code>setContent()</code>は文書を作らないので、スキャンはフックなしで実行されます。早期に記録するには、実際のナビゲーションでページを読み込んでください。サーバーや<code>file://</code>のURLへの<code>page.goto()</code>、またはURLにマークアップで応答する<code>page.route()</code>です。internalsフックも同様です。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"await context.addInitScript({ content: listenerHookScript() });",
+					"const page = await context.newPage();",
+					"await page.route('https://test.local/', (route) =>",
+					"  route.fulfill({ body: html, contentType: 'text/html' })",
+					");",
+					"await page.goto('https://test.local/'); // listenerHook: 'early'",
+				]}
+			/>
+			<p>
+				残りは、GitHubにある連携ガイド
 				<code>INTEGRATION.md</code>
 				の
 				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>

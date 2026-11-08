@@ -252,9 +252,9 @@ export function WcagMappingContent() {
 				aus, die einem AA-Kriterium von 2.0 zugeordnet sind, nicht die 105, die ein Ziel 2.0 A +
 				AA ausmachen. Listen Sie jede Stufe auf, die Sie meinen, oder verwenden Sie{" "}
 				<code>runOnly.wcag</code>, das dieses Problem nicht hat. Auch{" "}
-				<code>engineOptions.profile</code> (<code>wcag22-a</code>,{" "}
-				<code>wcag22-aa</code>, <code>wcag22-aaa</code>, <code>en301549-v4.1.1</code>,{" "}
-				<code>en301549-v3.2.1</code>, <code>section508</code>) erledigt das für Sie; siehe{" "}
+				<code>engineOptions.profile</code> (<code>wcag20-aa</code>,{" "}
+				<code>wcag21-aa</code>, <code>wcag22-aa</code> und die anderen WCAG-Versionen und
+				-Stufen) erledigt das für Sie; siehe{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Konformitätsprofile</a>.
 			</p>
 			<p>

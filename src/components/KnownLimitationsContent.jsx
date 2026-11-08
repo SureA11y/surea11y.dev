@@ -160,7 +160,11 @@ export function KnownLimitationsContent() {
 					the scan with an error coded <code>PAGE_BUILTINS_BROKEN</code> that names each, rather
 					than giving a result that reads well and is wrong; one broken before the bundle is
 					injected (<code>Object.keys</code>) stops the bundle loading. A page that adds{" "}
-					<code>then</code> to <code>Object.prototype</code> is scanned as any other. DOM methods a
+					<code>then</code> to <code>Object.prototype</code> is scanned as any other. A page that
+					replaces <code>Array.from</code>, as Prototype and MooTools do, is scanned too (since
+					core 1.16.0): core's own code doesn't use it. A pack's or custom rule that uses it stops
+					the scan there, with <code>PAGE_BUILTINS_BROKEN</code> naming <code>Array.from</code>,
+					unless the selection leaves the rule out. DOM methods a
 					page replaces (<code>getComputedStyle</code>, <code>querySelectorAll</code>,{" "}
 					<code>getBoundingClientRect</code>) are not checked: rules read what they return.
 				</li>
@@ -259,10 +263,15 @@ export function KnownLimitationsContent() {
 					document inert, and browsers give assistive technology only the dialog. A dialog opened
 					with the <code>open</code> attribute or <code>show()</code> is not modal, even with{" "}
 					<code>aria-modal="true"</code>: the page behind it stays reachable, and the engine judges
-					it. Under jsdom, which has no top layer, an open{" "}
-					<code>&lt;dialog aria-modal="true"&gt;</code> is taken as modal instead, the closest the
-					engine can tell there. The engine follows that: content behind the dialog is left out of
-					every rule, as other hidden content is, and the rules about the page's own structure (
+					it. jsdom has no top layer and can't open a modal dialog, so under jsdom nothing is
+					behind one, and the same markup gets the same verdicts as in a browser (since core
+					1.16.0); a jsdom test that stands in for <code>showModal()</code> by setting{" "}
+					<code>open</code> and <code>aria-modal="true"</code> on the dialog sets{" "}
+					<a href="/configuration/engine-options/"><code>engineOptions.assumeModal: true</code></a>{" "}
+					to have such a dialog taken as modal. Of several modal dialogs, only the topmost is
+					judged. The engine follows the modal dialog: content behind it is left out of every
+					rule, as other hidden content is, and takes no focus, and the rules about the page's own
+					structure (
 					<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
 					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
 					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
@@ -398,8 +407,12 @@ export function KnownLimitationsContent() {
 					<code>getComputedStyle</code> call, so one call per element costs O(elements x depth).
 					Measured on jsdom 29.1.1 with no engine code involved: 4000 elements in one chain take
 					8.3s of <code>getComputedStyle</code> alone, against 0.25s for the same 4000 as
-					siblings. The engine's own ancestor walks are capped and stay linear, so this is jsdom's
-					cost rather than the rules'. It affects <code>runDomRulesInPage</code> and anything
+					siblings. The engine reads each element's ancestors to the root, once per scan, though
+					the contrast rules measure each text against every background above it; most of the time
+					is still jsdom's. jsdom also resolves an inherited value by recursing up the elements
+					above, which runs out of stack a thousand or so levels deep: the engine reads a property
+					of an element more than 100 levels deep with the elements above it resolved first, so
+					every scan reads the same value. It affects <code>runDomRulesInPage</code> and anything
 					built on it, including <code>@surea11y/test-matchers</code>; a real browser computes
 					inherited style natively and does not have this shape. Component frameworks routinely
 					nest 100-300 deep, which is comfortably fast — it becomes noticeable past roughly 1000.
@@ -414,6 +427,24 @@ export function KnownLimitationsContent() {
 					properties unsubstituted, so a color set with <code>var()</code> is unreadable there: the
 					text or background is asked about (<code>contrast-computable</code>) rather than
 					measured. Run a real browser for large production pages.
+				</li>
+				<li>
+					<strong>
+						Under jsdom, layered and conditional CSS is applied to what hides an element, with
+						jsdom's media.
+					</strong>{" "}
+					jsdom's <code>getComputedStyle</code> reads no rule inside <code>@layer</code>,{" "}
+					<code>@supports</code> or <code>@container</code>, so a Tailwind v4 page's{" "}
+					<code>hidden</code> and <code>sr-only</code> hid nothing there. Since core 1.16.0 the
+					engine applies those rules itself to the properties it reads to tell whether an element
+					is shown, but takes <code>@media</code> as jsdom does: only <code>all</code> and{" "}
+					<code>screen</code> apply, so a rule under <code>(width &gt;= 48rem)</code> counts in a
+					layer no more than outside one, and Tailwind's <code>hidden md:block</code> stays hidden
+					under jsdom where a desktop browser shows it. <code>@supports</code> holds for any
+					property test and for a <code>selector()</code> that parses, <code>@container</code>{" "}
+					doesn't apply, and a <code>revert</code>, <code>revert-layer</code> or <code>var()</code>{" "}
+					value leaves jsdom's. Other properties, colors among them, are still jsdom's. Scan in a
+					browser for a page that changes what it shows by viewport.
 				</li>
 				<li>
 					<strong>Under jsdom, a link's color is worked out from the page's own rules.</strong>{" "}

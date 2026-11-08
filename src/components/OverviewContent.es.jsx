@@ -172,7 +172,9 @@ export function OverviewContent() {
 				Nombra el estándar y el motor elige las reglas.{" "}
 				<code>{"{ wcag: { version: '2.2', level: 'AA' } }"}</code> ejecuta las reglas de los criterios
 				A y AA de WCAG 2.2, según el nivel que tiene cada criterio en esa versión, y{" "}
-				<code>bestPractices: true</code> añade las comprobaciones que WCAG no exige. Un estándar más
+				<code>bestPractices: true</code> añade las comprobaciones que WCAG no exige.{" "}
+				<code>profile: 'wcag21-aa'</code> hace lo mismo por su nombre, para WCAG 2.0, 2.1 y 2.2 en
+				cada nivel, y puede analizarse junto al perfil de un pack. Un estándar más
 				allá de WCAG, como uno nacional o la política propia de tu organización, llega como un pack:
 				sus reglas, perfiles y elementos de lista de comprobación se ejecutan junto a los de core
 				y aparecen en todos los informes. Consulta{" "}

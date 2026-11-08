@@ -258,9 +258,8 @@ export function WcagMappingContent() {
 				por tanto, ejecuta las 11 reglas asociadas a un criterio AA de la versión 2.0, no las
 				105 que forman un objetivo A + AA de la 2.0. Enumera cada nivel que quieras, o usa{" "}
 				<code>runOnly.wcag</code>, que no tiene ese problema. <code>engineOptions.profile</code> (
-				<code>wcag22-a</code>, <code>wcag22-aa</code>, <code>wcag22-aaa</code>,{" "}
-				<code>en301549-v4.1.1</code>, <code>en301549-v3.2.1</code>,{" "}
-				<code>section508</code>) también lo hace por ti; ver{" "}
+				<code>wcag20-aa</code>, <code>wcag21-aa</code>, <code>wcag22-aa</code> y las demás
+				versiones y niveles de WCAG) también lo hace por ti; ver{" "}
 				<a href="/configuration/engine-options/#conformance-profiles">Perfiles de conformidad</a>.
 			</p>
 			<p>
@@ -278,7 +277,7 @@ export function WcagMappingContent() {
 				una versión de WCAG objetivo (<code>engineOptions.wcagVersion</code>, si no, el{" "}
 				<code>wcagVersion</code> del perfil del <a href="/configuration/packs/">pack</a> que
 				aplica la ejecución, si no, la versión de <code>runOnly.wcag</code>, si no, lo que impliquen tus etiquetas de versión, si no, <code>2.2</code>) y la devuelve como{" "}
-				<code>engine.wcagVersion</code>. Bajo un objetivo 2.2, una regla asociada solo al SC 4.1.1
+				<code>engine.wcagVersion</code>. Bajo un objetivo 2.2, una regla asociada solo al SC 4.1.1{" "}
 				<span lang="en">Parsing</span> no puede devolver <code>fail</code>: se ejecuta, informa de sus ocurrencias, y vuelve
 				como <code>cantTell</code> con un campo <code>wcagVersionScope</code> que explica la
 				coerción. Desde la 1.14, bajo un objetivo 2.0 o 2.1 hace lo mismo, con{" "}

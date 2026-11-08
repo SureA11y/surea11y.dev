@@ -174,7 +174,11 @@ export function KnownLimitationsContent() {
 					résultat qui paraît correct et qui est faux ; un objet cassé avant l’injection du bundle
 					(<code>Object.keys</code>) empêche le chargement du bundle. Une page qui ajoute{" "}
 					<code>then</code> à <code>Object.prototype</code> est analysée comme n’importe quelle
-					autre. Les méthodes du DOM qu’une page remplace (<code>getComputedStyle</code>,{" "}
+					autre. Une page qui remplace <code>Array.from</code>, comme le font Prototype et MooTools,
+					est analysée elle aussi (depuis core 1.16.0) : le code propre à core ne l’utilise pas. Une
+					règle de pack ou personnalisée qui l’utilise arrête l’analyse à cet endroit, avec{" "}
+					<code>PAGE_BUILTINS_BROKEN</code> qui nomme <code>Array.from</code>, sauf si la sélection
+					écarte la règle. Les méthodes du DOM qu’une page remplace (<code>getComputedStyle</code>,{" "}
 					<code>querySelectorAll</code>, <code>getBoundingClientRect</code>) ne sont pas
 					vérifiées : les règles lisent ce qu’elles renvoient.
 				</li>
@@ -285,11 +289,16 @@ export function KnownLimitationsContent() {
 					du document, et les navigateurs ne présentent que la boîte de dialogue aux technologies
 					d’assistance. Une boîte de dialogue ouverte avec l’attribut <code>open</code> ou{" "}
 					<code>show()</code> n’est pas modale, même avec <code>aria-modal="true"</code> : la page
-					derrière reste atteignable, et le moteur la juge. Sous jsdom, qui n’a pas de top layer, un{" "}
-					<code>&lt;dialog aria-modal="true"&gt;</code> ouvert est au contraire considéré comme
-					modal, ce que le moteur peut établir de plus proche là. Le moteur suit ce comportement :
-					le contenu derrière la boîte de dialogue est écarté de toutes les règles, comme tout autre
-					contenu masqué, et les règles portant sur la structure de la page elle-même (
+					derrière reste atteignable, et le moteur la juge. jsdom n’a pas de top layer et ne peut pas
+					ouvrir de boîte de dialogue modale : sous jsdom, rien ne se trouve donc derrière l’une
+					d’elles, et le même balisage reçoit les mêmes verdicts que dans un navigateur (depuis
+					core 1.16.0) ; un test jsdom qui remplace <code>showModal()</code> en définissant{" "}
+					<code>open</code> et <code>aria-modal="true"</code> sur la boîte de dialogue définit{" "}
+					<a href="/configuration/engine-options/"><code>engineOptions.assumeModal: true</code></a>{" "}
+					pour qu’une telle boîte de dialogue soit considérée comme modale. De plusieurs boîtes de
+					dialogue modales, seule celle du dessus est jugée. Le moteur suit la boîte de dialogue
+					modale : le contenu derrière elle est écarté de toutes les règles, comme tout autre
+					contenu masqué, et ne reçoit pas le focus, et les règles portant sur la structure de la page elle-même (
 					<a href="/rules/page-has-heading-one/"><code>page-has-heading-one</code></a>,{" "}
 					<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>,{" "}
 					<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>,{" "}
@@ -443,9 +452,14 @@ export function KnownLimitationsContent() {
 					appel de <code>getComputedStyle</code>, donc un appel par élément coûte
 					O(éléments x profondeur). Mesuré sur jsdom 29.1.1 sans aucun code du moteur : 4000
 					éléments dans une seule chaîne prennent 8,3 s rien qu’en <code>getComputedStyle</code>,
-					contre 0,25 s pour les mêmes 4000 éléments placés côte à côte. Les parcours d’ancêtres du
-					moteur lui-même sont plafonnés et restent linéaires : ce coût vient donc de jsdom, pas
-					des règles. Il concerne <code>runDomRulesInPage</code> et tout ce qui repose dessus, y
+					contre 0,25 s pour les mêmes 4000 éléments placés côte à côte. Le moteur lit les ancêtres de
+					chaque élément jusqu’à la racine, une fois par analyse, même si les règles de contraste
+					mesurent chaque texte par rapport à chaque arrière-plan situé au-dessus de lui ; l’essentiel
+					du temps revient toujours à jsdom. jsdom résout aussi une valeur héritée en remontant
+					récursivement les éléments au-dessus, ce qui épuise la pile vers un millier de niveaux de
+					profondeur : le moteur lit une propriété d’un élément situé à plus de 100 niveaux de
+					profondeur en résolvant d’abord les éléments au-dessus de lui, si bien que chaque analyse
+					lit la même valeur. Il concerne <code>runDomRulesInPage</code> et tout ce qui repose dessus, y
 					compris <code>@surea11y/test-matchers</code> ; un vrai navigateur calcule le style hérité
 					nativement et ne présente pas ce comportement. Les frameworks de composants imbriquent
 					couramment sur 100 à 300 niveaux, ce qui reste largement rapide ; cela devient sensible
@@ -462,6 +476,25 @@ export function KnownLimitationsContent() {
 					bien qu’une couleur définie avec <code>var()</code> y est illisible : le texte ou
 					l’arrière-plan fait l’objet d’une question (<code>contrast-computable</code>) au lieu
 					d’être mesuré. Utilisez un vrai navigateur pour les grandes pages de production.
+				</li>
+				<li>
+					<strong>
+						Sous jsdom, le CSS en couches et conditionnel est appliqué à ce qui masque un élément,
+						avec les médias de jsdom.
+					</strong>{" "}
+					Le <code>getComputedStyle</code> de jsdom ne lit aucune règle à l’intérieur de{" "}
+					<code>@layer</code>, <code>@supports</code> ou <code>@container</code> : sur une page
+					Tailwind v4, <code>hidden</code> et <code>sr-only</code> n’y masquaient donc rien. Depuis
+					core 1.16.0, le moteur applique lui-même ces règles aux propriétés qu’il lit pour savoir
+					si un élément est affiché, mais traite <code>@media</code> comme jsdom : seuls{" "}
+					<code>all</code> et <code>screen</code> s’appliquent, si bien qu’une règle sous{" "}
+					<code>(width &gt;= 48rem)</code> ne compte pas plus dans une couche qu’en dehors, et que{" "}
+					<code>hidden md:block</code> de Tailwind reste masqué sous jsdom là où un navigateur de
+					bureau l’affiche. <code>@supports</code> est vrai pour tout test de propriété et pour un{" "}
+					<code>selector()</code> qui s’analyse, <code>@container</code> ne s’applique pas, et une
+					valeur <code>revert</code>, <code>revert-layer</code> ou <code>var()</code> laisse celle
+					de jsdom. Les autres propriétés, dont les couleurs, restent celles de jsdom. Analysez
+					dans un navigateur une page qui change ce qu’elle affiche selon le viewport.
 				</li>
 				<li>
 					<strong>

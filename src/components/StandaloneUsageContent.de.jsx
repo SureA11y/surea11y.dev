@@ -409,7 +409,39 @@ export function StandaloneUsageContent() {
 				Skript der Seite es lesen kann: Installieren Sie sie für Test- und Audit-Läufe. In einer
 				jsdom-Setup-Datei übergeben Sie <code>{"{ early: true }"}</code> und führen für den
 				Listener-Hook vorher einen Selektor aus (<code>document.querySelector('*')</code>), weil
-				jsdom beim ersten Selektor eigene Tastatur-Listener hinzufügt. Die Abschnitte zum{" "}
+				jsdom beim ersten Selektor eigene Tastatur-Listener hinzufügt. Ein jsdom-Test, der{" "}
+				<code>showModal()</code> nachbildet, indem er <code>open</code> und{" "}
+				<code>aria-modal="true"</code> auf einen Dialog setzt, installiert den Live-Region-Hook mit{" "}
+				<code>{"{ early: true, assumeModal: true }"}</code> und scannt mit{" "}
+				<code>engineOptions.assumeModal: true</code> (ab core 1.16.0).
+			</p>
+			<p>
+				<strong><code>setContent()</code> von Playwright ist keine Navigation.</strong> Es schreibt
+				das Markup in das aktuelle Dokument der Seite, das bereits geladen ist, daher läuft ein
+				Init-Skript nicht, während dieses Dokument lädt. Eines, das dem Kontext hinzugefügt wurde,
+				bevor die Seite geöffnet wurde, läuft im ersten, leeren Dokument der Seite: Der Hook ist da,
+				wenn <code>setContent()</code> die Seite schreibt, wird aber als <code>'late'</code>{" "}
+				erfasst, und <code>click-handler-keyboard-operable</code> fragt dort, wo ein früher Hook
+				das Element hätte fehlschlagen lassen. Eines, das einer bereits geöffneten Seite
+				hinzugefügt wurde, wartet auf deren nächstes Dokument, und <code>setContent()</code>{" "}
+				erzeugt keines, also läuft der Scan ohne Hook. Für eine frühe Erfassung laden Sie die Seite
+				mit einer echten Navigation: <code>page.goto()</code> zu einem Server oder einer{" "}
+				<code>file://</code>-URL, oder <code>page.route()</code>, um eine URL mit dem Markup zu
+				beantworten. Dasselbe gilt für den Internals-Hook:
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"await context.addInitScript({ content: listenerHookScript() });",
+					"const page = await context.newPage();",
+					"await page.route('https://test.local/', (route) =>",
+					"  route.fulfill({ body: html, contentType: 'text/html' })",
+					");",
+					"await page.goto('https://test.local/'); // listenerHook: 'early'",
+				]}
+			/>
+			<p>
+				Die Abschnitte zum{" "}
 				<a href={`${core}/docs/INTEGRATION.md#seeing-listeners-added-from-script-the-listener-hook`}>
 					Listener-Hook
 				</a>{" "}

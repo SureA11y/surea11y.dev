@@ -1730,50 +1730,50 @@
           "steps": [
             "Untersuchen Sie das im Bericht genannte Element und lesen Sie den !important-Abstandswert in seinem style-Attribut.",
             "Lesen Sie im Tab „Berechnet“ der Entwicklertools die resultierende line-height, letter-spacing oder word-spacing in Pixeln und vergleichen Sie sie mit dem 1,5-, 0,12- oder 0,16-Fachen der Schriftgröße.",
-            "Wenden Sie die Textabstände aus WCAG 1.4.12 (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, Absatzabstand 2em) mit !important an, zum Beispiel über ein Benutzer-Stylesheet oder ein Bookmarklet; da der eigene !important-Inline-Stil des Elements Vorrang hat, notieren Sie auch die Werte, die es behält.",
+            "Wenden Sie die Textabstände (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, Absatzabstand 2em) mit !important an, zum Beispiel über ein Benutzer-Stylesheet oder ein Bookmarklet; da der eigene !important-Inline-Stil des Elements Vorrang hat, notieren Sie auch die Werte, die es behält.",
             "Verkleinern Sie auf 320 CSS-Pixel und prüfen Sie, ob der Text abgeschnitten wird oder sich überlappt."
           ],
-          "passWhen": "Der erzwungene Wert erfüllt die Metrik aus WCAG 1.4.12, oder der Text bricht nicht um, oder mit den angewendeten Abständen geht nichts verloren.",
+          "passWhen": "Der erzwungene Wert erreicht die Abstände, die Nutzende anwenden können müssen, oder der Text bricht nicht um, oder mit den angewendeten Abständen geht nichts verloren.",
           "failWhen": "Der erzwungene Wert liegt bei umbrechendem Text unter der Metrik und der Text verträgt keine benutzerdefinierten Abstände ohne Verlust; das verstößt gegen WCAG 1.4.12."
         },
         "en": {
           "steps": [
             "Inspect the element the report names and read the !important spacing value in its style attribute.",
             "In the Computed tab of the developer tools, read the resulting line-height, letter-spacing or word-spacing in pixels and compare with 1.5 times, 0.12 times or 0.16 times the font size.",
-            "Apply the WCAG 1.4.12 text spacing (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, paragraph spacing 2em) with !important, for example through a user stylesheet or a bookmarklet; since the element's own !important inline style wins, also note the values it keeps.",
+            "Apply the text spacing (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, paragraph spacing 2em) with !important, for example through a user stylesheet or a bookmarklet; since the element's own !important inline style wins, also note the values it keeps.",
             "Narrow to 320 CSS pixels and check whether the text is cut off or overlaps."
           ],
-          "passWhen": "The forced value meets the WCAG 1.4.12 metric, or the text does not wrap, or nothing is lost with the spacing applied.",
+          "passWhen": "The forced value reaches the spacing users must be able to apply, or the text does not wrap, or nothing is lost with the spacing applied.",
           "failWhen": "The forced value is below the metric on wrapping text and the text cannot take user spacing without loss, which fails WCAG 1.4.12."
         },
         "es": {
           "steps": [
             "Inspeccionar el elemento que indica el informe y leer el valor de espaciado !important de su atributo style.",
             "En la pestaña Computed de las herramientas para desarrolladores, leer el line-height, letter-spacing o word-spacing resultante en píxeles y compararlo con 1,5 veces, 0,12 veces o 0,16 veces el tamaño de la fuente.",
-            "Aplicar el espaciado de texto de WCAG 1.4.12 (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espaciado entre párrafos 2em) con !important, por ejemplo mediante una hoja de estilo de usuario o un bookmarklet; como gana el propio estilo en línea !important del elemento, anotar también los valores que conserva.",
+            "Aplicar el espaciado de texto (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espaciado entre párrafos 2em) con !important, por ejemplo mediante una hoja de estilo de usuario o un bookmarklet; como gana el propio estilo en línea !important del elemento, anotar también los valores que conserva.",
             "Estrechar hasta 320 píxeles CSS y comprobar si el texto queda cortado o se superpone."
           ],
-          "passWhen": "El valor forzado cumple la métrica de WCAG 1.4.12, o el texto no pasa a otra línea, o no se pierde nada al aplicar el espaciado.",
+          "passWhen": "El valor forzado alcanza el espaciado que el usuario debe poder aplicar, o el texto no pasa a otra línea, o no se pierde nada al aplicar el espaciado.",
           "failWhen": "El valor forzado está por debajo de la métrica en un texto que pasa a otra línea y el texto no admite el espaciado del usuario sin pérdida, lo que incumple WCAG 1.4.12."
         },
         "fr": {
           "steps": [
             "Inspectez l’élément indiqué par le rapport et lisez la valeur d’espacement !important dans son attribut style.",
             "Dans l’onglet Calculé des outils de développement, lisez la valeur résultante de line-height, letter-spacing ou word-spacing en pixels et comparez-la à 1,5 fois, 0,12 fois ou 0,16 fois la taille de police.",
-            "Appliquez l’espacement du texte de WCAG 1.4.12 (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espacement des paragraphes 2em) avec !important, par exemple au moyen d’une feuille de style utilisateur ou d’un bookmarklet ; comme le style en ligne !important de l’élément l’emporte, notez aussi les valeurs qu’il conserve.",
+            "Appliquez l’espacement du texte (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espacement des paragraphes 2em) avec !important, par exemple au moyen d’une feuille de style utilisateur ou d’un bookmarklet ; comme le style en ligne !important de l’élément l’emporte, notez aussi les valeurs qu’il conserve.",
             "Réduisez à 320 pixels CSS et vérifiez si le texte est coupé ou se chevauche."
           ],
-          "passWhen": "La valeur imposée atteint la mesure de WCAG 1.4.12, ou le texte ne revient pas à la ligne, ou rien n’est perdu une fois l’espacement appliqué.",
+          "passWhen": "La valeur imposée atteint l’espacement que l’utilisateur doit pouvoir appliquer, ou le texte ne revient pas à la ligne, ou rien n’est perdu une fois l’espacement appliqué.",
           "failWhen": "La valeur imposée est inférieure à la mesure sur un texte qui revient à la ligne, et le texte ne supporte pas l’espacement de l’utilisateur sans perte, ce qui ne respecte pas le critère WCAG 1.4.12."
         },
         "ja": {
           "steps": [
             "レポートに示された要素を調べ、style属性にある!importantの間隔の値を読んでください。",
             "開発者ツールの[Computed]タブで、結果として得られるline-height、letter-spacing、またはword-spacingをピクセル単位で読み、フォントサイズの1.5倍、0.12倍、または0.16倍と比べてください。",
-            "WCAG 1.4.12のテキスト間隔（line-height 1.5、letter-spacing 0.12em、word-spacing 0.16em、段落の間隔2em）を、ユーザースタイルシートやブックマークレットなどを使って!importantで適用してください。要素自身の!importantのインラインスタイルが優先されるため、要素が保持する値も控えてください。",
+            "テキスト間隔（line-height 1.5、letter-spacing 0.12em、word-spacing 0.16em、段落の間隔2em）を、ユーザースタイルシートやブックマークレットなどを使って!importantで適用してください。要素自身の!importantのインラインスタイルが優先されるため、要素が保持する値も控えてください。",
             "幅を320 CSSピクセルまで狭め、テキストが切れたり重なったりしていないか確認してください。"
           ],
-          "passWhen": "強制された値がWCAG 1.4.12の指標を満たしているか、テキストが折り返さないか、間隔を適用しても失われるものがありません。",
+          "passWhen": "強制された値が利用者が適用できるべき間隔に達しているか、テキストが折り返さないか、間隔を適用しても失われるものがありません。",
           "failWhen": "折り返すテキストで強制された値が指標を下回り、利用者による間隔の変更を損失なく受け入れられないため、WCAG 1.4.12を満たしません。"
         }
       }
@@ -1785,7 +1785,7 @@
           "steps": [
             "Untersuchen Sie das im Bericht genannte Element und notieren Sie, welche Abstandseigenschaft sein style-Attribut mit !important erzwingt.",
             "Verkleinern Sie das Fenster auf 320 CSS-Pixel Breite (oder zoomen Sie auf 400 %) und prüfen Sie, ob der Text jemals in eine zweite Zeile umbricht.",
-            "Wenden Sie die Textabstände aus WCAG 1.4.12 (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, Absatzabstand 2em) mit !important an, zum Beispiel über ein Benutzer-Stylesheet oder ein Bookmarklet; da der eigene !important-Inline-Stil des Elements Vorrang hat, notieren Sie auch die Werte, die es behält.",
+            "Wenden Sie die Textabstände (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, Absatzabstand 2em) mit !important an, zum Beispiel über ein Benutzer-Stylesheet oder ein Bookmarklet; da der eigene !important-Inline-Stil des Elements Vorrang hat, notieren Sie auch die Werte, die es behält.",
             "Prüfen Sie, ob Text abgeschnitten wird, sich überlappt oder verborgen ist."
           ],
           "passWhen": "Der Text kann nicht umbrechen (er bleibt in einer Zeile oder scrollt) und nichts wird abgeschnitten oder überlappt, sodass das Kriterium nicht zutrifft.",
@@ -1795,7 +1795,7 @@
           "steps": [
             "Inspect the element the report names and note which spacing property its style attribute forces with !important.",
             "Narrow the window to 320 CSS pixels wide (or zoom to 400%) and check whether the text ever wraps onto a second line.",
-            "Apply the WCAG 1.4.12 text spacing (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, paragraph spacing 2em) with !important, for example through a user stylesheet or a bookmarklet; since the element's own !important inline style wins, also note the values it keeps.",
+            "Apply the text spacing (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, paragraph spacing 2em) with !important, for example through a user stylesheet or a bookmarklet; since the element's own !important inline style wins, also note the values it keeps.",
             "Check whether any text is cut off, overlaps or is hidden."
           ],
           "passWhen": "The text cannot wrap (it stays on one line or scrolls) and nothing is cut off or overlaps, so the criterion does not apply.",
@@ -1805,7 +1805,7 @@
           "steps": [
             "Inspeccionar el elemento que indica el informe y anotar qué propiedad de espaciado fuerza su atributo style con !important.",
             "Estrechar la ventana hasta 320 píxeles CSS de ancho (o ampliar al 400 %) y comprobar si el texto llega a pasar a una segunda línea.",
-            "Aplicar el espaciado de texto de WCAG 1.4.12 (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espaciado entre párrafos 2em) con !important, por ejemplo mediante una hoja de estilo de usuario o un bookmarklet; como gana el propio estilo en línea !important del elemento, anotar también los valores que conserva.",
+            "Aplicar el espaciado de texto (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espaciado entre párrafos 2em) con !important, por ejemplo mediante una hoja de estilo de usuario o un bookmarklet; como gana el propio estilo en línea !important del elemento, anotar también los valores que conserva.",
             "Comprobar si algún texto queda cortado, se superpone o queda oculto."
           ],
           "passWhen": "El texto no puede pasar a otra línea (se queda en una línea o se desplaza) y nada queda cortado ni se superpone, así que el criterio no se aplica.",
@@ -1815,7 +1815,7 @@
           "steps": [
             "Inspectez l’élément indiqué par le rapport et notez quelle propriété d’espacement son attribut style impose avec !important.",
             "Réduisez la fenêtre à 320 pixels CSS de large (ou zoomez à 400 %) et vérifiez si le texte passe parfois sur une deuxième ligne.",
-            "Appliquez l’espacement du texte de WCAG 1.4.12 (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espacement des paragraphes 2em) avec !important, par exemple au moyen d’une feuille de style utilisateur ou d’un bookmarklet ; comme le style en ligne !important de l’élément l’emporte, notez aussi les valeurs qu’il conserve.",
+            "Appliquez l’espacement du texte (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espacement des paragraphes 2em) avec !important, par exemple au moyen d’une feuille de style utilisateur ou d’un bookmarklet ; comme le style en ligne !important de l’élément l’emporte, notez aussi les valeurs qu’il conserve.",
             "Vérifiez si du texte est coupé, se chevauche ou est masqué."
           ],
           "passWhen": "Le texte ne peut pas revenir à la ligne (il reste sur une ligne ou défile) et rien n’est coupé ni ne se chevauche : le critère ne s’applique donc pas.",
@@ -1825,7 +1825,7 @@
           "steps": [
             "レポートに示された要素を調べ、style属性が!importantで強制している間隔のプロパティを控えてください。",
             "ウィンドウの幅を320 CSSピクセルまで狭め（または400%にズームし）、テキストが2行目に折り返すことがあるか確認してください。",
-            "WCAG 1.4.12のテキスト間隔（line-height 1.5、letter-spacing 0.12em、word-spacing 0.16em、段落の間隔2em）を、ユーザースタイルシートやブックマークレットなどを使って!importantで適用してください。要素自身の!importantのインラインスタイルが優先されるため、要素が保持する値も控えてください。",
+            "テキスト間隔（line-height 1.5、letter-spacing 0.12em、word-spacing 0.16em、段落の間隔2em）を、ユーザースタイルシートやブックマークレットなどを使って!importantで適用してください。要素自身の!importantのインラインスタイルが優先されるため、要素が保持する値も控えてください。",
             "テキストが切れたり、重なったり、隠れたりしていないか確認してください。"
           ],
           "passWhen": "テキストは折り返さない（1行のままか、スクロールする）うえ、切れたり重なったりしているものもないため、この達成基準は適用されません。",
@@ -1840,7 +1840,7 @@
           "steps": [
             "Untersuchen Sie das im Bericht genannte Element und notieren Sie, welche Abstandseigenschaft sein style-Attribut mit !important erzwingt.",
             "Verkleinern Sie das Fenster auf 320 CSS-Pixel Breite (oder zoomen Sie auf 400 %) und prüfen Sie, ob der kurze Text in zwei Zeilen umbricht.",
-            "Wenden Sie die Textabstände aus WCAG 1.4.12 (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, Absatzabstand 2em) mit !important an, zum Beispiel über ein Benutzer-Stylesheet oder ein Bookmarklet; da der eigene !important-Inline-Stil des Elements Vorrang hat, notieren Sie auch die Werte, die es behält.",
+            "Wenden Sie die Textabstände (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, Absatzabstand 2em) mit !important an, zum Beispiel über ein Benutzer-Stylesheet oder ein Bookmarklet; da der eigene !important-Inline-Stil des Elements Vorrang hat, notieren Sie auch die Werte, die es behält.",
             "Prüfen Sie, ob der Text abgeschnitten wird, sich überlappt oder verborgen ist."
           ],
           "passWhen": "Der Text bleibt bei jeder Breite in einer Zeile oder bricht um, ohne dass sich Zeilen überlappen oder Text verloren geht.",
@@ -1850,7 +1850,7 @@
           "steps": [
             "Inspect the element the report names and note which spacing property its style attribute forces with !important.",
             "Narrow the window to 320 CSS pixels wide (or zoom to 400%) and check whether the short text wraps onto two lines.",
-            "Apply the WCAG 1.4.12 text spacing (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, paragraph spacing 2em) with !important, for example through a user stylesheet or a bookmarklet; since the element's own !important inline style wins, also note the values it keeps.",
+            "Apply the text spacing (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, paragraph spacing 2em) with !important, for example through a user stylesheet or a bookmarklet; since the element's own !important inline style wins, also note the values it keeps.",
             "Check whether the text is cut off, overlaps or is hidden."
           ],
           "passWhen": "The text stays on one line at every width, or wraps without lines overlapping or text being lost.",
@@ -1860,7 +1860,7 @@
           "steps": [
             "Inspeccionar el elemento que indica el informe y anotar qué propiedad de espaciado fuerza su atributo style con !important.",
             "Estrechar la ventana hasta 320 píxeles CSS de ancho (o ampliar al 400 %) y comprobar si el texto corto pasa a ocupar dos líneas.",
-            "Aplicar el espaciado de texto de WCAG 1.4.12 (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espaciado entre párrafos 2em) con !important, por ejemplo mediante una hoja de estilo de usuario o un bookmarklet; como gana el propio estilo en línea !important del elemento, anotar también los valores que conserva.",
+            "Aplicar el espaciado de texto (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espaciado entre párrafos 2em) con !important, por ejemplo mediante una hoja de estilo de usuario o un bookmarklet; como gana el propio estilo en línea !important del elemento, anotar también los valores que conserva.",
             "Comprobar si el texto queda cortado, se superpone o queda oculto."
           ],
           "passWhen": "El texto se queda en una línea con cualquier ancho, o pasa a otra línea sin que las líneas se superpongan ni se pierda texto.",
@@ -1870,7 +1870,7 @@
           "steps": [
             "Inspectez l’élément indiqué par le rapport et notez quelle propriété d’espacement son attribut style impose avec !important.",
             "Réduisez la fenêtre à 320 pixels CSS de large (ou zoomez à 400 %) et vérifiez si le texte court passe sur deux lignes.",
-            "Appliquez l’espacement du texte de WCAG 1.4.12 (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espacement des paragraphes 2em) avec !important, par exemple au moyen d’une feuille de style utilisateur ou d’un bookmarklet ; comme le style en ligne !important de l’élément l’emporte, notez aussi les valeurs qu’il conserve.",
+            "Appliquez l’espacement du texte (line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em, espacement des paragraphes 2em) avec !important, par exemple au moyen d’une feuille de style utilisateur ou d’un bookmarklet ; comme le style en ligne !important de l’élément l’emporte, notez aussi les valeurs qu’il conserve.",
             "Vérifiez si le texte est coupé, se chevauche ou est masqué."
           ],
           "passWhen": "Le texte reste sur une ligne à toutes les largeurs, ou revient à la ligne sans que les lignes se chevauchent ni que du texte soit perdu.",
@@ -1880,7 +1880,7 @@
           "steps": [
             "レポートに示された要素を調べ、style属性が!importantで強制している間隔のプロパティを控えてください。",
             "ウィンドウの幅を320 CSSピクセルまで狭め（または400%にズームし）、短いテキストが2行に折り返すか確認してください。",
-            "WCAG 1.4.12のテキスト間隔（line-height 1.5、letter-spacing 0.12em、word-spacing 0.16em、段落の間隔2em）を、ユーザースタイルシートやブックマークレットなどを使って!importantで適用してください。要素自身の!importantのインラインスタイルが優先されるため、要素が保持する値も控えてください。",
+            "テキスト間隔（line-height 1.5、letter-spacing 0.12em、word-spacing 0.16em、段落の間隔2em）を、ユーザースタイルシートやブックマークレットなどを使って!importantで適用してください。要素自身の!importantのインラインスタイルが優先されるため、要素が保持する値も控えてください。",
             "テキストが切れたり、重なったり、隠れたりしていないか確認してください。"
           ],
           "passWhen": "テキストはどの幅でも1行のままか、行が重なったりテキストが失われたりすることなく折り返します。",
@@ -2544,7 +2544,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text und notieren Sie den Vorfahren mit einer opacity unter 1.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben Text und Hintergrund so, wie sie auf dem Bildschirm (abgeschwächt) erscheinen, mit der Pipette auf der gerenderten Seite.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Die abgeschwächten Farben auf dem Bildschirm erreichen den Schwellenwert, oder der abgeschwächte Text ist ein inaktives (deaktiviertes) Bedienelement, das ausgenommen ist.",
           "failWhen": "Die abgeschwächten Farben auf dem Bildschirm ergeben ein Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6), sofern der Text nicht zu einem inaktiven Bedienelement gehört."
@@ -2553,7 +2553,7 @@
           "steps": [
             "Find the text the report names and note the ancestor with opacity below 1.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text and background as they appear on screen (faded), with an eyedropper on the rendered page.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The faded colors on screen reach the threshold, or the faded text is an inactive (disabled) control, which is exempt.",
           "failWhen": "The faded colors on screen give a ratio below the threshold, which fails WCAG 1.4.3 (or 1.4.6), unless the text is part of an inactive control."
@@ -2562,7 +2562,7 @@
           "steps": [
             "Localizar el texto que indica el informe y anotar el ancestro con una opacidad inferior a 1.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto y el fondo tal como se ven en pantalla (atenuados), con un cuentagotas sobre la página representada.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Los colores atenuados en pantalla alcanzan el umbral, o el texto atenuado es un control inactivo (deshabilitado), que está exento.",
           "failWhen": "Los colores atenuados en pantalla dan una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6), salvo que el texto forme parte de un control inactivo."
@@ -2571,7 +2571,7 @@
           "steps": [
             "Repérez le texte indiqué par le rapport et notez l’ancêtre dont l’opacity est inférieure à 1.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte et l’arrière-plan tels qu’ils apparaissent à l’écran (atténués), avec la pipette sur la page rendue.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Les couleurs atténuées à l’écran atteignent le seuil, ou le texte atténué est un contrôle inactif (désactivé), qui est exempté.",
           "failWhen": "Les couleurs atténuées à l’écran donnent un ratio inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6), sauf si le texte fait partie d’un contrôle inactif."
@@ -2580,7 +2580,7 @@
           "steps": [
             "レポートに示されたテキストを見つけ、opacityが1未満の祖先を控えてください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、描画されたページ上でスポイトを使って、画面に表示される（薄くなった）テキストと背景を測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "画面上の薄くなった色が基準値に達しているか、薄くなったテキストが適用除外となる非アクティブな（無効な）コントロールです。",
           "failWhen": "画面上の薄くなった色のコントラスト比が基準値を下回るため、テキストが非アクティブなコントロールの一部でない限り、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -2595,7 +2595,7 @@
             "Suchen Sie den im Bericht genannten Text und notieren Sie den filter oder backdrop-filter an ihm oder einem Vorfahren (im Bereich „Stile“ der Entwicklertools).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Text- und Hintergrundfarbe so, wie sie mit angewendetem Filter auf dem Bildschirm erscheinen, mit der Pipette auf der gerenderten Seite statt anhand der deklarierten Werte.",
             "Scrollen oder warten Sie bei einem Weichzeichner oder backdrop-filter über wechselndem Inhalt, damit unterschiedlicher Inhalt dahinter vorbeizieht, und prüfen Sie den ungünstigsten Fall.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Mit angewendetem Filter erreicht das Verhältnis auf dem Bildschirm den Schwellenwert.",
           "failWhen": "Mit angewendetem Filter liegt das Verhältnis auf dem Bildschirm unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -2605,7 +2605,7 @@
             "Find the text the report names and note the filter or backdrop-filter on it or an ancestor (in the developer tools Styles pane).",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text and background colors as they appear on screen with the filter applied, using an eyedropper on the rendered page rather than the declared values.",
             "For a blur or backdrop-filter over changing content, scroll or wait so different content passes behind, and check the worst case.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "With the filter applied, the ratio on screen reaches the threshold.",
           "failWhen": "With the filter applied, the ratio on screen falls below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -2615,7 +2615,7 @@
             "Localizar el texto que indica el informe y anotar el filter o backdrop-filter que tiene él o un ancestro (en el panel Styles de las herramientas para desarrolladores).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir los colores del texto y del fondo tal como se ven en pantalla con el filtro aplicado, usando un cuentagotas sobre la página representada en lugar de los valores declarados.",
             "En un desenfoque o un backdrop-filter sobre contenido cambiante, desplazarse o esperar para que pase contenido distinto por detrás, y comprobar el peor caso.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Con el filtro aplicado, la relación en pantalla alcanza el umbral.",
           "failWhen": "Con el filtro aplicado, la relación en pantalla queda por debajo del umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2625,7 +2625,7 @@
             "Repérez le texte indiqué par le rapport et notez le filter ou le backdrop-filter appliqué au texte ou à un ancêtre (dans le panneau Styles des outils de développement).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez les couleurs du texte et de l’arrière-plan telles qu’elles apparaissent à l’écran avec le filtre appliqué, en utilisant la pipette sur la page rendue plutôt que les valeurs déclarées.",
             "Pour un flou ou un backdrop-filter au-dessus d’un contenu qui change, faites défiler la page ou attendez que différents contenus passent derrière, et vérifiez le pire cas.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Avec le filtre appliqué, le ratio à l’écran atteint le seuil.",
           "failWhen": "Avec le filtre appliqué, le ratio à l’écran passe sous le seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -2635,7 +2635,7 @@
             "レポートに示されたテキストを見つけ、そのテキストまたは祖先にあるfilterまたはbackdrop-filterを控えてください（開発者ツールの[Styles]ペインで確認できます）。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、フィルターが適用された状態で画面に表示されるテキストと背景の色を測定してください。指定された値ではなく、描画されたページ上でスポイトを使ってください。",
             "変化するコンテンツの上にぼかしやbackdrop-filterがある場合は、スクロールするか待って背後をさまざまなコンテンツが通るようにし、最も悪い場合を確認してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "フィルターが適用された状態で、画面上のコントラスト比が基準値に達しています。",
           "failWhen": "フィルターが適用された状態で、画面上のコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -2650,7 +2650,7 @@
             "Suchen Sie den im Bericht genannten Text und sehen Sie sich das Bild oder den Verlauf dahinter an.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Textfarbe gegen die hellsten und dunkelsten Stellen des Hintergrunds direkt hinter den Buchstaben.",
             "Ändert sich das Bild (Slides, Video, responsive Bilder), prüfen Sie jede Version und mehrere Fensterbreiten.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Jede Stelle des Hintergrunds hinter den Buchstaben erreicht mindestens das Schwellenverhältnis.",
           "failWhen": "Eine Stelle des Hintergrunds hinter dem Text ergibt ein Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -2660,7 +2660,7 @@
             "Find the text the report names and look at the image or gradient behind it.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text color against the lightest and darkest parts of the background directly behind the letters.",
             "If the image changes (slides, video, responsive images), check each version and at a few window widths.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "Every part of the background behind the letters gives at least the threshold ratio.",
           "failWhen": "Some part of the background behind the text gives a ratio below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -2670,7 +2670,7 @@
             "Localizar el texto que indica el informe y observar la imagen o el degradado que hay detrás.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente a las partes más clara y más oscura del fondo situado justo detrás de las letras.",
             "Si la imagen cambia (diapositivas, vídeo, imágenes adaptables), comprobar cada versión y con varios anchos de ventana.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Todas las partes del fondo situadas detrás de las letras dan al menos la relación del umbral.",
           "failWhen": "Alguna parte del fondo situada detrás del texto da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2680,7 +2680,7 @@
             "Repérez le texte indiqué par le rapport et regardez l’image ou le dégradé situé derrière.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte par rapport aux zones les plus claires et les plus sombres de l’arrière-plan situé juste derrière les lettres.",
             "Si l’image change (diaporama, vidéo, images adaptatives), vérifiez chaque version, et ce à plusieurs largeurs de fenêtre.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Chaque partie de l’arrière-plan derrière les lettres donne au moins le ratio requis.",
           "failWhen": "Une partie de l’arrière-plan derrière le texte donne un ratio inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -2690,7 +2690,7 @@
             "レポートに示されたテキストを見つけ、その背後にある画像またはグラデーションを確認してください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、文字のすぐ背後にある背景の最も明るい部分と最も暗い部分に対して、テキストの色を測定してください。",
             "画像が変わる場合（スライド、動画、レスポンシブ画像）は、それぞれの版をいくつかのウィンドウ幅で確認してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "文字の背後にある背景のどの部分でも、基準値以上のコントラスト比が得られます。",
           "failWhen": "テキストの背後にある背景の一部でコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -2704,7 +2704,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text auf der Seite.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Textfarbe gegen die Farbe direkt hinter den Buchstaben; wenn sie variiert, nehmen Sie die dunkelste und die hellste Stelle.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Das Verhältnis erreicht überall hinter dem Text den Schwellenwert.",
           "failWhen": "Das Verhältnis liegt an irgendeiner Stelle hinter dem Text unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -2713,7 +2713,7 @@
           "steps": [
             "Find the text the report names on the page.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text color against the color seen directly behind the letters, taking the darkest and lightest points if it varies.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The ratio reaches the threshold everywhere behind the text.",
           "failWhen": "The ratio is below the threshold anywhere behind the text, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -2722,7 +2722,7 @@
           "steps": [
             "Localizar en la página el texto que indica el informe.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al color que se ve justo detrás de las letras, tomando los puntos más oscuro y más claro si varía.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral en todo el fondo situado detrás del texto.",
           "failWhen": "La relación es inferior al umbral en algún punto detrás del texto, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2731,7 +2731,7 @@
           "steps": [
             "Repérez sur la page le texte indiqué par le rapport.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte par rapport à la couleur visible juste derrière les lettres, en retenant les points le plus sombre et le plus clair si elle varie.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Le ratio atteint le seuil partout derrière le texte.",
           "failWhen": "Le ratio est inférieur au seuil à un endroit derrière le texte, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -2740,7 +2740,7 @@
           "steps": [
             "レポートに示されたテキストをページ上で見つけてください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、文字のすぐ背後に見える色に対してテキストの色を測定してください。色が変化する場合は、最も暗い点と最も明るい点で測ってください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "テキストの背後のどこでも、コントラスト比が基準値に達しています。",
           "failWhen": "テキストの背後のどこかでコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -2755,7 +2755,7 @@
             "Suchen Sie den im Bericht genannten Text; die Seite setzt dahinter keinen opaken Hintergrund, sodass dort die Leinwand zu sehen ist, die der Browser malt, oder in einem Frame die umgebende Seite.",
             "Betrachten Sie die Seite dort, wo sie angezeigt wird: in der Seite, die sie einbettet, ohne erzwungene Farben und in jedem Farbschema, das die Seite unterstützt (hell und dunkel).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben den Text gegen den Hintergrund, der in jeder Einstellung tatsächlich zu sehen ist.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Das Verhältnis erreicht den Schwellenwert in jeder Einstellung, in der die Seite angezeigt wird.",
           "failWhen": "In einer Einstellung, in der die Seite angezeigt wird, liegt das Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -2765,7 +2765,7 @@
             "Find the text the report names; the page sets no opaque background behind it, so what shows there is the canvas the browser paints, or, in a frame, the page around it.",
             "View the page where it is shown: inside the page that embeds it, with forced colors off, and in each color scheme the page supports (light and dark).",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text against the background actually seen in each setting.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The ratio reaches the threshold in every setting where the page is shown.",
           "failWhen": "In some setting where the page is shown the ratio is below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -2775,7 +2775,7 @@
             "Localizar el texto que indica el informe; la página no define ningún fondo opaco detrás de él, así que lo que se ve es el lienzo que pinta el navegador o, en un marco, la página que lo rodea.",
             "Visualizar la página donde se muestra: dentro de la página que la inserta, sin colores forzados y en cada esquema de color que admite (claro y oscuro).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto frente al fondo que se ve realmente en cada configuración.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral en todas las configuraciones en que se muestra la página.",
           "failWhen": "En alguna configuración en que se muestra la página, la relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2785,7 +2785,7 @@
             "Repérez le texte indiqué par le rapport ; la page ne définit aucun arrière-plan opaque derrière lui : ce qui s’y affiche est le canevas que peint le navigateur ou, dans un cadre, la page qui l’entoure.",
             "Affichez la page là où elle apparaît : dans la page qui l’intègre, sans couleurs forcées, et dans chaque jeu de couleurs qu’elle prend en charge (clair et sombre).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte par rapport à l’arrière-plan réellement visible dans chaque contexte.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Le ratio atteint le seuil dans tous les contextes où la page s’affiche.",
           "failWhen": "Dans un des contextes où la page s’affiche, le ratio est inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -2795,7 +2795,7 @@
             "レポートに示されたテキストを見つけてください。ページはその背後に不透明な背景を指定していないため、そこにはブラウザーが描くキャンバス、またはフレーム内では周囲のページが表示されます。",
             "ページが表示される場所で確認してください。埋め込み先のページの中で、強制カラーをオフにして、ページが対応する各配色（ライトとダーク）で確認します。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、各設定で実際に見える背景に対してテキストを測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "ページが表示されるすべての設定で、コントラスト比が基準値に達しています。",
           "failWhen": "ページが表示されるいずれかの設定でコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -2809,7 +2809,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text und prüfen Sie, welches Element tatsächlich dahinter gezeichnet wird (untersuchen Sie es und schalten Sie das überlappende Element aus und wieder ein).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Textfarbe gegen die Farbe, die hinter den Buchstaben tatsächlich zu sehen ist.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Die Farbe, die tatsächlich hinter dem Text liegt, erreicht mindestens das Schwellenverhältnis.",
           "failWhen": "Die Farbe, die tatsächlich hinter dem Text liegt, ergibt ein Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -2818,7 +2818,7 @@
           "steps": [
             "Find the text the report names and check which element actually paints behind it (inspect it and toggle the overlapping element off and on).",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text color against the color actually seen behind the letters.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The color actually behind the text gives at least the threshold ratio.",
           "failWhen": "The color actually behind the text gives a ratio below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -2827,7 +2827,7 @@
           "steps": [
             "Localizar el texto que indica el informe y comprobar qué elemento se pinta realmente detrás de él (inspeccionarlo y desactivar y reactivar el elemento superpuesto).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al color que se ve realmente detrás de las letras.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "El color que hay realmente detrás del texto da al menos la relación del umbral.",
           "failWhen": "El color que hay realmente detrás del texto da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2836,7 +2836,7 @@
           "steps": [
             "Repérez le texte indiqué par le rapport et vérifiez quel élément est réellement peint derrière lui (inspectez-le et masquez puis réaffichez l’élément qui le recouvre).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte par rapport à la couleur réellement visible derrière les lettres.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "La couleur réellement présente derrière le texte donne au moins le ratio requis.",
           "failWhen": "La couleur réellement présente derrière le texte donne un ratio inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -2845,7 +2845,7 @@
           "steps": [
             "レポートに示されたテキストを見つけ、実際にその背後に描画されている要素を確認してください（要素を調べ、重なっている要素の表示を切り替えます）。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、文字の背後に実際に見える色に対して、テキストの色を測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "テキストの背後に実際にある色に対して、基準値以上のコントラスト比が得られます。",
           "failWhen": "テキストの背後に実際にある色に対するコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -2859,7 +2859,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text und untersuchen Sie den Wert der Hintergrundfarbe in den Entwicklertools (oft eine neuere Syntax wie oklch(), lab() oder color()).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Textfarbe gegen den Hintergrund, wie er auf dem Bildschirm dargestellt wird.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Das Verhältnis erreicht den Schwellenwert.",
           "failWhen": "Das Verhältnis liegt unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -2868,7 +2868,7 @@
           "steps": [
             "Find the text the report names and inspect the background color value in the developer tools (often a newer syntax such as oklch(), lab() or color()).",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text color against the background as rendered on screen.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The ratio reaches the threshold.",
           "failWhen": "The ratio is below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -2877,7 +2877,7 @@
           "steps": [
             "Localizar el texto que indica el informe e inspeccionar el valor del color de fondo en las herramientas para desarrolladores (a menudo con una sintaxis más reciente, como oklch(), lab() o color()).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al fondo tal como se representa en pantalla.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral.",
           "failWhen": "La relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2886,7 +2886,7 @@
           "steps": [
             "Repérez le texte indiqué par le rapport et inspectez la valeur de la couleur d’arrière-plan dans les outils de développement (souvent une syntaxe récente comme oklch(), lab() ou color()).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte par rapport à l’arrière-plan tel qu’il est rendu à l’écran.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Le ratio atteint le seuil.",
           "failWhen": "Le ratio est inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -2895,7 +2895,7 @@
           "steps": [
             "レポートに示されたテキストを見つけ、開発者ツールで背景色の値を調べてください（oklch()、lab()、color()など新しい構文であることが多いです）。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、画面に描画された背景に対してテキストの色を測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "コントラスト比が基準値に達しています。",
           "failWhen": "コントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -2909,7 +2909,7 @@
           "steps": [
             "Öffnen Sie die Seite in einem Browser mit dem im Bericht genannten Farbschema (blockerValue: light oder dark), oder emulieren Sie es in den Entwicklertools (Rendering, prefers-color-scheme).",
             "Suchen Sie den im Bericht genannten Text und messen Sie ihn mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner, dessen Farben Sie mit einer Pipette aufnehmen, gegen den Hintergrund dahinter.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "In diesem Farbschema erreicht das Verhältnis den Schwellenwert.",
           "failWhen": "In diesem Farbschema liegt das Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -2918,7 +2918,7 @@
           "steps": [
             "Open the page in a browser set to the color scheme the report names (blockerValue: light or dark), or emulate it in the developer tools (Rendering, prefers-color-scheme).",
             "Find the text the report names and use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure it against the background behind it.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "In that color scheme the ratio reaches the threshold.",
           "failWhen": "In that color scheme the ratio is below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -2927,7 +2927,7 @@
           "steps": [
             "Abrir la página en un navegador configurado con el esquema de color que indica el informe (blockerValue: light o dark), o emularlo en las herramientas para desarrolladores (Renderizado, prefers-color-scheme).",
             "Localizar el texto que indica el informe y, con el selector de color de las herramientas para desarrolladores del navegador o una calculadora de contraste con colores tomados con un cuentagotas, medirlo frente al fondo que tiene detrás.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "En ese esquema de color la relación alcanza el umbral.",
           "failWhen": "En ese esquema de color la relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2936,7 +2936,7 @@
           "steps": [
             "Ouvrez la page dans un navigateur réglé sur le jeu de couleurs indiqué par le rapport (blockerValue : light ou dark), ou émulez-le dans les outils de développement (Rendu, prefers-color-scheme).",
             "Repérez le texte indiqué par le rapport et, avec la pipette de couleur des outils de développement du navigateur ou un calculateur de contraste dont les couleurs sont prélevées à la pipette, mesurez-le par rapport à l’arrière-plan qui se trouve derrière lui.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Dans ce jeu de couleurs, le ratio atteint le seuil.",
           "failWhen": "Dans ce jeu de couleurs, le ratio est inférieur au seuil, ce qui ne satisfait pas WCAG 1.4.3 (ou 1.4.6)."
@@ -2945,7 +2945,7 @@
           "steps": [
             "レポートに示された配色（blockerValue: lightまたはdark）に設定したブラウザーでページを開くか、開発者ツールでエミュレートしてください（レンダリング、prefers-color-scheme）。",
             "レポートに示されたテキストを見つけ、ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使って、その背後の背景に対するコントラストを測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "その配色でコントラスト比が基準値に達しています。",
           "failWhen": "その配色でコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -2959,7 +2959,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text und notieren Sie die opacity unter 1 an seinem Element.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben Text und Hintergrund so, wie sie auf dem Bildschirm (abgeschwächt) erscheinen, mit der Pipette auf der gerenderten Seite.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Die abgeschwächten Farben auf dem Bildschirm erreichen den Schwellenwert, oder der abgeschwächte Text ist ein inaktives (deaktiviertes) Bedienelement, das ausgenommen ist.",
           "failWhen": "Die abgeschwächten Farben auf dem Bildschirm ergeben ein Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6), sofern der Text nicht zu einem inaktiven Bedienelement gehört."
@@ -2968,7 +2968,7 @@
           "steps": [
             "Find the text the report names and note the opacity below 1 on its element.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text and background as they appear on screen (faded), with an eyedropper on the rendered page.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The faded colors on screen reach the threshold, or the faded text is an inactive (disabled) control, which is exempt.",
           "failWhen": "The faded colors on screen give a ratio below the threshold, which fails WCAG 1.4.3 (or 1.4.6), unless the text is part of an inactive control."
@@ -2977,7 +2977,7 @@
           "steps": [
             "Localizar el texto que indica el informe y anotar la opacidad inferior a 1 de su elemento.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto y el fondo tal como se ven en pantalla (atenuados), con un cuentagotas sobre la página representada.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Los colores atenuados en pantalla alcanzan el umbral, o el texto atenuado es un control inactivo (deshabilitado), que está exento.",
           "failWhen": "Los colores atenuados en pantalla dan una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6), salvo que el texto forme parte de un control inactivo."
@@ -2986,7 +2986,7 @@
           "steps": [
             "Repérez le texte indiqué par le rapport et notez l’opacity inférieure à 1 sur son élément.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte et l’arrière-plan tels qu’ils apparaissent à l’écran (atténués), avec la pipette sur la page rendue.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Les couleurs atténuées à l’écran atteignent le seuil, ou le texte atténué est un contrôle inactif (désactivé), qui est exempté.",
           "failWhen": "Les couleurs atténuées à l’écran donnent un ratio inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6), sauf si le texte fait partie d’un contrôle inactif."
@@ -2995,7 +2995,7 @@
           "steps": [
             "レポートに示されたテキストを見つけ、その要素にある1未満のopacityを控えてください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、描画されたページ上でスポイトを使って、画面に表示される（薄くなった）テキストと背景を測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "画面上の薄くなった色が基準値に達しているか、薄くなったテキストが適用除外となる非アクティブな（無効な）コントロールです。",
           "failWhen": "画面上の薄くなった色のコントラスト比が基準値を下回るため、テキストが非アクティブなコントロールの一部でない限り、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3010,7 +3010,7 @@
             "Suchen Sie den im Bericht genannten Text (die Prüfung wurde vorzeitig beendet, daher wurde nichts gemessen).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Textfarbe gegen den Hintergrund direkt hinter den Buchstaben.",
             "Notieren Sie Schriftgröße und -stärke, um zu entscheiden, ob der Text als groß gilt (mindestens 24px oder 18.66px und fett).",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Das Verhältnis erreicht den Schwellenwert für seine Größe.",
           "failWhen": "Das Verhältnis liegt unter dem Schwellenwert für seine Größe; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -3020,7 +3020,7 @@
             "Find the text the report names (the check stopped early, so nothing was measured).",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text color against the background directly behind the letters.",
             "Note the text size and weight to tell whether it counts as large (at least 24px, or 18.66px and bold).",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The ratio reaches the threshold for its size.",
           "failWhen": "The ratio is below the threshold for its size, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -3030,7 +3030,7 @@
             "Localizar el texto que indica el informe (la comprobación se detuvo antes de tiempo, así que no se midió nada).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al fondo situado justo detrás de las letras.",
             "Anotar el tamaño y el grosor del texto para saber si cuenta como texto grande (al menos 24px, o 18.66px y en negrita).",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral correspondiente a su tamaño.",
           "failWhen": "La relación es inferior al umbral correspondiente a su tamaño, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3040,7 +3040,7 @@
             "Repérez le texte indiqué par le rapport (la vérification s’est arrêtée tôt, donc rien n’a été mesuré).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte par rapport à l’arrière-plan situé juste derrière les lettres.",
             "Notez la taille et la graisse du texte pour savoir s’il compte comme texte de grande taille (au moins 24px, ou 18.66px en gras).",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Le ratio atteint le seuil correspondant à sa taille.",
           "failWhen": "Le ratio est inférieur au seuil correspondant à sa taille, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -3050,7 +3050,7 @@
             "レポートに示されたテキストを見つけてください（チェックが途中で止まったため、何も測定されていません）。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、文字のすぐ背後にある背景に対してテキストの色を測定してください。",
             "テキストのサイズと太さを控え、大きなテキスト（24px以上、または18.66px以上の太字）に当たるかを判断してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "サイズに応じた基準値にコントラスト比が達しています。",
           "failWhen": "サイズに応じた基準値をコントラスト比が下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3064,7 +3064,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text und untersuchen Sie seinen Farbwert in den Entwicklertools (oft eine neuere Syntax wie oklch(), lab() oder color()).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die dargestellte Textfarbe gegen ihren Hintergrund.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Das Verhältnis erreicht den Schwellenwert.",
           "failWhen": "Das Verhältnis liegt unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -3073,7 +3073,7 @@
           "steps": [
             "Find the text the report names and inspect its color value in the developer tools (often a newer syntax such as oklch(), lab() or color()).",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text color as rendered against its background.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The ratio reaches the threshold.",
           "failWhen": "The ratio is below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -3082,7 +3082,7 @@
           "steps": [
             "Localizar el texto que indica el informe e inspeccionar su valor de color en las herramientas para desarrolladores (a menudo con una sintaxis más reciente, como oklch(), lab() o color()).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto tal como se representa frente a su fondo.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral.",
           "failWhen": "La relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3091,7 +3091,7 @@
           "steps": [
             "Repérez le texte indiqué par le rapport et inspectez la valeur de sa couleur dans les outils de développement (souvent une syntaxe récente comme oklch(), lab() ou color()).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte telle qu’elle est rendue par rapport à son arrière-plan.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Le ratio atteint le seuil.",
           "failWhen": "Le ratio est inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -3100,7 +3100,7 @@
           "steps": [
             "レポートに示されたテキストを見つけ、開発者ツールでその色の値を調べてください（oklch()、lab()、color()など新しい構文であることが多いです）。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、描画されたテキストの色をその背景に対して測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "コントラスト比が基準値に達しています。",
           "failWhen": "コントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3115,7 +3115,7 @@
             "Suchen Sie das im Bericht genannte Element und finden Sie den Text, den sein ::before oder ::after auf dem Bildschirm zeichnet (er ist von seinem Element entfernt positioniert).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Farbe dieses Textes gegen das, was an seiner tatsächlichen Position dahinter zu sehen ist.",
             "Ändern Sie die Fenstergröße und scrollen Sie, um andere Positionen zu prüfen, an denen er auf einem anderen Hintergrund landen kann.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Wo immer er landet, erreicht der generierte Text den Schwellenwert.",
           "failWhen": "Dort, wo der generierte Text landet, liegt das Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -3125,7 +3125,7 @@
             "Find the element the report names and locate the text its ::before or ::after draws on screen (it is positioned away from its element).",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure that text's color against whatever shows behind it at its actual position.",
             "Resize the window and scroll to check other positions where it may land on another background.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "Wherever it lands, the generated text reaches the threshold.",
           "failWhen": "Where the generated text lands, the ratio is below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -3135,7 +3135,7 @@
             "Localizar el elemento que indica el informe y buscar el texto que su ::before o ::after dibuja en pantalla (está posicionado lejos de su elemento).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color de ese texto frente a lo que se vea detrás de él en su posición real.",
             "Cambiar el tamaño de la ventana y desplazarse para comprobar otras posiciones en las que pueda quedar sobre otro fondo.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Quede donde quede, el texto generado alcanza el umbral.",
           "failWhen": "Donde queda el texto generado, la relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3145,7 +3145,7 @@
             "Repérez l’élément indiqué par le rapport et localisez à l’écran le texte que dessine son ::before ou son ::after (il est positionné à l’écart de son élément).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur de ce texte par rapport à ce qui s’affiche derrière lui à sa position réelle.",
             "Redimensionnez la fenêtre et faites défiler la page pour vérifier d’autres positions où il pourrait se trouver sur un autre arrière-plan.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Où qu’il se trouve, le texte généré atteint le seuil.",
           "failWhen": "Là où se trouve le texte généré, le ratio est inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -3155,7 +3155,7 @@
             "レポートに示された要素を見つけ、その::beforeまたは::afterが画面上に描画するテキストの位置を確かめてください（要素から離れた位置に配置されています）。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、実際の位置でそのテキストの背後に見えるものに対して、テキストの色を測定してください。",
             "ウィンドウの大きさを変えたりスクロールしたりして、別の背景の上に来る可能性のあるほかの位置も確認してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "どこに配置されても、生成されたテキストは基準値に達しています。",
           "failWhen": "生成されたテキストが配置される位置でコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3170,7 +3170,7 @@
             "Suchen Sie das im Bericht genannte Element und sehen Sie sich den Text an, den sein ::before, ::after oder Listenmarker zeichnet (eine Zahl, ein Aufzählungszeichen oder eine Beschriftung).",
             "Entscheiden Sie, ob es Text ist, den Menschen lesen müssen (eine Zahl, ein Wort oder eine Beschriftung), oder eine rein dekorative Form.",
             "Ist es Text, messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben seine Farbe gegen den Hintergrund dahinter.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Der generierte Text erreicht den Schwellenwert, oder er ist rein dekorativ.",
           "failWhen": "Der generierte Text ist lesbarer Inhalt und sein Verhältnis liegt unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -3180,7 +3180,7 @@
             "Find the element the report names and look at the text its ::before, ::after or list marker draws (a number, bullet or label).",
             "Decide whether it is text people need to read (a number, word or label) or a purely decorative shape.",
             "If it is text, use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure its color against the background behind it.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The generated text reaches the threshold, or it is purely decorative.",
           "failWhen": "The generated text is readable content and its ratio is below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -3190,7 +3190,7 @@
             "Localizar el elemento que indica el informe y observar el texto que dibuja su ::before, ::after o marcador de lista (un número, una viñeta o una etiqueta).",
             "Decidir si es texto que hay que leer (un número, una palabra o una etiqueta) o una forma puramente decorativa.",
             "Si es texto, medir su color frente al fondo que tiene detrás con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "El texto generado alcanza el umbral, o es puramente decorativo.",
           "failWhen": "El texto generado es contenido legible y su relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3200,7 +3200,7 @@
             "Repérez l’élément indiqué par le rapport et regardez le texte que dessine son ::before, son ::after ou son marqueur de liste (un numéro, une puce ou un libellé).",
             "Déterminez s’il s’agit d’un texte que les utilisateurs doivent lire (un numéro, un mot ou un libellé) ou d’une forme purement décorative.",
             "S’il s’agit de texte, avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez sa couleur par rapport à l’arrière-plan situé derrière.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Le texte généré atteint le seuil, ou il est purement décoratif.",
           "failWhen": "Le texte généré est un contenu à lire et son ratio est inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -3210,7 +3210,7 @@
             "レポートに示された要素を見つけ、その::before、::after、またはリストマーカーが描画するテキスト（番号、行頭記号、ラベル）を確認してください。",
             "それが読む必要のあるテキスト（番号、単語、ラベル）か、純粋に装飾的な図形かを判断してください。",
             "テキストであれば、ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、その背後にある背景に対して色を測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "生成されたテキストが基準値に達しているか、純粋に装飾的なものです。",
           "failWhen": "生成されたテキストは読む必要のあるコンテンツで、コントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3225,7 +3225,7 @@
             "Suchen Sie den im Bericht genannten Text und notieren Sie den mix-blend-mode an ihm oder seinem Container.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die gemischten Text- und Hintergrundfarben so, wie sie auf dem Bildschirm erscheinen, mit der Pipette auf der gerenderten Seite.",
             "Kann unterschiedlicher Inhalt dahinter liegen (Scrollen, Slider), prüfen Sie den ungünstigsten Fall.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Die gemischten Farben auf dem Bildschirm erreichen den Schwellenwert.",
           "failWhen": "Die gemischten Farben auf dem Bildschirm ergeben ein Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -3235,7 +3235,7 @@
             "Find the text the report names and note the mix-blend-mode on it or its container.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the blended text and background colors as they appear on screen, with an eyedropper on the rendered page.",
             "If different content can sit behind it (scrolling, sliders), check the worst case.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The blended colors on screen reach the threshold.",
           "failWhen": "The blended colors on screen give a ratio below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -3245,7 +3245,7 @@
             "Localizar el texto que indica el informe y anotar el mix-blend-mode que tiene él o su contenedor.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir los colores fusionados del texto y del fondo tal como se ven en pantalla, con un cuentagotas sobre la página representada.",
             "Si detrás puede quedar contenido distinto (desplazamiento, carruseles), comprobar el peor caso.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Los colores fusionados en pantalla alcanzan el umbral.",
           "failWhen": "Los colores fusionados en pantalla dan una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3255,7 +3255,7 @@
             "Repérez le texte indiqué par le rapport et notez le mix-blend-mode appliqué au texte ou à son conteneur.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez les couleurs fusionnées du texte et de l’arrière-plan telles qu’elles apparaissent à l’écran, avec la pipette sur la page rendue.",
             "Si différents contenus peuvent se trouver derrière (défilement, carrousels), vérifiez le pire cas.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Les couleurs fusionnées à l’écran atteignent le seuil.",
           "failWhen": "Les couleurs fusionnées à l’écran donnent un ratio inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -3265,7 +3265,7 @@
             "レポートに示されたテキストを見つけ、そのテキストまたはコンテナーにあるmix-blend-modeを控えてください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、描画されたページ上でスポイトを使って、画面に表示される合成後のテキストと背景の色を測定してください。",
             "背後にさまざまなコンテンツが来る可能性がある場合（スクロール、スライダー）は、最も悪い場合を確認してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "画面上の合成後の色が基準値に達しています。",
           "failWhen": "画面上の合成後の色のコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3280,7 +3280,7 @@
             "Suchen Sie den im Bericht genannten Text und notieren Sie die Farbe von ::first-line oder ::first-letter im Bereich „Stile“.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben sowohl die Textfarbe des Elements als auch die Farbe der ersten Zeile oder des ersten Buchstabens gegen den Hintergrund.",
             "Ändern Sie die Fenstergröße, um zu sehen, dass die Farbe der ersten Zeile bei unterschiedlichen Breiten für unterschiedliche Wörter gilt.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Beide Farben erreichen den Schwellenwert.",
           "failWhen": "Eine der Farben ergibt ein Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -3290,7 +3290,7 @@
             "Find the text the report names and note the ::first-line or ::first-letter color in the Styles pane.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure both the element's text color and the first-line or first-letter color against the background.",
             "Resize the window to see that the first-line color applies to different words at different widths.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "Both colors reach the threshold.",
           "failWhen": "Either color gives a ratio below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -3300,7 +3300,7 @@
             "Localizar el texto que indica el informe y anotar el color de ::first-line o ::first-letter en el panel Styles.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir frente al fondo tanto el color del texto del elemento como el color de la primera línea o de la primera letra.",
             "Cambiar el tamaño de la ventana para ver que el color de la primera línea se aplica a palabras distintas con anchos distintos.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Ambos colores alcanzan el umbral.",
           "failWhen": "Alguno de los colores da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3310,7 +3310,7 @@
             "Repérez le texte indiqué par le rapport et notez la couleur de ::first-line ou ::first-letter dans le panneau Styles.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez à la fois la couleur du texte de l’élément et la couleur de la première ligne ou de la première lettre par rapport à l’arrière-plan.",
             "Redimensionnez la fenêtre pour constater que la couleur de la première ligne s’applique à des mots différents selon la largeur.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Les deux couleurs atteignent le seuil.",
           "failWhen": "L’une des couleurs donne un ratio inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -3320,7 +3320,7 @@
             "レポートに示されたテキストを見つけ、[Styles]ペインで::first-lineまたは::first-letterの色を控えてください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、要素のテキストの色と、first-lineまたはfirst-letterの色の両方を背景に対して測定してください。",
             "ウィンドウの大きさを変えて、幅によってfirst-lineの色が異なる単語に適用されることを確認してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "どちらの色も基準値に達しています。",
           "failWhen": "いずれかの色のコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3334,7 +3334,7 @@
           "steps": [
             "Suchen Sie die im Bericht genannte Auswahlliste und öffnen Sie sie mit der Maus und mit Alt+Pfeil nach unten.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben in der geöffneten Liste den Text jeder Option gegen ihren Hintergrund, einschließlich der hervorgehobenen Option, in jedem Browser, den die Seite unterstützt.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Jede Option in der geöffneten Liste erreicht den Schwellenwert.",
           "failWhen": "Eine Option in der geöffneten Liste ergibt ein Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -3343,7 +3343,7 @@
           "steps": [
             "Find the drop-down the report names and open it with the mouse and with Alt+Down Arrow.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure each option's text against its background in the open list, including the highlighted option, in each browser the page supports.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "Every option in the open list reaches the threshold.",
           "failWhen": "An option in the open list gives a ratio below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -3352,7 +3352,7 @@
           "steps": [
             "Localizar la lista desplegable que indica el informe y abrirla con el ratón y con Alt+Flecha abajo.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto de cada opción frente a su fondo en la lista abierta, incluida la opción resaltada, en cada navegador que admite la página.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Todas las opciones de la lista abierta alcanzan el umbral.",
           "failWhen": "Una opción de la lista abierta da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3361,7 +3361,7 @@
           "steps": [
             "Repérez la liste déroulante indiquée par le rapport et ouvrez-la à la souris et avec Alt+Flèche bas.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte de chaque option par rapport à son arrière-plan dans la liste ouverte, y compris l’option en surbrillance, dans chaque navigateur pris en charge par la page.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Chaque option de la liste ouverte atteint le seuil.",
           "failWhen": "Une option de la liste ouverte donne un ratio inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -3370,7 +3370,7 @@
           "steps": [
             "レポートに示されたドロップダウンを見つけ、マウスとAlt+下矢印キーで開いてください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、ページが対応する各ブラウザーで、開いたリスト内の各選択肢のテキストを、強調表示された選択肢も含めて背景に対して測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "開いたリスト内のすべての選択肢が基準値に達しています。",
           "failWhen": "開いたリスト内のいずれかの選択肢のコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3385,7 +3385,7 @@
             "Suchen Sie den im Bericht genannten Text und notieren Sie seinen text-shadow.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Füllfarbe des Textes gegen den Hintergrund.",
             "Fällt die Füllung durch, zoomen Sie hinein und prüfen Sie, ob der Schatten eine geschlossene Kontur oder einen Halo um jeden Buchstaben bildet; falls ja, messen Sie die Schattenfarbe gegen den Hintergrund und die Füllung gegen den Schatten.",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Die Füllung erreicht den Schwellenwert gegenüber dem Hintergrund, oder ein geschlossener Halo umgibt jeden Buchstaben und ergibt das Schwellenverhältnis.",
           "failWhen": "Weder die Füllung gegenüber dem Hintergrund noch ein geschlossener Halo um die Buchstaben erreicht den Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -3395,7 +3395,7 @@
             "Find the text the report names and note its text-shadow.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text fill color against the background.",
             "If the fill fails, zoom in and check whether the shadow forms a solid outline or halo around every letter; if so, measure the shadow color against the background and the fill against the shadow.",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The fill reaches the threshold against the background, or a solid halo surrounds every letter and gives the threshold ratio.",
           "failWhen": "Neither the fill against the background nor a solid halo around the letters reaches the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -3405,7 +3405,7 @@
             "Localizar el texto que indica el informe y anotar su text-shadow.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color de relleno del texto frente al fondo.",
             "Si el relleno no alcanza el umbral, ampliar y comprobar si la sombra forma un contorno o halo sólido alrededor de cada letra; si es así, medir el color de la sombra frente al fondo y el relleno frente a la sombra.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "El relleno alcanza el umbral frente al fondo, o un halo sólido rodea cada letra y da la relación del umbral.",
           "failWhen": "Ni el relleno frente al fondo ni un halo sólido alrededor de las letras alcanzan el umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3415,7 +3415,7 @@
             "Repérez le texte indiqué par le rapport et notez son text-shadow.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur de remplissage du texte par rapport à l’arrière-plan.",
             "Si le remplissage échoue, zoomez et vérifiez si l’ombre forme un contour plein ou un halo autour de chaque lettre ; si c’est le cas, mesurez la couleur de l’ombre par rapport à l’arrière-plan et le remplissage par rapport à l’ombre.",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Le remplissage atteint le seuil par rapport à l’arrière-plan, ou un halo plein entoure chaque lettre et donne le ratio requis.",
           "failWhen": "Ni le remplissage par rapport à l’arrière-plan, ni un halo plein autour des lettres n’atteint le seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -3425,7 +3425,7 @@
             "レポートに示されたテキストを見つけ、そのtext-shadowを控えてください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、背景に対してテキストの塗りの色を測定してください。",
             "塗りが基準を満たさない場合は、拡大して影がすべての文字の周りにはっきりした輪郭や縁取りを形成しているか確認し、そうであれば影の色を背景に対して、塗りの色を影に対して測定してください。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "塗りが背景に対して基準値に達しているか、すべての文字をはっきりした縁取りが囲み、基準値のコントラスト比が得られます。",
           "failWhen": "背景に対する塗りも、文字の周りのはっきりした縁取りも基準値に達しないため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3440,7 +3440,7 @@
             "Suchen Sie den im Bericht genannten Text und notieren Sie Breite und Farbe seines -webkit-text-stroke.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Füllfarbe gegen den Hintergrund und die Konturfarbe gegen den Hintergrund.",
             "Zoomen Sie hinein, um zu sehen, welche Farbe den Großteil jedes Buchstabens bildet (eine dünne Kontur zählt weniger als die Füllung).",
-            "Vergleichen Sie das Verhältnis für WCAG 1.4.3 mit 4,5:1 (3:1 für großen Text) und für 1.4.6 mit 7:1 (4,5:1 für großen Text)."
+            "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Füllung und Kontur erreichen beide den Schwellenwert, oder die Farbe, die die Buchstaben eindeutig bildet, erreicht ihn.",
           "failWhen": "Die Farbe, die die Buchstaben bildet, ergibt ein Verhältnis unter dem Schwellenwert; das verstößt gegen WCAG 1.4.3 (oder 1.4.6)."
@@ -3450,7 +3450,7 @@
             "Find the text the report names and note its -webkit-text-stroke width and color.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the fill color against the background, and the stroke color against the background.",
             "Zoom in to see which color forms most of each letter (a thin stroke counts less than the fill).",
-            "Compare the ratio with 4.5:1 (3:1 for large text) for WCAG 1.4.3, and 7:1 (4.5:1 for large text) for 1.4.6."
+            "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
           "passWhen": "The fill and stroke both reach the threshold, or the color that clearly forms the letters does.",
           "failWhen": "The color that forms the letters gives a ratio below the threshold, which fails WCAG 1.4.3 (or 1.4.6)."
@@ -3460,7 +3460,7 @@
             "Localizar el texto que indica el informe y anotar el ancho y el color de su -webkit-text-stroke.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color de relleno frente al fondo, y el color del trazo frente al fondo.",
             "Ampliar para ver qué color forma la mayor parte de cada letra (un trazo fino cuenta menos que el relleno).",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para WCAG 1.4.3, y con 7:1 (4.5:1 para texto grande) para 1.4.6."
+            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "El relleno y el trazo alcanzan ambos el umbral, o lo alcanza el color que claramente forma las letras.",
           "failWhen": "El color que forma las letras da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3470,7 +3470,7 @@
             "Repérez le texte indiqué par le rapport et notez l’épaisseur et la couleur de son -webkit-text-stroke.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur de remplissage par rapport à l’arrière-plan, ainsi que la couleur du contour par rapport à l’arrière-plan.",
             "Zoomez pour voir quelle couleur forme l’essentiel de chaque lettre (un contour fin compte moins que le remplissage).",
-            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour WCAG 1.4.3, et à 7:1 (4,5:1 pour le texte de grande taille) pour 1.4.6."
+            "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Le remplissage et le contour atteignent tous deux le seuil, ou bien la couleur qui forme clairement les lettres l’atteint.",
           "failWhen": "La couleur qui forme les lettres donne un ratio inférieur au seuil, ce qui ne respecte pas le critère WCAG 1.4.3 (ou 1.4.6)."
@@ -3480,7 +3480,7 @@
             "レポートに示されたテキストを見つけ、その-webkit-text-strokeの幅と色を控えてください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、背景に対して塗りの色と輪郭線の色をそれぞれ測定してください。",
             "拡大して、各文字の大部分をどの色が形作っているか確認してください（細い輪郭線は塗りより影響が小さくなります）。",
-            "比を、WCAG 1.4.3では4.5:1（大きなテキストは3:1）、1.4.6では7:1（大きなテキストは4.5:1）と比べてください。"
+            "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
           "passWhen": "塗りと輪郭線の両方が基準値に達しているか、明らかに文字を形作っている色が基準値に達しています。",
           "failWhen": "文字を形作っている色のコントラスト比が基準値を下回るため、WCAG 1.4.3（または1.4.6）を満たしません。"
@@ -3653,7 +3653,7 @@
             "Entscheiden Sie, ob es Text ist, den Menschen lesen (Teil von Wörtern, eine Zahl), oder ein Symbol, das für eine Aktion steht, etwa ein Schließen- oder Menüsymbol.",
             "Ist es Text, messen Sie es mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund und vergleichen Sie mit 7:1 (4,5:1 für großen Text: mindestens 24px oder 18.66px und fett).",
             "Ist es ein Symbol, prüfen Sie zuerst, ob sichtbarer Text daneben dasselbe sagt, etwa das Wort „Schließen“ neben einem Schließen-Symbol. Dann ist das Symbol nicht der einzige Weg, es zu verstehen, und braucht das Verhältnis 3:1 nicht.",
-            "Andernfalls messen Sie das Symbol gegen seinen Hintergrund und vergleichen mit 3:1 (WCAG 1.4.11)."
+            "Andernfalls messen Sie das Symbol gegen seinen Hintergrund und vergleichen mit 3:1, dem Verhältnis für grafische Objekte."
           ],
           "passWhen": "Es ist Text und erreicht sein Verhältnis, oder es ist ein Symbol, das 3:1 erreicht oder dessen Bedeutung auch sichtbarer Text daneben wiedergibt.",
           "failWhen": "Es ist Text unter 7:1; das verstößt gegen WCAG 1.4.6; oder ein Symbol unter 3:1, das der einzige sichtbare Hinweis darauf ist, was es bedeutet oder tut; das verstößt gegen WCAG 1.4.11."
@@ -3664,7 +3664,7 @@
             "Decide whether it is text people read (part of words, a number) or an icon standing in for an action, like a close or menu symbol.",
             "If it is text, use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure it against its background and compare with 7:1 (4.5:1 for large text: at least 24px, or 18.66px and bold).",
             "If it is an icon, check first whether visible text next to it says the same thing, such as the word \"Close\" beside a close symbol. If it does, the icon is not the only way to understand it and does not need the 3:1 ratio.",
-            "Otherwise, measure the icon against its background and compare with 3:1 (WCAG 1.4.11)."
+            "Otherwise, measure the icon against its background and compare with 3:1, the ratio for graphical objects."
           ],
           "passWhen": "It is text and reaches its ratio, or it is an icon that reaches 3:1 or whose meaning is also given by visible text next to it.",
           "failWhen": "It is text below 7:1, which fails WCAG 1.4.6; or an icon below 3:1 that is the only visible way to know what it means or does, which fails WCAG 1.4.11."
@@ -3675,7 +3675,7 @@
             "Decidir si es texto que se lee (parte de palabras, un número) o un icono que sustituye a una acción, como un símbolo de cerrar o de menú.",
             "Si es texto, medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, y compararlo con 7:1 (4.5:1 para texto grande: al menos 24px, o 18.66px y en negrita).",
             "Si es un icono, comprobar primero si un texto visible junto a él dice lo mismo, como la palabra «Cerrar» al lado de un símbolo de cerrar. Si es así, el icono no es la única forma de entenderlo y no necesita la relación 3:1.",
-            "Si no, medir el icono contra su fondo y comparar con 3:1 (WCAG 1.4.11)."
+            "Si no, medir el icono contra su fondo y comparar con 3:1, la relación de los objetos gráficos."
           ],
           "passWhen": "Es texto y alcanza su relación, o es un icono que alcanza 3:1 o cuyo significado también da un texto visible junto a él.",
           "failWhen": "Es texto por debajo de 7:1, lo que incumple WCAG 1.4.6; o un icono por debajo de 3:1 que es la única forma visible de saber qué significa o qué hace, lo que incumple WCAG 1.4.11."
@@ -3686,7 +3686,7 @@
             "Déterminez s’il s’agit d’un texte que l’on lit (une partie de mot, un nombre) ou d’une icône qui représente une action, comme un symbole de fermeture ou de menu.",
             "S’il s’agit de texte, avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le caractère par rapport à son arrière-plan et comparez à 7:1 (4,5:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras).",
             "S’il s’agit d’une icône, vérifiez d’abord si un texte visible à côté dit la même chose, comme le mot « Fermer » à côté d’un symbole de fermeture. Dans ce cas, l’icône n’est pas le seul moyen de la comprendre et n’a pas besoin du rapport 3:1.",
-            "Sinon, mesurez l’icône par rapport à son arrière-plan et comparez avec 3:1 (WCAG 1.4.11)."
+            "Sinon, mesurez l’icône par rapport à son arrière-plan et comparez avec 3:1, le ratio des éléments graphiques."
           ],
           "passWhen": "C’est du texte qui atteint son rapport, ou une icône qui atteint 3:1 ou dont le sens est aussi donné par un texte visible à côté.",
           "failWhen": "C’est du texte sous 7:1, ce qui ne respecte pas le critère WCAG 1.4.6 ; ou une icône sous 3:1 qui est le seul moyen visible de savoir ce qu’elle signifie ou fait, ce qui ne respecte pas le critère WCAG 1.4.11."
@@ -3697,7 +3697,7 @@
             "それが読むためのテキスト（単語の一部、数字）か、閉じるやメニューの記号のように操作を表すアイコンかを判断してください。",
             "テキストであれば、ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使って背景に対して測定し、7:1（大きなテキスト、つまり24px以上または18.66px以上の太字では4.5:1）と比べてください。",
             "アイコンの場合は、まず隣に同じ意味の見えるテキストがあるか確認してください（閉じる記号の横の「閉じる」という語など）。ある場合、そのアイコンは理解するための唯一の手段ではなく、3:1のコントラスト比は必要ありません。",
-            "そうでない場合は、アイコンを背景に対して測定し、3:1と比べてください（WCAG 1.4.11）。"
+            "そうでない場合は、アイコンを背景に対して測定し、グラフィックに求められる3:1と比べてください。"
           ],
           "passWhen": "テキストで基準のコントラスト比に達しているか、3:1に達しているか、隣の見えるテキストが同じ意味を示しているアイコンです。",
           "failWhen": "7:1未満のテキストでWCAG 1.4.6を満たさないか、意味や機能を知る唯一の見える手段である3:1未満のアイコンでWCAG 1.4.11を満たしません。"
@@ -4030,7 +4030,7 @@
             "Entscheiden Sie, ob es Text ist, den Menschen lesen (Teil von Wörtern, eine Zahl), oder ein Symbol, das für eine Aktion steht, etwa ein Schließen- oder Menüsymbol.",
             "Ist es Text, messen Sie es mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund und vergleichen Sie mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18.66px und fett).",
             "Ist es ein Symbol, prüfen Sie zuerst, ob sichtbarer Text daneben dasselbe sagt, etwa das Wort „Schließen“ neben einem Schließen-Symbol. Dann ist das Symbol nicht der einzige Weg, es zu verstehen, und braucht das Verhältnis 3:1 nicht.",
-            "Andernfalls messen Sie das Symbol gegen seinen Hintergrund und vergleichen mit 3:1 (WCAG 1.4.11)."
+            "Andernfalls messen Sie das Symbol gegen seinen Hintergrund und vergleichen mit 3:1, dem Verhältnis für grafische Objekte."
           ],
           "passWhen": "Es ist Text und erreicht sein Verhältnis, oder es ist ein Symbol, das 3:1 erreicht oder dessen Bedeutung auch sichtbarer Text daneben wiedergibt.",
           "failWhen": "Es ist Text unter 4.5:1; das verstößt gegen WCAG 1.4.3; oder ein Symbol unter 3:1, das der einzige sichtbare Hinweis darauf ist, was es bedeutet oder tut; das verstößt gegen WCAG 1.4.11."
@@ -4041,7 +4041,7 @@
             "Decide whether it is text people read (part of words, a number) or an icon standing in for an action, like a close or menu symbol.",
             "If it is text, use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure it against its background and compare with 4.5:1 (3:1 for large text: at least 24px, or 18.66px and bold).",
             "If it is an icon, check first whether visible text next to it says the same thing, such as the word \"Close\" beside a close symbol. If it does, the icon is not the only way to understand it and does not need the 3:1 ratio.",
-            "Otherwise, measure the icon against its background and compare with 3:1 (WCAG 1.4.11)."
+            "Otherwise, measure the icon against its background and compare with 3:1, the ratio for graphical objects."
           ],
           "passWhen": "It is text and reaches its ratio, or it is an icon that reaches 3:1 or whose meaning is also given by visible text next to it.",
           "failWhen": "It is text below 4.5:1, which fails WCAG 1.4.3; or an icon below 3:1 that is the only visible way to know what it means or does, which fails WCAG 1.4.11."
@@ -4052,7 +4052,7 @@
             "Decidir si es texto que se lee (parte de palabras, un número) o un icono que sustituye a una acción, como un símbolo de cerrar o de menú.",
             "Si es texto, medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, y compararlo con 4.5:1 (3:1 para texto grande: al menos 24px, o 18.66px y en negrita).",
             "Si es un icono, comprobar primero si un texto visible junto a él dice lo mismo, como la palabra «Cerrar» al lado de un símbolo de cerrar. Si es así, el icono no es la única forma de entenderlo y no necesita la relación 3:1.",
-            "Si no, medir el icono contra su fondo y comparar con 3:1 (WCAG 1.4.11)."
+            "Si no, medir el icono contra su fondo y comparar con 3:1, la relación de los objetos gráficos."
           ],
           "passWhen": "Es texto y alcanza su relación, o es un icono que alcanza 3:1 o cuyo significado también da un texto visible junto a él.",
           "failWhen": "Es texto por debajo de 4.5:1, lo que incumple WCAG 1.4.3; o un icono por debajo de 3:1 que es la única forma visible de saber qué significa o qué hace, lo que incumple WCAG 1.4.11."
@@ -4063,7 +4063,7 @@
             "Déterminez s’il s’agit d’un texte que l’on lit (une partie de mot, un nombre) ou d’une icône qui représente une action, comme un symbole de fermeture ou de menu.",
             "S’il s’agit de texte, avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le caractère par rapport à son arrière-plan et comparez à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras).",
             "S’il s’agit d’une icône, vérifiez d’abord si un texte visible à côté dit la même chose, comme le mot « Fermer » à côté d’un symbole de fermeture. Dans ce cas, l’icône n’est pas le seul moyen de la comprendre et n’a pas besoin du rapport 3:1.",
-            "Sinon, mesurez l’icône par rapport à son arrière-plan et comparez avec 3:1 (WCAG 1.4.11)."
+            "Sinon, mesurez l’icône par rapport à son arrière-plan et comparez avec 3:1, le ratio des éléments graphiques."
           ],
           "passWhen": "C’est du texte qui atteint son rapport, ou une icône qui atteint 3:1 ou dont le sens est aussi donné par un texte visible à côté.",
           "failWhen": "C’est du texte sous 4.5:1, ce qui ne respecte pas le critère WCAG 1.4.3 ; ou une icône sous 3:1 qui est le seul moyen visible de savoir ce qu’elle signifie ou fait, ce qui ne respecte pas le critère WCAG 1.4.11."
@@ -4074,7 +4074,7 @@
             "それが読むためのテキスト（単語の一部、数字）か、閉じるやメニューの記号のように操作を表すアイコンかを判断してください。",
             "テキストであれば、ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使って背景に対して測定し、4.5:1（大きなテキスト、つまり24px以上または18.66px以上の太字では3:1）と比べてください。",
             "アイコンの場合は、まず隣に同じ意味の見えるテキストがあるか確認してください（閉じる記号の横の「閉じる」という語など）。ある場合、そのアイコンは理解するための唯一の手段ではなく、3:1のコントラスト比は必要ありません。",
-            "そうでない場合は、アイコンを背景に対して測定し、3:1と比べてください（WCAG 1.4.11）。"
+            "そうでない場合は、アイコンを背景に対して測定し、グラフィックに求められる3:1と比べてください。"
           ],
           "passWhen": "テキストで基準のコントラスト比に達しているか、3:1に達しているか、隣の見えるテキストが同じ意味を示しているアイコンです。",
           "failWhen": "4.5:1未満のテキストでWCAG 1.4.3を満たさないか、意味や機能を知る唯一の見える手段である3:1未満のアイコンでWCAG 1.4.11を満たしません。"
@@ -12801,6 +12801,118 @@
           ],
           "passWhen": "見出しはデータのラベルとなることを意図していない（通常のセルにできる）か、見出しを付けるデータが、見出しが割り当てられるようにマークアップされています。",
           "failWhen": "データのラベルとなるべき見出しにデータセルが割り当てられておらず、その関係が伝わらないため、WCAG 1.3.1を満たしません。"
+        }
+      }
+    }
+  ],
+  "target-size-minimum": [
+    {
+      "code": "undersized-inline-link-run",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie auf der Seite den im Bericht genannten Link und den benachbarten Link, dem er zu nahe ist.",
+            "Lesen Sie den Text, in dem die beiden Links stehen, und entscheiden Sie, ob sie Teil eines Satzes oder Absatzes sind, was sie ausnimmt, oder eine Reihe von Links, die nur durch Trennzeichen wie „|“ oder „·“ getrennt sind, wie in „Bearbeiten | Löschen“.",
+            "Ist es eine Reihe von Links, untersuchen Sie jeden im Boxmodell der Entwicklertools und prüfen Sie, ob er mindestens 24 mal 24 CSS-Pixel groß ist oder ob ein Kreis mit 24 Pixeln Durchmesser, der darauf zentriert ist, den anderen Link oder dessen Kreis berühren würde.",
+            "Ist ein Link kleiner und zu nahe, suchen Sie auf derselben Seite ein anderes Bedienelement, das dasselbe tut und diese Größe oder diesen Abstand einhält."
+          ],
+          "passWhen": "Die Links sind Teil eines Satzes oder Absatzes, oder jeder ist mindestens 24 mal 24 CSS-Pixel groß oder weit genug vom anderen entfernt, oder ein anderes Bedienelement der Seite, das die Größe einhält, tut dasselbe.",
+          "failWhen": "Die Links bilden eine eigene Reihe, nur durch Trennzeichen getrennt, und einer ist kleiner als 24 mal 24 CSS-Pixel und dem anderen so nahe, dass sich ihre 24-Pixel-Kreise überschneiden, ohne ein anderes Bedienelement der Seite, das die Größe einhält und dasselbe tut; das verstößt gegen WCAG 2.5.8."
+        },
+        "en": {
+          "steps": [
+            "Find the link the report names on the page, and the link next to it that it is too close to.",
+            "Read the text the two links sit in, and decide whether they are part of a sentence or paragraph, which is exempt, or a row of links set apart only by separators such as \"|\" or \"·\", as in \"Edit | Delete\".",
+            "If they are a row of links, inspect each in the developer tools' box model and check whether it is at least 24 by 24 CSS pixels, or whether a 24-pixel circle centred on it would touch the other link or that link's circle.",
+            "If a link is smaller and too close, look for another control on the same page that does the same thing and meets that size or spacing."
+          ],
+          "passWhen": "The links are part of a sentence or paragraph, or each is at least 24 by 24 CSS pixels or far enough from the other, or another control on the page that meets the size does the same thing.",
+          "failWhen": "The links form a row of their own, set apart only by separators, and one is smaller than 24 by 24 CSS pixels and so close to the other that their 24-pixel circles overlap, with no control elsewhere on the page that meets the size and does the same, which fails WCAG 2.5.8."
+        },
+        "es": {
+          "steps": [
+            "Buscar en la página el enlace que indica el informe y el enlace contiguo del que está demasiado cerca.",
+            "Leer el texto en el que están los dos enlaces y decidir si forman parte de una frase o un párrafo, lo que los exime, o de una fila de enlaces separados solo por separadores como «|» o «·», como en «Editar | Borrar».",
+            "Si son una fila de enlaces, inspeccionar cada uno en el modelo de caja de las herramientas de desarrollo y comprobar si mide al menos 24 por 24 píxeles CSS, o si un círculo de 24 píxeles centrado en él tocaría el otro enlace o el círculo de ese enlace.",
+            "Si un enlace es menor y está demasiado cerca, buscar en la misma página otro control que haga lo mismo y cumpla ese tamaño o esa separación."
+          ],
+          "passWhen": "Los enlaces forman parte de una frase o un párrafo, o cada uno mide al menos 24 por 24 píxeles CSS o está lo bastante lejos del otro, o hay otro control en la página que cumple el tamaño y hace lo mismo.",
+          "failWhen": "Los enlaces forman una fila propia, separados solo por separadores, y uno mide menos de 24 por 24 píxeles CSS y está tan cerca del otro que sus círculos de 24 píxeles se solapan, sin otro control en la página que cumpla el tamaño y haga lo mismo, lo que incumple WCAG 2.5.8."
+        },
+        "fr": {
+          "steps": [
+            "Repérez dans la page le lien indiqué par le rapport, et le lien voisin dont il est trop proche.",
+            "Lisez le texte dans lequel se trouvent les deux liens et déterminez s’ils font partie d’une phrase ou d’un paragraphe, ce qui les exempte, ou d’une suite de liens séparés seulement par des séparateurs comme « | » ou « · », comme dans « Modifier | Supprimer ».",
+            "S’il s’agit d’une suite de liens, inspectez chacun dans le modèle de boîte des outils de développement et vérifiez s’il fait au moins 24 pixels CSS sur 24, ou si un cercle de 24 pixels centré sur lui toucherait l’autre lien ou le cercle de cet autre lien.",
+            "Si un lien est plus petit et trop proche, cherchez dans la même page un autre contrôle qui fait la même chose et respecte cette taille ou cet espacement."
+          ],
+          "passWhen": "Les liens font partie d’une phrase ou d’un paragraphe, ou chacun fait au moins 24 pixels CSS sur 24 ou est suffisamment éloigné de l’autre, ou un autre contrôle de la page qui respecte la taille fait la même chose.",
+          "failWhen": "Les liens forment une suite à part, séparés seulement par des séparateurs, et l’un d’eux fait moins de 24 pixels CSS sur 24 et est si proche de l’autre que leurs cercles de 24 pixels se chevauchent, sans autre contrôle de la page qui respecte la taille et fasse la même chose, ce qui ne respecte pas le critère WCAG 2.5.8."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたリンクと、それが近すぎる隣のリンクをページ上で見つけてください。",
+            "2つのリンクがある文章を読み、それらが文や段落の一部（例外として除外されます）か、「編集|削除」のように「|」や「·」などの区切り文字だけで区切られたリンクの並びかを判断してください。",
+            "リンクの並びであれば、開発者ツールのボックスモデルでそれぞれを調べ、24 × 24 CSSピクセル以上あるか、またはリンクを中心とする直径24ピクセルの円がもう一方のリンクやその円に接するかを確認してください。",
+            "リンクが小さく近すぎる場合は、同じページに同じ機能を持ち、そのサイズまたは間隔を満たすほかのコントロールがあるかを探してください。"
+          ],
+          "passWhen": "リンクが文や段落の一部である、それぞれが24 × 24 CSSピクセル以上あるかもう一方から十分に離れている、またはサイズを満たすほかのコントロールがページ上で同じ機能を持っています。",
+          "failWhen": "リンクが区切り文字だけで区切られた独立した並びで、一方が24 × 24 CSSピクセル未満かつもう一方に近く、直径24ピクセルの円どうしが重なり、サイズを満たして同じ機能を持つほかのコントロールもページ上にないため、WCAG 2.5.8を満たしません。"
+        }
+      }
+    },
+    {
+      "code": "undersized-plausibly-essential",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie das im Bericht genannte Ziel und die Grafik, zu der es gehört: eine SVG-Zeichnung, ein Canvas oder eine Imagemap (ein Bild mit anklickbaren Bereichen).",
+            "Entscheiden Sie, ob Größe und Lage des Ziels eine Information tragen, die verloren ginge, wenn man es vergrößerte oder von den anderen wegrückte, wie bei den Markierungen auf einer Karte oder den Punkten eines Diagramms.",
+            "Ist das nicht so, untersuchen Sie das Ziel im Boxmodell der Entwicklertools und prüfen Sie, ob es mindestens 24 mal 24 CSS-Pixel groß ist oder ob ein Kreis mit 24 Pixeln Durchmesser, der darauf zentriert ist, ein anderes Ziel oder den Kreis eines anderen kleinen Ziels berühren würde.",
+            "Ist es kleiner und zu nahe, suchen Sie auf derselben Seite ein anderes Bedienelement, das dasselbe tut und diese Größe oder diesen Abstand einhält, etwa eine Liste der Orte der Karte als Links."
+          ],
+          "passWhen": "Die Größe des Ziels ist für das, was die Grafik zeigt, wesentlich, oder das Ziel ist mindestens 24 mal 24 CSS-Pixel groß oder weit genug von anderen entfernt, oder ein anderes Bedienelement der Seite, das die Größe einhält, tut dasselbe.",
+          "failWhen": "Die Größe des Ziels ist nicht wesentlich, es ist kleiner als 24 mal 24 CSS-Pixel und einem anderen Ziel so nahe, dass sich ihre 24-Pixel-Kreise überschneiden, und kein anderes Bedienelement der Seite, das die Größe einhält, tut dasselbe; das verstößt gegen WCAG 2.5.8."
+        },
+        "en": {
+          "steps": [
+            "Find the target the report names and the graphic it belongs to: an SVG drawing, a canvas or an image map (an image with clickable areas).",
+            "Decide whether the target's size and position carry information that would be lost if it were made larger or moved apart, as the pins on a map or the points on a chart do.",
+            "If they don't, inspect the target in the developer tools' box model and check whether it is at least 24 by 24 CSS pixels, or whether a 24-pixel circle centred on it would touch another target or the circle of another small target.",
+            "If it is smaller and too close, look for another control on the same page that does the same thing and meets that size or spacing, such as a list of the map's places as links."
+          ],
+          "passWhen": "The target's size is essential to what the graphic shows, or the target is at least 24 by 24 CSS pixels or far enough from others, or another control on the page that meets the size does the same thing.",
+          "failWhen": "The target's size is not essential, it is smaller than 24 by 24 CSS pixels and so close to another target that their 24-pixel circles overlap, and no control elsewhere on the page that meets the size does the same, which fails WCAG 2.5.8."
+        },
+        "es": {
+          "steps": [
+            "Buscar el objetivo que indica el informe y el gráfico al que pertenece: un dibujo SVG, un canvas o un mapa de imagen (una imagen con zonas en las que se puede hacer clic).",
+            "Decidir si el tamaño y la posición del objetivo transmiten información que se perdería si se agrandara o se separara de los demás, como los marcadores de un mapa o los puntos de un gráfico.",
+            "Si no es así, inspeccionar el objetivo en el modelo de caja de las herramientas de desarrollo y comprobar si mide al menos 24 por 24 píxeles CSS, o si un círculo de 24 píxeles centrado en él tocaría otro objetivo o el círculo de otro objetivo pequeño.",
+            "Si es menor y está demasiado cerca, buscar en la misma página otro control que haga lo mismo y cumpla ese tamaño o esa separación, como una lista de enlaces a los lugares del mapa."
+          ],
+          "passWhen": "El tamaño del objetivo es esencial para lo que muestra el gráfico, o el objetivo mide al menos 24 por 24 píxeles CSS o está lo bastante lejos de los demás, o hay otro control en la página que cumple el tamaño y hace lo mismo.",
+          "failWhen": "El tamaño del objetivo no es esencial, mide menos de 24 por 24 píxeles CSS y está tan cerca de otro objetivo que sus círculos de 24 píxeles se solapan, y ningún otro control de la página que cumpla el tamaño hace lo mismo, lo que incumple WCAG 2.5.8."
+        },
+        "fr": {
+          "steps": [
+            "Repérez la cible indiquée par le rapport et le graphique auquel elle appartient : un dessin SVG, un canvas ou une image réactive (une image avec des zones cliquables).",
+            "Déterminez si la taille et la position de la cible portent une information qui serait perdue si on l’agrandissait ou l’éloignait des autres, comme les repères d’une carte ou les points d’un graphique.",
+            "Si ce n’est pas le cas, inspectez la cible dans le modèle de boîte des outils de développement et vérifiez si elle fait au moins 24 pixels CSS sur 24, ou si un cercle de 24 pixels centré sur elle toucherait une autre cible ou le cercle d’une autre petite cible.",
+            "Si elle est plus petite et trop proche, cherchez dans la même page un autre contrôle qui fait la même chose et respecte cette taille ou cet espacement, comme une liste de liens vers les lieux de la carte."
+          ],
+          "passWhen": "La taille de la cible est essentielle à ce que montre le graphique, ou la cible fait au moins 24 pixels CSS sur 24 ou est suffisamment éloignée des autres, ou un autre contrôle de la page qui respecte la taille fait la même chose.",
+          "failWhen": "La taille de la cible n’est pas essentielle, elle fait moins de 24 pixels CSS sur 24 et est si proche d’une autre cible que leurs cercles de 24 pixels se chevauchent, et aucun autre contrôle de la page qui respecte la taille ne fait la même chose, ce qui ne respecte pas le critère WCAG 2.5.8."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたターゲットと、それが属する図（SVGの描画、canvas、またはイメージマップ、つまりクリックできる領域を持つ画像）を見つけてください。",
+            "地図のピンやグラフの点のように、ターゲットのサイズや位置が、大きくしたりほかから離したりすると失われる情報を伝えているかを判断してください。",
+            "そうでない場合は、開発者ツールのボックスモデルでターゲットを調べ、24 × 24 CSSピクセル以上あるか、またはターゲットを中心とする直径24ピクセルの円がほかのターゲットやほかの小さなターゲットの円に接するかを確認してください。",
+            "小さく近すぎる場合は、地図の場所をリンクで並べた一覧のように、同じページに同じ機能を持ち、そのサイズまたは間隔を満たすほかのコントロールがあるかを探してください。"
+          ],
+          "passWhen": "ターゲットのサイズが図の示す内容に必要不可欠である、ターゲットが24 × 24 CSSピクセル以上あるかほかから十分に離れている、またはサイズを満たすほかのコントロールがページ上で同じ機能を持っています。",
+          "failWhen": "ターゲットのサイズは必要不可欠ではなく、24 × 24 CSSピクセル未満で、ほかのターゲットに近く直径24ピクセルの円どうしが重なり、サイズを満たして同じ機能を持つほかのコントロールもページ上にないため、WCAG 2.5.8を満たしません。"
         }
       }
     }

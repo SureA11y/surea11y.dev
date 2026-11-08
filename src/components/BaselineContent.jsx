@@ -225,7 +225,8 @@ export function BaselineContent() {
 			</p>
 			<p>
 				The table covers one minor release: a move is listed from the release it shipped in until
-				the next minor release, which drops it. 1.15 moved no finding, so its table is empty.
+				the next minor release, which drops it. 1.15 and 1.16 moved no finding, so the table is
+				empty.
 			</p>
 			<p>1.14 moved these, from 1.13, and 1.15 dropped them:</p>
 			<DataTable
@@ -242,7 +243,8 @@ export function BaselineContent() {
 				So a baseline written by 1.13 keeps matching these under 1.14.x, not under 1.15: there an
 				entry under an old code is stale and its finding is new. Bring such a baseline up to date
 				under 1.14.x, as below, before moving to 1.15; <code>migrateBaselineEntries</code> in 1.15
-				no longer knows these moves. A baseline written by 1.14 keeps matching under 1.15.
+				no longer knows these moves. A baseline written by 1.14 keeps matching under 1.15 and
+				1.16.
 			</p>
 			<p>
 				Regenerating the baseline with <code>--write-baseline</code> (or{" "}
@@ -326,7 +328,15 @@ export function BaselineContent() {
 				<code>{"{ version: 1, entries: [...] }"}</code> with a clear exit-2 error rather than
 				guessing at an older/different format. <code>matchBaseline</code>, and the{" "}
 				<code>baselineEntries</code> option of the SARIF and JUnit reporters, take the file as
-				saved (<code>JSON.parse</code> of it) or its <code>entries</code> list.
+				saved (<code>JSON.parse</code> of it) or its <code>entries</code> list.{" "}
+				<code>null</code> or no baseline has no entries, so every failure is new. Since core
+				1.16.0, anything else throws a <code>TypeError</code> with{" "}
+				<code>code: 'INVALID_BASELINE'</code> and a message naming what is wrong: a string or an
+				object with no <code>entries</code> list, an entry that isn't an object or has no{" "}
+				<code>ruleId</code>, a <code>reasonCode</code>, <code>selector</code> or <code>html</code>{" "}
+				that is neither a string nor <code>null</code>, or a <code>frame</code> that isn't a list
+				of strings. <code>migrateBaselineEntries</code> checks it the same way. Before, such a
+				value was read as an empty baseline, which made every failure new without a word.
 			</p>
 
 			<h2>Combining with <code>--json</code></h2>

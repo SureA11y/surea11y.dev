@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Core's lint rules for rules." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Standard only: the requirements and the rules that check each." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Standard only: how a person assesses each requirement by hand, and a test that every requirement has a procedure for each of its facets." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.15.0</code>), and eslint, jsdom and Playwright as development dependencies.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.16.0</code>), and eslint, jsdom and Playwright as development dependencies.</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "The pack's own guide to these files, and what git leaves out." },
 ];
 
@@ -642,12 +642,14 @@ export function PacksContent() {
 					<code>'^1.11.1'</code>), read as npm reads ranges. Start new packs at 1.11.1: the 1.11.0
 					package left out a file packs need in Node. A scan with a core outside it skips the
 					pack, with the reason in <code>skippedPacks</code>. <code>surea11y-pack new</code> writes
-					the version that generated the pack (<code>^1.15.0</code>); keep a range that starts at
+					the version that generated the pack (<code>^1.16.0</code>); keep a range that starts at
 					1.14 if the pack uses what 1.14 added: <code>meta.review</code>, <code>reasonCodes</code>{" "}
 					and <code>findings</code> rows, <code>meta.contributions</code>, <code>applicability</code>,{" "}
 					<code>partial</code> or <code>keepsParsing</code>; and one that starts at 1.15 if it uses{" "}
 					<code>outcome: 'fail'</code>. What else 1.15 reads (a standard's procedures, groups and
-					translations, its own review steps) an older core ignores.
+					translations, its own review steps) an older core ignores. A pack that uses an API core
+					marks experimental declares a range that takes no later minor (<code>'~1.16.0'</code>);
+					see <a href="#experimental">Experimental APIs</a>.
 				</li>
 				<li>
 					<strong><code>title</code></strong> is what results and reports call a checklist, and{" "}
@@ -797,11 +799,20 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				Match only fields a rule keeps stable: <code>reasonCode</code> on every rule, and the few
+				Match only fields a rule keeps stable: <code>reasonCode</code> on every rule, and the
 				others core's <a href={`${core}/docs/API_STABILITY.md`}>API stability policy</a> on GitHub
-				names (<code>contrast-minimum</code>'s ratio, threshold and typography, among them). A
-				field that changes or disappears matches nothing, and the finding goes by its code or the
-				row. Each rule's reason codes are listed under "What a finding reports" in core's{" "}
+				names: <code>contrast-minimum</code>'s ratio, threshold and typography,{" "}
+				<code>contrast-computable</code>'s typography, the list rules' <code>element</code> and{" "}
+				<code>parentElement</code>, <code>aria-role-name-present</code>'s <code>role</code>, the
+				link rules' <code>linkKind</code>, <code>live-region-announcements</code>'{" "}
+				<code>messageKind</code>, and, experimental, <code>skip-link</code>'s <code>lean</code>{" "}
+				(see the <a href="/results-reports/output-schema/#occurrence">output schema</a>). The typography of
+				<code>contrast-computable</code>, <code>linkKind</code>, <code>messageKind</code> and{" "}
+				<code>lean</code> are new in core 1.16.0, for a standard that files findings under tests of its own
+				(an image link apart from a text link, a status message apart from an alert).{" "}
+				<code>linkKind</code> and <code>messageKind</code> may gain values in a minor: name the
+				ones you route, and the others go by their code or the row. A field that changes or
+				disappears matches nothing, and the finding goes by its code or the row. Each rule's reason codes are listed under "What a finding reports" in core's{" "}
 				<a href={`${core}/docs/RULE_CATALOG.md`}>rule catalog</a> on GitHub.
 			</p>
 			<p>
@@ -817,6 +828,66 @@ export function PacksContent() {
 				<code>meta.contributions</code>; <code>StandardRollup</code> in <code>pack.d.ts</code>{" "}
 				gives the shape, and core's <a href={`${core}/docs/PACKS.md`}>pack guide</a> on GitHub
 				walks through it. All of these need core 1.14.0.
+			</p>
+			<p>
+				<strong>Tests under requirements</strong> (core 1.16.0,{" "}
+				<a href="#experimental">experimental</a>). A standard that judges tests under its
+				requirements, as RGAA judges tests under each criterion, gives{" "}
+				<code>ruleMappedStandard</code> a third table, <code>tests</code>, per version: each test's{" "}
+				<code>title</code> and the <code>requirements</code> it belongs to. A rule-map row then
+				names tests, and may say where its findings are only questions, with <code>asks</code>.
+				There is still one rollup per requirement, grouping the rules of its tests; each finding
+				counts toward the test it fails, and the results name each test with the requirement it
+				belongs to (<code>criterion</code>):
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"requirements: { '1.0': { '4.2': { title: 'Images have a text alternative', wcagSc: ['1.1.1'], tests: ['4.2.1', '4.2.2'] } } },",
+					"tests: { '1.0': {",
+					"  '4.2.1': { title: 'Each image has an alt attribute', requirements: ['4.2'] },",
+					"  '4.2.2': { title: 'Each alternative describes the image', requirements: ['4.2'] }",
+					"} },",
+					"ruleMap: { '1.0': {",
+					"  'img-alt-present': { requirements: ['4.2.1'] },",
+					"  'img-alt-quality': { requirements: [], asks: ['4.2.2'] }",
+					"} }",
+				]}
+			/>
+
+			<h3 id="standards-as-data">A standard as data, or built on others</h3>
+			<p>
+				Since core 1.16.0 (<a href="#experimental">experimental</a>), the same tables, with the
+				standard's versions, groups, profiles and texts, can be one JSON object in the format{" "}
+				<code>surea11y-standard/1</code>, which <code>@surea11y/core/schemas/standard.schema.json</code>{" "}
+				describes, so any tool can read the standard without running the pack.{" "}
+				<code>checkStandardData(data)</code> lists what is wrong with it,{" "}
+				<code>standardFromData(data)</code> makes the pack's <code>standard</code> from it, and{" "}
+				<code>standardDataOf(standard)</code> gives it back. The{" "}
+				<a href="#en-301-549-pack">EN 301 549 pack</a> built from its data gives the same results
+				as it does today.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const { definePack, standardFromData } = require('@surea11y/core/pack');",
+					"const data = require('./standard.json');   // { format: 'surea11y-standard/1', key: 'city', ... }",
+					"",
+					"module.exports = definePack({ name, version, namespace: 'city', core: '~1.16.0',",
+					"  standard: standardFromData(data) });",
+				]}
+			/>
+			<p>
+				A standard built on one or more others, the way some national standards build on EN 301
+				549 or split its clauses into steps, declares only what it keeps and changes:{" "}
+				<code>deriveStandard(bases, own)</code> completes it from the bases' data. Each of its
+				versions, requirements and tests says what it is <code>basedOn</code>; it takes the fields,
+				tests and rule-map rows of what it is based on, its own rows replace or drop inherited
+				ones, and a <code>basedOn</code> the bases can't answer throws, so when a base changes the
+				derived pack's tests fail rather than its results. Each entry in a result carries the{" "}
+				<code>basedOn</code> of its requirement or test, so a step's result names the clause it
+				comes from. Core's <a href={`${core}/docs/PACKS.md`}>pack guide</a> on GitHub has the format
+				and every rule of the derivation.
 			</p>
 
 			<h3 id="rules">Rules</h3>
@@ -909,7 +980,10 @@ export function PacksContent() {
 				that criterion's <a href="/conformance/procedures/">procedures</a> as core's do. A standard
 				that judges core's rules by reason code can also give its own steps for a core rule's code,
 				in <code>standard.review</code>: a finding only its profiles ask about reads them in place
-				of core's, which name WCAG.
+				of core's, which name WCAG. Since core 1.16.0,{" "}
+				<code>{"howToCheckFor(ruleId, code, locale, { packs, profile })"}</code> reads them the same
+				way without a finding, and <code>reviewByVersion</code> gives each version of the standard
+				steps of its own, so steps that name a requirement can follow the version's numbering.
 			</p>
 
 			<h3 id="procedures">How a person assesses it: procedures</h3>
@@ -964,6 +1038,13 @@ export function PacksContent() {
 				for one gets the first form for every requirement from <code>ruleMappedStandard</code>.
 			</p>
 			<p>
+				Since core 1.16.0, a facet also lists the core rules the standard's mapping sends to what
+				it assesses, in its <code>rules</code> and its <code>mappedRules</code>, so a test only
+				core's rules check no longer looks unchecked. A standard whose map links rules to
+				something finer than its procedures' requirements, a criterion's tests say, names in each
+				facet the ids its mapping uses, in <code>mappedRequirements</code>.
+			</p>
+			<p>
 				A standard can also give <code>groups</code> (its themes or chapters, by version),{" "}
 				<code>relatesTo</code> on a requirement of its own (the WCAG criteria it relates to without
 				restating), and <code>notes</code> (what a reader should know before using a version's
@@ -1002,9 +1083,79 @@ export function PacksContent() {
 			/>
 			<p>
 				A finding's <code>howToCheck</code> and the procedures show them in that locale, and in
-				English each text the locale lacks. For a locale core doesn't ship (<code>pt</code>), a
-				pack's dictionary may also give core's keys, which translates core's rules, and its
-				procedures, there.
+				English each text the locale lacks. Since core 1.16.0, <code>checkPack</code> reports a
+				dictionary that translates only part of an entry (some of its steps and not the others),
+				which would have a person read its steps in two languages. For a locale core doesn't
+				ship (<code>pt</code>), a pack's dictionary may also give core's keys, which translates
+				core's rules, and its procedures, there.
+			</p>
+			<p>
+				A standard's own steps for core's codes (<code>standard.review</code>) are translated
+				under keys made of the standard's <code>key</code>, <code>_standardReview_</code>, the core
+				rule's id and the reason code, then <code>{"step<n>"}</code>, <code>pass</code> or{" "}
+				<code>fail</code> (<code>acme_standardReview_aria-valid-attr-value_ARIA_HASPOPUP_ROLE_MISMATCH_step1</code>);
+				a finding reads them only where the dictionary translates the whole entry, and the English
+				otherwise. These keys are <a href="#experimental">experimental</a> (core 1.16.0).
+			</p>
+			<p>
+				<strong>Translations by id</strong> (core 1.16.0,{" "}
+				<a href="#experimental">experimental</a>). <code>standard.texts</code> translates a standard
+				per version by what each text is rather than by its wording (
+				<code>requirements.4.2.title</code>, <code>groups.4.title</code>,{" "}
+				<code>review.&lt;rule&gt;.&lt;CODE&gt;.steps</code>), so two texts worded alike can be
+				translated apart and a version can word an id its own way. A text with its key in{" "}
+				<code>texts</code> is read from there; one without, from <code>translations</code>, so a
+				standard can move from one to the other text by text.
+			</p>
+
+			<h3 id="laws">The laws a standard is assessed under</h3>
+			<p>
+				Since core 1.16.0 (<a href="#experimental">experimental</a>), a standard can say which laws
+				it serves in <code>standard.laws</code>, since one standard can serve more than one law,
+				and each profile names the one it is for (<code>law</code>). Only <code>name</code> and{" "}
+				<code>jurisdiction</code> are required; <code>appliesTo</code>, <code>exemptions</code>,{" "}
+				<code>since</code>, <code>enforcement</code> and <code>sources</code> (https links only)
+				describe it further, and <code>standard.lawTexts</code> translates them by id.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"laws: {",
+					"  'city-public': {",
+					"    name: 'City Accessibility Act, section 4',",
+					"    jurisdiction: 'DE-BY',                 // 'FR', 'DE-BY', 'EU'…",
+					"    appliesTo: 'Public bodies of the city',",
+					"    sources: [{ title: 'Official journal', url: 'https://example.org/act' }]",
+					"  }",
+					"},",
+					"profiles: { 'city-1.0': { version: '1.0', tags: ['city'], mappedRules: true, law: 'city-public' } }",
+				]}
+			/>
+			<p>
+				They are facts to show, never logic: <strong>core never decides whom a law applies
+				to</strong>. Results name the profile's law (<code>engine.law</code>, see the{" "}
+				<a href="/results-reports/output-schema/">output schema</a>), the{" "}
+				<a href="/results-reports/html-report/">HTML report</a> shows it beside the profile,{" "}
+				<code>{"listProcedures({ profile })"}</code> lists only the requirements that law asks for
+				(a requirement only some of the laws ask for lists them in <code>laws</code>), and{" "}
+				<code>describePacks</code> lists each standard's laws with the profiles that serve them.{" "}
+				<code>lawOf(standard, id, locale)</code> from <code>@surea11y/core/pack</code> gives a law
+				in a language. A standard derived from another names its own laws; it doesn't inherit them.
+			</p>
+
+			<h3 id="experimental">Experimental APIs</h3>
+			<p>
+				Core 1.16.0 marks some APIs experimental: they may change in a minor release, never in a
+				patch, and become stable or are removed within two minors. Today those are standards as
+				data, tests under requirements, standards built on others, translations by id and{" "}
+				<code>reviewByVersion</code>, laws, the <code>_standardReview_</code> dictionary keys and{" "}
+				<code>skip-link</code>'s <code>data.details.lean</code>, all experimental until 1.18.0.
+				A pack that uses one declares a <code>core</code> range that takes no later minor (
+				<code>'~1.16.0'</code>), since the next minor may change it: <code>checkPack</code> reports a
+				wider one, and <code>describePacks</code> lists what each pack uses. Everything else on
+				this page is stable across 1.x. Core's{" "}
+				<a href={`${core}/docs/API_STABILITY.md#experimental-may-change-in-a-minor`}>API stability policy</a>{" "}
+				on GitHub keeps the list.
 			</p>
 
 			<h3 id="test-lint-document">Test, lint and document it</h3>
