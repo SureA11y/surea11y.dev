@@ -649,10 +649,13 @@ Open English-source issues found in that review, not yet decided:
 - **deploy**: push to `main` only, after both: `npx wrangler deploy` with
   secrets `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`. It replaces
   Cloudflare's git-triggered build, which was disconnected on 2026-10-03
-  after the first deploy from Actions worked: the org's free plan can't
-  require checks on a private repo, so the deploy job's `needs` is the
-  gate. Don't reconnect that build, or pushes to `main` go live without
-  the checks and the scan. Wrangler also reports the Worker's default
+  after the first deploy from Actions worked. The deploy job's `needs`
+  is the gate for what goes live. Don't reconnect that build, or pushes
+  to `main` go live without the checks and the scan.
+- The repo is public since 2026-11-08 (Actions minutes on the private
+  repo had run out). Ruleset "Protected" on the default branch: no
+  deletion or force-push, a pull request for every change (no bypass),
+  and "Build and site checks" required to merge. Wrangler also reports the Worker's default
   `surea11y-dev.rumoroso.workers.dev` address, which serves the same site
   (a "workers.dev" toggle in the Worker's settings).
 - `.github/dependabot.yml`: `@surea11y/*` weekly (grouped), Actions monthly.
