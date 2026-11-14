@@ -444,6 +444,36 @@ export function LocalesContent() {
 				already-resolved text, so you can re-render
 				in a different locale from a saved result without re-scanning.
 			</p>
+
+			<h2 id="help-with-translations">Help with translations</h2>
+			<p>
+				Every language not yet in the table above is welcome, for the engine's messages and for
+				this site alike, and so is help short of translating a whole language. Translating needs
+				no code: the engine's messages are files of strings, and each page of this site has one
+				file per language.
+			</p>
+			<ul>
+				<li>
+					<strong>Report a wrong or unclear text</strong> in a language you read: an engine
+					message with a <a href="https://github.com/SureA11y/core/issues/new?template=translation.md">translation issue on the engine</a>, a page of this site
+					with <a href="https://github.com/SureA11y/surea11y.dev/issues/new?template=translation.md">one on the site</a>.
+				</li>
+				<li>
+					<strong>Review a language</strong> if you speak it natively and work in accessibility:
+					join the <a href={`${core}/docs/I18N.md#translation-reviewers`}>translation reviewers</a>, who are asked when a
+					translation of the engine or of this site needs them.
+				</li>
+				<li>
+					<strong>Translate</strong>: <a href={`${core}/docs/I18N.md#adding-your-language`}>Adding your language</a> has the steps
+					for the engine's messages, and <a href="https://github.com/SureA11y/surea11y.dev#adding-a-language">the site's README</a> for this site's
+					pages.
+				</li>
+			</ul>
+			<p>
+				A new language, in the engine or on this site, is merged once someone who speaks it
+				natively and works in accessibility has reviewed it. A reviewer is as welcome as a
+				translator.
+			</p>
 		</>
 	);
 }

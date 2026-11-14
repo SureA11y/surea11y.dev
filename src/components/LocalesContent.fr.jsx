@@ -464,6 +464,41 @@ export function LocalesContent() {
 				Les clés de la règle, de la règle composite et de l’occurrence figurent dans le résultat à côté du texte déjà résolu, ce qui vous permet de
 				réafficher un résultat enregistré dans une autre langue sans relancer l’analyse.
 			</p>
+
+			<h2 id="help-with-translations">Aider aux traductions</h2>
+			<p>
+				Toute langue absente du tableau ci-dessus est la bienvenue, pour les messages du moteur
+				comme pour ce site, et toute aide qui ne va pas jusqu’à traduire une langue entière l’est
+				aussi. Traduire ne demande pas de code : les messages du moteur sont des fichiers de
+				textes, et chaque page de ce site a un fichier par langue.
+			</p>
+			<ul>
+				<li>
+					<strong>Signalez un texte faux ou peu clair</strong> dans une langue que vous lisez :
+					un message du moteur par un{" "}
+					<a href="https://github.com/SureA11y/core/issues/new?template=translation.md">ticket de traduction sur le moteur</a>, une page de ce site par{" "}
+					<a href="https://github.com/SureA11y/surea11y.dev/issues/new?template=translation.md">un ticket sur le site</a>.
+				</li>
+				<li>
+					<strong>Relisez une langue</strong> si c’est votre langue maternelle et que vous
+					travaillez dans l’accessibilité : rejoignez{" "}
+					<a href={`${core}/docs/I18N.md#translation-reviewers`}>les personnes qui relisent les traductions</a>, sollicitées quand
+					une traduction du moteur ou de ce site a besoin d’elles.
+				</li>
+				<li>
+					<strong>Traduisez</strong> :{" "}
+					<a href={`${core}/docs/I18N.md#adding-your-language`}>
+						<span lang="en">Adding your language</span>
+					</a>{" "}
+					(en anglais) décrit les étapes pour les messages du moteur, et{" "}
+					<a href="https://github.com/SureA11y/surea11y.dev#adding-a-language">le README du site</a> celles pour ses pages.
+				</li>
+			</ul>
+			<p>
+				Une nouvelle langue, dans le moteur ou sur ce site, est intégrée une fois relue par une
+				personne dont c’est la langue maternelle et qui travaille dans l’accessibilité. Une
+				personne qui relit est aussi bienvenue qu’une personne qui traduit.
+			</p>
 		</>
 	);
 }

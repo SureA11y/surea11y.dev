@@ -472,6 +472,40 @@ export function LocalesContent() {
 				Las claves de regla, de compuesto y de ocurrencia se incluyen en el resultado junto con el
 				texto ya resuelto, así que puedes volver a renderizar en una configuración regional distinta a partir de un resultado guardado sin volver a analizar.
 			</p>
+
+			<h2 id="help-with-translations">Ayuda con las traducciones</h2>
+			<p>
+				Cualquier idioma que aún no esté en la tabla de arriba es bienvenido, tanto para los
+				mensajes del motor como para este sitio, y también lo es la ayuda que no llega a traducir
+				un idioma entero. Traducir no requiere código: los mensajes del motor son archivos de
+				textos, y cada página de este sitio tiene un archivo por idioma.
+			</p>
+			<ul>
+				<li>
+					<strong>Informa de un texto incorrecto o poco claro</strong> en un idioma que leas: un
+					mensaje del motor, con una{" "}
+					<a href="https://github.com/SureA11y/core/issues/new?template=translation.md">incidencia de traducción en el motor</a>; una página de este sitio, con{" "}
+					<a href="https://github.com/SureA11y/surea11y.dev/issues/new?template=translation.md">una en el sitio</a>.
+				</li>
+				<li>
+					<strong>Revisa un idioma</strong> si es tu lengua materna y trabajas en accesibilidad:
+					únete a <a href={`${core}/docs/I18N.md#translation-reviewers`}>las personas revisoras de traducciones</a>, a quienes se
+					avisa cuando una traducción del motor o de este sitio las necesita.
+				</li>
+				<li>
+					<strong>Traduce</strong>:{" "}
+					<a href={`${core}/docs/I18N.md#adding-your-language`}>
+						<span lang="en">Adding your language</span>
+					</a>{" "}
+					(en inglés) explica los pasos para los mensajes del motor, y{" "}
+					<a href="https://github.com/SureA11y/surea11y.dev#adding-a-language">el README del sitio</a>, los de sus páginas.
+				</li>
+			</ul>
+			<p>
+				Un idioma nuevo, en el motor o en este sitio, se incorpora cuando alguien que lo habla
+				como lengua materna y trabaja en accesibilidad lo ha revisado. Quien revisa es tan
+				bienvenido como quien traduce.
+			</p>
 		</>
 	);
 }
