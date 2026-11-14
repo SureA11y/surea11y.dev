@@ -105,7 +105,8 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Die Lint-Regeln von core für Regeln." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Nur bei einer Norm: die Anforderungen und die Regeln, die jede prüfen." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Nur bei einer Norm: wie eine Person jede Anforderung von Hand bewertet, und ein Test, dass jede Anforderung für jede ihrer Facetten ein Prüfverfahren hat." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, mit <code>@surea11y/core</code> als Peer-Dependency in der Version, die es geschrieben hat (<code>^1.16.1</code>), und eslint, jsdom und Playwright als Entwicklungsabhängigkeiten.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, mit <code>@surea11y/core</code> als Peer-Dependency in der Version, die es geschrieben hat (<code>^1.17.0</code>), und eslint, jsdom und Playwright als Entwicklungsabhängigkeiten.</> },
+	{ id: "derived", file: <><code>standard-data.js</code>, <code>tests/standard.test.js</code></>, what: <>Nur bei einem abgeleiteten Pack, und neben <code>index.js</code>, <code>README.md</code>, <code>package.json</code>, <code>eslint.config.js</code> und <code>.gitignore</code> seine einzigen Dateien: die aus den Daten der Basis abgeleitete Norm, die Basis unverändert, bis Sie sie ändern, und ihre Tests (<a href="#a-pack-built-on-another-pack">Ein Pack, das auf einem anderen aufbaut</a>).</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "Die eigene Anleitung des Packs zu diesen Dateien, und was git auslässt." },
 ];
 
@@ -163,7 +164,11 @@ export function PacksContent() {
 				V4.1.1. Es hat ein Profil pro Version, <code>en301549-v4.1.1</code> und{" "}
 				<code>en301549-v3.2.1</code>, das ein Ergebnis pro Klausel meldet, und{" "}
 				<code>mappings: ['en301549']</code>, um die Klauseln in den Ergebnissen jedes Scans zu
-				nennen, auch eines WCAG-Scans. Es braucht <code>@surea11y/core</code> 1.13.0 oder neuer.
+				nennen, auch eines WCAG-Scans. Sein neuestes Release, 1.4.0, braucht{" "}
+				<code>@surea11y/core</code> 1.17 (<code>~1.17.0</code>): Seine Norm ist aus{" "}
+				<a href="#standards-as-data">Normdaten</a> gebaut, die in core bis 1.18.0 experimentell
+				sind, daher lässt es bis dahin kein späteres Minor zu. Verwenden Sie für core 1.16 seine
+				Releases 1.3 und für core 1.13 bis 1.15 seine Releases 1.2.
 			</p>
 			<p>
 				Seine Version 1.1.0, gebaut auf core 1.14.0, beurteilt jede Klausel so, wie core das
@@ -189,6 +194,18 @@ export function PacksContent() {
 				funktionalen Leistungsmerkmale in Kapitel 4, Kapitel 12, die Kapitel für das, was keine
 				Webseite ist) haben darin keine Regel, kein Ergebnis und kein Prüfverfahren.
 			</p>
+			<p>
+				Sein Release 1.3.0 baut die Norm aus Daten (<code>standard-data.js</code>, im Format{" "}
+				<code>surea11y-standard/1</code> von core), mit denselben Ergebnissen, und exportiert diese
+				Daten, sodass eine auf der EN 301 549 aufbauende Norm, die ihre Klauseln in Schritte
+				aufteilt oder eigene Anforderungen hinzufügt, mit <code>deriveStandard</code> davon ausgeht,
+				statt die Tabellen des Packs zu kopieren (siehe{" "}
+				<a href="#standards-as-data">Eine Norm als Daten</a>). Sein Release 1.4.0 für core 1.17
+				bewertet zwei weitere Klauseln mit den Regeln von core: 9.1.4.11 „Nicht-Text-Kontrast“, in
+				beiden Versionen, über <code>css-focus-indicator-suppressed</code>, und 9.2.4.11 „Fokus
+				nicht verdeckt (Minimum)“ von V4.1.1 über die neue Regel{" "}
+				<code>focus-not-obscured-minimum</code> von core.
+			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -208,7 +225,7 @@ export function PacksContent() {
 				(<code>keepsParsing</code>). Seine Klauseln geben WCAG-Kriterien eins zu eins wieder (
 				<code>applicability: 'wcag'</code>), und seine Regelzuordnung wird aus dem Katalog des
 				installierten core abgeleitet: Eine Regel, die core hinzufügt, ist ohne Änderung am Pack
-				abgedeckt. Eine Norm mit Anforderungen, die die WCAG nicht hat, folgt derselben Form und
+				abgedeckt; so ist 1.4.0 zu seinen zwei Klauseln gekommen. Eine Norm mit Anforderungen, die die WCAG nicht hat, folgt derselben Form und
 				bringt eigene Regeln mit. Der Quelltext ist kurz und lohnt sich neben{" "}
 				<a href="#writing-a-pack">Ein Pack schreiben</a> weiter unten.
 			</p>
@@ -314,7 +331,10 @@ export function PacksContent() {
 				vollständig aufgeführt, aus den Tabellen der Empfehlung. <code>docs/COVERAGE.md</code> des
 				Packs führt jede Anforderung von WAI-ARIA 1.2 an Autorinnen und Autoren auf, die eine Regel
 				aus dem Markup prüfen kann, ein Fall pro Rolle, Zustand oder Eigenschaft, und was das
-				Profil aus jedem macht.
+				Profil aus jedem macht. Seit 1.1.0 nennen die Meldungen seiner Regeln, was einen Befund
+				verursacht, und den beinahe richtigen Wert, wo einer nahe liegt (eine falsch geschriebene
+				Rolle oder ein falsch geschriebenes Attribut, die Größe, die die meisten Elemente einer
+				Gruppe angeben).
 			</p>
 			<p>
 				Es ist auch das ausgearbeitete Beispiel einer Norm, die sich sicher ist, wo WCAG fragt:{" "}
@@ -574,7 +594,10 @@ export function PacksContent() {
 				registriert hat oder das mit einer anderen core-Version registriert wurde, genauso
 				aufgeführt. Ein Scan kann also ohne die Prüfungen enden, für die Sie das Pack hinzugefügt
 				haben: Ein Tool, das von einem Pack abhängt, sollte <code>skippedPacks</code> prüfen, bevor
-				es den Scan als vollständig behandelt.
+				es den Scan als vollständig behandelt. Seit core 1.17.0 wird auch ein Pack übersprungen,
+				das auf einem anderen aufbaut (<a href="#a-pack-built-on-another-pack">siehe unten</a>),
+				wenn die Packs, die es nutzt, nicht in der Version im Scan sind, mit der es erstellt wurde,
+				und ebenso die Packs, die es nutzen.
 			</p>
 			<p>Jedes Tool macht aus einem übersprungenen Pack einen sichtbaren Fehlschlag:</p>
 			<ul>
@@ -625,6 +648,8 @@ export function PacksContent() {
 					{ text: "npx -p @surea11y/core surea11y-pack new acme-a11y --name @acme/a11y-pack", command: true },
 					"# or, for a standard:",
 					{ text: "npx -p @surea11y/core surea11y-pack new city-standard --name @city/a11y-standard --kind standard --title \"City Standard\"", command: true },
+					"# or, for a standard built on another pack's (installed first, here EN 301 549):",
+					{ text: "npx -p @surea11y/core surea11y-pack new city-en301549 --name @city/a11y-en301549 --kind derived --from @surea11y/pack-en301549", command: true },
 					"",
 					{ text: "cd acme-a11y", command: true },
 					{ text: "npm install", command: true },
@@ -638,8 +663,12 @@ export function PacksContent() {
 				<code>surea11y-pack new</code> prüft das Pack vor dem Schreiben so, wie ein Scan es täte,
 				und lehnt einen Namen, Namensraum oder Titel ab, der es ungültig machen würde (ein Titel{" "}
 				<code>WCAG</code> gibt seine Norm als eine von core aus), mit Begründung. Ändern Sie es von
-				dort aus Schritt für Schritt und führen Sie dabei <code>npm test</code> aus. Seine README
-				geht jede Datei durch:
+				dort aus Schritt für Schritt und führen Sie dabei <code>npm test</code> aus. Ein abgeleitetes
+				Pack (<code>--kind derived</code>, ab core 1.17.0,{" "}
+				<a href="#experimental">experimentell</a>) ist die Basis unverändert, ohne eigene Regeln,
+				bis Sie es ändern: siehe{" "}
+				<a href="#a-pack-built-on-another-pack">Ein Pack, das auf einem anderen aufbaut</a>. Seine
+				README geht jede Datei durch:
 			</p>
 			<DataTable
 				label="Dateien eines erzeugten Packs"
@@ -681,7 +710,7 @@ export function PacksContent() {
 					Scan mit
 					einem core außerhalb davon überspringt das Pack, mit dem Grund in{" "}
 					<code>skippedPacks</code>. <code>surea11y-pack new</code> schreibt die Version, die das
-					Pack erzeugt hat (<code>^1.16.1</code>); behalten Sie einen Bereich, der bei 1.14 beginnt,
+					Pack erzeugt hat (<code>^1.17.0</code>); behalten Sie einen Bereich, der bei 1.14 beginnt,
 					wenn das Pack nutzt, was 1.14 hinzugefügt hat: <code>meta.review</code>, Zeilen mit{" "}
 					<code>reasonCodes</code> und <code>findings</code>, <code>meta.contributions</code>,{" "}
 					<code>applicability</code>, <code>partial</code> oder <code>keepsParsing</code>; und einen,
@@ -689,7 +718,7 @@ export function PacksContent() {
 					(die Prüfverfahren, Gruppen und Übersetzungen einer Norm, ihre eigenen Prüfschritte),
 					ignoriert ein älteres core. Ein Pack, das eine API nutzt, die core als experimentell
 					kennzeichnet, gibt einen Bereich an, der kein späteres Minor zulässt
-					(<code>'~1.16.0'</code>); siehe <a href="#experimental">Experimentelle APIs</a>.
+					(<code>'~1.17.0'</code>); siehe <a href="#experimental">Experimentelle APIs</a>.
 				</li>
 				<li>
 					<strong><code>title</code></strong> ist der Name, unter dem Ergebnisse und Berichte eine
@@ -915,8 +944,8 @@ export function PacksContent() {
 				die Norm lesen kann, ohne das Pack auszuführen. <code>checkStandardData(data)</code>{" "}
 				listet auf, was daran falsch ist, <code>standardFromData(data)</code> macht daraus das{" "}
 				<code>standard</code> des Packs, und <code>standardDataOf(standard)</code> gibt es zurück.
-				Das aus seinen Daten gebaute <a href="#en-301-549-pack">EN-301-549-Pack</a> liefert
-				dieselben Ergebnisse wie heute.
+				Das <a href="#en-301-549-pack">EN-301-549-Pack</a> ist seit seinem Release 1.3.0 so
+				gebaut, und seine Daten sind der Ausgangspunkt einer Norm, die auf der EN 301 549 aufbaut.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -924,7 +953,7 @@ export function PacksContent() {
 					"const { definePack, standardFromData } = require('@surea11y/core/pack');",
 					"const data = require('./standard.json');   // { format: 'surea11y-standard/1', key: 'city', ... }",
 					"",
-					"module.exports = definePack({ name, version, namespace: 'city', core: '~1.16.0',",
+					"module.exports = definePack({ name, version, namespace: 'city', core: '~1.17.0',",
 					"  standard: standardFromData(data) });",
 				]}
 			/>
@@ -941,6 +970,73 @@ export function PacksContent() {
 				Anforderung oder seines Tests, sodass das Ergebnis eines Schritts die Klausel nennt, aus
 				der er stammt. Der <a href={`${core}/docs/PACKS.md`}>Pack-Leitfaden</a> von core auf
 				GitHub enthält das Format und jede Regel der Ableitung.
+			</p>
+
+			<h3 id="a-pack-built-on-another-pack">Ein Pack, das auf einem anderen aufbaut</h3>
+			<p>
+				Seit core 1.17.0 (<a href="#experimental">experimentell</a>) nutzt ein Pack, dessen Norm
+				von der eines anderen Packs abgeleitet ist, dessen eigene Regeln, wenn dieses Basis-Pack
+				welche hat, statt sie zu kopieren: Es nennt die Packs, auf denen es aufbaut, in{" "}
+				<code>uses</code>, und seine Norm ordnet deren Regeln nach ID zu, wie sie die von core
+				zuordnet.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const base = require('@acme/pack-base');",
+					"",
+					"module.exports = definePack({",
+					"  name: '@acme/pack-derived', version: '1.0.0', namespace: 'derived', core: '~1.17.0',",
+					"  uses: [base],   // the pack itself, as installed (a dependency in package.json)",
+					"  standard        // its rule map may name the base's rules, and its profiles run them",
+					"});",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>Die Regeln bleiben, wo sie sind.</strong> Ein Pack nutzt die Regeln eines anderen
+					so wie die von core: Es gibt an, welche seiner Anforderungen jede prüft, und seine Profile
+					führen sie aus. Ändern kann es sie nicht; wo es anders urteilt, ordnet es ihre Befunde auf
+					seine eigene Weise zu oder schreibt eine eigene Regel.
+				</li>
+				<li>
+					<strong>Ein Scan führt es nur zusammen mit ihnen aus.</strong> Die Packs, die es nutzt,
+					gehören in denselben Scan (<code>packs: [base, derived]</code>; in einer Seite ein
+					einziger Aufruf von <code>packScript</code>), in der Version, mit der es erstellt wurde.
+					Sonst überspringt der Scan es, nennt den Grund in <code>skippedPacks</code> und
+					überspringt auch die Packs, die es nutzen; <code>packScript</code> wirft einen Fehler.
+				</li>
+				<li>
+					<strong>Eine Kette funktioniert.</strong> Ein Pack kann eines nutzen, das andere nutzt;{" "}
+					<code>checkPack</code> lehnt einen Kreis ab, zwei Versionen eines Packs in der Kette und
+					einen Eintrag, der kein gültiges Pack ist. <code>describePacks</code> listet auf, was
+					jedes Pack nutzt.
+				</li>
+				<li>
+					<strong>Ohne <code>uses</code></strong> ordnet eine Norm nur die Regeln von core und ihre
+					eigenen zu: Eine Regel, die zwei voneinander unabhängige Normen brauchen, gehört in core.
+				</li>
+			</ul>
+			<p>
+				<code>surea11y-pack new &lt;folder&gt; --kind derived --from &lt;base&gt;</code> schreibt,
+				wenn die Basis dort installiert ist, wo Sie es ausführen, und ihre Norm im Datenformat
+				vorliegt, ein Pack, das die Basis unverändert ist: <code>standard-data.js</code> leitet
+				jede Anforderung der neuesten Version der Basis ab, mit ihren Tests und ihrer
+				Regelzuordnung, und hat eine leere Tabelle der Änderungen mit einem Beispiel jeder Art;{" "}
+				<code>index.js</code> nutzt die Basis; der Bereich von core ist <code>~</code>, und die
+				Basis ist eine Abhängigkeit in der installierten Version. Seine Tests prüfen, dass die
+				Daten gültig sind, dass jede Zeile, die es nicht ändert, die der Basis ist, und dass sein
+				Profil mit der Basis läuft und ohne sie übersprungen wird.
+			</p>
+			<p>
+				Testen Sie jeden Unterschied an einer Seite: Wo die abgeleitete Norm eine Verknüpfung
+				entfernt, einen Fehlschlag zu einer Frage macht oder einen Reason-Code oder einen Befund
+				anderswohin leitet, geben Sie ihr eine Seite, die die Zeile der Basis falsch beurteilen
+				würde, und das Ergebnis, das die abgeleitete Norm liefert. Am meisten braucht das eine
+				Weiterleitung nach einem Feld der Befunde des Basis-Packs: Das Feld gehört dem Basis-Pack,
+				es ist keines, das core stabil hält, und ändert es sich, trifft die Weiterleitung nichts
+				mehr, und der Befund fällt stillschweigend an die Zeile zurück. Stattdessen schlägt der
+				Seitentest fehl.
 			</p>
 
 			<h3 id="rules">Regeln</h3>
@@ -1180,15 +1276,17 @@ export function PacksContent() {
 				einem zum anderen wechseln kann.
 			</p>
 
-			<h3 id="laws">Die Gesetze, nach denen eine Norm bewertet wird</h3>
+			<h3 id="laws">Das Gesetz, für das ein Profil verwendet wird</h3>
 			<p>
-				Seit core 1.16.0 (<a href="#experimental">experimentell</a>) kann eine Norm in{" "}
-				<code>standard.laws</code> angeben, welchen Gesetzen sie dient, da eine Norm mehr als einem
-				Gesetz dienen kann, und jedes Profil nennt das, für das es gedacht ist (<code>law</code>).
-				Nur <code>name</code> und <code>jurisdiction</code> sind erforderlich;{" "}
-				<code>appliesTo</code>, <code>exemptions</code>, <code>since</code>,{" "}
-				<code>enforcement</code> und <code>sources</code> (nur https-Links) beschreiben es genauer,
-				und <code>standard.lawTexts</code> übersetzt sie nach ID.
+				Seit core 1.16.0 (<a href="#experimental">experimentell</a>) kann ein Profil das Gesetz
+				nennen, für das es verwendet wird (<code>law</code>), eines aus{" "}
+				<code>standard.laws</code> seiner Norm, sodass Ergebnisse und Bericht sagen, für welches
+				Gesetz ein Scan ausgeführt wurde. Core prüft die Anforderungen einer Norm; es benennt das
+				Gesetz und dokumentiert es nicht. Ein Gesetz hat seinen <code>name</code> und seine{" "}
+				<code>jurisdiction</code>, beide erforderlich, und <code>sources</code>, Links zu seinem
+				amtlichen Text (nur https), sonst nichts: core 1.17.0 hat <code>appliesTo</code>,{" "}
+				<code>exemptions</code>, <code>since</code> und <code>enforcement</code> entfernt und lehnt
+				sie ab. <code>standard.lawTexts</code> übersetzt den Namen eines Gesetzes nach ID.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -1197,7 +1295,6 @@ export function PacksContent() {
 					"  'city-public': {",
 					"    name: 'City Accessibility Act, section 4',",
 					"    jurisdiction: 'DE-BY',                 // 'FR', 'DE-BY', 'EU'…",
-					"    appliesTo: 'Public bodies of the city',",
 					"    sources: [{ title: 'Official journal', url: 'https://example.org/act' }]",
 					"  }",
 					"},",
@@ -1205,16 +1302,17 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				Es sind Fakten zum Anzeigen, nie Logik: <strong>Core entscheidet nie, für wen ein Gesetz
-				gilt</strong>. Ergebnisse nennen das Gesetz des Profils (<code>engine.law</code>, siehe das{" "}
+				<strong>Core entscheidet nie, für wen ein Gesetz gilt.</strong> Ergebnisse nennen das
+				Gesetz des Profils (<code>engine.law</code>, siehe das{" "}
 				<a href="/results-reports/output-schema/">Ausgabeschema</a>), der{" "}
 				<a href="/results-reports/html-report/">HTML-Bericht</a> zeigt es neben dem Profil,{" "}
 				<code>{"listProcedures({ profile })"}</code> listet nur die Anforderungen auf, die dieses
-				Gesetz verlangt (eine Anforderung, die nur einige der Gesetze verlangen, nennt sie in{" "}
-				<code>laws</code>), und <code>describePacks</code> listet die Gesetze jeder Norm mit den
-				Profilen auf, die ihnen dienen. <code>lawOf(standard, id, locale)</code> aus{" "}
-				<code>@surea11y/core/pack</code> gibt ein Gesetz in einer Sprache an. Eine von einer anderen
-				abgeleitete Norm nennt ihre eigenen Gesetze; sie erbt sie nicht.
+				Gesetz verlangt (wo eine Norm mehreren Gesetzen dient, nennt eine Anforderung, die nur
+				einige davon verlangen, sie in <code>laws</code>), und <code>describePacks</code> listet
+				die Gesetze jeder Norm mit den Profilen auf, die sie verwenden.{" "}
+				<code>lawOf(standard, id, locale)</code> aus <code>@surea11y/core/pack</code> gibt ein
+				Gesetz mit seinem Namen in einer Sprache an. Eine von einer anderen abgeleitete Norm nennt
+				ihre eigenen Gesetze; sie erbt sie nicht.
 			</p>
 
 			<h3 id="experimental">Experimentelle APIs</h3>
@@ -1224,9 +1322,11 @@ export function PacksContent() {
 				entfernt. Derzeit sind das Normen als Daten, Tests unter Anforderungen, auf anderen
 				aufbauende Normen, Übersetzungen nach ID und <code>reviewByVersion</code>, Gesetze, die
 				Wörterbuchschlüssel <code>_standardReview_</code> und <code>data.details.lean</code> von{" "}
-				<code>skip-link</code>, alle experimentell bis 1.18.0. Ein Pack, das eine davon nutzt, gibt
-				einen <code>core</code>-Bereich an, der kein späteres Minor zulässt{" "}
-				(<code>'~1.16.0'</code>), da das nächste Minor sie ändern kann: <code>checkPack</code>{" "}
+				<code>skip-link</code>, experimentell bis 1.18.0, sowie <code>uses</code> eines Packs und{" "}
+				<code>surea11y-pack new --kind derived</code>, ab 1.17.0 bis 1.19.0. Was das bedeutet,
+				zeigen die Gesetze: 1.17.0 hat vier ihrer Felder entfernt. Ein Pack, das eine davon nutzt,
+				gibt einen <code>core</code>-Bereich an, der kein späteres Minor zulässt{" "}
+				(<code>'~1.17.0'</code>), da das nächste Minor sie ändern kann: <code>checkPack</code>{" "}
 				meldet einen weiteren, und <code>describePacks</code> listet auf, was jedes Pack nutzt.
 				Alles andere auf dieser Seite ist über 1.x hinweg stabil. Die{" "}
 				<a href={`${core}/docs/API_STABILITY.md#experimental-may-change-in-a-minor`}>API-Stabilitätsrichtlinie</a>{" "}

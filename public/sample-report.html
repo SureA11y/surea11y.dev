@@ -116,8 +116,8 @@
 </header>
 
 <div class="meta-bar">
-  <div><b>145</b>rules run</div>
-  <div><b>13</b>total occurrences</div>
+  <div><b>149</b>rules run</div>
+  <div><b>18</b>total occurrences</div>
   <div><b>a11ycore</b>engine</div>
   <div><b>1.0.0</b>schema version</div>
   <div><b>WCAG 2.2</b>target</div>
@@ -128,12 +128,12 @@
 
 <main>
   <div class="hero">
-    <p class="hero-headline"><strong>39</strong> of <strong>48</strong> applicable checks passed. <strong>4</strong> failures need attention below.</p>
-    <div class="hero-bar"><div class="hero-bar-seg" style="width:2.7586206896551726%; background:#b0441f" title="Fail: 4 (2.8%)"></div><div class="hero-bar-seg" style="width:3.4482758620689653%; background:#8a6400" title="Needs review: 5 (3.4%)"></div><div class="hero-bar-seg" style="width:26.89655172413793%; background:#0b7d0b" title="Pass: 39 (26.9%)"></div><div class="hero-bar-seg" style="width:66.89655172413794%; background:#5f6368" title="Not applicable: 97 (66.9%)"></div></div>
+    <p class="hero-headline"><strong>42</strong> of <strong>52</strong> applicable checks passed. <strong>5</strong> failures need attention below.</p>
+    <div class="hero-bar"><div class="hero-bar-seg" style="width:3.3557046979865772%; background:#b0441f" title="Fail: 5 (3.4%)"></div><div class="hero-bar-seg" style="width:3.3557046979865772%; background:#8a6400" title="Needs review: 5 (3.4%)"></div><div class="hero-bar-seg" style="width:28.187919463087248%; background:#0b7d0b" title="Pass: 42 (28.2%)"></div><div class="hero-bar-seg" style="width:65.1006711409396%; background:#5f6368" title="Not applicable: 97 (65.1%)"></div></div>
     <div class="hero-legend"><div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
         <span class="hero-legend-label">Fail</span>
-        <span class="hero-legend-count">4 (2.8%)</span>
+        <span class="hero-legend-count">5 (3.4%)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
@@ -143,12 +143,12 @@
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#0b7d0b">✓</span>
         <span class="hero-legend-label">Pass</span>
-        <span class="hero-legend-count">39 (26.9%)</span>
+        <span class="hero-legend-count">42 (28.2%)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#5f6368">–</span>
         <span class="hero-legend-label">Not applicable</span>
-        <span class="hero-legend-count">97 (66.9%)</span>
+        <span class="hero-legend-count">97 (65.1%)</span>
       </div></div>
   </div>
 
@@ -212,6 +212,21 @@
         
         <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Understanding 1.1.1 Non-text Content</a></p>
       </div>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
+        <span class="card-title"><strong>target-size-enhanced</strong> (Fail, moderate severity) <span class="card-count">× 5</span></span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.5.5</span></div>
+        <div class="card-selector"><span class="card-selector-label">Selector:</span> <code>html &gt; body &gt; header &gt; a</code></div>
+        <div class="card-snippet">Target is 37.6×18 CSS px at a 1280px-wide viewport, under 44×44. — Make the target at least 44×44 CSS px.</div>
+        
+        
+        <p class="card-note">Selector/summary above are from one representative occurrence; 5 total on this rule.</p>
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html">Understanding 2.5.5 Target Size (Enhanced)</a></p>
+      </div>
     </div></div>
 <h3 class="cards-group">Likely fails: confirm</h3><div class="cards"><div class="card">
       <div class="card-head">
@@ -221,7 +236,7 @@
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 3.3.1</span></div>
         <div class="card-selector"><span class="card-selector-label">Selector:</span> <code>#email</code></div>
-        <div class="card-snippet">This field is marked invalid, but the error message aria-errormessage names is hidden. — Show the error message while the field is invalid.</div>
+        <div class="card-snippet">This field is marked invalid, but the error message aria-errormessage names (&quot;Enter an email address such as name@exa…&quot;) is hidden by display: none on &lt;p id=&quot;email-error&quot;&gt;. — Show the error message while the field is invalid.</div>
         <p class="card-lean">Likely fails: The error message tied to the field is hidden, so the error is probably not told.</p>
         <details class="card-how"><summary>How to check</summary><ol><li>Make the field invalid the way a user would (submit the form empty, or type a wrong value).</li><li>Look for the error message the field points to (its aria-errormessage), and check whether it appears on screen.</li><li>If it doesn&#39;t, look for any text that tells you what is wrong: in the label, next to the field, or in a summary at the top of the form.</li><li>With a screen reader, move to the field and listen for the error.</li></ol><p>Passes: The error is shown in text, and announced, somewhere tied to the field, even if not in the message aria-errormessage names.</p><p>Fails: No text tells you which field is wrong and why, or a screen reader user isn&#39;t told, which fails WCAG 3.3.1.</p></details>
         
@@ -236,7 +251,7 @@
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.1.1</span></div>
         <div class="card-selector"><span class="card-selector-label">Selector:</span> <code>html &gt; body &gt; main &gt; img:nth-of-type(2)</code></div>
-        <div class="card-snippet">The text alternative of this &lt;img&gt; looks like a file name. — A file name tells someone who can’t see the image nothing about it. Replace it with text that says what the image shows or, on a link or button, where it leads or what it does. Keep it only if the file name is itself what the image shows, such as a screenshot of a file list.</div>
+        <div class="card-snippet">The text alternative of this &lt;img&gt;, &quot;IMG_2041.jpg&quot;, looks like a file name. — A file name tells someone who can’t see the image nothing about it. Replace it with text that says what the image shows or, on a link or button, where it leads or what it does. Keep it only if the file name is itself what the image shows, such as a screenshot of a file list.</div>
         <p class="card-lean">Likely fails: A file name, a web address or a generic word does not say what the image shows. Caution: The word may be all the image shows, such as an image of that word.</p>
         <details class="card-how"><summary>How to check</summary><ol><li>Find the image the report names and read its alt text (the report gives the reason it looked suspect, if any).</li><li>Look at the image and its context, and ask what it shows that matters to the page.</li><li>If the text alternative only names the image, as is common for charts and diagrams, the details may be given elsewhere: in a caption, text or a table next to it, or a link beside it. That counts only if a screen reader user can find it from the image and it gives everything the image shows.</li><li>Decide whether the alt says what matters, or names the image while that description gives the rest; a file name, web address or generic word such as &quot;image&quot; does neither.</li></ol><p>Passes: The alt text conveys what the image shows that a user needs, or it names the image and a description a screen reader user can reach from it gives the rest.</p><p>Fails: Neither the alt text nor a description reachable from the image conveys the image&#39;s content (for example the alt is a file name, address or generic word), which fails WCAG 1.1.1 (F30).</p></details>
         
@@ -479,6 +494,13 @@
             <td class="note">image-of-text</td>
           </tr>
 <tr>
+            <td class="sc-cell">WCAG 1.4.11</td>
+            <td>Non-text Contrast</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Needs review</span></td>
+            <td class="note">0 pass / 0 fail / 0 needs review / 1 n/a</td>
+            <td class="note">css-focus-indicator-suppressed</td>
+          </tr>
+<tr>
             <td class="sc-cell">WCAG 1.4.12</td>
             <td>Text Spacing</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Needs review</span></td>
@@ -498,6 +520,13 @@
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Needs review</span></td>
             <td class="note">0 pass / 0 fail / 1 needs review / 3 n/a</td>
             <td class="note">css-hidden-focus, css-focus-indicator-suppressed, focus-not-removed-by-script, manual-review</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.11</td>
+            <td>Focus Not Obscured (Minimum)</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Needs review</span></td>
+            <td class="note">1 pass / 0 fail / 0 needs review / 0 n/a<br>Partly checked: its checks cover only part of this criterion, so a person checks the rest</td>
+            <td class="note">focus-not-obscured-minimum</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 2.5.8</td>
@@ -544,8 +573,8 @@
             <td class="sc-cell">WCAG 2.1.3</td>
             <td>Keyboard (No Exception)</td>
             <td><span class="chip" style="background:#fdece5;color:#b0441f">Fail</span></td>
-            <td class="note">0 pass / 1 fail / 0 needs review / 2 n/a</td>
-            <td class="note">scrollable-region-focusable, mouse-only-event-handlers, click-handler-keyboard-operable</td>
+            <td class="note">1 pass / 1 fail / 0 needs review / 5 n/a</td>
+            <td class="note">iframe-focusable-content, server-side-image-map-absent, scrollable-region-focusable, mouse-only-event-handlers, click-handler-keyboard-operable, focus-not-removed-by-script, widget-keyboard-focusable</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 2.2.4</td>
@@ -562,6 +591,27 @@
             <td class="note">identical-links-same-purpose, link-name-present, link-name-quality</td>
           </tr>
 <tr>
+            <td class="sc-cell">WCAG 2.4.12</td>
+            <td>Focus Not Obscured (Enhanced)</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Needs review</span></td>
+            <td class="note">1 pass / 0 fail / 0 needs review / 0 n/a<br>Partly checked: its checks cover only part of this criterion, so a person checks the rest</td>
+            <td class="note">focus-not-obscured-enhanced</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.13</td>
+            <td>Focus Appearance</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Needs review</span></td>
+            <td class="note">0 pass / 0 fail / 0 needs review / 2 n/a</td>
+            <td class="note">css-focus-indicator-suppressed, focus-not-removed-by-script</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.5.5</td>
+            <td>Target Size (Enhanced)</td>
+            <td><span class="chip" style="background:#fdece5;color:#b0441f">Fail</span></td>
+            <td class="note">0 pass / 1 fail / 0 needs review / 0 n/a</td>
+            <td class="note">target-size-enhanced</td>
+          </tr>
+<tr>
             <td class="sc-cell">WCAG 3.2.5</td>
             <td>Change on Request</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Needs review</span></td>
@@ -572,7 +622,7 @@
       </div>
 
   <h2 id="manual-checks-heading">What&#39;s left for a person</h2>
-  <p class="manual-intro">No rule decides these in full, so a person checks them by hand: <strong>55</strong> checks for <strong>35</strong> requirements of WCAG 2.2 (A, AA, AAA). A requirement whose rules all pass is met only once its checks here pass too.</p>
+  <p class="manual-intro">No rule decides these in full, so a person checks them by hand: <strong>61</strong> checks for <strong>40</strong> requirements of WCAG 2.2 (A, AA, AAA). A requirement whose rules all pass is met only once its checks here pass too.</p>
   <div class="manual-list"><details class="manual-req">
       <summary><span class="sc-cell">1.1.1</span> <span>Non-text Content</span> <span class="chip" style="background:#fdece5;color:#b0441f">Scan: Fail</span> <span class="card-count">Checks: 5</span></summary>
       <div class="manual-body"><div class="manual-facet">
@@ -742,6 +792,21 @@
           <p><strong>Fails when:</strong> <span>Text has less contrast with its background than 7:1 (4.5:1 for large text), which fails WCAG 1.4.6.</span></p>
         </div></div>
     </details><details class="manual-req">
+      <summary><span class="sc-cell">1.4.11</span> <span>Non-text Contrast</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Scan: Needs review</span> <span class="card-count">Checks: 2</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>The parts of a control that show it is there and its state have a contrast of at least 3:1</strong></p>
+          <p class="manual-meta">Only a person can check it · Tools: <span>The browser&#39;s developer tools</span></p>
+          <ol><li>Look at each control on the page: buttons, fields, check boxes, radio buttons, sliders, tabs and links styled as buttons.</li><li>For each, find what shows that it is there, such as a field&#39;s border or a button&#39;s outline, and measure its contrast against what is next to it with a contrast checker. It needs at least 3:1. A control shown by its text alone needs nothing more.</li><li>Do the same for what shows each state: the tick of a check box, the selected tab, the thumb of a slider, and the focus indicator, in the focused state.</li><li>Leave out controls the browser draws without the author changing their look, and inactive (disabled) controls.</li></ol>
+          <p><strong>Passes when:</strong> <span>Every part that shows a control or its state has a contrast of at least 3:1 against what is next to it.</span></p>
+          <p><strong>Fails when:</strong> <span>A part that is needed to see a control or its state, such as a field&#39;s border, a check box&#39;s tick or the focus indicator, has a contrast below 3:1, which fails WCAG 1.4.11.</span></p>
+        </div><div class="manual-facet">
+          <p class="manual-label"><strong>The parts of a graphic needed to understand it have a contrast of at least 3:1</strong></p>
+          <p class="manual-meta">Only a person can check it · Tools: <span>The browser&#39;s developer tools</span></p>
+          <ol><li>Look for graphics that carry information: icons without text beside them, charts, diagrams, maps and infographics.</li><li>In each, find the parts a person needs to understand it, such as an icon&#39;s shape, a chart&#39;s lines and bars, or the boundaries between areas.</li><li>Measure each part&#39;s contrast against what is next to it with a contrast checker. It needs at least 3:1. A part that is labelled in text, or whose information is also given in text nearby, doesn&#39;t need it.</li><li>Leave out decorative graphics, logos, and graphics whose particular look is essential, such as a photo or a flag.</li></ol>
+          <p><strong>Passes when:</strong> <span>Every part of a graphic needed to understand it has a contrast of at least 3:1, or its information is given another way.</span></p>
+          <p><strong>Fails when:</strong> <span>A part of a graphic needed to understand it has a contrast below 3:1, and its information is not given another way, which fails WCAG 1.4.11.</span></p>
+        </div></div>
+    </details><details class="manual-req">
       <summary><span class="sc-cell">1.4.12</span> <span>Text Spacing</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Scan: Needs review</span> <span class="card-count">Checks: 4</span></summary>
       <div class="manual-body"><div class="manual-facet">
           <p class="manual-label"><strong>Spacing forced in a style attribute doesn&#39;t stop text from taking the user&#39;s spacing</strong></p>
@@ -901,6 +966,33 @@
           <p><strong>Fails when:</strong> <span>A link&#39;s purpose can only be told from its context, or two links with the same name lead to different places, which fails WCAG 2.4.9.</span></p>
         </div></div>
     </details><details class="manual-req">
+      <summary><span class="sc-cell">2.4.11</span> <span>Focus Not Obscured (Minimum)</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Scan: Needs review</span> <span class="card-count">Checks: 1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>An element that receives focus is not entirely hidden by content the page puts over it</strong></p>
+          <p class="manual-meta">Rules decide part of it · Tools: <span>A keyboard</span>, <span>The browser&#39;s zoom</span></p>
+          <ol><li>Reload the page, scroll it half way down with the mouse, then press Tab slowly through the whole page.</li><li>At each stop, check that you can see at least part of the element that has focus. Watch for headers, footers, banners and chat buttons that stay in place while the page scrolls.</li><li>Where content the page keeps in place covers the focused element entirely, note it. If you opened that content yourself (a chat panel, a menu), check whether you can close it, for example with Escape, without moving focus: then it doesn&#39;t count.</li><li>Do the same with Shift+Tab back up the page, and in a window 320 CSS pixels wide, where fixed bars take more of the screen.</li></ol>
+          <p><strong>Passes when:</strong> <span>Every element that takes focus can be seen, at least in part, or is covered only by content you opened and can close without moving focus.</span></p>
+          <p><strong>Fails when:</strong> <span>An element takes focus entirely hidden behind content the page put there, such as a sticky header, footer or cookie banner, which fails WCAG 2.4.11.</span></p>
+        </div></div>
+    </details><details class="manual-req">
+      <summary><span class="sc-cell">2.4.12</span> <span>Focus Not Obscured (Enhanced)</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Scan: Needs review</span> <span class="card-count">Checks: 1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>No part of an element that receives focus is hidden by content the page puts over it</strong></p>
+          <p class="manual-meta">Rules decide part of it · Tools: <span>A keyboard</span>, <span>The browser&#39;s zoom</span></p>
+          <ol><li>Reload the page, scroll it half way down with the mouse, then press Tab slowly through the whole page.</li><li>At each stop, check that you can see all of the element that has focus, its focus indicator included. Watch for headers, footers, banners and chat buttons that stay in place while the page scrolls.</li><li>Where content the page keeps in place covers any part of the focused element, note it. If you opened that content yourself, check whether you can close it, for example with Escape, without moving focus: then it doesn&#39;t count.</li><li>Do the same with Shift+Tab back up the page, and in a window 320 CSS pixels wide.</li></ol>
+          <p><strong>Passes when:</strong> <span>Every element that takes focus can be seen in full, or is covered only by content you opened and can close without moving focus.</span></p>
+          <p><strong>Fails when:</strong> <span>Part of an element that has focus is hidden behind content the page put there, such as a sticky header, footer or cookie banner, which fails WCAG 2.4.12.</span></p>
+        </div></div>
+    </details><details class="manual-req">
+      <summary><span class="sc-cell">2.4.13</span> <span>Focus Appearance</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Scan: Needs review</span> <span class="card-count">Checks: 1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>The focus indicator is at least as large as a 2 CSS pixel outline around the element and changes contrast by at least 3:1</strong></p>
+          <p class="manual-meta">Only a person can check it · Tools: <span>A keyboard</span>, <span>The browser&#39;s developer tools</span></p>
+          <ol><li>Press Tab through the page and stop on each kind of control: links, buttons, fields, and the items of menus and widgets.</li><li>At each stop, compare the element with focus and without it. Check that the part that changes is at least as large as a 2 CSS pixel outline around the element: an outline that thick, or an area as large, such as a thicker underline or a changed background.</li><li>Check that those pixels differ in contrast by at least 3:1 between the focused and the unfocused state. Use a colour picker or a contrast checker on the same pixels in both states.</li><li>Leave out focus indicators the browser draws that the author has not changed, together with their background.</li></ol>
+          <p><strong>Passes when:</strong> <span>At every stop, the change that shows focus is at least as large as a 2 CSS pixel outline and changes contrast by at least 3:1, or it is the browser&#39;s own indicator, left as it is.</span></p>
+          <p><strong>Fails when:</strong> <span>A focus indicator is missing, smaller than a 2 CSS pixel outline around the element, or changes contrast by less than 3:1, which fails WCAG 2.4.13.</span></p>
+        </div></div>
+    </details><details class="manual-req">
       <summary><span class="sc-cell">2.5.3</span> <span>Label in Name</span> <span class="chip" style="background:#f1f2f3;color:#5f6368">Scan: Not applicable</span> <span class="card-count">Checks: 1</span></summary>
       <div class="manual-body"><div class="manual-facet">
           <p class="manual-label"><strong>A control&#39;s name contains the text of its visible label</strong></p>
@@ -908,6 +1000,15 @@
           <ol><li>Find every control with a visible label made of text: buttons, links, fields, tabs, menu items, and controls labelled by text next to them.</li><li>For each, read its Name in the developer tools&#39; Accessibility pane.</li><li>Check that the name contains the visible label&#39;s words, in the same order, ideally at the start (a button showing &quot;Send&quot; named &quot;Send message&quot;, not &quot;Submit&quot;).</li><li>Ignore differences of case and punctuation when you compare. Text shown as an image counts as a visible label too.</li><li>Leave out a label made only of symbols, such as &quot;×&quot; or &quot;&gt;&quot;: the name should say what it does.</li><li>Leave out controls with no visible text, such as an icon-only button: they have no visible label to match.</li></ol>
           <p><strong>Passes when:</strong> <span>Every control&#39;s name contains the words of its visible label, in order.</span></p>
           <p><strong>Fails when:</strong> <span>A control&#39;s name doesn&#39;t contain its visible label, so someone who uses speech input can&#39;t activate it by saying what they see, which fails WCAG 2.5.3.</span></p>
+        </div></div>
+    </details><details class="manual-req">
+      <summary><span class="sc-cell">2.5.5</span> <span>Target Size (Enhanced)</span> <span class="chip" style="background:#fdece5;color:#b0441f">Scan: Fail</span> <span class="card-count">Checks: 1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>Pointer targets are at least 44 by 44 CSS pixels</strong></p>
+          <p class="manual-meta">Rules decide part of it · Tools: <span>The browser&#39;s developer tools</span></p>
+          <ol><li>Look for small controls: icons, close buttons, pagination, links in a row, check boxes, and buttons in toolbars.</li><li>Inspect each and read the size of the area that responds to the pointer, which can be larger than the visible icon, in the developer tools&#39; box model. Check that it is at least 44 by 44 CSS pixels. Spacing doesn&#39;t help here: a smaller target fails however far it is from others.</li><li>Leave out links in a sentence or paragraph, controls the browser draws unstyled, controls with an equivalent of 44 by 44 CSS pixels elsewhere on the page, and targets whose size is essential, such as a map&#39;s pins.</li></ol>
+          <p><strong>Passes when:</strong> <span>Every target is at least 44 by 44 CSS pixels, or one of the exceptions.</span></p>
+          <p><strong>Fails when:</strong> <span>A target is smaller than 44 by 44 CSS pixels, with no exception that applies, which fails WCAG 2.5.5.</span></p>
         </div></div>
     </details><details class="manual-req">
       <summary><span class="sc-cell">2.5.8</span> <span>Target Size (Minimum)</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Scan: Needs review</span> <span class="card-count">Checks: 1</span></summary>
@@ -1015,8 +1116,8 @@
     <div class="tech-body">
       <h2>Scorecard</h2>
       <div class="scorecard"><div class="tile" style="border-color:#b0441f; background:#fdece5">
-      <div class="tile-num" style="color:#b0441f">4</div>
-      <div class="tile-pct">2.8%</div>
+      <div class="tile-num" style="color:#b0441f">5</div>
+      <div class="tile-pct">3.4%</div>
       <div class="tile-label">Fail</div>
     </div>
 <div class="tile" style="border-color:#8a6400; background:#fdf3d9">
@@ -1025,13 +1126,13 @@
       <div class="tile-label">Needs review</div>
     </div>
 <div class="tile" style="border-color:#0b7d0b; background:#e9f7e9">
-      <div class="tile-num" style="color:#0b7d0b">39</div>
-      <div class="tile-pct">26.9%</div>
+      <div class="tile-num" style="color:#0b7d0b">42</div>
+      <div class="tile-pct">28.2%</div>
       <div class="tile-label">Pass</div>
     </div>
 <div class="tile" style="border-color:#5f6368; background:#f1f2f3">
       <div class="tile-num" style="color:#5f6368">97</div>
-      <div class="tile-pct">66.9%</div>
+      <div class="tile-pct">65.1%</div>
       <div class="tile-label">Not applicable</div>
     </div></div>
 
@@ -1061,7 +1162,7 @@
   </details>
 </main>
 
-<script type="application/json" id="report-data">[{"ruleId":"click-handler-keyboard-operable","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"This element has role=\"button\" and a click handler, and takes keyboard focus, but no key listener is on it, an ancestor, the document or the window, so Enter and Space do nothing.","summaryLang":"","hint":"Use the native element (\u003cbutton>, \u003ca href> or \u003cinput type=\"checkbox\">), or handle keydown so that the keys a button answers to do what a click does.","lean":""},{"ruleId":"contrast-computable","outcome":"pass","severity":"serious","severityLabel":"serious","selector":"","html":"","summary":"Contrast is computable for all eligible text (11 text node(s)).","summaryLang":"","hint":"Nothing to change. Whether this text reaches its ratio is for the minimum (AA) and enhanced (AAA) contrast rules to say.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"Element has insufficient color contrast (AAA) of 2.61:1 (foreground: #a0a0a0, background: #ffffff, font size: 16px, font weight: normal). Expected contrast ratio of 7:1 (normal text).","summaryLang":"","hint":"Change the text color, the background color, or both, so the contrast ratio reaches at least 7:1.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"Element has insufficient color contrast (AAA) of 2.55:1 (foreground: #ffffff, background: #00bb55, font size: 16px, font weight: normal). Expected contrast ratio of 7:1 (normal text).","summaryLang":"","hint":"Change the text color, the background color, or both, so the contrast ratio reaches at least 7:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"Element has insufficient color contrast of 2.61:1 (foreground: #a0a0a0, background: #ffffff, font size: 16px, font weight: normal). Expected contrast ratio of 4.5:1 (normal text).","summaryLang":"","hint":"Change the text color, the background color, or both, so the contrast ratio reaches at least 4.5:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"Element has insufficient color contrast of 2.55:1 (foreground: #ffffff, background: #00bb55, font size: 16px, font weight: normal). Expected contrast ratio of 4.5:1 (normal text).","summaryLang":"","hint":"Change the text color, the background color, or both, so the contrast ratio reaches at least 4.5:1.","lean":""},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"moderate","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"The id \"code\" is used on 2 elements in the same tree.","summaryLang":"","hint":"Give each element its own id. A duplicate breaks \u003clabel for>, fragment links, getElementById and every ID-reference attribute, all of which resolve to the first match only.","lean":"Likely passes: WCAG 2.2 removed the criterion this was found against."},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"moderate","selector":"html > body > footer > p","html":"\u003cp id=\"code\">© Shop\u003c/p>","summary":"The id \"code\" is used on 2 elements in the same tree.","summaryLang":"","hint":"Give each element its own id. A duplicate breaks \u003clabel for>, fragment links, getElementById and every ID-reference attribute, all of which resolve to the first match only.","lean":"Likely passes: WCAG 2.2 removed the criterion this was found against."},{"ruleId":"img-alt-present","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"html > body > main > img:nth-of-type(1)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\">","summary":"This \u003cimg> has no alt attribute.","summaryLang":"","hint":"Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.","lean":""},{"ruleId":"img-alt-quality","outcome":"cantTell","severity":"minor","severityLabel":"minor","selector":"html > body > main > img:nth-of-type(2)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\" alt=\"IMG_2041.jpg\">","summary":"The text alternative of this \u003cimg> looks like a file name.","summaryLang":"","hint":"A file name tells someone who can’t see the image nothing about it. Replace it with text that says what the image shows or, on a link or button, where it leads or what it does. Keep it only if the file name is itself what the image shows, such as a screenshot of a file list.","lean":"Likely fails: A file name, a web address or a generic word does not say what the image shows."},{"ruleId":"invalid-field-error-message","outcome":"cantTell","severity":"serious","severityLabel":"serious","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"This field is marked invalid, but the error message aria-errormessage names is hidden.","summaryLang":"","hint":"Show the error message while the field is invalid.","lean":"Likely fails: The error message tied to the field is hidden, so the error is probably not told."},{"ruleId":"manual-review","outcome":"cantTell","severity":"moderate","severityLabel":"moderate","selector":"html","html":"","summary":"Check keyboard navigation and focus order by hand.","summaryLang":"","hint":"Tab through the page and check that every interactive element can be reached and used with the keyboard, and that focus can always leave it again; that the focus order follows the reading order, also after a script opens or adds content; and that the focus is always visible.","lean":""},{"ruleId":"page-title-patterns","outcome":"cantTell","severity":"minor","severityLabel":"minor","selector":"html > head > title","html":"\u003ctitle>Checkout\u003c/title>","summary":"Check that the page title, “Checkout”, says what the page is about.","summaryLang":"","hint":"Check that the title says what the page is about or what it is for, and sets it apart from the site's other pages.","lean":""}]</script>
+<script type="application/json" id="report-data">[{"ruleId":"click-handler-keyboard-operable","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"This element has role=\"button\" and a click handler, and takes keyboard focus, but no key listener is on it, an ancestor, the document or the window, so Enter and Space do nothing.","summaryLang":"","hint":"Use the native element (\u003cbutton>, \u003ca href> or \u003cinput type=\"checkbox\">), or handle keydown so that the keys a button answers to do what a click does.","lean":""},{"ruleId":"contrast-computable","outcome":"pass","severity":"serious","severityLabel":"serious","selector":"","html":"","summary":"Contrast is computable for all eligible text (11 text node(s)).","summaryLang":"","hint":"Nothing to change. Whether this text reaches its ratio is for the minimum (AA) and enhanced (AAA) contrast rules to say.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"Element has insufficient color contrast (AAA) of 2.61:1 (foreground: #a0a0a0, background: #ffffff, font size: 16px, font weight: normal). Expected contrast ratio of 7:1 (normal text).","summaryLang":"","hint":"Change the text color, the background color, or both, so the contrast ratio reaches at least 7:1.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"Element has insufficient color contrast (AAA) of 2.55:1 (foreground: #ffffff, background: #00bb55, font size: 16px, font weight: normal). Expected contrast ratio of 7:1 (normal text).","summaryLang":"","hint":"Change the text color, the background color, or both, so the contrast ratio reaches at least 7:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"Element has insufficient color contrast of 2.61:1 (foreground: #a0a0a0, background: #ffffff, font size: 16px, font weight: normal). Expected contrast ratio of 4.5:1 (normal text).","summaryLang":"","hint":"Change the text color, the background color, or both, so the contrast ratio reaches at least 4.5:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"Element has insufficient color contrast of 2.55:1 (foreground: #ffffff, background: #00bb55, font size: 16px, font weight: normal). Expected contrast ratio of 4.5:1 (normal text).","summaryLang":"","hint":"Change the text color, the background color, or both, so the contrast ratio reaches at least 4.5:1.","lean":""},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"moderate","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"The id \"code\" is used on 2 elements in the same tree.","summaryLang":"","hint":"Give each element its own id. A duplicate breaks \u003clabel for>, fragment links, getElementById and every ID-reference attribute, all of which resolve to the first match only.","lean":"Likely passes: WCAG 2.2 removed the criterion this was found against."},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"moderate","selector":"html > body > footer > p","html":"\u003cp id=\"code\">© Shop\u003c/p>","summary":"The id \"code\" is used on 2 elements in the same tree.","summaryLang":"","hint":"Give each element its own id. A duplicate breaks \u003clabel for>, fragment links, getElementById and every ID-reference attribute, all of which resolve to the first match only.","lean":"Likely passes: WCAG 2.2 removed the criterion this was found against."},{"ruleId":"img-alt-present","outcome":"fail","severity":"serious","severityLabel":"serious","selector":"html > body > main > img:nth-of-type(1)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\">","summary":"This \u003cimg> has no alt attribute.","summaryLang":"","hint":"Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.","lean":""},{"ruleId":"img-alt-quality","outcome":"cantTell","severity":"minor","severityLabel":"minor","selector":"html > body > main > img:nth-of-type(2)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\" alt=\"IMG_2041.jpg\">","summary":"The text alternative of this \u003cimg>, \"IMG_2041.jpg\", looks like a file name.","summaryLang":"","hint":"A file name tells someone who can’t see the image nothing about it. Replace it with text that says what the image shows or, on a link or button, where it leads or what it does. Keep it only if the file name is itself what the image shows, such as a screenshot of a file list.","lean":"Likely fails: A file name, a web address or a generic word does not say what the image shows."},{"ruleId":"invalid-field-error-message","outcome":"cantTell","severity":"serious","severityLabel":"serious","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"This field is marked invalid, but the error message aria-errormessage names (\"Enter an email address such as name@exa…\") is hidden by display: none on \u003cp id=\"email-error\">.","summaryLang":"","hint":"Show the error message while the field is invalid.","lean":"Likely fails: The error message tied to the field is hidden, so the error is probably not told."},{"ruleId":"manual-review","outcome":"cantTell","severity":"moderate","severityLabel":"moderate","selector":"html","html":"","summary":"Check keyboard navigation and focus order by hand.","summaryLang":"","hint":"Tab through the page and check that every interactive element can be reached and used with the keyboard, and that focus can always leave it again; that the focus order follows the reading order, also after a script opens or adds content; and that the focus is always visible.","lean":""},{"ruleId":"page-title-patterns","outcome":"cantTell","severity":"minor","severityLabel":"minor","selector":"html > head > title","html":"\u003ctitle>Checkout\u003c/title>","summary":"Check that the page title, “Checkout”, says what the page is about.","summaryLang":"","hint":"Check that the title says what the page is about or what it is for, and sets it apart from the site's other pages.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderate","selector":"html > body > header > a","html":"\u003ca href=\"/\">Shop\u003c/a>","summary":"Target is 37.6×18 CSS px at a 1280px-wide viewport, under 44×44.","summaryLang":"","hint":"Make the target at least 44×44 CSS px.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderate","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(1)","html":"\u003ca href=\"/cart\">Cart\u003c/a>","summary":"Target is 31.1×18 CSS px at a 1280px-wide viewport, under 44×44.","summaryLang":"","hint":"Make the target at least 44×44 CSS px.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderate","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(2)","html":"\u003ca href=\"/account\">Account\u003c/a>","summary":"Target is 60×18 CSS px at a 1280px-wide viewport, under 44×44.","summaryLang":"","hint":"Make the target at least 44×44 CSS px.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderate","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"Target is 153×21 CSS px at a 1280px-wide viewport, under 44×44.","summaryLang":"","hint":"Make the target at least 44×44 CSS px.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderate","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"Target is 153×21 CSS px at a 1280px-wide viewport, under 44×44.","summaryLang":"","hint":"Make the target at least 44×44 CSS px.","lean":""}]</script>
 <script>
 (function () {
   var OUTCOME_INFO = {"fail":{"label":"Fail","defaultOn":true,"color":"#b0441f","bg":"#fdece5","icon":"⚠"},"cantTell":{"label":"Needs review","defaultOn":true,"color":"#8a6400","bg":"#fdf3d9","icon":"ℹ"},"pass":{"label":"Pass","defaultOn":false,"color":"#0b7d0b","bg":"#e9f7e9","icon":"✓"},"notApplicable":{"label":"Not applicable","defaultOn":false,"color":"#5f6368","bg":"#f1f2f3","icon":"–"}};

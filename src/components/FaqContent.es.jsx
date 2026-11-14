@@ -7,86 +7,90 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-16">"Mis resultados cambiaron al actualizar a core 1.16"</h2>
+				<h2 id="results-changed-1-17">"Mis resultados cambiaron al actualizar a core 1.17"</h2>
 				<p>
-					La 1.16 acerca jsdom al navegador y redacta sus mensajes para cualquier estándar. Los
-					cambios que más probablemente se noten en un pipeline:
+					La 1.17 añade cuatro reglas, asigna algunas reglas a más criterios y hace que los mensajes
+					nombren la causa de un hallazgo. Por lo demás, los resultados y los códigos de motivo de
+					las reglas existentes no cambian. Los cambios que más probablemente se noten en un
+					pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>Con jsdom, solo un diálogo abierto con <code>showModal()</code> es
-						modal</strong>, como en un navegador. La página detrás de un{" "}
-						<code>&lt;dialog open aria-modal="true"&gt;</code> se juzga ahora, así que una prueba
-						con jsdom que simula un modal de esa manera ve hallazgos detrás de él;{" "}
-						<code>engineOptions.assumeModal: true</code> mantiene el comportamiento anterior
-						(consulta <a href="/help/known-limitations/">Limitaciones conocidas</a>; con
-						test-matchers 1.6.0, pásalo también a <code>installLiveRegionHook()</code>, consulta{" "}
-						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
-						Nada detrás
-						de un diálogo modal recibe el foco, y de varios abiertos con <code>showModal()</code>{" "}
-						solo se juzga el superior.
+						<strong>Un análisis de WCAG 2.2 AA en un navegador pregunta por el 2.4.11.</strong>{" "}
+						<a href="/rules/focus-not-obscured-minimum/">
+							<code>focus-not-obscured-minimum</code>
+						</a>{" "}
+						pregunta (<code>cantTell</code>) por una caja fija o sticky, como un encabezado, un pie
+						de página o un banner, detrás de la cual los elementos del orden de tabulación pueden
+						recibir el foco ocultos, y{" "}
+						<a href="/rules/focus-not-obscured-enhanced/">
+							<code>focus-not-obscured-enhanced</code>
+						</a>{" "}
+						hace lo mismo para el 2.4.12 (AAA). Con jsdom ambas son <code>notApplicable</code>. Un
+						análisis así tarda alrededor de un 4 % más en Chromium (consulta{" "}
+						<a href="/help/known-limitations/">Limitaciones conocidas</a> para ver lo que dejan
+						fuera).
 					</li>
 					<li>
-						<strong>jsdom oculta lo que oculta un navegador.</strong> Las reglas dentro de{" "}
-						<code>@layer</code>, <code>@supports</code> y <code>@container</code> ocultan
-						elementos, así que <code>hidden</code> y <code>sr-only</code> de Tailwind v4
-						funcionan; <code>clip: rect(0 0 0 0)</code> cuenta como recortado; el{" "}
-						<code>&lt;area&gt;</code> de un mapa de imagen está en la página. Desaparecen los
-						hallazgos sobre contenido que siempre estuvo oculto.
+						<strong>Un análisis que ejecuta reglas AAA hace fallar los objetivos de menos de 44
+						px.</strong>{" "}
+						<a href="/rules/target-size-enhanced/">
+							<code>target-size-enhanced</code>
+						</a>{" "}
+						(2.5.5) se ejecuta en un análisis completo, uno sin objetivo de WCAG, y con un objetivo
+						AAA. Un pipeline que falla con cualquier <code>fail</code> de un análisis completo
+						puede ver fallos nuevos: analiza con un objetivo, como el perfil{" "}
+						<code>wcag22-aa</code>, para juzgar solo por A y AA (consulta{" "}
+						<a href="/configuration/engine-options/">Opciones del motor</a>). Con las buenas
+						prácticas,{" "}
+						<a href="/rules/page-zones-landmark/">
+							<code>page-zones-landmark</code>
+						</a>{" "}
+						pregunta por un encabezado, una navegación, una búsqueda o un pie de página que no es
+						su región de referencia.
 					</li>
 					<li>
-						<strong>Los mensajes y los pasos describen la comprobación</strong> en lugar de nombrar
-						el criterio de WCAG, en todas las configuraciones regionales, así que un informe para
-						otro estándar se lee bien. Los mapeos y <code>failWhen</code> no cambian; una prueba
-						que compare el texto de los mensajes necesita actualizarse.
+						<strong>Algunas reglas cuentan para más criterios.</strong>{" "}
+						<code>css-focus-indicator-suppressed</code> se asigna también al 1.4.11 y al 2.4.13,
+						así que sus hallazgos aparecen ahora en el resultado del 1.4.11;{" "}
+						<code>focus-not-removed-by-script</code> se asigna al 2.4.13, y cuatro reglas que se
+						asignan al 2.1.1 se asignan también al 2.1.3.
 					</li>
 					<li>
-						<strong>Se juzgan las páginas profundas.</strong> Un elemento a 200 o más niveles de
-						profundidad se juzga con todo lo que tiene encima, hasta 10.000 niveles, donde un fallo
-						tan profundo pasaba a ser una pregunta anotada en <code>error</code>; así que pueden
-						aparecer fallos ahí. Más allá de 10.000 es una pregunta, informada en{" "}
-						<a href="/results-reports/output-schema/">
-							<code>ancestorWalkLimit</code>
-						</a>
-						.
+						<strong>Los mensajes nombran la causa de fondo</strong> que encuentran las reglas: por
+						qué un elemento no tiene nombre (<code>data.details.nameCause</code>), una probable
+						errata en un rol, un atributo o un valor de <code>autocomplete</code>, qué oculta un
+						elemento, el contraste en un fallo de <code>link-in-text-block</code>, cuánto le falta
+						a un objetivo para pasar <code>target-size-minimum</code>. Una prueba que compare el
+						texto de los mensajes, o la clave de la pista de <code>target-size-minimum</code>{" "}
+						(ahora <code>_centerDistance</code> o <code>_regionDistance</code>), necesita
+						actualizarse.
 					</li>
 					<li>
-						<strong>Las páginas que sustituyen <code>Array.from</code></strong> (Prototype.js,
-						MooTools) se analizan, donde antes el análisis se detenía con{" "}
-						<code>PAGE_BUILTINS_BROKEN</code> (consulta{" "}
-						<a href="#page-builtins-broken">la entrada de más abajo</a>).
+						<strong>Algunos hallazgos cambian.</strong> <code>css-hidden-focus</code> tiende a{" "}
+						<code>fail</code> cuando el elemento está fuera de la vista y no se sabe de nada que lo
+						traiga a la vista; <code>aria-hidden-focus</code> hace fallar un elemento enfocable
+						devuelto a <code>visibility: visible</code> dentro de una raíz <code>aria-hidden</code>{" "}
+						oculta; <code>aria-conditional-attr</code> da por bueno un valor de{" "}
+						<code>aria-invalid</code> fuera de sus tokens; <code>link-in-text-block</code> solo
+						cuenta el texto de la propia línea del enlace.
 					</li>
 					<li>
-						<strong>Algunos selectores son distintos.</strong> Los caracteres de control se
-						escapan, un valor de más de 256 caracteres deja paso a la ruta del elemento, y{" "}
-						<a href="/rules/page-title-present/"><code>page-title-present</code></a> y{" "}
-						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> apuntan al
-						propio elemento del título, o a <code>&lt;head&gt;</code> cuando no hay ninguno. La
-						identidad de un hallazgo no incluye su selector, así que los baselines siguen
-						coincidiendo. Las reglas de contraste son <code>notApplicable</code> sin ninguna
-						ocurrencia cuando no se pudo calcular ningún contraste.
-					</li>
-					<li>
-						<strong>Los errores se informan en lugar de leerse como nada.</strong> Un{" "}
-						<code>contextSelector</code> vacío sigue analizando toda la página, pero avisa; algo
-						que no es un baseline lanza <code>INVALID_BASELINE</code> en lugar de hacer nuevo cada
-						fallo; y con <code>strictOptions</code>, un nombre de perfil desconocido lanza un error.
-						El perfil <code>section508</code> está obsoleto: usa <code>wcag20-aa</code>, que
-						ejecuta las mismas reglas.
-					</li>
-					<li>
-						<strong>Análisis más rápidos</strong>, con los mismos hallazgos: un pequeño porcentaje
-						en Chromium en páginas corrientes, del 10 al 25 % con jsdom, y mucho más donde era peor
-						(miles de enlaces o campos idénticos, tablas largas, muchas reglas de estilo).
+						<strong>Los packs creados para la 1.16 pueden omitirse.</strong> Un pack que usa las
+						API experimentales de core no acepta ninguna versión menor posterior, así que un
+						análisis con la 1.17 lo omite hasta que tenga una versión para la 1.17: el{" "}
+						<a href="/configuration/packs/#en-301-549-pack">pack de EN 301 549</a> necesita la
+						1.4.0. Además, la 1.17 eliminó cuatro campos de las leyes de un estándar, y un pack que
+						todavía los tenga se rechaza (consulta{" "}
+						<a href="/configuration/packs/#laws">Packs</a>).
 					</li>
 				</ul>
 				<p>
-					Nuevo, y sin cambiar nada salvo que lo uses: los perfiles de WCAG 2.0 y 2.1 (
-					<a href="/configuration/engine-options/#conformance-profiles">Opciones del motor</a>) y,
-					experimentales hasta la 1.18.0, los estándares como datos, las pruebas bajo los
-					requisitos, los estándares construidos sobre otros y las leyes bajo las que se evalúa un
-					estándar (<a href="/configuration/packs/#experimental">Packs</a>). La lista completa está
-					en el{" "}
+					Nuevo, y sin cambiar nada salvo que lo uses: un pack construido sobre otro pack (
+					<code>uses</code>, <code>surea11y-pack new --kind derived</code>), experimental hasta la
+					1.19.0 (<a href="/configuration/packs/#a-pack-built-on-another-pack">Packs</a>). El
+					bundle para navegador pasa de 1.565 a 1.829 KB, sobre todo por los mensajes nuevos. La
+					lista completa está en el{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>{" "}
@@ -661,6 +665,94 @@ export function FaqContent() {
 						<code>INTEGRATION.md</code>
 					</a>
 					, la guía de integración en GitHub.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="results-changed-1-16">"Mis resultados cambiaron al actualizar a core 1.16"</h2>
+				<p>
+					La 1.16 acerca jsdom al navegador y redacta sus mensajes para cualquier estándar. Los
+					cambios que más probablemente se noten en un pipeline:
+				</p>
+				<ul>
+					<li>
+						<strong>Con jsdom, solo un diálogo abierto con <code>showModal()</code> es
+						modal</strong>, como en un navegador. La página detrás de un{" "}
+						<code>&lt;dialog open aria-modal="true"&gt;</code> se juzga ahora, así que una prueba
+						con jsdom que simula un modal de esa manera ve hallazgos detrás de él;{" "}
+						<code>engineOptions.assumeModal: true</code> mantiene el comportamiento anterior
+						(consulta <a href="/help/known-limitations/">Limitaciones conocidas</a>; con
+						test-matchers 1.6.0, pásalo también a <code>installLiveRegionHook()</code>, consulta{" "}
+						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
+						Nada detrás
+						de un diálogo modal recibe el foco, y de varios abiertos con <code>showModal()</code>{" "}
+						solo se juzga el superior.
+					</li>
+					<li>
+						<strong>jsdom oculta lo que oculta un navegador.</strong> Las reglas dentro de{" "}
+						<code>@layer</code>, <code>@supports</code> y <code>@container</code> ocultan
+						elementos, así que <code>hidden</code> y <code>sr-only</code> de Tailwind v4
+						funcionan; <code>clip: rect(0 0 0 0)</code> cuenta como recortado; el{" "}
+						<code>&lt;area&gt;</code> de un mapa de imagen está en la página. Desaparecen los
+						hallazgos sobre contenido que siempre estuvo oculto.
+					</li>
+					<li>
+						<strong>Los mensajes y los pasos describen la comprobación</strong> en lugar de nombrar
+						el criterio de WCAG, en todas las configuraciones regionales, así que un informe para
+						otro estándar se lee bien. Los mapeos y <code>failWhen</code> no cambian; una prueba
+						que compare el texto de los mensajes necesita actualizarse.
+					</li>
+					<li>
+						<strong>Se juzgan las páginas profundas.</strong> Un elemento a 200 o más niveles de
+						profundidad se juzga con todo lo que tiene encima, hasta 10.000 niveles, donde un fallo
+						tan profundo pasaba a ser una pregunta anotada en <code>error</code>; así que pueden
+						aparecer fallos ahí. Más allá de 10.000 es una pregunta, informada en{" "}
+						<a href="/results-reports/output-schema/">
+							<code>ancestorWalkLimit</code>
+						</a>
+						.
+					</li>
+					<li>
+						<strong>Las páginas que sustituyen <code>Array.from</code></strong> (Prototype.js,
+						MooTools) se analizan, donde antes el análisis se detenía con{" "}
+						<code>PAGE_BUILTINS_BROKEN</code> (consulta{" "}
+						<a href="#page-builtins-broken">la entrada de más arriba</a>).
+					</li>
+					<li>
+						<strong>Algunos selectores son distintos.</strong> Los caracteres de control se
+						escapan, un valor de más de 256 caracteres deja paso a la ruta del elemento, y{" "}
+						<a href="/rules/page-title-present/"><code>page-title-present</code></a> y{" "}
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> apuntan al
+						propio elemento del título, o a <code>&lt;head&gt;</code> cuando no hay ninguno. La
+						identidad de un hallazgo no incluye su selector, así que los baselines siguen
+						coincidiendo. Las reglas de contraste son <code>notApplicable</code> sin ninguna
+						ocurrencia cuando no se pudo calcular ningún contraste.
+					</li>
+					<li>
+						<strong>Los errores se informan en lugar de leerse como nada.</strong> Un{" "}
+						<code>contextSelector</code> vacío sigue analizando toda la página, pero avisa; algo
+						que no es un baseline lanza <code>INVALID_BASELINE</code> en lugar de hacer nuevo cada
+						fallo; y con <code>strictOptions</code>, un nombre de perfil desconocido lanza un error.
+						El perfil <code>section508</code> está obsoleto: usa <code>wcag20-aa</code>, que
+						ejecuta las mismas reglas.
+					</li>
+					<li>
+						<strong>Análisis más rápidos</strong>, con los mismos hallazgos: un pequeño porcentaje
+						en Chromium en páginas corrientes, del 10 al 25 % con jsdom, y mucho más donde era peor
+						(miles de enlaces o campos idénticos, tablas largas, muchas reglas de estilo).
+					</li>
+				</ul>
+				<p>
+					Nuevo, y sin cambiar nada salvo que lo uses: los perfiles de WCAG 2.0 y 2.1 (
+					<a href="/configuration/engine-options/#conformance-profiles">Opciones del motor</a>) y,
+					experimentales hasta la 1.18.0, los estándares como datos, las pruebas bajo los
+					requisitos, los estándares construidos sobre otros y las leyes bajo las que se evalúa un
+					estándar (<a href="/configuration/packs/#experimental">Packs</a>). La lista completa está
+					en el{" "}
+					<a href={`${core}/CHANGELOG.md`}>
+						<code>CHANGELOG.md</code>
+					</a>{" "}
+					de core.
 				</p>
 			</article>
 

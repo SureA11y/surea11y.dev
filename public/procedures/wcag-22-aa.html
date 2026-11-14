@@ -103,7 +103,7 @@
 <a class="skip" href="#main">Skip to the procedures</a>
 <header class="page">
 <h1>WCAG 2.2: how to assess each requirement</h1>
-<p>Requirements: 55 · Procedures: 50</p>
+<p>Requirements: 55 · Procedures: 53</p>
 <ul><li>Levels: A, AA</li></ul>
 
 </header>
@@ -399,14 +399,17 @@
 <p class="meta"><span>Level AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-11-ui-component-contrast">
 <h5 id="facet-1-4-11-ui-component-contrast">The parts of a control that show it is there and its state have a contrast of at least 3:1</h5>
-<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
-<p class="empty">No procedure for this yet.</p>
-
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look at each control on the page: buttons, fields, check boxes, radio buttons, sliders, tabs and links styled as buttons.</li><li>For each, find what shows that it is there, such as a field&#39;s border or a button&#39;s outline, and measure its contrast against what is next to it with a contrast checker. It needs at least 3:1. A control shown by its text alone needs nothing more.</li><li>Do the same for what shows each state: the tick of a check box, the selected tab, the thumb of a slider, and the focus indicator, in the focused state.</li><li>Leave out controls the browser draws without the author changing their look, and inactive (disabled) controls.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every part that shows a control or its state has a contrast of at least 3:1 against what is next to it.</dd><dt>Fails when</dt><dd>A part that is needed to see a control or its state, such as a field&#39;s border, a check box&#39;s tick or the focus indicator, has a contrast below 3:1, which fails WCAG 1.4.11.</dd></dl>
+<p class="rules">Rules that test it: <code>css-focus-indicator-suppressed</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>CSS does not remove the focus indicator without drawing a replacement</li></ul></div>
 </section>
 <section class="facet" aria-labelledby="facet-1-4-11-graphics-contrast">
 <h5 id="facet-1-4-11-graphics-contrast">The parts of a graphic needed to understand it have a contrast of at least 3:1</h5>
-<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
-<p class="empty">No procedure for this yet.</p>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look for graphics that carry information: icons without text beside them, charts, diagrams, maps and infographics.</li><li>In each, find the parts a person needs to understand it, such as an icon&#39;s shape, a chart&#39;s lines and bars, or the boundaries between areas.</li><li>Measure each part&#39;s contrast against what is next to it with a contrast checker. It needs at least 3:1. A part that is labelled in text, or whose information is also given in text nearby, doesn&#39;t need it.</li><li>Leave out decorative graphics, logos, and graphics whose particular look is essential, such as a photo or a flag.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every part of a graphic needed to understand it has a contrast of at least 3:1, or its information is given another way.</dd><dt>Fails when</dt><dd>A part of a graphic needed to understand it has a contrast below 3:1, and its information is not given another way, which fails WCAG 1.4.11.</dd></dl>
 
 </section>
 </article>
@@ -657,9 +660,10 @@
 <p class="meta"><span>Level AA</span></p>
 <section class="facet" aria-labelledby="facet-2-4-11-focus-not-obscured">
 <h5 id="facet-2-4-11-focus-not-obscured">An element that receives focus is not entirely hidden by content the page puts over it</h5>
-<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
-<p class="empty">No procedure for this yet.</p>
-
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>A keyboard</span>, <span>The browser&#39;s zoom</span></li></ul>
+<ol class="steps"><li>Reload the page, scroll it half way down with the mouse, then press Tab slowly through the whole page.</li><li>At each stop, check that you can see at least part of the element that has focus. Watch for headers, footers, banners and chat buttons that stay in place while the page scrolls.</li><li>Where content the page keeps in place covers the focused element entirely, note it. If you opened that content yourself (a chat panel, a menu), check whether you can close it, for example with Escape, without moving focus: then it doesn&#39;t count.</li><li>Do the same with Shift+Tab back up the page, and in a window 320 CSS pixels wide, where fixed bars take more of the screen.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every element that takes focus can be seen, at least in part, or is covered only by content you opened and can close without moving focus.</dd><dt>Fails when</dt><dd>An element takes focus entirely hidden behind content the page put there, such as a sticky header, footer or cookie banner, which fails WCAG 2.4.11.</dd></dl>
+<p class="rules">Rules that test it: <code>focus-not-obscured-minimum</code></p>
 </section>
 </article>
 </section>

@@ -533,7 +533,11 @@ export function KnownLimitationsContent() {
 					mesure ; <code>aria-hidden-focus</code> donne le focus à un élément situé dans un
 					sous-arbre <code>aria-hidden</code> pour voir si la page déplace aussitôt le focus
 					ailleurs (une sentinelle de piège à focus) ; <code>text-spacing-content-loss</code> ajoute une feuille de style avec
-					l’espacement de WCAG 1.4.12 ; les règles de contraste ajoutent un frame vide hors de
+					l’espacement de WCAG 1.4.12 ;{" "}
+					<code>focus-not-obscured-minimum</code> et <code>-enhanced</code> font défiler la page pour
+					amener un élément sous une boîte fixe ou sticky et y effectuer un test d’atteinte, ce qui
+					déclenche les gestionnaires <code>scroll</code> de la page après leurs mesures (un en-tête
+					qui se masque au défilement peut réagir) ; les règles de contraste ajoutent un frame vide hors de
 					l’écran pour lire les couleurs propres du navigateur pour un placeholder ou un{" "}
 					<code>&lt;select&gt;</code> déroulant. L’analyse amène aussi chaque animation en cours à
 					un point fixe pendant l’exécution des règles (une animation finie à sa fin, une animation
@@ -755,6 +759,31 @@ export function KnownLimitationsContent() {
 						<code>LAYOUT_MEASUREMENT.md</code>
 					</a>
 					.
+				</li>
+				<li>
+					<strong>
+						Le fait qu’un contenu couvre un élément qui a le focus est déterminé pour le défilement
+						propre de la page et ses boîtes fixes et sticky.
+					</strong>{" "}
+					<a href="/rules/focus-not-obscured-minimum/"><code>focus-not-obscured-minimum</code></a>{" "}
+					(2.4.11) et{" "}
+					<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>{" "}
+					(2.4.12) nécessitent un navigateur : sous jsdom, elles renvoient <code>notApplicable</code>{" "}
+					(<code>data.reason: 'noLayout'</code>). Dans un navigateur, elles déterminent quels
+					éléments de l’ordre de tabulation une boîte en <code>position: fixed</code> ou{" "}
+					<code>sticky</code> qui dessine quelque chose peut masquer, compte tenu de la fenêtre
+					qu’utilise l’analyse et du <code>scroll-padding</code> de la page, et le confirment par un
+					test d’atteinte sur quelques-uns d’entre eux. Sont laissés de côté : un élément situé dans
+					une boîte qui a son propre défilement, ou dans une boîte fixe ou sticky ; le défilement
+					horizontal ; tout autre contenu posé sur un élément (une boîte en position absolue, une
+					fenêtre contextuelle non modale qui n’est pas fixe) ; une boîte en{" "}
+					<code>pointer-events: none</code>, que le test d’atteinte du navigateur traverse ; et ce
+					qui apparaît plus tard (une bulle de discussion après un délai) ou à une autre taille de
+					fenêtre. Qui a ouvert une boîte ne se voit pas non plus : les critères admettent un
+					contenu que la personne a ouvert et peut fermer sans déplacer le focus, si bien qu’une
+					boîte qu’un contrôle marque comme développée (<code>aria-expanded="true"</code> avec{" "}
+					<code>aria-controls</code>) fait l’objet d’une question sans tendance, et toute autre avec
+					un avertissement qui le précise.
 				</li>
 				<li>
 					<strong>Le contraste est calculé en sRGB.</strong> Les couleurs exprimées en{" "}

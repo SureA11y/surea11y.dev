@@ -121,7 +121,10 @@ function readRuleMeta(checksDirAbs) {
     } catch {
       continue;
     }
-    if (!mod || typeof mod.id !== 'string' || typeof mod.runInPage !== 'function') continue;
+    // A variant (core 1.17) has no runInPage of its own: it names the core
+    // rule it runs in `from`, with other settings in `config`.
+    if (!mod || typeof mod.id !== 'string') continue;
+    if (typeof mod.runInPage !== 'function' && typeof mod.from !== 'string') continue;
 
     const source = fs.readFileSync(file, 'utf8');
     meta.set(mod.id, {

@@ -237,12 +237,17 @@ export function OverviewContent() {
 				(auf GitHub) zeigt, wie Sie es vor den Skripten der Seite installieren.
 			</p>
 			<p>
-				Die Regeln erreichen drei Kriterien, die bisher keine Regel abdeckte: 3.3.1
+				Die Regeln erreichen vier Kriterien, die bisher keine Regel abdeckte: 3.3.1
 				„Fehlererkennung“ (ein als ungültig markiertes Feld, dessen Fehlermeldung fehlt, verborgen
 				oder nicht mit ihm verknüpft ist), 4.1.3 „Statusmeldungen“ (eine Live-Region, die
-				assistive Technologien nicht erreichen) und 1.4.5 „Bilder eines Textes“ (in ein Bild
-				gezeichneter Text, der echter Text sein könnte). Alle drei stellen eine Frage, statt
-				fehlzuschlagen. Die Tastaturregeln lesen Event-Handler aus dem Markup; mit{" "}
+				assistive Technologien nicht erreichen), 1.4.5 „Bilder eines Textes“ (in ein Bild
+				gezeichneter Text, der echter Text sein könnte) und, im Browser, 2.4.11 „Fokus nicht
+				verdeckt (Minimum)“ (eine fixierte oder sticky positionierte Kopfzeile, Fußzeile oder ein
+				Banner, hinter dem Elemente in der Tab-Reihenfolge den Fokus verborgen erhalten können,
+				bestätigt per Hit-Test). Alle vier stellen eine Frage, statt fehlzuschlagen. Die Meldung
+				eines Befunds nennt die Ursache, wo die Regel sie kennt: warum ein Element keinen Namen
+				hat, einen wahrscheinlichen Tippfehler in einer Rolle, einem Attribut oder einem{" "}
+				<code>autocomplete</code>-Wert, was ein Element ausblendet. Die Tastaturregeln lesen Event-Handler aus dem Markup; mit{" "}
 				<code>listenerHookScript()</code>, einem weiteren optionalen Skript, das vor den Skripten
 				der Seite installiert wird, beurteilen sie auch per Skript hinzugefügte Listener. Ein{" "}
 				<code>role="button"</code> in der Tab-Reihenfolge mit einem Klick-Listener und ohne

@@ -217,10 +217,14 @@ export function OverviewContent() {
 				on GitHub shows how to install it before the page's own scripts.
 			</p>
 			<p>
-				Rules reach three criteria no rule covered before: 3.3.1 Error Identification (a field
+				Rules reach four criteria no rule covered before: 3.3.1 Error Identification (a field
 				marked invalid whose error message is missing, hidden or not tied to it), 4.1.3 Status
-				Messages (a live region assistive technology can't reach) and 1.4.5 Images of Text (text
-				drawn in an image that could be real text). All three ask rather than fail. The keyboard
+				Messages (a live region assistive technology can't reach), 1.4.5 Images of Text (text
+				drawn in an image that could be real text) and, in a browser, 2.4.11 Focus Not Obscured (Minimum)
+				(a fixed or sticky header, footer or banner that elements in the tab order can take focus
+				hidden behind, confirmed by hit-testing). All four ask rather than fail. A finding's
+				message names the cause where the rule knows it: why an element has no name, a likely
+				typo in a role, attribute or <code>autocomplete</code> value, what hides an element. The keyboard
 				rules read event handlers from the markup; with <code>listenerHookScript()</code>, another
 				opt-in script installed before the page's own, they judge listeners added from script too,
 				so a <code>role="button"</code> in the tab order with a click listener and no key listener

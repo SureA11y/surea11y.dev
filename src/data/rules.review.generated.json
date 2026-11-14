@@ -5398,6 +5398,300 @@
       }
     }
   ],
+  "focus-not-obscured-enhanced": [
+    {
+      "code": "FOCUS_OBSCURED_ENTIRELY",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie das Element, das der Bericht nennt, das Element: Es bleibt beim Scrollen an Ort und Stelle.",
+            "Scrollen Sie die Seite so, dass eines der gezählten Elemente, etwa ein Link, unter diesem Element liegt, und drücken Sie dann die Tabulatortaste, bis es den Fokus hat. Probieren Sie zwei oder drei davon.",
+            "Haben Sie das Element selbst geöffnet (ein Chatfenster, ein Menü), prüfen Sie, ob Sie es schließen können, etwa mit Escape, ohne den Fokus zu bewegen."
+          ],
+          "passWhen": "Der Fokus bringt jedes Element unter dem Element hervor, oder es ist Inhalt, den Sie geöffnet haben und ohne Fokuswechsel schließen können.",
+          "failWhen": "Ein Element erhält den Fokus ganz verdeckt hinter dem Element, was WCAG 2.4.12 nicht erfüllt (F110). Ein scroll-padding der Seite so groß wie das Element behebt es (C43)."
+        },
+        "en": {
+          "steps": [
+            "Find the box the report names, the box: it stays in place while the page scrolls.",
+            "Scroll the page so that one of the elements the report counts, such as a link, lies under that box, then press Tab until it has focus. Try two or three of them.",
+            "If you opened the box yourself (a chat panel, a menu), check whether you can close it, for example with Escape, without moving focus."
+          ],
+          "passWhen": "Focus brings each element clear of the box, or the box is content you opened and can close without moving focus.",
+          "failWhen": "An element takes focus entirely hidden behind the box, which fails WCAG 2.4.12 (F110). A scroll-padding on the page as large as the box fixes it (C43)."
+        },
+        "es": {
+          "steps": [
+            "Busque la caja que nombra el informe, la caja: se queda fija al desplazar la página.",
+            "Desplace la página para que uno de los elementos que cuenta el informe, como un enlace, quede bajo esa caja, y pulse Tab hasta que tenga el foco. Pruebe con dos o tres.",
+            "Si abrió la caja usted (un panel de chat, un menú), compruebe si puede cerrarla, por ejemplo con Escape, sin mover el foco."
+          ],
+          "passWhen": "El foco saca cada elemento de debajo de la caja, o la caja es contenido que usted abrió y puede cerrar sin mover el foco.",
+          "failWhen": "Un elemento recibe el foco totalmente oculto tras la caja, lo que incumple WCAG 2.4.12 (F110). Un scroll-padding en la página tan grande como la caja lo corrige (C43)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez la boîte que nomme le rapport, la boîte : elle reste en place quand la page défile.",
+            "Faites défiler la page pour qu’un des éléments que compte le rapport, comme un lien, soit sous cette boîte, puis appuyez sur Tab jusqu’à ce qu’il ait le focus. Essayez-en deux ou trois.",
+            "Si vous avez ouvert la boîte vous-même (un panneau de discussion, un menu), vérifiez si vous pouvez la fermer, par exemple avec Échap, sans déplacer le focus."
+          ],
+          "passWhen": "Le focus fait sortir chaque élément de dessous la boîte, ou la boîte est un contenu que vous avez ouvert et pouvez fermer sans déplacer le focus.",
+          "failWhen": "Un élément reçoit le focus entièrement caché derrière la boîte, ce qui ne satisfait pas WCAG 2.4.12 (F110). Un scroll-padding sur la page aussi grand que la boîte corrige cela (C43)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示すボックスボックスを見つけます。ページをスクロールしても定位置に残ります。",
+            "レポートが数えた要素の一つ（リンクなど）がそのボックスの下に来るようにページをスクロールし、その要素にフォーカスが来るまでTabキーを押します。2、3個試します。",
+            "ボックスを自分で開いた場合（チャットパネル、メニュー）は、Escapeキーなどでフォーカスを移動せずに閉じられるか確認します。"
+          ],
+          "passWhen": "フォーカスで各要素がボックスの下から出るか、ボックスは自分で開いてフォーカスを移動せずに閉じられるコンテンツです。",
+          "failWhen": "要素がボックスの後ろに完全に隠れたままフォーカスを受けます。これはWCAG 2.4.12を満たしません（F110）。ボックスと同じ大きさのscroll-paddingをページに指定すると直ります（C43）。"
+        }
+      }
+    },
+    {
+      "code": "FOCUS_OBSCURED_PARTLY",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie das Element, das der Bericht nennt, das Element: Es bleibt beim Scrollen an Ort und Stelle.",
+            "Scrollen Sie die Seite so, dass eines der gezählten Elemente, etwa ein Link, unter diesem Element liegt, und drücken Sie dann die Tabulatortaste, bis es den Fokus hat. Probieren Sie zwei oder drei davon.",
+            "Haben Sie das Element selbst geöffnet (ein Chatfenster, ein Menü), prüfen Sie, ob Sie es schließen können, etwa mit Escape, ohne den Fokus zu bewegen."
+          ],
+          "passWhen": "Der Fokus bringt jedes Element ganz unter dem Element hervor, oder es ist Inhalt, den Sie geöffnet haben und ohne Fokuswechsel schließen können.",
+          "failWhen": "Ein Element erhält den Fokus mit einem Teil verdeckt hinter dem Element, was WCAG 2.4.12 nicht erfüllt. Ein scroll-padding der Seite so groß wie das Element behebt es (C43)."
+        },
+        "en": {
+          "steps": [
+            "Find the box the report names, the box: it stays in place while the page scrolls.",
+            "Scroll the page so that one of the elements the report counts, such as a link, lies under that box, then press Tab until it has focus. Try two or three of them.",
+            "If you opened the box yourself (a chat panel, a menu), check whether you can close it, for example with Escape, without moving focus."
+          ],
+          "passWhen": "Focus brings each element fully clear of the box, or the box is content you opened and can close without moving focus.",
+          "failWhen": "An element takes focus with part of it hidden behind the box, which fails WCAG 2.4.12. A scroll-padding on the page as large as the box fixes it (C43)."
+        },
+        "es": {
+          "steps": [
+            "Busque la caja que nombra el informe, la caja: se queda fija al desplazar la página.",
+            "Desplace la página para que uno de los elementos que cuenta el informe, como un enlace, quede bajo esa caja, y pulse Tab hasta que tenga el foco. Pruebe con dos o tres.",
+            "Si abrió la caja usted (un panel de chat, un menú), compruebe si puede cerrarla, por ejemplo con Escape, sin mover el foco."
+          ],
+          "passWhen": "El foco saca cada elemento por completo de debajo de la caja, o la caja es contenido que usted abrió y puede cerrar sin mover el foco.",
+          "failWhen": "Un elemento recibe el foco con una parte oculta tras la caja, lo que incumple WCAG 2.4.12. Un scroll-padding en la página tan grande como la caja lo corrige (C43)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez la boîte que nomme le rapport, la boîte : elle reste en place quand la page défile.",
+            "Faites défiler la page pour qu’un des éléments que compte le rapport, comme un lien, soit sous cette boîte, puis appuyez sur Tab jusqu’à ce qu’il ait le focus. Essayez-en deux ou trois.",
+            "Si vous avez ouvert la boîte vous-même (un panneau de discussion, un menu), vérifiez si vous pouvez la fermer, par exemple avec Échap, sans déplacer le focus."
+          ],
+          "passWhen": "Le focus fait sortir chaque élément entièrement de dessous la boîte, ou la boîte est un contenu que vous avez ouvert et pouvez fermer sans déplacer le focus.",
+          "failWhen": "Un élément reçoit le focus avec une partie cachée derrière la boîte, ce qui ne satisfait pas WCAG 2.4.12. Un scroll-padding sur la page aussi grand que la boîte corrige cela (C43)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示すボックスボックスを見つけます。ページをスクロールしても定位置に残ります。",
+            "レポートが数えた要素の一つ（リンクなど）がそのボックスの下に来るようにページをスクロールし、その要素にフォーカスが来るまでTabキーを押します。2、3個試します。",
+            "ボックスを自分で開いた場合（チャットパネル、メニュー）は、Escapeキーなどでフォーカスを移動せずに閉じられるか確認します。"
+          ],
+          "passWhen": "フォーカスで各要素がボックスの下から完全に出るか、ボックスは自分で開いてフォーカスを移動せずに閉じられるコンテンツです。",
+          "failWhen": "要素の一部がボックスの後ろに隠れたままフォーカスを受けます。これはWCAG 2.4.12を満たしません。ボックスと同じ大きさのscroll-paddingをページに指定すると直ります（C43）。"
+        }
+      }
+    },
+    {
+      "code": "FOCUS_OBSCURED_BEHIND_MODAL",
+      "text": {
+        "de": {
+          "steps": [
+            "Drücken Sie bei geöffnetem Dialog, wie ihn der Bericht vorfand, die Tabulatortaste, bis der Fokus den Dialog verlässt, falls er das tut.",
+            "Prüfen Sie, wohin der Fokus geht: zu einem Element hinter dem Dialog, verdeckt von ihm oder seinem abgedunkelten Hintergrund, etwa ein Link."
+          ],
+          "passWhen": "Der Fokus bleibt im Dialog, solange er geöffnet ist.",
+          "failWhen": "Der Fokus erreicht Elemente hinter dem Dialog, die der Dialog oder sein Hintergrund verdeckt, was WCAG 2.4.12 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "With the dialog open, as the report found it, press Tab until focus leaves the dialog, if it does.",
+            "Check where focus goes: to an element behind the dialog, covered by it or by its dimmed backdrop, such as a link."
+          ],
+          "passWhen": "Focus stays inside the dialog while it is open.",
+          "failWhen": "Focus reaches elements behind the dialog that the dialog or its backdrop covers, which fails WCAG 2.4.12."
+        },
+        "es": {
+          "steps": [
+            "Con el diálogo abierto, como lo encontró el informe, pulse Tab hasta que el foco salga del diálogo, si sale.",
+            "Compruebe adónde va el foco: a un elemento tras el diálogo, cubierto por él o por su fondo oscurecido, como un enlace."
+          ],
+          "passWhen": "El foco se queda dentro del diálogo mientras está abierto.",
+          "failWhen": "El foco llega a elementos tras el diálogo que el diálogo o su fondo cubren, lo que incumple WCAG 2.4.12."
+        },
+        "fr": {
+          "steps": [
+            "Avec la boîte de dialogue ouverte, comme le rapport l’a trouvée, appuyez sur Tab jusqu’à ce que le focus en sorte, s’il en sort.",
+            "Vérifiez où va le focus : vers un élément derrière la boîte de dialogue, couvert par elle ou par son arrière-plan assombri, comme un lien."
+          ],
+          "passWhen": "Le focus reste dans la boîte de dialogue tant qu’elle est ouverte.",
+          "failWhen": "Le focus atteint des éléments derrière la boîte de dialogue que celle-ci ou son arrière-plan couvre, ce qui ne satisfait pas WCAG 2.4.12."
+        },
+        "ja": {
+          "steps": [
+            "レポートが見つけたとおりダイアログを開いたまま、フォーカスがダイアログの外に出るまでTabキーを押します（出る場合）。",
+            "フォーカスの行き先を確認します。ダイアログやその暗くなった背景に覆われた、ダイアログの後ろの要素（リンクなど）です。"
+          ],
+          "passWhen": "ダイアログが開いている間、フォーカスはその中に留まります。",
+          "failWhen": "フォーカスがダイアログやその背景に覆われた後ろの要素に到達します。これはWCAG 2.4.12を満たしません。"
+        }
+      }
+    }
+  ],
+  "focus-not-obscured-minimum": [
+    {
+      "code": "FOCUS_OBSCURED_ENTIRELY",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie das Element, das der Bericht nennt, das Element: Es bleibt beim Scrollen an Ort und Stelle.",
+            "Scrollen Sie die Seite so, dass eines der gezählten Elemente, etwa ein Link, unter diesem Element liegt, und drücken Sie dann die Tabulatortaste, bis es den Fokus hat. Probieren Sie zwei oder drei davon.",
+            "Haben Sie das Element selbst geöffnet (ein Chatfenster, ein Menü), prüfen Sie, ob Sie es schließen können, etwa mit Escape, ohne den Fokus zu bewegen."
+          ],
+          "passWhen": "Der Fokus bringt jedes Element unter dem Element hervor, oder es ist Inhalt, den Sie geöffnet haben und ohne Fokuswechsel schließen können.",
+          "failWhen": "Ein Element erhält den Fokus ganz verdeckt hinter dem Element, was WCAG 2.4.11 nicht erfüllt (F110). Ein scroll-padding der Seite so groß wie das Element behebt es (C43)."
+        },
+        "en": {
+          "steps": [
+            "Find the box the report names, the box: it stays in place while the page scrolls.",
+            "Scroll the page so that one of the elements the report counts, such as a link, lies under that box, then press Tab until it has focus. Try two or three of them.",
+            "If you opened the box yourself (a chat panel, a menu), check whether you can close it, for example with Escape, without moving focus."
+          ],
+          "passWhen": "Focus brings each element clear of the box, or the box is content you opened and can close without moving focus.",
+          "failWhen": "An element takes focus entirely hidden behind the box, which fails WCAG 2.4.11 (F110). A scroll-padding on the page as large as the box fixes it (C43)."
+        },
+        "es": {
+          "steps": [
+            "Busque la caja que nombra el informe, la caja: se queda fija al desplazar la página.",
+            "Desplace la página para que uno de los elementos que cuenta el informe, como un enlace, quede bajo esa caja, y pulse Tab hasta que tenga el foco. Pruebe con dos o tres.",
+            "Si abrió la caja usted (un panel de chat, un menú), compruebe si puede cerrarla, por ejemplo con Escape, sin mover el foco."
+          ],
+          "passWhen": "El foco saca cada elemento de debajo de la caja, o la caja es contenido que usted abrió y puede cerrar sin mover el foco.",
+          "failWhen": "Un elemento recibe el foco totalmente oculto tras la caja, lo que incumple WCAG 2.4.11 (F110). Un scroll-padding en la página tan grande como la caja lo corrige (C43)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez la boîte que nomme le rapport, la boîte : elle reste en place quand la page défile.",
+            "Faites défiler la page pour qu’un des éléments que compte le rapport, comme un lien, soit sous cette boîte, puis appuyez sur Tab jusqu’à ce qu’il ait le focus. Essayez-en deux ou trois.",
+            "Si vous avez ouvert la boîte vous-même (un panneau de discussion, un menu), vérifiez si vous pouvez la fermer, par exemple avec Échap, sans déplacer le focus."
+          ],
+          "passWhen": "Le focus fait sortir chaque élément de dessous la boîte, ou la boîte est un contenu que vous avez ouvert et pouvez fermer sans déplacer le focus.",
+          "failWhen": "Un élément reçoit le focus entièrement caché derrière la boîte, ce qui ne satisfait pas WCAG 2.4.11 (F110). Un scroll-padding sur la page aussi grand que la boîte corrige cela (C43)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示すボックスボックスを見つけます。ページをスクロールしても定位置に残ります。",
+            "レポートが数えた要素の一つ（リンクなど）がそのボックスの下に来るようにページをスクロールし、その要素にフォーカスが来るまでTabキーを押します。2、3個試します。",
+            "ボックスを自分で開いた場合（チャットパネル、メニュー）は、Escapeキーなどでフォーカスを移動せずに閉じられるか確認します。"
+          ],
+          "passWhen": "フォーカスで各要素がボックスの下から出るか、ボックスは自分で開いてフォーカスを移動せずに閉じられるコンテンツです。",
+          "failWhen": "要素がボックスの後ろに完全に隠れたままフォーカスを受けます。これはWCAG 2.4.11を満たしません（F110）。ボックスと同じ大きさのscroll-paddingをページに指定すると直ります（C43）。"
+        }
+      }
+    },
+    {
+      "code": "FOCUS_OBSCURED_PARTLY",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie das Element, das der Bericht nennt, das Element: Es bleibt beim Scrollen an Ort und Stelle.",
+            "Scrollen Sie die Seite so, dass eines der gezählten Elemente, etwa ein Link, unter diesem Element liegt, und drücken Sie dann die Tabulatortaste, bis es den Fokus hat. Probieren Sie zwei oder drei davon.",
+            "Haben Sie das Element selbst geöffnet (ein Chatfenster, ein Menü), prüfen Sie, ob Sie es schließen können, etwa mit Escape, ohne den Fokus zu bewegen."
+          ],
+          "passWhen": "Der Fokus bringt jedes Element ganz unter dem Element hervor, oder es ist Inhalt, den Sie geöffnet haben und ohne Fokuswechsel schließen können.",
+          "failWhen": "Ein Element erhält den Fokus mit einem Teil verdeckt hinter dem Element, was WCAG 2.4.11 nicht erfüllt. Ein scroll-padding der Seite so groß wie das Element behebt es (C43)."
+        },
+        "en": {
+          "steps": [
+            "Find the box the report names, the box: it stays in place while the page scrolls.",
+            "Scroll the page so that one of the elements the report counts, such as a link, lies under that box, then press Tab until it has focus. Try two or three of them.",
+            "If you opened the box yourself (a chat panel, a menu), check whether you can close it, for example with Escape, without moving focus."
+          ],
+          "passWhen": "Focus brings each element fully clear of the box, or the box is content you opened and can close without moving focus.",
+          "failWhen": "An element takes focus with part of it hidden behind the box, which fails WCAG 2.4.11. A scroll-padding on the page as large as the box fixes it (C43)."
+        },
+        "es": {
+          "steps": [
+            "Busque la caja que nombra el informe, la caja: se queda fija al desplazar la página.",
+            "Desplace la página para que uno de los elementos que cuenta el informe, como un enlace, quede bajo esa caja, y pulse Tab hasta que tenga el foco. Pruebe con dos o tres.",
+            "Si abrió la caja usted (un panel de chat, un menú), compruebe si puede cerrarla, por ejemplo con Escape, sin mover el foco."
+          ],
+          "passWhen": "El foco saca cada elemento por completo de debajo de la caja, o la caja es contenido que usted abrió y puede cerrar sin mover el foco.",
+          "failWhen": "Un elemento recibe el foco con una parte oculta tras la caja, lo que incumple WCAG 2.4.11. Un scroll-padding en la página tan grande como la caja lo corrige (C43)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez la boîte que nomme le rapport, la boîte : elle reste en place quand la page défile.",
+            "Faites défiler la page pour qu’un des éléments que compte le rapport, comme un lien, soit sous cette boîte, puis appuyez sur Tab jusqu’à ce qu’il ait le focus. Essayez-en deux ou trois.",
+            "Si vous avez ouvert la boîte vous-même (un panneau de discussion, un menu), vérifiez si vous pouvez la fermer, par exemple avec Échap, sans déplacer le focus."
+          ],
+          "passWhen": "Le focus fait sortir chaque élément entièrement de dessous la boîte, ou la boîte est un contenu que vous avez ouvert et pouvez fermer sans déplacer le focus.",
+          "failWhen": "Un élément reçoit le focus avec une partie cachée derrière la boîte, ce qui ne satisfait pas WCAG 2.4.11. Un scroll-padding sur la page aussi grand que la boîte corrige cela (C43)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示すボックスボックスを見つけます。ページをスクロールしても定位置に残ります。",
+            "レポートが数えた要素の一つ（リンクなど）がそのボックスの下に来るようにページをスクロールし、その要素にフォーカスが来るまでTabキーを押します。2、3個試します。",
+            "ボックスを自分で開いた場合（チャットパネル、メニュー）は、Escapeキーなどでフォーカスを移動せずに閉じられるか確認します。"
+          ],
+          "passWhen": "フォーカスで各要素がボックスの下から完全に出るか、ボックスは自分で開いてフォーカスを移動せずに閉じられるコンテンツです。",
+          "failWhen": "要素の一部がボックスの後ろに隠れたままフォーカスを受けます。これはWCAG 2.4.11を満たしません。ボックスと同じ大きさのscroll-paddingをページに指定すると直ります（C43）。"
+        }
+      }
+    },
+    {
+      "code": "FOCUS_OBSCURED_BEHIND_MODAL",
+      "text": {
+        "de": {
+          "steps": [
+            "Drücken Sie bei geöffnetem Dialog, wie ihn der Bericht vorfand, die Tabulatortaste, bis der Fokus den Dialog verlässt, falls er das tut.",
+            "Prüfen Sie, wohin der Fokus geht: zu einem Element hinter dem Dialog, verdeckt von ihm oder seinem abgedunkelten Hintergrund, etwa ein Link."
+          ],
+          "passWhen": "Der Fokus bleibt im Dialog, solange er geöffnet ist.",
+          "failWhen": "Der Fokus erreicht Elemente hinter dem Dialog, die der Dialog oder sein Hintergrund verdeckt, was WCAG 2.4.11 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "With the dialog open, as the report found it, press Tab until focus leaves the dialog, if it does.",
+            "Check where focus goes: to an element behind the dialog, covered by it or by its dimmed backdrop, such as a link."
+          ],
+          "passWhen": "Focus stays inside the dialog while it is open.",
+          "failWhen": "Focus reaches elements behind the dialog that the dialog or its backdrop covers, which fails WCAG 2.4.11."
+        },
+        "es": {
+          "steps": [
+            "Con el diálogo abierto, como lo encontró el informe, pulse Tab hasta que el foco salga del diálogo, si sale.",
+            "Compruebe adónde va el foco: a un elemento tras el diálogo, cubierto por él o por su fondo oscurecido, como un enlace."
+          ],
+          "passWhen": "El foco se queda dentro del diálogo mientras está abierto.",
+          "failWhen": "El foco llega a elementos tras el diálogo que el diálogo o su fondo cubren, lo que incumple WCAG 2.4.11."
+        },
+        "fr": {
+          "steps": [
+            "Avec la boîte de dialogue ouverte, comme le rapport l’a trouvée, appuyez sur Tab jusqu’à ce que le focus en sorte, s’il en sort.",
+            "Vérifiez où va le focus : vers un élément derrière la boîte de dialogue, couvert par elle ou par son arrière-plan assombri, comme un lien."
+          ],
+          "passWhen": "Le focus reste dans la boîte de dialogue tant qu’elle est ouverte.",
+          "failWhen": "Le focus atteint des éléments derrière la boîte de dialogue que celle-ci ou son arrière-plan couvre, ce qui ne satisfait pas WCAG 2.4.11."
+        },
+        "ja": {
+          "steps": [
+            "レポートが見つけたとおりダイアログを開いたまま、フォーカスがダイアログの外に出るまでTabキーを押します（出る場合）。",
+            "フォーカスの行き先を確認します。ダイアログやその暗くなった背景に覆われた、ダイアログの後ろの要素（リンクなど）です。"
+          ],
+          "passWhen": "ダイアログが開いている間、フォーカスはその中に留まります。",
+          "failWhen": "フォーカスがダイアログやその背景に覆われた後ろの要素に到達します。これはWCAG 2.4.11を満たしません。"
+        }
+      }
+    }
+  ],
   "focus-not-removed-by-script": [
     {
       "code": "FOCUS_HANDLER_BLURS_SELF",
@@ -11467,6 +11761,278 @@
       }
     }
   ],
+  "page-zones-landmark": [
+    {
+      "code": "BANNER_NOT_EXPOSED",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie den im Bericht genannten Block und entscheiden Sie, ob er der Kopfbereich der ganzen Seite ist: der obere Bereich mit Name oder Logo der Website, oft mit dem Hauptmenü.",
+            "Wenn ja, öffnen Sie die Landmarkenliste eines Screenreaders oder den Barrierefreiheitsbaum in den Entwicklertools des Browsers und prüfen Sie, ob die Seite eine banner-Landmarke hat."
+          ],
+          "passWhen": "Der Block ist nicht der Kopfbereich der Seite, oder der Kopfbereich der Seite ist eine banner-Landmarke.",
+          "failWhen": "Der Block ist der Kopfbereich der Seite, und die Seite hat keine banner-Landmarke, sodass die Navigation über Landmarken ihn nicht erreicht (Best Practice, ARIA11)."
+        },
+        "en": {
+          "steps": [
+            "Find the block the report names, and decide whether it is the header of the whole page: the area at the top with the site's name or logo, often with its main menu.",
+            "If it is, open a screen reader's list of landmarks, or the Accessibility tree in the browser's developer tools, and check whether the page has a banner landmark."
+          ],
+          "passWhen": "The block is not the page header, or the page header is a banner landmark.",
+          "failWhen": "The block is the page header and the page has no banner landmark, so landmark navigation can't reach it (best practice, ARIA11)."
+        },
+        "es": {
+          "steps": [
+            "Buscar el bloque que indica el informe y decidir si es la cabecera de toda la página: la zona superior con el nombre o el logotipo del sitio, a menudo con su menú principal.",
+            "Si lo es, abrir la lista de regiones de referencia de un lector de pantalla, o el árbol de accesibilidad en las herramientas de desarrollo del navegador, y comprobar si la página tiene una región banner."
+          ],
+          "passWhen": "El bloque no es la cabecera de la página, o la cabecera de la página es una región banner.",
+          "failWhen": "El bloque es la cabecera de la página y la página no tiene región banner, así que la navegación por regiones no puede llegar a ella (buena práctica, ARIA11)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez le bloc indiqué par le rapport et décidez s’il est l’en-tête de toute la page : la zone du haut avec le nom ou le logo du site, souvent avec son menu principal.",
+            "Si c’est le cas, ouvrez la liste des repères d’un lecteur d’écran, ou l’arbre d’accessibilité dans les outils de développement du navigateur, et vérifiez si la page a un repère banner."
+          ],
+          "passWhen": "Le bloc n’est pas l’en-tête de la page, ou l’en-tête de la page est un repère banner.",
+          "failWhen": "Le bloc est l’en-tête de la page et la page n’a pas de repère banner : la navigation par repères ne peut pas l’atteindre (bonne pratique, ARIA11)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示すブロックを見つけ、それがページ全体のヘッダー（サイト名やロゴがある上部の領域で、多くはメインメニューを含む）かどうかを判断します。",
+            "そうであれば、スクリーンリーダーのランドマーク一覧、またはブラウザーの開発者ツールのアクセシビリティツリーを開き、ページにbannerランドマークがあるかを確認します。"
+          ],
+          "passWhen": "ブロックはページのヘッダーではないか、ページのヘッダーがbannerランドマークになっています。",
+          "failWhen": "ブロックはページのヘッダーで、ページにbannerランドマークがないため、ランドマークによる移動でそこに到達できません（ベストプラクティス、ARIA11）。"
+        }
+      }
+    },
+    {
+      "code": "HEADER_NESTED",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie das im Bericht genannte <header> und entscheiden Sie, ob es der Kopfbereich der ganzen Seite ist: der obere Bereich mit Name oder Logo der Website, oft mit dem Hauptmenü.",
+            "Wenn ja, prüfen Sie im Barrierefreiheitsbaum, ob es oder ein anderes Element eine banner-Landmarke ist: Ein <header> in einem article, aside, main, nav oder section ist es nicht."
+          ],
+          "passWhen": "Das <header> ist nicht der Kopfbereich der Seite, oder der Kopfbereich der Seite ist eine banner-Landmarke.",
+          "failWhen": "Das <header> ist der Kopfbereich der Seite, und nichts auf der Seite ist eine banner-Landmarke, sodass die Navigation über Landmarken ihn nicht erreicht (Best Practice, ARIA11)."
+        },
+        "en": {
+          "steps": [
+            "Find the <header> the report names, and decide whether it is the header of the whole page: the area at the top with the site's name or logo, often with its main menu.",
+            "If it is, check in the Accessibility tree whether it, or another element, is a banner landmark: a <header> inside an article, aside, main, nav or section is not."
+          ],
+          "passWhen": "The <header> is not the page header, or the page header is a banner landmark.",
+          "failWhen": "The <header> is the page header and nothing on the page is a banner landmark, so landmark navigation can't reach it (best practice, ARIA11)."
+        },
+        "es": {
+          "steps": [
+            "Buscar el <header> que indica el informe y decidir si es la cabecera de toda la página: la zona superior con el nombre o el logotipo del sitio, a menudo con su menú principal.",
+            "Si lo es, comprobar en el árbol de accesibilidad si él, u otro elemento, es una región banner: un <header> dentro de un article, aside, main, nav o section no lo es."
+          ],
+          "passWhen": "El <header> no es la cabecera de la página, o la cabecera de la página es una región banner.",
+          "failWhen": "El <header> es la cabecera de la página y nada en la página es una región banner, así que la navegación por regiones no puede llegar a ella (buena práctica, ARIA11)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez le <header> indiqué par le rapport et décidez s’il est l’en-tête de toute la page : la zone du haut avec le nom ou le logo du site, souvent avec son menu principal.",
+            "Si c’est le cas, vérifiez dans l’arbre d’accessibilité si lui, ou un autre élément, est un repère banner : un <header> placé dans un article, aside, main, nav ou section ne l’est pas."
+          ],
+          "passWhen": "Le <header> n’est pas l’en-tête de la page, ou l’en-tête de la page est un repère banner.",
+          "failWhen": "Le <header> est l’en-tête de la page et rien sur la page n’est un repère banner : la navigation par repères ne peut pas l’atteindre (bonne pratique, ARIA11)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示す<header>を見つけ、それがページ全体のヘッダー（サイト名やロゴがある上部の領域で、多くはメインメニューを含む）かどうかを判断します。",
+            "そうであれば、アクセシビリティツリーで、それまたは他の要素がbannerランドマークになっているかを確認します。article、aside、main、nav、sectionの中の<header>はなりません。"
+          ],
+          "passWhen": "<header>はページのヘッダーではないか、ページのヘッダーがbannerランドマークになっています。",
+          "failWhen": "<header>はページのヘッダーで、ページのどの要素もbannerランドマークではないため、ランドマークによる移動でそこに到達できません（ベストプラクティス、ARIA11）。"
+        }
+      }
+    },
+    {
+      "code": "NAVIGATION_NOT_EXPOSED",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie den im Bericht genannten Block und entscheiden Sie, ob er eine Navigation der Website ist: eine Gruppe von Links zu ihren Seiten oder Rubriken, etwa das Hauptmenü.",
+            "Wenn ja, prüfen Sie in der Landmarkenliste eines Screenreaders oder im Barrierefreiheitsbaum, dass er eine navigation-Landmarke ist."
+          ],
+          "passWhen": "Der Block ist keine Navigation der Website, oder er ist eine navigation-Landmarke.",
+          "failWhen": "Der Block ist eine Navigation der Website und keine navigation-Landmarke, sodass die Navigation über Landmarken ihn nicht erreicht (Best Practice, ARIA11)."
+        },
+        "en": {
+          "steps": [
+            "Find the block the report names, and decide whether it is a navigation of the site: a set of links to its pages or sections, such as the main menu.",
+            "If it is, check in a screen reader's list of landmarks, or the Accessibility tree, that it is a navigation landmark."
+          ],
+          "passWhen": "The block is not a navigation of the site, or it is a navigation landmark.",
+          "failWhen": "The block is a navigation of the site and is not a navigation landmark, so landmark navigation can't reach it (best practice, ARIA11)."
+        },
+        "es": {
+          "steps": [
+            "Buscar el bloque que indica el informe y decidir si es una navegación del sitio: un conjunto de enlaces a sus páginas o secciones, como el menú principal.",
+            "Si lo es, comprobar en la lista de regiones de referencia de un lector de pantalla, o en el árbol de accesibilidad, que es una región navigation."
+          ],
+          "passWhen": "El bloque no es una navegación del sitio, o es una región navigation.",
+          "failWhen": "El bloque es una navegación del sitio y no es una región navigation, así que la navegación por regiones no puede llegar a él (buena práctica, ARIA11)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez le bloc indiqué par le rapport et décidez s’il est une navigation du site : un ensemble de liens vers ses pages ou ses rubriques, comme le menu principal.",
+            "Si c’est le cas, vérifiez dans la liste des repères d’un lecteur d’écran, ou dans l’arbre d’accessibilité, qu’il est un repère navigation."
+          ],
+          "passWhen": "Le bloc n’est pas une navigation du site, ou il est un repère navigation.",
+          "failWhen": "Le bloc est une navigation du site et n’est pas un repère navigation : la navigation par repères ne peut pas l’atteindre (bonne pratique, ARIA11)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示すブロックを見つけ、それがサイトのナビゲーション（メインメニューのように、ページやセクションへのリンクの集まり）かどうかを判断します。",
+            "そうであれば、スクリーンリーダーのランドマーク一覧またはアクセシビリティツリーで、navigationランドマークになっているかを確認します。"
+          ],
+          "passWhen": "ブロックはサイトのナビゲーションではないか、navigationランドマークになっています。",
+          "failWhen": "ブロックはサイトのナビゲーションで、navigationランドマークではないため、ランドマークによる移動でそこに到達できません（ベストプラクティス、ARIA11）。"
+        }
+      }
+    },
+    {
+      "code": "SEARCH_NOT_EXPOSED",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie das im Bericht genannte Suchformular und entscheiden Sie, ob es die Website durchsucht.",
+            "Wenn ja, prüfen Sie in der Landmarkenliste eines Screenreaders oder im Barrierefreiheitsbaum, dass es eine search-Landmarke ist, durch das search-Element oder role=\"search\"."
+          ],
+          "passWhen": "Das Formular durchsucht nicht die Website, oder es ist eine search-Landmarke.",
+          "failWhen": "Das Formular durchsucht die Website und ist keine search-Landmarke, sodass die Navigation über Landmarken es nicht erreicht (Best Practice, ARIA11)."
+        },
+        "en": {
+          "steps": [
+            "Find the search form the report names, and decide whether it searches the site.",
+            "If it does, check in a screen reader's list of landmarks, or the Accessibility tree, that it is a search landmark, through the search element or role=\"search\"."
+          ],
+          "passWhen": "The form doesn't search the site, or it is a search landmark.",
+          "failWhen": "The form searches the site and is not a search landmark, so landmark navigation can't reach it (best practice, ARIA11)."
+        },
+        "es": {
+          "steps": [
+            "Buscar el formulario de búsqueda que indica el informe y decidir si busca en el sitio.",
+            "Si lo hace, comprobar en la lista de regiones de referencia de un lector de pantalla, o en el árbol de accesibilidad, que es una región search, mediante el elemento search o role=\"search\"."
+          ],
+          "passWhen": "El formulario no busca en el sitio, o es una región search.",
+          "failWhen": "El formulario busca en el sitio y no es una región search, así que la navegación por regiones no puede llegar a él (buena práctica, ARIA11)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez le formulaire de recherche indiqué par le rapport et décidez s’il recherche dans le site.",
+            "Si c’est le cas, vérifiez dans la liste des repères d’un lecteur d’écran, ou dans l’arbre d’accessibilité, qu’il est un repère search, par l’élément search ou role=\"search\"."
+          ],
+          "passWhen": "Le formulaire ne recherche pas dans le site, ou il est un repère search.",
+          "failWhen": "Le formulaire recherche dans le site et n’est pas un repère search : la navigation par repères ne peut pas l’atteindre (bonne pratique, ARIA11)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示す検索フォームを見つけ、それがサイト内を検索するものかどうかを判断します。",
+            "そうであれば、スクリーンリーダーのランドマーク一覧またはアクセシビリティツリーで、search要素またはrole=\"search\"によってsearchランドマークになっているかを確認します。"
+          ],
+          "passWhen": "フォームはサイト内を検索するものではないか、searchランドマークになっています。",
+          "failWhen": "フォームはサイト内を検索するもので、searchランドマークではないため、ランドマークによる移動でそこに到達できません（ベストプラクティス、ARIA11）。"
+        }
+      }
+    },
+    {
+      "code": "CONTENTINFO_NOT_EXPOSED",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie den im Bericht genannten Block und entscheiden Sie, ob er der Fußbereich der ganzen Seite ist: der untere Bereich mit Informationen zur Website, etwa Kontaktdaten, Impressum oder Copyright.",
+            "Wenn ja, öffnen Sie die Landmarkenliste eines Screenreaders oder den Barrierefreiheitsbaum in den Entwicklertools des Browsers und prüfen Sie, ob die Seite eine contentinfo-Landmarke hat."
+          ],
+          "passWhen": "Der Block ist nicht der Fußbereich der Seite, oder der Fußbereich der Seite ist eine contentinfo-Landmarke.",
+          "failWhen": "Der Block ist der Fußbereich der Seite, und die Seite hat keine contentinfo-Landmarke, sodass die Navigation über Landmarken ihn nicht erreicht (Best Practice, ARIA11)."
+        },
+        "en": {
+          "steps": [
+            "Find the block the report names, and decide whether it is the footer of the whole page: the area at the bottom with information about the site, such as contact details, legal notices or copyright.",
+            "If it is, open a screen reader's list of landmarks, or the Accessibility tree in the browser's developer tools, and check whether the page has a contentinfo landmark."
+          ],
+          "passWhen": "The block is not the page footer, or the page footer is a contentinfo landmark.",
+          "failWhen": "The block is the page footer and the page has no contentinfo landmark, so landmark navigation can't reach it (best practice, ARIA11)."
+        },
+        "es": {
+          "steps": [
+            "Buscar el bloque que indica el informe y decidir si es el pie de toda la página: la zona inferior con información sobre el sitio, como los datos de contacto, el aviso legal o el copyright.",
+            "Si lo es, abrir la lista de regiones de referencia de un lector de pantalla, o el árbol de accesibilidad en las herramientas de desarrollo del navegador, y comprobar si la página tiene una región contentinfo."
+          ],
+          "passWhen": "El bloque no es el pie de la página, o el pie de la página es una región contentinfo.",
+          "failWhen": "El bloque es el pie de la página y la página no tiene región contentinfo, así que la navegación por regiones no puede llegar a él (buena práctica, ARIA11)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez le bloc indiqué par le rapport et décidez s’il est le pied de toute la page : la zone du bas avec des informations sur le site, comme les coordonnées, les mentions légales ou le copyright.",
+            "Si c’est le cas, ouvrez la liste des repères d’un lecteur d’écran, ou l’arbre d’accessibilité dans les outils de développement du navigateur, et vérifiez si la page a un repère contentinfo."
+          ],
+          "passWhen": "Le bloc n’est pas le pied de page, ou le pied de page est un repère contentinfo.",
+          "failWhen": "Le bloc est le pied de page et la page n’a pas de repère contentinfo : la navigation par repères ne peut pas l’atteindre (bonne pratique, ARIA11)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示すブロックを見つけ、それがページ全体のフッター（連絡先、法的表示、著作権などサイトについての情報がある下部の領域）かどうかを判断します。",
+            "そうであれば、スクリーンリーダーのランドマーク一覧、またはブラウザーの開発者ツールのアクセシビリティツリーを開き、ページにcontentinfoランドマークがあるかを確認します。"
+          ],
+          "passWhen": "ブロックはページのフッターではないか、ページのフッターがcontentinfoランドマークになっています。",
+          "failWhen": "ブロックはページのフッターで、ページにcontentinfoランドマークがないため、ランドマークによる移動でそこに到達できません（ベストプラクティス、ARIA11）。"
+        }
+      }
+    },
+    {
+      "code": "FOOTER_NESTED",
+      "text": {
+        "de": {
+          "steps": [
+            "Finden Sie das im Bericht genannte <footer> und entscheiden Sie, ob es der Fußbereich der ganzen Seite ist: der untere Bereich mit Informationen zur Website, etwa Kontaktdaten, Impressum oder Copyright.",
+            "Wenn ja, prüfen Sie im Barrierefreiheitsbaum, ob es oder ein anderes Element eine contentinfo-Landmarke ist: Ein <footer> in einem article, aside, main, nav oder section ist es nicht."
+          ],
+          "passWhen": "Das <footer> ist nicht der Fußbereich der Seite, oder der Fußbereich der Seite ist eine contentinfo-Landmarke.",
+          "failWhen": "Das <footer> ist der Fußbereich der Seite, und nichts auf der Seite ist eine contentinfo-Landmarke, sodass die Navigation über Landmarken ihn nicht erreicht (Best Practice, ARIA11)."
+        },
+        "en": {
+          "steps": [
+            "Find the <footer> the report names, and decide whether it is the footer of the whole page: the area at the bottom with information about the site, such as contact details, legal notices or copyright.",
+            "If it is, check in the Accessibility tree whether it, or another element, is a contentinfo landmark: a <footer> inside an article, aside, main, nav or section is not."
+          ],
+          "passWhen": "The <footer> is not the page footer, or the page footer is a contentinfo landmark.",
+          "failWhen": "The <footer> is the page footer and nothing on the page is a contentinfo landmark, so landmark navigation can't reach it (best practice, ARIA11)."
+        },
+        "es": {
+          "steps": [
+            "Buscar el <footer> que indica el informe y decidir si es el pie de toda la página: la zona inferior con información sobre el sitio, como los datos de contacto, el aviso legal o el copyright.",
+            "Si lo es, comprobar en el árbol de accesibilidad si él, u otro elemento, es una región contentinfo: un <footer> dentro de un article, aside, main, nav o section no lo es."
+          ],
+          "passWhen": "El <footer> no es el pie de la página, o el pie de la página es una región contentinfo.",
+          "failWhen": "El <footer> es el pie de la página y nada en la página es una región contentinfo, así que la navegación por regiones no puede llegar a él (buena práctica, ARIA11)."
+        },
+        "fr": {
+          "steps": [
+            "Trouvez le <footer> indiqué par le rapport et décidez s’il est le pied de toute la page : la zone du bas avec des informations sur le site, comme les coordonnées, les mentions légales ou le copyright.",
+            "Si c’est le cas, vérifiez dans l’arbre d’accessibilité si lui, ou un autre élément, est un repère contentinfo : un <footer> placé dans un article, aside, main, nav ou section ne l’est pas."
+          ],
+          "passWhen": "Le <footer> n’est pas le pied de page, ou le pied de page est un repère contentinfo.",
+          "failWhen": "Le <footer> est le pied de page et rien sur la page n’est un repère contentinfo : la navigation par repères ne peut pas l’atteindre (bonne pratique, ARIA11)."
+        },
+        "ja": {
+          "steps": [
+            "レポートが示す<footer>を見つけ、それがページ全体のフッター（連絡先、法的表示、著作権などサイトについての情報がある下部の領域）かどうかを判断します。",
+            "そうであれば、アクセシビリティツリーで、それまたは他の要素がcontentinfoランドマークになっているかを確認します。article、aside、main、nav、sectionの中の<footer>はなりません。"
+          ],
+          "passWhen": "<footer>はページのフッターではないか、ページのフッターがcontentinfoランドマークになっています。",
+          "failWhen": "<footer>はページのフッターで、ページのどの要素もcontentinfoランドマークではないため、ランドマークによる移動でそこに到達できません（ベストプラクティス、ARIA11）。"
+        }
+      }
+    }
+  ],
   "password-paste-enabled": [
     {
       "code": "PASTE_CANCELLED",
@@ -12801,6 +13367,118 @@
           ],
           "passWhen": "見出しはデータのラベルとなることを意図していない（通常のセルにできる）か、見出しを付けるデータが、見出しが割り当てられるようにマークアップされています。",
           "failWhen": "データのラベルとなるべき見出しにデータセルが割り当てられておらず、その関係が伝わらないため、WCAG 1.3.1を満たしません。"
+        }
+      }
+    }
+  ],
+  "target-size-enhanced": [
+    {
+      "code": "undersized-inline-link-run",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie auf der Seite den im Bericht genannten Link und den Link daneben.",
+            "Lesen Sie den Text, in dem die beiden Links stehen, und entscheiden Sie, ob sie Teil eines Satzes oder Absatzes sind, was sie ausnimmt, oder eine Reihe von Links, die nur durch Trennzeichen wie „|“ oder „·“ getrennt sind, wie in „Bearbeiten | Löschen“.",
+            "Ist es eine Reihe von Links, untersuchen Sie jeden im Boxmodell der Entwicklertools und prüfen Sie, ob er mindestens 44 mal 44 CSS-Pixel groß ist.",
+            "Ist ein Link kleiner, suchen Sie auf derselben Seite ein anderes Bedienelement, das dasselbe tut und mindestens 44 mal 44 CSS-Pixel groß ist."
+          ],
+          "passWhen": "Die Links sind Teil eines Satzes oder Absatzes, oder jeder ist mindestens 44 mal 44 CSS-Pixel groß, oder ein anderes Bedienelement der Seite, das die Größe einhält, tut dasselbe.",
+          "failWhen": "Die Links bilden eine eigene Reihe, nur durch Trennzeichen getrennt, und einer ist kleiner als 44 mal 44 CSS-Pixel, ohne ein anderes Bedienelement der Seite, das die Größe einhält und dasselbe tut; das verstößt gegen WCAG 2.5.5."
+        },
+        "en": {
+          "steps": [
+            "Find the link the report names on the page, and the link next to it.",
+            "Read the text the two links sit in, and decide whether they are part of a sentence or paragraph, which is exempt, or a row of links set apart only by separators such as \"|\" or \"·\", as in \"Edit | Delete\".",
+            "If they are a row of links, inspect each in the developer tools' box model and check whether it is at least 44 by 44 CSS pixels.",
+            "If a link is smaller, look for another control on the same page that does the same thing and is at least 44 by 44 CSS pixels."
+          ],
+          "passWhen": "The links are part of a sentence or paragraph, or each is at least 44 by 44 CSS pixels, or another control on the page that meets the size does the same thing.",
+          "failWhen": "The links form a row of their own, set apart only by separators, and one is smaller than 44 by 44 CSS pixels, with no control elsewhere on the page that meets the size and does the same, which fails WCAG 2.5.5."
+        },
+        "es": {
+          "steps": [
+            "Buscar en la página el enlace que indica el informe y el enlace contiguo.",
+            "Leer el texto en el que están los dos enlaces y decidir si forman parte de una frase o un párrafo, lo que los exime, o de una fila de enlaces separados solo por separadores como «|» o «·», como en «Editar | Borrar».",
+            "Si son una fila de enlaces, inspeccionar cada uno en el modelo de caja de las herramientas de desarrollo y comprobar si mide al menos 44 por 44 píxeles CSS.",
+            "Si un enlace es menor, buscar en la misma página otro control que haga lo mismo y mida al menos 44 por 44 píxeles CSS."
+          ],
+          "passWhen": "Los enlaces forman parte de una frase o un párrafo, o cada uno mide al menos 44 por 44 píxeles CSS, o hay otro control en la página que cumple el tamaño y hace lo mismo.",
+          "failWhen": "Los enlaces forman una fila propia, separados solo por separadores, y uno mide menos de 44 por 44 píxeles CSS, sin otro control en la página que cumpla el tamaño y haga lo mismo, lo que incumple WCAG 2.5.5."
+        },
+        "fr": {
+          "steps": [
+            "Repérez dans la page le lien indiqué par le rapport, et le lien voisin.",
+            "Lisez le texte dans lequel se trouvent les deux liens et déterminez s’ils font partie d’une phrase ou d’un paragraphe, ce qui les exempte, ou d’une suite de liens séparés seulement par des séparateurs comme « | » ou « · », comme dans « Modifier | Supprimer ».",
+            "S’il s’agit d’une suite de liens, inspectez chacun dans le modèle de boîte des outils de développement et vérifiez s’il fait au moins 44 pixels CSS sur 44.",
+            "Si un lien est plus petit, cherchez dans la même page un autre contrôle qui fait la même chose et fait au moins 44 pixels CSS sur 44."
+          ],
+          "passWhen": "Les liens font partie d’une phrase ou d’un paragraphe, ou chacun fait au moins 44 pixels CSS sur 44, ou un autre contrôle de la page qui respecte la taille fait la même chose.",
+          "failWhen": "Les liens forment une suite à part, séparés seulement par des séparateurs, et l’un d’eux fait moins de 44 pixels CSS sur 44, sans autre contrôle de la page qui respecte la taille et fasse la même chose, ce qui ne respecte pas le critère WCAG 2.5.5."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたリンクと、その隣のリンクをページ上で見つけてください。",
+            "2つのリンクがある文章を読み、それらが文や段落の一部（例外として除外されます）か、「編集|削除」のように「|」や「·」などの区切り文字だけで区切られたリンクの並びかを判断してください。",
+            "リンクの並びであれば、開発者ツールのボックスモデルでそれぞれを調べ、44 × 44 CSSピクセル以上あるかを確認してください。",
+            "リンクが小さい場合は、同じページに同じ機能を持ち、44 × 44 CSSピクセル以上あるほかのコントロールがあるかを探してください。"
+          ],
+          "passWhen": "リンクが文や段落の一部である、それぞれが44 × 44 CSSピクセル以上ある、またはサイズを満たすほかのコントロールがページ上で同じ機能を持っています。",
+          "failWhen": "リンクが区切り文字だけで区切られた独立した並びで、一方が44 × 44 CSSピクセル未満であり、サイズを満たして同じ機能を持つほかのコントロールもページ上にないため、WCAG 2.5.5を満たしません。"
+        }
+      }
+    },
+    {
+      "code": "undersized-plausibly-essential",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie das im Bericht genannte Ziel und die Grafik, zu der es gehört: eine SVG-Zeichnung, ein Canvas oder eine Imagemap (ein Bild mit anklickbaren Bereichen).",
+            "Entscheiden Sie, ob Größe und Lage des Ziels eine Information tragen, die verloren ginge, wenn man es vergrößerte, wie bei den Markierungen auf einer Karte oder den Punkten eines Diagramms.",
+            "Ist das nicht so, untersuchen Sie das Ziel im Boxmodell der Entwicklertools und prüfen Sie, ob es mindestens 44 mal 44 CSS-Pixel groß ist.",
+            "Ist es kleiner, suchen Sie auf derselben Seite ein anderes Bedienelement, das dasselbe tut und mindestens 44 mal 44 CSS-Pixel groß ist, etwa eine Liste der Orte der Karte als Links."
+          ],
+          "passWhen": "Die Größe des Ziels ist für das, was die Grafik zeigt, wesentlich, oder das Ziel ist mindestens 44 mal 44 CSS-Pixel groß, oder ein anderes Bedienelement der Seite, das die Größe einhält, tut dasselbe.",
+          "failWhen": "Die Größe des Ziels ist nicht wesentlich, es ist kleiner als 44 mal 44 CSS-Pixel, und kein anderes Bedienelement der Seite, das die Größe einhält, tut dasselbe; das verstößt gegen WCAG 2.5.5."
+        },
+        "en": {
+          "steps": [
+            "Find the target the report names and the graphic it belongs to: an SVG drawing, a canvas or an image map (an image with clickable areas).",
+            "Decide whether the target's size and position carry information that would be lost if it were made larger, as the pins on a map or the points on a chart do.",
+            "If they don't, inspect the target in the developer tools' box model and check whether it is at least 44 by 44 CSS pixels.",
+            "If it is smaller, look for another control on the same page that does the same thing and is at least 44 by 44 CSS pixels, such as a list of the map's places as links."
+          ],
+          "passWhen": "The target's size is essential to what the graphic shows, or the target is at least 44 by 44 CSS pixels, or another control on the page that meets the size does the same thing.",
+          "failWhen": "The target's size is not essential, it is smaller than 44 by 44 CSS pixels, and no control elsewhere on the page that meets the size does the same, which fails WCAG 2.5.5."
+        },
+        "es": {
+          "steps": [
+            "Buscar el objetivo que indica el informe y el gráfico al que pertenece: un dibujo SVG, un canvas o un mapa de imagen (una imagen con zonas en las que se puede hacer clic).",
+            "Decidir si el tamaño y la posición del objetivo transmiten información que se perdería si se agrandara, como los marcadores de un mapa o los puntos de un gráfico.",
+            "Si no es así, inspeccionar el objetivo en el modelo de caja de las herramientas de desarrollo y comprobar si mide al menos 44 por 44 píxeles CSS.",
+            "Si es menor, buscar en la misma página otro control que haga lo mismo y mida al menos 44 por 44 píxeles CSS, como una lista de enlaces a los lugares del mapa."
+          ],
+          "passWhen": "El tamaño del objetivo es esencial para lo que muestra el gráfico, o el objetivo mide al menos 44 por 44 píxeles CSS, o hay otro control en la página que cumple el tamaño y hace lo mismo.",
+          "failWhen": "El tamaño del objetivo no es esencial, mide menos de 44 por 44 píxeles CSS, y ningún otro control de la página que cumpla el tamaño hace lo mismo, lo que incumple WCAG 2.5.5."
+        },
+        "fr": {
+          "steps": [
+            "Repérez la cible indiquée par le rapport et le graphique auquel elle appartient : un dessin SVG, un canvas ou une image réactive (une image avec des zones cliquables).",
+            "Déterminez si la taille et la position de la cible portent une information qui serait perdue si on l’agrandissait, comme les repères d’une carte ou les points d’un graphique.",
+            "Si ce n’est pas le cas, inspectez la cible dans le modèle de boîte des outils de développement et vérifiez si elle fait au moins 44 pixels CSS sur 44.",
+            "Si elle est plus petite, cherchez dans la même page un autre contrôle qui fait la même chose et fait au moins 44 pixels CSS sur 44, comme une liste de liens vers les lieux de la carte."
+          ],
+          "passWhen": "La taille de la cible est essentielle à ce que montre le graphique, ou la cible fait au moins 44 pixels CSS sur 44, ou un autre contrôle de la page qui respecte la taille fait la même chose.",
+          "failWhen": "La taille de la cible n’est pas essentielle, elle fait moins de 44 pixels CSS sur 44, et aucun autre contrôle de la page qui respecte la taille ne fait la même chose, ce qui ne respecte pas le critère WCAG 2.5.5."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたターゲットと、それが属する図（SVGの描画、canvas、またはイメージマップ、つまりクリックできる領域を持つ画像）を見つけてください。",
+            "地図のピンやグラフの点のように、ターゲットのサイズや位置が、大きくすると失われる情報を伝えているかを判断してください。",
+            "そうでない場合は、開発者ツールのボックスモデルでターゲットを調べ、44 × 44 CSSピクセル以上あるかを確認してください。",
+            "小さい場合は、地図の場所をリンクで並べた一覧のように、同じページに同じ機能を持ち、44 × 44 CSSピクセル以上あるほかのコントロールがあるかを探してください。"
+          ],
+          "passWhen": "ターゲットのサイズが図の示す内容に必要不可欠である、ターゲットが44 × 44 CSSピクセル以上ある、またはサイズを満たすほかのコントロールがページ上で同じ機能を持っています。",
+          "failWhen": "ターゲットのサイズは必要不可欠ではなく、44 × 44 CSSピクセル未満で、サイズを満たして同じ機能を持つほかのコントロールもページ上にないため、WCAG 2.5.5を満たしません。"
         }
       }
     }

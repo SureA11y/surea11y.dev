@@ -477,8 +477,11 @@ export function KnownLimitationsContent() {
 					keyboard would, and switches transitions off on the element it measures;{" "}
 					<code>aria-hidden-focus</code> focuses an element inside an <code>aria-hidden</code>{" "}
 					subtree to see whether the page moves focus away at once (a focus-trap sentinel);{" "}
-					<code>text-spacing-content-loss</code> adds a style sheet with the WCAG 1.4.12 spacing;
-					the contrast rules add a blank, off-screen frame to read the browser's own colors for a
+					<code>text-spacing-content-loss</code> adds a style sheet with the WCAG 1.4.12 spacing;{" "}
+					<code>focus-not-obscured-minimum</code> and <code>-enhanced</code> scroll the page so an
+					element lies under a fixed or sticky box, to hit-test it there, which fires the page's{" "}
+					<code>scroll</code> handlers after they have measured (a header that hides on scroll may
+					react); the contrast rules add a blank, off-screen frame to read the browser's own colors for a
 					placeholder or a drop-down <code>&lt;select&gt;</code>. The scan also moves each running
 					animation to a fixed point while the rules run (a finite one to its end, an endless one
 					to its start), so a fade-in is measured as it settles. All of this is put back before the
@@ -674,6 +677,28 @@ export function KnownLimitationsContent() {
 						<code>LAYOUT_MEASUREMENT.md</code>
 					</a>
 					.
+				</li>
+				<li>
+					<strong>
+						Whether content covers a focused element is worked out for the page's own scrolling
+						and its fixed and sticky boxes.
+					</strong>{" "}
+					<a href="/rules/focus-not-obscured-minimum/"><code>focus-not-obscured-minimum</code></a>{" "}
+					(2.4.11) and{" "}
+					<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>{" "}
+					(2.4.12) need a browser: under jsdom they are <code>notApplicable</code>{" "}
+					(<code>data.reason: 'noLayout'</code>). In a browser they ask which elements in the tab
+					order a <code>position: fixed</code> or <code>sticky</code> box that draws something can
+					hide, given the window the scan uses and the page's <code>scroll-padding</code>, and
+					confirm it by hit-testing a few of them. Left out: an element inside a box that scrolls on
+					its own, or inside a fixed or sticky box; horizontal scrolling; other content laid over an
+					element (an absolutely positioned box, a non-modal popup that isn't fixed); a box with{" "}
+					<code>pointer-events: none</code>, which the browser's hit test passes through; and what
+					appears later (a chat bubble after a delay) or at another window size. Who opened a box
+					can't be seen either: the criteria allow content the user opened and can close without
+					moving focus, so a box a control marks as expanded (<code>aria-expanded="true"</code> with{" "}
+					<code>aria-controls</code>) is asked about without a lean, and any other with a caution
+					saying so.
 				</li>
 				<li>
 					<strong>Contrast is computed in sRGB.</strong> Colors given in <code>oklch()</code>,{" "}

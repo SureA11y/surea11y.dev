@@ -103,7 +103,7 @@
 <a class="skip" href="#main">Zu den Prüfschritten springen</a>
 <header class="page">
 <h1>WCAG 2.2: wie jede Anforderung geprüft wird</h1>
-<p>Anforderungen: 55 · Prüfschritte: 50</p>
+<p>Anforderungen: 55 · Prüfschritte: 53</p>
 <ul><li>Stufen: A, AA</li></ul>
 
 </header>
@@ -399,14 +399,17 @@
 <p class="meta"><span>Stufe AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-11-ui-component-contrast">
 <h5 id="facet-1-4-11-ui-component-contrast">Die Teile eines Bedienelements, die zeigen, dass es vorhanden ist und in welchem Zustand es ist, haben einen Kontrast von mindestens 3:1</h5>
-<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li></ul>
-<p class="empty">Dafür gibt es noch keinen Prüfschritt.</p>
-
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Betrachten Sie jedes Bedienelement der Seite: Schaltflächen, Felder, Kontrollkästchen, Optionsfelder, Schieberegler, Registerkarten und wie Schaltflächen gestaltete Links.</li><li>Suchen Sie bei jedem, was zeigt, dass es vorhanden ist, etwa den Rahmen eines Felds oder den Umriss einer Schaltfläche, und messen Sie mit einem Kontrastprüfwerkzeug seinen Kontrast zur Umgebung. Nötig sind mindestens 3:1. Ein Bedienelement, das nur durch seinen Text erkennbar ist, braucht nichts weiter.</li><li>Tun Sie dasselbe für das, was jeden Zustand zeigt: das Häkchen eines Kontrollkästchens, die ausgewählte Registerkarte, den Griff eines Schiebereglers und den Fokusindikator im fokussierten Zustand.</li><li>Lassen Sie Bedienelemente aus, die der Browser zeichnet, ohne dass der Autor ihr Aussehen geändert hat, und inaktive (deaktivierte) Bedienelemente.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder Teil, der ein Bedienelement oder seinen Zustand zeigt, hat einen Kontrast von mindestens 3:1 zu seiner Umgebung.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Teil, der nötig ist, um ein Bedienelement oder seinen Zustand zu sehen, etwa der Rahmen eines Felds, das Häkchen eines Kontrollkästchens oder der Fokusindikator, hat einen Kontrast unter 3:1; das verstößt gegen WCAG 1.4.11.</dd></dl>
+<p class="rules">Regeln, die es prüfen: <code>css-focus-indicator-suppressed</code></p>
+<div class="covers"><p>Dieser Prüfschritt prüft auch:</p><ul><li>CSS entfernt den Fokusindikator nicht, ohne einen Ersatz zu zeichnen</li></ul></div>
 </section>
 <section class="facet" aria-labelledby="facet-1-4-11-graphics-contrast">
 <h5 id="facet-1-4-11-graphics-contrast">Die Teile einer Grafik, die zu ihrem Verständnis nötig sind, haben einen Kontrast von mindestens 3:1</h5>
-<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li></ul>
-<p class="empty">Dafür gibt es noch keinen Prüfschritt.</p>
+<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
+<ol class="steps"><li>Suchen Sie nach Grafiken, die Informationen tragen: Symbole ohne Text daneben, Diagramme, Schaubilder, Karten und Infografiken.</li><li>Suchen Sie in jeder die Teile, die man zu ihrem Verständnis braucht, etwa die Form eines Symbols, die Linien und Balken eines Diagramms oder die Grenzen zwischen Flächen.</li><li>Messen Sie mit einem Kontrastprüfwerkzeug den Kontrast jedes Teils zu seiner Umgebung. Nötig sind mindestens 3:1. Ein Teil, der mit Text beschriftet ist oder dessen Information auch in Text daneben steht, braucht ihn nicht.</li><li>Lassen Sie dekorative Grafiken, Logos und Grafiken aus, deren besonderes Aussehen wesentlich ist, etwa ein Foto oder eine Flagge.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder Teil einer Grafik, der zu ihrem Verständnis nötig ist, hat einen Kontrast von mindestens 3:1, oder seine Information wird auf andere Weise gegeben.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Teil einer Grafik, der zu ihrem Verständnis nötig ist, hat einen Kontrast unter 3:1, und seine Information wird nicht auf andere Weise gegeben; das verstößt gegen WCAG 1.4.11.</dd></dl>
 
 </section>
 </article>
@@ -657,9 +660,10 @@
 <p class="meta"><span>Stufe AA</span></p>
 <section class="facet" aria-labelledby="facet-2-4-11-focus-not-obscured">
 <h5 id="facet-2-4-11-focus-not-obscured">Ein Element, das den Fokus erhält, wird nicht vollständig von Inhalten verdeckt, die die Seite darüberlegt</h5>
-<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li></ul>
-<p class="empty">Dafür gibt es noch keinen Prüfschritt.</p>
-
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Eine Tastatur</span>, <span>Der Zoom des Browsers</span></li></ul>
+<ol class="steps"><li>Laden Sie die Seite neu, scrollen Sie mit der Maus bis zur Hälfte und drücken Sie dann langsam die Tabulatortaste durch die ganze Seite.</li><li>Prüfen Sie bei jedem Halt, dass Sie das fokussierte Element wenigstens teilweise sehen. Achten Sie auf Kopf- und Fußzeilen, Banner und Chat-Schaltflächen, die beim Scrollen an Ort und Stelle bleiben.</li><li>Wo Inhalt, den die Seite an Ort und Stelle hält, das fokussierte Element ganz verdeckt, notieren Sie es. Haben Sie diesen Inhalt selbst geöffnet (ein Chatfenster, ein Menü), prüfen Sie, ob Sie ihn schließen können, etwa mit Escape, ohne den Fokus zu bewegen: Dann zählt er nicht.</li><li>Wiederholen Sie es mit Umschalt+Tab die Seite hinauf und in einem Fenster von 320 CSS-Pixeln Breite, in dem fixierte Leisten mehr vom Bildschirm einnehmen.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jedes Element, das den Fokus erhält, ist wenigstens teilweise zu sehen, oder es verdeckt nur Inhalt, den Sie geöffnet haben und ohne Fokuswechsel schließen können.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Element erhält den Fokus ganz verdeckt hinter Inhalt, den die Seite dort hingesetzt hat, etwa einer fixierten Kopf- oder Fußzeile oder einem Cookie-Banner, was WCAG 2.4.11 nicht erfüllt.</dd></dl>
+<p class="rules">Regeln, die es prüfen: <code>focus-not-obscured-minimum</code></p>
 </section>
 </article>
 </section>

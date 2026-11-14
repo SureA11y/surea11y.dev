@@ -116,8 +116,8 @@
 </header>
 
 <div class="meta-bar">
-  <div><b>145</b>実行したルール</div>
-  <div><b>13</b>検出箇所の合計</div>
+  <div><b>149</b>実行したルール</div>
+  <div><b>18</b>検出箇所の合計</div>
   <div><b>a11ycore</b>エンジン</div>
   <div><b>1.0.0</b>スキーマバージョン</div>
   <div><b>WCAG 2.2</b>対象</div>
@@ -128,12 +128,12 @@
 
 <main>
   <div class="hero">
-    <p class="hero-headline">該当するチェック <strong>48</strong> 件のうち <strong>39</strong> 件が合格しました。不合格の <strong>4</strong> 件は、以下で対応が必要です。</p>
-    <div class="hero-bar"><div class="hero-bar-seg" style="width:2.7586206896551726%; background:#b0441f" title="不合格: 4 (2.8%)"></div><div class="hero-bar-seg" style="width:3.4482758620689653%; background:#8a6400" title="要確認: 5 (3.4%)"></div><div class="hero-bar-seg" style="width:26.89655172413793%; background:#0b7d0b" title="合格: 39 (26.9%)"></div><div class="hero-bar-seg" style="width:66.89655172413794%; background:#5f6368" title="該当なし: 97 (66.9%)"></div></div>
+    <p class="hero-headline">該当するチェック <strong>52</strong> 件のうち <strong>42</strong> 件が合格しました。不合格の <strong>5</strong> 件は、以下で対応が必要です。</p>
+    <div class="hero-bar"><div class="hero-bar-seg" style="width:3.3557046979865772%; background:#b0441f" title="不合格: 5 (3.4%)"></div><div class="hero-bar-seg" style="width:3.3557046979865772%; background:#8a6400" title="要確認: 5 (3.4%)"></div><div class="hero-bar-seg" style="width:28.187919463087248%; background:#0b7d0b" title="合格: 42 (28.2%)"></div><div class="hero-bar-seg" style="width:65.1006711409396%; background:#5f6368" title="該当なし: 97 (65.1%)"></div></div>
     <div class="hero-legend"><div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
         <span class="hero-legend-label">不合格</span>
-        <span class="hero-legend-count">4 (2.8%)</span>
+        <span class="hero-legend-count">5 (3.4%)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
@@ -143,12 +143,12 @@
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#0b7d0b">✓</span>
         <span class="hero-legend-label">合格</span>
-        <span class="hero-legend-count">39 (26.9%)</span>
+        <span class="hero-legend-count">42 (28.2%)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#5f6368">–</span>
         <span class="hero-legend-label">該当なし</span>
-        <span class="hero-legend-count">97 (66.9%)</span>
+        <span class="hero-legend-count">97 (65.1%)</span>
       </div></div>
   </div>
 
@@ -212,6 +212,21 @@
         
         <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">1.1.1 Non-text Content の解説</a></p>
       </div>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
+        <span class="card-title"><strong>target-size-enhanced</strong> (不合格、重大度: 中程度) <span class="card-count">× 5</span></span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.5.5</span></div>
+        <div class="card-selector"><span class="card-selector-label">セレクター:</span> <code>html &gt; body &gt; header &gt; a</code></div>
+        <div class="card-snippet">幅 1280px のビューポートで、このターゲットは 37.6×18 CSS px と 44×44 未満です。 — ターゲットを 44×44 CSS px 以上にしてください。</div>
+        
+        
+        <p class="card-note">上記のセレクターと概要は、代表的な 1 件のものです。このルールの検出箇所は合計 5 件です。</p>
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html">2.5.5 Target Size (Enhanced) の解説</a></p>
+      </div>
     </div></div>
 <h3 class="cards-group">不適合の可能性が高い: 確認してください</h3><div class="cards"><div class="card">
       <div class="card-head">
@@ -221,7 +236,7 @@
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 3.3.1</span></div>
         <div class="card-selector"><span class="card-selector-label">セレクター:</span> <code>#email</code></div>
-        <div class="card-snippet">このフィールドは無効とマークされていますが、aria-errormessage が指すエラーメッセージは隠れています。 — フィールドが無効な間は、エラーメッセージを表示してください。</div>
+        <div class="card-snippet">このフィールドは無効とマークされていますが、aria-errormessage が指すエラーメッセージ (「Enter an email address such as name@exa…」)は、&lt;p id=&quot;email-error&quot;&gt; の display: none によって隠れています。 — フィールドが無効な間は、エラーメッセージを表示してください。</div>
         <p class="card-lean">不適合の可能性が高い: フィールドに結び付けられたエラーメッセージが非表示のため、エラーはおそらく伝えられていません。</p>
         <details class="card-how"><summary>確認方法</summary><ol><li>利用者と同じ方法でフィールドを無効な状態にしてください (フォームを空のまま送信するか、誤った値を入力します)。</li><li>フィールドが指すエラーメッセージ (aria-errormessage によるもの) を探し、画面上に表示されるか確認してください。</li><li>表示されない場合は、ラベル内、フィールドの隣、またはフォーム上部の概要に、何が誤っているかを伝えるテキストがないか探してください。</li><li>スクリーンリーダーでフィールドに移動し、エラーが読み上げられるか聞いてください。</li></ol><p>適合: aria-errormessage が示すメッセージでなくても、フィールドに結び付いたどこかでエラーがテキストで表示され、読み上げられます。</p><p>不適合: どのフィールドがなぜ誤っているかを伝えるテキストがないか、スクリーンリーダーの利用者に伝わらないため、WCAG 3.3.1 を満たしません。</p></details>
         
@@ -236,7 +251,7 @@
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.1.1</span></div>
         <div class="card-selector"><span class="card-selector-label">セレクター:</span> <code>html &gt; body &gt; main &gt; img:nth-of-type(2)</code></div>
-        <div class="card-snippet">この &lt;img&gt; のテキストによる代替はファイル名のように見えます。 — ファイル名は、画像を見られない人にとって画像について何も伝えません。画像が何を示しているか、リンクやボタンであればどこへ移動し何をするのかを伝えるテキストに置き換えてください。ファイル一覧のスクリーンショットのように、ファイル名そのものが画像に写っている内容である場合に限り、そのままで構いません。</div>
+        <div class="card-snippet">この &lt;img&gt; のテキストによる代替「IMG_2041.jpg」はファイル名のように見えます。 — ファイル名は、画像を見られない人にとって画像について何も伝えません。画像が何を示しているか、リンクやボタンであればどこへ移動し何をするのかを伝えるテキストに置き換えてください。ファイル一覧のスクリーンショットのように、ファイル名そのものが画像に写っている内容である場合に限り、そのままで構いません。</div>
         <p class="card-lean">不適合の可能性が高い: ファイル名、Web アドレス、汎用的な語では、画像が何を示しているかは伝わりません。 注意: その語の画像のように、その語が画像の示すすべてである場合もあります。</p>
         <details class="card-how"><summary>確認方法</summary><ol><li>レポートに示された画像を見つけ、その代替テキストを読んでください (疑わしいと判断された理由があれば、レポートに示されています)。</li><li>画像とその文脈を見て、ページにとって重要な何を示しているかを検討してください。</li><li>テキストによる代替が、グラフや図によくあるように画像の名前を示すだけの場合、詳細は別の場所 (隣のキャプション、テキスト、表、またはすぐ横のリンク) にあるかもしれません。スクリーンリーダーの利用者が画像からそれを見つけられ、画像が示すすべてを伝えている場合にだけ、それを認めます。</li><li>alt が重要な内容を伝えているか、画像の名前を示し残りをその説明が伝えているかを判断してください。ファイル名、ウェブアドレス、「画像」のような一般的な語はどちらにもなりません。</li></ol><p>適合: alt テキストが、画像が示す利用者に必要な内容を伝えているか、画像の名前を示し、スクリーンリーダーの利用者が画像からたどれる説明が残りを伝えています。</p><p>不適合: alt テキストも画像からたどれる説明も画像の内容を伝えていない (alt がファイル名、アドレス、一般的な語であるなど) ため、WCAG 1.1.1 を満たしません (F30)。</p></details>
         
@@ -479,6 +494,13 @@
             <td class="note">image-of-text</td>
           </tr>
 <tr>
+            <td class="sc-cell">WCAG 1.4.11</td>
+            <td>非テキストのコントラスト</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">要確認</span></td>
+            <td class="note">合格 0 / 不合格 0 / 要確認 0 / 該当なし 1</td>
+            <td class="note">css-focus-indicator-suppressed</td>
+          </tr>
+<tr>
             <td class="sc-cell">WCAG 1.4.12</td>
             <td>テキストの間隔</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">要確認</span></td>
@@ -498,6 +520,13 @@
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">要確認</span></td>
             <td class="note">合格 0 / 不合格 0 / 要確認 1 / 該当なし 3</td>
             <td class="note">css-hidden-focus, css-focus-indicator-suppressed, focus-not-removed-by-script, manual-review</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.11</td>
+            <td>フォーカスが隠されない (最低限)</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">要確認</span></td>
+            <td class="note">合格 1 / 不合格 0 / 要確認 0 / 該当なし 0<br>一部のみ確認: チェックはこの達成基準の一部しか扱わないため、残りは人が確認します</td>
+            <td class="note">focus-not-obscured-minimum</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 2.5.8</td>
@@ -544,8 +573,8 @@
             <td class="sc-cell">WCAG 2.1.3</td>
             <td>キーボード (例外なし)</td>
             <td><span class="chip" style="background:#fdece5;color:#b0441f">不合格</span></td>
-            <td class="note">合格 0 / 不合格 1 / 要確認 0 / 該当なし 2</td>
-            <td class="note">scrollable-region-focusable, mouse-only-event-handlers, click-handler-keyboard-operable</td>
+            <td class="note">合格 1 / 不合格 1 / 要確認 0 / 該当なし 5</td>
+            <td class="note">iframe-focusable-content, server-side-image-map-absent, scrollable-region-focusable, mouse-only-event-handlers, click-handler-keyboard-operable, focus-not-removed-by-script, widget-keyboard-focusable</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 2.2.4</td>
@@ -562,6 +591,27 @@
             <td class="note">identical-links-same-purpose, link-name-present, link-name-quality</td>
           </tr>
 <tr>
+            <td class="sc-cell">WCAG 2.4.12</td>
+            <td>フォーカスが隠されない (高度)</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">要確認</span></td>
+            <td class="note">合格 1 / 不合格 0 / 要確認 0 / 該当なし 0<br>一部のみ確認: チェックはこの達成基準の一部しか扱わないため、残りは人が確認します</td>
+            <td class="note">focus-not-obscured-enhanced</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.4.13</td>
+            <td>フォーカスの外観</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">要確認</span></td>
+            <td class="note">合格 0 / 不合格 0 / 要確認 0 / 該当なし 2</td>
+            <td class="note">css-focus-indicator-suppressed, focus-not-removed-by-script</td>
+          </tr>
+<tr>
+            <td class="sc-cell">WCAG 2.5.5</td>
+            <td>ターゲットのサイズ (高度)</td>
+            <td><span class="chip" style="background:#fdece5;color:#b0441f">不合格</span></td>
+            <td class="note">合格 0 / 不合格 1 / 要確認 0 / 該当なし 0</td>
+            <td class="note">target-size-enhanced</td>
+          </tr>
+<tr>
             <td class="sc-cell">WCAG 3.2.5</td>
             <td>要求による変化</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">要確認</span></td>
@@ -572,7 +622,7 @@
       </div>
 
   <h2 id="manual-checks-heading">人による確認が残っているもの</h2>
-  <p class="manual-intro">どのルールも完全には判定できないため、人が手作業で確認します：WCAG 2.2 (A, AA, AAA) の <strong>35</strong> 件の要件に対して <strong>55</strong> 件の確認。ルールがすべて合格した要件も、ここでの確認が合格して初めて満たされます。</p>
+  <p class="manual-intro">どのルールも完全には判定できないため、人が手作業で確認します：WCAG 2.2 (A, AA, AAA) の <strong>40</strong> 件の要件に対して <strong>61</strong> 件の確認。ルールがすべて合格した要件も、ここでの確認が合格して初めて満たされます。</p>
   <div class="manual-list"><details class="manual-req">
       <summary><span class="sc-cell">1.1.1</span> <span>非テキストコンテンツ</span> <span class="chip" style="background:#fdece5;color:#b0441f">スキャン：不合格</span> <span class="card-count">確認：5</span></summary>
       <div class="manual-body"><div class="manual-facet">
@@ -742,6 +792,21 @@
           <p><strong>不合格の条件：</strong> <span>テキストと背景のコントラスト比が 7:1 (大きな文字は 4.5:1) 未満であるため、WCAG 1.4.6 を満たしません。</span></p>
         </div></div>
     </details><details class="manual-req">
+      <summary><span class="sc-cell">1.4.11</span> <span>非テキストのコントラスト</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">スキャン：要確認</span> <span class="card-count">確認：2</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>コントロールの存在と状態を示す部分のコントラスト比が 3:1 以上である</strong></p>
+          <p class="manual-meta">人だけが確認できる · 必要なもの：<span>ブラウザーの開発者ツール</span></p>
+          <ol><li>ページ上の各コントロール (ボタン、入力欄、チェックボックス、ラジオボタン、スライダー、タブ、ボタンのような見た目のリンク) を確認してください。</li><li>それぞれについて、入力欄の枠線やボタンの輪郭など、そこにあることを示す部分を見つけ、コントラストチェッカーで隣接する色とのコントラスト比を測ってください。3:1 以上が必要です。テキストだけで示されるコントロールには、それ以上は必要ありません。</li><li>各状態を示す部分についても同じように確認してください。チェックボックスのチェック、選択されたタブ、スライダーのつまみ、フォーカスがある状態のフォーカスインジケータです。</li><li>制作者が見た目を変更していない、ブラウザが描画するコントロールと、非アクティブ (無効) なコントロールは除外してください。</li></ol>
+          <p><strong>合格の条件：</strong> <span>コントロールやその状態を示すすべての部分が、隣接する色とのコントラスト比 3:1 以上です。</span></p>
+          <p><strong>不合格の条件：</strong> <span>入力欄の枠線、チェックボックスのチェック、フォーカスインジケータなど、コントロールやその状態を見るのに必要な部分のコントラスト比が 3:1 未満であり、WCAG 1.4.11 を満たしません。</span></p>
+        </div><div class="manual-facet">
+          <p class="manual-label"><strong>グラフィックの理解に必要な部分のコントラスト比が 3:1 以上である</strong></p>
+          <p class="manual-meta">人だけが確認できる · 必要なもの：<span>ブラウザーの開発者ツール</span></p>
+          <ol><li>テキストを伴わないアイコン、グラフ、図、地図、インフォグラフィックなど、情報を伝えるグラフィックを探してください。</li><li>それぞれについて、アイコンの形、グラフの線や棒、領域の境界など、理解に必要な部分を見つけてください。</li><li>コントラストチェッカーで、各部分と隣接する色とのコントラスト比を測ってください。3:1 以上が必要です。テキストでラベル付けされている部分や、同じ情報が近くのテキストでも示されている部分は対象外です。</li><li>装飾的なグラフィック、ロゴ、写真や国旗のように特定の見た目が必要不可欠なグラフィックは除外してください。</li></ol>
+          <p><strong>合格の条件：</strong> <span>グラフィックの理解に必要なすべての部分のコントラスト比が 3:1 以上であるか、その情報が別の方法で示されています。</span></p>
+          <p><strong>不合格の条件：</strong> <span>グラフィックの理解に必要な部分のコントラスト比が 3:1 未満で、その情報が別の方法で示されておらず、WCAG 1.4.11 を満たしません。</span></p>
+        </div></div>
+    </details><details class="manual-req">
       <summary><span class="sc-cell">1.4.12</span> <span>テキストの間隔</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">スキャン：要確認</span> <span class="card-count">確認：4</span></summary>
       <div class="manual-body"><div class="manual-facet">
           <p class="manual-label"><strong>style 属性で強制された間隔が、テキストへの利用者の間隔の適用を妨げていない</strong></p>
@@ -901,6 +966,33 @@
           <p><strong>不合格の条件：</strong> <span>リンクの目的が文脈からしか判断できないか、同じ名前の 2 つのリンクが異なる場所へ移動するため、WCAG 2.4.9 を満たしません。</span></p>
         </div></div>
     </details><details class="manual-req">
+      <summary><span class="sc-cell">2.4.11</span> <span>隠されないフォーカス (最低限)</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">スキャン：要確認</span> <span class="card-count">確認：1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>フォーカスを受け取った要素が、ページがその上に重ねるコンテンツによって完全に隠されない</strong></p>
+          <p class="manual-meta">ルールが一部を判定する · 必要なもの：<span>キーボード</span>, <span>ブラウザーのズーム</span></p>
+          <ol><li>ページを再読み込みし、マウスでページの半分までスクロールしてから、ページ全体を Tab キーでゆっくり移動します。</li><li>止まるたびに、フォーカスのある要素の少なくとも一部が見えることを確認します。スクロールしても定位置に残るヘッダー、フッター、バナー、チャットボタンに注意します。</li><li>ページが定位置に保つコンテンツがフォーカスのある要素を完全に覆っている箇所を記録します。そのコンテンツを自分で開いた場合（チャットパネル、メニュー）は、Escape キーなどでフォーカスを移動せずに閉じられるか確認します。閉じられれば対象外です。</li><li>Shift+Tab でページを戻りながら、また幅 320 CSS ピクセルのウィンドウでも同じことを行います。固定バーが画面のより多くを占めます。</li></ol>
+          <p><strong>合格の条件：</strong> <span>フォーカスを受けるすべての要素が少なくとも一部見えるか、自分で開いてフォーカスを移動せずに閉じられるコンテンツにだけ覆われています。</span></p>
+          <p><strong>不合格の条件：</strong> <span>固定ヘッダー、フッター、Cookie バナーなど、ページが置いたコンテンツの後ろに要素が完全に隠れたままフォーカスを受けます。これは WCAG 2.4.11 を満たしません。</span></p>
+        </div></div>
+    </details><details class="manual-req">
+      <summary><span class="sc-cell">2.4.12</span> <span>隠されないフォーカス (高度)</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">スキャン：要確認</span> <span class="card-count">確認：1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>フォーカスを受け取った要素のどの部分も、ページがその上に重ねるコンテンツによって隠されない</strong></p>
+          <p class="manual-meta">ルールが一部を判定する · 必要なもの：<span>キーボード</span>, <span>ブラウザーのズーム</span></p>
+          <ol><li>ページを再読み込みし、マウスでページの半分までスクロールしてから、ページ全体を Tab キーでゆっくり移動します。</li><li>止まるたびに、フォーカスのある要素がフォーカスインジケーターを含めてすべて見えることを確認します。スクロールしても定位置に残るヘッダー、フッター、バナー、チャットボタンに注意します。</li><li>ページが定位置に保つコンテンツがフォーカスのある要素の一部でも覆っている箇所を記録します。そのコンテンツを自分で開いた場合は、Escape キーなどでフォーカスを移動せずに閉じられるか確認します。閉じられれば対象外です。</li><li>Shift+Tab でページを戻りながら、また幅 320 CSS ピクセルのウィンドウでも同じことを行います。</li></ol>
+          <p><strong>合格の条件：</strong> <span>フォーカスを受けるすべての要素が全体見えるか、自分で開いてフォーカスを移動せずに閉じられるコンテンツにだけ覆われています。</span></p>
+          <p><strong>不合格の条件：</strong> <span>固定ヘッダー、フッター、Cookie バナーなど、ページが置いたコンテンツの後ろにフォーカスのある要素の一部が隠れます。これは WCAG 2.4.12 を満たしません。</span></p>
+        </div></div>
+    </details><details class="manual-req">
+      <summary><span class="sc-cell">2.4.13</span> <span>フォーカスの外観</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">スキャン：要確認</span> <span class="card-count">確認：1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>フォーカスインジケータが、要素を囲む 2 CSS ピクセルのアウトライン以上の大きさで、コントラストが 3:1 以上変化する</strong></p>
+          <p class="manual-meta">人だけが確認できる · 必要なもの：<span>キーボード</span>, <span>ブラウザーの開発者ツール</span></p>
+          <ol><li>Tab キーでページを移動し、リンク、ボタン、入力欄、メニューやウィジェットの項目など、各種類のコントロールで止まってください。</li><li>各停止位置で、フォーカスがあるときとないときの要素を比べてください。変化する部分が、要素を囲む 2 CSS ピクセルのアウトライン以上の大きさであることを確認してください。その太さのアウトラインか、太い下線や背景の変化など、同じ以上の面積の部分です。</li><li>その部分のピクセルが、フォーカスがある状態とない状態とでコントラストが 3:1 以上変化することを確認してください。両方の状態の同じピクセルに、カラーピッカーかコントラストチェッカーを使ってください。</li><li>ブラウザが描画し、制作者が変更していないフォーカスインジケータとその背景は対象外です。</li></ol>
+          <p><strong>合格の条件：</strong> <span>すべての停止位置で、フォーカスを示す変化が 2 CSS ピクセルのアウトライン以上の大きさで、コントラストが 3:1 以上変化するか、変更されていないブラウザ自身のインジケータです。</span></p>
+          <p><strong>不合格の条件：</strong> <span>フォーカスインジケータがないか、要素を囲む 2 CSS ピクセルのアウトラインより小さいか、コントラストの変化が 3:1 未満であり、WCAG 2.4.13 を満たしません。</span></p>
+        </div></div>
+    </details><details class="manual-req">
       <summary><span class="sc-cell">2.5.3</span> <span>ラベルを含む名前 (name)</span> <span class="chip" style="background:#f1f2f3;color:#5f6368">スキャン：該当なし</span> <span class="card-count">確認：1</span></summary>
       <div class="manual-body"><div class="manual-facet">
           <p class="manual-label"><strong>コントロールの名前に、見えるラベルのテキストが含まれている</strong></p>
@@ -908,6 +1000,15 @@
           <ol><li>ボタン、リンク、フィールド、タブ、メニュー項目、隣のテキストでラベル付けされたコントロールなど、テキストでできた見えるラベルを持つコントロールをすべて見つけてください。</li><li>それぞれについて、開発者ツールのアクセシビリティ ペインで Name を読んでください。</li><li>名前に見えるラベルの語が同じ順序で含まれていること、できれば先頭にあることを確認してください (「購入」と表示されたボタンなら、名前は「次へ」ではなく「購入手続きへ進む」)。</li><li>比較の際は、大文字・小文字や句読点の違いは無視してください。画像として表示されたテキストも見えるラベルとみなします。</li><li>「×」や「&gt;」など、記号だけでできたラベルは除外してください。その名前は働きを示していることが望ましいです。</li><li>アイコンだけのボタンなど、見えるテキストのないコントロールは除外してください。照合すべき見えるラベルがありません。</li></ol>
           <p><strong>合格の条件：</strong> <span>すべてのコントロールの名前に、見えるラベルの語が順序どおりに含まれています。</span></p>
           <p><strong>不合格の条件：</strong> <span>コントロールの名前に見えるラベルが含まれていないため、音声入力の利用者が見えている言葉を言ってもそれを作動させられず、WCAG 2.5.3 を満たしません。</span></p>
+        </div></div>
+    </details><details class="manual-req">
+      <summary><span class="sc-cell">2.5.5</span> <span>ターゲットのサイズ (高度)</span> <span class="chip" style="background:#fdece5;color:#b0441f">スキャン：不合格</span> <span class="card-count">確認：1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>ポインターのターゲットが 44 × 44 CSS ピクセル以上である</strong></p>
+          <p class="manual-meta">ルールが一部を判定する · 必要なもの：<span>ブラウザーの開発者ツール</span></p>
+          <ol><li>アイコン、閉じるボタン、ページ送り、横に並んだリンク、チェックボックス、ツールバーのボタンなど、小さなコントロールを探してください。</li><li>それぞれを調べ、開発者ツールのボックスモデルで、ポインターに反応する領域 (見えているアイコンより大きいことがあります) のサイズを読んでください。44 × 44 CSS ピクセル以上であることを確認します。ここでは間隔は考慮されません。小さいターゲットは、ほかからどれだけ離れていても満たしません。</li><li>文や段落の中のリンク、スタイルを付けずにブラウザーが描画するコントロール、ページのほかの場所に 44 × 44 CSS ピクセルの同等のコントロールがあるもの、地図のピンのようにサイズが必要不可欠なターゲットは除外してください。</li></ol>
+          <p><strong>合格の条件：</strong> <span>すべてのターゲットが 44 × 44 CSS ピクセル以上であるか、例外のいずれかに当たります。</span></p>
+          <p><strong>不合格の条件：</strong> <span>ターゲットが 44 × 44 CSS ピクセルより小さく、当てはまる例外もないため、WCAG 2.5.5 を満たしません。</span></p>
         </div></div>
     </details><details class="manual-req">
       <summary><span class="sc-cell">2.5.8</span> <span>ターゲットのサイズ (最低限)</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">スキャン：要確認</span> <span class="card-count">確認：1</span></summary>
@@ -1015,8 +1116,8 @@
     <div class="tech-body">
       <h2>スコアカード</h2>
       <div class="scorecard"><div class="tile" style="border-color:#b0441f; background:#fdece5">
-      <div class="tile-num" style="color:#b0441f">4</div>
-      <div class="tile-pct">2.8%</div>
+      <div class="tile-num" style="color:#b0441f">5</div>
+      <div class="tile-pct">3.4%</div>
       <div class="tile-label">不合格</div>
     </div>
 <div class="tile" style="border-color:#8a6400; background:#fdf3d9">
@@ -1025,13 +1126,13 @@
       <div class="tile-label">要確認</div>
     </div>
 <div class="tile" style="border-color:#0b7d0b; background:#e9f7e9">
-      <div class="tile-num" style="color:#0b7d0b">39</div>
-      <div class="tile-pct">26.9%</div>
+      <div class="tile-num" style="color:#0b7d0b">42</div>
+      <div class="tile-pct">28.2%</div>
       <div class="tile-label">合格</div>
     </div>
 <div class="tile" style="border-color:#5f6368; background:#f1f2f3">
       <div class="tile-num" style="color:#5f6368">97</div>
-      <div class="tile-pct">66.9%</div>
+      <div class="tile-pct">65.1%</div>
       <div class="tile-label">該当なし</div>
     </div></div>
 
@@ -1061,7 +1162,7 @@
   </details>
 </main>
 
-<script type="application/json" id="report-data">[{"ruleId":"click-handler-keyboard-operable","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"この要素は role=\"button\" とクリック ハンドラーを持ち、キーボード フォーカスを受け取りますが、要素自体にも祖先にも document にも window にもキー リスナーがないため、Enter や Space では何も起きません。","summaryLang":"","hint":"ネイティブの要素(\u003cbutton>、\u003ca href>、\u003cinput type=\"checkbox\">)を使うか、keydown を処理して、button が応答するキーでクリックと同じことが起きるようにしてください。","lean":""},{"ruleId":"contrast-computable","outcome":"pass","severity":"serious","severityLabel":"重大","selector":"","html":"","summary":"対象となるすべてのテキスト (11 個のテキストノード) でコントラストを計算できます。","summaryLang":"","hint":"変更は不要です。このテキストがコントラスト比を満たすかどうかは、最低限 (AA) と高度 (AAA) のコントラストのルールが判定します。","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"要素の色のコントラスト比 (AAA) が 2.61:1 で不十分です (前景: #a0a0a0、背景: #ffffff、フォントサイズ: 16px、フォントの太さ: normal)。必要なコントラスト比は 7:1 です (通常のテキスト)。","summaryLang":"","hint":"コントラスト比が 7:1 以上になるよう、テキストの色、背景色、またはその両方を変更してください。","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"要素の色のコントラスト比 (AAA) が 2.55:1 で不十分です (前景: #ffffff、背景: #00bb55、フォントサイズ: 16px、フォントの太さ: normal)。必要なコントラスト比は 7:1 です (通常のテキスト)。","summaryLang":"","hint":"コントラスト比が 7:1 以上になるよう、テキストの色、背景色、またはその両方を変更してください。","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"要素の色のコントラスト比が 2.61:1 で不十分です (前景: #a0a0a0、背景: #ffffff、フォントサイズ: 16px、フォントの太さ: normal)。必要なコントラスト比は 4.5:1 です (通常のテキスト)。","summaryLang":"","hint":"コントラスト比が 4.5:1 以上になるよう、テキストの色、背景色、またはその両方を変更してください。","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"要素の色のコントラスト比が 2.55:1 で不十分です (前景: #ffffff、背景: #00bb55、フォントサイズ: 16px、フォントの太さ: normal)。必要なコントラスト比は 4.5:1 です (通常のテキスト)。","summaryLang":"","hint":"コントラスト比が 4.5:1 以上になるよう、テキストの色、背景色、またはその両方を変更してください。","lean":""},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"中程度","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"id「code」が、同じツリー内の 2 個の要素で使われています。","summaryLang":"","hint":"要素ごとに固有の id を付けてください。id が重複すると、\u003clabel for>、フラグメントリンク、getElementById、ID を参照するすべての属性が、最初に一致した要素しか参照しなくなり、正しく機能しません。","lean":"適合の可能性が高い: WCAG 2.2 では、これを検出した達成基準が削除されています。"},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"中程度","selector":"html > body > footer > p","html":"\u003cp id=\"code\">© Shop\u003c/p>","summary":"id「code」が、同じツリー内の 2 個の要素で使われています。","summaryLang":"","hint":"要素ごとに固有の id を付けてください。id が重複すると、\u003clabel for>、フラグメントリンク、getElementById、ID を参照するすべての属性が、最初に一致した要素しか参照しなくなり、正しく機能しません。","lean":"適合の可能性が高い: WCAG 2.2 では、これを検出した達成基準が削除されています。"},{"ruleId":"img-alt-present","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"html > body > main > img:nth-of-type(1)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\">","summary":"この \u003cimg> には alt 属性がありません。","summaryLang":"","hint":"画像の内容を伝える alt 属性を追加してください。画像が純粋に装飾目的であれば alt=\"\" にしてください。","lean":""},{"ruleId":"img-alt-quality","outcome":"cantTell","severity":"minor","severityLabel":"軽微","selector":"html > body > main > img:nth-of-type(2)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\" alt=\"IMG_2041.jpg\">","summary":"この \u003cimg> のテキストによる代替はファイル名のように見えます。","summaryLang":"","hint":"ファイル名は、画像を見られない人にとって画像について何も伝えません。画像が何を示しているか、リンクやボタンであればどこへ移動し何をするのかを伝えるテキストに置き換えてください。ファイル一覧のスクリーンショットのように、ファイル名そのものが画像に写っている内容である場合に限り、そのままで構いません。","lean":"不適合の可能性が高い: ファイル名、Web アドレス、汎用的な語では、画像が何を示しているかは伝わりません。"},{"ruleId":"invalid-field-error-message","outcome":"cantTell","severity":"serious","severityLabel":"重大","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"このフィールドは無効とマークされていますが、aria-errormessage が指すエラーメッセージは隠れています。","summaryLang":"","hint":"フィールドが無効な間は、エラーメッセージを表示してください。","lean":"不適合の可能性が高い: フィールドに結び付けられたエラーメッセージが非表示のため、エラーはおそらく伝えられていません。"},{"ruleId":"manual-review","outcome":"cantTell","severity":"moderate","severityLabel":"中程度","selector":"html","html":"","summary":"キーボード操作とフォーカス順序を手作業で確認してください。","summaryLang":"","hint":"Tab キーでページを移動し、すべての操作可能な要素にキーボードで到達して操作でき、そこからフォーカスを必ず外せること、フォーカス順序が読み上げ順序に沿っていること（スクリプトがコンテンツを開いたり追加したりした後も含む）、フォーカスが常に見えることを確認してください。","lean":""},{"ruleId":"page-title-patterns","outcome":"cantTell","severity":"minor","severityLabel":"軽微","selector":"html > head > title","html":"\u003ctitle>Checkout\u003c/title>","summary":"ページタイトル「Checkout」が、ページの内容を表しているか確認してください。","summaryLang":"","hint":"タイトルがページの内容や目的を伝え、サイト内の他のページと区別できるものになっているか確認してください。","lean":""}]</script>
+<script type="application/json" id="report-data">[{"ruleId":"click-handler-keyboard-operable","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"この要素は role=\"button\" とクリック ハンドラーを持ち、キーボード フォーカスを受け取りますが、要素自体にも祖先にも document にも window にもキー リスナーがないため、Enter や Space では何も起きません。","summaryLang":"","hint":"ネイティブの要素(\u003cbutton>、\u003ca href>、\u003cinput type=\"checkbox\">)を使うか、keydown を処理して、button が応答するキーでクリックと同じことが起きるようにしてください。","lean":""},{"ruleId":"contrast-computable","outcome":"pass","severity":"serious","severityLabel":"重大","selector":"","html":"","summary":"対象となるすべてのテキスト (11 個のテキストノード) でコントラストを計算できます。","summaryLang":"","hint":"変更は不要です。このテキストがコントラスト比を満たすかどうかは、最低限 (AA) と高度 (AAA) のコントラストのルールが判定します。","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"要素の色のコントラスト比 (AAA) が 2.61:1 で不十分です (前景: #a0a0a0、背景: #ffffff、フォントサイズ: 16px、フォントの太さ: normal)。必要なコントラスト比は 7:1 です (通常のテキスト)。","summaryLang":"","hint":"コントラスト比が 7:1 以上になるよう、テキストの色、背景色、またはその両方を変更してください。","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"要素の色のコントラスト比 (AAA) が 2.55:1 で不十分です (前景: #ffffff、背景: #00bb55、フォントサイズ: 16px、フォントの太さ: normal)。必要なコントラスト比は 7:1 です (通常のテキスト)。","summaryLang":"","hint":"コントラスト比が 7:1 以上になるよう、テキストの色、背景色、またはその両方を変更してください。","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"要素の色のコントラスト比が 2.61:1 で不十分です (前景: #a0a0a0、背景: #ffffff、フォントサイズ: 16px、フォントの太さ: normal)。必要なコントラスト比は 4.5:1 です (通常のテキスト)。","summaryLang":"","hint":"コントラスト比が 4.5:1 以上になるよう、テキストの色、背景色、またはその両方を変更してください。","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"要素の色のコントラスト比が 2.55:1 で不十分です (前景: #ffffff、背景: #00bb55、フォントサイズ: 16px、フォントの太さ: normal)。必要なコントラスト比は 4.5:1 です (通常のテキスト)。","summaryLang":"","hint":"コントラスト比が 4.5:1 以上になるよう、テキストの色、背景色、またはその両方を変更してください。","lean":""},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"中程度","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"id「code」が、同じツリー内の 2 個の要素で使われています。","summaryLang":"","hint":"要素ごとに固有の id を付けてください。id が重複すると、\u003clabel for>、フラグメントリンク、getElementById、ID を参照するすべての属性が、最初に一致した要素しか参照しなくなり、正しく機能しません。","lean":"適合の可能性が高い: WCAG 2.2 では、これを検出した達成基準が削除されています。"},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"中程度","selector":"html > body > footer > p","html":"\u003cp id=\"code\">© Shop\u003c/p>","summary":"id「code」が、同じツリー内の 2 個の要素で使われています。","summaryLang":"","hint":"要素ごとに固有の id を付けてください。id が重複すると、\u003clabel for>、フラグメントリンク、getElementById、ID を参照するすべての属性が、最初に一致した要素しか参照しなくなり、正しく機能しません。","lean":"適合の可能性が高い: WCAG 2.2 では、これを検出した達成基準が削除されています。"},{"ruleId":"img-alt-present","outcome":"fail","severity":"serious","severityLabel":"重大","selector":"html > body > main > img:nth-of-type(1)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\">","summary":"この \u003cimg> には alt 属性がありません。","summaryLang":"","hint":"画像の内容を伝える alt 属性を追加してください。画像が純粋に装飾目的であれば alt=\"\" にしてください。","lean":""},{"ruleId":"img-alt-quality","outcome":"cantTell","severity":"minor","severityLabel":"軽微","selector":"html > body > main > img:nth-of-type(2)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\" alt=\"IMG_2041.jpg\">","summary":"この \u003cimg> のテキストによる代替「IMG_2041.jpg」はファイル名のように見えます。","summaryLang":"","hint":"ファイル名は、画像を見られない人にとって画像について何も伝えません。画像が何を示しているか、リンクやボタンであればどこへ移動し何をするのかを伝えるテキストに置き換えてください。ファイル一覧のスクリーンショットのように、ファイル名そのものが画像に写っている内容である場合に限り、そのままで構いません。","lean":"不適合の可能性が高い: ファイル名、Web アドレス、汎用的な語では、画像が何を示しているかは伝わりません。"},{"ruleId":"invalid-field-error-message","outcome":"cantTell","severity":"serious","severityLabel":"重大","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"このフィールドは無効とマークされていますが、aria-errormessage が指すエラーメッセージ (「Enter an email address such as name@exa…」)は、\u003cp id=\"email-error\"> の display: none によって隠れています。","summaryLang":"","hint":"フィールドが無効な間は、エラーメッセージを表示してください。","lean":"不適合の可能性が高い: フィールドに結び付けられたエラーメッセージが非表示のため、エラーはおそらく伝えられていません。"},{"ruleId":"manual-review","outcome":"cantTell","severity":"moderate","severityLabel":"中程度","selector":"html","html":"","summary":"キーボード操作とフォーカス順序を手作業で確認してください。","summaryLang":"","hint":"Tab キーでページを移動し、すべての操作可能な要素にキーボードで到達して操作でき、そこからフォーカスを必ず外せること、フォーカス順序が読み上げ順序に沿っていること（スクリプトがコンテンツを開いたり追加したりした後も含む）、フォーカスが常に見えることを確認してください。","lean":""},{"ruleId":"page-title-patterns","outcome":"cantTell","severity":"minor","severityLabel":"軽微","selector":"html > head > title","html":"\u003ctitle>Checkout\u003c/title>","summary":"ページタイトル「Checkout」が、ページの内容を表しているか確認してください。","summaryLang":"","hint":"タイトルがページの内容や目的を伝え、サイト内の他のページと区別できるものになっているか確認してください。","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"中程度","selector":"html > body > header > a","html":"\u003ca href=\"/\">Shop\u003c/a>","summary":"幅 1280px のビューポートで、このターゲットは 37.6×18 CSS px と 44×44 未満です。","summaryLang":"","hint":"ターゲットを 44×44 CSS px 以上にしてください。","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"中程度","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(1)","html":"\u003ca href=\"/cart\">Cart\u003c/a>","summary":"幅 1280px のビューポートで、このターゲットは 31.1×18 CSS px と 44×44 未満です。","summaryLang":"","hint":"ターゲットを 44×44 CSS px 以上にしてください。","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"中程度","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(2)","html":"\u003ca href=\"/account\">Account\u003c/a>","summary":"幅 1280px のビューポートで、このターゲットは 60×18 CSS px と 44×44 未満です。","summaryLang":"","hint":"ターゲットを 44×44 CSS px 以上にしてください。","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"中程度","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"幅 1280px のビューポートで、このターゲットは 153×21 CSS px と 44×44 未満です。","summaryLang":"","hint":"ターゲットを 44×44 CSS px 以上にしてください。","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"中程度","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"幅 1280px のビューポートで、このターゲットは 153×21 CSS px と 44×44 未満です。","summaryLang":"","hint":"ターゲットを 44×44 CSS px 以上にしてください。","lean":""}]</script>
 <script>
 (function () {
   var OUTCOME_INFO = {"fail":{"label":"不合格","defaultOn":true,"color":"#b0441f","bg":"#fdece5","icon":"⚠"},"cantTell":{"label":"要確認","defaultOn":true,"color":"#8a6400","bg":"#fdf3d9","icon":"ℹ"},"pass":{"label":"合格","defaultOn":false,"color":"#0b7d0b","bg":"#e9f7e9","icon":"✓"},"notApplicable":{"label":"該当なし","defaultOn":false,"color":"#5f6368","bg":"#f1f2f3","icon":"–"}};

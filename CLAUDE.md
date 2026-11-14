@@ -52,7 +52,9 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   `require.resolve`), never a `../core` checkout, so the site's rule text
   always matches a release; it ships `src/checks`, `src/core.js` and
   `docs/`. Reads three JSDoc tags
-  from each rule module: `@applicability`, `@expectation` and `@reports`
+  from each rule module (since core 1.17 that includes a variant, a module
+  with `from` and `config` instead of `runInPage`, such as
+  `target-size-enhanced`): `@applicability`, `@expectation` and `@reports`
   (since core `d7b4725`, after 1.9.0: the fields a rule's findings carry
   in `data.details`, one `- ` line each). `@reports` renders on rule pages
   as "What a finding reports", with a note that those fields aren't a
@@ -1233,3 +1235,46 @@ Covers `@surea11y/cli` 1.6.0, `@surea11y/test-matchers` 1.6.0 and
   `includeBehindModal`); the FAQ's 1.16 modal bullet links to it.
 - FAQ `#page-builtins-broken`: the WAI-ARIA pack used `Array.from` until
   1.0.2.
+
+## Core 1.17.0 update (2026-11-14)
+
+Pinned `@surea11y/core` 1.17.0. Released with it, for 1.17:
+`@surea11y/pack-en301549` 1.4.0 (`~1.17.0`; 1.3.0, built from standard data,
+took 1.16 only), `@surea11y/pack-rgaa` 1.2.0 (`~1.17.0`) and
+`@surea11y/pack-wai-aria` 1.1.0 (`^1.15.0`). Bindings, CLI and test-matchers
+unchanged (they take 1.17 through their ranges). 149 rules: 4 new
+(`focus-not-obscured-minimum`/`-enhanced`, in a browser only;
+`target-size-enhanced`, a variant of `target-size-minimum` at 44px with no
+spacing exception; `page-zones-landmark`, best practice), 28 changed (mostly
+new `reports` fields that name a finding's cause); every overlay follows,
+examples included. 42 composites. Content pages, every language:
+
+- Packs: the EN 301 549 pack's 1.3.0 (standard data, a base for
+  `deriveStandard`) and 1.4.0 (9.1.4.11 and V4.1.1's 9.2.4.11 from core 1.17's
+  rules), and which core each release needs; the WAI-ARIA pack's 1.1.0
+  messages; `#a-pack-built-on-another-pack` (`uses`, `surea11y-pack new --kind
+  derived`, EN 301 549 as the base in the example, experimental until 1.19.0);
+  `#laws` rewritten ("The law a profile is used for": `name`, `jurisdiction`,
+  `sources` only; 1.17 removed and refuses the other four fields);
+  `^1.17.0`/`~1.17.0` samples. The RGAA pack is on npm now, but the site still
+  names RGAA only as core's example: presenting it is the user's call.
+- Known limitations: what `focus-not-obscured-*` leave out, and their scrolling
+  in the "change the page" item.
+- FAQ: `#results-changed-1-17` first, dated (move or drop it later);
+  `#results-changed-1-16` moved down beside `#results-changed-1-15`, which Packs
+  and the binding pages still link to.
+- Homepage/Overview: 2.4.11 among the criteria no rule covered before; messages
+  name the cause.
+- Quickstart and CLI samples re-run with CLI 1.6.0 on core 1.17.0
+  (`notApplicable` 130 and 125, the criteria lists, `heading-order`'s message).
+  The CLI sample's page isn't in the CLI repo; it was rebuilt (title "Home", h1,
+  low-contrast p, img without alt, empty button, h3, "Click here" link) and gave
+  the published 1.16.1 output exactly. Sample HTML reports and the share image
+  (149 rules) re-generated; sample procedures follow core's.
+
+Open English-source issues found in this update: `focus-not-obscured-enhanced`
+and `target-size-enhanced` put `docs/RULE_AUTHORING.md` back in rule text;
+`landmark-no-duplicate-contentinfo`/`-main` give a banner as their `others`
+example; `page-zones-landmark`'s "or one named q, s, search or query" means a
+field (the translations say so); core's README says 146 rules, the catalog has
+149.

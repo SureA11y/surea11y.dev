@@ -103,7 +103,7 @@
 <a class="skip" href="#main">Aller aux procédures</a>
 <header class="page">
 <h1>WCAG 2.2 : comment évaluer chaque exigence</h1>
-<p>Exigences : 55 · Procédures : 50</p>
+<p>Exigences : 55 · Procédures : 53</p>
 <ul><li>Niveaux : A, AA</li></ul>
 
 </header>
@@ -399,14 +399,17 @@
 <p class="meta"><span>Niveau AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-11-ui-component-contrast">
 <h5 id="facet-1-4-11-ui-component-contrast">Les parties d’un contrôle qui montrent sa présence et son état ont un contraste d’au moins 3:1</h5>
-<ul class="badges"><li class="badge auto-manual">Seule une personne peut le vérifier</li></ul>
-<p class="empty">Pas encore de procédure pour ceci.</p>
-
+<ul class="badges"><li class="badge auto-manual">Seule une personne peut le vérifier</li><li class="badge">Outils : <span>Les outils de développement du navigateur</span></li></ul>
+<ol class="steps"><li>Examinez chaque contrôle de la page : boutons, champs, cases à cocher, boutons radio, curseurs, onglets et liens présentés comme des boutons.</li><li>Pour chacun, repérez ce qui montre sa présence, comme la bordure d’un champ ou le contour d’un bouton, et mesurez son contraste avec ce qui l’entoure avec un outil de contraste. Il faut au moins 3:1. Un contrôle signalé par son seul texte n’a besoin de rien de plus.</li><li>Faites de même pour ce qui montre chaque état : la coche d’une case, l’onglet sélectionné, le curseur d’une glissière et l’indicateur de focus, à l’état focalisé.</li><li>Laissez de côté les contrôles que le navigateur dessine sans que l’auteur ait modifié leur apparence, et les contrôles inactifs (désactivés).</li></ol>
+<dl class="verdict"><dt>Conforme si</dt><dd>Chaque partie qui montre un contrôle ou son état a un contraste d’au moins 3:1 avec ce qui l’entoure.</dd><dt>Non conforme si</dt><dd>Une partie nécessaire pour voir un contrôle ou son état, comme la bordure d’un champ, la coche d’une case ou l’indicateur de focus, a un contraste inférieur à 3:1, ce qui ne respecte pas le critère WCAG 1.4.11.</dd></dl>
+<p class="rules">Règles qui le testent : <code>css-focus-indicator-suppressed</code></p>
+<div class="covers"><p>Cette procédure évalue aussi :</p><ul><li>La CSS ne supprime pas l’indicateur de focus sans en dessiner un autre à la place</li></ul></div>
 </section>
 <section class="facet" aria-labelledby="facet-1-4-11-graphics-contrast">
 <h5 id="facet-1-4-11-graphics-contrast">Les parties d’un graphique nécessaires pour le comprendre ont un contraste d’au moins 3:1</h5>
-<ul class="badges"><li class="badge auto-manual">Seule une personne peut le vérifier</li></ul>
-<p class="empty">Pas encore de procédure pour ceci.</p>
+<ul class="badges"><li class="badge auto-manual">Seule une personne peut le vérifier</li><li class="badge">Outils : <span>Les outils de développement du navigateur</span></li></ul>
+<ol class="steps"><li>Cherchez les graphiques porteurs d’information : icônes sans texte à côté, graphiques, schémas, cartes et infographies.</li><li>Dans chacun, repérez les parties nécessaires pour le comprendre, comme la forme d’une icône, les courbes et barres d’un graphique ou les limites entre des zones.</li><li>Mesurez le contraste de chaque partie avec ce qui l’entoure avec un outil de contraste. Il faut au moins 3:1. Une partie étiquetée en texte, ou dont l’information est aussi donnée en texte à proximité, n’en a pas besoin.</li><li>Laissez de côté les graphiques décoratifs, les logos et les graphiques dont l’apparence est essentielle, comme une photo ou un drapeau.</li></ol>
+<dl class="verdict"><dt>Conforme si</dt><dd>Chaque partie d’un graphique nécessaire pour le comprendre a un contraste d’au moins 3:1, ou son information est donnée autrement.</dd><dt>Non conforme si</dt><dd>Une partie d’un graphique nécessaire pour le comprendre a un contraste inférieur à 3:1, et son information n’est pas donnée autrement, ce qui ne respecte pas le critère WCAG 1.4.11.</dd></dl>
 
 </section>
 </article>
@@ -657,9 +660,10 @@
 <p class="meta"><span>Niveau AA</span></p>
 <section class="facet" aria-labelledby="facet-2-4-11-focus-not-obscured">
 <h5 id="facet-2-4-11-focus-not-obscured">Un élément qui reçoit le focus n’est pas entièrement masqué par un contenu que la page place par-dessus</h5>
-<ul class="badges"><li class="badge auto-manual">Seule une personne peut le vérifier</li></ul>
-<p class="empty">Pas encore de procédure pour ceci.</p>
-
+<ul class="badges"><li class="badge auto-partial">Les règles en décident en partie</li><li class="badge">Outils : <span>Un clavier</span>, <span>Le zoom du navigateur</span></li></ul>
+<ol class="steps"><li>Rechargez la page, faites-la défiler à mi-hauteur avec la souris, puis appuyez lentement sur Tab à travers toute la page.</li><li>À chaque arrêt, vérifiez que vous voyez au moins une partie de l’élément qui a le focus. Surveillez les en-têtes, pieds de page, bandeaux et boutons de discussion qui restent en place quand la page défile.</li><li>Là où un contenu que la page garde en place couvre entièrement l’élément qui a le focus, notez-le. Si vous avez ouvert ce contenu vous-même (un panneau de discussion, un menu), vérifiez si vous pouvez le fermer, par exemple avec Échap, sans déplacer le focus : alors il ne compte pas.</li><li>Refaites-le avec Maj+Tab en remontant la page, et dans une fenêtre de 320 pixels CSS de large, où les barres fixes prennent plus de place.</li></ol>
+<dl class="verdict"><dt>Conforme si</dt><dd>Chaque élément qui reçoit le focus se voit, au moins en partie, ou n’est couvert que par un contenu que vous avez ouvert et pouvez fermer sans déplacer le focus.</dd><dt>Non conforme si</dt><dd>Un élément reçoit le focus entièrement caché derrière un contenu que la page a placé là, comme un en-tête ou un pied de page fixe ou un bandeau de cookies, ce qui ne satisfait pas WCAG 2.4.11.</dd></dl>
+<p class="rules">Règles qui le testent : <code>focus-not-obscured-minimum</code></p>
 </section>
 </article>
 </section>

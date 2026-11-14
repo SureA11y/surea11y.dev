@@ -103,7 +103,7 @@
 <a class="skip" href="#main">Skip to the procedures</a>
 <header class="page">
 <h1>WCAG 2.2: manual checklist</h1>
-<p>Checks: 50 · Requirements: 30</p>
+<p>Checks: 53 · Requirements: 32</p>
 <ul><li>Levels: A, AA</li></ul>
 
 </header>
@@ -117,7 +117,7 @@
 </section>
 <section class="results" aria-labelledby="results-h" data-record="wcag|2.2|WCAG 2.2: manual checklist">
 <h2 id="results-h">Your results</h2>
-<p id="record-progress" role="status">Checked: 0 of 50 · Passes: 0 · Fails: 0 · Does not apply: 0</p>
+<p id="record-progress" role="status">Checked: 0 of 53 · Passes: 0 · Fails: 0 · Does not apply: 0</p>
 <p class="note">Your results are kept in this browser only, until you clear them. Download them to keep or share them.</p>
 <noscript><p class="note">With scripts turned off, results can be marked but are not kept or downloaded.</p></noscript>
 <div class="actions"><button type="button" id="record-json">Download results (JSON)</button><button type="button" id="record-csv">Download results (CSV)</button><button type="button" id="record-clear">Clear results</button></div>
@@ -408,6 +408,32 @@
 <textarea id="notes-21" rows="2"></textarea>
 </fieldset>
 </article>
+<article class="item" id="i-1-4-11-ui-component-contrast" aria-labelledby="item-1-4-11-ui-component-contrast" data-key="1.4.11/ui-component-contrast" data-facet="ui-component-contrast" data-label="The parts of a control that show it is there and its state have a contrast of at least 3:1" data-requirements="[&quot;1.4.11&quot;]">
+<h4 id="item-1-4-11-ui-component-contrast">The parts of a control that show it is there and its state have a contrast of at least 3:1</h4>
+<p class="meta"><span>For: 1.4.11</span></p>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look at each control on the page: buttons, fields, check boxes, radio buttons, sliders, tabs and links styled as buttons.</li><li>For each, find what shows that it is there, such as a field&#39;s border or a button&#39;s outline, and measure its contrast against what is next to it with a contrast checker. It needs at least 3:1. A control shown by its text alone needs nothing more.</li><li>Do the same for what shows each state: the tick of a check box, the selected tab, the thumb of a slider, and the focus indicator, in the focused state.</li><li>Leave out controls the browser draws without the author changing their look, and inactive (disabled) controls.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every part that shows a control or its state has a contrast of at least 3:1 against what is next to it.</dd><dt>Fails when</dt><dd>A part that is needed to see a control or its state, such as a field&#39;s border, a check box&#39;s tick or the focus indicator, has a contrast below 3:1, which fails WCAG 1.4.11.</dd></dl>
+<details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>css-focus-indicator-suppressed</code></p><p class="covers">It also assesses: <code>focus-indicator-not-suppressed</code></p></details>
+<fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">The parts of a control that show it is there and its state have a contrast of at least 3:1</span></legend>
+<div class="choices"><label><input type="radio" name="o-22" value="open" checked> Not checked</label><label><input type="radio" name="o-22" value="pass"> Passes</label><label><input type="radio" name="o-22" value="fail"> Fails</label><label><input type="radio" name="o-22" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-22">Notes<span class="vh">: </span><span class="vh">The parts of a control that show it is there and its state have a contrast of at least 3:1</span></label>
+<textarea id="notes-22" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-11-graphics-contrast" aria-labelledby="item-1-4-11-graphics-contrast" data-key="1.4.11/graphics-contrast" data-facet="graphics-contrast" data-label="The parts of a graphic needed to understand it have a contrast of at least 3:1" data-requirements="[&quot;1.4.11&quot;]">
+<h4 id="item-1-4-11-graphics-contrast">The parts of a graphic needed to understand it have a contrast of at least 3:1</h4>
+<p class="meta"><span>For: 1.4.11</span></p>
+<ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
+<ol class="steps"><li>Look for graphics that carry information: icons without text beside them, charts, diagrams, maps and infographics.</li><li>In each, find the parts a person needs to understand it, such as an icon&#39;s shape, a chart&#39;s lines and bars, or the boundaries between areas.</li><li>Measure each part&#39;s contrast against what is next to it with a contrast checker. It needs at least 3:1. A part that is labelled in text, or whose information is also given in text nearby, doesn&#39;t need it.</li><li>Leave out decorative graphics, logos, and graphics whose particular look is essential, such as a photo or a flag.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every part of a graphic needed to understand it has a contrast of at least 3:1, or its information is given another way.</dd><dt>Fails when</dt><dd>A part of a graphic needed to understand it has a contrast below 3:1, and its information is not given another way, which fails WCAG 1.4.11.</dd></dl>
+
+<fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">The parts of a graphic needed to understand it have a contrast of at least 3:1</span></legend>
+<div class="choices"><label><input type="radio" name="o-23" value="open" checked> Not checked</label><label><input type="radio" name="o-23" value="pass"> Passes</label><label><input type="radio" name="o-23" value="fail"> Fails</label><label><input type="radio" name="o-23" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-23">Notes<span class="vh">: </span><span class="vh">The parts of a graphic needed to understand it have a contrast of at least 3:1</span></label>
+<textarea id="notes-23" rows="2"></textarea>
+</fieldset>
+</article>
 <article class="item" id="i-1-4-12-avoid-inline-spacing" aria-labelledby="item-1-4-12-avoid-inline-spacing" data-key="1.4.12/avoid-inline-spacing" data-facet="avoid-inline-spacing" data-label="Spacing forced in a style attribute doesn&#39;t stop text from taking the user&#39;s spacing" data-requirements="[&quot;1.4.12&quot;]">
 <h4 id="item-1-4-12-avoid-inline-spacing">Spacing forced in a style attribute doesn&#39;t stop text from taking the user&#39;s spacing</h4>
 <p class="meta"><span>For: 1.4.12</span></p>
@@ -416,9 +442,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>No style attribute forces spacing below those values on text that wraps, or the text it forces still shows in full with the spacing applied.</dd><dt>Fails when</dt><dd>A style attribute forces spacing below those values on wrapping text, so a bookmarklet or browser extension can&#39;t apply the person&#39;s spacing, and with that spacing the text overlaps or is cut off, which fails WCAG 1.4.12.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>avoid-inline-spacing</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Spacing forced in a style attribute doesn&#39;t stop text from taking the user&#39;s spacing</span></legend>
-<div class="choices"><label><input type="radio" name="o-22" value="open" checked> Not checked</label><label><input type="radio" name="o-22" value="pass"> Passes</label><label><input type="radio" name="o-22" value="fail"> Fails</label><label><input type="radio" name="o-22" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-22">Notes<span class="vh">: </span><span class="vh">Spacing forced in a style attribute doesn&#39;t stop text from taking the user&#39;s spacing</span></label>
-<textarea id="notes-22" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-24" value="open" checked> Not checked</label><label><input type="radio" name="o-24" value="pass"> Passes</label><label><input type="radio" name="o-24" value="fail"> Fails</label><label><input type="radio" name="o-24" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-24">Notes<span class="vh">: </span><span class="vh">Spacing forced in a style attribute doesn&#39;t stop text from taking the user&#39;s spacing</span></label>
+<textarea id="notes-24" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-1-4-12-text-spacing-content-loss" aria-labelledby="item-1-4-12-text-spacing-content-loss" data-key="1.4.12/text-spacing-content-loss" data-facet="text-spacing-content-loss" data-label="With the 1.4.12 spacing applied, no text is cut off or made to overlap (measured in a browser)" data-requirements="[&quot;1.4.12&quot;]">
@@ -429,9 +455,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>All text stays visible and readable, or any text that is cut off can be shown in full with the keyboard.</dd><dt>Fails when</dt><dd>Some text is cut off, overlaps or is lost with the spacing applied and cannot be shown in full another way, which fails WCAG 1.4.12.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>text-spacing-content-loss</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">With the 1.4.12 spacing applied, no text is cut off or made to overlap (measured in a browser)</span></legend>
-<div class="choices"><label><input type="radio" name="o-23" value="open" checked> Not checked</label><label><input type="radio" name="o-23" value="pass"> Passes</label><label><input type="radio" name="o-23" value="fail"> Fails</label><label><input type="radio" name="o-23" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-23">Notes<span class="vh">: </span><span class="vh">With the 1.4.12 spacing applied, no text is cut off or made to overlap (measured in a browser)</span></label>
-<textarea id="notes-23" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-25" value="open" checked> Not checked</label><label><input type="radio" name="o-25" value="pass"> Passes</label><label><input type="radio" name="o-25" value="fail"> Fails</label><label><input type="radio" name="o-25" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-25">Notes<span class="vh">: </span><span class="vh">With the 1.4.12 spacing applied, no text is cut off or made to overlap (measured in a browser)</span></label>
+<textarea id="notes-25" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-1-4-12-text-spacing-functionality-kept" aria-labelledby="item-1-4-12-text-spacing-functionality-kept" data-key="1.4.12/text-spacing-functionality-kept" data-facet="text-spacing-functionality-kept" data-label="With the 1.4.12 spacing applied, controls, menus and forms keep working and show all their text" data-requirements="[&quot;1.4.12&quot;]">
@@ -442,9 +468,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every control still works and shows all its text with the spacing applied.</dd><dt>Fails when</dt><dd>With the spacing applied, a control stops working, is covered so it can&#39;t be used, or loses text that says what it does, which fails WCAG 1.4.12.</dd></dl>
 
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">With the 1.4.12 spacing applied, controls, menus and forms keep working and show all their text</span></legend>
-<div class="choices"><label><input type="radio" name="o-24" value="open" checked> Not checked</label><label><input type="radio" name="o-24" value="pass"> Passes</label><label><input type="radio" name="o-24" value="fail"> Fails</label><label><input type="radio" name="o-24" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-24">Notes<span class="vh">: </span><span class="vh">With the 1.4.12 spacing applied, controls, menus and forms keep working and show all their text</span></label>
-<textarea id="notes-24" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-26" value="open" checked> Not checked</label><label><input type="radio" name="o-26" value="pass"> Passes</label><label><input type="radio" name="o-26" value="fail"> Fails</label><label><input type="radio" name="o-26" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-26">Notes<span class="vh">: </span><span class="vh">With the 1.4.12 spacing applied, controls, menus and forms keep working and show all their text</span></label>
+<textarea id="notes-26" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-1-4-12-text-spacing-other-states" aria-labelledby="item-1-4-12-text-spacing-other-states" data-key="1.4.12/text-spacing-other-states" data-facet="text-spacing-other-states" data-label="With the 1.4.12 spacing applied, content shown only after interaction (menus, dialogs, tabs, messages) keeps all its text" data-requirements="[&quot;1.4.12&quot;]">
@@ -455,9 +481,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Content shown after you do something keeps all its text visible and readable with the spacing applied, or the text that is cut off can be shown in full with the keyboard.</dd><dt>Fails when</dt><dd>Text in a menu, dialog, tab, tooltip or message is cut off or overlaps with the spacing applied and can&#39;t be shown in full another way, which fails WCAG 1.4.12.</dd></dl>
 
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">With the 1.4.12 spacing applied, content shown only after interaction (menus, dialogs, tabs, messages) keeps all its text</span></legend>
-<div class="choices"><label><input type="radio" name="o-25" value="open" checked> Not checked</label><label><input type="radio" name="o-25" value="pass"> Passes</label><label><input type="radio" name="o-25" value="fail"> Fails</label><label><input type="radio" name="o-25" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-25">Notes<span class="vh">: </span><span class="vh">With the 1.4.12 spacing applied, content shown only after interaction (menus, dialogs, tabs, messages) keeps all its text</span></label>
-<textarea id="notes-25" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-27" value="open" checked> Not checked</label><label><input type="radio" name="o-27" value="pass"> Passes</label><label><input type="radio" name="o-27" value="fail"> Fails</label><label><input type="radio" name="o-27" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-27">Notes<span class="vh">: </span><span class="vh">With the 1.4.12 spacing applied, content shown only after interaction (menus, dialogs, tabs, messages) keeps all its text</span></label>
+<textarea id="notes-27" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -474,9 +500,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Everything the page lets you do with a pointer can be done with the keyboard alone, directly or through another way that does the same job.</dd><dt>Fails when</dt><dd>Something can only be done with a pointer, with no keyboard way to do the same, which fails WCAG 2.1.1.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>iframe-focusable-content</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable</code>, <code>mouse-only-event-handlers</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable</code>, <code>focus-not-removed-by-script</code></p><p class="covers">It also assesses: <code>iframe-tabindex-negative-content-not-focusable</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable-evidence</code>, <code>mouse-only-event-handlers-evidence</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable-evidence</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">All functionality can be operated from a keyboard alone</span></legend>
-<div class="choices"><label><input type="radio" name="o-26" value="open" checked> Not checked</label><label><input type="radio" name="o-26" value="pass"> Passes</label><label><input type="radio" name="o-26" value="fail"> Fails</label><label><input type="radio" name="o-26" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-26">Notes<span class="vh">: </span><span class="vh">All functionality can be operated from a keyboard alone</span></label>
-<textarea id="notes-26" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-28" value="open" checked> Not checked</label><label><input type="radio" name="o-28" value="pass"> Passes</label><label><input type="radio" name="o-28" value="fail"> Fails</label><label><input type="radio" name="o-28" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-28">Notes<span class="vh">: </span><span class="vh">All functionality can be operated from a keyboard alone</span></label>
+<textarea id="notes-28" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -490,9 +516,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every time limit can be turned off, adjusted or extended, or is real-time, essential or over 20 hours.</dd><dt>Fails when</dt><dd>A time limit ends a session, a form or a page with no way to turn it off, adjust it or extend it, which fails WCAG 2.2.1.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>meta-refresh-timing-absent</code></p><p class="covers">It also assesses: <code>meta-refresh-timing-absent</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Each time limit can be turned off, adjusted or extended, unless it is real-time, essential or over 20 hours</span></legend>
-<div class="choices"><label><input type="radio" name="o-27" value="open" checked> Not checked</label><label><input type="radio" name="o-27" value="pass"> Passes</label><label><input type="radio" name="o-27" value="fail"> Fails</label><label><input type="radio" name="o-27" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-27">Notes<span class="vh">: </span><span class="vh">Each time limit can be turned off, adjusted or extended, unless it is real-time, essential or over 20 hours</span></label>
-<textarea id="notes-27" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-29" value="open" checked> Not checked</label><label><input type="radio" name="o-29" value="pass"> Passes</label><label><input type="radio" name="o-29" value="fail"> Fails</label><label><input type="radio" name="o-29" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-29">Notes<span class="vh">: </span><span class="vh">Each time limit can be turned off, adjusted or extended, unless it is real-time, essential or over 20 hours</span></label>
+<textarea id="notes-29" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-2-2-auto-moving-content-pausable" aria-labelledby="item-2-2-2-auto-moving-content-pausable" data-key="2.2.2/auto-moving-content-pausable" data-facet="auto-moving-content-pausable" data-label="Animations that start by themselves and last over five seconds can be paused, stopped or hidden" data-requirements="[&quot;2.2.2&quot;]">
@@ -503,9 +529,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Everything that moves, blinks or scrolls by itself for more than 5 seconds next to other content can be paused, stopped or hidden.</dd><dt>Fails when</dt><dd>Content moves, blinks or scrolls by itself for more than 5 seconds next to other content with no way to pause, stop or hide it, which fails WCAG 2.2.2.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>moving-content-pausable</code>, <code>deprecated-elements-not-used</code></p><p class="covers">It also assesses: <code>deprecated-non-stoppable-elements-absent</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Animations that start by themselves and last over five seconds can be paused, stopped or hidden</span></legend>
-<div class="choices"><label><input type="radio" name="o-28" value="open" checked> Not checked</label><label><input type="radio" name="o-28" value="pass"> Passes</label><label><input type="radio" name="o-28" value="fail"> Fails</label><label><input type="radio" name="o-28" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-28">Notes<span class="vh">: </span><span class="vh">Animations that start by themselves and last over five seconds can be paused, stopped or hidden</span></label>
-<textarea id="notes-28" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-30" value="open" checked> Not checked</label><label><input type="radio" name="o-30" value="pass"> Passes</label><label><input type="radio" name="o-30" value="fail"> Fails</label><label><input type="radio" name="o-30" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-30">Notes<span class="vh">: </span><span class="vh">Animations that start by themselves and last over five seconds can be paused, stopped or hidden</span></label>
+<textarea id="notes-30" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-2-2-auto-updating-content-controllable" aria-labelledby="item-2-2-2-auto-updating-content-controllable" data-key="2.2.2/auto-updating-content-controllable" data-facet="auto-updating-content-controllable" data-label="Content that updates by itself can be paused, stopped, hidden or set to update less often" data-requirements="[&quot;2.2.2&quot;]">
@@ -516,9 +542,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every part that updates by itself next to other content can be paused, stopped, hidden or slowed, or its updates are essential.</dd><dt>Fails when</dt><dd>Content updates by itself next to other content with no way to pause, stop, hide it or change how often, which fails WCAG 2.2.2.</dd></dl>
 
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Content that updates by itself can be paused, stopped, hidden or set to update less often</span></legend>
-<div class="choices"><label><input type="radio" name="o-29" value="open" checked> Not checked</label><label><input type="radio" name="o-29" value="pass"> Passes</label><label><input type="radio" name="o-29" value="fail"> Fails</label><label><input type="radio" name="o-29" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-29">Notes<span class="vh">: </span><span class="vh">Content that updates by itself can be paused, stopped, hidden or set to update less often</span></label>
-<textarea id="notes-29" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-31" value="open" checked> Not checked</label><label><input type="radio" name="o-31" value="pass"> Passes</label><label><input type="radio" name="o-31" value="fail"> Fails</label><label><input type="radio" name="o-31" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-31">Notes<span class="vh">: </span><span class="vh">Content that updates by itself can be paused, stopped, hidden or set to update less often</span></label>
+<textarea id="notes-31" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -536,9 +562,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>The page repeats no blocks, or a working skip link, a main landmark or headings let keyboard and screen reader users jump past them.</dd><dt>Fails when</dt><dd>Repeated blocks have no way to skip them, so keyboard and screen reader users must go through them on every page, which fails WCAG 2.4.1.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>bypass-blocks-present</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Blocks repeated on several pages can be skipped</span></legend>
-<div class="choices"><label><input type="radio" name="o-30" value="open" checked> Not checked</label><label><input type="radio" name="o-30" value="pass"> Passes</label><label><input type="radio" name="o-30" value="fail"> Fails</label><label><input type="radio" name="o-30" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-30">Notes<span class="vh">: </span><span class="vh">Blocks repeated on several pages can be skipped</span></label>
-<textarea id="notes-30" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-32" value="open" checked> Not checked</label><label><input type="radio" name="o-32" value="pass"> Passes</label><label><input type="radio" name="o-32" value="fail"> Fails</label><label><input type="radio" name="o-32" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-32">Notes<span class="vh">: </span><span class="vh">Blocks repeated on several pages can be skipped</span></label>
+<textarea id="notes-32" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-2-page-title-descriptive" aria-labelledby="item-2-4-2-page-title-descriptive" data-key="2.4.2/page-title-descriptive" data-facet="page-title-descriptive" data-label="The page has a title that says what it is about or for, and tells it apart from the site&#39;s other pages" data-requirements="[&quot;2.4.2&quot;]">
@@ -549,9 +575,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>The page&#39;s title says what it is about or for and tells it apart from other pages.</dd><dt>Fails when</dt><dd>The page has no title, or one that is generic, a file name, or the same as other pages&#39;, which fails WCAG 2.4.2.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>page-title-present</code>, <code>page-title-patterns</code></p><p class="covers">It also assesses: <code>page-title-present</code>, <code>page-title-patterns</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">The page has a title that says what it is about or for, and tells it apart from the site&#39;s other pages</span></legend>
-<div class="choices"><label><input type="radio" name="o-31" value="open" checked> Not checked</label><label><input type="radio" name="o-31" value="pass"> Passes</label><label><input type="radio" name="o-31" value="fail"> Fails</label><label><input type="radio" name="o-31" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-31">Notes<span class="vh">: </span><span class="vh">The page has a title that says what it is about or for, and tells it apart from the site&#39;s other pages</span></label>
-<textarea id="notes-31" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-33" value="open" checked> Not checked</label><label><input type="radio" name="o-33" value="pass"> Passes</label><label><input type="radio" name="o-33" value="fail"> Fails</label><label><input type="radio" name="o-33" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-33">Notes<span class="vh">: </span><span class="vh">The page has a title that says what it is about or for, and tells it apart from the site&#39;s other pages</span></label>
+<textarea id="notes-33" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-3-focus-order-preserves-meaning" aria-labelledby="item-2-4-3-focus-order-preserves-meaning" data-key="2.4.3/focus-order-preserves-meaning" data-facet="focus-order-preserves-meaning" data-label="Moving focus with Tab and Shift+Tab follows an order that keeps the page&#39;s meaning and lets it be used" data-requirements="[&quot;2.4.3&quot;]">
@@ -562,9 +588,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Focus moves through the page in an order that keeps its meaning and lets every part be used, even where it differs from the visual order in small ways.</dd><dt>Fails when</dt><dd>Focus jumps around the page so that its meaning or use changes, such as fields filled in out of their order, which fails WCAG 2.4.3.</dd></dl>
 
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Moving focus with Tab and Shift+Tab follows an order that keeps the page&#39;s meaning and lets it be used</span></legend>
-<div class="choices"><label><input type="radio" name="o-32" value="open" checked> Not checked</label><label><input type="radio" name="o-32" value="pass"> Passes</label><label><input type="radio" name="o-32" value="fail"> Fails</label><label><input type="radio" name="o-32" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-32">Notes<span class="vh">: </span><span class="vh">Moving focus with Tab and Shift+Tab follows an order that keeps the page&#39;s meaning and lets it be used</span></label>
-<textarea id="notes-32" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-34" value="open" checked> Not checked</label><label><input type="radio" name="o-34" value="pass"> Passes</label><label><input type="radio" name="o-34" value="fail"> Fails</label><label><input type="radio" name="o-34" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-34">Notes<span class="vh">: </span><span class="vh">Moving focus with Tab and Shift+Tab follows an order that keeps the page&#39;s meaning and lets it be used</span></label>
+<textarea id="notes-34" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-3-focus-order-opened-content" aria-labelledby="item-2-4-3-focus-order-opened-content" data-key="2.4.3/focus-order-opened-content" data-facet="focus-order-opened-content" data-label="Focus moves into a dialog, menu or section that opens, stays in a dialog while it covers the page, and comes back when it closes" data-requirements="[&quot;2.4.3&quot;]">
@@ -575,9 +601,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Focus goes into what opens, stays in a dialog while it covers the page, and comes back to where it was when it closes.</dd><dt>Fails when</dt><dd>Focus stays behind what opens, leaves a dialog for the page behind it, or lands at the top of the page when it closes, so the order no longer follows what is on screen, which fails WCAG 2.4.3.</dd></dl>
 
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Focus moves into a dialog, menu or section that opens, stays in a dialog while it covers the page, and comes back when it closes</span></legend>
-<div class="choices"><label><input type="radio" name="o-33" value="open" checked> Not checked</label><label><input type="radio" name="o-33" value="pass"> Passes</label><label><input type="radio" name="o-33" value="fail"> Fails</label><label><input type="radio" name="o-33" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-33">Notes<span class="vh">: </span><span class="vh">Focus moves into a dialog, menu or section that opens, stays in a dialog while it covers the page, and comes back when it closes</span></label>
-<textarea id="notes-33" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-35" value="open" checked> Not checked</label><label><input type="radio" name="o-35" value="pass"> Passes</label><label><input type="radio" name="o-35" value="fail"> Fails</label><label><input type="radio" name="o-35" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-35">Notes<span class="vh">: </span><span class="vh">Focus moves into a dialog, menu or section that opens, stays in a dialog while it covers the page, and comes back when it closes</span></label>
+<textarea id="notes-35" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-3-focus-order-no-hidden-stops" aria-labelledby="item-2-4-3-focus-order-no-hidden-stops" data-key="2.4.3/focus-order-no-hidden-stops" data-facet="focus-order-no-hidden-stops" data-label="Focus does not stop on content that is closed, hidden or off screen" data-requirements="[&quot;2.4.3&quot;]">
@@ -588,9 +614,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every Tab stop is on something you can see, or on something that appears when it receives focus, such as a skip link.</dd><dt>Fails when</dt><dd>Focus stops on controls in closed menus, hidden panels or off screen, so the order passes through things that aren&#39;t there, which fails WCAG 2.4.3.</dd></dl>
 
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Focus does not stop on content that is closed, hidden or off screen</span></legend>
-<div class="choices"><label><input type="radio" name="o-34" value="open" checked> Not checked</label><label><input type="radio" name="o-34" value="pass"> Passes</label><label><input type="radio" name="o-34" value="fail"> Fails</label><label><input type="radio" name="o-34" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-34">Notes<span class="vh">: </span><span class="vh">Focus does not stop on content that is closed, hidden or off screen</span></label>
-<textarea id="notes-34" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-36" value="open" checked> Not checked</label><label><input type="radio" name="o-36" value="pass"> Passes</label><label><input type="radio" name="o-36" value="fail"> Fails</label><label><input type="radio" name="o-36" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-36">Notes<span class="vh">: </span><span class="vh">Focus does not stop on content that is closed, hidden or off screen</span></label>
+<textarea id="notes-36" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-4-link-purpose-clear" aria-labelledby="item-2-4-4-link-purpose-clear" data-key="2.4.4/link-purpose-clear" data-facet="link-purpose-clear" data-label="Each link&#39;s purpose can be told from its text, or from its text with the sentence, paragraph, list item or table cell it is in" data-requirements="[&quot;2.4.4&quot;]">
@@ -601,9 +627,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every link&#39;s purpose is clear from its name, or from its name with the sentence, paragraph, list item or table cell it is in.</dd><dt>Fails when</dt><dd>A link has no name, or a name such as &quot;read more&quot; whose purpose nothing around it explains, which fails WCAG 2.4.4.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>link-name-present</code>, <code>link-name-quality</code></p><p class="covers">It also assesses: <code>link-name-present</code>, <code>link-text-descriptive-evidence</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Each link&#39;s purpose can be told from its text, or from its text with the sentence, paragraph, list item or table cell it is in</span></legend>
-<div class="choices"><label><input type="radio" name="o-35" value="open" checked> Not checked</label><label><input type="radio" name="o-35" value="pass"> Passes</label><label><input type="radio" name="o-35" value="fail"> Fails</label><label><input type="radio" name="o-35" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-35">Notes<span class="vh">: </span><span class="vh">Each link&#39;s purpose can be told from its text, or from its text with the sentence, paragraph, list item or table cell it is in</span></label>
-<textarea id="notes-35" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-37" value="open" checked> Not checked</label><label><input type="radio" name="o-37" value="pass"> Passes</label><label><input type="radio" name="o-37" value="fail"> Fails</label><label><input type="radio" name="o-37" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-37">Notes<span class="vh">: </span><span class="vh">Each link&#39;s purpose can be told from its text, or from its text with the sentence, paragraph, list item or table cell it is in</span></label>
+<textarea id="notes-37" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-6-heading-text-descriptive-evidence" aria-labelledby="item-2-4-6-heading-text-descriptive-evidence" data-key="2.4.6/heading-text-descriptive-evidence" data-facet="heading-text-descriptive-evidence" data-label="Headings describe the content that follows them" data-requirements="[&quot;2.4.6&quot;]">
@@ -614,9 +640,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every heading says what the content under it is about.</dd><dt>Fails when</dt><dd>A heading doesn&#39;t describe the content under it, such as &quot;Section 1&quot; or a file name, which fails WCAG 2.4.6.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>heading-quality</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Headings describe the content that follows them</span></legend>
-<div class="choices"><label><input type="radio" name="o-36" value="open" checked> Not checked</label><label><input type="radio" name="o-36" value="pass"> Passes</label><label><input type="radio" name="o-36" value="fail"> Fails</label><label><input type="radio" name="o-36" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-36">Notes<span class="vh">: </span><span class="vh">Headings describe the content that follows them</span></label>
-<textarea id="notes-36" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-38" value="open" checked> Not checked</label><label><input type="radio" name="o-38" value="pass"> Passes</label><label><input type="radio" name="o-38" value="fail"> Fails</label><label><input type="radio" name="o-38" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-38">Notes<span class="vh">: </span><span class="vh">Headings describe the content that follows them</span></label>
+<textarea id="notes-38" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-6-form-control-label-descriptive-evidence" aria-labelledby="item-2-4-6-form-control-label-descriptive-evidence" data-key="2.4.6/form-control-label-descriptive-evidence" data-facet="form-control-label-descriptive-evidence" data-label="Labels describe their fields, and fields with the same label can be told apart" data-requirements="[&quot;2.4.6&quot;]">
@@ -627,9 +653,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every label says what its field or control is for, and fields with the same label are told apart.</dd><dt>Fails when</dt><dd>A label doesn&#39;t say what its field is for, or several fields have the same label with nothing telling them apart, which fails WCAG 2.4.6.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>form-control-label-quality</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Labels describe their fields, and fields with the same label can be told apart</span></legend>
-<div class="choices"><label><input type="radio" name="o-37" value="open" checked> Not checked</label><label><input type="radio" name="o-37" value="pass"> Passes</label><label><input type="radio" name="o-37" value="fail"> Fails</label><label><input type="radio" name="o-37" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-37">Notes<span class="vh">: </span><span class="vh">Labels describe their fields, and fields with the same label can be told apart</span></label>
-<textarea id="notes-37" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-39" value="open" checked> Not checked</label><label><input type="radio" name="o-39" value="pass"> Passes</label><label><input type="radio" name="o-39" value="fail"> Fails</label><label><input type="radio" name="o-39" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-39">Notes<span class="vh">: </span><span class="vh">Labels describe their fields, and fields with the same label can be told apart</span></label>
+<textarea id="notes-39" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-7-focus-indicator-visible" aria-labelledby="item-2-4-7-focus-indicator-visible" data-key="2.4.7/focus-indicator-visible" data-facet="focus-indicator-visible" data-label="Every element that takes keyboard focus shows that it has it" data-requirements="[&quot;2.4.7&quot;]">
@@ -640,9 +666,22 @@
 <dl class="verdict"><dt>Passes when</dt><dd>At every stop you can see which element has focus.</dd><dt>Fails when</dt><dd>Focus reaches an element with no visible change, or lands on something hidden or off screen, so keyboard users lose track of where they are, which fails WCAG 2.4.7.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>css-hidden-focus</code>, <code>css-focus-indicator-suppressed</code>, <code>focus-not-removed-by-script</code></p><p class="covers">It also assesses: <code>css-hidden-focusable</code>, <code>focus-indicator-not-suppressed</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Every element that takes keyboard focus shows that it has it</span></legend>
-<div class="choices"><label><input type="radio" name="o-38" value="open" checked> Not checked</label><label><input type="radio" name="o-38" value="pass"> Passes</label><label><input type="radio" name="o-38" value="fail"> Fails</label><label><input type="radio" name="o-38" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-38">Notes<span class="vh">: </span><span class="vh">Every element that takes keyboard focus shows that it has it</span></label>
-<textarea id="notes-38" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-40" value="open" checked> Not checked</label><label><input type="radio" name="o-40" value="pass"> Passes</label><label><input type="radio" name="o-40" value="fail"> Fails</label><label><input type="radio" name="o-40" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-40">Notes<span class="vh">: </span><span class="vh">Every element that takes keyboard focus shows that it has it</span></label>
+<textarea id="notes-40" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-11-focus-not-obscured" aria-labelledby="item-2-4-11-focus-not-obscured" data-key="2.4.11/focus-not-obscured" data-facet="focus-not-obscured" data-label="An element that receives focus is not entirely hidden by content the page puts over it" data-requirements="[&quot;2.4.11&quot;]">
+<h4 id="item-2-4-11-focus-not-obscured">An element that receives focus is not entirely hidden by content the page puts over it</h4>
+<p class="meta"><span>For: 2.4.11</span></p>
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>A keyboard</span>, <span>The browser&#39;s zoom</span></li></ul>
+<ol class="steps"><li>Reload the page, scroll it half way down with the mouse, then press Tab slowly through the whole page.</li><li>At each stop, check that you can see at least part of the element that has focus. Watch for headers, footers, banners and chat buttons that stay in place while the page scrolls.</li><li>Where content the page keeps in place covers the focused element entirely, note it. If you opened that content yourself (a chat panel, a menu), check whether you can close it, for example with Escape, without moving focus: then it doesn&#39;t count.</li><li>Do the same with Shift+Tab back up the page, and in a window 320 CSS pixels wide, where fixed bars take more of the screen.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>Every element that takes focus can be seen, at least in part, or is covered only by content you opened and can close without moving focus.</dd><dt>Fails when</dt><dd>An element takes focus entirely hidden behind content the page put there, such as a sticky header, footer or cookie banner, which fails WCAG 2.4.11.</dd></dl>
+<details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>focus-not-obscured-minimum</code></p></details>
+<fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">An element that receives focus is not entirely hidden by content the page puts over it</span></legend>
+<div class="choices"><label><input type="radio" name="o-41" value="open" checked> Not checked</label><label><input type="radio" name="o-41" value="pass"> Passes</label><label><input type="radio" name="o-41" value="fail"> Fails</label><label><input type="radio" name="o-41" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-41">Notes<span class="vh">: </span><span class="vh">An element that receives focus is not entirely hidden by content the page puts over it</span></label>
+<textarea id="notes-41" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -656,9 +695,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every control&#39;s name contains the words of its visible label, in order.</dd><dt>Fails when</dt><dd>A control&#39;s name doesn&#39;t contain its visible label, so someone who uses speech input can&#39;t activate it by saying what they see, which fails WCAG 2.5.3.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>label-in-name</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">A control&#39;s name contains the text of its visible label</span></legend>
-<div class="choices"><label><input type="radio" name="o-39" value="open" checked> Not checked</label><label><input type="radio" name="o-39" value="pass"> Passes</label><label><input type="radio" name="o-39" value="fail"> Fails</label><label><input type="radio" name="o-39" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-39">Notes<span class="vh">: </span><span class="vh">A control&#39;s name contains the text of its visible label</span></label>
-<textarea id="notes-39" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-42" value="open" checked> Not checked</label><label><input type="radio" name="o-42" value="pass"> Passes</label><label><input type="radio" name="o-42" value="fail"> Fails</label><label><input type="radio" name="o-42" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-42">Notes<span class="vh">: </span><span class="vh">A control&#39;s name contains the text of its visible label</span></label>
+<textarea id="notes-42" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-5-8-target-size-minimum-pointer" aria-labelledby="item-2-5-8-target-size-minimum-pointer" data-key="2.5.8/target-size-minimum-pointer" data-facet="target-size-minimum-pointer" data-label="Targets are at least 24 by 24 CSS pixels, or far enough apart" data-requirements="[&quot;2.5.8&quot;]">
@@ -669,9 +708,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every target is at least 24 by 24 CSS pixels, or far enough from others, or one of the exceptions.</dd><dt>Fails when</dt><dd>A target smaller than 24 by 24 CSS pixels sits so close to another that their 24-pixel circles overlap, with no exception that applies, which fails WCAG 2.5.8.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>target-size-minimum</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Targets are at least 24 by 24 CSS pixels, or far enough apart</span></legend>
-<div class="choices"><label><input type="radio" name="o-40" value="open" checked> Not checked</label><label><input type="radio" name="o-40" value="pass"> Passes</label><label><input type="radio" name="o-40" value="fail"> Fails</label><label><input type="radio" name="o-40" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-40">Notes<span class="vh">: </span><span class="vh">Targets are at least 24 by 24 CSS pixels, or far enough apart</span></label>
-<textarea id="notes-40" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-43" value="open" checked> Not checked</label><label><input type="radio" name="o-43" value="pass"> Passes</label><label><input type="radio" name="o-43" value="fail"> Fails</label><label><input type="radio" name="o-43" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-43">Notes<span class="vh">: </span><span class="vh">Targets are at least 24 by 24 CSS pixels, or far enough apart</span></label>
+<textarea id="notes-43" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -688,9 +727,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>The &lt;html&gt; element&#39;s lang gives the language most of the page is in.</dd><dt>Fails when</dt><dd>The page has no lang, a wrong or invalid one, so screen readers read it with the wrong voice and pronunciation, which fails WCAG 3.1.1.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p><p class="covers">It also assesses: <code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">The page&#39;s main language is given in its markup, and is the right one</span></legend>
-<div class="choices"><label><input type="radio" name="o-41" value="open" checked> Not checked</label><label><input type="radio" name="o-41" value="pass"> Passes</label><label><input type="radio" name="o-41" value="fail"> Fails</label><label><input type="radio" name="o-41" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-41">Notes<span class="vh">: </span><span class="vh">The page&#39;s main language is given in its markup, and is the right one</span></label>
-<textarea id="notes-41" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-44" value="open" checked> Not checked</label><label><input type="radio" name="o-44" value="pass"> Passes</label><label><input type="radio" name="o-44" value="fail"> Fails</label><label><input type="radio" name="o-44" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-44">Notes<span class="vh">: </span><span class="vh">The page&#39;s main language is given in its markup, and is the right one</span></label>
+<textarea id="notes-44" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-3-1-2-parts-language-marked" aria-labelledby="item-3-1-2-parts-language-marked" data-key="3.1.2/parts-language-marked" data-facet="parts-language-marked" data-label="Passages and phrases in a language other than the page&#39;s are marked with their own language" data-requirements="[&quot;3.1.2&quot;]">
@@ -701,9 +740,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every passage or phrase in another language is marked with a valid lang attribute for that language.</dd><dt>Fails when</dt><dd>A passage or phrase in another language isn&#39;t marked with its language, or is marked with a wrong code, so it is read with the wrong pronunciation, which fails WCAG 3.1.2.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>valid-lang</code></p><p class="covers">It also assesses: <code>element-lang-valid</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Passages and phrases in a language other than the page&#39;s are marked with their own language</span></legend>
-<div class="choices"><label><input type="radio" name="o-42" value="open" checked> Not checked</label><label><input type="radio" name="o-42" value="pass"> Passes</label><label><input type="radio" name="o-42" value="fail"> Fails</label><label><input type="radio" name="o-42" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-42">Notes<span class="vh">: </span><span class="vh">Passages and phrases in a language other than the page&#39;s are marked with their own language</span></label>
-<textarea id="notes-42" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-45" value="open" checked> Not checked</label><label><input type="radio" name="o-45" value="pass"> Passes</label><label><input type="radio" name="o-45" value="fail"> Fails</label><label><input type="radio" name="o-45" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-45">Notes<span class="vh">: </span><span class="vh">Passages and phrases in a language other than the page&#39;s are marked with their own language</span></label>
+<textarea id="notes-45" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -721,9 +760,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every input error the page detects is shown in text that names the field and the problem.</dd><dt>Fails when</dt><dd>An input error is shown only by colour or an icon, not at all, or without saying which field is wrong, which fails WCAG 3.3.1.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>invalid-field-error-message</code></p><p class="covers">It also assesses: <code>invalid-field-error-message</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">An input error the page detects is shown in text that says which field is wrong and what is wrong</span></legend>
-<div class="choices"><label><input type="radio" name="o-43" value="open" checked> Not checked</label><label><input type="radio" name="o-43" value="pass"> Passes</label><label><input type="radio" name="o-43" value="fail"> Fails</label><label><input type="radio" name="o-43" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-43">Notes<span class="vh">: </span><span class="vh">An input error the page detects is shown in text that says which field is wrong and what is wrong</span></label>
-<textarea id="notes-43" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-46" value="open" checked> Not checked</label><label><input type="radio" name="o-46" value="pass"> Passes</label><label><input type="radio" name="o-46" value="fail"> Fails</label><label><input type="radio" name="o-46" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-46">Notes<span class="vh">: </span><span class="vh">An input error the page detects is shown in text that says which field is wrong and what is wrong</span></label>
+<textarea id="notes-46" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-3-3-2-labels-instructions-provided" aria-labelledby="item-3-3-2-labels-instructions-provided" data-key="3.3.2/labels-instructions-provided" data-facet="labels-instructions-provided" data-label="Fields that ask for input have a visible label, and instructions where the input needs them" data-requirements="[&quot;3.3.2&quot;]">
@@ -734,9 +773,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every field has a visible label, and the page gives the instructions the input needs before it is sent.</dd><dt>Fails when</dt><dd>A field has no visible label, only a placeholder or a hover title, or input rules are given only after an error, which fails WCAG 3.3.2.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>form-control-programmatic-label-present</code>, <code>form-control-single-label</code>, <code>form-control-programmatic-label-quality</code></p><p class="covers">It also assesses: <code>form-control-labels-or-instructions-present</code>, <code>form-control-single-label</code>, <code>form-control-visible-label-quality</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Fields that ask for input have a visible label, and instructions where the input needs them</span></legend>
-<div class="choices"><label><input type="radio" name="o-44" value="open" checked> Not checked</label><label><input type="radio" name="o-44" value="pass"> Passes</label><label><input type="radio" name="o-44" value="fail"> Fails</label><label><input type="radio" name="o-44" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-44">Notes<span class="vh">: </span><span class="vh">Fields that ask for input have a visible label, and instructions where the input needs them</span></label>
-<textarea id="notes-44" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-47" value="open" checked> Not checked</label><label><input type="radio" name="o-47" value="pass"> Passes</label><label><input type="radio" name="o-47" value="fail"> Fails</label><label><input type="radio" name="o-47" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-47">Notes<span class="vh">: </span><span class="vh">Fields that ask for input have a visible label, and instructions where the input needs them</span></label>
+<textarea id="notes-47" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-3-3-8-authentication-no-cognitive-test" aria-labelledby="item-3-3-8-authentication-no-cognitive-test" data-key="3.3.8/authentication-no-cognitive-test" data-facet="authentication-no-cognitive-test" data-label="Signing in doesn&#39;t require remembering, transcribing or solving something, unless a way around it is offered" data-requirements="[&quot;3.3.8&quot;]">
@@ -747,9 +786,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every sign-in step that asks to remember, transcribe or solve something allows pasting and password managers, or offers another way, or only asks to recognise objects or your own content.</dd><dt>Fails when</dt><dd>Signing in requires remembering, transcribing or solving something with no way around it, such as a code field that blocks pasting, which fails WCAG 3.3.8.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>password-paste-enabled</code></p><p class="covers">It also assesses: <code>authentication-paste-not-blocked</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Signing in doesn&#39;t require remembering, transcribing or solving something, unless a way around it is offered</span></legend>
-<div class="choices"><label><input type="radio" name="o-45" value="open" checked> Not checked</label><label><input type="radio" name="o-45" value="pass"> Passes</label><label><input type="radio" name="o-45" value="fail"> Fails</label><label><input type="radio" name="o-45" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-45">Notes<span class="vh">: </span><span class="vh">Signing in doesn&#39;t require remembering, transcribing or solving something, unless a way around it is offered</span></label>
-<textarea id="notes-45" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-48" value="open" checked> Not checked</label><label><input type="radio" name="o-48" value="pass"> Passes</label><label><input type="radio" name="o-48" value="fail"> Fails</label><label><input type="radio" name="o-48" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-48">Notes<span class="vh">: </span><span class="vh">Signing in doesn&#39;t require remembering, transcribing or solving something, unless a way around it is offered</span></label>
+<textarea id="notes-48" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -766,9 +805,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every link, control, frame and dialog has a name that says what it is for.</dd><dt>Fails when</dt><dd>A link, control, frame or dialog has no name, or one that doesn&#39;t say what it is for, so assistive technology announces only its role, which fails WCAG 4.1.2.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>form-control-programmatic-label-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-alt-present</code>, <code>binary-control-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>iframe-title-unique</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p><p class="covers">It also assesses: <code>form-control-name-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-name-present</code>, <code>checkbox-name-present</code>, <code>radio-name-present</code>, <code>switch-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Every link, control, frame and dialog has a name that says what it is for</span></legend>
-<div class="choices"><label><input type="radio" name="o-46" value="open" checked> Not checked</label><label><input type="radio" name="o-46" value="pass"> Passes</label><label><input type="radio" name="o-46" value="fail"> Fails</label><label><input type="radio" name="o-46" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-46">Notes<span class="vh">: </span><span class="vh">Every link, control, frame and dialog has a name that says what it is for</span></label>
-<textarea id="notes-46" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-49" value="open" checked> Not checked</label><label><input type="radio" name="o-49" value="pass"> Passes</label><label><input type="radio" name="o-49" value="fail"> Fails</label><label><input type="radio" name="o-49" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-49">Notes<span class="vh">: </span><span class="vh">Every link, control, frame and dialog has a name that says what it is for</span></label>
+<textarea id="notes-49" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-2-roles-match-behavior" aria-labelledby="item-4-1-2-roles-match-behavior" data-key="4.1.2/roles-match-behavior" data-facet="roles-match-behavior" data-label="Every control&#39;s role says what it does, and controls aren&#39;t nested inside one another" data-requirements="[&quot;4.1.2&quot;]">
@@ -779,9 +818,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every control&#39;s role says what it does, and no control is nested inside another.</dd><dt>Fails when</dt><dd>A control has no role, a wrong one (a clickable div with no role, a link that acts as a button), or holds another control inside it, which fails WCAG 4.1.2.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>aria-roles-valid</code>, <code>aria-deprecated-role</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p><p class="covers">It also assesses: <code>aria-role-valid</code>, <code>aria-role-not-deprecated</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Every control&#39;s role says what it does, and controls aren&#39;t nested inside one another</span></legend>
-<div class="choices"><label><input type="radio" name="o-47" value="open" checked> Not checked</label><label><input type="radio" name="o-47" value="pass"> Passes</label><label><input type="radio" name="o-47" value="fail"> Fails</label><label><input type="radio" name="o-47" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-47">Notes<span class="vh">: </span><span class="vh">Every control&#39;s role says what it does, and controls aren&#39;t nested inside one another</span></label>
-<textarea id="notes-47" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-50" value="open" checked> Not checked</label><label><input type="radio" name="o-50" value="pass"> Passes</label><label><input type="radio" name="o-50" value="fail"> Fails</label><label><input type="radio" name="o-50" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-50">Notes<span class="vh">: </span><span class="vh">Every control&#39;s role says what it does, and controls aren&#39;t nested inside one another</span></label>
+<textarea id="notes-50" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-2-states-values-exposed" aria-labelledby="item-4-1-2-states-values-exposed" data-key="4.1.2/states-values-exposed" data-facet="states-values-exposed" data-label="Every control&#39;s state and value are exposed and change with what is on screen" data-requirements="[&quot;4.1.2&quot;]">
@@ -792,9 +831,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every control&#39;s state and value are exposed and change with what is on screen.</dd><dt>Fails when</dt><dd>A control&#39;s state or value isn&#39;t exposed, or doesn&#39;t change when it changes on screen, such as a custom check box always read as not checked, which fails WCAG 4.1.2.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>aria-required-attr</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p><p class="covers">It also assesses: <code>aria-attr-required-for-role</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Every control&#39;s state and value are exposed and change with what is on screen</span></legend>
-<div class="choices"><label><input type="radio" name="o-48" value="open" checked> Not checked</label><label><input type="radio" name="o-48" value="pass"> Passes</label><label><input type="radio" name="o-48" value="fail"> Fails</label><label><input type="radio" name="o-48" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-48">Notes<span class="vh">: </span><span class="vh">Every control&#39;s state and value are exposed and change with what is on screen</span></label>
-<textarea id="notes-48" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-51" value="open" checked> Not checked</label><label><input type="radio" name="o-51" value="pass"> Passes</label><label><input type="radio" name="o-51" value="fail"> Fails</label><label><input type="radio" name="o-51" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-51">Notes<span class="vh">: </span><span class="vh">Every control&#39;s state and value are exposed and change with what is on screen</span></label>
+<textarea id="notes-51" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-2-aria-used-validly" aria-labelledby="item-4-1-2-aria-used-validly" data-key="4.1.2/aria-used-validly" data-facet="aria-used-validly" data-label="ARIA attributes are real, valid and allowed where they are, and nothing focusable is hidden from assistive technology" data-requirements="[&quot;4.1.2&quot;]">
@@ -805,9 +844,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>ARIA attributes are real, valid and allowed where they are, their ids are unique, and nothing focusable is hidden.</dd><dt>Fails when</dt><dd>An ARIA attribute is misspelt, has an invalid value or is not allowed on its role, an id it points to is missing or repeated, or something focusable is hidden from assistive technology, which fails WCAG 4.1.2.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>aria-hidden-focus</code>, <code>aria-valid-attr</code>, <code>aria-valid-attr-value</code>, <code>aria-allowed-attr</code>, <code>aria-prohibited-attr</code>, <code>aria-hidden-body</code>, <code>duplicate-id-aria</code></p><p class="covers">It also assesses: <code>aria-hidden-focusable</code>, <code>aria-attr-name-valid</code>, <code>aria-attr-value-valid</code>, <code>aria-attr-allowed-for-role</code>, <code>aria-attr-not-prohibited</code>, <code>aria-hidden-body-absent</code>, <code>duplicate-id-aria</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">ARIA attributes are real, valid and allowed where they are, and nothing focusable is hidden from assistive technology</span></legend>
-<div class="choices"><label><input type="radio" name="o-49" value="open" checked> Not checked</label><label><input type="radio" name="o-49" value="pass"> Passes</label><label><input type="radio" name="o-49" value="fail"> Fails</label><label><input type="radio" name="o-49" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-49">Notes<span class="vh">: </span><span class="vh">ARIA attributes are real, valid and allowed where they are, and nothing focusable is hidden from assistive technology</span></label>
-<textarea id="notes-49" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-52" value="open" checked> Not checked</label><label><input type="radio" name="o-52" value="pass"> Passes</label><label><input type="radio" name="o-52" value="fail"> Fails</label><label><input type="radio" name="o-52" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-52">Notes<span class="vh">: </span><span class="vh">ARIA attributes are real, valid and allowed where they are, and nothing focusable is hidden from assistive technology</span></label>
+<textarea id="notes-52" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-3-status-messages-announced" aria-labelledby="item-4-1-3-status-messages-announced" data-key="4.1.3/status-messages-announced" data-facet="status-messages-announced" data-label="Status messages are announced by assistive technology without taking focus" data-requirements="[&quot;4.1.3&quot;]">
@@ -818,9 +857,9 @@
 <dl class="verdict"><dt>Passes when</dt><dd>Every status message is announced by a screen reader without focus moving to it.</dd><dt>Fails when</dt><dd>A status message appears on screen but a screen reader doesn&#39;t say it, which fails WCAG 4.1.3.</dd></dl>
 <details class="technical"><summary>Rules and facets</summary><p class="rules">Rules that test it: <code>live-region-announcements</code></p><p class="covers">It also assesses: <code>live-region-reachable-evidence</code>, <code>live-region-changes-evidence</code></p></details>
 <fieldset class="record"><legend>Result<span class="vh">: </span><span class="vh">Status messages are announced by assistive technology without taking focus</span></legend>
-<div class="choices"><label><input type="radio" name="o-50" value="open" checked> Not checked</label><label><input type="radio" name="o-50" value="pass"> Passes</label><label><input type="radio" name="o-50" value="fail"> Fails</label><label><input type="radio" name="o-50" value="notApplicable"> Does not apply</label></div>
-<label class="notes" for="notes-50">Notes<span class="vh">: </span><span class="vh">Status messages are announced by assistive technology without taking focus</span></label>
-<textarea id="notes-50" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-53" value="open" checked> Not checked</label><label><input type="radio" name="o-53" value="pass"> Passes</label><label><input type="radio" name="o-53" value="fail"> Fails</label><label><input type="radio" name="o-53" value="notApplicable"> Does not apply</label></div>
+<label class="notes" for="notes-53">Notes<span class="vh">: </span><span class="vh">Status messages are announced by assistive technology without taking focus</span></label>
+<textarea id="notes-53" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
