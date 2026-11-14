@@ -469,6 +469,41 @@ export function LocalesContent() {
 				Die Schlüssel von Regel, Composite und Vorkommen stehen im Ergebnis neben dem bereits aufgelösten Text, sodass Sie ein gespeichertes
 				Ergebnis in einer anderen Locale neu darstellen können, ohne erneut zu scannen.
 			</p>
+
+			<h2 id="help-with-translations">Bei Übersetzungen helfen</h2>
+			<p>
+				Jede Sprache, die noch nicht in der Tabelle oben steht, ist willkommen, für die Meldungen
+				der Engine wie für diese Website, und ebenso jede Hilfe, die nicht gleich eine ganze
+				Sprache übersetzt. Übersetzen erfordert keinen Code: Die Meldungen der Engine sind Dateien
+				mit Texten, und jede Seite dieser Website hat eine Datei pro Sprache.
+			</p>
+			<ul>
+				<li>
+					<strong>Melden Sie einen falschen oder unklaren Text</strong> in einer Sprache, die Sie
+					lesen: eine Meldung der Engine mit einem{" "}
+					<a href="https://github.com/SureA11y/core/issues/new?template=translation.md">Übersetzungs-Issue zur Engine</a>, eine Seite dieser Website mit{" "}
+					<a href="https://github.com/SureA11y/surea11y.dev/issues/new?template=translation.md">einem Issue zur Website</a>.
+				</li>
+				<li>
+					<strong>Prüfen Sie eine Sprache</strong>, wenn sie Ihre Muttersprache ist und Sie im
+					Bereich Barrierefreiheit arbeiten: Tragen Sie sich in die{" "}
+					<a href={`${core}/docs/I18N.md#translation-reviewers`}>Liste der Übersetzungsprüfenden</a> ein. Sie werden angefragt, wenn
+					eine Übersetzung der Engine oder dieser Website eine Prüfung braucht.
+				</li>
+				<li>
+					<strong>Übersetzen Sie</strong>:{" "}
+					<a href={`${core}/docs/I18N.md#adding-your-language`}>
+						<span lang="en">Adding your language</span>
+					</a>{" "}
+					(auf Englisch) beschreibt die Schritte für die Meldungen der Engine,{" "}
+					<a href="https://github.com/SureA11y/surea11y.dev#adding-a-language">die README der Website</a> die für ihre Seiten.
+				</li>
+			</ul>
+			<p>
+				Eine neue Sprache, in der Engine oder auf dieser Website, wird aufgenommen, sobald eine
+				Person sie geprüft hat, deren Muttersprache sie ist und die im Bereich Barrierefreiheit
+				arbeitet. Prüfende sind ebenso willkommen wie Übersetzende.
+			</p>
 		</>
 	);
 }

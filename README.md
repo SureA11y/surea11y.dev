@@ -65,6 +65,18 @@ notice.
 6. Record the new translations as current:
    `npm run i18n:mark -- --locale=<code> --stale`.
 
+### Review
+
+A new language, or a rewrite of a large part of one, is merged once someone
+who speaks it natively and works in accessibility has reviewed it: every
+text read against the English, with the terms people who test or fix pages
+in that language use, and WCAG's own translation where there is one. The
+reviewer says so in a comment on the pull request. The engine's
+[translation reviewers](https://github.com/SureA11y/core/blob/main/docs/I18N.md#translation-reviewers)
+review the site too. A wrong or unclear text on the site can be reported
+with a
+[translation issue](https://github.com/SureA11y/surea11y.dev/issues/new?template=translation.md).
+
 ### Keeping translations current
 
 `src/i18n/translation-sources.json` records, for every translated page,

@@ -566,6 +566,15 @@ translation, and what to keep in mind when editing it:
   `check:lang` skips any element marked with a language other than the
   page's.
 
+**Help with translations (2026-11-14)**: the Locales page ends with an
+invitation to translate or review, for the engine's messages and for the
+site, in every language. It only invites and links: the steps stay on
+GitHub (`I18N.md` "Adding your language" and "Translation reviewers", the
+README's "Adding a language" and "Review"), per the canonical-source rule.
+Site texts are reported with `.github/ISSUE_TEMPLATE/translation.md`, engine
+messages with core's form of the same name. One reviewer list, in core's
+`I18N.md`, covers both.
+
 **Translation review (2026-09-28)**: de, fr and ja were reviewed line by
 line against the English (all 132 rules, every content page, dictionaries),
 correcting meaning, obligation levels and terminology per the conventions

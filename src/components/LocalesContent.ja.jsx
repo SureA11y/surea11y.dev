@@ -536,6 +536,40 @@ export function LocalesContent() {
 			<p>
 				ルール、複合ルール、検出箇所のキーは解決済みのテキストと一緒に結果に含まれるので、保存した結果から、再スキャンせずに別のロケールで表示し直せます。
 			</p>
+
+			<h2 id="help-with-translations">翻訳への協力</h2>
+			<p>
+				上の表にまだない言語は、エンジンのメッセージでもこのサイトでも歓迎します。1つの言語をまるごと翻訳しなくても協力できます。翻訳にコードは不要です。エンジンのメッセージは文字列のファイルで、このサイトの各ページは言語ごとに1つのファイルです。
+			</p>
+			<ul>
+				<li>
+					<strong>誤った文章やわかりにくい文章を報告する</strong>
+					：読める言語で見つけたら、エンジンのメッセージは
+					<a href="https://github.com/SureA11y/core/issues/new?template=translation.md">エンジンの翻訳Issue</a>
+					で、このサイトのページは
+					<a href="https://github.com/SureA11y/surea11y.dev/issues/new?template=translation.md">サイトの翻訳Issue</a>
+					で報告してください。
+				</li>
+				<li>
+					<strong>言語をレビューする</strong>
+					：その言語を母語とし、アクセシビリティの仕事をしている場合は、
+					<a href={`${core}/docs/I18N.md#translation-reviewers`}>翻訳レビュアー</a>
+					に加わってください。エンジンやこのサイトの翻訳にレビューが必要なときに依頼が届きます。
+				</li>
+				<li>
+					<strong>翻訳する</strong>
+					：エンジンのメッセージの手順は
+					<a href={`${core}/docs/I18N.md#adding-your-language`}>
+						<span lang="en">Adding your language</span>
+					</a>
+					（英語）に、このサイトのページの手順は
+					<a href="https://github.com/SureA11y/surea11y.dev#adding-a-language">サイトのREADME</a>
+					にあります。
+				</li>
+			</ul>
+			<p>
+				新しい言語は、エンジンでもこのサイトでも、その言語を母語としアクセシビリティの仕事をしている人がレビューしてから取り込みます。翻訳する人と同じくらい、レビューする人も歓迎します。
+			</p>
 		</>
 	);
 }
