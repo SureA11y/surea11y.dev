@@ -105,7 +105,8 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Core's lint rules for rules." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Standard only: the requirements and the rules that check each." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Standard only: how a person assesses each requirement by hand, and a test that every requirement has a procedure for each of its facets." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.16.1</code>), and eslint, jsdom and Playwright as development dependencies.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.17.0</code>), and eslint, jsdom and Playwright as development dependencies.</> },
+	{ id: "derived", file: <><code>standard-data.js</code>, <code>tests/standard.test.js</code></>, what: <>Derived only, and its only files besides <code>index.js</code>, <code>README.md</code>, <code>package.json</code>, <code>eslint.config.js</code> and <code>.gitignore</code>: the standard derived from the base's data, the base as it is until you change it, and its tests (<a href="#a-pack-built-on-another-pack">A pack built on another pack</a>).</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "The pack's own guide to these files, and what git leaves out." },
 ];
 
@@ -160,8 +161,11 @@ export function PacksContent() {
 				SureA11y family, ready to install: EN 301 549 chapter 9 (Web), in V3.2.1 and V4.1.1. It has
 				a profile per version, <code>en301549-v4.1.1</code> and <code>en301549-v3.2.1</code>, that
 				reports one result per clause, and <code>mappings: ['en301549']</code> to name the clauses
-				on the results of any scan, a WCAG one included. It needs <code>@surea11y/core</code> 1.13.0
-				or later.
+				on the results of any scan, a WCAG one included. Its latest release, 1.4.0, needs{" "}
+				<code>@surea11y/core</code> 1.17 (<code>~1.17.0</code>): its standard is built from{" "}
+				<a href="#standards-as-data">standard data</a>, which is experimental in core until 1.18.0,
+				so it takes no later minor until then. For core 1.16, use its 1.3 releases, and for core
+				1.13 to 1.15, its 1.2 releases.
 			</p>
 			<p>
 				Its 1.1.0 release, built on core 1.14.0, judges each clause as core judges the WCAG
@@ -184,6 +188,16 @@ export function PacksContent() {
 				(chapter 4's functional performance statements, chapter 12, the chapters for what is not
 				a web page) have no rule, result or procedure in it.
 			</p>
+			<p>
+				Its 1.3.0 release builds the standard from data (<code>standard-data.js</code>, core's
+				format <code>surea11y-standard/1</code>), with the same results, and exports that data, so a
+				standard built on EN 301 549, splitting its clauses into steps or adding requirements of
+				its own, starts from it with <code>deriveStandard</code> rather than copying the pack's
+				tables (see <a href="#standards-as-data">A standard as data</a>). Its 1.4.0 release, for
+				core 1.17, evaluates two more clauses with core's rules: 9.1.4.11 Non-text contrast, in
+				both versions, by <code>css-focus-indicator-suppressed</code>, and V4.1.1's 9.2.4.11 Focus
+				not obscured (minimum), by core's new <code>focus-not-obscured-minimum</code>.
+			</p>
 			<CodeBlock
 				lang="js"
 				lines={[
@@ -202,7 +216,7 @@ export function PacksContent() {
 				4.1.1 Parsing (<code>keepsParsing</code>). Its clauses restate WCAG criteria one for one (
 				<code>applicability: 'wcag'</code>), and its rule map is
 				derived from the installed core's catalog, so a rule core adds is covered with no change to
-				the pack. A standard with requirements WCAG doesn't have uses the same shape and adds its
+				the pack: that is how 1.4.0 gained its two clauses. A standard with requirements WCAG doesn't have uses the same shape and adds its
 				own rules. Its source is short and worth reading beside{" "}
 				<a href="#writing-a-pack">Writing a pack</a> below.
 			</p>
@@ -301,7 +315,9 @@ export function PacksContent() {
 				gives each requirement's checklist, with the roles, states and values that are valid listed
 				in full, from the Recommendation's tables. The pack's <code>docs/COVERAGE.md</code> lists
 				every WAI-ARIA 1.2 author requirement a rule can check from the markup, one case per role,
-				state or property, and what the profile makes of each.
+				state or property, and what the profile makes of each. Since 1.1.0, its rules' messages
+				name what causes a finding, and the near-right value where one is close (a misspelt role or
+				attribute, the size most of a set gives).
 			</p>
 			<p>
 				It is also the worked example of a standard that is certain where WCAG asks:{" "}
@@ -545,7 +561,10 @@ export function PacksContent() {
 				<code>engineOptions.packs</code> that no <code>packScript</code> call registered, or that
 				was registered with another core version, is listed the same way. So a scan can finish
 				without the checks you added the pack for: a tool that depends on a pack should check{" "}
-				<code>skippedPacks</code> before treating the scan as complete.
+				<code>skippedPacks</code> before treating the scan as complete. Since core 1.17.0, a pack
+				built on another (<a href="#a-pack-built-on-another-pack">below</a>) is skipped too when
+				the packs it uses aren't in the scan at the version it was made with, and so are the packs
+				that use it.
 			</p>
 			<p>Each tool turns a skipped pack into a failure you can see:</p>
 			<ul>
@@ -593,6 +612,8 @@ export function PacksContent() {
 					{ text: "npx -p @surea11y/core surea11y-pack new acme-a11y --name @acme/a11y-pack", command: true },
 					"# or, for a standard:",
 					{ text: "npx -p @surea11y/core surea11y-pack new city-standard --name @city/a11y-standard --kind standard --title \"City Standard\"", command: true },
+					"# or, for a standard built on another pack's (installed first, here EN 301 549):",
+					{ text: "npx -p @surea11y/core surea11y-pack new city-en301549 --name @city/a11y-en301549 --kind derived --from @surea11y/pack-en301549", command: true },
 					"",
 					{ text: "cd acme-a11y", command: true },
 					{ text: "npm install", command: true },
@@ -605,7 +626,11 @@ export function PacksContent() {
 				its rules. <code>surea11y-pack new</code> checks the pack as a scan would before writing anything, and
 				refuses a name, namespace or title that would make it invalid (a title of <code>WCAG</code>{" "}
 				names its standard as one of core's), saying why. Change it step by step from there,
-				running <code>npm test</code> as you go. Its README walks through each file:
+				running <code>npm test</code> as you go. A derived pack (<code>--kind derived</code>, core
+				1.17.0 and later, <a href="#experimental">experimental</a>) is the base as it is, with no
+				rules of its own, until you change it: see{" "}
+				<a href="#a-pack-built-on-another-pack">A pack built on another pack</a>. Its README walks
+				through each file:
 			</p>
 			<DataTable
 				label="Files of a generated pack"
@@ -642,13 +667,13 @@ export function PacksContent() {
 					<code>'^1.11.1'</code>), read as npm reads ranges. Start new packs at 1.11.1: the 1.11.0
 					package left out a file packs need in Node. A scan with a core outside it skips the
 					pack, with the reason in <code>skippedPacks</code>. <code>surea11y-pack new</code> writes
-					the version that generated the pack (<code>^1.16.1</code>); keep a range that starts at
+					the version that generated the pack (<code>^1.17.0</code>); keep a range that starts at
 					1.14 if the pack uses what 1.14 added: <code>meta.review</code>, <code>reasonCodes</code>{" "}
 					and <code>findings</code> rows, <code>meta.contributions</code>, <code>applicability</code>,{" "}
 					<code>partial</code> or <code>keepsParsing</code>; and one that starts at 1.15 if it uses{" "}
 					<code>outcome: 'fail'</code>. What else 1.15 reads (a standard's procedures, groups and
 					translations, its own review steps) an older core ignores. A pack that uses an API core
-					marks experimental declares a range that takes no later minor (<code>'~1.16.0'</code>);
+					marks experimental declares a range that takes no later minor (<code>'~1.17.0'</code>);
 					see <a href="#experimental">Experimental APIs</a>.
 				</li>
 				<li>
@@ -864,8 +889,8 @@ export function PacksContent() {
 				<code>checkStandardData(data)</code> lists what is wrong with it,{" "}
 				<code>standardFromData(data)</code> makes the pack's <code>standard</code> from it, and{" "}
 				<code>standardDataOf(standard)</code> gives it back. The{" "}
-				<a href="#en-301-549-pack">EN 301 549 pack</a> built from its data gives the same results
-				as it does today.
+				<a href="#en-301-549-pack">EN 301 549 pack</a> has been built this way since its 1.3.0
+				release, and its data is what a standard built on EN 301 549 starts from.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -873,7 +898,7 @@ export function PacksContent() {
 					"const { definePack, standardFromData } = require('@surea11y/core/pack');",
 					"const data = require('./standard.json');   // { format: 'surea11y-standard/1', key: 'city', ... }",
 					"",
-					"module.exports = definePack({ name, version, namespace: 'city', core: '~1.16.0',",
+					"module.exports = definePack({ name, version, namespace: 'city', core: '~1.17.0',",
 					"  standard: standardFromData(data) });",
 				]}
 			/>
@@ -888,6 +913,68 @@ export function PacksContent() {
 				<code>basedOn</code> of its requirement or test, so a step's result names the clause it
 				comes from. Core's <a href={`${core}/docs/PACKS.md`}>pack guide</a> on GitHub has the format
 				and every rule of the derivation.
+			</p>
+
+			<h3 id="a-pack-built-on-another-pack">A pack built on another pack</h3>
+			<p>
+				Since core 1.17.0 (<a href="#experimental">experimental</a>), when the base's pack has
+				rules of its own, a pack whose standard is derived from it uses them rather than copying
+				them: it names the packs it builds on in <code>uses</code>, and its standard maps their
+				rules by id as it maps core's.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const base = require('@acme/pack-base');",
+					"",
+					"module.exports = definePack({",
+					"  name: '@acme/pack-derived', version: '1.0.0', namespace: 'derived', core: '~1.17.0',",
+					"  uses: [base],   // the pack itself, as installed (a dependency in package.json)",
+					"  standard        // its rule map may name the base's rules, and its profiles run them",
+					"});",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>The rules stay where they are.</strong> A pack uses another's rules as it uses
+					core's: it says which of its requirements each checks, and its profiles run them. It
+					can't change them; where it judges differently, it maps their findings its own way or
+					writes a rule of its own.
+				</li>
+				<li>
+					<strong>A scan runs it only with them.</strong> The packs it uses go in the same scan (
+					<code>packs: [base, derived]</code>; in a page, one <code>packScript</code> call), at the
+					version it was made with. Otherwise the scan skips it, says why in{" "}
+					<code>skippedPacks</code>, and skips the packs that use it too;{" "}
+					<code>packScript</code> throws.
+				</li>
+				<li>
+					<strong>A chain works.</strong> A pack may use one that uses others;{" "}
+					<code>checkPack</code> refuses a circle, two versions of one pack along the chain, and an
+					entry that isn't a valid pack. <code>describePacks</code> lists what each pack uses.
+				</li>
+				<li>
+					<strong>Without <code>uses</code></strong>, a standard maps only core's rules and its own:
+					a rule two unrelated standards need belongs in core.
+				</li>
+			</ul>
+			<p>
+				<code>surea11y-pack new &lt;folder&gt; --kind derived --from &lt;base&gt;</code>, with the
+				base installed where you run it and its standard in the data format, writes a pack that is
+				the base as it is: <code>standard-data.js</code> derives every requirement of the base's
+				latest version, with its tests and rule map, and has an empty table of changes with an
+				example of each kind; <code>index.js</code> uses the base; core's range is{" "}
+				<code>~</code>, and the base is a dependency at the version installed. Its tests check that
+				the data is valid, that every row it doesn't change is the base's, and that its profile
+				runs with the base and is skipped without it.
+			</p>
+			<p>
+				Test each difference on a page: where the derived standard drops a link, makes a failure a
+				question, or sends a reason code or a finding elsewhere, give it a page the base's row would
+				get wrong, and the result the derived standard gives. A route by a field of the base pack's
+				findings needs that most: the field is the base pack's own, not one core keeps stable, and
+				if it changes, the route matches nothing and the finding goes back to the row without a
+				word. The page test fails instead.
 			</p>
 
 			<h3 id="rules">Rules</h3>
@@ -1108,14 +1195,16 @@ export function PacksContent() {
 				standard can move from one to the other text by text.
 			</p>
 
-			<h3 id="laws">The laws a standard is assessed under</h3>
+			<h3 id="laws">The law a profile is used for</h3>
 			<p>
-				Since core 1.16.0 (<a href="#experimental">experimental</a>), a standard can say which laws
-				it serves in <code>standard.laws</code>, since one standard can serve more than one law,
-				and each profile names the one it is for (<code>law</code>). Only <code>name</code> and{" "}
-				<code>jurisdiction</code> are required; <code>appliesTo</code>, <code>exemptions</code>,{" "}
-				<code>since</code>, <code>enforcement</code> and <code>sources</code> (https links only)
-				describe it further, and <code>standard.lawTexts</code> translates them by id.
+				Since core 1.16.0 (<a href="#experimental">experimental</a>), a profile can name the law it
+				is used for (<code>law</code>), one of its standard's <code>standard.laws</code>, so results
+				and the report say which law a scan was run for. Core tests a standard's requirements; it
+				identifies the law and doesn't document it. A law has its <code>name</code> and{" "}
+				<code>jurisdiction</code>, both required, and <code>sources</code>, links to its official
+				text (https only), nothing more: core 1.17.0 removed <code>appliesTo</code>,{" "}
+				<code>exemptions</code>, <code>since</code> and <code>enforcement</code>, and refuses them.{" "}
+				<code>standard.lawTexts</code> translates a law's name by id.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -1124,23 +1213,21 @@ export function PacksContent() {
 					"  'city-public': {",
 					"    name: 'City Accessibility Act, section 4',",
 					"    jurisdiction: 'DE-BY',                 // 'FR', 'DE-BY', 'EU'…",
-					"    appliesTo: 'Public bodies of the city',",
-					"    sources: [{ title: 'Official journal', url: 'https://example.org/act' }]",
+						"    sources: [{ title: 'Official journal', url: 'https://example.org/act' }]",
 					"  }",
 					"},",
 					"profiles: { 'city-1.0': { version: '1.0', tags: ['city'], mappedRules: true, law: 'city-public' } }",
 				]}
 			/>
 			<p>
-				They are facts to show, never logic: <strong>core never decides whom a law applies
-				to</strong>. Results name the profile's law (<code>engine.law</code>, see the{" "}
+				<strong>Core never decides whom a law applies to.</strong> Results name the profile's law (<code>engine.law</code>, see the{" "}
 				<a href="/results-reports/output-schema/">output schema</a>), the{" "}
 				<a href="/results-reports/html-report/">HTML report</a> shows it beside the profile,{" "}
 				<code>{"listProcedures({ profile })"}</code> lists only the requirements that law asks for
-				(a requirement only some of the laws ask for lists them in <code>laws</code>), and{" "}
-				<code>describePacks</code> lists each standard's laws with the profiles that serve them.{" "}
-				<code>lawOf(standard, id, locale)</code> from <code>@surea11y/core/pack</code> gives a law
-				in a language. A standard derived from another names its own laws; it doesn't inherit them.
+				(where a standard serves several laws, a requirement only some of them ask for lists them
+				in <code>laws</code>), and <code>describePacks</code> lists each standard's laws with the
+				profiles that use them. <code>lawOf(standard, id, locale)</code> from{" "}
+				<code>@surea11y/core/pack</code> gives a law with its name in a language. A standard derived from another names its own laws; it doesn't inherit them.
 			</p>
 
 			<h3 id="experimental">Experimental APIs</h3>
@@ -1149,9 +1236,11 @@ export function PacksContent() {
 				patch, and become stable or are removed within two minors. Today those are standards as
 				data, tests under requirements, standards built on others, translations by id and{" "}
 				<code>reviewByVersion</code>, laws, the <code>_standardReview_</code> dictionary keys and{" "}
-				<code>skip-link</code>'s <code>data.details.lean</code>, all experimental until 1.18.0.
-				A pack that uses one declares a <code>core</code> range that takes no later minor (
-				<code>'~1.16.0'</code>), since the next minor may change it: <code>checkPack</code> reports a
+				<code>skip-link</code>'s <code>data.details.lean</code>, experimental until 1.18.0, and a
+				pack's <code>uses</code> and <code>surea11y-pack new --kind derived</code>, from 1.17.0
+				until 1.19.0. Laws show what that means: 1.17.0 removed four of their fields. A pack that
+				uses one declares a <code>core</code> range that takes no later minor (
+				<code>'~1.17.0'</code>), since the next minor may change it: <code>checkPack</code> reports a
 				wider one, and <code>describePacks</code> lists what each pack uses. Everything else on
 				this page is stable across 1.x. Core's{" "}
 				<a href={`${core}/docs/API_STABILITY.md#experimental-may-change-in-a-minor`}>API stability policy</a>{" "}

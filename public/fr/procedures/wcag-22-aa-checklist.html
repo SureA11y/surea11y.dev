@@ -103,7 +103,7 @@
 <a class="skip" href="#main">Aller aux procédures</a>
 <header class="page">
 <h1>WCAG 2.2 : liste de vérification manuelle</h1>
-<p>Vérifications : 50 · Exigences : 30</p>
+<p>Vérifications : 53 · Exigences : 32</p>
 <ul><li>Niveaux : A, AA</li></ul>
 
 </header>
@@ -117,7 +117,7 @@
 </section>
 <section class="results" aria-labelledby="results-h" data-record="wcag|2.2|WCAG 2.2 : liste de vérification manuelle">
 <h2 id="results-h">Vos résultats</h2>
-<p id="record-progress" role="status">Vérifiés : 0 sur 50 · Conformes : 0 · Non conformes : 0 · Non applicables : 0</p>
+<p id="record-progress" role="status">Vérifiés : 0 sur 53 · Conformes : 0 · Non conformes : 0 · Non applicables : 0</p>
 <p class="note">Vos résultats sont gardés dans ce navigateur seulement, jusqu’à ce que vous les effaciez. Téléchargez-les pour les garder ou les partager.</p>
 <noscript><p class="note">Sans scripts, les résultats peuvent être cochés mais ne sont ni gardés ni téléchargés.</p></noscript>
 <div class="actions"><button type="button" id="record-json">Télécharger les résultats (JSON)</button><button type="button" id="record-csv">Télécharger les résultats (CSV)</button><button type="button" id="record-clear">Effacer les résultats</button></div>
@@ -408,6 +408,32 @@
 <textarea id="notes-21" rows="2"></textarea>
 </fieldset>
 </article>
+<article class="item" id="i-1-4-11-ui-component-contrast" aria-labelledby="item-1-4-11-ui-component-contrast" data-key="1.4.11/ui-component-contrast" data-facet="ui-component-contrast" data-label="Les parties d’un contrôle qui montrent sa présence et son état ont un contraste d’au moins 3:1" data-requirements="[&quot;1.4.11&quot;]">
+<h4 id="item-1-4-11-ui-component-contrast">Les parties d’un contrôle qui montrent sa présence et son état ont un contraste d’au moins 3:1</h4>
+<p class="meta"><span>Pour : 1.4.11</span></p>
+<ul class="badges"><li class="badge auto-manual">Seule une personne peut le vérifier</li><li class="badge">Outils : <span>Les outils de développement du navigateur</span></li></ul>
+<ol class="steps"><li>Examinez chaque contrôle de la page : boutons, champs, cases à cocher, boutons radio, curseurs, onglets et liens présentés comme des boutons.</li><li>Pour chacun, repérez ce qui montre sa présence, comme la bordure d’un champ ou le contour d’un bouton, et mesurez son contraste avec ce qui l’entoure avec un outil de contraste. Il faut au moins 3:1. Un contrôle signalé par son seul texte n’a besoin de rien de plus.</li><li>Faites de même pour ce qui montre chaque état : la coche d’une case, l’onglet sélectionné, le curseur d’une glissière et l’indicateur de focus, à l’état focalisé.</li><li>Laissez de côté les contrôles que le navigateur dessine sans que l’auteur ait modifié leur apparence, et les contrôles inactifs (désactivés).</li></ol>
+<dl class="verdict"><dt>Conforme si</dt><dd>Chaque partie qui montre un contrôle ou son état a un contraste d’au moins 3:1 avec ce qui l’entoure.</dd><dt>Non conforme si</dt><dd>Une partie nécessaire pour voir un contrôle ou son état, comme la bordure d’un champ, la coche d’une case ou l’indicateur de focus, a un contraste inférieur à 3:1, ce qui ne respecte pas le critère WCAG 1.4.11.</dd></dl>
+<details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>css-focus-indicator-suppressed</code></p><p class="covers">Elle évalue aussi : <code>focus-indicator-not-suppressed</code></p></details>
+<fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les parties d’un contrôle qui montrent sa présence et son état ont un contraste d’au moins 3:1</span></legend>
+<div class="choices"><label><input type="radio" name="o-22" value="open" checked> Non vérifié</label><label><input type="radio" name="o-22" value="pass"> Conforme</label><label><input type="radio" name="o-22" value="fail"> Non conforme</label><label><input type="radio" name="o-22" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-22">Notes<span class="vh">: </span><span class="vh">Les parties d’un contrôle qui montrent sa présence et son état ont un contraste d’au moins 3:1</span></label>
+<textarea id="notes-22" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-11-graphics-contrast" aria-labelledby="item-1-4-11-graphics-contrast" data-key="1.4.11/graphics-contrast" data-facet="graphics-contrast" data-label="Les parties d’un graphique nécessaires pour le comprendre ont un contraste d’au moins 3:1" data-requirements="[&quot;1.4.11&quot;]">
+<h4 id="item-1-4-11-graphics-contrast">Les parties d’un graphique nécessaires pour le comprendre ont un contraste d’au moins 3:1</h4>
+<p class="meta"><span>Pour : 1.4.11</span></p>
+<ul class="badges"><li class="badge auto-manual">Seule une personne peut le vérifier</li><li class="badge">Outils : <span>Les outils de développement du navigateur</span></li></ul>
+<ol class="steps"><li>Cherchez les graphiques porteurs d’information : icônes sans texte à côté, graphiques, schémas, cartes et infographies.</li><li>Dans chacun, repérez les parties nécessaires pour le comprendre, comme la forme d’une icône, les courbes et barres d’un graphique ou les limites entre des zones.</li><li>Mesurez le contraste de chaque partie avec ce qui l’entoure avec un outil de contraste. Il faut au moins 3:1. Une partie étiquetée en texte, ou dont l’information est aussi donnée en texte à proximité, n’en a pas besoin.</li><li>Laissez de côté les graphiques décoratifs, les logos et les graphiques dont l’apparence est essentielle, comme une photo ou un drapeau.</li></ol>
+<dl class="verdict"><dt>Conforme si</dt><dd>Chaque partie d’un graphique nécessaire pour le comprendre a un contraste d’au moins 3:1, ou son information est donnée autrement.</dd><dt>Non conforme si</dt><dd>Une partie d’un graphique nécessaire pour le comprendre a un contraste inférieur à 3:1, et son information n’est pas donnée autrement, ce qui ne respecte pas le critère WCAG 1.4.11.</dd></dl>
+
+<fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les parties d’un graphique nécessaires pour le comprendre ont un contraste d’au moins 3:1</span></legend>
+<div class="choices"><label><input type="radio" name="o-23" value="open" checked> Non vérifié</label><label><input type="radio" name="o-23" value="pass"> Conforme</label><label><input type="radio" name="o-23" value="fail"> Non conforme</label><label><input type="radio" name="o-23" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-23">Notes<span class="vh">: </span><span class="vh">Les parties d’un graphique nécessaires pour le comprendre ont un contraste d’au moins 3:1</span></label>
+<textarea id="notes-23" rows="2"></textarea>
+</fieldset>
+</article>
 <article class="item" id="i-1-4-12-avoid-inline-spacing" aria-labelledby="item-1-4-12-avoid-inline-spacing" data-key="1.4.12/avoid-inline-spacing" data-facet="avoid-inline-spacing" data-label="Un espacement imposé dans un attribut style n’empêche pas le texte de prendre l’espacement de l’utilisateur" data-requirements="[&quot;1.4.12&quot;]">
 <h4 id="item-1-4-12-avoid-inline-spacing">Un espacement imposé dans un attribut style n’empêche pas le texte de prendre l’espacement de l’utilisateur</h4>
 <p class="meta"><span>Pour : 1.4.12</span></p>
@@ -416,9 +442,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Aucun attribut style n’impose un espacement inférieur à ces valeurs sur un texte qui passe à la ligne, ou le texte concerné s’affiche toujours en entier avec l’espacement appliqué.</dd><dt>Non conforme si</dt><dd>Un attribut style impose un espacement inférieur à ces valeurs sur un texte qui passe à la ligne, si bien qu’un bookmarklet ou une extension de navigateur ne peut pas appliquer l’espacement de la personne, et avec cet espacement le texte se superpose ou est tronqué, ce qui ne respecte pas le critère WCAG 1.4.12.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>avoid-inline-spacing</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Un espacement imposé dans un attribut style n’empêche pas le texte de prendre l’espacement de l’utilisateur</span></legend>
-<div class="choices"><label><input type="radio" name="o-22" value="open" checked> Non vérifié</label><label><input type="radio" name="o-22" value="pass"> Conforme</label><label><input type="radio" name="o-22" value="fail"> Non conforme</label><label><input type="radio" name="o-22" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-22">Notes<span class="vh">: </span><span class="vh">Un espacement imposé dans un attribut style n’empêche pas le texte de prendre l’espacement de l’utilisateur</span></label>
-<textarea id="notes-22" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-24" value="open" checked> Non vérifié</label><label><input type="radio" name="o-24" value="pass"> Conforme</label><label><input type="radio" name="o-24" value="fail"> Non conforme</label><label><input type="radio" name="o-24" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-24">Notes<span class="vh">: </span><span class="vh">Un espacement imposé dans un attribut style n’empêche pas le texte de prendre l’espacement de l’utilisateur</span></label>
+<textarea id="notes-24" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-1-4-12-text-spacing-content-loss" aria-labelledby="item-1-4-12-text-spacing-content-loss" data-key="1.4.12/text-spacing-content-loss" data-facet="text-spacing-content-loss" data-label="Avec l’espacement du critère 1.4.12 appliqué, aucun texte n’est tronqué ni superposé (mesuré dans un navigateur)" data-requirements="[&quot;1.4.12&quot;]">
@@ -429,9 +455,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Tout le texte reste visible et lisible, ou tout texte tronqué peut être affiché en entier au clavier.</dd><dt>Non conforme si</dt><dd>Du texte est tronqué, se superpose ou est perdu avec l’espacement appliqué et ne peut pas être affiché en entier d’une autre façon, ce qui ne respecte pas le critère WCAG 1.4.12.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>text-spacing-content-loss</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Avec l’espacement du critère 1.4.12 appliqué, aucun texte n’est tronqué ni superposé (mesuré dans un navigateur)</span></legend>
-<div class="choices"><label><input type="radio" name="o-23" value="open" checked> Non vérifié</label><label><input type="radio" name="o-23" value="pass"> Conforme</label><label><input type="radio" name="o-23" value="fail"> Non conforme</label><label><input type="radio" name="o-23" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-23">Notes<span class="vh">: </span><span class="vh">Avec l’espacement du critère 1.4.12 appliqué, aucun texte n’est tronqué ni superposé (mesuré dans un navigateur)</span></label>
-<textarea id="notes-23" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-25" value="open" checked> Non vérifié</label><label><input type="radio" name="o-25" value="pass"> Conforme</label><label><input type="radio" name="o-25" value="fail"> Non conforme</label><label><input type="radio" name="o-25" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-25">Notes<span class="vh">: </span><span class="vh">Avec l’espacement du critère 1.4.12 appliqué, aucun texte n’est tronqué ni superposé (mesuré dans un navigateur)</span></label>
+<textarea id="notes-25" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-1-4-12-text-spacing-functionality-kept" aria-labelledby="item-1-4-12-text-spacing-functionality-kept" data-key="1.4.12/text-spacing-functionality-kept" data-facet="text-spacing-functionality-kept" data-label="Avec l’espacement du critère 1.4.12 appliqué, les contrôles, les menus et les formulaires fonctionnent encore et affichent tout leur texte" data-requirements="[&quot;1.4.12&quot;]">
@@ -442,9 +468,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque contrôle fonctionne encore et affiche tout son texte avec l’espacement appliqué.</dd><dt>Non conforme si</dt><dd>Avec l’espacement appliqué, un contrôle cesse de fonctionner, est recouvert au point de ne plus pouvoir être utilisé, ou perd le texte qui indique ce qu’il fait, ce qui ne respecte pas le critère WCAG 1.4.12.</dd></dl>
 
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Avec l’espacement du critère 1.4.12 appliqué, les contrôles, les menus et les formulaires fonctionnent encore et affichent tout leur texte</span></legend>
-<div class="choices"><label><input type="radio" name="o-24" value="open" checked> Non vérifié</label><label><input type="radio" name="o-24" value="pass"> Conforme</label><label><input type="radio" name="o-24" value="fail"> Non conforme</label><label><input type="radio" name="o-24" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-24">Notes<span class="vh">: </span><span class="vh">Avec l’espacement du critère 1.4.12 appliqué, les contrôles, les menus et les formulaires fonctionnent encore et affichent tout leur texte</span></label>
-<textarea id="notes-24" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-26" value="open" checked> Non vérifié</label><label><input type="radio" name="o-26" value="pass"> Conforme</label><label><input type="radio" name="o-26" value="fail"> Non conforme</label><label><input type="radio" name="o-26" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-26">Notes<span class="vh">: </span><span class="vh">Avec l’espacement du critère 1.4.12 appliqué, les contrôles, les menus et les formulaires fonctionnent encore et affichent tout leur texte</span></label>
+<textarea id="notes-26" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-1-4-12-text-spacing-other-states" aria-labelledby="item-1-4-12-text-spacing-other-states" data-key="1.4.12/text-spacing-other-states" data-facet="text-spacing-other-states" data-label="Avec l’espacement du critère 1.4.12 appliqué, le contenu affiché seulement après une interaction (menus, boîtes de dialogue, onglets, messages) garde tout son texte" data-requirements="[&quot;1.4.12&quot;]">
@@ -455,9 +481,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Le contenu affiché après une action garde tout son texte visible et lisible avec l’espacement appliqué, ou le texte tronqué peut être affiché en entier au clavier.</dd><dt>Non conforme si</dt><dd>Le texte d’un menu, d’une boîte de dialogue, d’un onglet, d’une info-bulle ou d’un message est tronqué ou se superpose avec l’espacement appliqué et ne peut pas être affiché en entier d’une autre façon, ce qui ne respecte pas le critère WCAG 1.4.12.</dd></dl>
 
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Avec l’espacement du critère 1.4.12 appliqué, le contenu affiché seulement après une interaction (menus, boîtes de dialogue, onglets, messages) garde tout son texte</span></legend>
-<div class="choices"><label><input type="radio" name="o-25" value="open" checked> Non vérifié</label><label><input type="radio" name="o-25" value="pass"> Conforme</label><label><input type="radio" name="o-25" value="fail"> Non conforme</label><label><input type="radio" name="o-25" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-25">Notes<span class="vh">: </span><span class="vh">Avec l’espacement du critère 1.4.12 appliqué, le contenu affiché seulement après une interaction (menus, boîtes de dialogue, onglets, messages) garde tout son texte</span></label>
-<textarea id="notes-25" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-27" value="open" checked> Non vérifié</label><label><input type="radio" name="o-27" value="pass"> Conforme</label><label><input type="radio" name="o-27" value="fail"> Non conforme</label><label><input type="radio" name="o-27" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-27">Notes<span class="vh">: </span><span class="vh">Avec l’espacement du critère 1.4.12 appliqué, le contenu affiché seulement après une interaction (menus, boîtes de dialogue, onglets, messages) garde tout son texte</span></label>
+<textarea id="notes-27" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -474,9 +500,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Tout ce que la page permet de faire avec un pointeur peut être fait au clavier seul, directement ou par un autre moyen qui remplit la même fonction.</dd><dt>Non conforme si</dt><dd>Une action ne peut être faite qu’avec un pointeur, sans moyen de faire la même chose au clavier, ce qui ne respecte pas le critère WCAG 2.1.1.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>iframe-focusable-content</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable</code>, <code>mouse-only-event-handlers</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable</code>, <code>focus-not-removed-by-script</code></p><p class="covers">Elle évalue aussi : <code>iframe-tabindex-negative-content-not-focusable</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable-evidence</code>, <code>mouse-only-event-handlers-evidence</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable-evidence</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Toutes les fonctionnalités peuvent être utilisées au clavier seul</span></legend>
-<div class="choices"><label><input type="radio" name="o-26" value="open" checked> Non vérifié</label><label><input type="radio" name="o-26" value="pass"> Conforme</label><label><input type="radio" name="o-26" value="fail"> Non conforme</label><label><input type="radio" name="o-26" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-26">Notes<span class="vh">: </span><span class="vh">Toutes les fonctionnalités peuvent être utilisées au clavier seul</span></label>
-<textarea id="notes-26" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-28" value="open" checked> Non vérifié</label><label><input type="radio" name="o-28" value="pass"> Conforme</label><label><input type="radio" name="o-28" value="fail"> Non conforme</label><label><input type="radio" name="o-28" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-28">Notes<span class="vh">: </span><span class="vh">Toutes les fonctionnalités peuvent être utilisées au clavier seul</span></label>
+<textarea id="notes-28" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -490,9 +516,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque limite de temps peut être désactivée, ajustée ou prolongée, ou est en temps réel, essentielle ou supérieure à 20 heures.</dd><dt>Non conforme si</dt><dd>Une limite de temps met fin à une session, un formulaire ou une page sans moyen de la désactiver, de l’ajuster ou de la prolonger, ce qui ne respecte pas le critère WCAG 2.2.1.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>meta-refresh-timing-absent</code></p><p class="covers">Elle évalue aussi : <code>meta-refresh-timing-absent</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Chaque limite de temps peut être désactivée, ajustée ou prolongée, sauf si elle est en temps réel, essentielle ou supérieure à 20 heures</span></legend>
-<div class="choices"><label><input type="radio" name="o-27" value="open" checked> Non vérifié</label><label><input type="radio" name="o-27" value="pass"> Conforme</label><label><input type="radio" name="o-27" value="fail"> Non conforme</label><label><input type="radio" name="o-27" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-27">Notes<span class="vh">: </span><span class="vh">Chaque limite de temps peut être désactivée, ajustée ou prolongée, sauf si elle est en temps réel, essentielle ou supérieure à 20 heures</span></label>
-<textarea id="notes-27" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-29" value="open" checked> Non vérifié</label><label><input type="radio" name="o-29" value="pass"> Conforme</label><label><input type="radio" name="o-29" value="fail"> Non conforme</label><label><input type="radio" name="o-29" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-29">Notes<span class="vh">: </span><span class="vh">Chaque limite de temps peut être désactivée, ajustée ou prolongée, sauf si elle est en temps réel, essentielle ou supérieure à 20 heures</span></label>
+<textarea id="notes-29" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-2-2-auto-moving-content-pausable" aria-labelledby="item-2-2-2-auto-moving-content-pausable" data-key="2.2.2/auto-moving-content-pausable" data-facet="auto-moving-content-pausable" data-label="Les animations qui démarrent d’elles-mêmes et durent plus de cinq secondes peuvent être mises en pause, arrêtées ou masquées" data-requirements="[&quot;2.2.2&quot;]">
@@ -503,9 +529,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Tout ce qui bouge, clignote ou défile de soi-même pendant plus de 5 secondes à côté d’autres contenus peut être mis en pause, arrêté ou masqué.</dd><dt>Non conforme si</dt><dd>Un contenu bouge, clignote ou défile de lui-même pendant plus de 5 secondes à côté d’autres contenus sans moyen de le mettre en pause, de l’arrêter ou de le masquer, ce qui ne respecte pas le critère WCAG 2.2.2.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>moving-content-pausable</code>, <code>deprecated-elements-not-used</code></p><p class="covers">Elle évalue aussi : <code>deprecated-non-stoppable-elements-absent</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les animations qui démarrent d’elles-mêmes et durent plus de cinq secondes peuvent être mises en pause, arrêtées ou masquées</span></legend>
-<div class="choices"><label><input type="radio" name="o-28" value="open" checked> Non vérifié</label><label><input type="radio" name="o-28" value="pass"> Conforme</label><label><input type="radio" name="o-28" value="fail"> Non conforme</label><label><input type="radio" name="o-28" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-28">Notes<span class="vh">: </span><span class="vh">Les animations qui démarrent d’elles-mêmes et durent plus de cinq secondes peuvent être mises en pause, arrêtées ou masquées</span></label>
-<textarea id="notes-28" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-30" value="open" checked> Non vérifié</label><label><input type="radio" name="o-30" value="pass"> Conforme</label><label><input type="radio" name="o-30" value="fail"> Non conforme</label><label><input type="radio" name="o-30" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-30">Notes<span class="vh">: </span><span class="vh">Les animations qui démarrent d’elles-mêmes et durent plus de cinq secondes peuvent être mises en pause, arrêtées ou masquées</span></label>
+<textarea id="notes-30" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-2-2-auto-updating-content-controllable" aria-labelledby="item-2-2-2-auto-updating-content-controllable" data-key="2.2.2/auto-updating-content-controllable" data-facet="auto-updating-content-controllable" data-label="Le contenu qui se met à jour de lui-même peut être mis en pause, arrêté, masqué ou réglé pour se mettre à jour moins souvent" data-requirements="[&quot;2.2.2&quot;]">
@@ -516,9 +542,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque partie qui se met à jour d’elle-même à côté d’autres contenus peut être mise en pause, arrêtée, masquée ou ralentie, ou ses mises à jour sont essentielles.</dd><dt>Non conforme si</dt><dd>Un contenu se met à jour de lui-même à côté d’autres contenus sans moyen de le mettre en pause, de l’arrêter, de le masquer ou d’en changer la fréquence, ce qui ne respecte pas le critère WCAG 2.2.2.</dd></dl>
 
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Le contenu qui se met à jour de lui-même peut être mis en pause, arrêté, masqué ou réglé pour se mettre à jour moins souvent</span></legend>
-<div class="choices"><label><input type="radio" name="o-29" value="open" checked> Non vérifié</label><label><input type="radio" name="o-29" value="pass"> Conforme</label><label><input type="radio" name="o-29" value="fail"> Non conforme</label><label><input type="radio" name="o-29" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-29">Notes<span class="vh">: </span><span class="vh">Le contenu qui se met à jour de lui-même peut être mis en pause, arrêté, masqué ou réglé pour se mettre à jour moins souvent</span></label>
-<textarea id="notes-29" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-31" value="open" checked> Non vérifié</label><label><input type="radio" name="o-31" value="pass"> Conforme</label><label><input type="radio" name="o-31" value="fail"> Non conforme</label><label><input type="radio" name="o-31" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-31">Notes<span class="vh">: </span><span class="vh">Le contenu qui se met à jour de lui-même peut être mis en pause, arrêté, masqué ou réglé pour se mettre à jour moins souvent</span></label>
+<textarea id="notes-31" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -536,9 +562,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>La page ne répète aucun bloc, ou un lien d’évitement fonctionnel, un repère main ou des titres permettent aux utilisateurs du clavier et de lecteur d’écran de les sauter.</dd><dt>Non conforme si</dt><dd>Les blocs répétés ne peuvent pas être contournés : les utilisateurs du clavier et de lecteur d’écran doivent les traverser sur chaque page, ce qui ne respecte pas le critère WCAG 2.4.1.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>bypass-blocks-present</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les blocs répétés sur plusieurs pages peuvent être contournés</span></legend>
-<div class="choices"><label><input type="radio" name="o-30" value="open" checked> Non vérifié</label><label><input type="radio" name="o-30" value="pass"> Conforme</label><label><input type="radio" name="o-30" value="fail"> Non conforme</label><label><input type="radio" name="o-30" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-30">Notes<span class="vh">: </span><span class="vh">Les blocs répétés sur plusieurs pages peuvent être contournés</span></label>
-<textarea id="notes-30" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-32" value="open" checked> Non vérifié</label><label><input type="radio" name="o-32" value="pass"> Conforme</label><label><input type="radio" name="o-32" value="fail"> Non conforme</label><label><input type="radio" name="o-32" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-32">Notes<span class="vh">: </span><span class="vh">Les blocs répétés sur plusieurs pages peuvent être contournés</span></label>
+<textarea id="notes-32" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-2-page-title-descriptive" aria-labelledby="item-2-4-2-page-title-descriptive" data-key="2.4.2/page-title-descriptive" data-facet="page-title-descriptive" data-label="La page a un titre qui indique son sujet ou sa finalité et la distingue des autres pages du site" data-requirements="[&quot;2.4.2&quot;]">
@@ -549,9 +575,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Le titre de la page indique son sujet ou sa finalité et la distingue des autres pages.</dd><dt>Non conforme si</dt><dd>La page n’a pas de titre, ou a un titre générique, un nom de fichier ou le même titre que d’autres pages, ce qui ne respecte pas le critère WCAG 2.4.2.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>page-title-present</code>, <code>page-title-patterns</code></p><p class="covers">Elle évalue aussi : <code>page-title-present</code>, <code>page-title-patterns</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">La page a un titre qui indique son sujet ou sa finalité et la distingue des autres pages du site</span></legend>
-<div class="choices"><label><input type="radio" name="o-31" value="open" checked> Non vérifié</label><label><input type="radio" name="o-31" value="pass"> Conforme</label><label><input type="radio" name="o-31" value="fail"> Non conforme</label><label><input type="radio" name="o-31" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-31">Notes<span class="vh">: </span><span class="vh">La page a un titre qui indique son sujet ou sa finalité et la distingue des autres pages du site</span></label>
-<textarea id="notes-31" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-33" value="open" checked> Non vérifié</label><label><input type="radio" name="o-33" value="pass"> Conforme</label><label><input type="radio" name="o-33" value="fail"> Non conforme</label><label><input type="radio" name="o-33" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-33">Notes<span class="vh">: </span><span class="vh">La page a un titre qui indique son sujet ou sa finalité et la distingue des autres pages du site</span></label>
+<textarea id="notes-33" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-3-focus-order-preserves-meaning" aria-labelledby="item-2-4-3-focus-order-preserves-meaning" data-key="2.4.3/focus-order-preserves-meaning" data-facet="focus-order-preserves-meaning" data-label="Le déplacement du focus avec Tab et Maj+Tab suit un ordre qui préserve le sens de la page et permet de l’utiliser" data-requirements="[&quot;2.4.3&quot;]">
@@ -562,9 +588,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Le focus parcourt la page dans un ordre qui en préserve le sens et permet d’en utiliser chaque partie, même s’il diffère légèrement de l’ordre visuel.</dd><dt>Non conforme si</dt><dd>Le focus saute d’un endroit à l’autre de la page au point d’en changer le sens ou l’utilisation, comme des champs remplis dans le désordre, ce qui ne respecte pas le critère WCAG 2.4.3.</dd></dl>
 
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Le déplacement du focus avec Tab et Maj+Tab suit un ordre qui préserve le sens de la page et permet de l’utiliser</span></legend>
-<div class="choices"><label><input type="radio" name="o-32" value="open" checked> Non vérifié</label><label><input type="radio" name="o-32" value="pass"> Conforme</label><label><input type="radio" name="o-32" value="fail"> Non conforme</label><label><input type="radio" name="o-32" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-32">Notes<span class="vh">: </span><span class="vh">Le déplacement du focus avec Tab et Maj+Tab suit un ordre qui préserve le sens de la page et permet de l’utiliser</span></label>
-<textarea id="notes-32" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-34" value="open" checked> Non vérifié</label><label><input type="radio" name="o-34" value="pass"> Conforme</label><label><input type="radio" name="o-34" value="fail"> Non conforme</label><label><input type="radio" name="o-34" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-34">Notes<span class="vh">: </span><span class="vh">Le déplacement du focus avec Tab et Maj+Tab suit un ordre qui préserve le sens de la page et permet de l’utiliser</span></label>
+<textarea id="notes-34" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-3-focus-order-opened-content" aria-labelledby="item-2-4-3-focus-order-opened-content" data-key="2.4.3/focus-order-opened-content" data-facet="focus-order-opened-content" data-label="Le focus entre dans une boîte de dialogue, un menu ou une section qui s’ouvre, reste dans une boîte de dialogue tant qu’elle recouvre la page, et revient à sa place à la fermeture" data-requirements="[&quot;2.4.3&quot;]">
@@ -575,9 +601,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Le focus entre dans ce qui s’ouvre, reste dans une boîte de dialogue tant qu’elle recouvre la page, et revient là où il était à la fermeture.</dd><dt>Non conforme si</dt><dd>Le focus reste derrière ce qui s’ouvre, quitte une boîte de dialogue pour la page située derrière, ou arrive en haut de la page à la fermeture : l’ordre ne suit plus ce qui est à l’écran, ce qui ne respecte pas le critère WCAG 2.4.3.</dd></dl>
 
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Le focus entre dans une boîte de dialogue, un menu ou une section qui s’ouvre, reste dans une boîte de dialogue tant qu’elle recouvre la page, et revient à sa place à la fermeture</span></legend>
-<div class="choices"><label><input type="radio" name="o-33" value="open" checked> Non vérifié</label><label><input type="radio" name="o-33" value="pass"> Conforme</label><label><input type="radio" name="o-33" value="fail"> Non conforme</label><label><input type="radio" name="o-33" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-33">Notes<span class="vh">: </span><span class="vh">Le focus entre dans une boîte de dialogue, un menu ou une section qui s’ouvre, reste dans une boîte de dialogue tant qu’elle recouvre la page, et revient à sa place à la fermeture</span></label>
-<textarea id="notes-33" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-35" value="open" checked> Non vérifié</label><label><input type="radio" name="o-35" value="pass"> Conforme</label><label><input type="radio" name="o-35" value="fail"> Non conforme</label><label><input type="radio" name="o-35" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-35">Notes<span class="vh">: </span><span class="vh">Le focus entre dans une boîte de dialogue, un menu ou une section qui s’ouvre, reste dans une boîte de dialogue tant qu’elle recouvre la page, et revient à sa place à la fermeture</span></label>
+<textarea id="notes-35" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-3-focus-order-no-hidden-stops" aria-labelledby="item-2-4-3-focus-order-no-hidden-stops" data-key="2.4.3/focus-order-no-hidden-stops" data-facet="focus-order-no-hidden-stops" data-label="Le focus ne s’arrête pas sur un contenu fermé, masqué ou hors de l’écran" data-requirements="[&quot;2.4.3&quot;]">
@@ -588,9 +614,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque arrêt de tabulation se trouve sur quelque chose de visible, ou sur quelque chose qui apparaît quand il reçoit le focus, comme un lien d’évitement.</dd><dt>Non conforme si</dt><dd>Le focus s’arrête sur des contrôles situés dans des menus fermés, des panneaux masqués ou hors de l’écran : le parcours passe par des éléments invisibles, ce qui ne respecte pas le critère WCAG 2.4.3.</dd></dl>
 
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Le focus ne s’arrête pas sur un contenu fermé, masqué ou hors de l’écran</span></legend>
-<div class="choices"><label><input type="radio" name="o-34" value="open" checked> Non vérifié</label><label><input type="radio" name="o-34" value="pass"> Conforme</label><label><input type="radio" name="o-34" value="fail"> Non conforme</label><label><input type="radio" name="o-34" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-34">Notes<span class="vh">: </span><span class="vh">Le focus ne s’arrête pas sur un contenu fermé, masqué ou hors de l’écran</span></label>
-<textarea id="notes-34" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-36" value="open" checked> Non vérifié</label><label><input type="radio" name="o-36" value="pass"> Conforme</label><label><input type="radio" name="o-36" value="fail"> Non conforme</label><label><input type="radio" name="o-36" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-36">Notes<span class="vh">: </span><span class="vh">Le focus ne s’arrête pas sur un contenu fermé, masqué ou hors de l’écran</span></label>
+<textarea id="notes-36" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-4-link-purpose-clear" aria-labelledby="item-2-4-4-link-purpose-clear" data-key="2.4.4/link-purpose-clear" data-facet="link-purpose-clear" data-label="La fonction de chaque lien peut être déduite de son intitulé, ou de son intitulé avec la phrase, le paragraphe, l’élément de liste ou la cellule de tableau qui le contient" data-requirements="[&quot;2.4.4&quot;]">
@@ -601,9 +627,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>La fonction de chaque lien est claire d’après son nom, ou d’après son nom avec la phrase, le paragraphe, l’élément de liste ou la cellule de tableau qui le contient.</dd><dt>Non conforme si</dt><dd>Un lien n’a pas de nom, ou a un nom comme « lire la suite » dont rien autour n’explique la fonction, ce qui ne respecte pas le critère WCAG 2.4.4.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>link-name-present</code>, <code>link-name-quality</code></p><p class="covers">Elle évalue aussi : <code>link-name-present</code>, <code>link-text-descriptive-evidence</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">La fonction de chaque lien peut être déduite de son intitulé, ou de son intitulé avec la phrase, le paragraphe, l’élément de liste ou la cellule de tableau qui le contient</span></legend>
-<div class="choices"><label><input type="radio" name="o-35" value="open" checked> Non vérifié</label><label><input type="radio" name="o-35" value="pass"> Conforme</label><label><input type="radio" name="o-35" value="fail"> Non conforme</label><label><input type="radio" name="o-35" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-35">Notes<span class="vh">: </span><span class="vh">La fonction de chaque lien peut être déduite de son intitulé, ou de son intitulé avec la phrase, le paragraphe, l’élément de liste ou la cellule de tableau qui le contient</span></label>
-<textarea id="notes-35" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-37" value="open" checked> Non vérifié</label><label><input type="radio" name="o-37" value="pass"> Conforme</label><label><input type="radio" name="o-37" value="fail"> Non conforme</label><label><input type="radio" name="o-37" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-37">Notes<span class="vh">: </span><span class="vh">La fonction de chaque lien peut être déduite de son intitulé, ou de son intitulé avec la phrase, le paragraphe, l’élément de liste ou la cellule de tableau qui le contient</span></label>
+<textarea id="notes-37" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-6-heading-text-descriptive-evidence" aria-labelledby="item-2-4-6-heading-text-descriptive-evidence" data-key="2.4.6/heading-text-descriptive-evidence" data-facet="heading-text-descriptive-evidence" data-label="Les titres décrivent le contenu qui les suit" data-requirements="[&quot;2.4.6&quot;]">
@@ -614,9 +640,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque titre indique le sujet du contenu qui le suit.</dd><dt>Non conforme si</dt><dd>Un titre ne décrit pas le contenu qui le suit, comme « Section 1 » ou un nom de fichier, ce qui ne respecte pas le critère WCAG 2.4.6.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>heading-quality</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les titres décrivent le contenu qui les suit</span></legend>
-<div class="choices"><label><input type="radio" name="o-36" value="open" checked> Non vérifié</label><label><input type="radio" name="o-36" value="pass"> Conforme</label><label><input type="radio" name="o-36" value="fail"> Non conforme</label><label><input type="radio" name="o-36" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-36">Notes<span class="vh">: </span><span class="vh">Les titres décrivent le contenu qui les suit</span></label>
-<textarea id="notes-36" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-38" value="open" checked> Non vérifié</label><label><input type="radio" name="o-38" value="pass"> Conforme</label><label><input type="radio" name="o-38" value="fail"> Non conforme</label><label><input type="radio" name="o-38" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-38">Notes<span class="vh">: </span><span class="vh">Les titres décrivent le contenu qui les suit</span></label>
+<textarea id="notes-38" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-6-form-control-label-descriptive-evidence" aria-labelledby="item-2-4-6-form-control-label-descriptive-evidence" data-key="2.4.6/form-control-label-descriptive-evidence" data-facet="form-control-label-descriptive-evidence" data-label="Les étiquettes décrivent leur champ, et les champs de même étiquette peuvent être distingués" data-requirements="[&quot;2.4.6&quot;]">
@@ -627,9 +653,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque étiquette indique à quoi sert son champ ou son contrôle, et les champs de même étiquette sont distingués.</dd><dt>Non conforme si</dt><dd>Une étiquette n’indique pas à quoi sert son champ, ou plusieurs champs ont la même étiquette sans rien pour les distinguer, ce qui ne respecte pas le critère WCAG 2.4.6.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>form-control-label-quality</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les étiquettes décrivent leur champ, et les champs de même étiquette peuvent être distingués</span></legend>
-<div class="choices"><label><input type="radio" name="o-37" value="open" checked> Non vérifié</label><label><input type="radio" name="o-37" value="pass"> Conforme</label><label><input type="radio" name="o-37" value="fail"> Non conforme</label><label><input type="radio" name="o-37" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-37">Notes<span class="vh">: </span><span class="vh">Les étiquettes décrivent leur champ, et les champs de même étiquette peuvent être distingués</span></label>
-<textarea id="notes-37" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-39" value="open" checked> Non vérifié</label><label><input type="radio" name="o-39" value="pass"> Conforme</label><label><input type="radio" name="o-39" value="fail"> Non conforme</label><label><input type="radio" name="o-39" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-39">Notes<span class="vh">: </span><span class="vh">Les étiquettes décrivent leur champ, et les champs de même étiquette peuvent être distingués</span></label>
+<textarea id="notes-39" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-7-focus-indicator-visible" aria-labelledby="item-2-4-7-focus-indicator-visible" data-key="2.4.7/focus-indicator-visible" data-facet="focus-indicator-visible" data-label="Chaque élément qui reçoit le focus clavier montre qu’il l’a" data-requirements="[&quot;2.4.7&quot;]">
@@ -640,9 +666,22 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>À chaque arrêt, vous voyez quel élément a le focus.</dd><dt>Non conforme si</dt><dd>Le focus atteint un élément sans aucun changement visible, ou arrive sur quelque chose de masqué ou hors de l’écran : les utilisateurs du clavier ne savent plus où ils sont, ce qui ne respecte pas le critère WCAG 2.4.7.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>css-hidden-focus</code>, <code>css-focus-indicator-suppressed</code>, <code>focus-not-removed-by-script</code></p><p class="covers">Elle évalue aussi : <code>css-hidden-focusable</code>, <code>focus-indicator-not-suppressed</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Chaque élément qui reçoit le focus clavier montre qu’il l’a</span></legend>
-<div class="choices"><label><input type="radio" name="o-38" value="open" checked> Non vérifié</label><label><input type="radio" name="o-38" value="pass"> Conforme</label><label><input type="radio" name="o-38" value="fail"> Non conforme</label><label><input type="radio" name="o-38" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-38">Notes<span class="vh">: </span><span class="vh">Chaque élément qui reçoit le focus clavier montre qu’il l’a</span></label>
-<textarea id="notes-38" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-40" value="open" checked> Non vérifié</label><label><input type="radio" name="o-40" value="pass"> Conforme</label><label><input type="radio" name="o-40" value="fail"> Non conforme</label><label><input type="radio" name="o-40" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-40">Notes<span class="vh">: </span><span class="vh">Chaque élément qui reçoit le focus clavier montre qu’il l’a</span></label>
+<textarea id="notes-40" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-11-focus-not-obscured" aria-labelledby="item-2-4-11-focus-not-obscured" data-key="2.4.11/focus-not-obscured" data-facet="focus-not-obscured" data-label="Un élément qui reçoit le focus n’est pas entièrement masqué par un contenu que la page place par-dessus" data-requirements="[&quot;2.4.11&quot;]">
+<h4 id="item-2-4-11-focus-not-obscured">Un élément qui reçoit le focus n’est pas entièrement masqué par un contenu que la page place par-dessus</h4>
+<p class="meta"><span>Pour : 2.4.11</span></p>
+<ul class="badges"><li class="badge auto-partial">Les règles en décident en partie</li><li class="badge">Outils : <span>Un clavier</span>, <span>Le zoom du navigateur</span></li></ul>
+<ol class="steps"><li>Rechargez la page, faites-la défiler à mi-hauteur avec la souris, puis appuyez lentement sur Tab à travers toute la page.</li><li>À chaque arrêt, vérifiez que vous voyez au moins une partie de l’élément qui a le focus. Surveillez les en-têtes, pieds de page, bandeaux et boutons de discussion qui restent en place quand la page défile.</li><li>Là où un contenu que la page garde en place couvre entièrement l’élément qui a le focus, notez-le. Si vous avez ouvert ce contenu vous-même (un panneau de discussion, un menu), vérifiez si vous pouvez le fermer, par exemple avec Échap, sans déplacer le focus : alors il ne compte pas.</li><li>Refaites-le avec Maj+Tab en remontant la page, et dans une fenêtre de 320 pixels CSS de large, où les barres fixes prennent plus de place.</li></ol>
+<dl class="verdict"><dt>Conforme si</dt><dd>Chaque élément qui reçoit le focus se voit, au moins en partie, ou n’est couvert que par un contenu que vous avez ouvert et pouvez fermer sans déplacer le focus.</dd><dt>Non conforme si</dt><dd>Un élément reçoit le focus entièrement caché derrière un contenu que la page a placé là, comme un en-tête ou un pied de page fixe ou un bandeau de cookies, ce qui ne satisfait pas WCAG 2.4.11.</dd></dl>
+<details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>focus-not-obscured-minimum</code></p></details>
+<fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Un élément qui reçoit le focus n’est pas entièrement masqué par un contenu que la page place par-dessus</span></legend>
+<div class="choices"><label><input type="radio" name="o-41" value="open" checked> Non vérifié</label><label><input type="radio" name="o-41" value="pass"> Conforme</label><label><input type="radio" name="o-41" value="fail"> Non conforme</label><label><input type="radio" name="o-41" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-41">Notes<span class="vh">: </span><span class="vh">Un élément qui reçoit le focus n’est pas entièrement masqué par un contenu que la page place par-dessus</span></label>
+<textarea id="notes-41" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -656,9 +695,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Le nom de chaque contrôle contient les mots de son étiquette visible, dans l’ordre.</dd><dt>Non conforme si</dt><dd>Le nom d’un contrôle ne contient pas son étiquette visible : une personne qui utilise la commande vocale ne peut pas l’activer en disant ce qu’elle voit, ce qui ne respecte pas le critère WCAG 2.5.3.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>label-in-name</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Le nom d’un contrôle contient le texte de son étiquette visible</span></legend>
-<div class="choices"><label><input type="radio" name="o-39" value="open" checked> Non vérifié</label><label><input type="radio" name="o-39" value="pass"> Conforme</label><label><input type="radio" name="o-39" value="fail"> Non conforme</label><label><input type="radio" name="o-39" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-39">Notes<span class="vh">: </span><span class="vh">Le nom d’un contrôle contient le texte de son étiquette visible</span></label>
-<textarea id="notes-39" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-42" value="open" checked> Non vérifié</label><label><input type="radio" name="o-42" value="pass"> Conforme</label><label><input type="radio" name="o-42" value="fail"> Non conforme</label><label><input type="radio" name="o-42" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-42">Notes<span class="vh">: </span><span class="vh">Le nom d’un contrôle contient le texte de son étiquette visible</span></label>
+<textarea id="notes-42" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-5-8-target-size-minimum-pointer" aria-labelledby="item-2-5-8-target-size-minimum-pointer" data-key="2.5.8/target-size-minimum-pointer" data-facet="target-size-minimum-pointer" data-label="Les cibles font au moins 24 pixels CSS sur 24, ou sont suffisamment espacées" data-requirements="[&quot;2.5.8&quot;]">
@@ -669,9 +708,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque cible fait au moins 24 pixels CSS sur 24, ou est suffisamment éloignée des autres, ou relève de l’une des exceptions.</dd><dt>Non conforme si</dt><dd>Une cible de moins de 24 pixels CSS sur 24 est si proche d’une autre que leurs cercles de 24 pixels se chevauchent, sans qu’aucune exception s’applique, ce qui ne respecte pas le critère WCAG 2.5.8.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>target-size-minimum</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les cibles font au moins 24 pixels CSS sur 24, ou sont suffisamment espacées</span></legend>
-<div class="choices"><label><input type="radio" name="o-40" value="open" checked> Non vérifié</label><label><input type="radio" name="o-40" value="pass"> Conforme</label><label><input type="radio" name="o-40" value="fail"> Non conforme</label><label><input type="radio" name="o-40" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-40">Notes<span class="vh">: </span><span class="vh">Les cibles font au moins 24 pixels CSS sur 24, ou sont suffisamment espacées</span></label>
-<textarea id="notes-40" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-43" value="open" checked> Non vérifié</label><label><input type="radio" name="o-43" value="pass"> Conforme</label><label><input type="radio" name="o-43" value="fail"> Non conforme</label><label><input type="radio" name="o-43" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-43">Notes<span class="vh">: </span><span class="vh">Les cibles font au moins 24 pixels CSS sur 24, ou sont suffisamment espacées</span></label>
+<textarea id="notes-43" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -688,9 +727,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>L’attribut lang de l’élément &lt;html&gt; indique la langue de la majeure partie de la page.</dd><dt>Non conforme si</dt><dd>La page n’a pas de lang, ou en a un erroné ou non valide : les lecteurs d’écran la lisent avec la mauvaise voix et la mauvaise prononciation, ce qui ne respecte pas le critère WCAG 3.1.1.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p><p class="covers">Elle évalue aussi : <code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">La langue principale de la page est indiquée dans son balisage, et c’est la bonne</span></legend>
-<div class="choices"><label><input type="radio" name="o-41" value="open" checked> Non vérifié</label><label><input type="radio" name="o-41" value="pass"> Conforme</label><label><input type="radio" name="o-41" value="fail"> Non conforme</label><label><input type="radio" name="o-41" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-41">Notes<span class="vh">: </span><span class="vh">La langue principale de la page est indiquée dans son balisage, et c’est la bonne</span></label>
-<textarea id="notes-41" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-44" value="open" checked> Non vérifié</label><label><input type="radio" name="o-44" value="pass"> Conforme</label><label><input type="radio" name="o-44" value="fail"> Non conforme</label><label><input type="radio" name="o-44" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-44">Notes<span class="vh">: </span><span class="vh">La langue principale de la page est indiquée dans son balisage, et c’est la bonne</span></label>
+<textarea id="notes-44" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-3-1-2-parts-language-marked" aria-labelledby="item-3-1-2-parts-language-marked" data-key="3.1.2/parts-language-marked" data-facet="parts-language-marked" data-label="Les passages et les expressions dans une autre langue que celle de la page sont signalés avec leur propre langue" data-requirements="[&quot;3.1.2&quot;]">
@@ -701,9 +740,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque passage ou expression dans une autre langue est signalé par un attribut lang valide pour cette langue.</dd><dt>Non conforme si</dt><dd>Un passage ou une expression dans une autre langue n’est pas signalé avec sa langue, ou l’est avec un code erroné : il est lu avec la mauvaise prononciation, ce qui ne respecte pas le critère WCAG 3.1.2.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>valid-lang</code></p><p class="covers">Elle évalue aussi : <code>element-lang-valid</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les passages et les expressions dans une autre langue que celle de la page sont signalés avec leur propre langue</span></legend>
-<div class="choices"><label><input type="radio" name="o-42" value="open" checked> Non vérifié</label><label><input type="radio" name="o-42" value="pass"> Conforme</label><label><input type="radio" name="o-42" value="fail"> Non conforme</label><label><input type="radio" name="o-42" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-42">Notes<span class="vh">: </span><span class="vh">Les passages et les expressions dans une autre langue que celle de la page sont signalés avec leur propre langue</span></label>
-<textarea id="notes-42" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-45" value="open" checked> Non vérifié</label><label><input type="radio" name="o-45" value="pass"> Conforme</label><label><input type="radio" name="o-45" value="fail"> Non conforme</label><label><input type="radio" name="o-45" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-45">Notes<span class="vh">: </span><span class="vh">Les passages et les expressions dans une autre langue que celle de la page sont signalés avec leur propre langue</span></label>
+<textarea id="notes-45" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -721,9 +760,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque erreur de saisie détectée par la page est indiquée par un texte qui nomme le champ et le problème.</dd><dt>Non conforme si</dt><dd>Une erreur de saisie n’est indiquée que par une couleur ou une icône, n’est pas indiquée du tout, ou l’est sans préciser quel champ est erroné, ce qui ne respecte pas le critère WCAG 3.3.1.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>invalid-field-error-message</code></p><p class="covers">Elle évalue aussi : <code>invalid-field-error-message</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Une erreur de saisie détectée par la page est indiquée par un texte qui précise quel champ est erroné et ce qui ne va pas</span></legend>
-<div class="choices"><label><input type="radio" name="o-43" value="open" checked> Non vérifié</label><label><input type="radio" name="o-43" value="pass"> Conforme</label><label><input type="radio" name="o-43" value="fail"> Non conforme</label><label><input type="radio" name="o-43" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-43">Notes<span class="vh">: </span><span class="vh">Une erreur de saisie détectée par la page est indiquée par un texte qui précise quel champ est erroné et ce qui ne va pas</span></label>
-<textarea id="notes-43" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-46" value="open" checked> Non vérifié</label><label><input type="radio" name="o-46" value="pass"> Conforme</label><label><input type="radio" name="o-46" value="fail"> Non conforme</label><label><input type="radio" name="o-46" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-46">Notes<span class="vh">: </span><span class="vh">Une erreur de saisie détectée par la page est indiquée par un texte qui précise quel champ est erroné et ce qui ne va pas</span></label>
+<textarea id="notes-46" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-3-3-2-labels-instructions-provided" aria-labelledby="item-3-3-2-labels-instructions-provided" data-key="3.3.2/labels-instructions-provided" data-facet="labels-instructions-provided" data-label="Les champs qui demandent une saisie ont une étiquette visible, et des instructions quand la saisie en nécessite" data-requirements="[&quot;3.3.2&quot;]">
@@ -734,9 +773,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque champ a une étiquette visible, et la page donne les instructions nécessaires à la saisie avant l’envoi.</dd><dt>Non conforme si</dt><dd>Un champ n’a pas d’étiquette visible, seulement un texte indicatif ou un title au survol, ou les règles de saisie ne sont données qu’après une erreur, ce qui ne respecte pas le critère WCAG 3.3.2.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>form-control-programmatic-label-present</code>, <code>form-control-single-label</code>, <code>form-control-programmatic-label-quality</code></p><p class="covers">Elle évalue aussi : <code>form-control-labels-or-instructions-present</code>, <code>form-control-single-label</code>, <code>form-control-visible-label-quality</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les champs qui demandent une saisie ont une étiquette visible, et des instructions quand la saisie en nécessite</span></legend>
-<div class="choices"><label><input type="radio" name="o-44" value="open" checked> Non vérifié</label><label><input type="radio" name="o-44" value="pass"> Conforme</label><label><input type="radio" name="o-44" value="fail"> Non conforme</label><label><input type="radio" name="o-44" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-44">Notes<span class="vh">: </span><span class="vh">Les champs qui demandent une saisie ont une étiquette visible, et des instructions quand la saisie en nécessite</span></label>
-<textarea id="notes-44" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-47" value="open" checked> Non vérifié</label><label><input type="radio" name="o-47" value="pass"> Conforme</label><label><input type="radio" name="o-47" value="fail"> Non conforme</label><label><input type="radio" name="o-47" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-47">Notes<span class="vh">: </span><span class="vh">Les champs qui demandent une saisie ont une étiquette visible, et des instructions quand la saisie en nécessite</span></label>
+<textarea id="notes-47" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-3-3-8-authentication-no-cognitive-test" aria-labelledby="item-3-3-8-authentication-no-cognitive-test" data-key="3.3.8/authentication-no-cognitive-test" data-facet="authentication-no-cognitive-test" data-label="La connexion n’exige pas de mémoriser, de retranscrire ou de résoudre quelque chose, sauf si un moyen de contournement est proposé" data-requirements="[&quot;3.3.8&quot;]">
@@ -747,9 +786,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque étape de connexion qui demande de mémoriser, de retranscrire ou de résoudre quelque chose permet le collage et les gestionnaires de mots de passe, ou propose un autre moyen, ou demande seulement de reconnaître des objets ou votre propre contenu.</dd><dt>Non conforme si</dt><dd>La connexion exige de mémoriser, de retranscrire ou de résoudre quelque chose sans moyen de contournement, comme un champ de code qui bloque le collage, ce qui ne respecte pas le critère WCAG 3.3.8.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>password-paste-enabled</code></p><p class="covers">Elle évalue aussi : <code>authentication-paste-not-blocked</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">La connexion n’exige pas de mémoriser, de retranscrire ou de résoudre quelque chose, sauf si un moyen de contournement est proposé</span></legend>
-<div class="choices"><label><input type="radio" name="o-45" value="open" checked> Non vérifié</label><label><input type="radio" name="o-45" value="pass"> Conforme</label><label><input type="radio" name="o-45" value="fail"> Non conforme</label><label><input type="radio" name="o-45" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-45">Notes<span class="vh">: </span><span class="vh">La connexion n’exige pas de mémoriser, de retranscrire ou de résoudre quelque chose, sauf si un moyen de contournement est proposé</span></label>
-<textarea id="notes-45" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-48" value="open" checked> Non vérifié</label><label><input type="radio" name="o-48" value="pass"> Conforme</label><label><input type="radio" name="o-48" value="fail"> Non conforme</label><label><input type="radio" name="o-48" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-48">Notes<span class="vh">: </span><span class="vh">La connexion n’exige pas de mémoriser, de retranscrire ou de résoudre quelque chose, sauf si un moyen de contournement est proposé</span></label>
+<textarea id="notes-48" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -766,9 +805,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque lien, contrôle, cadre et boîte de dialogue a un nom qui indique sa fonction.</dd><dt>Non conforme si</dt><dd>Un lien, un contrôle, un cadre ou une boîte de dialogue n’a pas de nom, ou a un nom qui n’indique pas sa fonction : les technologies d’assistance n’annoncent que son rôle, ce qui ne respecte pas le critère WCAG 4.1.2.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>form-control-programmatic-label-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-alt-present</code>, <code>binary-control-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>iframe-title-unique</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p><p class="covers">Elle évalue aussi : <code>form-control-name-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-name-present</code>, <code>checkbox-name-present</code>, <code>radio-name-present</code>, <code>switch-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Chaque lien, contrôle, cadre et boîte de dialogue a un nom qui indique sa fonction</span></legend>
-<div class="choices"><label><input type="radio" name="o-46" value="open" checked> Non vérifié</label><label><input type="radio" name="o-46" value="pass"> Conforme</label><label><input type="radio" name="o-46" value="fail"> Non conforme</label><label><input type="radio" name="o-46" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-46">Notes<span class="vh">: </span><span class="vh">Chaque lien, contrôle, cadre et boîte de dialogue a un nom qui indique sa fonction</span></label>
-<textarea id="notes-46" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-49" value="open" checked> Non vérifié</label><label><input type="radio" name="o-49" value="pass"> Conforme</label><label><input type="radio" name="o-49" value="fail"> Non conforme</label><label><input type="radio" name="o-49" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-49">Notes<span class="vh">: </span><span class="vh">Chaque lien, contrôle, cadre et boîte de dialogue a un nom qui indique sa fonction</span></label>
+<textarea id="notes-49" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-2-roles-match-behavior" aria-labelledby="item-4-1-2-roles-match-behavior" data-key="4.1.2/roles-match-behavior" data-facet="roles-match-behavior" data-label="Le rôle de chaque contrôle indique ce qu’il fait, et les contrôles ne sont pas imbriqués les uns dans les autres" data-requirements="[&quot;4.1.2&quot;]">
@@ -779,9 +818,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Le rôle de chaque contrôle indique ce qu’il fait, et aucun contrôle n’est imbriqué dans un autre.</dd><dt>Non conforme si</dt><dd>Un contrôle n’a pas de rôle, en a un erroné (une div cliquable sans rôle, un lien qui agit comme un bouton), ou contient un autre contrôle, ce qui ne respecte pas le critère WCAG 4.1.2.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>aria-roles-valid</code>, <code>aria-deprecated-role</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p><p class="covers">Elle évalue aussi : <code>aria-role-valid</code>, <code>aria-role-not-deprecated</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Le rôle de chaque contrôle indique ce qu’il fait, et les contrôles ne sont pas imbriqués les uns dans les autres</span></legend>
-<div class="choices"><label><input type="radio" name="o-47" value="open" checked> Non vérifié</label><label><input type="radio" name="o-47" value="pass"> Conforme</label><label><input type="radio" name="o-47" value="fail"> Non conforme</label><label><input type="radio" name="o-47" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-47">Notes<span class="vh">: </span><span class="vh">Le rôle de chaque contrôle indique ce qu’il fait, et les contrôles ne sont pas imbriqués les uns dans les autres</span></label>
-<textarea id="notes-47" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-50" value="open" checked> Non vérifié</label><label><input type="radio" name="o-50" value="pass"> Conforme</label><label><input type="radio" name="o-50" value="fail"> Non conforme</label><label><input type="radio" name="o-50" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-50">Notes<span class="vh">: </span><span class="vh">Le rôle de chaque contrôle indique ce qu’il fait, et les contrôles ne sont pas imbriqués les uns dans les autres</span></label>
+<textarea id="notes-50" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-2-states-values-exposed" aria-labelledby="item-4-1-2-states-values-exposed" data-key="4.1.2/states-values-exposed" data-facet="states-values-exposed" data-label="L’état et la valeur de chaque contrôle sont exposés et changent avec ce qui est affiché" data-requirements="[&quot;4.1.2&quot;]">
@@ -792,9 +831,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>L’état et la valeur de chaque contrôle sont exposés et changent avec ce qui est affiché.</dd><dt>Non conforme si</dt><dd>L’état ou la valeur d’un contrôle n’est pas exposé, ou ne change pas quand il change à l’écran, comme une case à cocher personnalisée toujours annoncée comme non cochée, ce qui ne respecte pas le critère WCAG 4.1.2.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>aria-required-attr</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p><p class="covers">Elle évalue aussi : <code>aria-attr-required-for-role</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">L’état et la valeur de chaque contrôle sont exposés et changent avec ce qui est affiché</span></legend>
-<div class="choices"><label><input type="radio" name="o-48" value="open" checked> Non vérifié</label><label><input type="radio" name="o-48" value="pass"> Conforme</label><label><input type="radio" name="o-48" value="fail"> Non conforme</label><label><input type="radio" name="o-48" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-48">Notes<span class="vh">: </span><span class="vh">L’état et la valeur de chaque contrôle sont exposés et changent avec ce qui est affiché</span></label>
-<textarea id="notes-48" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-51" value="open" checked> Non vérifié</label><label><input type="radio" name="o-51" value="pass"> Conforme</label><label><input type="radio" name="o-51" value="fail"> Non conforme</label><label><input type="radio" name="o-51" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-51">Notes<span class="vh">: </span><span class="vh">L’état et la valeur de chaque contrôle sont exposés et changent avec ce qui est affiché</span></label>
+<textarea id="notes-51" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-2-aria-used-validly" aria-labelledby="item-4-1-2-aria-used-validly" data-key="4.1.2/aria-used-validly" data-facet="aria-used-validly" data-label="Les attributs ARIA sont réels, valides et autorisés là où ils se trouvent, et rien de focalisable n’est masqué aux technologies d’assistance" data-requirements="[&quot;4.1.2&quot;]">
@@ -805,9 +844,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Les attributs ARIA sont réels, valides et autorisés là où ils se trouvent, leurs id sont uniques, et rien de focalisable n’est masqué.</dd><dt>Non conforme si</dt><dd>Un attribut ARIA est mal orthographié, a une valeur non valide ou n’est pas autorisé pour son rôle, un id vers lequel il pointe est absent ou répété, ou un élément focalisable est masqué aux technologies d’assistance, ce qui ne respecte pas le critère WCAG 4.1.2.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>aria-hidden-focus</code>, <code>aria-valid-attr</code>, <code>aria-valid-attr-value</code>, <code>aria-allowed-attr</code>, <code>aria-prohibited-attr</code>, <code>aria-hidden-body</code>, <code>duplicate-id-aria</code></p><p class="covers">Elle évalue aussi : <code>aria-hidden-focusable</code>, <code>aria-attr-name-valid</code>, <code>aria-attr-value-valid</code>, <code>aria-attr-allowed-for-role</code>, <code>aria-attr-not-prohibited</code>, <code>aria-hidden-body-absent</code>, <code>duplicate-id-aria</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les attributs ARIA sont réels, valides et autorisés là où ils se trouvent, et rien de focalisable n’est masqué aux technologies d’assistance</span></legend>
-<div class="choices"><label><input type="radio" name="o-49" value="open" checked> Non vérifié</label><label><input type="radio" name="o-49" value="pass"> Conforme</label><label><input type="radio" name="o-49" value="fail"> Non conforme</label><label><input type="radio" name="o-49" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-49">Notes<span class="vh">: </span><span class="vh">Les attributs ARIA sont réels, valides et autorisés là où ils se trouvent, et rien de focalisable n’est masqué aux technologies d’assistance</span></label>
-<textarea id="notes-49" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-52" value="open" checked> Non vérifié</label><label><input type="radio" name="o-52" value="pass"> Conforme</label><label><input type="radio" name="o-52" value="fail"> Non conforme</label><label><input type="radio" name="o-52" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-52">Notes<span class="vh">: </span><span class="vh">Les attributs ARIA sont réels, valides et autorisés là où ils se trouvent, et rien de focalisable n’est masqué aux technologies d’assistance</span></label>
+<textarea id="notes-52" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-3-status-messages-announced" aria-labelledby="item-4-1-3-status-messages-announced" data-key="4.1.3/status-messages-announced" data-facet="status-messages-announced" data-label="Les messages d’état sont annoncés par les technologies d’assistance sans prendre le focus" data-requirements="[&quot;4.1.3&quot;]">
@@ -818,9 +857,9 @@
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque message d’état est annoncé par un lecteur d’écran sans que le focus se déplace vers lui.</dd><dt>Non conforme si</dt><dd>Un message d’état apparaît à l’écran mais le lecteur d’écran ne l’annonce pas, ce qui ne respecte pas le critère WCAG 4.1.3.</dd></dl>
 <details class="technical"><summary>Règles et facettes</summary><p class="rules">Règles qui le testent : <code>live-region-announcements</code></p><p class="covers">Elle évalue aussi : <code>live-region-reachable-evidence</code>, <code>live-region-changes-evidence</code></p></details>
 <fieldset class="record"><legend>Résultat<span class="vh">: </span><span class="vh">Les messages d’état sont annoncés par les technologies d’assistance sans prendre le focus</span></legend>
-<div class="choices"><label><input type="radio" name="o-50" value="open" checked> Non vérifié</label><label><input type="radio" name="o-50" value="pass"> Conforme</label><label><input type="radio" name="o-50" value="fail"> Non conforme</label><label><input type="radio" name="o-50" value="notApplicable"> Non applicable</label></div>
-<label class="notes" for="notes-50">Notes<span class="vh">: </span><span class="vh">Les messages d’état sont annoncés par les technologies d’assistance sans prendre le focus</span></label>
-<textarea id="notes-50" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-53" value="open" checked> Non vérifié</label><label><input type="radio" name="o-53" value="pass"> Conforme</label><label><input type="radio" name="o-53" value="fail"> Non conforme</label><label><input type="radio" name="o-53" value="notApplicable"> Non applicable</label></div>
+<label class="notes" for="notes-53">Notes<span class="vh">: </span><span class="vh">Les messages d’état sont annoncés par les technologies d’assistance sans prendre le focus</span></label>
+<textarea id="notes-53" rows="2"></textarea>
 </fieldset>
 </article>
 </section>

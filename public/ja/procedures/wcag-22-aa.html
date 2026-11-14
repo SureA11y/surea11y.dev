@@ -103,7 +103,7 @@
 <a class="skip" href="#main">手順へスキップ</a>
 <header class="page">
 <h1>WCAG 2.2：各要件の評価方法</h1>
-<p>要件：55 · 手順：50</p>
+<p>要件：55 · 手順：53</p>
 <ul><li>レベル：A, AA</li></ul>
 
 </header>
@@ -399,14 +399,17 @@
 <p class="meta"><span>レベル AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-11-ui-component-contrast">
 <h5 id="facet-1-4-11-ui-component-contrast">コントロールの存在と状態を示す部分のコントラスト比が 3:1 以上である</h5>
-<ul class="badges"><li class="badge auto-manual">人だけが確認できる</li></ul>
-<p class="empty">これにはまだ手順がありません。</p>
-
+<ul class="badges"><li class="badge auto-manual">人だけが確認できる</li><li class="badge">必要なもの：<span>ブラウザーの開発者ツール</span></li></ul>
+<ol class="steps"><li>ページ上の各コントロール (ボタン、入力欄、チェックボックス、ラジオボタン、スライダー、タブ、ボタンのような見た目のリンク) を確認してください。</li><li>それぞれについて、入力欄の枠線やボタンの輪郭など、そこにあることを示す部分を見つけ、コントラストチェッカーで隣接する色とのコントラスト比を測ってください。3:1 以上が必要です。テキストだけで示されるコントロールには、それ以上は必要ありません。</li><li>各状態を示す部分についても同じように確認してください。チェックボックスのチェック、選択されたタブ、スライダーのつまみ、フォーカスがある状態のフォーカスインジケータです。</li><li>制作者が見た目を変更していない、ブラウザが描画するコントロールと、非アクティブ (無効) なコントロールは除外してください。</li></ol>
+<dl class="verdict"><dt>合格の条件</dt><dd>コントロールやその状態を示すすべての部分が、隣接する色とのコントラスト比 3:1 以上です。</dd><dt>不合格の条件</dt><dd>入力欄の枠線、チェックボックスのチェック、フォーカスインジケータなど、コントロールやその状態を見るのに必要な部分のコントラスト比が 3:1 未満であり、WCAG 1.4.11 を満たしません。</dd></dl>
+<p class="rules">これを検査するルール：<code>css-focus-indicator-suppressed</code></p>
+<div class="covers"><p>この手順では次も評価します：</p><ul><li>CSS が代わりの表示を描かずにフォーカスインジケータを消していない</li></ul></div>
 </section>
 <section class="facet" aria-labelledby="facet-1-4-11-graphics-contrast">
 <h5 id="facet-1-4-11-graphics-contrast">グラフィックの理解に必要な部分のコントラスト比が 3:1 以上である</h5>
-<ul class="badges"><li class="badge auto-manual">人だけが確認できる</li></ul>
-<p class="empty">これにはまだ手順がありません。</p>
+<ul class="badges"><li class="badge auto-manual">人だけが確認できる</li><li class="badge">必要なもの：<span>ブラウザーの開発者ツール</span></li></ul>
+<ol class="steps"><li>テキストを伴わないアイコン、グラフ、図、地図、インフォグラフィックなど、情報を伝えるグラフィックを探してください。</li><li>それぞれについて、アイコンの形、グラフの線や棒、領域の境界など、理解に必要な部分を見つけてください。</li><li>コントラストチェッカーで、各部分と隣接する色とのコントラスト比を測ってください。3:1 以上が必要です。テキストでラベル付けされている部分や、同じ情報が近くのテキストでも示されている部分は対象外です。</li><li>装飾的なグラフィック、ロゴ、写真や国旗のように特定の見た目が必要不可欠なグラフィックは除外してください。</li></ol>
+<dl class="verdict"><dt>合格の条件</dt><dd>グラフィックの理解に必要なすべての部分のコントラスト比が 3:1 以上であるか、その情報が別の方法で示されています。</dd><dt>不合格の条件</dt><dd>グラフィックの理解に必要な部分のコントラスト比が 3:1 未満で、その情報が別の方法で示されておらず、WCAG 1.4.11 を満たしません。</dd></dl>
 
 </section>
 </article>
@@ -657,9 +660,10 @@
 <p class="meta"><span>レベル AA</span></p>
 <section class="facet" aria-labelledby="facet-2-4-11-focus-not-obscured">
 <h5 id="facet-2-4-11-focus-not-obscured">フォーカスを受け取った要素が、ページがその上に重ねるコンテンツによって完全に隠されない</h5>
-<ul class="badges"><li class="badge auto-manual">人だけが確認できる</li></ul>
-<p class="empty">これにはまだ手順がありません。</p>
-
+<ul class="badges"><li class="badge auto-partial">ルールが一部を判定する</li><li class="badge">必要なもの：<span>キーボード</span>, <span>ブラウザーのズーム</span></li></ul>
+<ol class="steps"><li>ページを再読み込みし、マウスでページの半分までスクロールしてから、ページ全体を Tab キーでゆっくり移動します。</li><li>止まるたびに、フォーカスのある要素の少なくとも一部が見えることを確認します。スクロールしても定位置に残るヘッダー、フッター、バナー、チャットボタンに注意します。</li><li>ページが定位置に保つコンテンツがフォーカスのある要素を完全に覆っている箇所を記録します。そのコンテンツを自分で開いた場合（チャットパネル、メニュー）は、Escape キーなどでフォーカスを移動せずに閉じられるか確認します。閉じられれば対象外です。</li><li>Shift+Tab でページを戻りながら、また幅 320 CSS ピクセルのウィンドウでも同じことを行います。固定バーが画面のより多くを占めます。</li></ol>
+<dl class="verdict"><dt>合格の条件</dt><dd>フォーカスを受けるすべての要素が少なくとも一部見えるか、自分で開いてフォーカスを移動せずに閉じられるコンテンツにだけ覆われています。</dd><dt>不合格の条件</dt><dd>固定ヘッダー、フッター、Cookie バナーなど、ページが置いたコンテンツの後ろに要素が完全に隠れたままフォーカスを受けます。これは WCAG 2.4.11 を満たしません。</dd></dl>
+<p class="rules">これを検査するルール：<code>focus-not-obscured-minimum</code></p>
 </section>
 </article>
 </section>

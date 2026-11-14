@@ -521,7 +521,10 @@ export function KnownLimitationsContent() {
 					<code>aria-hidden-focus</code> enfoca un elemento dentro de un subárbol{" "}
 					<code>aria-hidden</code> para ver si la página retira el foco de inmediato (un centinela de
 					trampa de foco); <code>text-spacing-content-loss</code> añade una hoja de estilo con el espaciado de WCAG
-					1.4.12; las reglas de contraste añaden un frame vacío fuera de la pantalla para leer los
+					1.4.12; <code>focus-not-obscured-minimum</code> y <code>-enhanced</code> desplazan la página
+					para que un elemento quede bajo una caja fija o sticky y comprobar ahí qué recibe el
+					puntero, lo que dispara los manejadores de <code>scroll</code> de la página después de que
+					estos hayan medido (un encabezado que se oculta al desplazarse puede reaccionar); las reglas de contraste añaden un frame vacío fuera de la pantalla para leer los
 					colores propios del navegador para un texto provisional o un{" "}
 					<code>&lt;select&gt;</code> desplegable. El análisis también lleva cada animación en
 					curso a un punto fijo mientras se ejecutan las reglas (una finita a su final, una
@@ -737,6 +740,29 @@ export function KnownLimitationsContent() {
 						<code>LAYOUT_MEASUREMENT.md</code>
 					</a>
 					.
+				</li>
+				<li>
+					<strong>
+						Si un contenido cubre un elemento con el foco se calcula para el propio desplazamiento
+						de la página y sus cajas fijas y sticky.
+					</strong>{" "}
+					<a href="/rules/focus-not-obscured-minimum/"><code>focus-not-obscured-minimum</code></a>{" "}
+					(2.4.11) y{" "}
+					<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>{" "}
+					(2.4.12) necesitan un navegador: bajo jsdom son <code>notApplicable</code>{" "}
+					(<code>data.reason: 'noLayout'</code>). En un navegador preguntan qué elementos del orden
+					de tabulación puede ocultar una caja <code>position: fixed</code> o <code>sticky</code> que
+					dibuja algo, dada la ventana que usa el análisis y el <code>scroll-padding</code> de la
+					página, y lo confirman comprobando qué recibe el puntero en unos pocos de ellos. Quedan
+					fuera: un elemento dentro de una caja con desplazamiento propio, o dentro de una caja fija
+					o sticky; el desplazamiento horizontal; otro contenido superpuesto a un elemento (una caja
+					con posicionamiento absoluto, una ventana emergente no modal que no es fija); una caja con{" "}
+					<code>pointer-events: none</code>, que la comprobación del navegador atraviesa; y lo que
+					aparece más tarde (una burbuja de chat tras un retardo) o con otro tamaño de ventana.
+					Tampoco se puede ver quién abrió una caja: los criterios permiten el contenido que el
+					usuario abrió y puede cerrar sin mover el foco, así que por una caja que un control marca
+					como expandida (<code>aria-expanded="true"</code> con <code>aria-controls</code>) se
+					pregunta sin tendencia, y por cualquier otra con una advertencia que lo indica.
 				</li>
 				<li>
 					<strong>El contraste se calcula en sRGB.</strong> Los colores dados en{" "}

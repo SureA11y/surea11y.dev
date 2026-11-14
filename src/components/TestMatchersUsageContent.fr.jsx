@@ -660,11 +660,11 @@ export function TestMatchersUsageContent() {
 					"   at body > main > img",
 					"   Add an alt attribute that says what the image shows, or alt=\"\" if the image is purely decorative.",
 					"",
-					"Scanned with @surea11y/core 1.16.1.",
+					"Scanned with @surea11y/core 1.17.0.",
 					"",
 					"2 findings need manual review (cantTell, not counted as failures):",
 					"",
-					"1) heading-order (minor, likely fails): This heading jumps from level 1 to level 3, skipping a level.",
+					"1) heading-order (minor, likely fails): This level-3 heading \"Notifications\" follows the level-1 heading \"Settings\", skipping a level.",
 					"   at body > main > h3",
 					"   Go down one level at a time, so an <h2> is followed by an <h3> rather than an <h4>, and the outline of the page stays easy to follow.",
 					"   Why it likely fails: The heading skips a level after the one before it.",
@@ -689,9 +689,9 @@ export function TestMatchersUsageContent() {
 					"",
 					"No accessibility violations found in what was scanned.",
 					"",
-					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.16.1.",
+					"Pack \"@acme/a11y-policy\" did not run: it supports core ^2.0.0, and this is core 1.17.0.",
 					"",
-					"Scanned with @surea11y/core 1.16.1.",
+					"Scanned with @surea11y/core 1.17.0.",
 				]}
 			/>
 

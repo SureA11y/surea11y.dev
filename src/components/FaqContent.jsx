@@ -7,83 +7,80 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-16">"My results changed after upgrading to core 1.16"</h2>
+				<h2 id="results-changed-1-17">"My results changed after upgrading to core 1.17"</h2>
 				<p>
-					1.16 brings jsdom closer to the browser and words its messages for any standard. The
+					1.17 adds four rules, maps some rules to more criteria, and makes messages name the cause
+					of a finding. Outcomes and reason codes of the existing rules are otherwise unchanged. The
 					changes most likely to show in a pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>Under jsdom, only a dialog opened with <code>showModal()</code> is
-						modal</strong>, as in a browser. The page behind a{" "}
-						<code>&lt;dialog open aria-modal="true"&gt;</code> is now judged, so a jsdom test that
-						fakes a modal that way sees findings behind it;{" "}
-						<code>engineOptions.assumeModal: true</code> keeps the old behaviour (see{" "}
-						<a href="/help/known-limitations/">Known limitations</a>; with test-matchers 1.6.0,
-						give it to <code>installLiveRegionHook()</code> too, see{" "}
-						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
-						Nothing behind a modal
-						dialog takes focus, and of several opened with <code>showModal()</code> only the
-						topmost is judged.
+						<strong>A WCAG 2.2 AA scan in a browser asks about 2.4.11.</strong>{" "}
+						<a href="/rules/focus-not-obscured-minimum/">
+							<code>focus-not-obscured-minimum</code>
+						</a>{" "}
+						asks (<code>cantTell</code>) about a fixed or sticky box, such as a header, footer or
+						banner, that elements in the tab order can take focus hidden behind, and{" "}
+						<a href="/rules/focus-not-obscured-enhanced/">
+							<code>focus-not-obscured-enhanced</code>
+						</a>{" "}
+						does the same for 2.4.12 (AAA). Under jsdom both are <code>notApplicable</code>. Such
+						a scan takes about 4% longer in Chromium (see{" "}
+						<a href="/help/known-limitations/">Known limitations</a> for what they leave out).
 					</li>
 					<li>
-						<strong>jsdom hides what a browser hides.</strong> Rules inside <code>@layer</code>,{" "}
-						<code>@supports</code> and <code>@container</code> hide elements, so Tailwind v4's{" "}
-						<code>hidden</code> and <code>sr-only</code> work; <code>clip: rect(0 0 0 0)</code>{" "}
-						counts as clipped; an image map's <code>&lt;area&gt;</code> is on the page. Findings
-						on content that was hidden all along go away.
+						<strong>A scan that runs AAA rules fails targets under 44 px.</strong>{" "}
+						<a href="/rules/target-size-enhanced/">
+							<code>target-size-enhanced</code>
+						</a>{" "}
+						(2.5.5) runs in a full scan, one with no WCAG target, and under a AAA target. A
+						pipeline that fails on any <code>fail</code> of a full scan can see new failures:
+						scan with a target, such as the <code>wcag22-aa</code> profile, to judge by A and AA
+						only (see <a href="/configuration/engine-options/">Engine options</a>). With best
+						practices,{" "}
+						<a href="/rules/page-zones-landmark/">
+							<code>page-zones-landmark</code>
+						</a>{" "}
+						asks about a header, navigation, search or footer that isn't its landmark.
 					</li>
 					<li>
-						<strong>Messages and steps describe the check</strong> instead of naming the WCAG
-						criterion, in every locale, so a report for another standard reads right. Mappings
-						and <code>failWhen</code> are unchanged; a test that compares message text needs
-						updating.
+						<strong>Some rules count toward more criteria.</strong>{" "}
+						<code>css-focus-indicator-suppressed</code> maps to 1.4.11 and 2.4.13 too, so its
+						findings now show in 1.4.11's result; <code>focus-not-removed-by-script</code> maps
+						to 2.4.13, and four rules that map to 2.1.1 map to 2.1.3 too.
 					</li>
 					<li>
-						<strong>Deep pages are judged.</strong> An element 200 or more levels deep is judged
-						with everything above it, up to 10,000 levels, where a fail that deep used to become a
-						question noted in <code>error</code>; so failures can appear there. Past 10,000 it is a
-						question, reported in{" "}
-						<a href="/results-reports/output-schema/">
-							<code>ancestorWalkLimit</code>
-						</a>
-						.
+						<strong>Messages name the root cause</strong> the rules find: why an element has no
+						name (<code>data.details.nameCause</code>), a likely typo in a role, attribute or{" "}
+						<code>autocomplete</code> value, what hides an element, the contrast in a{" "}
+						<code>link-in-text-block</code> fail, how far a target is from passing{" "}
+						<code>target-size-minimum</code>. A test that compares message text, or{" "}
+						<code>target-size-minimum</code>'s hint key (now <code>_centerDistance</code> or{" "}
+						<code>_regionDistance</code>), needs updating.
 					</li>
 					<li>
-						<strong>Pages that replace <code>Array.from</code></strong> (Prototype.js, MooTools)
-						are scanned, where the scan stopped with <code>PAGE_BUILTINS_BROKEN</code> (see{" "}
-						<a href="#page-builtins-broken">the entry below</a>).
+						<strong>A few findings move.</strong> <code>css-hidden-focus</code> leans fail when
+						the element is out of view and nothing is known to bring it into view;{" "}
+						<code>aria-hidden-focus</code> fails a focusable element set back to{" "}
+						<code>visibility: visible</code> inside a hidden <code>aria-hidden</code> root;{" "}
+						<code>aria-conditional-attr</code> passes an <code>aria-invalid</code> value outside
+						its tokens; <code>link-in-text-block</code> counts only text on the link's own line.
 					</li>
 					<li>
-						<strong>Some selectors are different.</strong> Control characters are escaped, a value
-						over 256 characters gives way to the element's path, and{" "}
-						<a href="/rules/page-title-present/"><code>page-title-present</code></a> and{" "}
-						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> point at
-						the title element itself, or at <code>&lt;head&gt;</code> when there is none. A
-						finding's identity doesn't include its selector, so baselines still match. The
-						contrast rules are <code>notApplicable</code> with no occurrence when no contrast
-						could be computed.
-					</li>
-					<li>
-						<strong>Mistakes are reported instead of read as nothing.</strong> An empty{" "}
-						<code>contextSelector</code> still scans the whole page, but warns; something that
-						isn't a baseline throws <code>INVALID_BASELINE</code> instead of making every failure
-						new; and under <code>strictOptions</code>, an unknown profile name throws. The{" "}
-						<code>section508</code> profile is deprecated: use <code>wcag20-aa</code>, which runs
-						the same rules.
-					</li>
-					<li>
-						<strong>Faster scans</strong>, with the same findings: a few percent in Chromium on
-						ordinary pages, 10 to 25% under jsdom, and much more where it was worst (thousands of
-						identical links or fields, long tables, many style rules).
+						<strong>Packs built for 1.16 may be skipped.</strong> A pack that uses core's
+						experimental APIs takes no later minor, so a scan with 1.17 skips it until it has a
+						release for 1.17: the{" "}
+						<a href="/configuration/packs/#en-301-549-pack">EN 301 549 pack</a> needs 1.4.0. And
+						1.17 removed four fields of a standard's laws, which a pack that still has them is
+						refused for (see <a href="/configuration/packs/#laws">Packs</a>).
 					</li>
 				</ul>
 				<p>
-					New, and changing nothing unless you use it: the WCAG 2.0 and 2.1 profiles (
-					<a href="/configuration/engine-options/#conformance-profiles">Engine options</a>), and,
-					experimental until 1.18.0, standards as data, tests under requirements, standards built
-					on others and the laws a standard is assessed under (
-					<a href="/configuration/packs/#experimental">Packs</a>). The full list is in core's{" "}
+					New, and changing nothing unless you use it: a pack built on another pack (
+					<code>uses</code>, <code>surea11y-pack new --kind derived</code>), experimental until
+					1.19.0 (<a href="/configuration/packs/#a-pack-built-on-another-pack">Packs</a>). The
+					browser bundle grows from 1,565 to 1,829 KB, mostly the new messages. The full list is in
+					core's{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>
@@ -622,6 +619,91 @@ export function FaqContent() {
 						<code>INTEGRATION.md</code>
 					</a>
 					, the integration guide on GitHub.
+				</p>
+			</article>
+
+			<article>
+				<h2 id="results-changed-1-16">"My results changed after upgrading to core 1.16"</h2>
+				<p>
+					1.16 brings jsdom closer to the browser and words its messages for any standard. The
+					changes most likely to show in a pipeline:
+				</p>
+				<ul>
+					<li>
+						<strong>Under jsdom, only a dialog opened with <code>showModal()</code> is
+						modal</strong>, as in a browser. The page behind a{" "}
+						<code>&lt;dialog open aria-modal="true"&gt;</code> is now judged, so a jsdom test that
+						fakes a modal that way sees findings behind it;{" "}
+						<code>engineOptions.assumeModal: true</code> keeps the old behaviour (see{" "}
+						<a href="/help/known-limitations/">Known limitations</a>; with test-matchers 1.6.0,
+						give it to <code>installLiveRegionHook()</code> too, see{" "}
+						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
+						Nothing behind a modal
+						dialog takes focus, and of several opened with <code>showModal()</code> only the
+						topmost is judged.
+					</li>
+					<li>
+						<strong>jsdom hides what a browser hides.</strong> Rules inside <code>@layer</code>,{" "}
+						<code>@supports</code> and <code>@container</code> hide elements, so Tailwind v4's{" "}
+						<code>hidden</code> and <code>sr-only</code> work; <code>clip: rect(0 0 0 0)</code>{" "}
+						counts as clipped; an image map's <code>&lt;area&gt;</code> is on the page. Findings
+						on content that was hidden all along go away.
+					</li>
+					<li>
+						<strong>Messages and steps describe the check</strong> instead of naming the WCAG
+						criterion, in every locale, so a report for another standard reads right. Mappings
+						and <code>failWhen</code> are unchanged; a test that compares message text needs
+						updating.
+					</li>
+					<li>
+						<strong>Deep pages are judged.</strong> An element 200 or more levels deep is judged
+						with everything above it, up to 10,000 levels, where a fail that deep used to become a
+						question noted in <code>error</code>; so failures can appear there. Past 10,000 it is a
+						question, reported in{" "}
+						<a href="/results-reports/output-schema/">
+							<code>ancestorWalkLimit</code>
+						</a>
+						.
+					</li>
+					<li>
+						<strong>Pages that replace <code>Array.from</code></strong> (Prototype.js, MooTools)
+						are scanned, where the scan stopped with <code>PAGE_BUILTINS_BROKEN</code> (see{" "}
+						<a href="#page-builtins-broken">the entry above</a>).
+					</li>
+					<li>
+						<strong>Some selectors are different.</strong> Control characters are escaped, a value
+						over 256 characters gives way to the element's path, and{" "}
+						<a href="/rules/page-title-present/"><code>page-title-present</code></a> and{" "}
+						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> point at
+						the title element itself, or at <code>&lt;head&gt;</code> when there is none. A
+						finding's identity doesn't include its selector, so baselines still match. The
+						contrast rules are <code>notApplicable</code> with no occurrence when no contrast
+						could be computed.
+					</li>
+					<li>
+						<strong>Mistakes are reported instead of read as nothing.</strong> An empty{" "}
+						<code>contextSelector</code> still scans the whole page, but warns; something that
+						isn't a baseline throws <code>INVALID_BASELINE</code> instead of making every failure
+						new; and under <code>strictOptions</code>, an unknown profile name throws. The{" "}
+						<code>section508</code> profile is deprecated: use <code>wcag20-aa</code>, which runs
+						the same rules.
+					</li>
+					<li>
+						<strong>Faster scans</strong>, with the same findings: a few percent in Chromium on
+						ordinary pages, 10 to 25% under jsdom, and much more where it was worst (thousands of
+						identical links or fields, long tables, many style rules).
+					</li>
+				</ul>
+				<p>
+					New, and changing nothing unless you use it: the WCAG 2.0 and 2.1 profiles (
+					<a href="/configuration/engine-options/#conformance-profiles">Engine options</a>), and,
+					experimental until 1.18.0, standards as data, tests under requirements, standards built
+					on others and the laws a standard is assessed under (
+					<a href="/configuration/packs/#experimental">Packs</a>). The full list is in core's{" "}
+					<a href={`${core}/CHANGELOG.md`}>
+						<code>CHANGELOG.md</code>
+					</a>
+					.
 				</p>
 			</article>
 

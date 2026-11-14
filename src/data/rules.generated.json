@@ -14,7 +14,7 @@
     "margin": null,
     "applicability": "Applies whenever two or more elements carry a non-empty accesskey attribute: only then can two of them collide.",
     "expectation": "Every accesskey value on the page is unique. Duplicate accesskeys make keyboard-shortcut activation ambiguous: only one of the elements sharing the key can actually be reached by it, and which one is browser/platform-dependent.",
-    "reports": "- `accesskey`: the shared key, in lower case.\n- `duplicateCount`: how many elements on the page share it, this one included.",
+    "reports": "- `accesskey`: the shared key, in lower case.\n- `duplicateCount`: how many elements on the page share it, this one included.\n- `others`: the other elements with this key, the first three, as the message names them (`<button> \"Save\"`).",
     "sourcePath": "src/checks/manual/accesskeys-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -264,7 +264,7 @@
     "deprecation": null,
     "margin": null,
     "applicability": "Elements with a non-empty `aria-errormessage` attribute.",
-    "expectation": "Per the ARIA specification, `aria-errormessage` is only exposed to assistive technology when `aria-invalid` is present with a value other than `\"false\"` (i.e. `\"true\"`, `\"grammar\"`, or `\"spelling\"`). An element with `aria-errormessage` but `aria-invalid` absent or `\"false\"` silently drops the error message from the accessibility tree, authors almost always intend it to be exposed. Reported at CANTTELL rather than FAIL: aria-errormessage is only exposed once aria-invalid is set, so the reference is currently inert. Whether that costs the user anything depends on whether the message is conveyed some other way (visible text next to the field, aria-describedby), which static markup does not settle.",
+    "expectation": "Per the ARIA specification, `aria-errormessage` is only exposed to assistive technology when `aria-invalid` is present with a value other than `\"false\"` (i.e. `\"true\"`, `\"grammar\"`, or `\"spelling\"`). An element with `aria-errormessage` but `aria-invalid` absent or `\"false\"` silently drops the error message from the accessibility tree, authors almost always intend it to be exposed. Any other value (aria-invalid=\"yes\") is read as \"true\", as WAI-ARIA 1.2 requires of a value not in its list, so the message is exposed and the element passes; the value itself is `aria-valid-attr-value`'s finding. Reported at CANTTELL rather than FAIL: aria-errormessage is only exposed once aria-invalid is set, so the reference is currently inert. Whether that costs the user anything depends on whether the message is conveyed some other way (visible text next to the field, aria-describedby), which static markup does not settle.",
     "reports": "- `ariaInvalid`: the element's `aria-invalid` value, lowercased; an empty string when the attribute is absent.",
     "sourcePath": "src/checks/automatic/aria-conditional-attr.js",
     "relatedRuleIds": [],
@@ -335,7 +335,7 @@
     "margin": null,
     "applicability": "Elements the page shows with `aria-expanded=\"true\"` or `aria-expanded=\"false\"` and an `aria-controls` that names at least one element in the same tree. Left out:\n\n- a combobox, whose `aria-controls` names its popup, often kept in the page while it is collapsed;\n- controlled elements that contain the element itself (a tree item naming its own group's parent).",
     "expectation": "`aria-expanded` tells assistive technology whether the content the element controls is shown. When it says the opposite of what the page shows, a screen reader user is told a panel is closed while it is open, or the other way round.\n\n- `aria-expanded=\"false\"`, and every element `aria-controls` names is shown: cantTell (`EXPANDED_FALSE_CONTROLLED_SHOWN`).\n- `aria-expanded=\"true\"`, and every element `aria-controls` names is hidden: cantTell (`EXPANDED_TRUE_CONTROLLED_HIDDEN`).\n- Otherwise: pass.\n\nAn element counts as hidden when it is out of the accessibility tree: `display: none`, `visibility: hidden`, `hidden`, a closed `<details>`, `content-visibility: hidden`, `inert` or `aria-hidden=\"true\"` on it or an ancestor, and, in a browser, a box of its own collapsed to no height or width with its overflow clipped (an accordion panel animated with `height: 0`). A panel collapsed some other way (a transform, an ancestor's height) counts as shown, and the content a control expands may stay in view while collapsed (a paragraph cut to two lines by `line-clamp`), which is why a finding is a question.",
-    "reports": "- `ariaExpanded`: `true` or `false`, as the attribute says.\n- `controlledCount`: how many elements `aria-controls` names that were compared.",
+    "reports": "- `ariaExpanded`: `true` or `false`, as the attribute says.\n- `controlledCount`: how many elements `aria-controls` names that were compared.\n- `controlled`: each of them, `{ element }` (`#menu`), and for hidden content what hides it, `hiddenBy` (`display: none`, `hidden`, `aria-hidden=\"true\"`...) with `hiddenByElement` when an ancestor carries it.",
     "sourcePath": "src/checks/manual/aria-expanded-state-mismatch.js",
     "relatedRuleIds": [],
     "examples": [
@@ -743,7 +743,7 @@
     "margin": null,
     "applicability": "Elements whose role attribute has the token `text`, matched in any case, before any token naming a WAI-ARIA role, so `role=\"foo text\"` and `role=\"TEXT\"` count while `role=\"link text\"` (a link) does not.",
     "expectation": "`role=\"text\"` names no WAI-ARIA role (neither WAI-ARIA 1.2 nor the 1.3 draft defines it; aria-roles-valid reports it), but some assistive technology has read it as asking to treat an element's whole subtree as a single unit of plain text (e.g. text visually split across multiple `<span>`s by styling). That only makes sense when the subtree contains no focusable content: a focusable descendant inside a \"this is just text\" region is unreachable or confusing for keyboard/AT users.",
-    "reports": "",
+    "reports": "- `focusableElement`, `focusableSelector`: the first focusable element inside, as the message names it (`<a> \"details\"`) and a selector.",
     "sourcePath": "src/checks/manual/aria-text-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -1328,9 +1328,11 @@
     "description": "Flags elements in the tab order whose focus outline is removed, by a :focus/:focus-visible rule or by a rule with no state such as a { outline: none }, with no replacement indicator (border, box-shadow, background, ...) in any focus rule matching them.",
     "type": "manual",
     "wcagSc": [
+      "1.4.11",
+      "2.4.13",
       "2.4.7"
     ],
-    "level": "AA",
+    "level": "AAA",
     "category": "operable",
     "confidence": "medium",
     "severity": "serious",
@@ -1339,7 +1341,7 @@
     "margin": null,
     "applicability": "Elements in sequential focus navigation (tabbable and rendered) on a page whose accessible stylesheets contain at least one rule that removes the outline. With no such rule anywhere, every element keeps the user agent's own indicator and there is nothing to check.",
     "expectation": "No element is matched by a rule that removes the outline (`outline: none`, `outline: 0`, `outline-color: transparent`, ...) unless some focus rule matching it draws a replacement: a border, box-shadow, background, color change, a positive outline of its own, or a `::before`/`::after` decoration. The removing rule is either a `:focus`/`:focus-visible` rule, or a rule with no state at all (`a { outline: none }`, `* { outline: 0 }`): an author declaration outranks the user agent's focus outline whatever its specificity, so it removes the indicator in the focused state too (WCAG F78). A rule that removes it only under `:not(:focus-visible)` keeps it for keyboard focus and is not counted; nor is the focus-visible polyfill's form of it, `:not(.focus-visible)` under `.js-focus-visible`, or `:not([data-focus-visible-added])` under `[data-js-focus-visible]`.",
-    "reports": "- `suppressingSelectors`: the selector of each style sheet rule that removes the element's outline, one item per selector.",
+    "reports": "- `suppressingSelectors`: the selector of each style sheet rule that removes the element's outline, one item per selector.\n- `styleSheet` or `styleElementIndex`: when those rules are all in one style sheet, its href as written, or the position of its <style> element among the page's, from 1.",
     "sourcePath": "src/checks/manual/css-focus-indicator-suppressed-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -1380,7 +1382,7 @@
     "margin": null,
     "applicability": "Applies to elements that are tabbable (keyboard-focusable) but are visually hidden via CSS techniques that can leave them in the tab order.",
     "expectation": "No element should be tabbable while visually hidden (e.g., opacity:0, clipped, off-screen). An element that CSS brings back into view when it takes focus is not hidden while focused, and is not flagged: the usual skip-link pattern (`.skip { position: absolute; left: -9999px } .skip:focus { left: 0 }`), or a hiding rule that stops applying on focus (`.visually-hidden-focusable:not(:focus) { clip: rect(0 0 0 0) }`). A focus rule nested in another (`.skip { &:focus { top: 0 } }`) counts as written out; one whose focus is inside `:has()` counts, for its subject, as `:focus-within` does. A focus rule that isn't `!important` doesn't override an `!important` declaration that hides the element.",
-    "reports": "- `metrics.visibilityHints`: how the element is hidden while it can take focus: `opacityZero`, `offscreen`, `clipped` or `zeroSizeOverflowHidden` (no size, with overflow hidden) by its own styles; when they show it, `outOfReach` (a container is positioned off screen, or, in a browser, the box focus would show lies where no scrolling reaches) or `containerClipped` (a container is clipped to nothing, has no size with overflow hidden, or is scaled to nothing, or, in a browser, the element lies wholly outside a container with `overflow: clip`, which focus doesn't scroll).\n- `runtimeProbe`: `null` unless focusing the element moved focus straight to another element (`cssHiddenTabbable_runtimeRedirect_needsReview`). Then it holds `redirected: true` and the tag and id of the element focus moved to (`redirectedToTag`, `redirectedToId`). Only the first three hidden elements are tried this way.",
+    "reports": "- `metrics.visibilityHints`: how the element is hidden while it can take focus: `opacityZero`, `offscreen`, `clipped` or `zeroSizeOverflowHidden` (no size, with overflow hidden) by its own styles; when they show it, `outOfReach` (a container is positioned off screen, or is fixed and clips its content where its px lengths put it wholly outside the viewport, or, in a browser, the box focus would show lies where no scrolling reaches) or `containerClipped` (a container is clipped to nothing, has no size with overflow hidden, or is scaled to nothing, or, in a browser, the element lies wholly outside a container with `overflow: clip`, which focus doesn't scroll).\n- `runtimeProbe`: `null` unless focusing the element moved focus straight to another element (`cssHiddenTabbable_runtimeRedirect_needsReview`). Then it holds `redirected: true` and the tag and id of the element focus moved to (`redirectedToTag`, `redirectedToId`). Only the first three hidden elements are tried this way.",
     "sourcePath": "src/checks/manual/css-hidden-focus-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -1790,15 +1792,91 @@
     ]
   },
   {
+    "ruleId": "focus-not-obscured-enhanced",
+    "title": "No part of a focused element should be hidden",
+    "description": "Checks that no element in the tab order can take focus with any part of it hidden behind content the page keeps in place, such as a sticky header or footer or a cookie banner.",
+    "type": "manual",
+    "wcagSc": [
+      "2.4.12"
+    ],
+    "level": "AAA",
+    "category": "operable",
+    "confidence": "low",
+    "severity": "moderate",
+    "deprecated": false,
+    "deprecation": null,
+    "margin": null,
+    "applicability": "What focus-not-obscured-minimum applies to: in a browser, the elements in the tab order that are drawn and scroll with the page, and the `position: fixed` or `sticky` boxes that draw something over it. Without a layout (jsdom), notApplicable.",
+    "expectation": "No element in the tab order can take focus with any part of it hidden behind such a box, even one it shows through (a semi-transparent or dimming box obscures it, as WCAG's Understanding 2.4.12 says, where focus-not-obscured-minimum lets it pass): where a box covers part of the window the page's `scroll-padding` doesn't take out, an element that reaches under it and can be scrolled there takes focus partly hidden. One finding per box, naming how many elements it can hide entirely and how many in part. A `scroll-padding` on the page at least as large as the box (C43) clears it. Content the user opened and can close without moving focus is allowed, and a script-made modal dialog that leaves the page able to take focus is reported apart, as in focus-not-obscured-minimum. It is focus-not-obscured-minimum run with `obscured: 'partly'` (a variant: docs/RULE_AUTHORING.md, \"Rule variants\"), so a fix to that rule's measuring reaches this one.",
+    "reports": "- As focus-not-obscured-minimum's, with `metrics.partlyCount`: how many elements can take focus partly hidden, and not entirely.",
+    "sourcePath": "src/checks/manual/focus-not-obscured-enhanced-manual.js",
+    "relatedRuleIds": [
+      "focus-not-obscured-minimum"
+    ],
+    "examples": [
+      {
+        "outcome": "Passed",
+        "state": "pass",
+        "html": "<style>html { scroll-padding-bottom: 60px; } footer { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #fff; }</style>\n<p style=\"height: 1000px\">Article</p>\n<p><a href=\"/next\">Next article</a></p>\n<p style=\"height: 1000px\"></p>\n<footer>Site footer</footer>",
+        "explanation": "The page's `scroll-padding-bottom` is as tall as the fixed footer, so focus scrolls the link clear of it before it can be hidden, even in part."
+      },
+      {
+        "outcome": "Flagged (cantTell)",
+        "state": "unknown",
+        "html": "<style>.chat { position: fixed; bottom: 0; left: 0; width: 40px; height: 60px; background: #036; }</style>\n<p style=\"height: 1000px\">Article</p>\n<p><a href=\"/next\" style=\"display: inline-block; width: 200px\">Next article</a></p>\n<p style=\"height: 1000px\"></p>\n<div class=\"chat\">Chat</div>",
+        "explanation": "The chat button stays in place over the bottom of the window, which the page still counts as in view, so the link can take focus with part of it hidden behind the button."
+      }
+    ]
+  },
+  {
+    "ruleId": "focus-not-obscured-minimum",
+    "title": "A focused element must not be entirely hidden",
+    "description": "Checks that no element in the tab order can take focus entirely hidden behind content the page keeps in place, such as a sticky header or footer or a cookie banner.",
+    "type": "manual",
+    "wcagSc": [
+      "2.4.11"
+    ],
+    "level": "AA",
+    "category": "operable",
+    "confidence": "low",
+    "severity": "serious",
+    "deprecated": false,
+    "deprecation": null,
+    "margin": null,
+    "applicability": "Applies, in a browser, to the elements in the tab order that are drawn and scroll with the page, and to the boxes the page keeps in place over it: `position: fixed` or `sticky` boxes that draw something (a background, an image or a picture), such as a sticky header or footer, a cookie banner or a chat widget. Without a layout (jsdom) nothing can be measured, and the rule is notApplicable.",
+    "expectation": "No element in the tab order can take focus entirely hidden behind such a box. A browser scrolls a focused element into view only when it is not already in view, and counts as in view the whole window less the page's `scroll-padding`. So where a fixed or sticky box covers part of the window that `scroll-padding` doesn't take out, an element that fits under it and can be scrolled there takes focus there and stays hidden: as the user tabs down a page, the next link is often already in the strip a footer covers. The rule works out, for each box, which elements can end up entirely under it, then scrolls a few of them there and checks that the box is what the browser draws on top of them, and puts the page back where it was. A sticky box counts only for the elements in its containing block, where it can be. A box hides an element entirely only where it is drawn opaque: under a semi-transparent or dimming box (an `opacity` under 1 on it or a container, or a background color that isn't opaque) the element shows through, so it is not entirely hidden, as WCAG's Understanding 2.4.11 says; 2.4.12 counts it as obscured. One finding per box, naming how many elements it can hide and one of them. A page lists at most 50 boxes, in document order, and checks at most 150 elements; when boxes are left unchecked, the result's own `data.details` says how many boxes could hide an element (`boxCount`), how many are listed (`reportedCount`, at most `maxOccurrences`), how many weren't checked (`uncheckedCount`), and `truncated`. A `scroll-padding` on the page at least as large as the box (technique C43) clears it. Content the user opened and can close without moving focus, such as a chat panel closed with Escape, is allowed to cover the focused element (the criterion's second note); the rule can't tell who opened a box, so it asks. A script-made modal dialog (`aria-modal=\"true\"`) that leaves the page behind it able to take focus is reported apart: focus can then reach elements its backdrop covers. A `<dialog>` opened with `showModal()` makes the page inert, so nothing behind it takes focus. It is the base of focus-not-obscured-enhanced (2.4.12), which asks about an element any part of which can be hidden (`obscured: 'partly'`).",
+    "reports": "- `metrics.entirelyCount`: how many elements in the tab order can take focus entirely hidden behind the box.\n- `metrics.partlyCount`: with `obscured: 'partly'`, how many can take focus partly hidden, and not entirely.\n- `metrics.position`: `fixed` or `sticky`, the box's own or that of the box it is drawn in.\n- `metrics.side`: where the box sits, `top`, `bottom` or `middle`, for the `scroll-padding` that would clear it.\n- `metrics.coverPx`: the height of the window the box covers that the page still counts as in view, in CSS pixels.\n- `metrics.scrollPaddingPx`: the page's `scroll-padding` on that side.\n- `metrics.paddingNeededPx`: the `scroll-padding` on that side that would clear the box, from that edge of the window to the box's far side (a box stacked under another counts both).\n- `openedByUser`: whether a control marked expanded (`aria-expanded=\"true\"`) names the box, or something in or around it, with `aria-controls`: content the user opened, which may cover the focused element if it closes without moving focus.\n- `examples`: up to 5 of the elements it can hide, each `{ tag, text }`.\n- `confirmedBy`: the element the rule scrolled under the box to check that the box is drawn on top of it, as `{ tag, text }`.",
+    "sourcePath": "src/checks/manual/focus-not-obscured-minimum-manual.js",
+    "relatedRuleIds": [
+      "focus-not-obscured-enhanced"
+    ],
+    "examples": [
+      {
+        "outcome": "Passed",
+        "state": "pass",
+        "html": "<style>html { scroll-padding-bottom: 60px; } footer { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #fff; }</style>\n<p style=\"height: 1000px\">Article</p>\n<p><a href=\"/next\">Next article</a></p>\n<p style=\"height: 1000px\"></p>\n<footer>Site footer</footer>",
+        "explanation": "The page's `scroll-padding-bottom` is as tall as the fixed footer, so focus scrolls the link clear of it."
+      },
+      {
+        "outcome": "Flagged (cantTell)",
+        "state": "unknown",
+        "html": "<style>footer { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #fff; }</style>\n<p style=\"height: 1000px\">Article</p>\n<p><a href=\"/next\">Next article</a></p>\n<p style=\"height: 1000px\"></p>\n<footer>Site footer</footer>",
+        "explanation": "The fixed footer covers the bottom 60px of the window, which the page still counts as in view, so the link can take focus there entirely hidden behind it, as the next link often does while tabbing down a page."
+      }
+    ]
+  },
+  {
     "ruleId": "focus-not-removed-by-script",
     "title": "A script must not remove focus from an element as it receives it",
     "description": "Fails elements in the tab order whose inline onfocus handler only calls blur() on them, and asks about other handlers that call blur(), or focus() on another element, which can remove focus as soon as the element receives it.",
     "type": "automatic",
     "wcagSc": [
       "2.1.1",
+      "2.1.3",
+      "2.4.13",
       "2.4.7"
     ],
-    "level": "AA",
+    "level": "AAA",
     "category": "operable",
     "confidence": "medium",
     "severity": "serious",
@@ -1881,7 +1959,7 @@
     "margin": null,
     "applicability": "Visible form fields: native `input` (excluding hidden and the button-like types), `select`, `textarea`, or an element with one of the ARIA widget roles ACT cc0f0a lists (checkbox, combobox, listbox, menuitemcheckbox, menuitemradio, radio, searchbox, slider, spinbutton, switch, textbox; the first real role token of the role attribute, in any case) that carry a visible programmatic label: a `<label>` association, or the elements `aria-labelledby` points at. A field named only by `aria-label`/`title` has no visible label to judge and is out of scope here (its labelling mechanism is `form-control-programmatic-label-quality`'s concern, its presence `form-control-programmatic-label-present`'s). A custom element whose ElementInternals give it one of those roles (this.attachInternals().role), with no role attribute naming another, counts as a native element with that role does. Finding nothing to ask about, it reports notApplicable, not pass: it applies only to what its check flags, and finding nothing there doesn't show that all is well.",
     "expectation": "The visible label text (a) is not a placeholder left in the markup (\"label\", \"field\", \"enter text\", ...), (b) is not shared with another field that no visible context tells apart (the same \"Name\" twice, with nothing visible on screen saying which is shipping and which is billing), and (c) is the whole of the field's programmatic label, not the visible fragment of a label whose descriptive part is hidden.",
-    "reports": "- `label`: the visible label text of the field.\n- `sharedWith`: how many other fields have the same label with nothing visible telling them apart, a count. 0 when no other field shares it.\n- `hiddenLabelParts`: how many parts of the field's label are hidden from sight, a count. 0 when the whole label is visible.",
+    "reports": "- `label`: the visible label text of the field.\n- `sharedWithFields`: on `DUPLICATE_LABEL_TEXT`, the first three of those other fields, as the message names them (`#last (name=\"last\")`).\n- `sharedWith`: how many other fields have the same label with nothing visible telling them apart, a count. 0 when no other field shares it.\n- `hiddenLabelParts`: how many parts of the field's label are hidden from sight, a count. 0 when the whole label is visible.",
     "sourcePath": "src/checks/manual/form-control-label-quality-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -1955,7 +2033,7 @@
     "margin": null,
     "applicability": "Applies to labelable native form controls exposed to assistive technologies:\n\n- input (excluding type=hidden|submit|reset|button|image)\n- select\n- textarea\n\nrole=\"presentation\"/\"none\" are excluded only when not focusable. A control not drawn on screen is excluded: transparent (opacity 0, its own or an ancestor's) or clipped away (as visually hidden text is), as a checkbox hidden behind a styled toggle is. It has no visible label to judge; its visible stand-in does. Only controls that have a programmatic name count: a control with none is form-control-programmatic-label-present's finding, not a question about how good its name is.",
     "expectation": "If a control has a programmatic name, it should not come ONLY from:\n\n- placeholder (non-empty)\n- title (non-empty)\n- aria-label\n- aria-labelledby whose every referenced element is unrendered (hidden, display:none, visibility:hidden)\n\nPrefer an associated <label> or aria-labelledby pointing at visible text.",
-    "reports": "- `labelMethod`: where the control's label comes from: `placeholder`, `title`, `aria-label` or `aria-labelledby`.\n- `reasonCode`: `label_from_placeholder_primary`, `label_from_title_primary`, `label_from_aria_label_only` or `label_from_hidden_labelledby`.\n- `sourceText`: the label text, up to 120 characters.",
+    "reports": "- `labelMethod`: where the control's label comes from: `placeholder`, `title`, `aria-label` or `aria-labelledby`.\n- `reasonCode`: `label_from_placeholder_primary`, `label_from_title_primary`, `label_from_aria_label_only` or `label_from_hidden_labelledby`.\n- `sourceText`: the label text, up to 120 characters.\n- `labelledbyTargets` (`label_from_hidden_labelledby`): the elements aria-labelledby points at (`#id`), with `hiddenBy` and, when an ancestor carries it, `hiddenByElement`, for a single target.",
     "sourcePath": "src/checks/manual/form-control-programmatic-label-quality-manual.js",
     "relatedRuleIds": [
       "form-control-programmatic-label-present"
@@ -2037,7 +2115,7 @@
     "margin": null,
     "applicability": "Applies whenever the page contains two or more heading elements (native <h1>-<h6>, or explicit role=\"heading\" with aria-level; default level 2 per the ARIA spec when aria-level is absent/invalid). A native <hx> with a valid aria-level (a positive integer) takes that level, as browsers expose it; otherwise it takes its tag level. A native <hx> marked role=\"none\" or \"presentation\" is still a heading when it can take focus or carries a global ARIA attribute, as WAI-ARIA's presentational roles conflict resolution has browsers ignore that role then. A custom element whose ElementInternals give it the heading role (this.attachInternals().role) counts as role=\"heading\" does, at the level its aria-level attribute or its internals' ariaLevel give.",
     "expectation": "In the order assistive technology reads the page, each heading's level is no more than one greater than the level of the previous heading exposed to assistive technology. Jumping deeper by more than one level (e.g. an <h1> followed directly by an <h3>, skipping <h2>) breaks the document outline assistive technology users rely on when navigating by heading. Going back to a shallower level at any point is always fine.",
-    "reports": "- `fromLevel`: the level of the previous exposed heading (3 for an <h3>).\n- `toLevel`: this heading's level, more than one deeper than `fromLevel`.",
+    "reports": "- `fromLevel`: the level of the previous exposed heading (3 for an <h3>).\n- `toLevel`: this heading's level, more than one deeper than `fromLevel`.\n- `previousText`, `previousSelector`: the previous exposed heading, its text (shortened) and a selector for it.",
     "sourcePath": "src/checks/manual/heading-order-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -2212,7 +2290,7 @@
     "margin": null,
     "applicability": "Sets of two or more `a[href]` elements, or elements whose role attribute resolves to link (its first real role token, in any case), that share a non-empty accessible name (trimmed, whitespace-collapsed, case-folded), as in ACT b20e66. A link whose name no other link shares has nothing to be compared with. A custom element whose ElementInternals give it the link role (this.attachInternals().role), with no role attribute naming another, counts as a native element with that role does.",
     "expectation": "Within a page, links that share the same accessible name are expected to serve the same purpose (i.e. resolve to the same destination, the full resolved URL, including any fragment). Same-text-different- destination links are common and frequently intentional in real sites (e.g. repeated \"Read more\" links per article card), so this is authored as `type: 'manual'` (cantTell-capped, never fail) rather than a hard fail, flagging a real name/destination mismatch for human judgment instead of guessing intent.",
-    "reports": "- `name`: the accessible name the links share, trimmed, with whitespace collapsed and in lower case.\n- `href`: the full URL this link leads to.\n- `distinctDestinationCount`: how many different URLs the links with this name lead to, a count of 2 or more.\n- `linkKind`: what this link is made of (`helpers.getLinkKind`): `svg` for an `<a>` in SVG; `image` for an `<area>`, or a link whose content is only images (`<img>`, `<svg>`, `<object>`, `<canvas>`, `role=\"img\"`); `composite` for text and an image; `text` otherwise, a link with no content (named by its attributes) included.",
+    "reports": "- `name`: the accessible name the links share, trimmed, with whitespace collapsed and in lower case.\n- `href`: the full URL this link leads to.\n- `distinctDestinationCount`: how many different URLs the links with this name lead to, a count of 2 or more.\n- `otherDestinations`: the other addresses the links with this name lead to, the first ten, as the message shows them (a path on the page's own site).\n- `linkKind`: what this link is made of (`helpers.getLinkKind`): `svg` for an `<a>` in SVG; `image` for an `<area>`, or a link whose content is only images (`<img>`, `<svg>`, `<object>`, `<canvas>`, `role=\"img\"`); `composite` for text and an image; `text` otherwise, a link with no content (named by its attributes) included.",
     "sourcePath": "src/checks/manual/identical-links-same-purpose-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -2242,9 +2320,10 @@
     "description": "Checks that same-origin <iframe>/<frame> elements with tabindex=\"-1\" do not contain focusable content, which keyboard users cannot reach: the negative tabindex takes the frame’s whole content out of the tab order.",
     "type": "automatic",
     "wcagSc": [
-      "2.1.1"
+      "2.1.1",
+      "2.1.3"
     ],
-    "level": "A",
+    "level": "AAA",
     "category": "operable",
     "confidence": "high",
     "severity": "moderate",
@@ -2430,7 +2509,7 @@
     "margin": null,
     "applicability": "Applies to visible <img>, <canvas> or <svg> elements excluded from the accessibility tree by any of: an aria-hidden ancestor-or-self, an explicit role=\"none\"/\"presentation\" not overridden by focusability, an <img alt=\"\"> (the native decorative marker, same focusability override; only a literally empty alt, so alt=\" \" is not one), an unlabeled <svg> whose implicit role is graphics-document (no img/graphics-symbol role restatement, aria-name, direct child <title>/<desc> with text wherever it is among the children, or focusability), or an unlabeled <canvas> with no explicit role at all. An element is skipped when an ancestor whose name stands for its content has an author-supplied name (aria-label, aria-labelledby, title, or an associated <label>): that name replaces what the image would have said (the common case: an icon-only button named with aria-label). Such an ancestor has a role named from its content (link, button, heading, cell, option, tab, treeitem, menuitem...) or with presentational children (img, slider, progressbar...). ACT e88epe skips the element under any ancestor named from author; this rule still asks under a named landmark, figure, group, region, dialog or composite widget (listbox, menu, grid...), whose name labels a container and says nothing of what an image in it shows: `<figure aria-label=\"Photo: DR\">` credits a photo. A link or button named by its text does not exempt an image beside the text either: a file-type, external-link or rating icon can say what the text does not, and ACT keeps it applicable. An element in an [inert] subtree, or behind an open modal dialog, is left out as other hidden content is, as img-alt-present leaves it out: it takes no interaction and no assistive technology gets it.",
     "expectation": "Human review is required to confirm the excluded element is purely decorative and conveys no information a user would otherwise miss.",
-    "reports": "- `element`: `img`, `svg` or `canvas`.\n- `sameImageCount`: how many of this result's findings show the same image, this one included: an <img> with the same current source (`currentSrc`, else `src`), or an inline <svg> with the same root attributes that change its rendering (viewBox, width, height, class, style, fill, stroke, color) and the same markup. 1 for a canvas, an image with no source or markup to compare, or a lazy-loaded <img> whose `data:` placeholder stands in for a `data-src` or `data-srcset`.\n- `sameImageFirst`: true on the first of them in document order, so a reader can review one copy and count the rest.\n- `reasonCode`: `IMAGE_ONLY_CONTROL_CONTENT` when the image is the only content of a link or button (no text and no other image in it): the control then has no name from it, whether or not it decorates, with `controlContent` naming the control's role (`link` or `button`). `EXCLUDED_ELEMENT_REVIEW` otherwise.",
+    "reports": "- `element`: `img`, `svg` or `canvas`.\n- `sameImageCount`: how many of this result's findings show the same image, this one included: an <img> with the same current source (`currentSrc`, else `src`), or an inline <svg> with the same root attributes that change its rendering (viewBox, width, height, class, style, fill, stroke, color) and the same markup. 1 for a canvas, an image with no source or markup to compare, or a lazy-loaded <img> whose `data:` placeholder stands in for a `data-src` or `data-srcset`.\n- `sameImageFirst`: true on the first of them in document order, so a reader can review one copy and count the rest.\n- `reasonCode`: `IMAGE_ONLY_CONTROL_CONTENT` when the image is the only content of a link or button (no text and no other image in it): the control then has no name from it, whether or not it decorates, with `controlContent` naming the control's role (`link` or `button`). `EXCLUDED_ELEMENT_REVIEW` otherwise.\n- `excludedBy`: what hides it: `hidden-ancestor` (an ancestor's aria-hidden, with `hiddenBy` and `hiddenByElement`), `hidden` (its own), `role` (role none/presentation), `empty-alt`, `unnamed-svg` or `unnamed-canvas`; `alt` quotes a non-empty alt that is never read.",
     "sourcePath": "src/checks/manual/img-alt-decorative-manual.js",
     "relatedRuleIds": [
       "img-alt-present",
@@ -2506,7 +2585,7 @@
     "margin": null,
     "applicability": "Applies to <img> elements whose alt attribute is present and non-empty. The element must be included in the accessibility tree, and a role attribute resolving to presentation/none (its first token naming a known role, matched case-insensitively) takes it out of scope unless it is focusable, which restores its role. An <img> with no alt at all is img-alt-present's failure, and one with alt=\"\" is img-alt-decorative's review.",
     "expectation": "Human review is required to confirm that the provided text alternative is accurate and appropriate. Alt text that looks like something other than a description gets its own summary and hint: a file name (or alt equal to the image's own file name), a web address, only symbols (such as \"★★★★☆\"), a placeholder or generic word such as \"image\" or \"TBD\", an opening that says it is an image (\"image of\", \"photo of\"), or alt longer than 150 characters. Every finding is still `cantTell`: each of these can be right in context.",
-    "reports": "- `altSignal`: what made the alt text look suspicious, on those findings only: `file-name`, `url`, `symbols`, `placeholder`, `redundant-prefix` or `too-long`. Absent on a finding with ordinary alt text. When several apply, the first in that order is reported.\n- `length`: the alt text's length in characters, on `too-long` only.\n- `limit`: the length above which alt counts as too long (150), on `too-long` only.\n- `reasonCode`: `IMAGE_ONLY_CONTROL_CONTENT` when the image is the only content of a link or button (no text and no other image in it), so its alt is the control's name (H30), with `controlContent` naming the control's role (`link` or `button`); `TEXT_ALTERNATIVE_REVIEW` otherwise.",
+    "reports": "- `altSignal`: what made the alt text look suspicious, on those findings only: `file-name`, `url`, `symbols`, `placeholder`, `redundant-prefix` or `too-long`. Absent on a finding with ordinary alt text. When several apply, the first in that order is reported.\n- `length`: the alt text's length in characters, on `too-long` only.\n- `limit`: the length above which alt counts as too long (150), on `too-long` only.\n- `nameSource`, `name` (and `labelledbyIds`): when aria-label or aria-labelledby names the image in place of its alt, where the name comes from and what it is; the message then quotes that name.\n- `reasonCode`: `IMAGE_ONLY_CONTROL_CONTENT` when the image is the only content of a link or button (no text and no other image in it), so its alt is the control's name (H30), with `controlContent` naming the control's role (`link` or `button`); `TEXT_ALTERNATIVE_REVIEW` otherwise.",
     "sourcePath": "src/checks/manual/img-alt-quality-manual.js",
     "relatedRuleIds": [
       "img-alt-decorative",
@@ -2550,7 +2629,7 @@
     "margin": null,
     "applicability": "Applies to <input type=\"image\"> elements whose alt attribute is present but empty once trimmed, and which still carry a name from another source: an ARIA name resolving to non-empty text, or a title. Without that other name there is nothing to weigh the empty alt against, and the control is input-image-alt-present's failure instead. The element must be included in the accessibility tree, and role=\"presentation\"/\"none\" takes it out of scope unless it is focusable, which restores its role.",
     "expectation": "Human review is required to confirm that the provided text alternative is accurate and appropriate.",
-    "reports": "",
+    "reports": "- `name`, `nameSource`: the name the input takes in place of its alt, and where from (`aria-labelledby`, with `labelledbyIds`, `aria-label`, `internals` or `title`).",
     "sourcePath": "src/checks/manual/input-image-alt-decorative-manual.js",
     "relatedRuleIds": [
       "input-image-alt-present",
@@ -2803,7 +2882,7 @@
     "margin": null,
     "applicability": "Applies whenever the page contains at least one banner candidate: explicit role=\"banner\", OR a <header> with NO role attribute at all, regardless of nesting. A custom element whose ElementInternals give it a landmark role (this.attachInternals().role), with no role attribute naming another, is a landmark as a native element with that role is.",
     "expectation": "No banner candidate has an ancestor that is itself any landmark region. A banner nested inside another landmark is not a top-level, whole-page banner and confuses landmark-based navigation for assistive technology users.",
-    "reports": "",
+    "reports": "- `ancestorRole`, `ancestorElement`: the landmark it is nested in, its role and the element, as the message names it.",
     "sourcePath": "src/checks/manual/landmark-banner-is-top-level-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -2836,7 +2915,7 @@
     "margin": null,
     "applicability": "Applies whenever the page contains at least one element carrying the complementary role: explicit role=\"complementary\", or an <aside> that keeps its implicit role. A custom element whose ElementInternals give it a landmark role (this.attachInternals().role), with no role attribute naming another, is a landmark as a native element with that role is.",
     "expectation": "No complementary candidate has an ancestor that is itself a landmark region. Complementary content supports the main content of the page and sits beside it; nested inside another landmark it is a section of that landmark instead, which is not what landmark navigation announces.",
-    "reports": "",
+    "reports": "- `ancestorRole`, `ancestorElement`: the landmark it is nested in, its role and the element, as the message names it.",
     "sourcePath": "src/checks/manual/landmark-complementary-is-top-level-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -2869,7 +2948,7 @@
     "margin": null,
     "applicability": "Applies whenever the page contains at least one contentinfo candidate: explicit role=\"contentinfo\", OR a <footer> with NO role attribute at all, regardless of nesting. A custom element whose ElementInternals give it a landmark role (this.attachInternals().role), with no role attribute naming another, is a landmark as a native element with that role is.",
     "expectation": "No contentinfo candidate has an ancestor that is itself any landmark region. A contentinfo nested inside another landmark is not a top-level, whole-page footer region and confuses landmark-based navigation for assistive technology users.",
-    "reports": "",
+    "reports": "- `ancestorRole`, `ancestorElement`: the landmark it is nested in, its role and the element, as the message names it.",
     "sourcePath": "src/checks/manual/landmark-contentinfo-is-top-level-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -2902,7 +2981,7 @@
     "margin": null,
     "applicability": "Applies whenever the page contains at least one main landmark (explicit role=\"main\", or an implicit <main> element). A custom element whose ElementInternals give it a landmark role (this.attachInternals().role), with no role attribute naming another, is a landmark as a native element with that role is.",
     "expectation": "No main landmark has an ancestor that is itself any landmark region. A main region nested inside another landmark is not a top-level, whole-page main content area and confuses landmark-based navigation for assistive technology users.",
-    "reports": "",
+    "reports": "- `ancestorRole`, `ancestorElement`: the landmark it is nested in, its role and the element, as the message names it.",
     "sourcePath": "src/checks/manual/landmark-main-is-top-level-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -2935,7 +3014,7 @@
     "margin": null,
     "applicability": "Applies whenever the page contains at least one banner landmark (explicit role=\"banner\", or an implicit, non-nested <header>, found the same way as in landmark-banner-is-top-level). A custom element whose ElementInternals give it a landmark role (this.attachInternals().role), with no role attribute naming another, is a landmark as a native element with that role is.",
     "expectation": "At most one banner landmark exists on the page. Per WAI-ARIA Authoring Practices, the banner landmark represents site-oriented content that identifies the page as a whole, so having more than one is ambiguous for assistive technology users navigating by landmark.",
-    "reports": "- `count`: how many banner landmarks the page exposes to assistive technology, against a limit of 1.",
+    "reports": "- `count`: how many banner landmarks the page exposes to assistive technology, against a limit of 1.\n- `others`: the other landmarks of this role, as the message names them, with their text (`<div role=\"banner\" class=\"cookie\"> \"Cookies\"`).",
     "sourcePath": "src/checks/manual/landmark-no-duplicate-banner-manual.js",
     "relatedRuleIds": [
       "landmark-no-duplicate-contentinfo",
@@ -2971,7 +3050,7 @@
     "margin": null,
     "applicability": "Applies whenever the page contains at least one contentinfo landmark (explicit role=\"contentinfo\", or an implicit, non-nested <footer>). A custom element whose ElementInternals give it a landmark role (this.attachInternals().role), with no role attribute naming another, is a landmark as a native element with that role is.",
     "expectation": "At most one contentinfo landmark exists on the page, mirroring landmark-no-duplicate-banner's rationale for contentinfo.",
-    "reports": "- `count`: how many contentinfo landmarks the page exposes to assistive technology, against a limit of 1.",
+    "reports": "- `count`: how many contentinfo landmarks the page exposes to assistive technology, against a limit of 1.\n- `others`: the other landmarks of this role, as the message names them, with their text (`<div role=\"banner\" class=\"cookie\"> \"Cookies\"`).",
     "sourcePath": "src/checks/manual/landmark-no-duplicate-contentinfo-manual.js",
     "relatedRuleIds": [
       "landmark-no-duplicate-banner",
@@ -3007,7 +3086,7 @@
     "margin": null,
     "applicability": "Applies whenever the page contains at least one main landmark (explicit role=\"main\", or an implicit <main>). A custom element whose ElementInternals give it a landmark role (this.attachInternals().role), with no role attribute naming another, is a landmark as a native element with that role is.",
     "expectation": "At most one main landmark exists on the page. Distinct, atomic decision from landmark-one-main (that rule flags zero mains too; this one only flags more than one).",
-    "reports": "- `count`: how many main landmarks the page exposes to assistive technology, against a limit of 1.",
+    "reports": "- `count`: how many main landmarks the page exposes to assistive technology, against a limit of 1.\n- `others`: the other landmarks of this role, as the message names them, with their text (`<div role=\"banner\" class=\"cookie\"> \"Cookies\"`).",
     "sourcePath": "src/checks/manual/landmark-no-duplicate-main-manual.js",
     "relatedRuleIds": [
       "landmark-no-duplicate-banner",
@@ -3115,7 +3194,7 @@
     "margin": null,
     "applicability": "Applies whenever two or more landmark regions on the page share the same landmark role (banner, contentinfo, main, navigation, complementary, region, form, or search). A custom element whose ElementInternals give it a landmark role (this.attachInternals().role), with no role attribute naming another, is a landmark as a native element with that role is.",
     "expectation": "Among landmarks sharing a role, each has a distinct accessible name (via aria-label/aria-labelledby; landmarks are not named from content). Two same-role landmarks with the same name (including two both left unnamed) are indistinguishable to assistive technology users navigating by landmark. A shared name is reported as CANTTELL, never as a failure: the ARIA Authoring Practices allow one when the landmarks have the same content and purpose, such as pagination repeated above and below a table, which only a person can confirm. Two unnamed landmarks need names either way, and the same allowance then applies to those names.",
-    "reports": "- `role`: the landmark role the colliding landmarks share, such as `navigation`.\n- `name`: the name they share, in lowercase with spacing collapsed. Empty when they are all unnamed.\n- `groupSize`: how many landmarks of that role share that name.",
+    "reports": "- `role`: the landmark role the colliding landmarks share, such as `navigation`.\n- `name`: the name they share, in lowercase with spacing collapsed. Empty when they are all unnamed.\n- `groupSize`: how many landmarks of that role share that name.\n- `others`: the other landmarks in the group, as the message names them (`<nav id=\"pages\">`, with their text when they are unnamed).",
     "sourcePath": "src/checks/manual/landmark-unique-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -3161,7 +3240,7 @@
         "relative": 0.1
       }
     },
-    "applicability": "Applies to links (`<a href>` and elements whose role attribute resolves to link: its first known role token, in any case, is `link`) that draw text (text other than white space in the link's flat tree and, where the page has a layout, a box with some area) and whose immediate parent element also has text with a letter or a digit beside it: a direct-child text node, or text in an inline element on the same line that is not a link, is not drawn invisibly, and is not an item of a flex or grid parent (i.e. the link sits inline within a run of plain text, not as a standalone item, e.g. not the sole content of a <li> nav item, nor one of a row of links separated by \"|\" or \"·\"). A custom element whose ElementInternals give it the link role (this.attachInternals().role), with no role attribute naming another, counts as a native element with that role does.",
+    "applicability": "Applies to links (`<a href>` and elements whose role attribute resolves to link: its first known role token, in any case, is `link`) that draw text (text other than white space in the link's flat tree and, where the page has a layout, a box with some area) and whose immediate parent element also has text with a letter or a digit beside it, on the link's own line (a `<br>`, or a child laid out as a block, starts another): a direct-child text node, or text in an inline element that is not a link, is not drawn invisibly, and is not an item of a flex or grid parent (i.e. the link sits inline within a run of plain text, not as a standalone item, e.g. not the sole content of a <li> nav item, nor one of a row of links separated by \"|\" or \"·\"). A custom element whose ElementInternals give it the link role (this.attachInternals().role), with no role attribute naming another, counts as a native element with that role does.",
     "expectation": "A link inside a text block must be visually distinguishable from the surrounding text by at least one non-color means:\n\n- text-decoration: underline, OR\n- a different font-weight or font-style than the surrounding text, OR\n- another visible mark on the link itself: a border, box-shadow or outline, a background color different from the surrounding one, a background image, an image or svg inside it, or a ::before/::after that draws something (content of its own, or an empty box painting a background, border, outline or shadow, as an underline drawn that way does), OR\n- a mark on all of its content: bold, italic, underlined, bordered, a background unlike the surrounding text's (a code chip, <mark>), or raised or lowered (a footnote's <sup>).\n\nA link with none of these is distinguished by color alone. When its color contrasts with the surrounding text by at least 3:1, technique G183 is met only if hover and focus also bring a non-color cue, which a static scan cannot see, so the link is reported as cantTell. Below 3:1, with contrast confidently computable, color is demonstrably the only cue and the link fails. The ratio between the link's color and the text's needs no background, so where only the background, or an effect applied alike to both, keeps it from being measured, two opaque text colors still decide it. Margin (`contrast-ratio`): of the links told apart by color alone that reach 3:1, the one closest to it, with its ratio unrounded. Those links are also asked about (the hover and focus cue), so the margin appears on a cantTell or fail result. Only a link within 10% of 3:1 (up to 3.3:1) counts as close. `measuredCount` counts the links whose only cue is color.",
     "reports": "- `metrics.ratio` (a link set apart by color only): the contrast between the link's text color and the surrounding text's, as a ratio (3 for 3:1), against `metrics.threshold` (3).\n- `metrics.ratioBeforeOpacity` (a link set apart by color only, under `ANCESTOR_OPACITY`): that ratio before an ancestor's opacity fades the link and the text alike, in place of `metrics.ratio`. The fading brings the two colors closer, so the ratio drawn may be lower: below 3:1 the link fails all the same, at 3:1 or more it is asked about with no lean toward pass, and it gives no margin.\n- `colors.linkForegroundHex`, `colors.surroundingTextForegroundHex` (a link set apart by color only): the link's text color and the surrounding text's, as hex.\n- `colorScheme` (a link with a background color of its own, on the canvas of a page that supports light and dark): `'light'` or `'dark'`, the scheme in which that background doesn't set it apart from the canvas around it, where it does in the other; the ratio and colors are that scheme's. Absent where it falls short in every scheme measured.\n- `colorSchemesChecked` (the same link): the schemes it was compared in, where the page supports both and one could not be measured (its colors or the backgrounds around it may change with the scheme). A binding can scan again with the browser in the other scheme.",
     "sourcePath": "src/checks/automatic/link-in-text-block.js",
@@ -3392,7 +3471,7 @@
     "margin": null,
     "applicability": "Live regions the page draws: elements whose aria-live is polite or assertive, or, without an aria-live, whose role is status, log or alert, and <output> elements. aria-live=\"off\" turns any of them off. A live region hidden with display: none, visibility: hidden or [hidden] is left out: a region waiting to be shown is the page at rest. A live region behind an open modal <dialog>, which the browser makes inert, is included, though other rules leave that content out. With the live-region hook (liveRegionHookScript), also the live regions it saw given their text in a way that is commonly not announced, whether or not they are still on the page.",
     "expectation": "WCAG 4.1.3: a status message can be presented to the user by assistive technology without receiving focus, which a live region does when its content changes while assistive technology can reach it.\n\n- A drawn live region inside, or on, aria-hidden=\"true\" or inert, or behind an open modal <dialog>: cantTell (`LIVE_REGION_HIDDEN`). It is out of the accessibility tree, so nothing it is given can be announced (behind the dialog, while the dialog is open).\n- A live region with aria-busy=\"true\" when the page was scanned: cantTell (`LIVE_REGION_BUSY`). Assistive technology may hold back its changes until aria-busy is cleared.\n- Recorded by the hook, a live region added to the page with its text already in it, other than role=\"alert\": cantTell (`LIVE_REGION_INSERTED_WITH_CONTENT`). Screen readers commonly announce changes to a region they already know, not a new region's content.\n- Recorded by the hook, a live region that was hidden and was shown and given its text in the same task: cantTell (`LIVE_REGION_SHOWN_AND_FILLED`). It was not in the accessibility tree when the text arrived.\n- Otherwise: pass.\n\nCheck whether the page uses the region for status messages, and that it is in the page, shown and reachable, before its text changes.",
-    "reports": "- `politeness`: the region's, `polite` or `assertive`.\n- `messageKind`: the kind of message the region declares it carries, from its role and live-region attributes, never from its text: `status` (role status, an <output>, or aria-live=\"polite\" with aria-atomic=\"true\"), `alert` (role alert, or aria-live=\"assertive\"), `log` (role log), `progress` (role progressbar, or a <progress>), or `unknown` (any other live region, such as a plain aria-live=\"polite\"). A role, given or the element's own, wins over aria-live.\n- `hiddenBy`: for `LIVE_REGION_HIDDEN`, `aria-hidden`, `inert`, or `modal` for a region behind an open modal <dialog>. A region behind the dialog is `modal` whatever else hides it (inert or aria-hidden on it or above it, with or without includeHiddenElements): while the dialog is open, it is the cause in effect.\n- `text`: for the hook's two findings, the text the region was given (up to 300 characters).\n- `removed`: for the hook's two findings, true when the region was no longer on the page when it was scanned; the occurrence is then on the document element, and `region` describes it (`tag`, `role`, `id`).",
+    "reports": "- `politeness`: the region's, `polite` or `assertive`.\n- `messageKind`: the kind of message the region declares it carries, from its role and live-region attributes, never from its text: `status` (role status, an <output>, or aria-live=\"polite\" with aria-atomic=\"true\"), `alert` (role alert, or aria-live=\"assertive\"), `log` (role log), `progress` (role progressbar, or a <progress>), or `unknown` (any other live region, such as a plain aria-live=\"polite\"). A role, given or the element's own, wins over aria-live.\n- `hiddenBy`: for `LIVE_REGION_HIDDEN`, `aria-hidden`, `inert`, or `modal` for a region behind an open modal <dialog>. A region behind the dialog is `modal` whatever else hides it (inert or aria-hidden on it or above it, with or without includeHiddenElements): while the dialog is open, it is the cause in effect.\n- `hiddenByElement`: for `aria-hidden` or `inert` on an ancestor, that ancestor (`<div id=\"app\">`).\n- `text`: for the hook's two findings, the text the region was given (up to 300 characters).\n- `removed`: for the hook's two findings, true when the region was no longer on the page when it was scanned; the occurrence is then on the document element, and `region` describes it (`tag`, `role`, `id`).",
     "sourcePath": "src/checks/manual/live-region-announcements.js",
     "relatedRuleIds": [],
     "examples": [
@@ -3458,7 +3537,7 @@
     "margin": null,
     "applicability": "Any eligible <audio> or <video> element in the composed DOM.",
     "expectation": "If a strong transcript/text-alternative signal is present (e.g., aria-describedby binding to a visible transcript block, or a nearby clearly labeled Transcript section/link), no occurrence is reported. Otherwise, the rule reports cantTell (insufficient evidence) for that media element.",
-    "reports": "- `evidence.strength`: how strong the transcript signal found near the media is: `none` (`transcriptNotDetected`) or `weak` (`transcriptEvidenceUnverified`).\n- `evidence.method`: what was found: `none`, `anchor-unverified` (a transcript link to a part of the same page that does not look like a transcript) or `external-link` (a transcript link to another page, which is not followed).\n- `evidence.transcriptLinkHref` (a weak signal): the transcript link's `href`.\n- `evidence.transcriptNodeSelector` (a weak signal): a selector for the transcript link.\n- `evidence.notes`: short English notes on what was found. Empty when nothing was.",
+    "reports": "- `evidence.strength`: how strong the transcript signal found near the media is: `none` (`transcriptNotDetected`) or `weak` (`transcriptEvidenceUnverified`).\n- `evidence.method`: what was found: `none`, `anchor-unverified` (a transcript link to a part of the same page that does not look like a transcript) or `external-link` (a transcript link to another page, which is not followed).\n- `evidence.transcriptLinkHref` (a weak signal): the transcript link's `href`.\n- `evidence.transcriptNodeSelector` (a weak signal): a selector for the transcript link.\n- `evidence.transcriptLinkText`, `evidence.transcriptLinkSelector` (a weak signal): the transcript link's name, shortened, and a selector that finds that link.\n- `evidence.notes`: short English notes on what was found. Empty when nothing was.",
     "sourcePath": "src/checks/manual/media-alternative-transcript-evidence-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -4098,6 +4177,51 @@
     ]
   },
   {
+    "ruleId": "page-zones-landmark",
+    "title": "The page's header, navigation, search and footer are landmarks",
+    "description": "Asks about blocks that name themselves the page's header, a navigation or its footer, and search forms, that are not exposed as the landmark of their nature, and about a page header or footer nested where it loses its landmark.",
+    "type": "manual",
+    "wcagSc": [],
+    "level": "",
+    "category": "operable",
+    "confidence": "medium",
+    "severity": "minor",
+    "deprecated": false,
+    "deprecation": null,
+    "margin": null,
+    "applicability": "Applies to a whole page, not a fragment, a scoped scan or a document in a frame, while no modal dialog is open. It looks at the visible blocks that name themselves a page zone by their id or class (header, masthead, banner, nav, navigation, menu, footer, and their French, German and Spanish names), at search forms (a form with a search field, or one named q, s, search or query), and at the page's first <header> and last <footer>. A page with none of them is notApplicable.",
+    "expectation": "Each zone is exposed as the landmark of its nature, by its element or a role: the header as banner, a navigation as navigation, the search as search, the footer as contentinfo. A zone inside or around an element with that role is exposed. The page header and footer are asked about only when the page exposes no banner, or no contentinfo, at all. Whether a block is that zone is for a person, so the rule only asks.",
+    "reports": "- `zone`: banner, navigation, search or contentinfo, the role the zone would have.\n- `namedBy`, `namedByToken`: on a block named as a zone, whether its `id` or its `class` names it, and the token that does.",
+    "sourcePath": "src/checks/manual/page-zones-landmark-manual.js",
+    "relatedRuleIds": [],
+    "examples": [
+      {
+        "outcome": "Passed",
+        "state": "pass",
+        "html": "<body>\n  <header><a href=\"/\">Site</a></header>\n  <nav class=\"menu\"><a href=\"/news\">News</a> <a href=\"/contact\">Contact</a></nav>\n  <main><p>Content</p></main>\n  <footer>© Site</footer>\n</body>",
+        "explanation": "The header, the navigation and the footer are landmarks."
+      },
+      {
+        "outcome": "Flagged (cantTell)",
+        "state": "unknown",
+        "html": "<body>\n  <div class=\"site-header\"><a href=\"/\">Site</a></div>\n  <main><p>Content</p></main>\n</body>",
+        "explanation": "The block named as the page header is not a banner landmark, and the page has none: a person checks whether it is the page header."
+      },
+      {
+        "outcome": "Flagged (cantTell)",
+        "state": "unknown",
+        "html": "<body>\n  <main>\n    <header><a href=\"/\">Site</a></header>\n    <p>Content</p>\n  </main>\n</body>",
+        "explanation": "The page's `<header>` is inside `<main>`, where it is not a banner landmark, and the page has none."
+      },
+      {
+        "outcome": "Not applicable",
+        "state": "na",
+        "html": "<body>\n  <main><p>Content</p></main>\n</body>",
+        "explanation": "Nothing on the page is named as a zone, and it has no header, footer or search form."
+      }
+    ]
+  },
+  {
     "ruleId": "password-paste-enabled",
     "title": "Authentication fields must not block pasting",
     "description": "Checks that a password or one-time-code field carries no inline paste handler that cancels the paste, which would take away the password manager or clipboard that spares users from remembering or retyping it.",
@@ -4413,9 +4537,10 @@
     "description": "Asks, for each <img ismap> inside a link, whether the page offers the same destinations as links a keyboard can reach, since a server-side image map has no keyboard-operable regions of its own.",
     "type": "automatic",
     "wcagSc": [
-      "2.1.1"
+      "2.1.1",
+      "2.1.3"
     ],
-    "level": "A",
+    "level": "AAA",
     "category": "operable",
     "confidence": "high",
     "severity": "serious",
@@ -4457,7 +4582,7 @@
     "margin": null,
     "applicability": "Applies to <a href=\"#fragment\"> elements that are skip links by one of two signs:\n\n- the accessible name follows a common skip-link wording in one of the shipped locales: \"skip\" or \"jump to\" (English); \"aller au contenu\", \"passer au contenu\", \"accéder au contenu\", \"accès direct\", \"évitement\" (French); \"springen\", \"überspringen\", \"direkt zum\", \"zum Inhalt\" (German); \"saltar\", \"ir al contenido\" (Spanish); \"スキップ\", \"本文へ\" (Japanese). \"jump to\" sits beside \"skip\" because real skip links use both conventions (e.g. a \"Jump to section\" link);\n- or it is the first link in the document, and it comes before the `main` element (or an element whose role attribute resolves to main, its first real role token in any case): the usual place of a skip link whatever its wording.\n\nOther same-page anchor links are not skip links and are left alone. Where the page has no <main> and no role=\"main\", a custom element whose ElementInternals give it the main role (this.attachInternals().role) is the main a link's position is measured against.",
     "expectation": "The link's fragment resolves to a real element in the document (via a matching id, or a legacy <a name=\"...\">), and that target is currently usable (not hidden from the accessibility tree; and, when browser geometry is available, rendered with an area that no ancestor cuts to nothing: one with `overflow: hidden` collapsed to no size, or `overflow: clip` keeping it outside). A skip link whose target is missing or effectively unusable does not provide a reliable bypass destination. An empty target (no element or text inside it), such as `<a id=\"content\" tabindex=\"-1\"></a>` or a legacy `<a name>`, has no area by nature: following the link moves focus, or the sequential focus navigation starting point, to it (HTML, \"scroll to the fragment\"), so the next Tab goes on from there. What it marks is measured instead: its nearest ancestor with content of its own, such as the <main> it opens. A `display: contents` target has no box of its own, and is measured by its children's.",
-    "reports": "- `href`: the link's `href`.\n- `lean` (a finding with a lean): the lean's direction, `fail` or `pass`, the same as the occurrence's `lean.toward`, so a standard's mapping, which reads `data.details`, can route the finding by it. Absent when the finding has no lean.\n- `unusableReasonCode` (a target that is not usable): why it is not: `ACC_TREE_INELIGIBLE` when it is hidden from the accessibility tree, `NO_CLIENT_RECTS` when it is not rendered, `ZERO_AREA_TARGET` when it, or for an empty target the content it marks, has no area or is cut to nothing.\n- `targetSelector` (a target that is not usable): a selector for the target.\n- `geometryCheckEnabled` (a target that is not usable): whether the target's geometry could be measured, which needs a browser.\n- `viewport.width`, `viewport.height` (a target whose geometry was measured): the viewport the page was laid out in, in CSS pixels. A target hidden at one width can be usable at another.",
+    "reports": "- `href`: the link's `href`.\n- `lean` (a finding with a lean): the lean's direction, `fail` or `pass`, the same as the occurrence's `lean.toward`, so a standard's mapping, which reads `data.details`, can route the finding by it. Absent when the finding has no lean.\n- `unusableReasonCode` (a target that is not usable): why it is not: `ACC_TREE_INELIGIBLE` when it is hidden from the accessibility tree, `NO_CLIENT_RECTS` when it is not rendered, `ZERO_AREA_TARGET` when it, or for an empty target the content it marks, has no area or is cut to nothing.\n- `unusableCause` (a target that is not usable, when known): what hides it, `hiddenBy` (`aria-hidden=\"true\"`, `hidden`, `display: none`, `visibility: hidden`, `inert`) with `hiddenByElement` when an ancestor carries it, or `geometry` (`notRendered`, `noSize`).\n- `targetSelector` (a target that is not usable): a selector for the target.\n- `geometryCheckEnabled` (a target that is not usable): whether the target's geometry could be measured, which needs a browser.\n- `viewport.width`, `viewport.height` (a target whose geometry was measured): the viewport the page was laid out in, in CSS pixels. A target hidden at one width can be usable at another.",
     "sourcePath": "src/checks/manual/skip-link-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -4745,7 +4870,7 @@
     "margin": null,
     "applicability": "Applies to elements with a tabindex attribute whose value parses as a valid integer.",
     "expectation": "The tabindex value is 0 or negative. A positive tabindex reorders keyboard tab order explicitly, which is fragile to maintain as a page changes and usually indicates the natural DOM order should be fixed instead.",
-    "reports": "- `value`: the `tabindex` value, a whole number above 0.",
+    "reports": "- `value`: the `tabindex` value, a whole number above 0.\n- `skippedCount`, `firstSkipped`: when Tab reaches it before tab stops earlier in the document, how many, and the first, as the message names it (`<a> \"Home\"`).",
     "sourcePath": "src/checks/manual/tabindex-manual.js",
     "relatedRuleIds": [],
     "examples": [
@@ -4902,6 +5027,50 @@
     ]
   },
   {
+    "ruleId": "target-size-enhanced",
+    "title": "Pointer targets must be at least 44x44px large",
+    "description": "Checks that pointer-operable targets have an effective hit region of at least 44 by 44 CSS pixels, or meet an allowed exception (inline, user-agent sizing, essential).",
+    "type": "automatic",
+    "wcagSc": [
+      "2.5.5"
+    ],
+    "level": "AAA",
+    "category": "operable",
+    "confidence": "medium",
+    "severity": "moderate",
+    "deprecated": false,
+    "deprecation": null,
+    "margin": {
+      "measure": "target-size-px",
+      "unit": "px",
+      "limit": "min",
+      "band": {
+        "absolute": 6
+      }
+    },
+    "applicability": "The targets target-size-minimum applies to: <button>, <summary>, <a href>, <area href>, <input>, <select>, <textarea> and elements whose role resolves to button or link, that a pointer can reach and hit.",
+    "expectation": "Each target is at least 44 by 44 CSS pixels, measured as target-size-minimum measures 24 (the region a pointer can hit, and the largest square aligned to the page that fits in it), or meets one of the SC 2.5.5 exceptions this rule can establish: the inline exception for a target in a sentence, or user-agent sizing (an unstyled native checkbox or radio). 2.5.5 has no spacing exception, so a target under 44 fails however far it is from others. Where an exception may apply but cannot be confirmed (two inline links side by side between separators alone, as in \"Edit | Delete\", or a target inside an SVG, canvas or image map that may be essential), the result is cantTell. The equivalent exception (the same function offered by a target that is large enough, elsewhere on the page) is not established: a target it would cover fails. It is target-size-minimum run with `minSizePx: 44` and `spacingException: 'none'` (a variant: docs/RULE_AUTHORING.md, \"Rule variants\"), so a fix to that rule's measuring reaches this one. Margin (`target-size-px`): of the targets that are at least 44 by 44, the smallest, as the side of the largest square that fits in it against 44. Only a target within 6px of 44 (up to 50) counts as close.",
+    "reports": "- As target-size-minimum's, against 44: `metrics.widthPx`, `metrics.heightPx`, `metrics.squarePx` against `metrics.minSizePx` (44), `measured` and `viewport`. No distance to other targets, which decides nothing here, but for an inline link run (`conflictWith`, the link beside it).",
+    "sourcePath": "src/checks/automatic/target-size-enhanced.js",
+    "relatedRuleIds": [
+      "target-size-minimum"
+    ],
+    "examples": [
+      {
+        "outcome": "Passed",
+        "state": "pass",
+        "html": "<button style=\"width:44px; height:44px; padding:0;\">+</button>",
+        "explanation": "Meets the 44×44 CSS pixel size of WCAG 2.5.5 on its own."
+      },
+      {
+        "outcome": "Failed",
+        "state": "fail",
+        "html": "<button style=\"width:30px; height:30px; padding:0;\">+</button>",
+        "explanation": "30×30 meets 2.5.8's 24×24 but not 2.5.5's 44×44, and 2.5.5 has no spacing exception: the button fails however far it is from other targets."
+      }
+    ]
+  },
+  {
     "ruleId": "target-size-minimum",
     "title": "Pointer targets must be at least 24x24px large, or leave sufficient distance to other targets",
     "description": "Checks that pointer-operable targets have an effective hit region of at least 24 by 24 CSS pixels, or meet an allowed exception (e.g. sufficient spacing).",
@@ -4924,10 +5093,12 @@
       }
     },
     "applicability": "Applies to <button>, <summary>, <a href>, <area href>, <input>, <select>, <textarea> and elements whose role resolves to button or link (the first real role in the role attribute, in any case) that are pointer-reachable: rendered, not suppressed by pointer-events:none, and with something left for a pointer to hit (a target clipped away is none; one with display: contents is its content). Accessibility-tree exclusion isn't a filter here: an aria-hidden control is still a target a pointer can hit. <area> is matched but never actually evaluated: it has no box of its own to measure. A custom element whose ElementInternals give it the button or link role (this.attachInternals().role), with no role attribute naming another, counts as a native element with that role does.",
-    "expectation": "Each target is at least 24 by 24 CSS pixels, or meets one of the SC 2.5.8 exceptions this rule can establish from geometry. A target is the region a pointer can hit: its border box with its rounded corners and 2D transforms, clipped by clip and clip-path: inset() on its containing-block chain and no larger than a box there that clips its overflow, with content sticking out of it. What is painted over a target takes nothing from it, another target included: whether a decorative layer, an overlay or a pinned row covers a target depends on the moment and the scroll position of the scan, so it says nothing about the target's size, and 2.5.8 measures the target itself. Two targets that overlap are within each other's circle, so an undersized one is still too close. A box that clips its overflow (overflow other than visible, or contain: paint), scrolled by the reader or by a script, doesn't cut it where its edge is now: the target is measured whole, as scrolled into it, no larger than the box, and only the boxes and targets inside the box are near a target it keeps out of view. It is large enough when a 24 by 24 square aligned to the page fits in that region, as Understanding 2.5.8 measures it. The exceptions: spacing (a 24px-diameter circle centred on the region's bounding box reaches no unrelated target's region, nor the circle of another undersized one), the inline exception for a target in a sentence, a link or a button written into the text (the stretch of its block container between line breaks holds text outside any target with a letter or a digit in it), or user-agent sizing (an unstyled native checkbox or radio, detected by appearance not having been reset to none). An undersized target too close to a neighbour fails. Where an exception may apply but cannot be confirmed (two inline links crowding each other between separators alone, as in \"Edit | Delete\", or a target inside an SVG, canvas or image map that may be essential), the result is cantTell rather than a guess. Margin (`target-size-px`): of the targets that are at least 24 by 24, the smallest, as the side of the largest square that fits in it against 24 (for a rectangle, the smaller of its width and height); `context.widthPx` and `context.heightPx` give its extent. A target under 24 that passes through the spacing exception is not a candidate. Only a target within 6px of 24 (up to 30) counts as close, so a page whose smallest target is larger gives no margin. `measuredCount` counts every target measured.",
-    "reports": "- `metrics.widthPx`, `metrics.heightPx`: the extent of the region a pointer can hit, in CSS pixels; `metrics.squarePx`: the side of the largest square that fits in it, against `metrics.minSizePx` (24). Rounded to a tenth, but down where that would reach the limit, so a size under 24 never reads as 24.\n- `metrics.decidedBy`: what found the target too close to another: `centerDistance`, the circle of another undersized target, or `regionDistance`, another target's region within the circle.\n- `metrics.centerDistancePx`, `metrics.minDistancePx` (`centerDistance`): the distance from the target's centre to its neighbour's, against the 24px it needs.\n- `metrics.regionDistancePx`, `metrics.minDistancePx` (`regionDistance`): how far the neighbour's region is from the target's centre, against the circle's 12px radius.\n- `conflictWith`: a selector for the neighbour it is too close to.\n- `measured.width`, `measured.height`, `measured.square`: the region's extent and the largest square, unrounded.\n- `viewport.width`, `viewport.height`: the viewport the page was laid out in, in CSS pixels. A responsive page can size or place a target differently at another width.",
+    "expectation": "Each target is at least 24 by 24 CSS pixels, or meets one of the SC 2.5.8 exceptions this rule can establish from geometry. A target is the region a pointer can hit: its border box with its rounded corners and 2D transforms, clipped by clip and clip-path: inset() on its containing-block chain and no larger than a box there that clips its overflow, with content sticking out of it. What is painted over a target takes nothing from it, another target included: whether a decorative layer, an overlay or a pinned row covers a target depends on the moment and the scroll position of the scan, so it says nothing about the target's size, and 2.5.8 measures the target itself. Two targets that overlap are within each other's circle, so an undersized one is still too close. A box that clips its overflow (overflow other than visible, or contain: paint), scrolled by the reader or by a script, doesn't cut it where its edge is now: the target is measured whole, as scrolled into it, no larger than the box, and only the boxes and targets inside the box are near a target it keeps out of view. It is large enough when a 24 by 24 square aligned to the page fits in that region, as Understanding 2.5.8 measures it. The exceptions: spacing (a 24px-diameter circle centred on the region's bounding box reaches no unrelated target's region, nor the circle of another undersized one), the inline exception for a target in a sentence, a link or a button written into the text (the stretch of its block container between line breaks holds text outside any target with a letter or a digit in it), or user-agent sizing (an unstyled native checkbox or radio, detected by appearance not having been reset to none). An undersized target too close to a neighbour fails. Where an exception may apply but cannot be confirmed (two inline links crowding each other between separators alone, as in \"Edit | Delete\", or a target inside an SVG, canvas or image map that may be essential), the result is cantTell rather than a guess. Settings, for a variant: `minSizePx`, the size needed (24), and `spacingException`, `'none'` to drop the spacing exception, so that every target under the size that no other exception covers fails (`undersized`), however far it is from others. target-size-enhanced is this rule at 2.5.5's 44px with none. Margin (`target-size-px`): of the targets that are at least 24 by 24, the smallest, as the side of the largest square that fits in it against 24 (for a rectangle, the smaller of its width and height); `context.widthPx` and `context.heightPx` give its extent. A target under 24 that passes through the spacing exception is not a candidate. Only a target within 6px of 24 (up to 30) counts as close, so a page whose smallest target is larger gives no margin. `measuredCount` counts every target measured.",
+    "reports": "- `metrics.widthPx`, `metrics.heightPx`: the extent of the region a pointer can hit, in CSS pixels; `metrics.squarePx`: the side of the largest square that fits in it, against `metrics.minSizePx` (24). Rounded to a tenth, but down where that would reach the limit, so a size under 24 never reads as 24.\n- `metrics.decidedBy`: what found the target too close to another: `centerDistance`, the circle of another undersized target, or `regionDistance`, another target's region within the circle.\n- `metrics.centerDistancePx`, `metrics.minDistancePx` (`centerDistance`): the distance from the target's centre to its neighbour's, against the 24px it needs.\n- `metrics.regionDistancePx`, `metrics.minDistancePx` (`regionDistance`): how far the neighbour's region is from the target's centre, against the circle's 12px radius.\n- `conflictWith`: a selector for the neighbour it is too close to.\n- `clippedBy`, `clipProperty`: where the region is smaller than the target's box, the ancestor that clips it, as `<div class=\"toolbar\">`, and the CSS that does, as `overflow: hidden`.\n- The fail hint (`targetSizeMinimum_hint_fail_centerDistance` or `targetSizeMinimum_hint_fail_regionDistance`, by `decidedBy`) states the same distance: `i18n.params.distancePx` against `i18n.params.minDistancePx`, and `i18n.params.shortfallPx`, how much further apart the two need to be, rounded up to a tenth.\n- `measured.width`, `measured.height`, `measured.square`: the region's extent and the largest square, unrounded.\n- `viewport.width`, `viewport.height`: the viewport the page was laid out in, in CSS pixels. A responsive page can size or place a target differently at another width.",
     "sourcePath": "src/checks/automatic/target-size-minimum.js",
-    "relatedRuleIds": [],
+    "relatedRuleIds": [
+      "target-size-enhanced"
+    ],
     "examples": [
       {
         "outcome": "Passed",
@@ -5002,7 +5173,7 @@
     },
     "applicability": "Applies to a page with visible text. The loss of content needs a layout (a browser): without one, only the style sheets are read.",
     "expectation": "WCAG 1.4.12: with line height at 1.5 times the font size, spacing after paragraphs at 2 times, letter spacing at 0.12 times and word spacing at 0.16 times, no content or functionality is lost.\n\n- In a browser, the spacing is applied as a style sheet that wins over the page's own (inline `!important` aside, which avoid-inline-spacing reports), and each line of text is measured before and after against the boxes that clip it: those on its containing block chain with `overflow: hidden` or `clip`, or `contain: paint` (which `content-visibility: auto` gives), and the viewport on an axis the page keeps from scrolling, or for text in a fixed box, which doesn't scroll with the page. A line that was inside and ends at least half outside (half its height, or half an em across) fails: the container cuts that text off (TEXT_CLIPPED). A line pushed out by less is asked about (TEXT_CLIPPED_PARTLY), and so is text that comes to overlap other text it did not overlap before (TEXT_OVERLAPS). Text moved by an animation that repeats for ever (a ticker) is asked about however far it goes (TEXT_CLIPPED_MOVING): it passes through the edge anyway, and one frame can't tell whether any of it is lost. Where the page is scroll-locked, both of the viewport's axes hidden while content already lay beyond it, as behind a cookie banner, text the spacing moves out of the viewport is asked about (VIEWPORT_SCROLL_LOCKED): the lock is usually a passing state, and the engine can't see past it. Text inside a <marquee> is left out: browsers move it outside the Web Animations API, so the engine can't hold it still, and its finding would depend on when the scan ran; deprecated-elements-not-used asks about the marquee (2.2.2). Text its box already cut off before the spacing (a fixed-height excerpt) is asked about when the spacing cuts off lines it showed in full (TEXT_CLIPPED_FURTHER): the excerpt was cut on purpose, but shows less. A box that grows with its lines, as line-clamp does, shows as many and is left alone.\n- In any environment, a style sheet rule that sets line-height, letter-spacing or word-spacing below those values with `!important` is asked about (STYLESHEET_IMPORTANT): a tool that adds its own style sheet to the page cannot override it, though a user style sheet can. A value relative to the font size is read as declared, and a computed one meets the value within the rounding browsers report lengths with, so a rule setting exactly the minimum is not asked about.\n- The spacing is applied with a <style> element, or, where the page's Content Security Policy blocks one, as a style sheet the document adopts. Where neither applies, the page is asked about (SPACING_NOT_APPLIED) instead of measured, never passed.\n\nWithout a layout and with no such rule, the rule is notApplicable, with `data.reason: 'noLayout'`.\n\n- Only text inside the scan's scope (contextSelector) and not excluded (excludeSelectors) is judged. Text elsewhere on the page is still measured, since text in scope can come to overlap it. While a modal dialog is open, the page behind it is left out altogether: the browser makes it inert, and the scan judges the dialog.\n- Margin (`overflow-px`): of the text a clipping box keeps in full, the line that came closest to being cut off. `value` is how far it reaches past the box's edge, negative while it is still inside, against 2px, past which a line is partly cut off (the first finding); `context.axis` and `context.text` say which edge and which text. It is measured where text grows with more spacing, the inline end (the right, or the left in right-to-left text) and the bottom; a start edge counts only once a line is past it. An axis on which the box grew with the spacing (a block of auto height) follows its content and is left out, and vertical text gets no margin. Text a repeating animation moves (a ticker) is left out, since where it stands depends on the point the animation was held at, and so is a box that cuts off other text: it is a finding. Only a line within 8px of the limit (from 6px inside the edge) counts as close, so text deeper inside its box gives no margin. `measuredCount` counts the pairs of text and clipping box compared; like the findings, the margin covers the first 3,000 text nodes.",
-    "reports": "- `text`: the start of the text, up to 60 characters. Not on a style sheet rule's finding.\n- `lines.shownBefore`, `lines.shownAfter` (TEXT_CLIPPED_FURTHER): how many lines of the text its box showed in full without and with the spacing.\n- `metrics.overflowPx` (cut-off text): how far, in CSS pixels, the line went past the edge of the box that clips it, with the spacing applied.\n- `metrics.thresholdPx` (cut-off text): how far it may go before it fails: half an em across, or half the line's height down.\n- `metrics.axis` (cut-off text): `x` when the line went past a side, `y` past the top or bottom.\n- `container.widthPx`, `container.heightPx` (cut-off text): the size of the clipping box with the spacing applied.\n- `clippedBy` (cut-off text): `content-visibility` when the box clips only for its `content-visibility: auto`, which clips what overflows it, on screen as well as off it, as `contain: paint` does, though its computed `contain` doesn't say so. The finding names it.\n- `viewport.width`, `viewport.height` (cut-off or overlapping text): the viewport the page was laid out in, in CSS pixels. Text that fits at one width can be cut off at another.\n- `other` (overlapping text): the text it comes to overlap.\n- `selector`, `property`, `value` (a style sheet rule): the rule's selector and the declaration that forces the spacing.\n- `evidenceState` (cut-off, overlapping or scroll-locked text): `text-spacing`, as the finding shows only with the spacing applied, which the rule takes off the page again before the browser paints. A tool applies it again with evidenceState() to picture the finding.",
+    "reports": "- `text`: the start of the text, up to 60 characters. Not on a style sheet rule's finding.\n- `lines.shownBefore`, `lines.shownAfter` (TEXT_CLIPPED_FURTHER): how many lines of the text its box showed in full without and with the spacing.\n- `metrics.overflowPx` (cut-off text): how far, in CSS pixels, the line went past the edge of the box that clips it, with the spacing applied.\n- `metrics.thresholdPx` (cut-off text): how far it may go before it fails: half an em across, or half the line's height down.\n- `metrics.axis` (cut-off text): `x` when the line went past a side, `y` past the top or bottom.\n- `container.widthPx`, `container.heightPx` (cut-off text): the size of the clipping box with the spacing applied.\n- `edge` (cut-off text): the edge of the box the line went furthest past: `top`, `right`, `bottom` or `left`.\n- `clipCss` (cut-off text, where it can be read): the CSS that cuts it off there, as declarations: what fixes the box's size on that axis (`white-space: nowrap`, `width`, `max-height`...) and its overflow, as `height: 48px; overflow: hidden`. Not for the viewport.\n- `clippedBy` (cut-off text): `content-visibility` when the box clips only for its `content-visibility: auto`, which clips what overflows it, on screen as well as off it, as `contain: paint` does, though its computed `contain` doesn't say so. The finding names it.\n- `viewport.width`, `viewport.height` (cut-off or overlapping text): the viewport the page was laid out in, in CSS pixels. Text that fits at one width can be cut off at another.\n- `other` (overlapping text): the text it comes to overlap.\n- `selector`, `property`, `value` (a style sheet rule): the rule's selector and the declaration that forces the spacing.\n- `evidenceState` (cut-off, overlapping or scroll-locked text): `text-spacing`, as the finding shows only with the spacing applied, which the rule takes off the page again before the browser paints. A tool applies it again with evidenceState() to picture the finding.",
     "sourcePath": "src/checks/automatic/text-spacing-content-loss.js",
     "relatedRuleIds": [],
     "examples": [
@@ -5238,9 +5409,10 @@
     "description": "Flags an element with a widget role that cannot take focus or is out of the tab order, and a composite widget with no tab stop, for manual review.",
     "type": "manual",
     "wcagSc": [
-      "2.1.1"
+      "2.1.1",
+      "2.1.3"
     ],
-    "level": "A",
+    "level": "AAA",
     "category": "operable",
     "confidence": "medium",
     "severity": "serious",

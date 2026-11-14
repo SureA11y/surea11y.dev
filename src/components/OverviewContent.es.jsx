@@ -230,11 +230,16 @@ export function OverviewContent() {
 				(en GitHub) muestra cómo instalarlo antes de los scripts de la propia página.
 			</p>
 			<p>
-				Las reglas llegan a tres criterios que ninguna regla cubría antes: 3.3.1 Identificación de
+				Las reglas llegan a cuatro criterios que ninguna regla cubría antes: 3.3.1 Identificación de
 				errores (un campo marcado como no válido cuyo mensaje de error falta, está oculto o no está
 				asociado a él), 4.1.3 Mensajes de estado (una región viva a la que las tecnologías de apoyo
-				no pueden llegar) y 1.4.5 Imágenes de texto (texto dibujado en una imagen que podría ser
-				texto real). Las tres preguntan en lugar de fallar. Las reglas de teclado leen los
+				no pueden llegar), 1.4.5 Imágenes de texto (texto dibujado en una imagen que podría ser
+				texto real) y, en un navegador, 2.4.11 Foco no oculto (mínimo) (un encabezado, un pie de
+				página o un banner fijo o sticky detrás del cual los elementos del orden de tabulación
+				pueden recibir el foco ocultos, confirmado comprobando qué recibe el puntero). Las cuatro
+				preguntan en lugar de fallar. El mensaje de un hallazgo nombra la causa cuando la regla la
+				conoce: por qué un elemento no tiene nombre, una probable errata en un rol, un atributo o
+				un valor de <code>autocomplete</code>, qué oculta un elemento. Las reglas de teclado leen los
 				controladores de eventos del marcado; con <code>listenerHookScript()</code>, otro script
 				opcional que se instala antes de los de la propia página, juzgan también los listeners
 				añadidos desde script, así que un <code>role="button"</code> en el orden de tabulación con un

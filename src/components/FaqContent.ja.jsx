@@ -7,46 +7,38 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-16">「core 1.16にアップグレードしたら、結果が変わった」</h2>
+				<h2 id="results-changed-1-17">「core 1.17にアップグレードしたら、結果が変わった」</h2>
 				<p>
-					1.16では、jsdomでの動作がブラウザーに近づき、メッセージがどの規格にも合う言い方になります。パイプラインに表れやすい変更は次のとおりです。
+					1.17では、ルールが4つ追加され、一部のルールがより多くの達成基準に対応付けられ、メッセージが検出結果の原因を示すようになります。それ以外では、既存のルールの判定結果と理由コードは変わりません。パイプラインに表れやすい変更は次のとおりです。
 				</p>
 				<ul>
 					<li>
-						<strong>jsdomでも、ブラウザーと同じく<code>showModal()</code>で開いたダイアログだけがモーダルになります。</strong>
-						<code>&lt;dialog open aria-modal="true"&gt;</code>の背後にあるページも判定されるようになったため、そのようにモーダルを模したjsdomのテストでは、その背後の検出結果が出ます。<code>engineOptions.assumeModal: true</code>で従来の動作を保てます（<a href="/help/known-limitations/">既知の制限事項</a>を参照。test-matchers 1.6.0では<code>installLiveRegionHook()</code>にも渡します。<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>を参照）。モーダルダイアログの背後にあるものはフォーカスを受け取らず、<code>showModal()</code>で複数開いた場合は最前面のものだけが判定されます。
+						<strong>ブラウザーでのWCAG 2.2 AAのスキャンが、2.4.11について確認を求めます。</strong>
+						<a href="/rules/focus-not-obscured-minimum/"><code>focus-not-obscured-minimum</code></a>は、タブ順序にある要素がその後ろに隠れた状態でフォーカスを受け取りうる、ヘッダー、フッター、バナーなどの固定配置やstickyのボックスについて確認を求め（<code>cantTell</code>）、<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>は2.4.12（AAA）について同じことを行います。jsdomでは、どちらも<code>notApplicable</code>です。そうしたスキャンは、Chromiumで約4%長くかかります（これらのルールが扱わないものは<a href="/help/known-limitations/">既知の制限事項</a>を参照してください）。
 					</li>
 					<li>
-						<strong>jsdomでも、ブラウザーが隠すものは隠されます。</strong>
-						<code>@layer</code>、<code>@supports</code>、<code>@container</code>の中のルールも要素を隠すので、Tailwind v4の<code>hidden</code>と<code>sr-only</code>が機能します。<code>clip: rect(0 0 0 0)</code>は切り取られたものとして扱われ、イメージマップの<code>&lt;area&gt;</code>はページ上にあるものとして扱われます。もともと隠れていたコンテンツについての検出結果はなくなります。
+						<strong>AAAのルールを実行するスキャンは、44px未満のターゲットを不合格にします。</strong>
+						<a href="/rules/target-size-enhanced/"><code>target-size-enhanced</code></a>（2.5.5）は、WCAGの対象を指定しない全体のスキャンと、AAAを対象とするスキャンで実行されます。全体のスキャンで<code>fail</code>が1つでもあれば失敗するパイプラインでは、新たな不合格が出ることがあります。AとAAだけで判定するには、<code>wcag22-aa</code>プロファイルなどの対象を指定してスキャンしてください（<a href="/configuration/engine-options/">エンジンオプション</a>を参照）。ベストプラクティスを含めると、<a href="/rules/page-zones-landmark/"><code>page-zones-landmark</code></a>が、それにあたるランドマークになっていないヘッダー、ナビゲーション、検索、フッターについて確認を求めます。
 					</li>
 					<li>
-						<strong>メッセージと手順は、WCAGの達成基準の名前を挙げる代わりに、チェックの内容を説明します。</strong>
-						すべてのロケールでそうなるので、ほかの規格のレポートでも正しく読めます。対応付けと<code>failWhen</code>は変わりません。メッセージのテキストを比較するテストは更新が必要です。
+						<strong>一部のルールが、より多くの達成基準に数えられます。</strong>
+						<code>css-focus-indicator-suppressed</code>は1.4.11と2.4.13にも対応付けられるため、その検出結果は1.4.11の結果にも表れます。<code>focus-not-removed-by-script</code>は2.4.13に対応付けられ、2.1.1に対応付けられる4つのルールは2.1.3にも対応付けられます。
 					</li>
 					<li>
-						<strong>深いページも判定されます。</strong>
-						200階層以上の深さにある要素も、その上にあるすべての要素とあわせて10,000階層まで判定されます。以前は、そこまで深い場所での不合格は<code>error</code>に記録される質問になっていたので、そこに不合格が出ることがあります。10,000階層を超えると質問になり、<a href="/results-reports/output-schema/"><code>ancestorWalkLimit</code></a>で報告されます。
+						<strong>メッセージが、ルールの見つけた根本原因を示します。</strong>
+						要素に名前がない理由（<code>data.details.nameCause</code>）、ロール、属性、<code>autocomplete</code>の値にありそうな入力ミス、要素を隠しているもの、<code>link-in-text-block</code>の不合格でのコントラスト、ターゲットが<code>target-size-minimum</code>に合格するまでの距離です。メッセージのテキストや、<code>target-size-minimum</code>のヒントのキー（現在は<code>_centerDistance</code>または<code>_regionDistance</code>）を比較するテストは更新が必要です。
 					</li>
 					<li>
-						<strong><code>Array.from</code>を置き換えるページ</strong>
-						（Prototype.js、MooTools）もスキャンされます。以前は<code>PAGE_BUILTINS_BROKEN</code>でスキャンが止まっていました（<a href="#page-builtins-broken">後述の項目</a>を参照）。
+						<strong>いくつかの検出結果が変わります。</strong>
+						<code>css-hidden-focus</code>は、要素が表示範囲外にあり、それを表示範囲に入れるものが何もわからない場合、fail寄りになります。<code>aria-hidden-focus</code>は、隠された<code>aria-hidden</code>のルートの中で<code>visibility: visible</code>に戻されたフォーカス可能な要素を不合格にします。<code>aria-conditional-attr</code>は、トークン以外の<code>aria-invalid</code>の値を合格にします。<code>link-in-text-block</code>は、リンク自身の行にあるテキストだけを数えます。
 					</li>
 					<li>
-						<strong>一部のセレクターが変わります。</strong>
-						制御文字はエスケープされ、256文字を超える値は要素のパスに置き換わります。<a href="/rules/page-title-present/"><code>page-title-present</code></a>と<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a>はtitle要素そのものを、それがなければ<code>&lt;head&gt;</code>を指します。検出結果の識別子にはセレクターが含まれないので、ベースラインは引き続き一致します。コントラストを1つも計算できなかった場合、コントラストのルールは出現箇所なしの<code>notApplicable</code>になります。
-					</li>
-					<li>
-						<strong>誤りは、何もないものとして読まれる代わりに報告されます。</strong>
-						空の<code>contextSelector</code>は引き続きページ全体をスキャンしますが、警告を出します。ベースラインでないものは、すべての不合格を新しいものにする代わりに<code>INVALID_BASELINE</code>を投げます。<code>strictOptions</code>のもとでは、不明なプロファイル名が例外を投げます。<code>section508</code>プロファイルは非推奨です。同じルールを実行する<code>wcag20-aa</code>を使ってください。
-					</li>
-					<li>
-						<strong>スキャンが速くなります。</strong>
-						検出結果は同じで、通常のページではChromiumで数パーセント、jsdomで10〜25%速くなり、最も遅かった場合（同一のリンクやフィールドが数千ある、長い表、多数のスタイルルール）ではさらに大きく速くなります。
+						<strong>1.16向けに作られたパックは、スキップされることがあります。</strong>
+						coreの実験的なAPIを使うパックは、それより後のマイナーバージョンを受け入れないため、1.17向けのリリースが出るまで、1.17でのスキャンではスキップされます。<a href="/configuration/packs/#en-301-549-pack">EN 301 549パック</a>には1.4.0が必要です。また、1.17では規格の法律のフィールドが4つ削除され、それらがまだあるパックは拒否されます（<a href="/configuration/packs/#laws">パック</a>を参照）。
 					</li>
 				</ul>
 				<p>
-					新しく追加され、使わない限り何も変えないもの：WCAG 2.0と2.1のプロファイル（<a href="/configuration/engine-options/#conformance-profiles">エンジンオプション</a>）と、1.18.0まで実験的な、データとしての規格、要件の下のテスト、ほかの規格を基にした規格、規格の評価の根拠となる法律（<a href="/configuration/packs/#experimental">パック</a>）。変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
+					新しく追加され、使わない限り何も変えないもの：1.19.0まで実験的な、別のパックを基にしたパック（<code>uses</code>、<code>surea11y-pack new --kind derived</code>。<a href="/configuration/packs/#a-pack-built-on-another-pack">パック</a>）。ブラウザーバンドルは1,565 KBから1,829 KBに増えます。そのほとんどは新しいメッセージです。変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
 				</p>
 			</article>
 
@@ -444,6 +436,50 @@ export function FaqContent() {
 				<h2 id="stylesheets-not-readable">「<code>css-orientation-lock</code>が<code>STYLESHEETS_NOT_READABLE</code>で確認を求める」</h2>
 				<p>
 					ページのスクリプトは、別のオリジン（CDN、フォントサービス）が配信するスタイルシートを読めないため、CSSを読むルールはその内容がわかりません。そのテキストを<code>engineOptions.styleSheetTexts</code>でスキャンに渡してください。<code>preloadStyleSheets()</code>、またはブラウザーバンドルの<code>runa11yCoreInPageAsync</code>は、サーバーが共有しているものを取得します。ブラウザーを操作するツールなら、それ以外のものもページの外から取得できます。GitHub上の統合ガイド<a href={`${core}/docs/INTEGRATION.md#style-sheets-from-another-origin`}><code>INTEGRATION.md</code></a>の「<span lang="en">Style sheets from another origin</span>」を参照してください。
+				</p>
+			</article>
+
+			<article>
+				<h2 id="results-changed-1-16">「core 1.16にアップグレードしたら、結果が変わった」</h2>
+				<p>
+					1.16では、jsdomでの動作がブラウザーに近づき、メッセージがどの規格にも合う言い方になります。パイプラインに表れやすい変更は次のとおりです。
+				</p>
+				<ul>
+					<li>
+						<strong>jsdomでも、ブラウザーと同じく<code>showModal()</code>で開いたダイアログだけがモーダルになります。</strong>
+						<code>&lt;dialog open aria-modal="true"&gt;</code>の背後にあるページも判定されるようになったため、そのようにモーダルを模したjsdomのテストでは、その背後の検出結果が出ます。<code>engineOptions.assumeModal: true</code>で従来の動作を保てます（<a href="/help/known-limitations/">既知の制限事項</a>を参照。test-matchers 1.6.0では<code>installLiveRegionHook()</code>にも渡します。<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>を参照）。モーダルダイアログの背後にあるものはフォーカスを受け取らず、<code>showModal()</code>で複数開いた場合は最前面のものだけが判定されます。
+					</li>
+					<li>
+						<strong>jsdomでも、ブラウザーが隠すものは隠されます。</strong>
+						<code>@layer</code>、<code>@supports</code>、<code>@container</code>の中のルールも要素を隠すので、Tailwind v4の<code>hidden</code>と<code>sr-only</code>が機能します。<code>clip: rect(0 0 0 0)</code>は切り取られたものとして扱われ、イメージマップの<code>&lt;area&gt;</code>はページ上にあるものとして扱われます。もともと隠れていたコンテンツについての検出結果はなくなります。
+					</li>
+					<li>
+						<strong>メッセージと手順は、WCAGの達成基準の名前を挙げる代わりに、チェックの内容を説明します。</strong>
+						すべてのロケールでそうなるので、ほかの規格のレポートでも正しく読めます。対応付けと<code>failWhen</code>は変わりません。メッセージのテキストを比較するテストは更新が必要です。
+					</li>
+					<li>
+						<strong>深いページも判定されます。</strong>
+						200階層以上の深さにある要素も、その上にあるすべての要素とあわせて10,000階層まで判定されます。以前は、そこまで深い場所での不合格は<code>error</code>に記録される質問になっていたので、そこに不合格が出ることがあります。10,000階層を超えると質問になり、<a href="/results-reports/output-schema/"><code>ancestorWalkLimit</code></a>で報告されます。
+					</li>
+					<li>
+						<strong><code>Array.from</code>を置き換えるページ</strong>
+						（Prototype.js、MooTools）もスキャンされます。以前は<code>PAGE_BUILTINS_BROKEN</code>でスキャンが止まっていました（<a href="#page-builtins-broken">前述の項目</a>を参照）。
+					</li>
+					<li>
+						<strong>一部のセレクターが変わります。</strong>
+						制御文字はエスケープされ、256文字を超える値は要素のパスに置き換わります。<a href="/rules/page-title-present/"><code>page-title-present</code></a>と<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a>はtitle要素そのものを、それがなければ<code>&lt;head&gt;</code>を指します。検出結果の識別子にはセレクターが含まれないので、ベースラインは引き続き一致します。コントラストを1つも計算できなかった場合、コントラストのルールは出現箇所なしの<code>notApplicable</code>になります。
+					</li>
+					<li>
+						<strong>誤りは、何もないものとして読まれる代わりに報告されます。</strong>
+						空の<code>contextSelector</code>は引き続きページ全体をスキャンしますが、警告を出します。ベースラインでないものは、すべての不合格を新しいものにする代わりに<code>INVALID_BASELINE</code>を投げます。<code>strictOptions</code>のもとでは、不明なプロファイル名が例外を投げます。<code>section508</code>プロファイルは非推奨です。同じルールを実行する<code>wcag20-aa</code>を使ってください。
+					</li>
+					<li>
+						<strong>スキャンが速くなります。</strong>
+						検出結果は同じで、通常のページではChromiumで数パーセント、jsdomで10〜25%速くなり、最も遅かった場合（同一のリンクやフィールドが数千ある、長い表、多数のスタイルルール）ではさらに大きく速くなります。
+					</li>
+				</ul>
+				<p>
+					新しく追加され、使わない限り何も変えないもの：WCAG 2.0と2.1のプロファイル（<a href="/configuration/engine-options/#conformance-profiles">エンジンオプション</a>）と、1.18.0まで実験的な、データとしての規格、要件の下のテスト、ほかの規格を基にした規格、規格の評価の根拠となる法律（<a href="/configuration/packs/#experimental">パック</a>）。変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
 				</p>
 			</article>
 

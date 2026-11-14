@@ -103,7 +103,7 @@
 <a class="skip" href="#main">手順へスキップ</a>
 <header class="page">
 <h1>WCAG 2.2：手動チェックリスト</h1>
-<p>チェック：50 · 要件：30</p>
+<p>チェック：53 · 要件：32</p>
 <ul><li>レベル：A, AA</li></ul>
 
 </header>
@@ -117,7 +117,7 @@
 </section>
 <section class="results" aria-labelledby="results-h" data-record="wcag|2.2|WCAG 2.2：手動チェックリスト">
 <h2 id="results-h">結果</h2>
-<p id="record-progress" role="status">確認済み：50 件中 0 件 · 合格：0 · 不合格：0 · 該当なし：0</p>
+<p id="record-progress" role="status">確認済み：53 件中 0 件 · 合格：0 · 不合格：0 · 該当なし：0</p>
 <p class="note">結果は消去するまでこのブラウザーにだけ保存されます。保管や共有にはダウンロードしてください。</p>
 <noscript><p class="note">スクリプトが無効の場合、結果は選択できますが、保存もダウンロードもできません。</p></noscript>
 <div class="actions"><button type="button" id="record-json">結果をダウンロード（JSON）</button><button type="button" id="record-csv">結果をダウンロード（CSV）</button><button type="button" id="record-clear">結果を消去</button></div>
@@ -408,6 +408,32 @@
 <textarea id="notes-21" rows="2"></textarea>
 </fieldset>
 </article>
+<article class="item" id="i-1-4-11-ui-component-contrast" aria-labelledby="item-1-4-11-ui-component-contrast" data-key="1.4.11/ui-component-contrast" data-facet="ui-component-contrast" data-label="コントロールの存在と状態を示す部分のコントラスト比が 3:1 以上である" data-requirements="[&quot;1.4.11&quot;]">
+<h4 id="item-1-4-11-ui-component-contrast">コントロールの存在と状態を示す部分のコントラスト比が 3:1 以上である</h4>
+<p class="meta"><span>対象：1.4.11</span></p>
+<ul class="badges"><li class="badge auto-manual">人だけが確認できる</li><li class="badge">必要なもの：<span>ブラウザーの開発者ツール</span></li></ul>
+<ol class="steps"><li>ページ上の各コントロール (ボタン、入力欄、チェックボックス、ラジオボタン、スライダー、タブ、ボタンのような見た目のリンク) を確認してください。</li><li>それぞれについて、入力欄の枠線やボタンの輪郭など、そこにあることを示す部分を見つけ、コントラストチェッカーで隣接する色とのコントラスト比を測ってください。3:1 以上が必要です。テキストだけで示されるコントロールには、それ以上は必要ありません。</li><li>各状態を示す部分についても同じように確認してください。チェックボックスのチェック、選択されたタブ、スライダーのつまみ、フォーカスがある状態のフォーカスインジケータです。</li><li>制作者が見た目を変更していない、ブラウザが描画するコントロールと、非アクティブ (無効) なコントロールは除外してください。</li></ol>
+<dl class="verdict"><dt>合格の条件</dt><dd>コントロールやその状態を示すすべての部分が、隣接する色とのコントラスト比 3:1 以上です。</dd><dt>不合格の条件</dt><dd>入力欄の枠線、チェックボックスのチェック、フォーカスインジケータなど、コントロールやその状態を見るのに必要な部分のコントラスト比が 3:1 未満であり、WCAG 1.4.11 を満たしません。</dd></dl>
+<details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>css-focus-indicator-suppressed</code></p><p class="covers">次も評価します：<code>focus-indicator-not-suppressed</code></p></details>
+<fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">コントロールの存在と状態を示す部分のコントラスト比が 3:1 以上である</span></legend>
+<div class="choices"><label><input type="radio" name="o-22" value="open" checked> 未確認</label><label><input type="radio" name="o-22" value="pass"> 合格</label><label><input type="radio" name="o-22" value="fail"> 不合格</label><label><input type="radio" name="o-22" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-22">メモ<span class="vh">: </span><span class="vh">コントロールの存在と状態を示す部分のコントラスト比が 3:1 以上である</span></label>
+<textarea id="notes-22" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-1-4-11-graphics-contrast" aria-labelledby="item-1-4-11-graphics-contrast" data-key="1.4.11/graphics-contrast" data-facet="graphics-contrast" data-label="グラフィックの理解に必要な部分のコントラスト比が 3:1 以上である" data-requirements="[&quot;1.4.11&quot;]">
+<h4 id="item-1-4-11-graphics-contrast">グラフィックの理解に必要な部分のコントラスト比が 3:1 以上である</h4>
+<p class="meta"><span>対象：1.4.11</span></p>
+<ul class="badges"><li class="badge auto-manual">人だけが確認できる</li><li class="badge">必要なもの：<span>ブラウザーの開発者ツール</span></li></ul>
+<ol class="steps"><li>テキストを伴わないアイコン、グラフ、図、地図、インフォグラフィックなど、情報を伝えるグラフィックを探してください。</li><li>それぞれについて、アイコンの形、グラフの線や棒、領域の境界など、理解に必要な部分を見つけてください。</li><li>コントラストチェッカーで、各部分と隣接する色とのコントラスト比を測ってください。3:1 以上が必要です。テキストでラベル付けされている部分や、同じ情報が近くのテキストでも示されている部分は対象外です。</li><li>装飾的なグラフィック、ロゴ、写真や国旗のように特定の見た目が必要不可欠なグラフィックは除外してください。</li></ol>
+<dl class="verdict"><dt>合格の条件</dt><dd>グラフィックの理解に必要なすべての部分のコントラスト比が 3:1 以上であるか、その情報が別の方法で示されています。</dd><dt>不合格の条件</dt><dd>グラフィックの理解に必要な部分のコントラスト比が 3:1 未満で、その情報が別の方法で示されておらず、WCAG 1.4.11 を満たしません。</dd></dl>
+
+<fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">グラフィックの理解に必要な部分のコントラスト比が 3:1 以上である</span></legend>
+<div class="choices"><label><input type="radio" name="o-23" value="open" checked> 未確認</label><label><input type="radio" name="o-23" value="pass"> 合格</label><label><input type="radio" name="o-23" value="fail"> 不合格</label><label><input type="radio" name="o-23" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-23">メモ<span class="vh">: </span><span class="vh">グラフィックの理解に必要な部分のコントラスト比が 3:1 以上である</span></label>
+<textarea id="notes-23" rows="2"></textarea>
+</fieldset>
+</article>
 <article class="item" id="i-1-4-12-avoid-inline-spacing" aria-labelledby="item-1-4-12-avoid-inline-spacing" data-key="1.4.12/avoid-inline-spacing" data-facet="avoid-inline-spacing" data-label="style 属性で強制された間隔が、テキストへの利用者の間隔の適用を妨げていない" data-requirements="[&quot;1.4.12&quot;]">
 <h4 id="item-1-4-12-avoid-inline-spacing">style 属性で強制された間隔が、テキストへの利用者の間隔の適用を妨げていない</h4>
 <p class="meta"><span>対象：1.4.12</span></p>
@@ -416,9 +442,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>折り返すテキストに対してそれらの値を下回る間隔を強制している style 属性はないか、強制されたテキストが間隔を適用してもすべて表示されます。</dd><dt>不合格の条件</dt><dd>折り返すテキストに対して style 属性がそれらの値を下回る間隔を強制しているため、ブックマークレットやブラウザー拡張機能で利用者の間隔を適用できず、その間隔ではテキストが重なるか切り取られ、WCAG 1.4.12 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>avoid-inline-spacing</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">style 属性で強制された間隔が、テキストへの利用者の間隔の適用を妨げていない</span></legend>
-<div class="choices"><label><input type="radio" name="o-22" value="open" checked> 未確認</label><label><input type="radio" name="o-22" value="pass"> 合格</label><label><input type="radio" name="o-22" value="fail"> 不合格</label><label><input type="radio" name="o-22" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-22">メモ<span class="vh">: </span><span class="vh">style 属性で強制された間隔が、テキストへの利用者の間隔の適用を妨げていない</span></label>
-<textarea id="notes-22" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-24" value="open" checked> 未確認</label><label><input type="radio" name="o-24" value="pass"> 合格</label><label><input type="radio" name="o-24" value="fail"> 不合格</label><label><input type="radio" name="o-24" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-24">メモ<span class="vh">: </span><span class="vh">style 属性で強制された間隔が、テキストへの利用者の間隔の適用を妨げていない</span></label>
+<textarea id="notes-24" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-1-4-12-text-spacing-content-loss" aria-labelledby="item-1-4-12-text-spacing-content-loss" data-key="1.4.12/text-spacing-content-loss" data-facet="text-spacing-content-loss" data-label="1.4.12 の間隔を適用しても、テキストが切り取られたり重なったりしない (ブラウザーで測定)" data-requirements="[&quot;1.4.12&quot;]">
@@ -429,9 +455,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのテキストが見えて読める状態を保っているか、切り取られたテキストをキーボードで全文表示できます。</dd><dt>不合格の条件</dt><dd>間隔を適用するとテキストの一部が切り取られる、重なる、または失われ、別の方法で全文を表示することもできないため、WCAG 1.4.12 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>text-spacing-content-loss</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">1.4.12 の間隔を適用しても、テキストが切り取られたり重なったりしない (ブラウザーで測定)</span></legend>
-<div class="choices"><label><input type="radio" name="o-23" value="open" checked> 未確認</label><label><input type="radio" name="o-23" value="pass"> 合格</label><label><input type="radio" name="o-23" value="fail"> 不合格</label><label><input type="radio" name="o-23" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-23">メモ<span class="vh">: </span><span class="vh">1.4.12 の間隔を適用しても、テキストが切り取られたり重なったりしない (ブラウザーで測定)</span></label>
-<textarea id="notes-23" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-25" value="open" checked> 未確認</label><label><input type="radio" name="o-25" value="pass"> 合格</label><label><input type="radio" name="o-25" value="fail"> 不合格</label><label><input type="radio" name="o-25" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-25">メモ<span class="vh">: </span><span class="vh">1.4.12 の間隔を適用しても、テキストが切り取られたり重なったりしない (ブラウザーで測定)</span></label>
+<textarea id="notes-25" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-1-4-12-text-spacing-functionality-kept" aria-labelledby="item-1-4-12-text-spacing-functionality-kept" data-key="1.4.12/text-spacing-functionality-kept" data-facet="text-spacing-functionality-kept" data-label="1.4.12 の間隔を適用しても、コントロール、メニュー、フォームが機能し続け、すべてのテキストを表示する" data-requirements="[&quot;1.4.12&quot;]">
@@ -442,9 +468,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>間隔を適用しても、すべてのコントロールが引き続き機能し、テキストをすべて表示しています。</dd><dt>不合格の条件</dt><dd>間隔を適用すると、コントロールが機能しなくなる、覆われて操作できなくなる、または働きを示すテキストが失われるため、WCAG 1.4.12 を満たしません。</dd></dl>
 
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">1.4.12 の間隔を適用しても、コントロール、メニュー、フォームが機能し続け、すべてのテキストを表示する</span></legend>
-<div class="choices"><label><input type="radio" name="o-24" value="open" checked> 未確認</label><label><input type="radio" name="o-24" value="pass"> 合格</label><label><input type="radio" name="o-24" value="fail"> 不合格</label><label><input type="radio" name="o-24" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-24">メモ<span class="vh">: </span><span class="vh">1.4.12 の間隔を適用しても、コントロール、メニュー、フォームが機能し続け、すべてのテキストを表示する</span></label>
-<textarea id="notes-24" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-26" value="open" checked> 未確認</label><label><input type="radio" name="o-26" value="pass"> 合格</label><label><input type="radio" name="o-26" value="fail"> 不合格</label><label><input type="radio" name="o-26" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-26">メモ<span class="vh">: </span><span class="vh">1.4.12 の間隔を適用しても、コントロール、メニュー、フォームが機能し続け、すべてのテキストを表示する</span></label>
+<textarea id="notes-26" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-1-4-12-text-spacing-other-states" aria-labelledby="item-1-4-12-text-spacing-other-states" data-key="1.4.12/text-spacing-other-states" data-facet="text-spacing-other-states" data-label="1.4.12 の間隔を適用しても、操作後にだけ表示されるコンテンツ (メニュー、ダイアログ、タブ、メッセージ) がすべてのテキストを保つ" data-requirements="[&quot;1.4.12&quot;]">
@@ -455,9 +481,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>操作後に表示されるコンテンツが、間隔を適用してもすべてのテキストを見えて読める状態に保っているか、切り取られたテキストをキーボードで全文表示できます。</dd><dt>不合格の条件</dt><dd>間隔を適用すると、メニュー、ダイアログ、タブ、ツールチップ、メッセージ内のテキストが切り取られるか重なり、別の方法で全文を表示することもできないため、WCAG 1.4.12 を満たしません。</dd></dl>
 
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">1.4.12 の間隔を適用しても、操作後にだけ表示されるコンテンツ (メニュー、ダイアログ、タブ、メッセージ) がすべてのテキストを保つ</span></legend>
-<div class="choices"><label><input type="radio" name="o-25" value="open" checked> 未確認</label><label><input type="radio" name="o-25" value="pass"> 合格</label><label><input type="radio" name="o-25" value="fail"> 不合格</label><label><input type="radio" name="o-25" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-25">メモ<span class="vh">: </span><span class="vh">1.4.12 の間隔を適用しても、操作後にだけ表示されるコンテンツ (メニュー、ダイアログ、タブ、メッセージ) がすべてのテキストを保つ</span></label>
-<textarea id="notes-25" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-27" value="open" checked> 未確認</label><label><input type="radio" name="o-27" value="pass"> 合格</label><label><input type="radio" name="o-27" value="fail"> 不合格</label><label><input type="radio" name="o-27" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-27">メモ<span class="vh">: </span><span class="vh">1.4.12 の間隔を適用しても、操作後にだけ表示されるコンテンツ (メニュー、ダイアログ、タブ、メッセージ) がすべてのテキストを保つ</span></label>
+<textarea id="notes-27" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -474,9 +500,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>ページでポインターを使ってできることはすべて、直接、または同じ役割を果たす別の手段によって、キーボードだけで行えます。</dd><dt>不合格の条件</dt><dd>ポインターでしか行えないことがあり、同じことをキーボードで行う手段がないため、WCAG 2.1.1 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>iframe-focusable-content</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable</code>, <code>mouse-only-event-handlers</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable</code>, <code>focus-not-removed-by-script</code></p><p class="covers">次も評価します：<code>iframe-tabindex-negative-content-not-focusable</code>, <code>server-side-image-map-absent</code>, <code>scrollable-region-focusable-evidence</code>, <code>mouse-only-event-handlers-evidence</code>, <code>click-handler-keyboard-operable</code>, <code>widget-keyboard-focusable-evidence</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">すべての機能をキーボードだけで操作できる</span></legend>
-<div class="choices"><label><input type="radio" name="o-26" value="open" checked> 未確認</label><label><input type="radio" name="o-26" value="pass"> 合格</label><label><input type="radio" name="o-26" value="fail"> 不合格</label><label><input type="radio" name="o-26" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-26">メモ<span class="vh">: </span><span class="vh">すべての機能をキーボードだけで操作できる</span></label>
-<textarea id="notes-26" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-28" value="open" checked> 未確認</label><label><input type="radio" name="o-28" value="pass"> 合格</label><label><input type="radio" name="o-28" value="fail"> 不合格</label><label><input type="radio" name="o-28" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-28">メモ<span class="vh">: </span><span class="vh">すべての機能をキーボードだけで操作できる</span></label>
+<textarea id="notes-28" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -490,9 +516,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべての制限時間を解除、調整、または延長できるか、リアルタイム、必要不可欠、または 20 時間を超えるものです。</dd><dt>不合格の条件</dt><dd>制限時間によってセッション、フォーム、ページが終了し、それを解除、調整、延長する手段がないため、WCAG 2.2.1 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>meta-refresh-timing-absent</code></p><p class="covers">次も評価します：<code>meta-refresh-timing-absent</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">リアルタイム、必要不可欠、または 20 時間を超える場合を除き、各制限時間を解除、調整、または延長できる</span></legend>
-<div class="choices"><label><input type="radio" name="o-27" value="open" checked> 未確認</label><label><input type="radio" name="o-27" value="pass"> 合格</label><label><input type="radio" name="o-27" value="fail"> 不合格</label><label><input type="radio" name="o-27" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-27">メモ<span class="vh">: </span><span class="vh">リアルタイム、必要不可欠、または 20 時間を超える場合を除き、各制限時間を解除、調整、または延長できる</span></label>
-<textarea id="notes-27" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-29" value="open" checked> 未確認</label><label><input type="radio" name="o-29" value="pass"> 合格</label><label><input type="radio" name="o-29" value="fail"> 不合格</label><label><input type="radio" name="o-29" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-29">メモ<span class="vh">: </span><span class="vh">リアルタイム、必要不可欠、または 20 時間を超える場合を除き、各制限時間を解除、調整、または延長できる</span></label>
+<textarea id="notes-29" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-2-2-auto-moving-content-pausable" aria-labelledby="item-2-2-2-auto-moving-content-pausable" data-key="2.2.2/auto-moving-content-pausable" data-facet="auto-moving-content-pausable" data-label="自動で始まり 5 秒より長く続くアニメーションを、一時停止、停止、または非表示にできる" data-requirements="[&quot;2.2.2&quot;]">
@@ -503,9 +529,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>ほかのコンテンツと並んで 5 秒より長く自動で動く、点滅する、またはスクロールするものはすべて、一時停止、停止、または非表示にできます。</dd><dt>不合格の条件</dt><dd>コンテンツがほかのコンテンツと並んで 5 秒より長く自動で動く、点滅する、またはスクロールし、それを一時停止、停止、非表示にする手段がないため、WCAG 2.2.2 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>moving-content-pausable</code>, <code>deprecated-elements-not-used</code></p><p class="covers">次も評価します：<code>deprecated-non-stoppable-elements-absent</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">自動で始まり 5 秒より長く続くアニメーションを、一時停止、停止、または非表示にできる</span></legend>
-<div class="choices"><label><input type="radio" name="o-28" value="open" checked> 未確認</label><label><input type="radio" name="o-28" value="pass"> 合格</label><label><input type="radio" name="o-28" value="fail"> 不合格</label><label><input type="radio" name="o-28" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-28">メモ<span class="vh">: </span><span class="vh">自動で始まり 5 秒より長く続くアニメーションを、一時停止、停止、または非表示にできる</span></label>
-<textarea id="notes-28" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-30" value="open" checked> 未確認</label><label><input type="radio" name="o-30" value="pass"> 合格</label><label><input type="radio" name="o-30" value="fail"> 不合格</label><label><input type="radio" name="o-30" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-30">メモ<span class="vh">: </span><span class="vh">自動で始まり 5 秒より長く続くアニメーションを、一時停止、停止、または非表示にできる</span></label>
+<textarea id="notes-30" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-2-2-auto-updating-content-controllable" aria-labelledby="item-2-2-2-auto-updating-content-controllable" data-key="2.2.2/auto-updating-content-controllable" data-facet="auto-updating-content-controllable" data-label="自動で更新されるコンテンツを、一時停止、停止、非表示にするか、更新の頻度を下げることができる" data-requirements="[&quot;2.2.2&quot;]">
@@ -516,9 +542,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>ほかのコンテンツと並んで自動で更新される部分はすべて、一時停止、停止、非表示にするか更新を遅くすることができるか、その更新が必要不可欠です。</dd><dt>不合格の条件</dt><dd>コンテンツがほかのコンテンツと並んで自動で更新され、それを一時停止、停止、非表示にする手段も、頻度を変える手段もないため、WCAG 2.2.2 を満たしません。</dd></dl>
 
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">自動で更新されるコンテンツを、一時停止、停止、非表示にするか、更新の頻度を下げることができる</span></legend>
-<div class="choices"><label><input type="radio" name="o-29" value="open" checked> 未確認</label><label><input type="radio" name="o-29" value="pass"> 合格</label><label><input type="radio" name="o-29" value="fail"> 不合格</label><label><input type="radio" name="o-29" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-29">メモ<span class="vh">: </span><span class="vh">自動で更新されるコンテンツを、一時停止、停止、非表示にするか、更新の頻度を下げることができる</span></label>
-<textarea id="notes-29" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-31" value="open" checked> 未確認</label><label><input type="radio" name="o-31" value="pass"> 合格</label><label><input type="radio" name="o-31" value="fail"> 不合格</label><label><input type="radio" name="o-31" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-31">メモ<span class="vh">: </span><span class="vh">自動で更新されるコンテンツを、一時停止、停止、非表示にするか、更新の頻度を下げることができる</span></label>
+<textarea id="notes-31" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -536,9 +562,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>ページに繰り返されるブロックがないか、機能するスキップリンク、main ランドマーク、または見出しによって、キーボードやスクリーンリーダーの利用者がそれを飛ばせます。</dd><dt>不合格の条件</dt><dd>繰り返されるブロックを飛ばす手段がなく、キーボードやスクリーンリーダーの利用者がページごとにそれをたどらなければならないため、WCAG 2.4.1 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>bypass-blocks-present</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">複数のページで繰り返されるブロックを飛ばせる</span></legend>
-<div class="choices"><label><input type="radio" name="o-30" value="open" checked> 未確認</label><label><input type="radio" name="o-30" value="pass"> 合格</label><label><input type="radio" name="o-30" value="fail"> 不合格</label><label><input type="radio" name="o-30" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-30">メモ<span class="vh">: </span><span class="vh">複数のページで繰り返されるブロックを飛ばせる</span></label>
-<textarea id="notes-30" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-32" value="open" checked> 未確認</label><label><input type="radio" name="o-32" value="pass"> 合格</label><label><input type="radio" name="o-32" value="fail"> 不合格</label><label><input type="radio" name="o-32" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-32">メモ<span class="vh">: </span><span class="vh">複数のページで繰り返されるブロックを飛ばせる</span></label>
+<textarea id="notes-32" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-2-page-title-descriptive" aria-labelledby="item-2-4-2-page-title-descriptive" data-key="2.4.2/page-title-descriptive" data-facet="page-title-descriptive" data-label="ページに、その主題や目的を示し、サイトのほかのページと区別できるタイトルがある" data-requirements="[&quot;2.4.2&quot;]">
@@ -549,9 +575,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>ページのタイトルがその主題や目的を示し、ほかのページと区別できます。</dd><dt>不合格の条件</dt><dd>ページにタイトルがないか、汎用的なタイトル、ファイル名、またはほかのページと同じタイトルであるため、WCAG 2.4.2 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>page-title-present</code>, <code>page-title-patterns</code></p><p class="covers">次も評価します：<code>page-title-present</code>, <code>page-title-patterns</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">ページに、その主題や目的を示し、サイトのほかのページと区別できるタイトルがある</span></legend>
-<div class="choices"><label><input type="radio" name="o-31" value="open" checked> 未確認</label><label><input type="radio" name="o-31" value="pass"> 合格</label><label><input type="radio" name="o-31" value="fail"> 不合格</label><label><input type="radio" name="o-31" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-31">メモ<span class="vh">: </span><span class="vh">ページに、その主題や目的を示し、サイトのほかのページと区別できるタイトルがある</span></label>
-<textarea id="notes-31" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-33" value="open" checked> 未確認</label><label><input type="radio" name="o-33" value="pass"> 合格</label><label><input type="radio" name="o-33" value="fail"> 不合格</label><label><input type="radio" name="o-33" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-33">メモ<span class="vh">: </span><span class="vh">ページに、その主題や目的を示し、サイトのほかのページと区別できるタイトルがある</span></label>
+<textarea id="notes-33" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-3-focus-order-preserves-meaning" aria-labelledby="item-2-4-3-focus-order-preserves-meaning" data-key="2.4.3/focus-order-preserves-meaning" data-facet="focus-order-preserves-meaning" data-label="Tab キーと Shift+Tab によるフォーカスの移動が、ページの意味を保ち、操作できる順序に従っている" data-requirements="[&quot;2.4.3&quot;]">
@@ -562,9 +588,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>見た目の順序と多少異なる箇所があっても、フォーカスがページの意味を保ち、すべての部分を操作できる順序でページ内を移動します。</dd><dt>不合格の条件</dt><dd>フィールドが本来の順序どおりに入力されないなど、フォーカスがページ内をあちこちに移動し、意味や操作が変わってしまうため、WCAG 2.4.3 を満たしません。</dd></dl>
 
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">Tab キーと Shift+Tab によるフォーカスの移動が、ページの意味を保ち、操作できる順序に従っている</span></legend>
-<div class="choices"><label><input type="radio" name="o-32" value="open" checked> 未確認</label><label><input type="radio" name="o-32" value="pass"> 合格</label><label><input type="radio" name="o-32" value="fail"> 不合格</label><label><input type="radio" name="o-32" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-32">メモ<span class="vh">: </span><span class="vh">Tab キーと Shift+Tab によるフォーカスの移動が、ページの意味を保ち、操作できる順序に従っている</span></label>
-<textarea id="notes-32" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-34" value="open" checked> 未確認</label><label><input type="radio" name="o-34" value="pass"> 合格</label><label><input type="radio" name="o-34" value="fail"> 不合格</label><label><input type="radio" name="o-34" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-34">メモ<span class="vh">: </span><span class="vh">Tab キーと Shift+Tab によるフォーカスの移動が、ページの意味を保ち、操作できる順序に従っている</span></label>
+<textarea id="notes-34" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-3-focus-order-opened-content" aria-labelledby="item-2-4-3-focus-order-opened-content" data-key="2.4.3/focus-order-opened-content" data-facet="focus-order-opened-content" data-label="開いたダイアログ、メニュー、セクションにフォーカスが移動し、ダイアログがページを覆っている間はその中にとどまり、閉じると元に戻る" data-requirements="[&quot;2.4.3&quot;]">
@@ -575,9 +601,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>フォーカスが開いたものの中に移動し、ダイアログがページを覆っている間はその中にとどまり、閉じると元の場所に戻ります。</dd><dt>不合格の条件</dt><dd>フォーカスが開いたものの背後に残る、ダイアログから背後のページへ移る、または閉じたときにページの先頭に移るため、順序が画面上の表示に沿わなくなり、WCAG 2.4.3 を満たしません。</dd></dl>
 
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">開いたダイアログ、メニュー、セクションにフォーカスが移動し、ダイアログがページを覆っている間はその中にとどまり、閉じると元に戻る</span></legend>
-<div class="choices"><label><input type="radio" name="o-33" value="open" checked> 未確認</label><label><input type="radio" name="o-33" value="pass"> 合格</label><label><input type="radio" name="o-33" value="fail"> 不合格</label><label><input type="radio" name="o-33" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-33">メモ<span class="vh">: </span><span class="vh">開いたダイアログ、メニュー、セクションにフォーカスが移動し、ダイアログがページを覆っている間はその中にとどまり、閉じると元に戻る</span></label>
-<textarea id="notes-33" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-35" value="open" checked> 未確認</label><label><input type="radio" name="o-35" value="pass"> 合格</label><label><input type="radio" name="o-35" value="fail"> 不合格</label><label><input type="radio" name="o-35" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-35">メモ<span class="vh">: </span><span class="vh">開いたダイアログ、メニュー、セクションにフォーカスが移動し、ダイアログがページを覆っている間はその中にとどまり、閉じると元に戻る</span></label>
+<textarea id="notes-35" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-3-focus-order-no-hidden-stops" aria-labelledby="item-2-4-3-focus-order-no-hidden-stops" data-key="2.4.3/focus-order-no-hidden-stops" data-facet="focus-order-no-hidden-stops" data-label="閉じている、隠れている、または画面外にあるコンテンツにフォーカスが止まらない" data-requirements="[&quot;2.4.3&quot;]">
@@ -588,9 +614,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのタブストップが、目に見えるもの、またはスキップリンクのようにフォーカスを受け取ると現れるものの上にあります。</dd><dt>不合格の条件</dt><dd>閉じたメニュー、隠れたパネル、画面外にあるコントロールにフォーカスが止まり、順序が存在しないものを通過するため、WCAG 2.4.3 を満たしません。</dd></dl>
 
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">閉じている、隠れている、または画面外にあるコンテンツにフォーカスが止まらない</span></legend>
-<div class="choices"><label><input type="radio" name="o-34" value="open" checked> 未確認</label><label><input type="radio" name="o-34" value="pass"> 合格</label><label><input type="radio" name="o-34" value="fail"> 不合格</label><label><input type="radio" name="o-34" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-34">メモ<span class="vh">: </span><span class="vh">閉じている、隠れている、または画面外にあるコンテンツにフォーカスが止まらない</span></label>
-<textarea id="notes-34" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-36" value="open" checked> 未確認</label><label><input type="radio" name="o-36" value="pass"> 合格</label><label><input type="radio" name="o-36" value="fail"> 不合格</label><label><input type="radio" name="o-36" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-36">メモ<span class="vh">: </span><span class="vh">閉じている、隠れている、または画面外にあるコンテンツにフォーカスが止まらない</span></label>
+<textarea id="notes-36" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-4-link-purpose-clear" aria-labelledby="item-2-4-4-link-purpose-clear" data-key="2.4.4/link-purpose-clear" data-facet="link-purpose-clear" data-label="各リンクの目的が、リンクテキストだけで、またはリンクテキストとそれを含む文、段落、リスト項目、表のセルから判断できる" data-requirements="[&quot;2.4.4&quot;]">
@@ -601,9 +627,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのリンクの目的が、名前だけで、または名前とそれを含む文、段落、リスト項目、表のセルから明らかです。</dd><dt>不合格の条件</dt><dd>リンクに名前がないか、「続きを読む」のような名前で、周囲のどこにもその目的の説明がないため、WCAG 2.4.4 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>link-name-present</code>, <code>link-name-quality</code></p><p class="covers">次も評価します：<code>link-name-present</code>, <code>link-text-descriptive-evidence</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">各リンクの目的が、リンクテキストだけで、またはリンクテキストとそれを含む文、段落、リスト項目、表のセルから判断できる</span></legend>
-<div class="choices"><label><input type="radio" name="o-35" value="open" checked> 未確認</label><label><input type="radio" name="o-35" value="pass"> 合格</label><label><input type="radio" name="o-35" value="fail"> 不合格</label><label><input type="radio" name="o-35" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-35">メモ<span class="vh">: </span><span class="vh">各リンクの目的が、リンクテキストだけで、またはリンクテキストとそれを含む文、段落、リスト項目、表のセルから判断できる</span></label>
-<textarea id="notes-35" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-37" value="open" checked> 未確認</label><label><input type="radio" name="o-37" value="pass"> 合格</label><label><input type="radio" name="o-37" value="fail"> 不合格</label><label><input type="radio" name="o-37" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-37">メモ<span class="vh">: </span><span class="vh">各リンクの目的が、リンクテキストだけで、またはリンクテキストとそれを含む文、段落、リスト項目、表のセルから判断できる</span></label>
+<textarea id="notes-37" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-6-heading-text-descriptive-evidence" aria-labelledby="item-2-4-6-heading-text-descriptive-evidence" data-key="2.4.6/heading-text-descriptive-evidence" data-facet="heading-text-descriptive-evidence" data-label="見出しが、その後に続くコンテンツを説明している" data-requirements="[&quot;2.4.6&quot;]">
@@ -614,9 +640,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべての見出しが、その下のコンテンツの主題を示しています。</dd><dt>不合格の条件</dt><dd>「セクション 1」やファイル名など、見出しがその下のコンテンツを説明していないため、WCAG 2.4.6 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>heading-quality</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">見出しが、その後に続くコンテンツを説明している</span></legend>
-<div class="choices"><label><input type="radio" name="o-36" value="open" checked> 未確認</label><label><input type="radio" name="o-36" value="pass"> 合格</label><label><input type="radio" name="o-36" value="fail"> 不合格</label><label><input type="radio" name="o-36" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-36">メモ<span class="vh">: </span><span class="vh">見出しが、その後に続くコンテンツを説明している</span></label>
-<textarea id="notes-36" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-38" value="open" checked> 未確認</label><label><input type="radio" name="o-38" value="pass"> 合格</label><label><input type="radio" name="o-38" value="fail"> 不合格</label><label><input type="radio" name="o-38" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-38">メモ<span class="vh">: </span><span class="vh">見出しが、その後に続くコンテンツを説明している</span></label>
+<textarea id="notes-38" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-6-form-control-label-descriptive-evidence" aria-labelledby="item-2-4-6-form-control-label-descriptive-evidence" data-key="2.4.6/form-control-label-descriptive-evidence" data-facet="form-control-label-descriptive-evidence" data-label="ラベルがフィールドを説明しており、同じラベルのフィールドを区別できる" data-requirements="[&quot;2.4.6&quot;]">
@@ -627,9 +653,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのラベルがフィールドやコントロールの目的を示し、同じラベルのフィールドは区別されています。</dd><dt>不合格の条件</dt><dd>ラベルがフィールドの目的を示していないか、複数のフィールドが同じラベルを持ち、それらを区別するものがないため、WCAG 2.4.6 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>form-control-label-quality</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">ラベルがフィールドを説明しており、同じラベルのフィールドを区別できる</span></legend>
-<div class="choices"><label><input type="radio" name="o-37" value="open" checked> 未確認</label><label><input type="radio" name="o-37" value="pass"> 合格</label><label><input type="radio" name="o-37" value="fail"> 不合格</label><label><input type="radio" name="o-37" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-37">メモ<span class="vh">: </span><span class="vh">ラベルがフィールドを説明しており、同じラベルのフィールドを区別できる</span></label>
-<textarea id="notes-37" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-39" value="open" checked> 未確認</label><label><input type="radio" name="o-39" value="pass"> 合格</label><label><input type="radio" name="o-39" value="fail"> 不合格</label><label><input type="radio" name="o-39" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-39">メモ<span class="vh">: </span><span class="vh">ラベルがフィールドを説明しており、同じラベルのフィールドを区別できる</span></label>
+<textarea id="notes-39" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-4-7-focus-indicator-visible" aria-labelledby="item-2-4-7-focus-indicator-visible" data-key="2.4.7/focus-indicator-visible" data-facet="focus-indicator-visible" data-label="キーボードフォーカスを受け取るすべての要素が、フォーカスがあることを表示する" data-requirements="[&quot;2.4.7&quot;]">
@@ -640,9 +666,22 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべての停止位置で、どの要素にフォーカスがあるかが見えます。</dd><dt>不合格の条件</dt><dd>フォーカスが目に見える変化のない要素に移るか、隠れたものや画面外のものに移るため、キーボードの利用者が現在位置を見失い、WCAG 2.4.7 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>css-hidden-focus</code>, <code>css-focus-indicator-suppressed</code>, <code>focus-not-removed-by-script</code></p><p class="covers">次も評価します：<code>css-hidden-focusable</code>, <code>focus-indicator-not-suppressed</code>, <code>focus-not-removed-by-script-evidence</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">キーボードフォーカスを受け取るすべての要素が、フォーカスがあることを表示する</span></legend>
-<div class="choices"><label><input type="radio" name="o-38" value="open" checked> 未確認</label><label><input type="radio" name="o-38" value="pass"> 合格</label><label><input type="radio" name="o-38" value="fail"> 不合格</label><label><input type="radio" name="o-38" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-38">メモ<span class="vh">: </span><span class="vh">キーボードフォーカスを受け取るすべての要素が、フォーカスがあることを表示する</span></label>
-<textarea id="notes-38" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-40" value="open" checked> 未確認</label><label><input type="radio" name="o-40" value="pass"> 合格</label><label><input type="radio" name="o-40" value="fail"> 不合格</label><label><input type="radio" name="o-40" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-40">メモ<span class="vh">: </span><span class="vh">キーボードフォーカスを受け取るすべての要素が、フォーカスがあることを表示する</span></label>
+<textarea id="notes-40" rows="2"></textarea>
+</fieldset>
+</article>
+<article class="item" id="i-2-4-11-focus-not-obscured" aria-labelledby="item-2-4-11-focus-not-obscured" data-key="2.4.11/focus-not-obscured" data-facet="focus-not-obscured" data-label="フォーカスを受け取った要素が、ページがその上に重ねるコンテンツによって完全に隠されない" data-requirements="[&quot;2.4.11&quot;]">
+<h4 id="item-2-4-11-focus-not-obscured">フォーカスを受け取った要素が、ページがその上に重ねるコンテンツによって完全に隠されない</h4>
+<p class="meta"><span>対象：2.4.11</span></p>
+<ul class="badges"><li class="badge auto-partial">ルールが一部を判定する</li><li class="badge">必要なもの：<span>キーボード</span>, <span>ブラウザーのズーム</span></li></ul>
+<ol class="steps"><li>ページを再読み込みし、マウスでページの半分までスクロールしてから、ページ全体を Tab キーでゆっくり移動します。</li><li>止まるたびに、フォーカスのある要素の少なくとも一部が見えることを確認します。スクロールしても定位置に残るヘッダー、フッター、バナー、チャットボタンに注意します。</li><li>ページが定位置に保つコンテンツがフォーカスのある要素を完全に覆っている箇所を記録します。そのコンテンツを自分で開いた場合（チャットパネル、メニュー）は、Escape キーなどでフォーカスを移動せずに閉じられるか確認します。閉じられれば対象外です。</li><li>Shift+Tab でページを戻りながら、また幅 320 CSS ピクセルのウィンドウでも同じことを行います。固定バーが画面のより多くを占めます。</li></ol>
+<dl class="verdict"><dt>合格の条件</dt><dd>フォーカスを受けるすべての要素が少なくとも一部見えるか、自分で開いてフォーカスを移動せずに閉じられるコンテンツにだけ覆われています。</dd><dt>不合格の条件</dt><dd>固定ヘッダー、フッター、Cookie バナーなど、ページが置いたコンテンツの後ろに要素が完全に隠れたままフォーカスを受けます。これは WCAG 2.4.11 を満たしません。</dd></dl>
+<details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>focus-not-obscured-minimum</code></p></details>
+<fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">フォーカスを受け取った要素が、ページがその上に重ねるコンテンツによって完全に隠されない</span></legend>
+<div class="choices"><label><input type="radio" name="o-41" value="open" checked> 未確認</label><label><input type="radio" name="o-41" value="pass"> 合格</label><label><input type="radio" name="o-41" value="fail"> 不合格</label><label><input type="radio" name="o-41" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-41">メモ<span class="vh">: </span><span class="vh">フォーカスを受け取った要素が、ページがその上に重ねるコンテンツによって完全に隠されない</span></label>
+<textarea id="notes-41" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -656,9 +695,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのコントロールの名前に、見えるラベルの語が順序どおりに含まれています。</dd><dt>不合格の条件</dt><dd>コントロールの名前に見えるラベルが含まれていないため、音声入力の利用者が見えている言葉を言ってもそれを作動させられず、WCAG 2.5.3 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>label-in-name</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">コントロールの名前に、見えるラベルのテキストが含まれている</span></legend>
-<div class="choices"><label><input type="radio" name="o-39" value="open" checked> 未確認</label><label><input type="radio" name="o-39" value="pass"> 合格</label><label><input type="radio" name="o-39" value="fail"> 不合格</label><label><input type="radio" name="o-39" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-39">メモ<span class="vh">: </span><span class="vh">コントロールの名前に、見えるラベルのテキストが含まれている</span></label>
-<textarea id="notes-39" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-42" value="open" checked> 未確認</label><label><input type="radio" name="o-42" value="pass"> 合格</label><label><input type="radio" name="o-42" value="fail"> 不合格</label><label><input type="radio" name="o-42" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-42">メモ<span class="vh">: </span><span class="vh">コントロールの名前に、見えるラベルのテキストが含まれている</span></label>
+<textarea id="notes-42" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-2-5-8-target-size-minimum-pointer" aria-labelledby="item-2-5-8-target-size-minimum-pointer" data-key="2.5.8/target-size-minimum-pointer" data-facet="target-size-minimum-pointer" data-label="ターゲットが 24 × 24 CSS ピクセル以上であるか、十分に離れている" data-requirements="[&quot;2.5.8&quot;]">
@@ -669,9 +708,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのターゲットが 24 × 24 CSS ピクセル以上であるか、ほかから十分に離れているか、例外のいずれかに当たります。</dd><dt>不合格の条件</dt><dd>24 × 24 CSS ピクセルより小さいターゲットがほかのターゲットに近く、直径 24 ピクセルの円が互いに重なり、当てはまる例外もないため、WCAG 2.5.8 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>target-size-minimum</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">ターゲットが 24 × 24 CSS ピクセル以上であるか、十分に離れている</span></legend>
-<div class="choices"><label><input type="radio" name="o-40" value="open" checked> 未確認</label><label><input type="radio" name="o-40" value="pass"> 合格</label><label><input type="radio" name="o-40" value="fail"> 不合格</label><label><input type="radio" name="o-40" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-40">メモ<span class="vh">: </span><span class="vh">ターゲットが 24 × 24 CSS ピクセル以上であるか、十分に離れている</span></label>
-<textarea id="notes-40" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-43" value="open" checked> 未確認</label><label><input type="radio" name="o-43" value="pass"> 合格</label><label><input type="radio" name="o-43" value="fail"> 不合格</label><label><input type="radio" name="o-43" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-43">メモ<span class="vh">: </span><span class="vh">ターゲットが 24 × 24 CSS ピクセル以上であるか、十分に離れている</span></label>
+<textarea id="notes-43" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -688,9 +727,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>&lt;html&gt; 要素の lang が、ページの大部分が書かれている言語を示しています。</dd><dt>不合格の条件</dt><dd>ページに lang がないか、lang が誤っているか無効であるため、スクリーンリーダーが誤った音声と発音で読み上げ、WCAG 3.1.1 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p><p class="covers">次も評価します：<code>html-lang-attr-present</code>, <code>html-xml-lang-mismatch</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">ページの主な言語がマークアップで示され、それが正しい</span></legend>
-<div class="choices"><label><input type="radio" name="o-41" value="open" checked> 未確認</label><label><input type="radio" name="o-41" value="pass"> 合格</label><label><input type="radio" name="o-41" value="fail"> 不合格</label><label><input type="radio" name="o-41" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-41">メモ<span class="vh">: </span><span class="vh">ページの主な言語がマークアップで示され、それが正しい</span></label>
-<textarea id="notes-41" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-44" value="open" checked> 未確認</label><label><input type="radio" name="o-44" value="pass"> 合格</label><label><input type="radio" name="o-44" value="fail"> 不合格</label><label><input type="radio" name="o-44" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-44">メモ<span class="vh">: </span><span class="vh">ページの主な言語がマークアップで示され、それが正しい</span></label>
+<textarea id="notes-44" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-3-1-2-parts-language-marked" aria-labelledby="item-3-1-2-parts-language-marked" data-key="3.1.2/parts-language-marked" data-facet="parts-language-marked" data-label="ページと異なる言語の文章や語句に、その言語が指定されている" data-requirements="[&quot;3.1.2&quot;]">
@@ -701,9 +740,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>ほかの言語の文章や語句すべてに、その言語を示す有効な lang 属性が指定されています。</dd><dt>不合格の条件</dt><dd>ほかの言語の文章や語句にその言語が指定されていないか、誤ったコードが指定されているため、誤った発音で読み上げられ、WCAG 3.1.2 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>valid-lang</code></p><p class="covers">次も評価します：<code>element-lang-valid</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">ページと異なる言語の文章や語句に、その言語が指定されている</span></legend>
-<div class="choices"><label><input type="radio" name="o-42" value="open" checked> 未確認</label><label><input type="radio" name="o-42" value="pass"> 合格</label><label><input type="radio" name="o-42" value="fail"> 不合格</label><label><input type="radio" name="o-42" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-42">メモ<span class="vh">: </span><span class="vh">ページと異なる言語の文章や語句に、その言語が指定されている</span></label>
-<textarea id="notes-42" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-45" value="open" checked> 未確認</label><label><input type="radio" name="o-45" value="pass"> 合格</label><label><input type="radio" name="o-45" value="fail"> 不合格</label><label><input type="radio" name="o-45" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-45">メモ<span class="vh">: </span><span class="vh">ページと異なる言語の文章や語句に、その言語が指定されている</span></label>
+<textarea id="notes-45" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -721,9 +760,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>ページが検出したすべての入力エラーが、フィールドと問題を示すテキストで表示されます。</dd><dt>不合格の条件</dt><dd>入力エラーが色やアイコンだけで示されている、まったく示されていない、またはどのフィールドが誤っているかを示していないため、WCAG 3.3.1 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>invalid-field-error-message</code></p><p class="covers">次も評価します：<code>invalid-field-error-message</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">ページが検出した入力エラーが、どのフィールドがどう誤っているかを示すテキストで表示される</span></legend>
-<div class="choices"><label><input type="radio" name="o-43" value="open" checked> 未確認</label><label><input type="radio" name="o-43" value="pass"> 合格</label><label><input type="radio" name="o-43" value="fail"> 不合格</label><label><input type="radio" name="o-43" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-43">メモ<span class="vh">: </span><span class="vh">ページが検出した入力エラーが、どのフィールドがどう誤っているかを示すテキストで表示される</span></label>
-<textarea id="notes-43" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-46" value="open" checked> 未確認</label><label><input type="radio" name="o-46" value="pass"> 合格</label><label><input type="radio" name="o-46" value="fail"> 不合格</label><label><input type="radio" name="o-46" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-46">メモ<span class="vh">: </span><span class="vh">ページが検出した入力エラーが、どのフィールドがどう誤っているかを示すテキストで表示される</span></label>
+<textarea id="notes-46" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-3-3-2-labels-instructions-provided" aria-labelledby="item-3-3-2-labels-instructions-provided" data-key="3.3.2/labels-instructions-provided" data-facet="labels-instructions-provided" data-label="入力を求めるフィールドに見えるラベルがあり、入力に必要な場合は指示がある" data-requirements="[&quot;3.3.2&quot;]">
@@ -734,9 +773,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのフィールドに見えるラベルがあり、ページが入力に必要な指示を送信前に示しています。</dd><dt>不合格の条件</dt><dd>フィールドに見えるラベルがなくプレースホルダーやホバー時の title しかないか、入力の規則がエラーの後にしか示されないため、WCAG 3.3.2 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>form-control-programmatic-label-present</code>, <code>form-control-single-label</code>, <code>form-control-programmatic-label-quality</code></p><p class="covers">次も評価します：<code>form-control-labels-or-instructions-present</code>, <code>form-control-single-label</code>, <code>form-control-visible-label-quality</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">入力を求めるフィールドに見えるラベルがあり、入力に必要な場合は指示がある</span></legend>
-<div class="choices"><label><input type="radio" name="o-44" value="open" checked> 未確認</label><label><input type="radio" name="o-44" value="pass"> 合格</label><label><input type="radio" name="o-44" value="fail"> 不合格</label><label><input type="radio" name="o-44" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-44">メモ<span class="vh">: </span><span class="vh">入力を求めるフィールドに見えるラベルがあり、入力に必要な場合は指示がある</span></label>
-<textarea id="notes-44" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-47" value="open" checked> 未確認</label><label><input type="radio" name="o-47" value="pass"> 合格</label><label><input type="radio" name="o-47" value="fail"> 不合格</label><label><input type="radio" name="o-47" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-47">メモ<span class="vh">: </span><span class="vh">入力を求めるフィールドに見えるラベルがあり、入力に必要な場合は指示がある</span></label>
+<textarea id="notes-47" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-3-3-8-authentication-no-cognitive-test" aria-labelledby="item-3-3-8-authentication-no-cognitive-test" data-key="3.3.8/authentication-no-cognitive-test" data-facet="authentication-no-cognitive-test" data-label="回避する手段が提供されていない限り、サインインに何かを記憶する、書き写す、解くことが求められない" data-requirements="[&quot;3.3.8&quot;]">
@@ -747,9 +786,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>何かを記憶する、書き写す、解くことを求めるサインインの各段階で、貼り付けとパスワードマネージャーが使えるか、別の方法が提供されているか、物体や利用者自身のコンテンツの認識だけが求められます。</dd><dt>不合格の条件</dt><dd>貼り付けを禁止するコードのフィールドなど、回避する手段がないまま、サインインに何かを記憶する、書き写す、解くことが求められるため、WCAG 3.3.8 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>password-paste-enabled</code></p><p class="covers">次も評価します：<code>authentication-paste-not-blocked</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">回避する手段が提供されていない限り、サインインに何かを記憶する、書き写す、解くことが求められない</span></legend>
-<div class="choices"><label><input type="radio" name="o-45" value="open" checked> 未確認</label><label><input type="radio" name="o-45" value="pass"> 合格</label><label><input type="radio" name="o-45" value="fail"> 不合格</label><label><input type="radio" name="o-45" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-45">メモ<span class="vh">: </span><span class="vh">回避する手段が提供されていない限り、サインインに何かを記憶する、書き写す、解くことが求められない</span></label>
-<textarea id="notes-45" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-48" value="open" checked> 未確認</label><label><input type="radio" name="o-48" value="pass"> 合格</label><label><input type="radio" name="o-48" value="fail"> 不合格</label><label><input type="radio" name="o-48" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-48">メモ<span class="vh">: </span><span class="vh">回避する手段が提供されていない限り、サインインに何かを記憶する、書き写す、解くことが求められない</span></label>
+<textarea id="notes-48" rows="2"></textarea>
 </fieldset>
 </article>
 </section>
@@ -766,9 +805,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのリンク、コントロール、フレーム、ダイアログに、その目的を示す名前があります。</dd><dt>不合格の条件</dt><dd>リンク、コントロール、フレーム、ダイアログに名前がないか、名前がその目的を示していないため、支援技術がロールしか読み上げず、WCAG 4.1.2 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>form-control-programmatic-label-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-alt-present</code>, <code>binary-control-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>iframe-title-unique</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p><p class="covers">次も評価します：<code>form-control-name-present</code>, <code>link-name-present</code>, <code>button-name-present</code>, <code>input-image-name-present</code>, <code>checkbox-name-present</code>, <code>radio-name-present</code>, <code>switch-name-present</code>, <code>combobox-name-present</code>, <code>dialog-name-present</code>, <code>menuitem-name-present</code>, <code>tab-name-present</code>, <code>slider-name-present</code>, <code>textbox-name-present</code>, <code>searchbox-name-present</code>, <code>spinbutton-name-present</code>, <code>listbox-name-present</code>, <code>option-name-present</code>, <code>treeitem-name-present</code>, <code>aria-role-name-present</code>, <code>iframe-name-present</code>, <code>identical-iframes-same-purpose</code>, <code>summary-name-present</code>, <code>tooltip-name-present</code>, <code>aria-braille-equivalent</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">すべてのリンク、コントロール、フレーム、ダイアログに、その目的を示す名前がある</span></legend>
-<div class="choices"><label><input type="radio" name="o-46" value="open" checked> 未確認</label><label><input type="radio" name="o-46" value="pass"> 合格</label><label><input type="radio" name="o-46" value="fail"> 不合格</label><label><input type="radio" name="o-46" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-46">メモ<span class="vh">: </span><span class="vh">すべてのリンク、コントロール、フレーム、ダイアログに、その目的を示す名前がある</span></label>
-<textarea id="notes-46" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-49" value="open" checked> 未確認</label><label><input type="radio" name="o-49" value="pass"> 合格</label><label><input type="radio" name="o-49" value="fail"> 不合格</label><label><input type="radio" name="o-49" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-49">メモ<span class="vh">: </span><span class="vh">すべてのリンク、コントロール、フレーム、ダイアログに、その目的を示す名前がある</span></label>
+<textarea id="notes-49" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-2-roles-match-behavior" aria-labelledby="item-4-1-2-roles-match-behavior" data-key="4.1.2/roles-match-behavior" data-facet="roles-match-behavior" data-label="すべてのコントロールのロールがその働きを示し、コントロールが互いに入れ子になっていない" data-requirements="[&quot;4.1.2&quot;]">
@@ -779,9 +818,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのコントロールのロールがその働きを示し、ほかのコントロールの中に入れ子になったコントロールはありません。</dd><dt>不合格の条件</dt><dd>コントロールにロールがないか誤ったロールがある (ロールのないクリック可能な div、ボタンとして機能するリンク)、または内部に別のコントロールを含んでいるため、WCAG 4.1.2 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>aria-roles-valid</code>, <code>aria-deprecated-role</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p><p class="covers">次も評価します：<code>aria-role-valid</code>, <code>aria-role-not-deprecated</code>, <code>nested-interactive-controls-absent</code>, <code>presentational-children-focusable-absent</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">すべてのコントロールのロールがその働きを示し、コントロールが互いに入れ子になっていない</span></legend>
-<div class="choices"><label><input type="radio" name="o-47" value="open" checked> 未確認</label><label><input type="radio" name="o-47" value="pass"> 合格</label><label><input type="radio" name="o-47" value="fail"> 不合格</label><label><input type="radio" name="o-47" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-47">メモ<span class="vh">: </span><span class="vh">すべてのコントロールのロールがその働きを示し、コントロールが互いに入れ子になっていない</span></label>
-<textarea id="notes-47" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-50" value="open" checked> 未確認</label><label><input type="radio" name="o-50" value="pass"> 合格</label><label><input type="radio" name="o-50" value="fail"> 不合格</label><label><input type="radio" name="o-50" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-50">メモ<span class="vh">: </span><span class="vh">すべてのコントロールのロールがその働きを示し、コントロールが互いに入れ子になっていない</span></label>
+<textarea id="notes-50" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-2-states-values-exposed" aria-labelledby="item-4-1-2-states-values-exposed" data-key="4.1.2/states-values-exposed" data-facet="states-values-exposed" data-label="すべてのコントロールの状態と値が公開され、画面上の表示に合わせて変わる" data-requirements="[&quot;4.1.2&quot;]">
@@ -792,9 +831,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのコントロールの状態と値が公開され、画面上の表示に合わせて変わります。</dd><dt>不合格の条件</dt><dd>常に未チェックと読み上げられるカスタムチェックボックスのように、コントロールの状態や値が公開されていないか、画面上で変わっても変わらないため、WCAG 4.1.2 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>aria-required-attr</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p><p class="covers">次も評価します：<code>aria-attr-required-for-role</code>, <code>aria-conditional-attr</code>, <code>aria-checked-state-mismatch</code>, <code>aria-expanded-state-mismatch</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">すべてのコントロールの状態と値が公開され、画面上の表示に合わせて変わる</span></legend>
-<div class="choices"><label><input type="radio" name="o-48" value="open" checked> 未確認</label><label><input type="radio" name="o-48" value="pass"> 合格</label><label><input type="radio" name="o-48" value="fail"> 不合格</label><label><input type="radio" name="o-48" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-48">メモ<span class="vh">: </span><span class="vh">すべてのコントロールの状態と値が公開され、画面上の表示に合わせて変わる</span></label>
-<textarea id="notes-48" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-51" value="open" checked> 未確認</label><label><input type="radio" name="o-51" value="pass"> 合格</label><label><input type="radio" name="o-51" value="fail"> 不合格</label><label><input type="radio" name="o-51" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-51">メモ<span class="vh">: </span><span class="vh">すべてのコントロールの状態と値が公開され、画面上の表示に合わせて変わる</span></label>
+<textarea id="notes-51" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-2-aria-used-validly" aria-labelledby="item-4-1-2-aria-used-validly" data-key="4.1.2/aria-used-validly" data-facet="aria-used-validly" data-label="ARIA 属性が実在し、有効で、その場所で許可されており、フォーカス可能なものが支援技術から隠されていない" data-requirements="[&quot;4.1.2&quot;]">
@@ -805,9 +844,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>ARIA 属性が実在し、有効で、その場所で許可されており、参照される id は一意で、フォーカス可能なものは隠されていません。</dd><dt>不合格の条件</dt><dd>ARIA 属性のつづりが誤っている、値が無効である、またはそのロールで許可されていない、参照する id が存在しないか重複している、またはフォーカス可能なものが支援技術から隠されているため、WCAG 4.1.2 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>aria-hidden-focus</code>, <code>aria-valid-attr</code>, <code>aria-valid-attr-value</code>, <code>aria-allowed-attr</code>, <code>aria-prohibited-attr</code>, <code>aria-hidden-body</code>, <code>duplicate-id-aria</code></p><p class="covers">次も評価します：<code>aria-hidden-focusable</code>, <code>aria-attr-name-valid</code>, <code>aria-attr-value-valid</code>, <code>aria-attr-allowed-for-role</code>, <code>aria-attr-not-prohibited</code>, <code>aria-hidden-body-absent</code>, <code>duplicate-id-aria</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">ARIA 属性が実在し、有効で、その場所で許可されており、フォーカス可能なものが支援技術から隠されていない</span></legend>
-<div class="choices"><label><input type="radio" name="o-49" value="open" checked> 未確認</label><label><input type="radio" name="o-49" value="pass"> 合格</label><label><input type="radio" name="o-49" value="fail"> 不合格</label><label><input type="radio" name="o-49" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-49">メモ<span class="vh">: </span><span class="vh">ARIA 属性が実在し、有効で、その場所で許可されており、フォーカス可能なものが支援技術から隠されていない</span></label>
-<textarea id="notes-49" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-52" value="open" checked> 未確認</label><label><input type="radio" name="o-52" value="pass"> 合格</label><label><input type="radio" name="o-52" value="fail"> 不合格</label><label><input type="radio" name="o-52" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-52">メモ<span class="vh">: </span><span class="vh">ARIA 属性が実在し、有効で、その場所で許可されており、フォーカス可能なものが支援技術から隠されていない</span></label>
+<textarea id="notes-52" rows="2"></textarea>
 </fieldset>
 </article>
 <article class="item" id="i-4-1-3-status-messages-announced" aria-labelledby="item-4-1-3-status-messages-announced" data-key="4.1.3/status-messages-announced" data-facet="status-messages-announced" data-label="ステータスメッセージが、フォーカスを移さずに支援技術によって読み上げられる" data-requirements="[&quot;4.1.3&quot;]">
@@ -818,9 +857,9 @@
 <dl class="verdict"><dt>合格の条件</dt><dd>すべてのステータスメッセージが、フォーカスがそれに移ることなく、スクリーンリーダーによって読み上げられます。</dd><dt>不合格の条件</dt><dd>ステータスメッセージが画面に表示されるのに、スクリーンリーダーがそれを読み上げないため、WCAG 4.1.3 を満たしません。</dd></dl>
 <details class="technical"><summary>ルールとファセット</summary><p class="rules">これを検査するルール：<code>live-region-announcements</code></p><p class="covers">次も評価します：<code>live-region-reachable-evidence</code>, <code>live-region-changes-evidence</code></p></details>
 <fieldset class="record"><legend>結果<span class="vh">: </span><span class="vh">ステータスメッセージが、フォーカスを移さずに支援技術によって読み上げられる</span></legend>
-<div class="choices"><label><input type="radio" name="o-50" value="open" checked> 未確認</label><label><input type="radio" name="o-50" value="pass"> 合格</label><label><input type="radio" name="o-50" value="fail"> 不合格</label><label><input type="radio" name="o-50" value="notApplicable"> 該当なし</label></div>
-<label class="notes" for="notes-50">メモ<span class="vh">: </span><span class="vh">ステータスメッセージが、フォーカスを移さずに支援技術によって読み上げられる</span></label>
-<textarea id="notes-50" rows="2"></textarea>
+<div class="choices"><label><input type="radio" name="o-53" value="open" checked> 未確認</label><label><input type="radio" name="o-53" value="pass"> 合格</label><label><input type="radio" name="o-53" value="fail"> 不合格</label><label><input type="radio" name="o-53" value="notApplicable"> 該当なし</label></div>
+<label class="notes" for="notes-53">メモ<span class="vh">: </span><span class="vh">ステータスメッセージが、フォーカスを移さずに支援技術によって読み上げられる</span></label>
+<textarea id="notes-53" rows="2"></textarea>
 </fieldset>
 </article>
 </section>

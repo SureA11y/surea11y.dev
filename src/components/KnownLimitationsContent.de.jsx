@@ -523,7 +523,11 @@ export function KnownLimitationsContent() {
 					<code>aria-hidden</code>-Teilbaum, um zu sehen, ob die Seite den Fokus sofort wegbewegt
 					(ein Wächterelement einer Fokusfalle);{" "}
 					<code>text-spacing-content-loss</code> fügt ein Stylesheet mit den Abständen aus WCAG
-					1.4.12 hinzu; die Kontrastregeln fügen einen leeren Frame außerhalb des sichtbaren
+					1.4.12 hinzu; <code>focus-not-obscured-minimum</code> und <code>-enhanced</code> scrollen
+					die Seite so, dass ein Element unter einer fixierten oder sticky positionierten Box liegt,
+					um dort einen Hit-Test auszuführen, was die <code>scroll</code>-Handler der Seite auslöst,
+					nachdem diese gemessen haben (ein Kopfbereich, der sich beim Scrollen ausblendet, kann
+					darauf reagieren); die Kontrastregeln fügen einen leeren Frame außerhalb des sichtbaren
 					Bereichs hinzu, um die eigenen Farben des Browsers für einen Platzhalter oder ein
 					Aufklapp-<code>&lt;select&gt;</code> zu lesen. Der Scan setzt außerdem jede laufende
 					Animation für die Dauer der Regeln auf einen festen Punkt (eine endliche an ihr Ende, eine
@@ -738,6 +742,30 @@ export function KnownLimitationsContent() {
 						<code>LAYOUT_MEASUREMENT.md</code>
 					</a>
 					.
+				</li>
+				<li>
+					<strong>
+						Ob Inhalt ein fokussiertes Element verdeckt, wird für das eigene Scrollen der Seite und
+						ihre fixierten und sticky positionierten Boxen ermittelt.
+					</strong>{" "}
+					<a href="/rules/focus-not-obscured-minimum/"><code>focus-not-obscured-minimum</code></a>{" "}
+					(2.4.11) und{" "}
+					<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>{" "}
+					(2.4.12) brauchen einen Browser: Unter jsdom sind sie <code>notApplicable</code>{" "}
+					(<code>data.reason: 'noLayout'</code>). Im Browser fragen sie, welche Elemente in der
+					Tab-Reihenfolge eine Box mit <code>position: fixed</code> oder <code>sticky</code>, die
+					etwas zeichnet, verbergen kann, bei dem Fenster, das der Scan verwendet, und dem{" "}
+					<code>scroll-padding</code> der Seite, und bestätigen das per Hit-Test an einigen davon.
+					Nicht berücksichtigt: ein Element in einer Box, die selbst scrollt, oder in einer fixierten
+					oder sticky positionierten Box; horizontales Scrollen; anderer Inhalt, der über einem
+					Element liegt (eine absolut positionierte Box, ein nicht modales Pop-up, das nicht fixiert
+					ist); eine Box mit <code>pointer-events: none</code>, durch die der Hit-Test des Browsers
+					hindurchgeht; und was später erscheint (eine Chat-Blase nach einer Verzögerung) oder bei
+					einer anderen Fenstergröße. Auch wer eine Box geöffnet hat, ist nicht zu erkennen: Die
+					Kriterien erlauben Inhalt, den Nutzende geöffnet haben und schließen können, ohne den Fokus
+					zu verschieben; daher wird nach einer Box, die ein Bedienelement als aufgeklappt markiert
+					(<code>aria-expanded="true"</code> mit <code>aria-controls</code>), ohne Tendenz gefragt,
+					und nach jeder anderen mit einem Hinweis, der das sagt.
 				</li>
 				<li>
 					<strong>Kontrast wird in sRGB berechnet.</strong> Farben in <code>oklch()</code>,{" "}

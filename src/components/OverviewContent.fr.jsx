@@ -238,12 +238,17 @@ export function OverviewContent() {
 				(sur GitHub) montre comment l’installer avant les scripts de la page.
 			</p>
 			<p>
-				Les règles atteignent trois critères qu’aucune règle ne couvrait : 3.3.1 « Identification
+				Les règles atteignent quatre critères qu’aucune règle ne couvrait : 3.3.1 « Identification
 				des erreurs » (un champ marqué invalide dont le message d’erreur manque, est masqué ou ne
 				lui est pas associé), 4.1.3 « Messages d’état » (une région live que les technologies
-				d’assistance ne peuvent pas atteindre) et 1.4.5 « Texte sous forme d’image » (du texte
-				dessiné dans une image qui pourrait être du vrai texte). Les trois posent une question au
-				lieu d’échouer. Les règles du clavier lisent les gestionnaires d’événements dans le
+				d’assistance ne peuvent pas atteindre), 1.4.5 « Texte sous forme d’image » (du texte
+				dessiné dans une image qui pourrait être du vrai texte) et, dans un navigateur, 2.4.11
+				« Focus non masqué (minimum) » (un en-tête, un pied de page ou un bandeau fixe ou sticky derrière
+				lequel des éléments de l’ordre de tabulation peuvent recevoir le focus en étant masqués,
+				confirmé par un test d’atteinte). Les quatre posent une question au lieu d’échouer. Le
+				message d’un constat nomme la cause là où la règle la connaît : pourquoi un élément n’a pas
+				de nom, une faute de frappe probable dans un rôle, un attribut ou une valeur{" "}
+				<code>autocomplete</code>, ce qui masque un élément. Les règles du clavier lisent les gestionnaires d’événements dans le
 				balisage ; avec <code>listenerHookScript()</code>, un autre script facultatif installé
 				avant ceux de la page, elles jugent aussi les écouteurs ajoutés par script : un{" "}
 				<code>role="button"</code> dans l’ordre de tabulation avec un écouteur de clic et aucun

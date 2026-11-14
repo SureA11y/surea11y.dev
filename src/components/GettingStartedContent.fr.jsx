@@ -90,8 +90,8 @@ export function GettingStartedContent() {
 				lines={[
 					"",
 					"surea11y scan: file:///path/to/index.html",
-					"  engine: @surea11y/core 1.16.1",
-					"  pass: 14   fail: 3   cantTell: 2   notApplicable: 126",
+					"  engine: @surea11y/core 1.17.0",
+					"  pass: 14   fail: 3   cantTell: 2   notApplicable: 130",
 					"",
 					"  occurrences by tier: fail: 3   cantTell: 2",
 					"  needs review: likely fail: 0   likely pass: 0   needs a person: 2",
@@ -130,17 +130,19 @@ export function GettingStartedContent() {
 					"             (Prerecorded); 1.3.1 Info and Relationships; 1.3.4",
 					"             Orientation; 1.3.5 Identify Input Purpose; 1.4.1 Use of",
 					"             Color; 1.4.2 Audio Control; 1.4.4 Resize Text; 1.4.5 Images",
-					"             of Text; 1.4.12 Text Spacing; 2.1.1 Keyboard; 2.1.3 Keyboard",
-					"             (No Exception); 2.2.1 Timing Adjustable; 2.2.2 Pause, Stop,",
-					"             Hide; 2.2.4 Interruptions; 2.4.1 Bypass Blocks; 2.4.3 Focus",
-					"             order; 2.4.4 Link Purpose (In Context); 2.4.6 Headings and",
-					"             Labels; 2.4.7 Focus visible; 2.4.9 Link Purpose (Link Only);",
-					"             2.5.8 Target size: minimum; 3.1.1 Language of page; 3.1.2",
-					"             Language of Parts; 3.2.5 Change on Request; 3.3.1 Error",
-					"             Identification; 3.3.2 Labels or Instructions; 3.3.8",
-					"             Accessible Authentication (Minimum); 4.1.2 Name, role, value:",
-					"             accessible name; 4.1.2 Name, role, value: ARIA validity;",
-					"             4.1.3 Status Messages",
+					"             of Text; 1.4.11 Non-text Contrast; 1.4.12 Text Spacing; 2.1.1",
+					"             Keyboard; 2.1.3 Keyboard (No Exception); 2.2.1 Timing",
+					"             Adjustable; 2.2.2 Pause, Stop, Hide; 2.2.4 Interruptions;",
+					"             2.4.1 Bypass Blocks; 2.4.3 Focus order; 2.4.4 Link Purpose",
+					"             (In Context); 2.4.6 Headings and Labels; 2.4.7 Focus visible;",
+					"             2.4.9 Link Purpose (Link Only); 2.4.11 Focus Not Obscured",
+					"             (Minimum); 2.4.12 Focus Not Obscured (Enhanced); 2.4.13 Focus",
+					"             Appearance; 2.5.5 Target Size (Enhanced); 2.5.8 Target size:",
+					"             minimum; 3.1.1 Language of page; 3.1.2 Language of Parts;",
+					"             3.2.5 Change on Request; 3.3.1 Error Identification; 3.3.2",
+					"             Labels or Instructions; 3.3.8 Accessible Authentication",
+					"             (Minimum); 4.1.2 Name, role, value: accessible name; 4.1.2",
+					"             Name, role, value: ARIA validity; 4.1.3 Status Messages",
 					"  notApplicable: 2",
 					"  A criterion that passes here means the checks that ran found nothing in",
 					"  it, not that the page conforms.",
@@ -153,7 +155,7 @@ export function GettingStartedContent() {
 				(« <span lang="en">Click here</span> » est-il un bon nom de lien, y a-t-il ici quelque
 				chose qui demande un examen manuel) ; la ligne <code>needs review</code> indique qu’aucune
 				des deux questions ne penche d’un côté, si bien que toutes deux demandent une personne.
-				Parmi les 126 résultats <code>notApplicable</code> figure <code>target-size-minimum</code> :
+				Parmi les 130 résultats <code>notApplicable</code> figure <code>target-size-minimum</code> :
 				cette règle ne peut pas s’exécuter sans une vraie mise en page CSS, dont une analyse de
 				HTML statique ne dispose pas (<code>--browser</code> la lui donne).
 			</p>
