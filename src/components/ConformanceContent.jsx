@@ -42,7 +42,9 @@ export function ConformanceContent() {
 				regressions starting today," and it's what actually gets a team to turn the gate on. It can
 				accept the findings that likely fail too, one baseline covers a scan of several profiles,
 				and a baseline written before an upgrade keeps matching for one minor release when a
-				finding's reason code is split or newly given. See{" "}
+				finding's reason code is split or newly given. Matching says when a scan was cut short by its
+				time budget, and counts a failure a capped result left out as new, so neither passes
+				quietly. See{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
 		</>

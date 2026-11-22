@@ -36,6 +36,8 @@
 	"rulePage.severity": "重大度：{value}",
 	"rulePage.exampleCodeLabel": "例{n}（{outcome}）：{ruleId}のHTML",
 	"rulePage.exampleContext.browser": "ブラウザーで実行した場合",
+	"rulePage.exampleContext.width320": "幅320 CSSピクセルの場合",
+	"rulePage.exampleContext.width640": "幅640 CSSピクセルの場合",
 	"common.deprecated": "非推奨",
 	"rulesTable.ruleId": "ルールID",
 	"rulesTable.title": "タイトル",

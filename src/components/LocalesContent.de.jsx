@@ -86,7 +86,7 @@ const localeReasonRows = [
 	{
 		id: "partial-dictionary",
 		reason: <code>partial-dictionary</code>,
-		meaning: "Das Wörterbuch wurde verwendet, aber ihm fehlen einige Schlüssel, deshalb sind diese einzelnen Strings auf Englisch zurückgefallen.",
+		meaning: "Das Wörterbuch wurde verwendet, aber ihm fehlen einige Schlüssel (die auch seine Basissprache nicht liefert), deshalb sind diese einzelnen Strings auf Englisch zurückgefallen.",
 	},
 ];
 
@@ -136,8 +136,8 @@ export function LocalesContent() {
 				„Unübersetzt“ zählt Werte, die Zeichen für Zeichen dem englischen Text entsprechen,
 				außer Wörtern, die in einer Sprache zu Recht gleich sind: französisch{" "}
 				<em lang="fr">Orientation</em>, <em lang="fr">Interruptions</em> und{" "}
-				<em lang="fr">Occurrences</em>, deutsch <em>Frame</em>, <em>Frames</em> und{" "}
-				<em>Element</em>, spanisch{" "}
+				<em lang="fr">Occurrences</em>, deutsch <em>Frame</em>, <em>Frames</em>,{" "}
+				<em>Element</em> und <em>Scan</em>, spanisch{" "}
 				<em lang="es">Selector</em>. Diese sind als solche aufgeführt, jeweils mit dem englischen
 				Text, gegen den sie geprüft wurden, und zählen als übersetzt. Ändert sich das Englische,
 				gilt der Eintrag nicht mehr, und der String zählt als unübersetzt, bis ihn jemand erneut
@@ -213,10 +213,27 @@ export function LocalesContent() {
 				ist jede deutsche Variante abgedeckt.
 			</p>
 			<h3>Schritt 2: jeden String auflösen (pro String)</h3>
-			<p>Innerhalb des gewählten Wörterbuchs wird jeder String einzeln nachgeschlagen:</p>
+			<p>
+				Danach wird jeder String einzeln nachgeschlagen, beginnend mit dem Wörterbuch für Ihren
+				Code:
+			</p>
 			<ol>
-				<li>Den Wert des Schlüssels aus dem gewählten Wörterbuch nehmen.</li>
-				<li>Fehlt dieser Schlüssel, den englischen nehmen.</li>
+				<li>
+					Den Wert des Schlüssels aus dem Wörterbuch für Ihren Code nehmen: zuerst aus Ihren
+					eigenen <code>engineOptions.messages</code> dafür, dann aus denen der Engine.
+				</li>
+				<li>
+					Trägt Ihr Code ein Subtag und fehlt dieser Schlüssel, ihn aus der Basissprache nehmen,
+					wieder zuerst aus Ihren, dann aus denen der Engine. Mit <code>locale: 'de-AT'</code> und{" "}
+					<code>{"messages: { 'de-AT': { … one key … } }"}</code> ist dieser Schlüssel Ihrer und
+					jeder andere String das eingebaute Deutsch.
+				</li>
+				<li>
+					Fehlt der Schlüssel dann immer noch, den englischen nehmen: zuerst aus Ihren eigenen{" "}
+					<code>engineOptions.messages.en</code>, dann aus denen der Engine. Ein Schlüssel, den Sie
+					nur auf Englisch angeben, erscheint also unter jeder Locale auf Englisch, und eine
+					englische Überschreibung gilt auch, wenn die Locale auf Englisch zurückgefallen ist.
+				</li>
 				<li>
 					Fehlt er auch im Englischen (was bei einem eingebauten Schlüssel nicht vorkommen sollte,
 					bei einem selbst angelegten aber schon), den wörtlichen Text verwenden, den die Regel
@@ -225,8 +242,8 @@ export function LocalesContent() {
 			</ol>
 			<p>
 				<strong>Das Ergebnis ist nie leer, nie <code>undefined</code> und nie ein geworfener Fehler.</strong>{" "}
-				Eine halb fertige Übersetzung erscheint in Ihrer Sprache, wo es sie gibt, und überall
-				sonst auf Englisch.
+				Eine halb fertige Übersetzung erscheint in Ihrer Sprache, wo es sie gibt, dann in ihrer
+				Basissprache und überall sonst auf Englisch.
 			</p>
 
 			<h2>Erkennen, welche Locale Sie tatsächlich bekommen haben</h2>
@@ -293,7 +310,7 @@ export function LocalesContent() {
 				keine Seite alle Sprachen braucht. Englisch inline und den Rest optional zu halten, hält
 				die anderen Sprachen aus dem Download heraus und verhindert, dass er mit jeder neuen
 				Sprache wächst. Jede Zusatzdatei, <code>surea11y.i18n.&lt;locale&gt;.js</code>, ist etwa so
-				groß wie der englische Text, den sie ersetzt (derzeit 200 bis 250 KB), und eine Seite lädt
+				groß wie der englische Text, den sie ersetzt(derzeit 310 bis 390 KB), und eine Seite lädt
 				nur die, die sie nutzt. Sonst ändert sich nichts: Das Node-Paket und die Bindings sind nicht
 				betroffen.
 			</p>
@@ -390,7 +407,17 @@ export function LocalesContent() {
 					"}, null);",
 				]}
 			/>
-			<p>Schlüssel, die Sie nicht übergeben, fallen normal zurück; eine teilweise Überschreibung ist also kein Problem.</p>
+			<p>
+				Schlüssel, die Sie nicht übergeben, fallen normal zurück; eine teilweise Überschreibung ist
+				also kein Problem. Das gilt auch für einen regionalen Code:{" "}
+				<code>{"messages: { 'de-AT': { … } }"}</code> mit <code>locale: 'de-AT'</code>{" "}
+				überschreibt diese Strings, und der Rest kommt aus dem Deutschen (zuerst aus Ihren{" "}
+				<code>messages.de</code>, dann aus dem eingebauten Deutsch oder dem der Zusatzdatei), bevor
+				Englisch an die Reihe kommt; <code>engine.locale</code> meldet <code>ok</code>, wenn das
+				Deutsche jeden Schlüssel abdeckt. Auch die Groß- und Kleinschreibung des Locale-Schlüssels
+				spielt hier keine Rolle: <code>{"messages: { DE: … }"}</code> überschreibt das Deutsch, das
+				ein Scan mit <code>locale: 'de'</code> zeigt, und das eingebaute Deutsch bleibt darunter.
+			</p>
 
 			<h2 id="language-specific-matching">Sprachspezifischer Abgleich</h2>
 			<p>
@@ -415,7 +442,13 @@ export function LocalesContent() {
 				generisch und in einer anderen ein echter Name sind, etwa „<span lang="fr">Suite</span>“ oder
 				„Plus“ auf einer englischen Seite. Transkript-Wörter sind die Ausnahme: Sie sind in jeder
 				Sprache eindeutig, und eine Seite kann ein Transkript in einer anderen Sprache verlinken,
-				daher werden sie immer alle geprüft. Text wird zuerst nach NFKC normalisiert, sodass auch
+				daher werden sie immer alle geprüft. Ebenso die Standardtitel, die ein Editor, eine
+				Startvorlage oder ein CMS einer Seite gibt, der niemand einen Namen gegeben hat
+				(„<span lang="en">Untitled</span>“, „<span lang="es">Sin título</span>“, „Ohne Titel“,
+				„<span lang="fr">Sans titre</span>“, „<span lang="ja">無題</span>“, „<span lang="en">Document</span>“, „
+				<span lang="en">Just another WordPress site</span>“): <code>page-title-patterns</code>{" "}
+				liest sie unabhängig von der Sprache der Seite als generisch. Text wird zuerst nach NFKC
+				normalisiert, sodass auch
 				Formen voller Breite wie „<span lang="ja">見出し２</span>“ erkannt werden.
 			</p>
 			<p>
@@ -447,7 +480,17 @@ export function LocalesContent() {
 				<li>
 					<strong>Vorkommensebene</strong>: <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,
 					mit <code>i18n.params</code> für die Interpolation von <code>{"{{placeholder}}"}</code>,
-					lösen <code>summary</code>/<code>hint</code> eines Vorkommens auf.{" "}
+					lösen <code>summary</code>/<code>hint</code> eines Vorkommens auf. Ein Parameter, der
+					nach einem Messwert benannt ist (ein Name, der auf <code>ratio</code>,{" "}
+					<code>threshold</code> oder <code>Px</code> endet, etwa <code>ratio</code>,{" "}
+					<code>bestRatio</code>, <code>fontSizePx</code>) und dessen Wert eine Dezimalzahl ist, wird
+					mit dem Dezimaltrennzeichen der Sprache geschrieben, in der die Meldung geschrieben ist,
+					nicht dem ihrer Region: „2,85:1“ auf Französisch, Deutsch und Spanisch, „2.85:1“ auf
+					Englisch und Japanisch, also schreibt <code>en-ZA</code> „2.85:1“ und{" "}
+					<code>fr-CA</code> und <code>de-AT</code> „2,85:1“. <code>data.details</code> und{" "}
+					<code>metrics</code> behalten Zahlen, und <code>i18n.params</code> behält jeden Wert
+					unformatiert, mit Punkt (<code>ratio: "2.85"</code>, ein String). Eine Dezimalzahl in
+					einem String eines Wörterbuchs („4,5:1“) folgt derselben Regel. Ab core 1.18.0.{" "}
 					<code>i18n.whyKey</code> / <code>i18n.cautionKey</code> einer Tendenz lösen deren{" "}
 					<code>why</code> und <code>caution</code> auf dieselbe Weise auf. Siehe{" "}
 					<a href="/results-reports/output-schema/">das Ausgabeschema</a>.
@@ -491,6 +534,11 @@ export function LocalesContent() {
 					eine Übersetzung der Engine oder dieser Website eine Prüfung braucht.
 				</li>
 				<li>
+					<strong>Fragen Sie nach einer Sprache</strong>, die Sie brauchen, auch wenn Sie sie nicht
+					selbst übersetzen können, mit einem{" "}
+					<a href="https://github.com/SureA11y/core/issues/new?template=translation.md">Übersetzungs-Issue zur Engine</a>.
+				</li>
+				<li>
 					<strong>Übersetzen Sie</strong>:{" "}
 					<a href={`${core}/docs/I18N.md#adding-your-language`}>
 						<span lang="en">Adding your language</span>
@@ -502,7 +550,16 @@ export function LocalesContent() {
 			<p>
 				Eine neue Sprache, in der Engine oder auf dieser Website, wird aufgenommen, sobald eine
 				Person sie geprüft hat, deren Muttersprache sie ist und die im Bereich Barrierefreiheit
-				arbeitet. Prüfende sind ebenso willkommen wie Übersetzende.
+				arbeitet: nicht nur auf die Grammatik, sondern darauf, dass jeder Text sagt, was der
+				englische sagt, in den Worten, die Menschen verwenden, die in dieser Sprache Seiten prüfen
+				oder korrigieren. Ein Entwurf aus maschineller Übersetzung ist ein guter Ausgangspunkt,
+				sofern eine Person danach jeden String mit dem Englischen vergleicht. Eine Korrektur
+				einiger weniger Strings braucht keine solche Prüfung. Prüfende sind ebenso willkommen wie
+				Übersetzende (siehe{" "}
+				<a href={`${core}/docs/I18N.md#review-by-a-native-speaker`}>
+					<span lang="en">Review by a native speaker</span>
+				</a>
+				, auf GitHub, auf Englisch).
 			</p>
 		</>
 	);

@@ -112,11 +112,12 @@ export function KnownLimitationsContent() {
 					trap detection would. Nothing in static markup stands in for it in the meantime.
 				</li>
 				<li>
-					<strong>Reflow / clipping at zoom</strong> (WCAG 1.4.10) — requires real layout
-					measurement (<code>clientWidth</code>/<code>scrollWidth</code>) at a simulated
-					320px-equivalent viewport. Unlike some CSS-declaration-based heuristics elsewhere in
-					this engine, there is no static markup proxy for "does content get clipped at 400%
-					zoom" at all.
+					<strong>Zooming the page</strong> (WCAG 1.4.4, 1.4.10) — the engine doesn't zoom the page
+					or resize the viewport. <code>reflow-horizontal-scroll</code> and{" "}
+					<code>resize-text-content-loss</code> measure a page laid out at 320 and 640 CSS pixels
+					wide, and only when it is scanned at that width (see <a href="#reflow">Reflow</a> and{" "}
+					<a href="#resize-text">Resize text</a> below); whether content or a function is lost
+					there is still for a person.
 				</li>
 				<li>
 					<strong>Dynamic/post-interaction state</strong> — anything that only exists after a
@@ -155,11 +156,18 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>The engine runs on the page's own JavaScript built-ins.</strong> A page whose
-					scripts break one it relies on (<code>Array.prototype.filter</code>, <code>Map</code>,{" "}
-					<code>JSON.stringify</code>, <code>String.prototype.toLowerCase</code> and others) stops
-					the scan with an error coded <code>PAGE_BUILTINS_BROKEN</code> that names each, rather
-					than giving a result that reads well and is wrong; one broken before the bundle is
-					injected (<code>Object.keys</code>) stops the bundle loading. A page that adds{" "}
+					scripts break one it relies on (<code>Array.prototype.filter</code>,{" "}
+					<code>Array.prototype.shift</code>, <code>Array.isArray</code>, <code>Map</code>,{" "}
+					<code>WeakMap.prototype.has</code>, <code>JSON.stringify</code>,{" "}
+					<code>String.prototype.split</code>, <code>String.prototype.indexOf</code>,{" "}
+					<code>RegExp.prototype.test</code>, <code>Math.round</code>, <code>Math.max</code> given
+					more than two values, <code>parseFloat</code>, <code>parseInt</code>, <code>URL</code>,{" "}
+					<code>NodeFilter</code> and others) stops the scan with an error coded{" "}
+					<code>PAGE_BUILTINS_BROKEN</code> that names each, rather than giving a result that reads
+					well and is wrong; so does a getter a script put on <code>Object.prototype</code> that
+					throws or gives a value (<code>Object.prototype.type</code>), and a built-in broken so
+					badly that the check itself throws (its <code>broken</code> list is then empty). One
+					broken before the bundle is injected (<code>Object.keys</code>) stops the bundle loading. A page that adds{" "}
 					<code>then</code> to <code>Object.prototype</code> is scanned as any other. A page that
 					replaces <code>Array.from</code>, as Prototype and MooTools do, is scanned too (since
 					core 1.16.0): core's own code doesn't use it. A pack's or custom rule that uses it stops
@@ -167,6 +175,17 @@ export function KnownLimitationsContent() {
 					unless the selection leaves the rule out. DOM methods a
 					page replaces (<code>getComputedStyle</code>, <code>querySelectorAll</code>,{" "}
 					<code>getBoundingClientRect</code>) are not checked: rules read what they return.
+				</li>
+				<li>
+					<strong>A custom element that overrides DOM members is read as it answers.</strong> The
+					engine reads an element's properties and methods as the page's own scripts would (only on
+					a form or the document does it read past the named controls that stand in for them), so a
+					custom element class that defines its own <code>tagName</code>, <code>parentNode</code>,{" "}
+					<code>getAttribute</code>, <code>textContent</code> or another member, on the class or
+					the instance, is read through that member. Where one returns something else than the DOM
+					would, rules judge what it returns; where one throws, a rule that reads it reports the
+					error (<code>error</code> on its result, outcome <code>cantTell</code>) rather than a
+					verdict, and the other rules go on.
 				</li>
 				<li>
 					<strong>A name is not worked out from content nested more than 256 levels deep.</strong>{" "}
@@ -187,7 +206,27 @@ export function KnownLimitationsContent() {
 					name could come from a custom element that renders but shows no readable content,
 					instead of failing it. A closed root on a built-in element (a <code>&lt;span&gt;</code>)
 					looks like an empty one, such as an icon drawn by CSS, so a button over one is still
-					failed. Check what such a component exposes by hand, for example with a screen reader.
+					failed. Nothing inside a closed root is checked: no rule finds its elements, its text or
+					its form fields. What the page slots into one is checked, but the closed root's own
+					structure around it is not seen: radio buttons slotted into a{" "}
+					<code>&lt;fieldset&gt;</code> with a <code>&lt;legend&gt;</code> inside a closed root are
+					still asked about by{" "}
+					<a href="/rules/form-group-name-present/"><code>form-group-name-present</code></a> (
+					<code>RADIO_GROUP_NO_NAME</code>), though Chromium's accessibility tree names their group.
+					Check what such a component exposes by hand, for example with a screen reader.
+				</li>
+				<li id="opening-closed-shadow-roots">
+					<strong>A host that drives the browser can open closed shadow roots for a scan.</strong>{" "}
+					Core offers no hook for closed roots. A script run before the page's own scripts that
+					wraps <code>Element.prototype.attachShadow</code> to create every root open (
+					<code>{"{ ...init, mode: 'open' }"}</code>), as Playwright's <code>addInitScript</code>{" "}
+					or CDP's <code>Page.addScriptToEvaluateOnNewDocument</code> run one, makes them readable,
+					and the engine then reads those roots as open ones. Checked in Chromium: with the hook,
+					the radio buttons above pass <code>form-group-name-present</code>. Two limits: a
+					declarative <code>shadowrootmode="closed"</code> root is made by the HTML parser, not by{" "}
+					<code>attachShadow</code>, so it stays closed; and the hook changes the page, since its
+					own scripts can then reach the roots too (<code>host.shadowRoot</code> is no longer{" "}
+					<code>null</code>), so use it for a scan, not for the page people use.
 				</li>
 				<li>
 					<strong>
@@ -371,19 +410,24 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>
-						jsdom's computed <code>text-shadow</code> is unreliable on a second read of the same
-						element.
+						jsdom's computed <code>text-shadow</code> depends on what was read before.
 					</strong>{" "}
-					Confirmed in jsdom 29.1.1: reading a computed <code>text-shadow</code> value a second
-					time on the same element — through any accessor, from any freshly-requested{" "}
-					<code>CSSStyleDeclaration</code> for that element, regardless of caching — silently
-					returns a different, wrong "no shadow" value instead of the real declared one. The first
-					read is always correct. This engine works around it internally by reading each element's{" "}
-					<code>text-shadow</code> exactly once per run and caching the result (see{" "}
-					<code>__textShadowInfoEl</code> in <code>src/core/contrast-helpers.js</code>), so a
-					single scan is unaffected. It only surfaces if you read{" "}
-					<code>getComputedStyle(el).textShadow</code> yourself, more than once, against the same
-					jsdom-parsed element — a real browser has no such bug.
+					Confirmed in jsdom 29.1.1: the value it gives for an element can change from one read to
+					the next, through any accessor and from a freshly requested{" "}
+					<code>CSSStyleDeclaration</code>. For most elements the first read is the declared value
+					and a later one a wrong "no shadow"; for a <code>button</code>, <code>input</code>,{" "}
+					<code>select</code> or <code>textarea</code> inside an element with a shadow it is the
+					other way round, the first read giving no shadow and a later one the shadow it inherits,
+					which a browser, whose own style sheet gives form controls{" "}
+					<code>text-shadow: none</code>, never draws. The engine reads each element's{" "}
+					<code>text-shadow</code> once per scan and keeps it (see <code>__textShadowInfoEl</code>{" "}
+					in <code>src/core/contrast-helpers.js</code>), and under jsdom takes a form control's from
+					the page's own rules (its style attribute, or a rule matching it; <code>inherit</code>{" "}
+					takes its parent's) and none otherwise, so a scan reads the same shadows as Chromium, and
+					a second scan of the same DOM the same as the first. Where a sheet or selector can't be
+					read, the form control's computed value is read as for any element. It only surfaces if
+					you read <code>getComputedStyle(el).textShadow</code> yourself, more than once, against
+					the same jsdom-parsed element; a real browser has no such bug.
 				</li>
 				<li>
 					<strong>
@@ -398,6 +442,21 @@ export function KnownLimitationsContent() {
 					the first asked about (<code>contrast-computable</code>). Scan a fresh parse, or change
 					the DOM between scans, which clears jsdom's cache; <code>@surea11y/core/testing</code>{" "}
 					does this for its own second scan. A real browser has no such bug.
+				</li>
+				<li id="jsdom-synchronous-loop">
+					<strong>
+						jsdom keeps every page made in one synchronous run until the event loop turns.
+					</strong>{" "}
+					Confirmed in jsdom 29.1.1: a new <code>JSDOM</code> queues its{" "}
+					<code>DOMContentLoaded</code> and <code>load</code> work as promise jobs, which hold the
+					document and its window until they run, and they run only once the code that made it
+					yields; <code>window.close()</code> doesn't release them. Scans one after another in a
+					plain <code>for</code> loop, with no <code>await</code> between them, so keep every page
+					alive: with <code>runa11yCoreOnHtml</code> on 75 KB pages, about 80 MB a scan, until Node
+					runs out of memory. Core holds none of it. Yield between scans,{" "}
+					<code>{"await new Promise((r) => setImmediate(r))"}</code>, and memory stays flat (20
+					scans of the same page stayed at about 210 MB). A test runner yields between tests, so
+					this matters to a loop within one test or a script.
 				</li>
 				<li>
 					<strong>
@@ -427,6 +486,71 @@ export function KnownLimitationsContent() {
 					properties unsubstituted, so a color set with <code>var()</code> is unreadable there: the
 					text or background is asked about (<code>contrast-computable</code>) rather than
 					measured. Run a real browser for large production pages.
+				</li>
+				<li>
+					<strong>
+						In Chromium, <code>text-spacing-content-loss</code> is slow on a very large page with
+						many broken or <code>src</code>-less images.
+					</strong>{" "}
+					The rule adds the WCAG 1.4.12 spacing as a style sheet and measures the text again, and
+					the style recalculation that follows is Chromium's: for an image that shows its alt text
+					in place of a picture (one whose <code>src</code> is missing or fails to load), its time
+					grows with the number of such images squared. Measured: about 1.3 s for 4,000 of them,
+					5.4 s for 8,000; a page with a few hundred is not affected. Leave the rule out of such a
+					scan (<code>{"runOnly.excludeRuleIds: ['text-spacing-content-loss']"}</code>, or{" "}
+					<code>engineOptions.rules.exclude</code>), or the area that holds the images (
+					<code>excludeSelectors</code>).
+				</li>
+				<li id="jsdom-contrast-asks">
+					<strong>
+						Under jsdom, contrast is not measured where the background needs a layout to place;
+						the text is asked about.
+					</strong>{" "}
+					jsdom has no geometry, and the engine doesn't guess one (see the contrast policy in{" "}
+					<a href={`${core}/docs/RULE_AUTHORING.md#87-contrast-edge-cases`}>
+						<code>RULE_AUTHORING.md</code>
+					</a>
+					, on GitHub). <code>contrast-computable</code> asks (<code>BACKGROUND_OVERLAP</code>,
+					with <code>blockerNoLayout</code> and a message saying no layout was there to measure)
+					about:
+					<ul>
+						<li>
+							SVG text painted after a shape in its <code>&lt;svg&gt;</code> that fills or strokes
+							and is drawn (not hidden by <code>display</code> or <code>visibility</code>, as an
+							attribute or in CSS), even a <code>&lt;rect&gt;</code> that looks as if it covers the
+							text. In a browser, a solid <code>&lt;rect&gt;</code>, <code>&lt;circle&gt;</code> or{" "}
+							<code>&lt;ellipse&gt;</code> covering all of the text is measured from the layout.
+						</li>
+						<li>
+							Text whose own element, or the element that gives it its background (the nearest
+							ancestor with an opaque background of its own), has a <code>::before</code> or{" "}
+							<code>::after</code> that the style sheets give content, a position of{" "}
+							<code>absolute</code> or <code>fixed</code> and a background, and do not hide (
+							<code>display: none</code>, <code>visibility: hidden</code>). Its size and offsets
+							are not read, so a small corner badge on those elements makes the text a question
+							too. A pseudo-element on another ancestor between them is not looked at: text nested
+							in an overlay host that has no background of its own is measured against the
+							background behind it, which may be wrong. In a browser the pseudo-element's box is
+							measured.
+						</li>
+					</ul>
+				</li>
+				<li>
+					<strong>
+						Under jsdom, a currency sign in a flex or grid item, a float or a positioned box is
+						read with the text beside it.
+					</strong>{" "}
+					A browser computes the <code>display</code> of a flex or grid item, a float and an
+					absolutely positioned box as a block, so a sign there is not on the same line as the
+					digits beside it, and{" "}
+					<a href="/rules/symbol-graphic-contrast/"><code>symbol-graphic-contrast</code></a> judges
+					it as a graphic. jsdom computes no such <code>display</code> and the engine doesn't infer
+					boxes from <code>flex</code>, <code>grid</code>, <code>float</code> or{" "}
+					<code>position</code>: only block elements, <code>&lt;br&gt;</code> and a link's text
+					(unless its nearest character is a digit) end a run. So{" "}
+					<code>{'<div style="display:flex"><span>$</span><span>45.00</span></div>'}</code> is text
+					there, held to the text ratio by <code>contrast-minimum</code>. Scan in a browser for the
+					layout's answer.
 				</li>
 				<li>
 					<strong>
@@ -462,7 +586,8 @@ export function KnownLimitationsContent() {
 				<li>
 					<strong>Under jsdom, text is judged by its computed <code>font-size</code>.</strong> In a
 					browser, the contrast rules and <code>p-as-heading</code> judge text by the size it is
-					drawn at: CSS <code>zoom</code>, an SVG transform and <code>font-size-adjust</code>{" "}
+					drawn at: CSS <code>zoom</code>, a uniform transform scale, an SVG transform and{" "}
+					<code>font-size-adjust</code>{" "}
 					included, the last from the font's own metrics (<code>font-size: 24px;
 					font-size-adjust: 0.3</code> draws Arial at about 14px, which is not large text). jsdom
 					lays nothing out and reads no font, so there <code>font-size</code> is taken as it is.
@@ -479,16 +604,41 @@ export function KnownLimitationsContent() {
 					subtree to see whether the page moves focus away at once (a focus-trap sentinel);{" "}
 					<code>text-spacing-content-loss</code> adds a style sheet with the WCAG 1.4.12 spacing;{" "}
 					<code>focus-not-obscured-minimum</code> and <code>-enhanced</code> scroll the page so an
-					element lies under a fixed or sticky box, to hit-test it there, which fires the page's{" "}
-					<code>scroll</code> handlers after they have measured (a header that hides on scroll may
-					react); the contrast rules add a blank, off-screen frame to read the browser's own colors for a
-					placeholder or a drop-down <code>&lt;select&gt;</code>. The scan also moves each running
-					animation to a fixed point while the rules run (a finite one to its end, an endless one
-					to its start), so a fade-in is measured as it settles. All of this is put back before the
-					rule or the scan returns: focus, scroll position, style attributes, animations, the added
-					style sheet and the frame. What cannot be put back is what the page's scripts do in
-					response, since focusing an element fires its <code>focus</code> and <code>focusin</code>{" "}
-					handlers: a carousel may move to the focused slide, moving <code>aria-hidden</code> with
+					element lies under a fixed or sticky box, to hit-test it there (on a page that keeps the
+					scroll from happening, such as one whose <code>scrollTo</code> does nothing, nothing can be
+					hit-tested, and each such box is asked about without a lean, with{" "}
+					<code>notScrolled: true</code>); the <code>scroll</code> and <code>scrollend</code> the
+					browser fires for that afterwards are kept from the page's listeners, all but a capturing
+					listener the page put on the window before the scan, so a widget a page loads on its first
+					scroll stays unloaded; the contrast rules add a blank frame to read the browser's own
+					colors for a placeholder or a drop-down <code>&lt;select&gt;</code> (one for the scan, kept
+					in a closed shadow root of a hidden <code>&lt;surea11y-probe&gt;</code> element at the end
+					of <code>&lt;html&gt;</code>, so no rule finds it and its <code>load</code> event, which
+					doesn't cross the shadow root, reaches none of the page's listeners, a capturing one
+					included), and a hidden element they measure a color, a font or the canvas with, added and
+					taken out at once. A page's <code>MutationObserver</code> sees those additions (the frame's
+					holder once, added and taken out), and <code>text-spacing-content-loss</code>'s{" "}
+					<code>&lt;style&gt;</code>, being added and removed: it is called with those records once
+					the scan returns, and a script that reacts to any change in the document (re-rendering, or
+					counting its nodes) runs then. The scan also moves each running animation to a fixed point
+					while the rules run (a finite one to its end, an endless one to its start), so a fade-in
+					is measured as it settles; those of elements in open shadow roots too, unless{" "}
+					<code>includeShadowDom</code> is off. An animation in a closed shadow root is not reached.
+					All of this is put back before the rule or the scan returns: focus, the page's selection
+					and the caret (in the document and in a focused text field), scroll position, style
+					attributes, animations, the added style sheet and the frame. Focus is followed into open
+					shadow roots and same-origin frames and put back there. Focus inside a closed shadow root
+					is the one place it couldn't be: the engine sees only the host, and moving focus away
+					would lose where in the root it was. So <code>aria-hidden-focus</code> doesn't probe then:
+					focus stays where it is, and the hidden focusable elements are judged without the probe,
+					reported as they would be with no sentinel to find, never passed on for review as one. A
+					focused custom element whose shadow root the engine can't read is taken as such a host,
+					even one with <code>tabindex</code> focused itself, since the two can't be told apart; so
+					is a focused <code>&lt;div&gt;</code>, <code>&lt;span&gt;</code> or other element that can
+					carry a shadow root and can't take focus on its own. What cannot be put back is what the
+					page's scripts do in response, since focusing an element fires its <code>focus</code> and{" "}
+					<code>focusin</code> handlers: a carousel may move to the focused slide, moving{" "}
+					<code>aria-hidden</code> with
 					it, or enable a button. The findings of that scan are those of the page as it was found:{" "}
 					<code>aria-hidden-focus</code> reads which subtrees are hidden, and the markup it reports,
 					before it focuses anything. But the page is left as its scripts made it, so a second scan
@@ -533,6 +683,40 @@ export function KnownLimitationsContent() {
 					If you need live-DOM accuracy for hydration-sensitive checks, run the library directly
 					against an already-loaded page via Pattern 2, not the static-fetch CLI.
 				</li>
+				<li id="reflow">
+					<strong>Reflow (1.4.10) is checked only at the width it names.</strong>{" "}
+					<a href="/rules/reflow-horizontal-scroll/"><code>reflow-horizontal-scroll</code></a>{" "}
+					applies to a page laid out at 320 CSS pixels wide or less, and is{" "}
+					<code>notApplicable</code> at any wider viewport: scan the page at that width to check
+					reflow (a phone's viewport, or a frame 320 pixels wide whose document the host names as
+					the page with <code>topLevelDocument</code>). It measures sideways scrolling, and asks
+					about what the edge cuts through where the page clips its sides; whether content or a
+					function is lost once a menu collapses, or a control moves, is still for a person (
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#reflow`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					, on GitHub). Vertical text, which 1.4.10 measures at 256 pixels high, is not checked.
+				</li>
+				<li id="resize-text">
+					<strong>
+						Resize text (1.4.4) is checked for cut-off text only at 640 CSS pixels wide or less.
+					</strong>{" "}
+					<a href="/rules/resize-text-content-loss/"><code>resize-text-content-loss</code></a>{" "}
+					applies to a page laid out at a viewport 640 CSS pixels wide or less, as a 1280 pixel
+					window shows it at 200% zoom, and is <code>notApplicable</code> at any wider viewport:
+					scan the page at that width (a frame 640 pixels wide whose document the host names as the
+					page with <code>topLevelDocument</code>, or a window that size). The engine doesn't zoom
+					the page or resize the viewport itself: a page's script can do neither, and CSS{" "}
+					<code>zoom</code> on the root would not match media queries as browser zoom does. It asks
+					about text a box with hidden overflow cuts off or shortens (ellipsis, line clamp), and
+					never fails: whether the full text is offered another way is for a person. Text cut only
+					by the viewport's own overflow, text that doesn't grow when zoomed, and controls that stop
+					working at 200% are not measured (
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#resize-text`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					, on GitHub).
+				</li>
 				<li>
 					<strong>A layout is measured at one viewport, with the fonts the page has at that
 					moment.</strong> Rules that measure what the browser draws,{" "}
@@ -542,6 +726,14 @@ export function KnownLimitationsContent() {
 					,{" "}
 					<a href="/rules/target-size-minimum/">
 						<code>target-size-minimum</code>
+					</a>
+					,{" "}
+					<a href="/rules/reflow-horizontal-scroll/">
+						<code>reflow-horizontal-scroll</code>
+					</a>
+					,{" "}
+					<a href="/rules/resize-text-content-loss/">
+						<code>resize-text-content-loss</code>
 					</a>{" "}
 					and{" "}
 					<a href="/rules/skip-link/">
@@ -668,7 +860,8 @@ export function KnownLimitationsContent() {
 						hit region out from the layout rather than by hit-testing.
 					</strong>{" "}
 					Targets below the fold or in a scrolling box are measured whole, as if scrolled into
-					view; fixed and sticky boxes over a target are ignored; 3D transforms, most{" "}
+					view; what is painted over a target (an overlay, a fixed or sticky box) takes nothing from
+					it; 3D transforms, most{" "}
 					<code>clip-path</code> shapes and an ancestor's rounded clipping are measured as a
 					bounding box; and links between separators alone ("Edit | Delete") that crowd each other
 					are asked about rather than exempted. Under jsdom the rule is{" "}
@@ -688,8 +881,12 @@ export function KnownLimitationsContent() {
 					<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>{" "}
 					(2.4.12) need a browser: under jsdom they are <code>notApplicable</code>{" "}
 					(<code>data.reason: 'noLayout'</code>). In a browser they ask which elements in the tab
-					order a <code>position: fixed</code> or <code>sticky</code> box that draws something can
-					hide, given the window the scan uses and the page's <code>scroll-padding</code>, and
+					order a <code>position: fixed</code> or <code>sticky</code> box that draws something (a
+					background or an image, an inset <code>box-shadow</code> filling it, or a{" "}
+					<code>::before</code> or <code>::after</code> with a background positioned over it) can
+					hide (a fixed box inside an ancestor that is its containing block, through a transform, a
+					filter, <code>perspective</code>, containment, a container type or{" "}
+					<code>will-change</code>, scrolls with that ancestor and isn't one), given the window the scan uses and the page's <code>scroll-padding</code>, and
 					confirm it by hit-testing a few of them. Left out: an element inside a box that scrolls on
 					its own, or inside a fixed or sticky box; horizontal scrolling; other content laid over an
 					element (an absolutely positioned box, a non-modal popup that isn't fixed); a box with{" "}

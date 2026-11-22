@@ -23,7 +23,9 @@ const sarifFieldRows = [
 			<>
 				El resumen SHA-256, de 64 dígitos hexadecimales, de la misma clave de identidad{" "}
 				<code>ruleId + reasonCode + html</code> que usa{" "}
-				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code>):
+				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code>;{" "}
+				<code>selector</code> en lugar de <code>html</code> para un hallazgo sin marcado, como con{" "}
+				<code>output.includeHtml: false</code>):
 				una huella basada en el contenido y estable, no basada en la posición, para los consumidores
 				que la leen: el mismo hallazgo recibe el mismo resumen en todos los informes. Antes de la
 				1.11, <code>surea11y/violation/v1</code> contenía la propia clave, así que una herramienta que
@@ -32,7 +34,11 @@ const sarifFieldRows = [
 				los hallazgos de las diecisiete reglas que ahora dan un código, y los de los códigos
 				divididos según su causa, así que sus alertas de <span lang="en">Code Scanning</span> se
 				cierran una vez y los hallazgos vuelven como nuevos (ver{" "}
-				<a href="/conformance/baseline/">Baseline / allowlist</a>).
+				<a href="/conformance/baseline/">Baseline / allowlist</a>). En la 1.18, un hallazgo sin
+				marcado se identifica por su selector (antes, todos los hallazgos así de una regla y un
+				código de motivo compartían un mismo resumen), y el resumen de un hallazgo cuyo marcado
+				tiene un nombre de clase con un espacio de no separación, o una etiqueta de apertura
+				cortada por el límite del fragmento, cambia una vez.
 			</>
 		),
 	},
@@ -59,17 +65,19 @@ const sarifFieldRows = [
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, el enlace de ayuda de la regla, cuando es una URL <code>http(s)</code> absoluta; si no, el documento Understanding del primer criterio de WCAG al que se asocia; ausente en una regla sin ninguno de los dos, lo que no ocurre con ninguna regla incorporada: una sin criterio asociado enlaza su sección del catálogo de reglas.</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>La opción <code>toolVersion</code>, si se indica (una herramienta que envuelve el motor pasa la suya); si no, <code>engine.version</code>, la versión del motor que produjo el resultado.<code>"0.0.0"</code> solo para un resultado que no lo tiene, de una versión anterior a la 1.10.0, o cuyo <code>engine.version</code> no es una cadena.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>La opción <code>category</code>, con una <code>/</code> final añadida si no la tiene (GitHub lee todo lo que hay hasta la última barra como la categoría). Ausente cuando no se indica ninguna categoría. Ver <a href="#scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</a>.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>,source: <><code>wcagVersion</code>, <code>wcagLevel</code> (cuando el análisis tenía un nivel: <code>engineOptions.wcagLevel</code>, o el que da su selección), <code>profile</code> (el primer perfil, en un análisis de varios), <code>profiles</code> (solo en un análisis de varios perfiles: cada perfil que ejecutó, <code>engine.profiles</code>), <code>optInRules</code> y <code>environment</code> (una copia de <code>engine.environment</code>) del <code>engine</code> del resultado: el objetivo de conformidad que usó la ejecución, para que un panel distinga una ejecución de WCAG 2.1 de una de 2.2, y una ejecución AA de una de todos los niveles, las etiquetas de reglas opcionales que añadió más allá de ese objetivo, cuando añadió alguna, y las condiciones en que se renderizó la página (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code> y cualquier otro campo que tenga, incluidos los de los hooks; ver <a href="/results-reports/output-schema/#top-level-result">Esquema de salida</a>). Se omiten en resultados de versiones anteriores a esos campos.</> },
+	{ id: "extensions", field: <code>tool.extensions</code>, source: <>Presente solo cuando el análisis se ejecutó con packs (<code>engine.packs</code>): cada pack como un componente de la herramienta, <code>{"{ name, version }"}</code> (<code>{'{ "name": "@surea11y/pack-en301549", "version": "1.5.0" }'}</code>), ordenados por nombre, de todos los frames de un resultado entre frames, para que un panel sepa qué pack y qué versión juzgaron las reglas que añadió un pack. Core 1.18.0 y posteriores.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>wcagLevel</code> (cuando el análisis tenía un nivel: <code>engineOptions.wcagLevel</code>, o el que da su selección), <code>profile</code> (el primer perfil, en un análisis de varios), <code>profiles</code> (solo en un análisis de varios perfiles: cada perfil que ejecutó, <code>engine.profiles</code>), <code>optInRules</code>, <code>packs</code> (cuando el análisis se ejecutó con packs: <code>engine.packs</code>, cada uno como <code>name@version</code>) y <code>environment</code> (una copia de <code>engine.environment</code>) del <code>engine</code> del resultado: el objetivo de conformidad que usó la ejecución, para que un panel distinga una ejecución de WCAG 2.1 de una de 2.2, y una ejecución AA de una de todos los niveles, las etiquetas de reglas opcionales que añadió más allá de ese objetivo, cuando añadió alguna, y las condiciones en que se renderizó la página (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code> y cualquier otro campo que tenga, incluidos los de los hooks; ver <a href="/results-reports/output-schema/#top-level-result">Esquema de salida</a>). Se omiten en resultados de versiones anteriores a esos campos.</> },
 ];
 
 const sarifOptionRows = [
 	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>, para una herramienta que envuelve el motor.</> },
 	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>, la página principal de la herramienta.</> },
 	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "ninguno", effect: <>El archivo de baseline tal como se guardó (su <code>JSON.parse</code>) o su lista <code>entries</code>, ver <a href="/conformance/baseline/#file-format">Formato del archivo</a>. Las ocurrencias de fallo registradas ahí se omiten, como hace <code>--baseline</code> (ver más abajo). Una entrada escrita por la versión menor anterior, con un código de motivo que ha cambiado desde entonces, sigue coincidiendo con el hallazgo con su código nuevo (ver <a href="/conformance/baseline/#upgrading">Actualizar de versión</a>).</> },
-	{ id: "allowProfilesNotRun", option: <code>allowProfilesNotRun</code>, def: <code>false</code>, effect: <>Un análisis de <a href="/configuration/engine-options/#several-profiles">varios perfiles</a> que ejecutó menos de los que pidió (<code>engine.profilesNotRun</code>) contó menos de lo que se le pidió: cada perfil no ejecutado es una notificación <code>error</code>, y la invocación no es <code>executionSuccessful</code>. <code>true</code> las convierte en advertencias. Un valor distinto de <code>true</code> o <code>false</code> lanza un <code>TypeError</code>. Core 1.15.0 y posteriores.</> },
+	{ id: "allowProfilesNotRun", option: <code>allowProfilesNotRun</code>, def: <code>false</code>, effect: <>Un análisis de <a href="/configuration/engine-options/#several-profiles">varios perfiles</a> que ejecutó menos de los que pidió (<code>engine.profilesNotRun</code>) contó menos de lo que se le pidió: cada perfil no ejecutado es una notificación <code>error</code>, y la invocación no es <code>executionSuccessful</code>. <code>true</code> las convierte en advertencias. Se lee igual que <code>leanFailWcagOnly</code>. Core 1.15.0 y posteriores.</> },
 	{ id: "category", option: <code>category</code>, def: "ninguno", effect: <><code>runs[0].automationDetails.id</code>, ver <a href="#scanning-at-several-viewport-widths">Analizar con varios anchos de viewport</a>.</> },
 	{ id: "leanFailAs", option: <code>leanFailAs</code>, def: <code>'warning'</code>, effect: <><code>'error'</code> informa con nivel <code>error</code> de un hallazgo <code>cantTell</code> cuya tendencia apunta a fallo, para que una compilación bloqueada por errores falle también con los fallos probables. Se lee sin distinguir mayúsculas y minúsculas; cualquier otro valor lanza un <code>TypeError</code>. También el de una regla de buenas prácticas: una regla así, sin criterio de WCAG asociado, nunca falla, y los hechos que constata tienden a fallo sin condiciones, así que un nivel de encabezado saltado (<code>heading-order</code>) es un <code>error</code>. Un hallazgo de una regla cuyos criterios quedan todos fuera del objetivo del análisis sigue siendo una <code>note</code>. Un hallazgo que tiende a fallo y tiene una entrada marcada con <code>lean: 'fail'</code> en <code>baselineEntries</code> sigue siendo un <code>warning</code>.</> },
-	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <>Con <code>leanFailAs: 'error'</code>, <code>true</code> eleva solo los hallazgos de reglas asociadas a un criterio de WCAG dentro del objetivo del análisis, y deja las tendencias de las reglas de buenas prácticas en <code>warning</code>. Un valor distinto de <code>true</code> o <code>false</code> lanza un <code>TypeError</code>. <code>leaningFailures(result, {"{ wcagOnly }"})</code>, de <code>@surea11y/core</code>, enumera los hallazgos que elevan estas dos opciones, antes del baseline.</> },
+	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <>Con <code>leanFailAs: 'error'</code>, <code>true</code> eleva solo los hallazgos de reglas asociadas a un criterio de WCAG dentro del objetivo del análisis, y deja las tendencias de las reglas de buenas prácticas en <code>warning</code>. Dado como lo escribe una línea de comandos o una variable de entorno (<code>'true'</code>, <code>'false'</code>, <code>'1'</code>, <code>'0'</code>, <code>1</code>, <code>0</code>), se lee como tal, con un aviso; cualquier otra cadena o número se ignora con un aviso; un valor que no se puede leer (un <code>BigInt</code>, un objeto) lanza un <code>TypeError</code>, igual que cualquier cosa que no sea <code>true</code> o <code>false</code> con <code>strictOptions</code>. <code>leaningFailures(result, {"{ wcagOnly }"})</code>, de <code>@surea11y/core</code>, enumera los hallazgos que elevan estas dos opciones, antes del baseline.</> },
+	{ id: "strictOptions", option: <code>strictOptions</code>, def: <code>false</code>, effect: <><code>true</code> (o <code>'true'</code>, <code>'1'</code>, <code>1</code>) hace que un interruptor dado como cualquier cosa distinta de <code>true</code> o <code>false</code> lance un <code>TypeError</code>, como hace <a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions"><code>engineOptions.strictOptions</code></a> en un análisis. Core 1.18.0 y posteriores.</> },
 	{ id: "packs", option: <code>packs</code>, def: "ninguno", effect: <>Los packs que ejecutó el análisis (<code>engineOptions.packs</code>): en Node, los hallazgos sin decidir de una regla de un pack llevan los pasos de su propio <code>meta.review</code> (<code>properties.howToCheck</code>).</> },
 ];
 
@@ -160,6 +168,30 @@ export function SarifReportContent() {
 				<code>"The rule &lt;id&gt; did not complete: &lt;error&gt;"</code>, que nombra la regla en{" "}
 				<code>associatedRule.id</code>, para que el hueco en la cobertura no se lea como un
 				aprobado.
+			</p>
+			<p id="capped-occurrences">
+				Una regla de la que{" "}
+				<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a>{" "}
+				dejó fuera del resultado algunas ocurrencias recibe una notificación de nivel{" "}
+				<code>note</code>,{" "}
+				<code>"+&lt;n&gt; more occurrences of the rule &lt;id&gt; not listed: output.maxOccurrencesPerRule kept &lt;k&gt;"</code>.
+				Un fallo que quedó fuera no se puede comparar con <code>baselineEntries</code>: cuando el
+				baseline conocía todos los fallos conservados, la regla recibe un resultado{" "}
+				<code>error</code> por los que quedaron fuera (código de motivo{" "}
+				<code>OCCURRENCES_OMITTED</code>, situado en la página), para que un análisis con límite
+				nunca se lea como limpio. Core 1.18.0 y posteriores.
+			</p>
+			<p id="rules-not-run">
+				Una regla que el presupuesto de tiempo del análisis dejó sin empezar (<code>notRun</code>,
+				ver{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">un presupuesto de
+				tiempo</a>) tampoco comprobó nada: es una notificación de nivel <code>error</code>,{" "}
+				<code>"The rule &lt;id&gt; was not run: the scan reached its time budget of &lt;n&gt; ms first, so it checked nothing"</code>,
+				que nombra la regla en <code>associatedRule.id</code>, y la invocación no es{" "}
+				<code>executionSuccessful</code>. Un perfil de un análisis de varios que el presupuesto
+				dejó sin empezar (<code>engine.profilesNotRun</code>, motivo <code>timeBudget</code>) es
+				también un <code>error</code>, diga lo que diga <code>allowProfilesNotRun</code>. Core
+				1.18.0 y posteriores.
 			</p>
 			<DataTable
 				label="Resultados del motor como niveles SARIF"
@@ -342,6 +374,12 @@ export function SarifReportContent() {
 				]}
 				rows={sarifOptionRows}
 			/>
+			<p>
+				Las opciones <code>null</code> equivalen a no dar opciones. Una clave que el informe no lee
+				y que parece una errata de una que sí lee (<code>categroy</code>, o <code>baseline</code>{" "}
+				por <code>baselineEntries</code>) se ignora con un <code>console.warn</code> que nombra la
+				opción a la que se refería, igual que un análisis avisa sobre <code>engineOptions</code>.
+			</p>
 
 			<h2>
 				Combinación con <code>--baseline</code>

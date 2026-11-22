@@ -36,6 +36,8 @@
 	"rulePage.severity": "gravedad: {value}",
 	"rulePage.exampleCodeLabel": "Ejemplo {n}, {outcome}: HTML para {ruleId}",
 	"rulePage.exampleContext.browser": "En un navegador",
+	"rulePage.exampleContext.width320": "A 320 píxeles CSS de ancho",
+	"rulePage.exampleContext.width640": "A 640 píxeles CSS de ancho",
 	"common.deprecated": "obsoleta",
 	"rulesTable.ruleId": "ID de regla",
 	"rulesTable.title": "Título",

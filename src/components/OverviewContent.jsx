@@ -222,7 +222,14 @@ export function OverviewContent() {
 				Messages (a live region assistive technology can't reach), 1.4.5 Images of Text (text
 				drawn in an image that could be real text) and, in a browser, 2.4.11 Focus Not Obscured (Minimum)
 				(a fixed or sticky header, footer or banner that elements in the tab order can take focus
-				hidden behind, confirmed by hit-testing). All four ask rather than fail. A finding's
+				hidden behind, confirmed by hit-testing). All four ask rather than fail. Two more measure
+				the page as a browser lays it out at a narrow width: at 320 CSS pixels wide, 1.4.10 Reflow
+				(content that makes the page scroll sideways, or that the edge cuts off), and at 640, as a
+				1280 pixel window shows a page at 200% zoom, 1.4.4 Resize Text (text a box cuts off or
+				shortens). Both ask, never fail, and don't apply at a wider viewport, so scan at that
+				width to check them. New questions also cover radio buttons and checkboxes with no group
+				name (1.3.1), symbols such as ★ used as graphics under 3:1 (1.4.11), and, in a scan that
+				targets AAA, a link named only "click here" that only its sentence explains (2.4.9). A finding's
 				message names the cause where the rule knows it: why an element has no name, a likely
 				typo in a role, attribute or <code>autocomplete</code> value, what hides an element. The keyboard
 				rules read event handlers from the markup; with <code>listenerHookScript()</code>, another
@@ -308,11 +315,12 @@ export function OverviewContent() {
 				<li>confirm that alt text is <em>meaningful</em>, only that it is present (an alt attribute of <code>"image123.png"</code> passes the objective check, and is asked about, leaning fail, as a file name);</li>
 				<li>judge whether a color contrast choice is aesthetically appropriate, only whether it meets the applicable contrast ratio;</li>
 				<li>determine whether an error message actually <em>explains</em> the problem, since that depends on validation logic a static scan can't see;</li>
-				<li>detect a keyboard focus trap or content clipped at 400% zoom, since both require simulating real user interaction over time, not just reading the DOM at one instant.</li>
+				<li>detect a keyboard focus trap, since that requires simulating real user interaction over time, not just reading the DOM at one instant;</li>
+				<li>zoom the page itself: reflow and cut-off text are measured only in a page laid out at the narrow width they name, and whether content or a function is lost there is still for a person.</li>
 			</ul>
 			<p>
 				Some implemented checks report <code>cantTell</code> when a person has to decide. Other
-				aspects, including keyboard traps and reflow at zoom, are not checked by the engine at all
+				aspects, including keyboard traps, are not checked by the engine at all
 				and need separate testing: no <code>cantTell</code> stands in for them, so a result without
 				one doesn't mean they were covered. See{" "}
 				<a href="/help/known-limitations/">Known limitations</a> for the complete list, and the{" "}

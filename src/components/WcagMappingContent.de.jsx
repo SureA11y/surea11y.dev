@@ -138,7 +138,7 @@ export function WcagMappingContent() {
 				(<code>COMPLETE_CHECK</code>), jeweils mit Begründung, und noch ist es keines: Jedes fragt
 				etwas, das die Regeln nicht sehen, ob eine Textalternative, ein Label, eine Überschrift
 				oder der Text eines Links das Richtige sagt, oder wie Inhalte, die ein Skript zeichnet
-				oder ändert, es erfüllen. <strong>In 1.14 ergibt daher keine zusammengesetzte WCAG-Regel{" "}
+				oder ändert, es erfüllen. <strong>Daher ergibt bisher keine zusammengesetzte WCAG-Regel{" "}
 				<code>pass</code>.</strong>
 			</p>
 			<p>
@@ -248,8 +248,8 @@ export function WcagMappingContent() {
 				falsch gemacht.</strong>{" "}
 				Eine Regel trägt ein Stufen-Tag pro zugeordnetem Erfolgskriterium, mehr nicht: Eine Regel,
 				die nur einem AA-Kriterium zugeordnet ist, trägt <code>wcag2aa</code> und <em>nicht</em>{" "}
-				<code>wcag2a</code>. <code>{"{ tags: ['wcag2aa'] }"}</code> allein führt daher die 11 Regeln
-				aus, die einem AA-Kriterium von 2.0 zugeordnet sind, nicht die 105, die ein Ziel 2.0 A +
+				<code>wcag2a</code>. <code>{"{ tags: ['wcag2aa'] }"}</code> allein führt daher die 12 Regeln
+				aus, die einem AA-Kriterium von 2.0 zugeordnet sind, nicht die 107, die ein Ziel 2.0 A +
 				AA ausmachen. Listen Sie jede Stufe auf, die Sie meinen, oder verwenden Sie{" "}
 				<code>runOnly.wcag</code>, das dieses Problem nicht hat. Auch{" "}
 				<code>engineOptions.profile</code> (<code>wcag20-aa</code>,{" "}

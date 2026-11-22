@@ -42,7 +42,9 @@ export function ResultsReportsContent() {
 				core-Regel sagt, wie eine Person ihn beantwortet, und manche sagen, in welche Richtung die Anhaltspunkte der
 				Seite weisen (eine <em>Tendenz</em>), sodass eine Prüfung mit den wahrscheinlichen Fehlern
 				beginnt statt mit einer flachen Liste. Ein Scan mehrerer Profile führt
-				jeden Befund nur einmal und sagt, was jedes Profil daraus macht. Es lohnt sich, das einmal zu
+				jeden Befund nur einmal und sagt, was jedes Profil daraus macht, und ein Scan, den sein
+				Zeitbudget abgebrochen hat, nennt die Regeln, die er nicht ausgeführt hat, sodass er nie
+				als Scan ohne Befunde gilt. Es lohnt sich, das einmal zu
 				lesen, wenn Sie irgendetwas auf einem rohen Ergebnis aufbauen. Die vollständige Form finden
 				Sie unter <a href="/results-reports/output-schema/">Ausgabeschema</a>.
 			</p>

@@ -145,7 +145,9 @@ const topLevelRows = [
 				Nur bei einem Scan mehrerer Profile, und nur, wenn eines davon nicht gelaufen ist:{" "}
 				<code>{"[{ profile, reason }]"}</code>, <code>reason</code>{" "}
 				<code>unknown-profile</code> (kein solches Profil), <code>pack-skipped</code> (sein Pack
-				wurde übersprungen, siehe <code>skippedPacks</code>) oder{" "}
+				wurde übersprungen, siehe <code>skippedPacks</code>), <code>timeBudget</code> (das
+				Zeitbudget des Scans war aufgebraucht, bevor es startete; siehe{" "}
+				<a href="#incomplete-scan">Ein unvollständiger Scan</a>) oder{" "}
 				<code>overridden-by-selection</code> (ein include in <code>runOnly</code> oder Regel-IDs
 				oder Tags in <code>engineOptions</code> wählen stattdessen die Regeln, wie sie es bei einem
 				Profil täten; das gilt für den Scan jedes Profils). Die Menge der Gründe ist offen.
@@ -158,9 +160,12 @@ const topLevelRows = [
 		meaning: (
 			<>
 				Nur vorhanden, wenn das angewendete Profil Regeln auslässt:{" "}
-				<code>{"{ rules, criteria }"}</code>, die genannten Regeln und die WCAG-Kriterien, die es
-				auslässt. Die genannten Regeln, die Regeln, deren sämtliche Kriterien es auslässt, und die
-				WCAG-Zusammenfassungen dieser Kriterien sind nicht gelaufen; eine Regel, die auch ein
+				<code>{"{ rules, criteria, requirements }"}</code>, die genannten Regeln, die
+				WCAG-Kriterien, die es auslässt, und die Anforderungen seiner Norm, die das Gesetz, dem es
+				dient, nicht verlangt (experimentell bis 1.20.0, und nur, wenn es welche gibt; siehe{" "}
+				<a href="/configuration/packs/#laws">Packs</a>). Die genannten Regeln, die Regeln, deren
+				sämtliche Kriterien es auslässt, die WCAG-Zusammenfassungen dieser Kriterien und die
+				Zusammenfassungen dieser Anforderungen sind nicht gelaufen; eine Regel, die auch ein
 				Kriterium prüft, das das Profil behält, ist gelaufen und zählt für dieses Kriterium. Das
 				schränkt den Scan ein, ohne zu ändern, was die WCAG verlangen. Kein eingebautes
 				Profil lässt etwas aus.
@@ -172,11 +177,12 @@ const topLevelRows = [
 		field: <code>engine.law</code>,
 		meaning: (
 			<>
-				Experimentell (core 1.16.0, bis 1.18.0). Nur vorhanden, wenn das angewendete Profil ein
-				Gesetz nennt, das, nach dem die Norm eines Packs bewertet wird (siehe{" "}
-				<a href="/configuration/packs/#laws">Packs</a>):{" "}
+				Nur vorhanden, wenn das angewendete Profil ein Gesetz nennt, das, nach dem die Norm eines
+				Packs bewertet wird (siehe <a href="/configuration/packs/#laws">Packs</a>):{" "}
 				<code>{"{ id, name, jurisdiction, lang }"}</code>, <code>lang</code> die Sprache, in der{" "}
-				<code>name</code> steht. Core nennt das Gesetz; es entscheidet nie, für wen das Gesetz gilt.
+				<code>name</code> steht. Bei einem Scan mehrerer Profile nur, wenn alle demselben Gesetz
+				dienen; das jedes Profils steht in <code>profiles[name].law</code>. Core nennt das Gesetz;
+				es entscheidet nie, für wen das Gesetz gilt. Stabil seit core 1.18.0.
 			</>
 		),
 	},
@@ -235,6 +241,42 @@ const topLevelRows = [
 				könnte, bleibt vollständig: jedes Prüfergebnis eines Scans mit <code>packs</code>, das einer
 				eigenen Regel und eines, dessen Titel oder Beschreibung die <code>messages</code> des Scans
 				geändert haben. Das Ergebnis einer leeren Seite schrumpft von etwa 263 KB auf 90 KB.
+			</>
+		),
+	},
+	{
+		id: "engine.incomplete",
+		field: <code>engine.incomplete</code>,
+		meaning: (
+			<>
+				Nur vorhanden, wenn der Scan nicht jede ausgewählte Regel ausgeführt oder nicht jedes
+				Stylesheet gelesen hat, das er abruft, weil sein <code>engineOptions.timeBudgetMs</code>{" "}
+				vorher aufgebraucht war (siehe <a href="#incomplete-scan">Ein unvollständiger Scan</a>):{" "}
+				<code>{"{ reason, timeBudgetMs, rulesNotRun }"}</code>. <code>reason</code> ist{" "}
+				<code>"timeBudget"</code>, <code>timeBudgetMs</code> das angegebene Budget und{" "}
+				<code>rulesNotRun</code> die Zahl der Einträge in <code>notRun</code>. Bei einem Scan
+				mehrerer Profile zählt <code>profilesNotRun</code> die nicht gestarteten Profile. Aus{" "}
+				<code>runa11yCoreInPageAsync</code> des Browser-Bundles listet{" "}
+				<code>styleSheetsNotRead</code> die Stylesheets, die es noch nicht abgerufen hatte, als
+				die Hälfte des Budgets, die das Abrufen brauchen darf, aufgebraucht war (
+				<code>rulesNotRun</code> ist dann <code>0</code>, wenn jede Regel lief). Ein solches
+				Ergebnis ist nie eines ohne Befunde: Die Regeln in <code>notRun</code> haben nichts
+				geprüft, und die Zusammenfassungen, die sie gruppieren, sind <code>cantTell</code>.
+			</>
+		),
+	},
+	{
+		id: "engine.occurrenceCap",
+		field: <code>engine.occurrenceCap</code>,
+		meaning: (
+			<>
+				Nur vorhanden, wenn <code>engineOptions.output.maxOccurrencesPerRule</code> Vorkommen aus
+				dem Ergebnis weggelassen hat:{" "}
+				<code>{"{ maxOccurrencesPerRule, occurrencesOmitted, rulesCapped }"}</code>, die
+				Obergrenze, wie viele Vorkommen sie insgesamt weggelassen hat und bei wie vielen Regeln.
+				Jedes betroffene Prüfergebnis nennt seine eigenen (<code>occurrencesOmitted</code>). Kein
+				Ergebnis, keine Zusammenfassung und keine Zählung ändert sich; siehe{" "}
+				<a href="#occurrence-cap">Ein begrenztes Ergebnis</a>.
 			</>
 		),
 	},
@@ -324,7 +366,9 @@ const topLevelRows = [
 		meaning: (
 			<>
 				<strong>Wird nicht automatisch erzeugt.</strong> Nur gesetzt, wenn Sie{" "}
-				<code>engineOptions.timestamp</code> als nicht leeren String übergeben. Die Engine hat
+				<code>engineOptions.timestamp</code> als Datum und Uhrzeit nach ISO 8601 übergeben (
+				<code>new Date().toISOString()</code>); anderer Text wird mit einer Warnung verworfen.
+				Die Engine hat
 				keine eingebaute Uhr (bewusst deterministisch). Wenn Sie einen Zeitstempel für den
 				Scan im Ergebnis haben möchten, liefern Sie ihn selbst.
 			</>
@@ -430,6 +474,23 @@ const topLevelRows = [
 				Seite es nicht ausgeführt hat: Kein Aufruf von <code>packScript</code> hat genau die
 				genannte Menge registriert, oder das Script wurde mit einer anderen core-Version
 				vorbereitet. Jeder Eintrag wird zusätzlich mit <code>console.warn</code> protokolliert.
+			</>
+		),
+	},
+	{
+		id: "notRun",
+		field: <code>notRun</code>,
+		meaning: (
+			<>
+				Nur vorhanden, wenn das Zeitbudget des Scans (<code>engineOptions.timeBudgetMs</code>)
+				aufgebraucht war, bevor jede ausgewählte Regel gestartet war: jede Regel, die er nicht
+				gestartet hat, <code>{'{ ruleId, reason: "timeBudget" }'}</code>, bei einem Scan mehrerer
+				Profile mit <code>profile</code>. Eine solche Regel hat keinen Eintrag in{" "}
+				<code>checksResults</code>. Ein Profil, das das Budget nicht mehr starten ließ (
+				<code>engine.profilesNotRun</code>, Grund <code>timeBudget</code>), hat jede Regel, die es
+				auswählt, mit seinem <code>profile</code> hier stehen; eine davon, die ein anderes Profil
+				ausgeführt hat, behält den Eintrag dieses Profils in <code>checksResults</code>.{" "}
+				<code>engine.incomplete</code> ist dann gesetzt.
 			</>
 		),
 	},
@@ -559,7 +620,20 @@ const occurrenceRows = [
 			</>
 		),
 	},
-	{ id: "summary", field: <code>summary</code>, meaning: <>Für Menschen lesbar, bereits lokalisiert („<span lang="en">This button has no accessible name.</span>“).</> },
+	{
+		id: "summary",
+		field: <code>summary</code>,
+		meaning: (
+			<>
+				Für Menschen lesbar, bereits lokalisiert („<span lang="en">This button has no accessible name.</span>“).
+				Seit core 1.18.0 steht eine Dezimalzahl darin mit dem Dezimaltrennzeichen der Sprache der
+				Meldung, nicht ihrer Region: „2,85:1“ auf Französisch, Deutsch und Spanisch, „2.85:1“ auf
+				Englisch und Japanisch. Text der Seite, den sie zitiert (eine ID, eine Rolle, eine
+				Beschriftung), wird nach 120 Zeichen abgeschnitten, und eine zitierte Liste endet nach
+				fünf Einträgen mit <code>…</code>.
+			</>
+		),
+	},
 	{ id: "hint", field: <code>hint</code>, meaning: "Für Menschen lesbare Hinweise zur Behebung, bereits lokalisiert." },
 	{
 		id: "i18n",
@@ -568,7 +642,10 @@ const occurrenceRows = [
 			<>
 				Die rohen Übersetzungs-Keys hinter <code>summary</code>/<code>hint</code>, falls Sie sie
 				selbst in einer anderen Locale neu rendern möchten, ohne den Scan zu wiederholen.{" "}
-				<code>null</code>, wenn das Vorkommen keine Key-basierte i18n verwendet hat.
+				<code>null</code>, wenn das Vorkommen keine Key-basierte i18n verwendet hat.{" "}
+				<code>params</code> behält jeden Wert unformatiert, eine Dezimalzahl mit Punkt (
+				<code>ratio: "2.85"</code>, ein String), und <code>data.details</code> und{" "}
+				<code>metrics</code> behalten Zahlen: Nur der Text der Meldung folgt der Sprache.
 			</>
 		),
 	},
@@ -649,13 +726,20 @@ const occurrenceRows = [
 				<code>occurrenceOutcome(check, occurrence)</code> aus <code>@surea11y/core</code> liefert
 				die Stufe so, wie jeder Reporter sie liest, in beiden Fällen; seit core 1.16.0 liefert es{" "}
 				<code>'pass'</code> für ein Vorkommen einer bestandenen Prüfung, wo es{" "}
-				<code>null</code> lieferte. Das Ergebnis stimmt
+				<code>null</code> lieferte, und seit 1.18.0 auch für ein als <code>'pass'</code>{" "}
+				markiertes Vorkommen in einer nicht bestandenen oder offenen Prüfung, wo es das Ergebnis
+				der Prüfung lieferte. SARIF, JUnit, der HTML-Bericht und Baselines zählen ein solches
+				Vorkommen daher nicht mehr als Fehler. Ein vollständiges <code>switch</code> darüber
+				braucht einen Fall <code>'pass'</code>. Das Ergebnis stimmt
 				immer mit den Stufen überein: Jedes Vorkommen der <code>fail</code>-Stufe macht es zu{" "}
 				<code>fail</code>, und ein <code>fail</code>, dessen Vorkommen alle zur{" "}
 				<code>cantTell</code>-Stufe gehören, ist <code>cantTell</code>, sodass SARIF, JUnit, EARL
 				und Baselines eine einzige Antwort geben. Die Engine gleicht eine eigene Regel oder eine
-				Regel eines Packs an, die sie widersprüchlich zurückgibt; unter der Standard-Policy ist
-				eine manuelle Regel nie <code>fail</code>. Ein Ergebnis, das gespeichert wurde, bevor die
+				Regel eines Packs an, die sie widersprüchlich zurückgibt, und liest die Stufe, die sie
+				angibt, ohne Rücksicht auf Groß- und Kleinschreibung (<code>'FAIL'</code> ist{" "}
+				<code>fail</code>); jeder andere Wert (<code>'bogus'</code>) wird verworfen, sodass das
+				Vorkommen das Ergebnis der Regel übernimmt, und im <code>error</code> des Ergebnisses
+				vermerkt. Unter der Standard-Policy ist eine manuelle Regel nie <code>fail</code>. Ein Ergebnis, das gespeichert wurde, bevor die
 				Engine das tat, lesen die Reporter nach derselben Regel, unter der Policy, die seine{" "}
 				<code>engineOptions</code> festhalten, und fassen seine WCAG-Zusammenfassungen aus dem
 				Gelesenen neu zusammen.
@@ -724,11 +808,13 @@ export function OutputSchemaContent() {
 					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
 					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
-					"    profileExcludes?: { rules: string[], criteria: string[] },",
-					"    law?: { id: string, name: string, jurisdiction: string, lang: string },  // experimental",
+					"    profileExcludes?: { rules: string[], criteria: string[], requirements?: string[] },",
+					"    law?: { id: string, name: string, jurisdiction: string, lang: string },",
 					"    optInRules?: string[],",
 					'    outputDetail?: "findings",',
 					"    packs?: string[],      // name@version",
+					'    incomplete?: { reason: "timeBudget", timeBudgetMs: number, rulesNotRun: number, profilesNotRun?: number, styleSheetsNotRead?: string[] },',
+					"    occurrenceCap?: { maxOccurrencesPerRule: number, occurrencesOmitted: number, rulesCapped: number },",
 					"    environment: {",
 					"      layout: boolean,",
 					"      viewport?: { width: number, height: number },  // CSS px",
@@ -757,6 +843,7 @@ export function OutputSchemaContent() {
 					"  overriddenBuiltinIds: string[],",
 					"  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
 					"  skippedPacks?: Array<{ name: string | null, reason: string }>,",
+					'  notRun?: Array<{ ruleId: string, reason: "timeBudget", profile?: string }>,',
 					"  profiles?: { [profile: string]: { wcagVersion, wcagLevel?, standards, rulesResults } }  // a scan of several profiles only",
 					"}",
 				]}
@@ -814,7 +901,28 @@ export function OutputSchemaContent() {
 					nur bei einem Profil, das eine WCAG-Stufe zum Ziel hat), <code>rulesResults</code> das
 					Ergebnis jeder seiner Zusammenfassungen nach ID: das, was ein Scan nur mit diesem Profil
 					gemeldet hätte. Ein Profil, das ein Gesetz nennt, hat auch <code>law</code>, wie{" "}
-					<code>engine.law</code> (experimentell).
+					<code>engine.law</code>.
+				</li>
+				<li>
+					<strong>Ein Profil, das keinen Befund einer Regel zählt</strong> (es wählt die Regel aus,
+					aber seine Norm ordnet die Befunde keiner Anforderung zu), gibt der Prüfung das Ergebnis,
+					das ihr ein Scan nur mit diesem Profil gibt, das eigene der Regel, nicht{" "}
+					<code>pass</code>.
+				</li>
+				<li>
+					<strong>Die <code>policy</code> des Scans</strong> (oder <code>policyContract</code>)
+					gilt für jedes Urteil: Wo sie <code>fail</code> nicht zulässt, ist eine Prüfung, die eine
+					Norm nicht bestehen lässt, <code>cantTell</code>, mit <code>policyOutcome: 'fail'</code>,
+					bei einem Scan eines Profils wie mehrerer.
+				</li>
+				<li>
+					<strong>Das Zeitbudget</strong> (<code>engineOptions.timeBudgetMs</code>) gilt für den
+					ganzen Scan, nicht für jedes Profil: Jedes Profil nach dem ersten erhält, was davon übrig
+					ist, und eines, das ohne Rest starten würde, steht in <code>engine.profilesNotRun</code>{" "}
+					als <code>timeBudget</code>, in SARIF und JUnit ein Fehler, auch mit{" "}
+					<code>allowProfilesNotRun</code>. Die Regeln, die der Scan eines Profils nicht gestartet
+					hat, stehen in <code>notRun</code>, jede mit ihrem <code>profile</code>, und ein nicht
+					gestartetes Profil hat dort alle seine Regeln.
 				</li>
 				<li>
 					<strong><code>severity</code></strong>: der höchste, den ein Profil, das die Regel
@@ -889,6 +997,41 @@ export function OutputSchemaContent() {
 					},
 				]}
 			/>
+
+			<h2 id="incomplete-scan">Ein unvollständiger Scan</h2>
+			<p>
+				Mit <code>engineOptions.timeBudgetMs</code> (siehe{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">Engine-Optionen</a>)
+				startet ein Scan keine weiteren Regeln mehr, sobald er so viele Millisekunden verbraucht
+				hat. Die Regeln, die er nicht gestartet hat, stehen in <code>notRun</code>, und{" "}
+				<code>engine.incomplete</code> sagt, dass der Scan abgebrochen wurde.{" "}
+				<strong>Ein solches Ergebnis gilt nie als bestanden</strong>: Die Zusammenfassungen, die
+				diese Regeln gruppieren, sind <code>cantTell</code>, der{" "}
+				<a href="/results-reports/html-report/">HTML-Bericht</a> sagt, dass der Scan unvollständig
+				ist, <a href="/results-reports/sarif-report/">SARIF</a> gibt je nicht ausgeführter Regel
+				eine Fehlerbenachrichtigung aus (<code>executionSuccessful: false</code>),{" "}
+				<a href="/results-reports/junit-report/">JUnit</a> einen Fehler je Regel,{" "}
+				<a href="/results-reports/earl-report/">EARL</a> <code>earl:untested</code>, und{" "}
+				<code>matchBaseline</code> ergänzt <code>incomplete</code> (siehe{" "}
+				<a href="/conformance/baseline/#incomplete-scan">Baseline</a>).
+			</p>
+
+			<h2 id="occurrence-cap">Ein begrenztes Ergebnis</h2>
+			<p>
+				Mit <code>engineOptions.output.maxOccurrencesPerRule</code> (siehe{" "}
+				<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule">Engine-Optionen</a>)
+				behält jedes Prüfergebnis höchstens so viele Vorkommen: zuerst die nicht bestandenen, dann
+				die offenen mit Tendenz zu <code>fail</code>, dann die übrigen, in der Reihenfolge der
+				Regel. Die weggelassenen zählt es in <code>occurrencesOmitted</code>,{" "}
+				<code>occurrencesOmittedByOutcome</code> und <code>occurrencesOmittedLeaningFail</code>{" "}
+				(siehe <a href="#check-result">Ein Prüfergebnis</a>), und{" "}
+				<code>engine.occurrenceCap</code> summiert sie für den Scan. <code>outcome</code>,{" "}
+				<code>severity</code>, die Zusammenfassungen, ihre Zählungen und die Gates, auch die für
+				Befunde mit Tendenz zu <code>fail</code>, sind die aller Vorkommen, die die Regel gefunden
+				hat, die weggelassenen eingeschlossen. Die Reporter zeigen „+N weitere“. Gegen eine
+				Baseline zählt ein nicht bestandenes Vorkommen, das die Obergrenze weggelassen hat, als
+				neu (siehe <a href="/conformance/baseline/#incomplete-scan">Baseline</a>).
+			</p>
 
 			<h2 id="cross-frame-result">Frame-übergreifendes Ergebnis (<code>runa11yCoreAcrossFrames</code>)</h2>
 			<p>
@@ -980,7 +1123,7 @@ export function OutputSchemaContent() {
 					</li>
 					</ul>
 
-			<h2>Ein Prüfergebnis (<code>checksResults[i]</code>)</h2>
+			<h2 id="check-result">Ein Prüfergebnis (<code>checksResults[i]</code>)</h2>
 			<CodeBlock
 				lines={[
 					"{",
@@ -1021,6 +1164,9 @@ export function OutputSchemaContent() {
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  occurrencesOmitted?: number,  // output.maxOccurrencesPerRule only: how many occurrences were left out",
+					"  occurrencesOmittedByOutcome?: { fail?: number, cantTell?: number, pass?: number, notApplicable?: number },",
+					"  occurrencesOmittedLeaningFail?: number,  // of the cantTell ones left out, those that lean fail",
 					"  variantOf?: string,      // a pack's variant only: the id of the rule it runs at other settings; i18n.variantOfTitleKey is that rule's titleKey",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
@@ -1046,6 +1192,10 @@ export function OutputSchemaContent() {
 					"    limit: number,         // 10000: the ancestors read, the element included",
 					"    occurrences: number,   // the fail-tier occurrences made cantTell-tier",
 					'    coercedFrom?: "fail"   // no fail-tier occurrence was left, so the outcome went from fail to cantTell',
+					"  },",
+					"  excludedOccurrences?: {  // present only when the rule reported on elements left out with excludeSelectors",
+					"    dropped: number,       // the occurrences dropped",
+					'    coercedFrom?: "fail" | "cantTell" | "pass"  // the outcome changed; notApplicable when none was left',
 					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
@@ -1171,6 +1321,27 @@ export function OutputSchemaContent() {
 						<code>frame</code>, dem Pfad zu ihm.
 					</li>
 				<li>
+					<strong><code>excludedOccurrences</code></strong>: Elemente, die mit{" "}
+					<code>excludeSelectors</code> ausgelassen werden (global oder die eigenen der Regel unter{" "}
+					<code>rules[ruleId]</code>), überspringt jede Regel, und die Engine hält jede Regel daran:
+					Ein Vorkommen auf einem solchen Element wird verworfen, wie auch immer die Regel es
+					gefunden hat, ob es das Element nennt, einen Textknoten darin oder nur seinen Selektor,
+					und auch ein Element im Dokument eines Frames in einem ausgelassenen Bereich. Die Regeln
+					von core melden nie eines; die Regel eines Packs oder eine eigene Regel, die das Dokument
+					selbst durchläuft und <code>helpers.isExcluded</code> vergisst, schon.{" "}
+					<code>dropped</code> zählt sie, und dasselbe steht in <code>error</code>, damit die Person,
+					die die Regel geschrieben hat, davon erfährt. Ein Ergebnis, dem kein Vorkommen bleibt,
+					hat außerhalb dieser Bereiche nichts gefunden: Es wird <code>notApplicable</code>, da die
+					Engine nicht sagen kann, ob der Rest der Seite bestanden hat oder die Regel dort nichts zu
+					beurteilen hatte. Eines, dem Vorkommen bleiben, nimmt das Ergebnis an, das sie ergeben:
+					Ein <code>fail</code>, dessen Vorkommen der <code>fail</code>-Stufe alle verworfen wurden,
+					wird <code>cantTell</code>, solange eines der <code>cantTell</code>-Stufe bleibt, und{" "}
+					<code>pass</code>, wenn nur solche der <code>pass</code>-Stufe bleiben, und ein{" "}
+					<code>cantTell</code>, dem nur bestandene bleiben, wird <code>pass</code>.{" "}
+					<code>coercedFrom</code> sagt, was die Regel ergab, wann immer sich das Ergebnis änderte.
+					Fehlt, wenn nichts verworfen wurde, wie bei jedem Scan ohne Ausschlüsse.
+				</li>
+				<li>
 					<strong><code>error</code></strong>: vorhanden, wenn die Regel nicht abgeschlossen wurde
 					oder wenn die Engine einen Teil dessen, was die Regel zurückgegeben hat, geändert oder
 					ignoriert hat. Eine Regel, die eine Exception geworfen hat (oder etwas zurückgegeben hat,
@@ -1185,10 +1356,25 @@ export function OutputSchemaContent() {
 					außerhalb ihrer Menge, ein <code>type</code>, der von dem in ihrem meta abweicht,
 					Vorkommen, die keine Objekte sind (weggelassen), ein <code>policyOutcome</code> oder eine{" "}
 					<code>ruleSeverity</code>, die die Regel zurückgegeben hat (nicht übernommen: Die Engine
-					setzt beide) und ein <code>uncertainty.code</code> außerhalb der geschlossenen Menge.
-					Diese Ergebnisse behalten ihre Vorkommen: Die Regel wurde abgeschlossen. (Vor 1.16.0
+					setzt beide), ein <code>uncertainty.code</code> außerhalb der geschlossenen Menge, ein{" "}
+					<code>occurrenceOutcome</code>, das keine Stufe ist, und Vorkommen auf ausgelassenen
+					Elementen (verworfen; siehe <code>excludedOccurrences</code> oben). Diese Ergebnisse
+					behalten ihre übrigen Vorkommen: Die Regel wurde abgeschlossen. (Vor 1.16.0
 					wurde hier auch ein <code>fail</code> vermerkt, vor dem der Durchlauf über die Vorfahren
 					nach 200 Schritten abbrach; siehe <code>ancestorWalkLimit</code> oben.)
+				</li>
+				<li>
+					<strong><code>occurrencesOmitted</code></strong>,{" "}
+					<strong><code>occurrencesOmittedByOutcome</code></strong>: nur vorhanden, wenn{" "}
+					<code>engineOptions.output.maxOccurrencesPerRule</code> weniger Vorkommen behalten hat,
+					als die Regel gefunden hat (siehe <a href="#occurrence-cap">Ein begrenztes Ergebnis</a>):
+					wie viele weggelassen wurden und wie viele davon zu jeder Stufe gehören (
+					<code>fail</code>, <code>cantTell</code>, <code>pass</code>, <code>notApplicable</code>,
+					jede nur, wenn es welche gibt). <strong><code>occurrencesOmittedLeaningFail</code></strong>,
+					nur wenn es welche gibt, zählt die weggelassenen offenen Vorkommen, deren{" "}
+					<code>lean</code> zu <code>fail</code> weist, die die Gates für Tendenzen zählen (
+					<code>leanFailAs</code>, <code>leanFail</code> von <code>matchBaseline</code>);{" "}
+					<code>leaningFailures</code> listet nur die behaltenen.
 				</li>
 				<li>
 					<strong><code>policyOutcome</code></strong>: vorhanden, wenn{" "}
@@ -1260,7 +1446,7 @@ export function OutputSchemaContent() {
 					"  summary: string,",
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
-					'  occurrenceOutcome?: "fail" | "cantTell",   // present when the rule graded its findings into tiers',
+					'  occurrenceOutcome?: "fail" | "cantTell" | "pass",   // present when the rule graded its findings into tiers; "pass" marks one that passes',
 					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only",
 					"  uncertainty?: {          // present only on a cantTell-tier occurrence",
 					'    code: "not-computable" | "runtime-dependent" | "spec-only"',
@@ -1401,9 +1587,11 @@ export function OutputSchemaContent() {
 				Die Zuordnung einer Norm verteilt Befunde nach ihren <code>data.details</code> (siehe{" "}
 				<a href="/configuration/packs/#sending-findings-to-requirements">Packs</a>), und eine
 				Tendenz steht außerhalb davon, daher kopiert <code>skip-link</code> die Richtung seiner
-				Tendenz auch dorthin (core 1.16.0, experimentell bis 1.18.0):{" "}
+				Tendenz auch dorthin (core 1.16.0, stabil seit 1.18.0):{" "}
 				<code>data.details.lean</code> ist <code>fail</code> oder <code>pass</code>, dasselbe wie{" "}
-				<code>lean.toward</code>, und fehlt, wenn der Befund keine Tendenz hat.
+				<code>lean.toward</code>, und fehlt, wenn der Befund keine Tendenz hat. Das Feld ist
+				stabil; bei welchen Befunden <code>skip-link</code> eine Tendenz angibt, und in welche
+				Richtung, kann sich in einem Minor-Release noch ändern, wie bei jeder Tendenz.
 			</p>
 
 			<h3 id="how-to-check">So prüfen Sie es</h3>
@@ -1632,8 +1820,7 @@ export function OutputSchemaContent() {
 				<code>aria-required-parent</code>, <code>aria-allowed-attr</code>,{" "}
 				<code>form-control-programmatic-label-present</code>,{" "}
 				<code>identical-iframes-same-purpose</code>,{" "}
-				<code>svg-image-text-alternative-present</code>,{" "}
-				<code>video-poster-text-alternative-present</code>, <code>target-size-minimum</code> und{" "}
+				<code>svg-image-text-alternative-present</code>, <code>target-size-minimum</code> und{" "}
 				<code>text-spacing-content-loss</code>.{" "}
 				<code>confidence</code> steht in jedem Ergebnis, sodass ein Konsument, der nur die
 				sichersten Verstöße will, direkt danach filtern kann; <code>policy.allowedConfidence</code>{" "}
@@ -1667,7 +1854,7 @@ export function OutputSchemaContent() {
 					"{",
 					'  "engine": {',
 					'    "tag": "a11ycore",',
-					'    "version": "1.14.0",',
+					'    "version": "1.18.0",',
 					'    "schemaVersion": "1.0.0",',
 					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" },',
 					'    "wcagVersion": "2.2",',

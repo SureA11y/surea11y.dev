@@ -49,6 +49,45 @@ const outcomeRows = [
 		junit: <><code>&lt;error type="ruleError"&gt;</code> with the error, counted in <code>errors</code></>,
 		why: "JUnit's element for a test that could not run. The page was not checked against the rule, which is neither a pass nor something to review.",
 	},
+	{
+		id: "occurrencesOmitted",
+		outcome: <>a rule some of whose occurrences <a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a> left out</>,
+		junit: (
+			<>
+				its test case counts them (<code>412 failing occurrences: …</code>) and adds{" "}
+				<code>+N more: … not listed (output.maxOccurrencesPerRule)</code> to the body
+			</>
+		),
+		why: (
+			<>
+				A failure left out can't be matched against <code>baselineEntries</code>, so the rule
+				fails even when the baseline knows every failure kept. Core 1.18.0 and later.
+			</>
+		),
+	},
+	{
+		id: "timeBudget",
+		outcome: (
+			<>
+				a rule the scan's time budget left unstarted (<code>notRun</code>, see{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">A time budget</a>)
+			</>
+		),
+		junit: (
+			<>
+				<code>&lt;error type="timeBudget"&gt;</code>, counted in <code>errors</code>, in a suite{" "}
+				<code>Rules not run</code> (with a <code>timeBudgetMs</code> property), and each suite
+				gets an <code>incomplete</code> property
+			</>
+		),
+		why: (
+			<>
+				The rule checked nothing, so the build never reads it as passed. A profile the budget
+				left unstarted is an <code>&lt;error&gt;</code> in the <code>Profiles</code> suite,
+				whatever <code>allowProfilesNotRun</code> says. Core 1.18.0 and later.
+			</>
+		),
+	},
 ];
 
 const optionRows = [
@@ -99,8 +138,12 @@ const optionRows = [
 			<>
 				With <code>leanFailAs: 'failure'</code>, <code>true</code> gates only on the findings of
 				rules mapped to a WCAG criterion in the scan's target, leaving out the best-practice rules'
-				leans. A value other than <code>true</code> or <code>false</code> throws a{" "}
-				<code>TypeError</code>.
+				leans. Given as a command line or an environment variable spells it (<code>'true'</code>,{" "}
+				<code>'false'</code>, <code>'1'</code>, <code>'0'</code>, <code>1</code>, <code>0</code>),
+				it is read as that, with a warning; another string or number is ignored with a warning; a
+				value that can't be read (a <code>BigInt</code>, an object) throws a{" "}
+				<code>TypeError</code>, as does anything but <code>true</code> or <code>false</code> under{" "}
+				<code>strictOptions</code>.
 			</>
 		),
 	},
@@ -108,7 +151,7 @@ const optionRows = [
 		id: "includeNotApplicable",
 		option: <code>includeNotApplicable</code>,
 		default: <code>false</code>,
-		effect: <>Include <code>notApplicable</code> rules as skipped tests.</>,
+		effect: <>Include <code>notApplicable</code> rules as skipped tests. Read as <code>leanFailWcagOnly</code> is.</>,
 	},
 	{
 		id: "baselineEntries",
@@ -152,9 +195,8 @@ const optionRows = [
 				A scan of <a href="/configuration/engine-options/#several-profiles">several profiles</a>{" "}
 				that ran fewer than it asked for (<code>engine.profilesNotRun</code>) counted less than it
 				was asked to: each profile not run is an <code>&lt;error&gt;</code> in a{" "}
-				<code>Profiles</code> suite. <code>true</code> makes them skips. A value other than{" "}
-				<code>true</code> or <code>false</code> throws a <code>TypeError</code>. Core 1.15.0 and
-				later.
+				<code>Profiles</code> suite. <code>true</code> makes them skips. Read as{" "}
+				<code>leanFailWcagOnly</code> is. Core 1.15.0 and later.
 			</>
 		),
 	},
@@ -166,6 +208,22 @@ const optionRows = [
 			<>
 				The <code>name</code> of the root <code>&lt;testsuites&gt;</code>, for telling several
 				pages' reports apart in one dashboard.
+			</>
+		),
+	},
+	{
+		id: "strictOptions",
+		option: <code>strictOptions</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				<code>true</code> (or <code>'true'</code>, <code>'1'</code>, <code>1</code>) makes a switch
+				given as anything but <code>true</code> or <code>false</code> throw a{" "}
+				<code>TypeError</code>, as{" "}
+				<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">
+					<code>engineOptions.strictOptions</code>
+				</a>{" "}
+				does for a scan. Core 1.18.0 and later.
 			</>
 		),
 	},
@@ -325,7 +383,10 @@ export function JunitReportContent() {
 					The run's <code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
 					<code>profile</code> (the first profile, for a scan of several), <code>profiles</code> (a
 					scan of several profiles only: every profile it ran, comma-separated),{" "}
-					<code>optInRules</code>, the rendering conditions from{" "}
+					<code>optInRules</code>, <code>packs</code> (the packs the scan ran with as{" "}
+					<code>name@version</code>, joined with commas:{" "}
+					<code>@surea11y/pack-en301549@1.5.0,pack-two@0.3.0</code>; core 1.18.0 and later), the
+					rendering conditions from{" "}
 					<a href="/results-reports/output-schema/">
 						<code>engine.environment</code>
 					</a>{" "}
@@ -412,6 +473,12 @@ export function JunitReportContent() {
 				]}
 				rows={optionRows}
 			/>
+			<p>
+				<code>null</code> options are no options. A key the report doesn't read that looks like a
+				misspelling of one it does (<code>cantTelAs</code>, or <code>baseline</code> for{" "}
+				<code>baselineEntries</code>) is ignored with a <code>console.warn</code> naming the
+				option meant, as a scan warns about <code>engineOptions</code>.
+			</p>
 
 			<h2>Determinism</h2>
 			<p>

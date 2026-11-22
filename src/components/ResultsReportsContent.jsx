@@ -40,7 +40,8 @@ export function ResultsReportsContent() {
 				decide, and composite WCAG-SC rollups. Every undecided finding of a core rule says how a person answers
 				it, and some say which way the page's evidence points (a <em>lean</em>), so a review
 				starts with the likely failures rather than a flat list. A scan of several profiles keeps
-				each finding once and says what each profile makes of it. Worth reading once if you're building anything on
+				each finding once and says what each profile makes of it, and a scan cut short by its time
+				budget names the rules it didn't run, so it never reads as clean. Worth reading once if you're building anything on
 				top of a raw result. See <a href="/results-reports/output-schema/">Output schema</a> for
 				the full shape.
 			</p>

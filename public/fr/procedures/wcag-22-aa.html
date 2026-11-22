@@ -103,7 +103,7 @@
 <a class="skip" href="#main">Aller aux procédures</a>
 <header class="page">
 <h1>WCAG 2.2 : comment évaluer chaque exigence</h1>
-<p>Exigences : 55 · Procédures : 53</p>
+<p>Exigences : 55 · Procédures : 54</p>
 <ul><li>Niveaux : A, AA</li></ul>
 
 </header>
@@ -259,8 +259,8 @@
 <ul class="badges"><li class="badge auto-partial">Les règles en décident en partie</li><li class="badge">Outils : <span>Les outils de développement du navigateur</span>, <span>Un lecteur d’écran</span></li></ul>
 <ol class="steps"><li>Repérez chaque champ de formulaire de la page : champs de texte, cases à cocher, boutons radio, listes déroulantes et contrôles personnalisés.</li><li>Pour chacun, sélectionnez-le dans le panneau Éléments des outils de développement et vérifiez que le nom affiché dans son panneau Accessibilité contient son étiquette visible.</li><li>Pour un groupe de champs qui répond à une seule question, comme des boutons radio ou une date en trois parties, vérifiez que le groupe est un &lt;fieldset&gt; avec une &lt;legend&gt;, ou qu’il a role=&quot;group&quot; avec un nom, afin que la question soit lue avec chaque champ.</li><li>Vérifiez que les instructions affichées à côté d’un champ (un format, une marque de champ obligatoire) lui sont liées avec aria-describedby ou figurent dans son étiquette.</li></ol>
 <dl class="verdict"><dt>Conforme si</dt><dd>Le nom de chaque champ contient son étiquette visible, les groupes de champs sont nommés par leur question, et les instructions d’un champ lui sont liées.</dd><dt>Non conforme si</dt><dd>Un champ n’est étiqueté que par un texte voisin qui ne lui est pas lié, ou la question d’un groupe n’est pas liée à ses champs : le lecteur d’écran lit un champ sans dire à quoi il sert, ce qui ne respecte pas le critère WCAG 1.3.1.</dd></dl>
-<p class="rules">Règles qui le testent : <code>form-control-programmatic-label-present</code></p>
-<div class="covers"><p>Cette procédure évalue aussi :</p><ul><li>Les champs de formulaire ont une étiquette programmatique (label/aria-label/aria-labelledby/title/placeholder)</li><li>Les étiquettes des champs de formulaire sont appropriées</li></ul></div>
+<p class="rules">Règles qui le testent : <code>form-control-programmatic-label-present</code>, <code>form-group-name-present</code></p>
+<div class="covers"><p>Cette procédure évalue aussi :</p><ul><li>Les champs de formulaire ont une étiquette programmatique (label/aria-label/aria-labelledby/title/placeholder)</li><li>Les étiquettes des champs de formulaire sont appropriées</li><li>Boutons radio ou cases à cocher partageant un nom et qui ne sont dans aucun groupe nommé (indices seulement)</li></ul></div>
 </section>
 <section class="facet" aria-labelledby="facet-1-3-1-aria-structure-valid">
 <h5 id="facet-1-3-1-aria-structure-valid">Les rôles et les relations ARIA donnent la même structure que celle que montre la page</h5>
@@ -368,8 +368,8 @@
 <ul class="badges"><li class="badge auto-partial">Les règles en décident en partie</li><li class="badge">Outils : <span>Le zoom du navigateur</span></li></ul>
 <ol class="steps"><li>Zoomez le navigateur à 200 %.</li><li>Parcourez toute la page et vérifiez que tout le texte a grandi, et qu’aucun texte n’est tronqué, superposé ou masqué.</li><li>Utilisez les contrôles, les menus et les formulaires de la page à cette taille et vérifiez qu’ils fonctionnent tous encore.</li><li>Sur un téléphone, vérifiez que vous pouvez zoomer la page à 200 % en pinçant. Utilisez Chrome sur Android, en laissant désactivé son réglage d’accessibilité qui force le zoom : Safari sur iOS ignore une zone d’affichage qui bloque le zoom, et peut donc masquer ce défaut.</li><li>Laissez de côté les sous-titres et le texte sous forme d’image.</li></ol>
 <dl class="verdict"><dt>Conforme si</dt><dd>À 200 %, tout le texte a grandi et reste lisible, et tout fonctionne encore.</dd><dt>Non conforme si</dt><dd>À 200 %, du texte est tronqué, se superpose ou ne grandit pas, un contrôle cesse de fonctionner, ou le zoom par pincement est bloqué, ce qui ne respecte pas le critère WCAG 1.4.4.</dd></dl>
-<p class="rules">Règles qui le testent : <code>meta-viewport-zoom-enabled</code></p>
-<div class="covers"><p>Cette procédure évalue aussi :</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; ne désactive pas le zoom par pincement et ne le limite pas en dessous de 200 %</li></ul></div>
+<p class="rules">Règles qui le testent : <code>meta-viewport-zoom-enabled</code>, <code>resize-text-content-loss</code></p>
+<div class="covers"><p>Cette procédure évalue aussi :</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; ne désactive pas le zoom par pincement et ne le limite pas en dessous de 200 %</li><li>À 640 pixels CSS de large (zoom à 200 %), le texte placé dans une boîte qui masque son débordement n’est pas rogné (question posée : c’est à une personne de dire si le texte complet est proposé autrement)</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-5" aria-labelledby="req-1-4-5">
@@ -389,9 +389,10 @@
 <p class="meta"><span>Niveau AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-10-reflow-320">
 <h5 id="facet-1-4-10-reflow-320">À 320 pixels CSS de large, le contenu ne nécessite pas de défilement dans deux directions et rien n’est perdu</h5>
-<ul class="badges"><li class="badge auto-manual">Seule une personne peut le vérifier</li></ul>
-<p class="empty">Pas encore de procédure pour ceci.</p>
-
+<ul class="badges"><li class="badge auto-partial">Les règles en décident en partie</li><li class="badge">Outils : <span>Les outils de développement du navigateur</span>, <span>Le zoom du navigateur</span></li></ul>
+<ol class="steps"><li>Réglez la fenêtre du navigateur sur 320 pixels CSS de large : dans les outils de développement, activez la barre d’appareils et réglez la largeur sur 320, ou zoomez à 400 % une fenêtre de 1280 pixels de large.</li><li>Parcourez toute la page et vérifiez si elle défile horizontalement en plus de verticalement.</li><li>Là où c’est le cas, trouvez ce qui est plus large que la fenêtre. Un contenu qui a besoin de deux dimensions pour être utilisé ou compris, comme une carte, un diagramme, une vidéo, un jeu ou un tableau de données, peut défiler horizontalement à lui seul.</li><li>Vérifiez que tout le contenu et tous les contrôles sont toujours là et utilisables : les menus, formulaires et boutons peuvent se déplacer ou se replier, mais rien ne doit être perdu.</li></ol>
+<dl class="verdict"><dt>Conforme si</dt><dd>À 320 pixels CSS de large, la page ne défile que dans une direction, hormis le contenu qui a besoin de deux dimensions, et rien n’est perdu.</dd><dt>Non conforme si</dt><dd>À 320 pixels CSS de large, la page doit défiler horizontalement pour lire ou utiliser son contenu, ou un contenu ou une fonction est perdu, ce qui ne respecte pas WCAG 1.4.10.</dd></dl>
+<p class="rules">Règles qui le testent : <code>reflow-horizontal-scroll</code></p>
 </section>
 </article>
 <article class="req" id="r-1-4-11" aria-labelledby="req-1-4-11">
@@ -410,7 +411,8 @@
 <ul class="badges"><li class="badge auto-manual">Seule une personne peut le vérifier</li><li class="badge">Outils : <span>Les outils de développement du navigateur</span></li></ul>
 <ol class="steps"><li>Cherchez les graphiques porteurs d’information : icônes sans texte à côté, graphiques, schémas, cartes et infographies.</li><li>Dans chacun, repérez les parties nécessaires pour le comprendre, comme la forme d’une icône, les courbes et barres d’un graphique ou les limites entre des zones.</li><li>Mesurez le contraste de chaque partie avec ce qui l’entoure avec un outil de contraste. Il faut au moins 3:1. Une partie étiquetée en texte, ou dont l’information est aussi donnée en texte à proximité, n’en a pas besoin.</li><li>Laissez de côté les graphiques décoratifs, les logos et les graphiques dont l’apparence est essentielle, comme une photo ou un drapeau.</li></ol>
 <dl class="verdict"><dt>Conforme si</dt><dd>Chaque partie d’un graphique nécessaire pour le comprendre a un contraste d’au moins 3:1, ou son information est donnée autrement.</dd><dt>Non conforme si</dt><dd>Une partie d’un graphique nécessaire pour le comprendre a un contraste inférieur à 3:1, et son information n’est pas donnée autrement, ce qui ne respecte pas le critère WCAG 1.4.11.</dd></dl>
-
+<p class="rules">Règles qui le testent : <code>symbol-graphic-contrast</code></p>
+<div class="covers"><p>Cette procédure évalue aussi :</p><ul><li>Symboles dessinés comme du texte sans lettre ni chiffre, utilisés comme graphique, sous 3:1 (indices seulement)</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-12" aria-labelledby="req-1-4-12">

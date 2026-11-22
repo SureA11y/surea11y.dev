@@ -26,7 +26,13 @@ const sarifFieldRows = [
 				<code>computeBaselineKey</code>
 				）で使うものと同じ
 				<code>ruleId + reasonCode + html</code>
-				の識別キーのSHA-256ダイジェスト（16進数64桁）です。位置ではなく内容に基づく、安定したフィンガープリントで、これを読む利用側のためのものです。同じ検出結果は、どのレポートでも同じダイジェストになります。1.11より前は
+				の識別キー（
+				<code>output.includeHtml: false</code>
+				のときのようにマークアップのない検出結果では、
+				<code>html</code>
+				の代わりに
+				<code>selector</code>
+				）のSHA-256ダイジェスト（16進数64桁）です。位置ではなく内容に基づく、安定したフィンガープリントで、これを読む利用側のためのものです。同じ検出結果は、どのレポートでも同じダイジェストになります。1.11より前は
 				<code>surea11y/violation/v1</code>
 				がキーそのものを保持していたため、
 				<code>v1</code>
@@ -34,7 +40,7 @@ const sarifFieldRows = [
 				<strong>理由コードが変わった検出結果は、別のダイジェストになります</strong>
 				。1.14では、新たにコードを示すようになった17件のルールの検出結果と、原因ごとに分けられたコードの検出結果がこれに当たり、それらの<span lang="en">Code Scanning</span>のアラートは一度閉じられ、検出結果は新規として戻ります（
 				<a href="/conformance/baseline/">ベースライン／許可リスト</a>
-				を参照）。
+				を参照）。1.18では、マークアップのない検出結果はセレクターで識別されるようになり（以前は、そうした検出結果はルールと理由コードが同じならすべて同じダイジェストでした）、マークアップにノーブレークスペースを含むクラス名がある検出結果や、スニペットの上限で途中で切れた開始タグがある検出結果のダイジェストは、一度だけ変わります。
 			</>
 		),
 	},
@@ -52,17 +58,19 @@ const sarifFieldRows = [
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <>ルールのヘルプリンクである<code>meta.helpUrl</code>が絶対<code>http(s)</code> URLならその値、そうでなければ対応する最初のWCAG達成基準のUnderstanding文書です。どちらもないルールでは含まれませんが、組み込みルールにそうしたものはありません。どの達成基準にも対応しないルールは、ルールカタログにある自身の節にリンクします。</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <><code>toolVersion</code>オプションが指定されていればその値（エンジンを組み込んだツールは自身のバージョンを渡します）、なければ結果を生成したエンジンのリリースである<code>engine.version</code>です。<code>"0.0.0"</code>になるのは、1.10.0より前のリリースによる、この値を持たない結果か、<code>engine.version</code>が文字列でない結果の場合だけです。</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <><code>category</code>オプションの値で、末尾に<code>/</code>がなければ追加します（GitHubは最後のスラッシュまでをカテゴリーとして読むためです）。カテゴリーを指定しない場合は含まれません。<a href="#scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</a>を参照してください。</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>, source: <>結果の<code>engine</code>にある<code>wcagVersion</code>、<code>wcagLevel</code>（スキャンにレベルがあった場合。<code>engineOptions.wcagLevel</code>、または選択が示すレベル）、<code>profile</code>（複数のプロファイルでのスキャンでは最初のプロファイル）、<code>profiles</code>（複数のプロファイルでのスキャンのみ。実行したすべてのプロファイル、<code>engine.profiles</code>）、<code>optInRules</code>、<code>environment</code>（<code>engine.environment</code>のコピー）です。実行が使った適合性の目標を示すので、ダッシュボードはWCAG 2.1の実行と2.2の実行を、またAAの実行とすべてのレベルの実行を区別できます。その目標を超えてオプトインルールのタグを追加した場合は、それも示します。また、ページがレンダリングされた条件（<code>layout</code>、<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>、フックのものを含むそのほかのすべてのフィールド。<a href="/results-reports/output-schema/#top-level-result">出力スキーマ</a>を参照）も示します。これらのフィールドより前のリリースの結果では省略されます。</> },
+	{ id: "extensions", field: <code>tool.extensions</code>, source: <>スキャンがパックを使って実行された場合（<code>engine.packs</code>）にだけ含まれます。各パックをツールのコンポーネント<code>{"{ name, version }"}</code>（<code>{'{ "name": "@surea11y/pack-en301549", "version": "1.5.0" }'}</code>）として、名前順に、フレーム横断の結果ではすべてのフレームから示します。パックが追加したルールを判定したのがどのパックのどのリリースかを、ダッシュボードが知ることができます。core 1.18.0以降。</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <>結果の<code>engine</code>にある<code>wcagVersion</code>、<code>wcagLevel</code>（スキャンにレベルがあった場合。<code>engineOptions.wcagLevel</code>、または選択が示すレベル）、<code>profile</code>（複数のプロファイルでのスキャンでは最初のプロファイル）、<code>profiles</code>（複数のプロファイルでのスキャンのみ。実行したすべてのプロファイル、<code>engine.profiles</code>）、<code>optInRules</code>、<code>packs</code>（スキャンがパックを使って実行された場合。<code>engine.packs</code>のそれぞれを<code>name@version</code>として）、<code>environment</code>（<code>engine.environment</code>のコピー）です。実行が使った適合性の目標を示すので、ダッシュボードはWCAG 2.1の実行と2.2の実行を、またAAの実行とすべてのレベルの実行を区別できます。その目標を超えてオプトインルールのタグを追加した場合は、それも示します。また、ページがレンダリングされた条件（<code>layout</code>、<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>、フックのものを含むそのほかのすべてのフィールド。<a href="/results-reports/output-schema/#top-level-result">出力スキーマ</a>を参照）も示します。これらのフィールドより前のリリースの結果では省略されます。</> },
 ];
 
 const sarifOptionRows = [
 	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>です。エンジンを組み込んだツールのためのものです。</> },
 	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>、つまりツールのホームページです。</> },
 	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "なし", effect: <>保存したままのベースラインファイル（それを<code>JSON.parse</code>したもの）、またはその<code>entries</code>の一覧です。<a href="/conformance/baseline/#file-format">ファイル形式</a>を参照してください。そこに記録された<code>fail</code>の検出箇所は、<code>--baseline</code>と同じく省かれます（後述）。1つ前のマイナーリリースが書いたエントリーのうち、その後に変わった理由コードのものも、新しいコードの検出結果に一致します（<a href="/conformance/baseline/#upgrading">アップグレード</a>を参照）。</> },
-	{ id: "allowProfilesNotRun", option: <code>allowProfilesNotRun</code>, def: <code>false</code>, effect: <><a href="/configuration/engine-options/#several-profiles">複数のプロファイル</a>でのスキャンが、求めたより少ないプロファイルしか実行しなかった場合（<code>engine.profilesNotRun</code>）、求められたより少なく数えたことになります。実行されなかった各プロファイルは<code>error</code>の通知になり、その呼び出しは<code>executionSuccessful</code>になりません。<code>true</code>にすると警告になります。<code>true</code>と<code>false</code>以外の値を指定すると<code>TypeError</code>が投げられます。core 1.15.0以降。</> },
+	{ id: "allowProfilesNotRun", option: <code>allowProfilesNotRun</code>, def: <code>false</code>, effect: <><a href="/configuration/engine-options/#several-profiles">複数のプロファイル</a>でのスキャンが、求めたより少ないプロファイルしか実行しなかった場合（<code>engine.profilesNotRun</code>）、求められたより少なく数えたことになります。実行されなかった各プロファイルは<code>error</code>の通知になり、その呼び出しは<code>executionSuccessful</code>になりません。<code>true</code>にすると警告になります。値の読み方は<code>leanFailWcagOnly</code>と同じです。core 1.15.0以降。</> },
 	{ id: "category", option: <code>category</code>, def: "なし", effect: <><code>runs[0].automationDetails.id</code>です。<a href="#scanning-at-several-viewport-widths">複数のビューポート幅でのスキャン</a>を参照してください。</> },
 	{ id: "leanFailAs", option: <code>leanFailAs</code>, def: <code>'warning'</code>, effect: <><code>'error'</code>にすると、傾きが不適合を指す<code>cantTell</code>の検出結果を<code>error</code>で報告するため、errorでゲートするビルドは不適合の可能性が高いものでも失敗します。大文字と小文字は区別しません。ほかの値を指定すると<code>TypeError</code>が投げられます。ベストプラクティスのルールも対象です。そうしたルールはどのWCAG達成基準にも対応せず、<code>fail</code>になることはありませんが、示す事実は無条件で不適合に傾くため、見出しレベルの飛び（<code>heading-order</code>）は<code>error</code>になります。対応するすべての達成基準がスキャンの目標の外にあるルールの検出結果は<code>note</code>のままです。不適合に傾き、<code>baselineEntries</code>に<code>lean: 'fail'</code>と示されたエントリーがある検出結果は<code>warning</code>のままです。</> },
-	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <><code>leanFailAs: 'error'</code>と組み合わせて<code>true</code>にすると、スキャンの目標内のWCAG達成基準に対応するルールの検出結果だけを引き上げ、ベストプラクティスのルールの傾きは<code>warning</code>のままにします。<code>true</code>と<code>false</code>以外の値を指定すると<code>TypeError</code>が投げられます。<code>@surea11y/core</code>の<code>leaningFailures(result, {"{ wcagOnly }"})</code>は、この2つのオプションが引き上げる検出結果を、ベースラインを適用する前の状態で列挙します。</> },
+	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <><code>leanFailAs: 'error'</code>と組み合わせて<code>true</code>にすると、スキャンの目標内のWCAG達成基準に対応するルールの検出結果だけを引き上げ、ベストプラクティスのルールの傾きは<code>warning</code>のままにします。コマンドラインや環境変数が書くような値（<code>'true'</code>、<code>'false'</code>、<code>'1'</code>、<code>'0'</code>、<code>1</code>、<code>0</code>）は、警告を出したうえでその値として読みます。ほかの文字列や数値は、警告を出して無視します。読み取れない値（<code>BigInt</code>やオブジェクト）は<code>TypeError</code>を投げ、<code>strictOptions</code>のときは<code>true</code>でも<code>false</code>でもない値も<code>TypeError</code>を投げます。<code>@surea11y/core</code>の<code>leaningFailures(result, {"{ wcagOnly }"})</code>は、この2つのオプションが引き上げる検出結果を、ベースラインを適用する前の状態で列挙します。</> },
+	{ id: "strictOptions", option: <code>strictOptions</code>, def: <code>false</code>, effect: <><code>true</code>（または<code>'true'</code>、<code>'1'</code>、<code>1</code>）にすると、<code>true</code>でも<code>false</code>でもない値で指定したスイッチは<code>TypeError</code>を投げます。スキャンでの<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions"><code>engineOptions.strictOptions</code></a>と同じです。core 1.18.0以降。</> },
 	{ id: "packs", option: <code>packs</code>, def: "なし", effect: <>スキャンが実行したパック（<code>engineOptions.packs</code>）です。Nodeでは、パックのルールの未判定の検出結果が、そのルール自身の<code>meta.review</code>の手順（<code>properties.howToCheck</code>）を持ちます。</> },
 ];
 
@@ -167,6 +175,43 @@ export function SarifReportContent() {
 				になり、
 				<code>associatedRule.id</code>
 				でルールを示します。そのため、カバレッジの抜けが合格と読まれることはありません。
+			</p>
+			<p id="capped-occurrences">
+				<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a>
+				によって検出箇所の一部が結果から省かれたルールには、
+				<code>note</code>
+				レベルの通知
+				<code>"+&lt;n&gt; more occurrences of the rule &lt;id&gt; not listed: output.maxOccurrencesPerRule kept &lt;k&gt;"</code>
+				が付きます。省かれた不合格は
+				<code>baselineEntries</code>
+				と照合できません。保持された不合格をベースラインがすべて知っていた場合、そのルールには省かれた分について
+				<code>error</code>
+				のresultが1つ付きます（理由コード
+				<code>OCCURRENCES_OMITTED</code>
+				、位置はページ）。そのため、上限付きのスキャンが検出なしと読まれることはありません。core 1.18.0以降。
+			</p>
+			<p id="rules-not-run">
+				スキャンの時間の予算によって開始されなかったルール（
+				<code>notRun</code>
+				。
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">時間の予算</a>
+				を参照）も何も検査していません。これは
+				<code>error</code>
+				レベルの通知
+				<code>"The rule &lt;id&gt; was not run: the scan reached its time budget of &lt;n&gt; ms first, so it checked nothing"</code>
+				になり、
+				<code>associatedRule.id</code>
+				でルールを示し、その呼び出しは
+				<code>executionSuccessful</code>
+				になりません。複数のプロファイルでのスキャンで、予算によって開始されなかったプロファイル（
+				<code>engine.profilesNotRun</code>
+				、理由
+				<code>timeBudget</code>
+				）も、
+				<code>allowProfilesNotRun</code>
+				の指定にかかわらず
+				<code>error</code>
+				になります。core 1.18.0以降。
 			</p>
 			<DataTable
 				label="エンジンの判定結果とSARIFのレベル"
@@ -362,6 +407,20 @@ export function SarifReportContent() {
 				]}
 				rows={sarifOptionRows}
 			/>
+			<p>
+				<code>null</code>
+				のオプションは、オプションなしと同じです。レポートが読まないキーで、読むキーの書き間違いのように見えるもの（
+				<code>categroy</code>
+				、または
+				<code>baselineEntries</code>
+				のつもりの
+				<code>baseline</code>
+				）は無視され、意図したオプションを示す
+				<code>console.warn</code>
+				が出ます。スキャンが
+				<code>engineOptions</code>
+				について警告するのと同じです。
+			</p>
 
 			<h2>
 				<code>--baseline</code>

@@ -34,12 +34,13 @@ Rules at `/rules/organization/`) — see "Where things come from" and
   every example against the engine (`rule-examples:outcomes:check`). This one *is*
   parsed (`scripts/generate-rules-data.cjs`) — it's the only source for the
   example pairs, there's no API for them. Format variations the parser
-  handles: one to four examples per rule (`manual-review` has one; a rule
+  handles: one to five examples per rule (`manual-review` has one; a rule
   with a tiered outcome adds a third, `Flagged (cantTell)`;
   `form-control-programmatic-label-quality` has three `cantTell` cases, so
-  four); an annotation
+  four; `resize-text-content-loss` has five); an annotation
   after the bold heading (`duplicate-id`) is dropped; a qualifier inside it
-  (`**Passed (in a browser)**`) becomes an example `context`, mapped to a
+  (`**Passed (in a browser)**`, `**Flagged (cantTell) (at 320 CSS pixels
+  wide)**`, since 1.18 also at 640) becomes an example `context`, mapped to a
   translated label via `EXAMPLE_CONTEXT` and `rulePage.exampleContext.*` —
   an unknown qualifier fails the generator rather than being dropped.
 - `scripts/generate-rules-data.cjs` — writes `src/data/rules.generated.json`
@@ -1287,3 +1288,56 @@ and `target-size-enhanced` put `docs/RULE_AUTHORING.md` back in rule text;
 example; `page-zones-landmark`'s "or one named q, s, search or query" means a
 field (the translations say so); core's README says 146 rules, the catalog has
 149.
+
+## Core 1.18.0 update (2026-11-22)
+
+Pinned `@surea11y/core` 1.18.0. Released with it: `@surea11y/pack-en301549`
+1.5.0 (`^1.18.0`; 1.4.0's `~1.17.0` is skipped by 1.18) and
+`@surea11y/pack-wai-aria` 1.1.1. Bindings, CLI and test-matchers unchanged
+(1.6.0). `@surea11y/pack-rgaa` 1.2.1 is still `~1.17.0`; the site names RGAA
+only as core's example. 154 rules: 5 new (`reflow-horizontal-scroll` at 320
+CSS pixels and `resize-text-content-loss` at 640, both browser-only and never
+failing; `form-group-name-present`; `symbol-graphic-contrast`;
+`link-name-quality-link-only`, AAA), 42 changed; every overlay follows. 43
+composites, 67 manual rules.
+
+- Generator: example contexts "at 320/640 CSS pixels wide"
+  (`rulePage.exampleContext.width320`/`width640`) and up to five examples per
+  rule.
+- Homepage/Overview: the two layout rules and the new questions; the "won't
+  catch" list no longer says reflow at zoom isn't checked (the engine doesn't
+  zoom; the rules measure a page scanned at that width).
+- Engine options (`#a-time-budget-timebudgetms`,
+  `#a-cap-on-occurrences-outputmaxoccurrencesperrule`, stricter option checks,
+  `pingWaitTime` 2000, `excludeSelectors` held for every rule and excluded
+  areas as context), Standalone, Output schema (`#incomplete-scan`,
+  `#occurrence-cap`, `#check-result`), Baseline (`#incomplete-scan`,
+  `#findings-without-markup`, the 1.18 moves), WCAG mapping (12 and 107),
+  HTML/SARIF/JUnit/EARL reports (packs and versions, incomplete scans, capped
+  results, option reading), Procedures, Packs (what 1.18 made stable,
+  `^1.18.0`/`~1.18.0`, EN 301 549 1.5.0, WAI-ARIA 1.1.1), Known limitations
+  (`#reflow`, `#resize-text`, `#jsdom-contrast-asks`,
+  `#opening-closed-shadow-roots`, `#jsdom-synchronous-loop`), Locales, FAQ
+  (`#results-changed-1-18` first, dated — move or drop it later;
+  `#results-changed-1-16` dropped, nothing linked to it). Every language.
+- Report strings quoted on the site use the report language's own wording
+  ("+412 más, sin listar", 「ほかに412件（一覧には表示されません）」); JUnit's
+  suite names such as "Rules not run" are English in core.
+- Samples re-run with CLI 1.6.0 on core 1.18.0 (`notApplicable` 135 and 130,
+  "1.4.10 Reflow" in the criteria); the CLI sample's page, rebuilt, gave the
+  published 1.17 output exactly first. Share image (154 rules), sample HTML
+  reports and procedures re-generated.
+- On Node 22.14, `npm run i18n:mark` and `check:meta` can't load `.ts`; run
+  them with `node --experimental-strip-types scripts/<name>.mjs`.
+
+English-source issues found in this update were fixed in core (PR
+SureA11y/core#426, text only, out with the next release): README and
+LIMITATIONS.md on reflow, PROCEDURES.md counts (42/87 criteria, 186 facets, 63
+procedures), I18N.md side-file size, OUTPUT_SCHEMA.md's type block, and rule
+text (`docs/RULE_AUTHORING.md` paths, a broken rule id, landmark examples,
+`page-zones-landmark`, `aria-prohibited-children`, `p-as-heading`,
+`video-poster-text-alternative-present`, `page-title-patterns`, "colour").
+Rule pages pick those up when the site pins that release. Two Chromium pixel
+tests in core (`contrast-forced-colors-chromium`,
+`native-controls-pixels-chromium`) fail on this machine on an untouched
+v1.18.0 too.

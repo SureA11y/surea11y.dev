@@ -46,6 +46,38 @@ const outcomeRows = [
 		junit: <>エラーを含む<code>&lt;error type="ruleError"&gt;</code>。<code>errors</code>に数えられます</>,
 		why: "実行できなかったテストを表すJUnitの要素です。ページはそのルールで検査されておらず、それは合格でもレビューすべきものでもありません。",
 	},
+	{
+		id: "occurrencesOmitted",
+		outcome: <><a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a>によって検出箇所の一部が省かれたルール</>,
+		junit: (
+			<>
+				テストケースがそれらも数え（<code>412 failing occurrences: …</code>）、本文に<code>+N more: … not listed (output.maxOccurrencesPerRule)</code>を加えます
+			</>
+		),
+		why: (
+			<>
+				省かれた不合格は<code>baselineEntries</code>と照合できないため、保持された不合格をベースラインがすべて知っていても、そのルールは不合格になります。core 1.18.0以降。
+			</>
+		),
+	},
+	{
+		id: "timeBudget",
+		outcome: (
+			<>
+				スキャンの時間の予算によって開始されなかったルール（<code>notRun</code>。<a href="/configuration/engine-options/#a-time-budget-timebudgetms">時間の予算</a>を参照）
+			</>
+		),
+		junit: (
+			<>
+				<code>Rules not run</code>スイート（<code>timeBudgetMs</code>プロパティ付き）の<code>&lt;error type="timeBudget"&gt;</code>で、<code>errors</code>に数えられます。各スイートには<code>incomplete</code>プロパティが付きます
+			</>
+		),
+		why: (
+			<>
+				ルールは何も検査していないので、ビルドがそれを合格と読むことはありません。予算によって開始されなかったプロファイルは、<code>allowProfilesNotRun</code>の指定にかかわらず、<code>Profiles</code>スイートの<code>&lt;error&gt;</code>になります。core 1.18.0以降。
+			</>
+		),
+	},
 ];
 
 const optionRows = [
@@ -75,7 +107,7 @@ const optionRows = [
 		default: <code>false</code>,
 		effect: (
 			<>
-				<code>leanFailAs: 'failure'</code>と組み合わせて<code>true</code>にすると、スキャンの目標内のWCAG達成基準に対応するルールの検出結果だけでゲートし、ベストプラクティスのルールの傾きは除きます。<code>true</code>と<code>false</code>以外の値は<code>TypeError</code>を投げます。
+				<code>leanFailAs: 'failure'</code>と組み合わせて<code>true</code>にすると、スキャンの目標内のWCAG達成基準に対応するルールの検出結果だけでゲートし、ベストプラクティスのルールの傾きは除きます。コマンドラインや環境変数が書くような値（<code>'true'</code>、<code>'false'</code>、<code>'1'</code>、<code>'0'</code>、<code>1</code>、<code>0</code>）は、警告を出したうえでその値として読みます。ほかの文字列や数値は、警告を出して無視します。読み取れない値（<code>BigInt</code>やオブジェクト）は<code>TypeError</code>を投げ、<code>strictOptions</code>のときは<code>true</code>でも<code>false</code>でもない値も<code>TypeError</code>を投げます。
 			</>
 		),
 	},
@@ -83,7 +115,7 @@ const optionRows = [
 		id: "includeNotApplicable",
 		option: <code>includeNotApplicable</code>,
 		default: <code>false</code>,
-		effect: <><code>notApplicable</code>のルールをスキップされたテストとして含めます。</>,
+		effect: <><code>notApplicable</code>のルールをスキップされたテストとして含めます。値の読み方は<code>leanFailWcagOnly</code>と同じです。</>,
 	},
 	{
 		id: "baselineEntries",
@@ -112,7 +144,7 @@ const optionRows = [
 		default: <code>false</code>,
 		effect: (
 			<>
-				<a href="/configuration/engine-options/#several-profiles">複数のプロファイル</a>でのスキャンが、求めたより少ないプロファイルしか実行しなかった場合（<code>engine.profilesNotRun</code>）、求められたより少なく数えたことになります。実行されなかった各プロファイルは、<code>Profiles</code>スイートの<code>&lt;error&gt;</code>になります。<code>true</code>にするとスキップになります。<code>true</code>と<code>false</code>以外の値を指定すると<code>TypeError</code>が投げられます。core 1.15.0以降。
+				<a href="/configuration/engine-options/#several-profiles">複数のプロファイル</a>でのスキャンが、求めたより少ないプロファイルしか実行しなかった場合（<code>engine.profilesNotRun</code>）、求められたより少なく数えたことになります。実行されなかった各プロファイルは、<code>Profiles</code>スイートの<code>&lt;error&gt;</code>になります。<code>true</code>にするとスキップになります。値の読み方は<code>leanFailWcagOnly</code>と同じです。core 1.15.0以降。
 			</>
 		),
 	},
@@ -123,6 +155,16 @@ const optionRows = [
 		effect: (
 			<>
 				ルートの<code>&lt;testsuites&gt;</code>の<code>name</code>です。1つのダッシュボードで複数ページのレポートを見分けるために使います。
+			</>
+		),
+	},
+	{
+		id: "strictOptions",
+		option: <code>strictOptions</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				<code>true</code>（または<code>'true'</code>、<code>'1'</code>、<code>1</code>）にすると、<code>true</code>でも<code>false</code>でもない値で指定したスイッチは<code>TypeError</code>を投げます。スキャンでの<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions"><code>engineOptions.strictOptions</code></a>と同じです。core 1.18.0以降。
 			</>
 		),
 	},
@@ -216,7 +258,7 @@ export function JunitReportContent() {
 					<strong>スイートはスキャンのWCAGのレベルとバージョンに従います。</strong>それらによってスキャンが<code>rulesResults</code>から外した達成基準にはスイートがありません。<code>engineOptions.wcagLevel: 'AA'</code>（<code>engine.wcagLevel</code>）のもとでのAAAの達成基準や、WCAG 2.2（<code>engine.wcagVersion</code>）で<code>{"includeRuleIds: ['duplicate-id']"}</code>を実行したときの、2.2で削除された4.1.1（構文解析）です。スキャンが報告する達成基準は残ります。レベルより上でもIDで指定された集約、<a href="/results-reports/output-schema/#partly-checked">一部だけチェックされた</a>達成基準、4.1.1を選んだ2.2のスキャンでの4.1.1などです。外された達成基準だけに対応するルールは<code>Other checks</code>に入り、その失敗は<code>&lt;skipped message="Not counted: WCAG 1.4.6 is outside the scan's target, WCAG 2.2 AA; 1 failing occurrence"&gt;</code>になり、検出箇所は<code>&lt;system-out&gt;</code>に入ります。ルールは実行されて失敗しており、レポートはそれを示しますが、AAのビルドがAAAの達成基準で失敗することはありません。完了しなかったルールは引き続き<code>&lt;error&gt;</code>です。選択が示すレベル（<code>runOnly.wcag.level</code>、またはレベルのタグ）も<code>engine.wcagLevel</code>として記録され、同じようにスイートを絞り込みます。古いエンジンの結果のように、<code>engine.wcagLevel</code>も<code>engine.wcagVersion</code>も記録していない結果では、すべての達成基準が残ります。
 				</li>
 				<li>
-					実行の<code>engine</code>、<code>schemaVersion</code>、<code>wcagVersion</code>、<code>profile</code>（複数のプロファイルでのスキャンでは最初のプロファイル）、<code>profiles</code>（複数のプロファイルでのスキャンのみ。実行したすべてのプロファイルをカンマ区切りで）、<code>optInRules</code>、<a href="/results-reports/output-schema/"><code>engine.environment</code></a>にあるレンダリングの条件（<code>layout</code>と、ブラウザーでは<code>1280x720</code>の形の<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>）、<code>locale</code>、<code>url</code>は、結果にある場合だけ、各スイートのプロパティとして繰り返されます。ビューポートの幅によって出たり消えたりする失敗は、実行が使った幅までたどれます。上の例はjsdomでのスキャンなので、レイアウトがありません。
+					実行の<code>engine</code>、<code>schemaVersion</code>、<code>wcagVersion</code>、<code>profile</code>（複数のプロファイルでのスキャンでは最初のプロファイル）、<code>profiles</code>（複数のプロファイルでのスキャンのみ。実行したすべてのプロファイルをカンマ区切りで）、<code>optInRules</code>、<code>packs</code>（スキャンが実行したパックを<code>name@version</code>としてカンマ区切りで。<code>@surea11y/pack-en301549@1.5.0,pack-two@0.3.0</code>のように。core 1.18.0以降）、<a href="/results-reports/output-schema/"><code>engine.environment</code></a>にあるレンダリングの条件（<code>layout</code>と、ブラウザーでは<code>1280x720</code>の形の<code>viewport</code>、<code>devicePixelRatio</code>、<code>colorScheme</code>、<code>forcedColors</code>、<code>fonts</code>）、<code>locale</code>、<code>url</code>は、結果にある場合だけ、各スイートのプロパティとして繰り返されます。ビューポートの幅によって出たり消えたりする失敗は、実行が使った幅までたどれます。上の例はjsdomでのスキャンなので、レイアウトがありません。
 				</li>
 				<li>
 					複数のビューポート幅でスキャンしたページは、どの幅でも同じスイート名とテスト名になるため、CIのテスト表示でまとめられてしまうことがあります。幅ごとに1つのファイルを書き出し、CIのレポート設定でファイルを幅ごとに名前付けするかグループ化してください。<code>viewport</code>プロパティには、そのファイルがどの幅を表しているかが記録されます。
@@ -266,6 +308,9 @@ export function JunitReportContent() {
 				]}
 				rows={optionRows}
 			/>
+			<p>
+				<code>null</code>のオプションは、オプションなしと同じです。レポートが読まないキーで、読むキーの書き間違いのように見えるもの（<code>cantTelAs</code>、または<code>baselineEntries</code>のつもりの<code>baseline</code>）は無視され、意図したオプションを示す<code>console.warn</code>が出ます。スキャンが<code>engineOptions</code>について警告するのと同じです。
+			</p>
 
 			<h2>決定性</h2>
 			<p>

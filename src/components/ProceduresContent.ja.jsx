@@ -24,14 +24,14 @@ const functionRows = [
 
 const listOptionRows = [
 	{ id: "standard", option: <code>standard</code>, what: <><code>'wcag'</code>（デフォルト）、<code>'best-practice'</code>、またはキーか名前で指定するパックの規格。</> },
-	{ id: "version", option: <code>version</code>, what: <>WCAGのバージョン（<code>'2.0'</code>、<code>'2.1'</code>、デフォルトの<code>'2.2'</code>）、またはパックの規格のバージョン。</> },
+	{ id: "version", option: <code>version</code>, what: <>WCAGのバージョン（<code>'2.0'</code>、<code>'2.1'</code>、デフォルトの<code>'2.2'</code>）、またはパックの規格のバージョン。数値は、それが表すバージョンとして読みます。<code>2.1</code>は<code>'2.1'</code>、<code>2</code>は<code>'2.0'</code>です（core 1.18.0以降）。</> },
 	{ id: "levels", option: <code>levels</code>, what: <>WCAGのみ：<code>'A'</code>、<code>'AA'</code>、<code>'AAA'</code>、またはそのリスト。デフォルトではすべてのレベル。</> },
 	{ id: "locale", option: <code>locale</code>, what: <>タグ（<code>'fr-CA'</code>は<code>fr-ca</code>、次に<code>fr</code>を読みます）、または優先度の高い順のリスト。ロケールにないテキストは英語になります。</> },
 	{ id: "tools", option: <code>tools</code>, what: <>手順がこれらのツールのいずれかを必要とするファセットだけ（<code>'screen-reader'</code>）。</> },
 	{ id: "automation", option: <code>automation</code>, what: <>ルールが完全に、一部だけ、またはまったく判定しないファセットだけ。<code>['manual', 'partial']</code>は、スキャンが人に任せるものです。</> },
 	{ id: "rules", option: <code>rules</code>, what: <>これらのルールのいずれかが対象とするファセットだけ（<code>'img-alt-present'</code>）。</> },
 	{ id: "packs", option: <code>packs</code>, what: "規格やルールを読むパック。" },
-	{ id: "profile", option: <code>profile</code>, what: <>法律を示すパックのプロファイル。その法律が求める要件だけを、一覧の見出しにその法律の名前を添えて返します（core 1.16.0、実験的。<a href="/configuration/packs/#laws">パック</a>を参照）。</> },
+	{ id: "profile", option: <code>profile</code>, what: <>法律を示すパックのプロファイル。その法律が求める要件だけを、一覧の見出しにその法律の名前を添えて返します（core 1.16.0以降。<a href="/configuration/packs/#laws">パック</a>を参照）。core 1.18.0から安定していますが、絞り込みに使う要件の法律（要件自身の<code>laws</code>）は1.20.0まで実験的です。どのプロファイルにもない名前を指定すると<code>null</code>を返します。1.17ではWCAG全体を挙げていました。</> },
 ];
 
 const renderOptionRows = [
@@ -102,7 +102,7 @@ export function ProceduresContent() {
 
 			<h2 id="which-criteria-have-procedures">テスト手順がある達成基準</h2>
 			<p>
-				コアのルールが、完全に、一部だけ、または<code>cantTell</code>として評価するすべての達成基準は、どのルールもチェックしないファセットも含めて、すべてのファセットに手順を持ちます。スキャンが始めたことを人が終えるにはそれらが必要だからです。レベルA、AA、AAAのWCAG 2.2の87の達成基準と4.1.1（2.2で削除）のうち36で、ファセットは170、独自の手順が56、そのいずれかでカバーされる技術ファセットが114です。そうした達成基準は<code>complete</code>です。どのルールも評価しない残りの51の達成基準（たとえば1.2.3「音声解説、又はメディアに対する代替（収録済）」）は、ファセットとともに手順なしで挙げられます。それらを手作業でどう評価するかは、コアの範囲外です。ベストプラクティスは、13のファセットそれぞれに手順を持ちます。ランドマーク、ランドマーク内のコンテンツ、見出し、表のマークアップ、ARIAのロール、フォーカス順序、アクセスキー、スキップリンク、名前とラベル、ズーム、繰り返される名前、新しいウィンドウとダウンロード、動きの抑制です。
+				コアのルールが、完全に、一部だけ、または<code>cantTell</code>として評価するすべての達成基準は、どのルールもチェックしないファセットも含めて、すべてのファセットに手順を持ちます。スキャンが始めたことを人が終えるにはそれらが必要だからです。レベルA、AA、AAAのWCAG 2.2の87の達成基準と4.1.1（2.2で削除）のうち42で、ファセットは186、独自の手順が63、そのいずれかでカバーされる技術ファセットが123です。そうした達成基準は<code>complete</code>です。どのルールも評価しない残りの45の達成基準（たとえば1.2.3「音声解説、又はメディアに対する代替（収録済）」）は、ファセットとともに手順なしで挙げられます。それらを手作業でどう評価するかは、コアの範囲外です。ベストプラクティスは、14のファセットそれぞれに手順を持ちます。ランドマーク、ランドマークとしてのページの各領域、ランドマーク内のコンテンツ、見出し、表のマークアップ、ARIAのロール、フォーカス順序、アクセスキー、スキップリンク、名前とラベル、ズーム、繰り返される名前、新しいウィンドウとダウンロード、動きの抑制です。
 			</p>
 
 			<h2 id="reading-them">読み取る</h2>
@@ -164,7 +164,7 @@ export function ProceduresContent() {
 				rows={listOptionRows}
 			/>
 			<p>
-				WCAGの達成基準は、そのバージョンがそのレベルで持つものです。2.0と2.1は4.1.1を「構文解析」という名前のレベルAの達成基準として挙げ、2.2は挙げません。複数のフィルターを指定すると、ファセットはそのそれぞれに一致する必要があります。要件の<code>complete</code>は、その要件自身のもののままです。
+				WCAGの達成基準は、そのバージョンがそのレベルで持つものです。2.0と2.1は4.1.1を「構文解析」という名前のレベルAの達成基準として挙げ、2.2は挙げません。上の表にないツールや、<code>full</code>、<code>partial</code>、<code>manual</code>以外の自動化のレベルを指定すると、未知のレベルと同じくエラーを投げます。何も挙げないことになるためです（core 1.18.0以降）。複数のフィルターを指定すると、ファセットはそのそれぞれに一致する必要があります。要件の<code>complete</code>は、その要件自身のもののままです。
 			</p>
 
 			<h2 id="a-checklist">チェックリスト</h2>
@@ -330,7 +330,7 @@ export function ProceduresContent() {
 				]}
 			/>
 			<p>
-				<a href="/configuration/packs/#en-301-549-pack">EN 301 549のパック</a> 1.2.0は、コアのルールが評価する達成基準を持つ第9章のすべての条項についてテスト手順を5つの言語で提供し、<a href="/configuration/packs/#wai-aria-pack">WAI-ARIAのパック</a>は、各要件のチェックリストを、妥当なロール、状態、値をすべて列挙して提供します。テスト手順を提供しないパックは何も変えません。WCAGのテスト手順は、パックがあってもなくても同じです。
+				<a href="/configuration/packs/#en-301-549-pack">EN 301 549のパック</a>は、1.2.0から、コアのルールが評価する達成基準を持つ第9章のすべての条項についてテスト手順を5つの言語で提供し、<a href="/configuration/packs/#wai-aria-pack">WAI-ARIAのパック</a>は、各要件のチェックリストを、妥当なロール、状態、値をすべて列挙して提供します。テスト手順を提供しないパックは何も変えません。WCAGのテスト手順は、パックがあってもなくても同じです。
 			</p>
 		</>
 	);

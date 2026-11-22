@@ -36,6 +36,8 @@
 	"rulePage.severity": "gravité : {value}",
 	"rulePage.exampleCodeLabel": "Exemple {n}, {outcome} : HTML pour {ruleId}",
 	"rulePage.exampleContext.browser": "Dans un navigateur",
+	"rulePage.exampleContext.width320": "À 320 pixels CSS de large",
+	"rulePage.exampleContext.width640": "À 640 pixels CSS de large",
 	"common.deprecated": "obsolète",
 	"rulesTable.ruleId": "ID de règle",
 	"rulesTable.title": "Titre",

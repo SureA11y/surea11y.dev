@@ -22,6 +22,23 @@ export function HtmlReportContent() {
 
 			<h2>Was er zeigt</h2>
 			<ul>
+				<li id="incomplete-scan">
+					<strong>Unvollständiger Scan</strong>: nur wenn das Zeitbudget des Scans aufgebraucht
+					war, bevor jede Regel lief, die er ausgewählt hatte (<code>engine.incomplete</code>,
+					siehe <a href="/configuration/engine-options/#a-time-budget-timebudgetms">Zeitbudget</a>,
+					ab core 1.18.0): Ein Hinweis vor allem anderen nennt das Budget und die Regeln (und
+					Profile), die nicht gelaufen sind, und sagt, dass nichts im Bericht sie als bestanden
+					wertet. Die Meta-Leiste zählt sie („Regeln nicht ausgeführt“), ebenso die Stylesheets,
+					die ein Scan im Browser nicht gelesen hat, weil das Budget aufgebraucht war, während er sie
+					abrief.
+				</li>
+				<li>
+					<strong>Ein begrenzter Scan</strong> (
+					<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a>,
+					ab core 1.18.0): Die Gesamtzahl in der Meta-Leiste zählt die weggelassenen Vorkommen mit,
+					und ein Chip sagt, wie viele nicht aufgeführt sind; die erste Karte einer Regel zählt sie
+					ebenfalls und sagt „+N weitere, nicht aufgeführt“.
+				</li>
 				<li>
 					<strong>Kopfbereich</strong>: eine Schlagzeile in einfacher Sprache („N von M
 					anwendbaren Prüfungen bestanden“) plus ein gestapelter Balken mit Legende (Icon +
@@ -64,7 +81,12 @@ export function HtmlReportContent() {
 					<code>http(s)</code>-Hilfelink (<code>meta.helpUrl</code>, auch bei einer eigenen Regel)
 					erhält auf ihrer Karte einen Link „<span lang="en">How to fix &lt;rule&gt;</span>“; eine Regel ohne einen solchen
 					verlinkt das Understanding-Dokument des WCAG-Kriteriums, das sie prüft
-					(„<span lang="en">Understanding 1.1.1 Non-text Content</span>“).
+					(„<span lang="en">Understanding 1.1.1 Non-text Content</span>“) und nennt das Kriterium in
+					der Sprache des Berichts („1.1.1 Nicht-Text-Inhalt verstehen“), wo die
+					Verfahrenswörterbücher von core seinen Titel übersetzen. Der eigene Titel einer früheren
+					Version („<span lang="en">Parsing</span>“ in WCAG 2.1) oder jeder Titel in{" "}
+					<code>surea11y.report.js</code> im Browser bleibt Englisch, in einem Bericht in einer
+					anderen Sprache mit <code>lang="en"</code> markiert.
 					</li>
 					<li>
 						<strong>Frames</strong>: nur bei einem Frame-übergreifenden Ergebnis
@@ -172,11 +194,14 @@ export function HtmlReportContent() {
 			</p>
 			<p>
 				Die Meta-Leiste unter dem Kopf enthält die Anzahl der Regeln, die Anzahl der Vorkommen,
-				das Engine-Tag, die Schema-Version, die WCAG-Version, auf die der Scan zielte, das
+				das Engine-Tag, die Schema-Version, die Packs, mit denen der Scan lief (
+				<code>engine.packs</code>, jedes mit Name und Version, etwa{" "}
+				<code>@surea11y/pack-en301549 1.5.0</code>, wenn er welche ausgeführt hat), die
+				WCAG-Version, auf die der Scan zielte, das
 				verwendete <code>engineOptions.profile</code> (falls es eines gab; bei einem Scan mehrerer
 				jedes Profil, mit <code>+</code> verbunden, und die, die nicht gelaufen sind) und daneben das
-				Gesetz, nach dem das Profil bewertet wird, wenn das Profil eines Packs eines nennt (core
-				1.16.0, experimentell), die Tags der Opt-in-Regeln,
+				Gesetz, nach dem das Profil bewertet wird, wenn das Profil eines Packs eines nennt (ab core
+				1.16.0), die Tags der Opt-in-Regeln,
 				die <code>engineOptions.optInRules</code> hinzugefügt hat (falls welche), die Bedingungen,
 				unter denen die Seite dargestellt wurde, und die Locale, auf die der Scan aufgelöst wurde.
 				Die Bedingungen sind der Viewport (mit dem Gerätepixelverhältnis, wenn es nicht 1 ist) und
@@ -242,6 +267,22 @@ export function HtmlReportContent() {
 				Mit den Packs folgt „Was ein Mensch noch prüfen muss“ auch dem Standard eines Packs, wo der
 				Scan dessen Profil ausgeführt hat. <code>options.manualChecks: false</code> lässt diesen
 				Abschnitt weg.
+			</p>
+			<p>
+				So angegeben, wie eine Kommandozeile oder eine Umgebungsvariable es schreibt (
+				<code>'false'</code>, <code>'0'</code>, <code>0</code>, <code>'true'</code>,{" "}
+				<code>'1'</code>, <code>1</code>), wird <code>manualChecks</code> als dieser Wert gelesen,
+				mit einer Warnung, und ein numerischer <code>title</code> wird als Text geschrieben, mit
+				einer Warnung; ein Wert, der sich nicht lesen lässt (ein <code>BigInt</code>, ein Objekt),
+				wirft einen <code>TypeError</code>, ebenso ein <code>manualChecks</code>, der weder{" "}
+				<code>true</code> noch <code>false</code> ist, oder ein <code>title</code>, der kein
+				String ist, unter <code>options.strictOptions: true</code>. <code>null</code> als Optionen
+				gilt als keine Optionen. Ein Schlüssel, den der Bericht nicht liest und der wie ein
+				Tippfehler eines Schlüssels aussieht, den er liest (<code>titel</code>), wird mit einem{" "}
+				<code>console.warn</code> ignoriert, das die gemeinte Option nennt, so wie ein Scan bei{" "}
+				<code>engineOptions</code> warnt (siehe{" "}
+				<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">Fehler
+				in den Optionen abfangen</a>). Ab core 1.18.0.
 			</p>
 
 			<h2>Umfang</h2>

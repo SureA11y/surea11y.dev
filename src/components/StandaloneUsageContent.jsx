@@ -90,10 +90,16 @@ export function StandaloneUsageContent() {
 				standalone path — this is Pattern 1/Pattern 2 in{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom in Node with
 				no real browser, or driving Puppeteer/Playwright yourself instead of going through a binding.
+				From an ES module, every export can be imported by name (
+				<code>{"import { runDomRulesInPage } from '@surea11y/core'"}</code>), since core 1.18.0.
 				For tests, <code>runa11yCoreOnHtml(html, options)</code> from{" "}
 				<code>@surea11y/core/testing</code> scans an HTML string in jsdom and sets up the document
 				for you; since core 1.12 its <code>contentType</code> option parses an SVG or XHTML
-				document as what it is.
+				document as what it is. Since 1.18.0 it warns about a key it doesn't know, naming the
+				closest (<code>engineOption</code>: did you mean <code>engineOptions</code>?), and about an
+				engine option it doesn't read beside <code>engineOptions</code> (<code>locale</code>: pass
+				it as <code>engineOptions.locale</code>);
+				with <code>engineOptions.strictOptions</code> set, either throws.
 			</p>
 
 			<h2 id="from-the-browser-console">From the browser console</h2>
@@ -122,7 +128,10 @@ export function StandaloneUsageContent() {
 			<p>
 				<code>run(options)</code> takes the engine options plus two of its own,{" "}
 				<code>context</code> (a selector, to scan only part of the page) and <code>runOnly</code>,
-				and fetches the style sheets the page can't read itself before it scans.{" "}
+				and fetches the style sheets the page can't read itself before it scans. Since core 1.18.0
+				it checks them: it refuses engine options wrapped in <code>engineOptions</code>, and the
+				older selection form <code>{"{ type: 'tag', values }"}</code> at the top level (both used to run every rule, with none of them), and warns once about a near typo such as{" "}
+				<code>lcoale</code> or a key no engine option has.{" "}
 				<code>table()</code> prints one row per finding: failures first, then the questions that
 				lean fail, those that lean pass, and those only a person can judge.{" "}
 				<code>highlight()</code> draws a box over each element a <code>fail</code> (solid red) or{" "}
@@ -257,7 +266,8 @@ export function StandaloneUsageContent() {
 				<code>css-focus-indicator-suppressed</code> read it. On the bundle,{" "}
 				<code>runa11yCoreInPageAsync</code> takes the same four arguments as{" "}
 				<code>runa11yCoreInPage</code>, fetches the sheets whose server shares them (CORS) with{" "}
-				<code>preloadStyleSheets()</code>, then scans:
+				<code>preloadStyleSheets()</code>, then scans, within <code>engineOptions.timeBudgetMs</code>{" "}
+				when given (<a href="#a-time-limit-on-a-scan">below</a>):
 			</p>
 			<CodeBlock
 				lang="js"
@@ -268,7 +278,10 @@ export function StandaloneUsageContent() {
 			<p>
 				A sheet whose server doesn't share it can't be read from the page at all. A tool driving
 				the browser can fetch it from outside the page, where no CORS applies, and pass it in the
-				same option; the bindings do.
+				same option; the bindings do. <code>preloadStyleSheets()</code> gives each sheet up after{" "}
+				<code>timeoutMs</code> (default <code>5000</code>), or at <code>deadline</code> (a{" "}
+				<code>Date.now()</code> time) when given, and names the sheets it cut short in the list's{" "}
+				<code>notRead</code>.
 			</p>
 
 			<h2 id="a-time-limit-on-a-scan">A time limit on a scan</h2>
@@ -310,6 +323,17 @@ export function StandaloneUsageContent() {
 				In jsdom the scan runs on Node's own thread, so a timer there can't fire until it ends: run
 				the scan in a worker thread or a child process, and end that when the limit passes. A CI
 				job's own time limit is the last resort for both.
+			</p>
+			<p>
+				Since core 1.18.0, <code>engineOptions.timeBudgetMs</code> lets the scan itself stop in
+				time on a heavy page: once it has spent that many milliseconds it starts no more rules, and
+				the result lists the ones it didn't start in <code>notRun</code> and says it is incomplete (
+				<code>engine.incomplete</code>), so a scan cut short never reads as a pass. A rule that has
+				started still finishes, so it doesn't replace the limit above for a page that hangs. In{" "}
+				<code>runa11yCoreInPageAsync</code> it covers fetching the style sheets too, which may take
+				half of it at most; across frames it is the whole scan's, each frame getting what is left.
+				See <a href="/configuration/engine-options/#a-time-budget-timebudgetms">"A time budget"</a>{" "}
+				in Engine options.
 			</p>
 
 			<h2 id="internals-hook">Web components with private internals</h2>
@@ -392,7 +416,10 @@ export function StandaloneUsageContent() {
 				install them for test and audit runs. In a jsdom setup file, pass{" "}
 				<code>{"{ early: true }"}</code>, and for the listener hook run one selector first (
 				<code>document.querySelector('*')</code>), since jsdom adds key listeners of its own the
-				first time a selector runs. A jsdom test that stands in for <code>showModal()</code> by
+				first time a selector runs. A listener added through another frame's{" "}
+				<code>addEventListener</code>, called on this page's element, is seen when the hook runs in
+				both frames (core 1.18.0 and later); without the hook in that frame it isn't, since each
+				frame has its own copy of the method. A jsdom test that stands in for <code>showModal()</code> by
 				setting <code>open</code> and <code>aria-modal="true"</code> on a dialog installs the
 				live-region hook with <code>{"{ early: true, assumeModal: true }"}</code> and scans with{" "}
 				<code>engineOptions.assumeModal: true</code> (core 1.16.0 and later).

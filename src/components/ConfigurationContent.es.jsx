@@ -27,7 +27,9 @@ export function ConfigurationContent() {
 				comprobaciones de contraste para un auditor humano frente a una puerta de CI desatendida, e
 				incorpora una regla propia de tu organización junto a las incorporadas cuando el catálogo no
 				cubre algo que te importa, y pasa a las reglas el CSS de una hoja de estilo de otro origen
-				que la página no puede leer. Ver{" "}
+				que la página no puede leer. Mantén el análisis de una página pesada dentro de un límite de
+				tiempo de CI, o un defecto repetido en cada fila de una tabla larga en un resultado legible,
+				sin que ninguno de los dos se lea como un <code>pass</code> ni afloje una puerta. Ver{" "}
 				<a href="/configuration/engine-options/">Opciones del motor</a> para la referencia completa.
 			</p>
 

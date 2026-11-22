@@ -41,7 +41,9 @@ export function ResultsReportsContent() {
 				une personne y répond, et certains indiquent de quel côté penchent les indices de la page (une{" "}
 				<em>tendance</em>), si bien qu’une revue commence par les échecs probables plutôt que
 				par une liste à plat. Une analyse de plusieurs profils garde
-				chaque constat une seule fois et dit ce que chaque profil en conclut. À lire une fois si vous construisez quoi que ce soit
+				chaque constat une seule fois et dit ce que chaque profil en conclut, et une analyse que
+				son budget de temps a interrompue nomme les règles qu’elle n’a pas exécutées : elle ne se
+				lit donc jamais comme une analyse sans constat. À lire une fois si vous construisez quoi que ce soit
 				sur un résultat brut. Voir <a href="/results-reports/output-schema/">Schéma de sortie</a>{" "}
 				pour la structure complète.
 			</p>

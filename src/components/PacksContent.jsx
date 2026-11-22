@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Core's lint rules for rules." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Standard only: the requirements and the rules that check each." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Standard only: how a person assesses each requirement by hand, and a test that every requirement has a procedure for each of its facets." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.17.0</code>), and eslint, jsdom and Playwright as development dependencies.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.18.0</code>; <code>~1.18.0</code> for a derived pack), and eslint, jsdom and Playwright as development dependencies.</> },
 	{ id: "derived", file: <><code>standard-data.js</code>, <code>tests/standard.test.js</code></>, what: <>Derived only, and its only files besides <code>index.js</code>, <code>README.md</code>, <code>package.json</code>, <code>eslint.config.js</code> and <code>.gitignore</code>: the standard derived from the base's data, the base as it is until you change it, and its tests (<a href="#a-pack-built-on-another-pack">A pack built on another pack</a>).</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "The pack's own guide to these files, and what git leaves out." },
 ];
@@ -161,11 +161,11 @@ export function PacksContent() {
 				SureA11y family, ready to install: EN 301 549 chapter 9 (Web), in V3.2.1 and V4.1.1. It has
 				a profile per version, <code>en301549-v4.1.1</code> and <code>en301549-v3.2.1</code>, that
 				reports one result per clause, and <code>mappings: ['en301549']</code> to name the clauses
-				on the results of any scan, a WCAG one included. Its latest release, 1.4.0, needs{" "}
-				<code>@surea11y/core</code> 1.17 (<code>~1.17.0</code>): its standard is built from{" "}
-				<a href="#standards-as-data">standard data</a>, which is experimental in core until 1.18.0,
-				so it takes no later minor until then. For core 1.16, use its 1.3 releases, and for core
-				1.13 to 1.15, its 1.2 releases.
+				on the results of any scan, a WCAG one included. Its latest release, 1.5.0, needs{" "}
+				<code>@surea11y/core</code> 1.18 or later (<code>^1.18.0</code>): its standard is built from{" "}
+				<a href="#standards-as-data">standard data</a>, stable in core since 1.18.0, so it takes
+				later minors again and uses no experimental API. For core 1.17, use its 1.4 releases, for
+				core 1.16 its 1.3 releases, and for core 1.13 to 1.15 its 1.2 releases.
 			</p>
 			<p>
 				Its 1.1.0 release, built on core 1.14.0, judges each clause as core judges the WCAG
@@ -196,7 +196,13 @@ export function PacksContent() {
 				tables (see <a href="#standards-as-data">A standard as data</a>). Its 1.4.0 release, for
 				core 1.17, evaluates two more clauses with core's rules: 9.1.4.11 Non-text contrast, in
 				both versions, by <code>css-focus-indicator-suppressed</code>, and V4.1.1's 9.2.4.11 Focus
-				not obscured (minimum), by core's new <code>focus-not-obscured-minimum</code>.
+				not obscured (minimum), by core's new <code>focus-not-obscured-minimum</code>. Its 1.5.0
+				release, for core 1.18, evaluates 9.1.4.10 Reflow, in both versions, by core's new{" "}
+				<code>reflow-horizontal-scroll</code>, a manual rule that measures reflow and asks a person
+				about what it finds; it never fails. Core 1.18's other new manual rules add questions, not
+				failures, to clauses other rules already check: <code>form-group-name-present</code> to
+				9.1.3.1, <code>symbol-graphic-contrast</code> to 9.1.4.11 and{" "}
+				<code>resize-text-content-loss</code> to 9.1.4.4.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -216,7 +222,7 @@ export function PacksContent() {
 				4.1.1 Parsing (<code>keepsParsing</code>). Its clauses restate WCAG criteria one for one (
 				<code>applicability: 'wcag'</code>), and its rule map is
 				derived from the installed core's catalog, so a rule core adds is covered with no change to
-				the pack: that is how 1.4.0 gained its two clauses. A standard with requirements WCAG doesn't have uses the same shape and adds its
+				the pack: that is how 1.4.0 and 1.5.0 gained their clauses. A standard with requirements WCAG doesn't have uses the same shape and adds its
 				own rules. Its source is short and worth reading beside{" "}
 				<a href="#writing-a-pack">Writing a pack</a> below.
 			</p>
@@ -231,7 +237,8 @@ export function PacksContent() {
 				<a href={ariaPack}><code>@surea11y/pack-wai-aria</code></a> is WAI-ARIA 1.2 as a standard:
 				one result per author requirement the rules can check, from core's ARIA rules judged by
 				WAI-ARIA's own wording. Its profile, <code>wai-aria-1.2</code>, runs core's ARIA rules and
-				the pack's own, and nothing else. It needs <code>@surea11y/core</code> 1.15.0 or later.
+				the pack's own, and nothing else. It needs <code>@surea11y/core</code> 1.15.0 or later; its
+				latest release, 1.1.1, is tested with core 1.17 and 1.18, and uses no experimental API.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -304,7 +311,11 @@ export function PacksContent() {
 				under <code>wai-aria-1.2</code> they are checked by the pack's variant, so an unnamed{" "}
 				<code>role="grid"</code> is two checks, core's <code>aria-role-name-present</code> (
 				<code>{"{ 'wcag22-aa': 'cantTell' }"}</code>) and the variant (
-				<code>{"{ 'wai-aria-1.2': 'fail' }"}</code>).
+				<code>{"{ 'wai-aria-1.2': 'fail' }"}</code>). With core 1.18, a scan of the{" "}
+				<code>wai-aria-1.2</code> profile alone gives the same: the variant's check fails, as the{" "}
+				<code>name-required</code> requirement does, where with core 1.17 the check was{" "}
+				<code>cantTell</code> and only the requirement failed (
+				<a href="#sending-findings-to-requirements">below</a>).
 			</p>
 			<p>
 				<strong>How a person answers a question.</strong> Under <code>wai-aria-1.2</code>, the steps
@@ -343,7 +354,11 @@ export function PacksContent() {
 			<p>
 				The pack is prepared once and kept for the next scan with the same pack object, so a crawl
 				that passes the same packs to every page prepares them once. <code>definePack</code> freezes
-				the pack object: treat it as immutable, and reuse the same object between scans. Passing a
+				the pack object: treat it as immutable, and reuse the same object between scans. Since core
+				1.18.0 a pack passed as a plain object, without <code>definePack</code>, isn't frozen: the
+				scan uses a frozen copy of its data, with its functions kept as they are, so the pack and
+				any object of yours it reaches stay as they were, and a later change to the pack is seen by
+				the next scan. Passing a
 				pack registers it for the scan; it doesn't select its rules. A pack rule tagged with the
 				pack's namespace is opt-in: without one of the pack's profiles, it runs only when selected
 				by id or by that tag (see <a href="#names">Names</a>). A pack rule without the tag is selected as core's rules are,
@@ -501,6 +516,10 @@ export function PacksContent() {
 			<p>
 				A finding a standard is certain of where WCAG asks (<code>outcome: 'fail'</code> in its rule
 				map) fails the scan, and its <code>verdicts</code> say what each profile makes of it. A
+				scan's <code>policy</code> holds every verdict: where it doesn't allow <code>fail</code>, a
+				check a standard fails is <code>cantTell</code>, with <code>policyOutcome: 'fail'</code>, and
+				a profile whose standard counts none of a rule's findings gives the check the rule's own
+				outcome, as a scan of that profile alone does, not <code>pass</code>. A
 				profile whose pack is skipped is listed in <code>engine.profilesNotRun</code>, and the
 				others still run. The bindings take the list in <code>.options({"{ profile }"})</code>, the
 				test matchers in their options and the CLI as a repeated <code>--profile</code>.
@@ -510,7 +529,10 @@ export function PacksContent() {
 			<ul>
 				<li>
 					<code>engine.packs</code> names each pack that ran, as <code>name@version</code>, and{" "}
-					<code>engine.profile</code> the profile that applied.
+					<code>engine.profile</code> the profile that applied. Since core 1.18.0 the reports name
+					them too: the HTML report beside the engine, SARIF in <code>tool.extensions</code> and{" "}
+					<code>runs[0].properties.packs</code>, JUnit as a <code>packs</code> property, and EARL
+					as <code>dct:hasPart</code> of the assertor.
 				</li>
 				<li>
 					A pack's rules appear in <code>checksResults</code> like core's, with ids that start with
@@ -520,6 +542,12 @@ export function PacksContent() {
 					Their <code>wcagSc</code> still names the WCAG criteria they check, for the reporters, and
 					no other standard (EN 301 549, which maps every rule by its WCAG criteria) claims them.
 					An override counts in place of the core rule it replaces, where its own mapping puts it.
+				</li>
+				<li>
+					Since core 1.18.0, the engine holds a pack's rules to <code>excludeSelectors</code> as it
+					holds core's: an occurrence on an excluded element is dropped and counted in{" "}
+					<code>excludedOccurrences</code>, and a result left with no occurrence is{" "}
+					<code>notApplicable</code>.
 				</li>
 				<li>
 					A checklist's items, or a standard's requirements, are rollups in{" "}
@@ -564,7 +592,11 @@ export function PacksContent() {
 				<code>skippedPacks</code> before treating the scan as complete. Since core 1.17.0, a pack
 				built on another (<a href="#a-pack-built-on-another-pack">below</a>) is skipped too when
 				the packs it uses aren't in the scan at the version it was made with, and so are the packs
-				that use it.
+				that use it. Since core 1.18.0, a pack that throws while it is read (a getter or Proxy trap
+				on its <code>name</code>, <code>version</code>, <code>standard</code> or anything else) is
+				skipped the same way, where the scan threw, and a pack whose range is <code>~1.16</code> or{" "}
+				<code>~1.17</code> is skipped by 1.18 until it widens it (see{" "}
+				<a href="#experimental">Experimental APIs</a>).
 			</p>
 			<p>Each tool turns a skipped pack into a failure you can see:</p>
 			<ul>
@@ -667,13 +699,13 @@ export function PacksContent() {
 					<code>'^1.11.1'</code>), read as npm reads ranges. Start new packs at 1.11.1: the 1.11.0
 					package left out a file packs need in Node. A scan with a core outside it skips the
 					pack, with the reason in <code>skippedPacks</code>. <code>surea11y-pack new</code> writes
-					the version that generated the pack (<code>^1.17.0</code>); keep a range that starts at
+					the version that generated the pack (<code>^1.18.0</code>); keep a range that starts at
 					1.14 if the pack uses what 1.14 added: <code>meta.review</code>, <code>reasonCodes</code>{" "}
 					and <code>findings</code> rows, <code>meta.contributions</code>, <code>applicability</code>,{" "}
 					<code>partial</code> or <code>keepsParsing</code>; and one that starts at 1.15 if it uses{" "}
 					<code>outcome: 'fail'</code>. What else 1.15 reads (a standard's procedures, groups and
 					translations, its own review steps) an older core ignores. A pack that uses an API core
-					marks experimental declares a range that takes no later minor (<code>'~1.17.0'</code>);
+					marks experimental declares a range that takes no later minor (<code>'~1.18.0'</code>);
 					see <a href="#experimental">Experimental APIs</a>.
 				</li>
 				<li>
@@ -798,9 +830,16 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				It fails the standard's requirement only: the check result's own outcome, and every WCAG
-				rollup, stay as they were. List only the codes the standard states for certain; a code
-				left out is judged by the rule's own outcome. A standard that writes its own rollups uses
+				It fails the standard's requirement, and, since core 1.18.0, in a scan of the standard's
+				profile the finding fails too, and so does its check, as in a scan of several profiles:
+				SARIF, JUnit and baselines gate on it. Every WCAG rollup stays as it was, and the check
+				keeps the rule's own outcome in <code>checkOutcome</code>, which EARL asserts the rule's
+				WCAG criteria by. List only the codes the standard states for certain; a code left out is
+				judged by the rule's own outcome. Since core 1.18.0, <code>checkPack</code> reports an
+				entry for a code its rule never gives, which no finding can match: a core rule's codes are
+				those core's rule catalog lists, a pack rule's those of its <code>meta.reasonCodes</code>,
+				and a pack rule that declares none isn't checked. It only reports it: the pack still
+				loads. A standard that writes its own rollups uses
 				the act <code>'fail'</code> in <code>meta.contributions</code> the same way.
 			</p>
 			<p>
@@ -830,7 +869,8 @@ export function PacksContent() {
 				<code>contrast-computable</code>'s typography, the list rules' <code>element</code> and{" "}
 				<code>parentElement</code>, <code>aria-role-name-present</code>'s <code>role</code>, the
 				link rules' <code>linkKind</code>, <code>live-region-announcements</code>'{" "}
-				<code>messageKind</code>, and, experimental, <code>skip-link</code>'s <code>lean</code>{" "}
+				<code>messageKind</code>, and <code>skip-link</code>'s <code>lean</code>, the direction
+				of its lean, which follows the lean and so may change in a minor{" "}
 				(see the <a href="/results-reports/output-schema/#occurrence">output schema</a>). The typography of
 				<code>contrast-computable</code>, <code>linkKind</code>, <code>messageKind</code> and{" "}
 				<code>lean</code> are new in core 1.16.0, for a standard that files findings under tests of its own
@@ -855,15 +895,18 @@ export function PacksContent() {
 				walks through it. All of these need core 1.14.0.
 			</p>
 			<p>
-				<strong>Tests under requirements</strong> (core 1.16.0,{" "}
-				<a href="#experimental">experimental</a>). A standard that judges tests under its
+				<strong>Tests under requirements</strong> (core 1.16.0, stable since 1.18.0). A standard that judges tests under its
 				requirements, as RGAA judges tests under each criterion, gives{" "}
 				<code>ruleMappedStandard</code> a third table, <code>tests</code>, per version: each test's{" "}
 				<code>title</code> and the <code>requirements</code> it belongs to. A rule-map row then
 				names tests, and may say where its findings are only questions, with <code>asks</code>.
 				There is still one rollup per requirement, grouping the rules of its tests; each finding
 				counts toward the test it fails, and the results name each test with the requirement it
-				belongs to (<code>criterion</code>):
+				belongs to: an entry for a test has the test's id in <code>requirement</code> and its
+				requirement in <code>criterion</code> (
+				<code>{"{ requirement: '4.2.1', criterion: '4.2' }"}</code>). <code>asks</code> is read only
+				with tests: <code>definePack</code> refuses it on a standard without, where it would do
+				nothing.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -882,12 +925,13 @@ export function PacksContent() {
 
 			<h3 id="standards-as-data">A standard as data, or built on others</h3>
 			<p>
-				Since core 1.16.0 (<a href="#experimental">experimental</a>), the same tables, with the
+				Since core 1.16.0, stable since 1.18.0, the same tables, with the
 				standard's versions, groups, profiles and texts, can be one JSON object in the format{" "}
 				<code>surea11y-standard/1</code>, which <code>@surea11y/core/schemas/standard.schema.json</code>{" "}
 				describes, so any tool can read the standard without running the pack.{" "}
-				<code>checkStandardData(data)</code> lists what is wrong with it,{" "}
-				<code>standardFromData(data)</code> makes the pack's <code>standard</code> from it, and{" "}
+				<code>checkStandardData(data)</code> lists what is wrong with it, rule-map rows included,{" "}
+				<code>standardFromData(data, extras)</code> makes the pack's <code>standard</code> from it
+				(<code>extras</code> adds what the data doesn't give, and can't replace what it does), and{" "}
 				<code>standardDataOf(standard)</code> gives it back. The{" "}
 				<a href="#en-301-549-pack">EN 301 549 pack</a> has been built this way since its 1.3.0
 				release, and its data is what a standard built on EN 301 549 starts from.
@@ -898,7 +942,7 @@ export function PacksContent() {
 					"const { definePack, standardFromData } = require('@surea11y/core/pack');",
 					"const data = require('./standard.json');   // { format: 'surea11y-standard/1', key: 'city', ... }",
 					"",
-					"module.exports = definePack({ name, version, namespace: 'city', core: '~1.17.0',",
+					"module.exports = definePack({ name, version, namespace: 'city', core: '^1.18.0',",
 					"  standard: standardFromData(data) });",
 				]}
 			/>
@@ -917,7 +961,7 @@ export function PacksContent() {
 
 			<h3 id="a-pack-built-on-another-pack">A pack built on another pack</h3>
 			<p>
-				Since core 1.17.0 (<a href="#experimental">experimental</a>), when the base's pack has
+				Since core 1.17.0 (<a href="#experimental">experimental</a> until 1.19.0), when the base's pack has
 				rules of its own, a pack whose standard is derived from it uses them rather than copying
 				them: it names the packs it builds on in <code>uses</code>, and its standard maps their
 				rules by id as it maps core's.
@@ -928,7 +972,7 @@ export function PacksContent() {
 					"const base = require('@acme/pack-base');",
 					"",
 					"module.exports = definePack({",
-					"  name: '@acme/pack-derived', version: '1.0.0', namespace: 'derived', core: '~1.17.0',",
+					"  name: '@acme/pack-derived', version: '1.0.0', namespace: 'derived', core: '~1.18.0',",
 					"  uses: [base],   // the pack itself, as installed (a dependency in package.json)",
 					"  standard        // its rule map may name the base's rules, and its profiles run them",
 					"});",
@@ -964,7 +1008,7 @@ export function PacksContent() {
 				the base as it is: <code>standard-data.js</code> derives every requirement of the base's
 				latest version, with its tests and rule map, and has an empty table of changes with an
 				example of each kind; <code>index.js</code> uses the base; core's range is{" "}
-				<code>~</code>, and the base is a dependency at the version installed. Its tests check that
+				<code>~</code> (<code>~1.18.0</code>), since <code>uses</code> is experimental, and the base is a dependency at the version installed. Its tests check that
 				the data is valid, that every row it doesn't change is the base's, and that its profile
 				runs with the base and is skipped without it.
 			</p>
@@ -1182,22 +1226,28 @@ export function PacksContent() {
 				rule's id and the reason code, then <code>{"step<n>"}</code>, <code>pass</code> or{" "}
 				<code>fail</code> (<code>acme_standardReview_aria-valid-attr-value_ARIA_HASPOPUP_ROLE_MISMATCH_step1</code>);
 				a finding reads them only where the dictionary translates the whole entry, and the English
-				otherwise. These keys are <a href="#experimental">experimental</a> (core 1.16.0).
+				otherwise. The keys name no version of the standard: they translate{" "}
+				<code>standard.review</code>, and a version whose own steps replace an entry (
+				<code>reviewByVersion</code>) is read in English there, never in another version's words,
+				unless it is translated by id (<code>{"review.<rule>.<CODE>.*"}</code> in{" "}
+				<code>standard.texts</code>); <code>checkPack</code> reports a key whose entry a version
+				replaces. Stable since core 1.18.0.
 			</p>
 			<p>
-				<strong>Translations by id</strong> (core 1.16.0,{" "}
-				<a href="#experimental">experimental</a>). <code>standard.texts</code> translates a standard
+				<strong>Translations by id</strong> (core 1.16.0, stable since 1.18.0). <code>standard.texts</code> translates a standard
 				per version by what each text is rather than by its wording (
 				<code>requirements.4.2.title</code>, <code>groups.4.title</code>,{" "}
 				<code>review.&lt;rule&gt;.&lt;CODE&gt;.steps</code>), so two texts worded alike can be
 				translated apart and a version can word an id its own way. A text with its key in{" "}
 				<code>texts</code> is read from there; one without, from <code>translations</code>, so a
-				standard can move from one to the other text by text.
+				standard can move from one to the other text by text. Keys join ids with dots, so{" "}
+				<code>definePack</code> refuses a standard with <code>texts</code> where two ids would give
+				the same keys (an id with a <code>facets</code> or <code>replace</code> segment).
 			</p>
 
 			<h3 id="laws">The law a profile is used for</h3>
 			<p>
-				Since core 1.16.0 (<a href="#experimental">experimental</a>), a profile can name the law it
+				Since core 1.16.0, stable since 1.18.0, a profile can name the law it
 				is used for (<code>law</code>), one of its standard's <code>standard.laws</code>, so results
 				and the report say which law a scan was run for. Core tests a standard's requirements; it
 				identifies the law and doesn't document it. A law has its <code>name</code> and{" "}
@@ -1220,29 +1270,46 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				<strong>Core never decides whom a law applies to.</strong> Results name the profile's law (<code>engine.law</code>, see the{" "}
+				<strong>Core never decides whom a law applies to.</strong> Results name the profile's law (<code>engine.law</code>, in a scan of several profiles only
+				when they all serve the same law; see the{" "}
 				<a href="/results-reports/output-schema/">output schema</a>), the{" "}
 				<a href="/results-reports/html-report/">HTML report</a> shows it beside the profile,{" "}
-				<code>{"listProcedures({ profile })"}</code> lists only the requirements that law asks for
-				(where a standard serves several laws, a requirement only some of them ask for lists them
-				in <code>laws</code>), and <code>describePacks</code> lists each standard's laws with the
+				<code>{"listProcedures({ profile })"}</code> lists only the requirements that law asks for,
+				and <code>describePacks</code> lists each standard's laws with the
 				profiles that use them. <code>lawOf(standard, id, locale)</code> from{" "}
 				<code>@surea11y/core/pack</code> gives a law with its name in a language. A standard derived from another names its own laws; it doesn't inherit them.
+			</p>
+			<p>
+				Where a standard serves several laws and a requirement is asked for by only some of them,
+				the requirement lists them, <code>laws</code> in its <code>standard.procedures</code>{" "}
+				entry (<a href="#experimental">experimental</a> until 1.20.0). One without{" "}
+				<code>laws</code> is asked for by all. Since core 1.18.0, under a profile whose law isn't
+				among them, or that serves none, the requirement is neither listed nor judged: the scan
+				leaves its rollup out and names it in <code>engine.profileExcludes.requirements</code>.
 			</p>
 
 			<h3 id="experimental">Experimental APIs</h3>
 			<p>
-				Core 1.16.0 marks some APIs experimental: they may change in a minor release, never in a
-				patch, and become stable or are removed within two minors. Today those are standards as
-				data, tests under requirements, standards built on others, translations by id and{" "}
+				Core marks some APIs experimental: they may change in a minor release, never in a patch,
+				and become stable or are removed within two minors. Core 1.18.0 made stable those
+				experimental since 1.16.0: standards as data, tests under requirements, standards built
+				on others (<code>deriveStandard</code> and <code>basedOn</code>), translations by id and{" "}
 				<code>reviewByVersion</code>, laws, the <code>_standardReview_</code> dictionary keys and{" "}
-				<code>skip-link</code>'s <code>data.details.lean</code>, experimental until 1.18.0, and a
+				<code>skip-link</code>'s <code>data.details.lean</code>. Two remain: a requirement's{" "}
+				<code>laws</code>, until 1.20.0, since the scan only began honouring them in 1.18.0, and a
 				pack's <code>uses</code> and <code>surea11y-pack new --kind derived</code>, from 1.17.0
-				until 1.19.0. Laws show what that means: 1.17.0 removed four of their fields. A pack that
-				uses one declares a <code>core</code> range that takes no later minor (
-				<code>'~1.17.0'</code>), since the next minor may change it: <code>checkPack</code> reports a
-				wider one, and <code>describePacks</code> lists what each pack uses. Everything else on
-				this page is stable across 1.x. Core's{" "}
+				until 1.19.0. Laws showed what experimental means: 1.17.0 removed four of their fields.
+			</p>
+			<p>
+				A pack that uses an experimental API declares a <code>core</code> range that takes no later
+				minor (<code>'~1.18.0'</code>), since the next minor may change it:{" "}
+				<code>checkPack</code> reports a wider one, a range that also takes the next major (
+				<code>{"'~1.18.0 || ^2.0.0'"}</code>) included, and <code>describePacks</code> lists what
+				each pack uses. A pack that declared <code>~1.16</code> or <code>~1.17</code> for the APIs
+				now stable is skipped by core 1.18.0, with the reason in <code>skippedPacks</code>, until
+				it widens its range to <code>'^1.18.0'</code>, as the{" "}
+				<a href="#en-301-549-pack">EN 301 549 pack</a>'s 1.5.0 did. Everything else on this page
+				is stable across 1.x. Core's{" "}
 				<a href={`${core}/docs/API_STABILITY.md#experimental-may-change-in-a-minor`}>API stability policy</a>{" "}
 				on GitHub keeps the list.
 			</p>
@@ -1263,7 +1330,15 @@ export function PacksContent() {
 					checks of its tables (<code>validate</code>) against core's rules and the pack's, as a
 					scan does, so a version without its <code>wcagVersion</code>, or a finding sent to a
 					requirement the table lacks, is refused there rather than making every scan skip the
-					pack. Core 1.14.0 and later.
+					pack. Core 1.14.0 and later. Since core 1.18.0 both also prepare the pack as a scan does,
+					with the packs it uses, and refuse what a scan would skip it for: a variant whose{" "}
+					<code>from</code> names no rule, or names a rule that declares no settings; a profile's{" "}
+					<code>rules</code>, <code>severity</code> or <code>exclude.rules</code> naming no rule,
+					or a <code>severity</code> that is no level; a rollup's <code>checksIds</code> naming no
+					rule; a standard named as one of core's. <code>checkPack</code> also reports a profile
+					field no profile has (<code>rule</code> for <code>rules</code>) and a tag in a profile's{" "}
+					<code>tags</code> that no rule or rollup carries, which selects nothing; the pack still
+					loads.
 				</li>
 				<li>
 					<strong>Lint</strong> (<code>npm run lint</code>, <code>@surea11y/core/eslint-plugin</code>)

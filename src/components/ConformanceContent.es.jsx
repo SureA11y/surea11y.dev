@@ -50,7 +50,9 @@ export function ConformanceContent() {
 				probablemente fallan, un baseline cubre un análisis de varios perfiles, y un baseline
 				escrito antes de actualizar sigue coincidiendo durante
 				una versión menor cuando el código de motivo de un hallazgo se divide o se le asigna por
-				primera vez. Ver{" "}
+				primera vez. La comparación dice cuándo su presupuesto de tiempo cortó un análisis, y
+				cuenta como nuevo un fallo que un resultado limitado dejó fuera, así que ninguno de los dos
+				pasa sin que se note. Ver{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
 		</>

@@ -7,38 +7,62 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-17">「core 1.17にアップグレードしたら、結果が変わった」</h2>
+				<h2 id="results-changed-1-18">「core 1.18にアップグレードしたら、結果が変わった」</h2>
 				<p>
-					1.17では、ルールが4つ追加され、一部のルールがより多くの達成基準に対応付けられ、メッセージが検出結果の原因を示すようになります。それ以外では、既存のルールの判定結果と理由コードは変わりません。パイプラインに表れやすい変更は次のとおりです。
+					1.18では、確認を求めるルールが5つ追加され、ページの証拠では決められない一部の不合格が問いに変わり、ブラウザーが描画するものをより多く測るようになります。パイプラインに表れやすい変更は次のとおりです。
 				</p>
 				<ul>
 					<li>
-						<strong>ブラウザーでのWCAG 2.2 AAのスキャンが、2.4.11について確認を求めます。</strong>
-						<a href="/rules/focus-not-obscured-minimum/"><code>focus-not-obscured-minimum</code></a>は、タブ順序にある要素がその後ろに隠れた状態でフォーカスを受け取りうる、ヘッダー、フッター、バナーなどの固定配置やstickyのボックスについて確認を求め（<code>cantTell</code>）、<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>は2.4.12（AAA）について同じことを行います。jsdomでは、どちらも<code>notApplicable</code>です。そうしたスキャンは、Chromiumで約4%長くかかります（これらのルールが扱わないものは<a href="/help/known-limitations/">既知の制限事項</a>を参照してください）。
+						<strong>新しい問いが増えますが、新しい不合格は増えません。</strong>
+						<a href="/rules/form-group-name-present/"><code>form-group-name-present</code></a>（1.3.1）は、名前を共有しているのに名前付きのグループに入っていないラジオボタンとチェックボックスについて、<a href="/rules/symbol-graphic-contrast/"><code>symbol-graphic-contrast</code></a>（1.4.11）は、3:1未満の★などの記号について確認を求めます。どちらもWCAG 2.2 AAのスキャンで実行されます。<a href="/rules/reflow-horizontal-scroll/"><code>reflow-horizontal-scroll</code></a>（1.4.10）と<a href="/rules/resize-text-content-loss/"><code>resize-text-content-loss</code></a>（1.4.4）は、ブラウザーで幅320または640 CSSピクセル以下にレイアウトされたページだけに適用されるので、通常の幅でのスキャンは変わりません（<a href="/help/known-limitations/">既知の制限事項</a>を参照してください）。<a href="/rules/link-name-quality-link-only/"><code>link-name-quality-link-only</code></a>（2.4.9）は、AAAを対象とするスキャンでだけ実行されます。5つとも<code>cantTell</code>を報告し、一部はfail寄りの傾きを伴います。
 					</li>
 					<li>
-						<strong>AAAのルールを実行するスキャンは、44px未満のターゲットを不合格にします。</strong>
-						<a href="/rules/target-size-enhanced/"><code>target-size-enhanced</code></a>（2.5.5）は、WCAGの対象を指定しない全体のスキャンと、AAAを対象とするスキャンで実行されます。全体のスキャンで<code>fail</code>が1つでもあれば失敗するパイプラインでは、新たな不合格が出ることがあります。AとAAだけで判定するには、<code>wcag22-aa</code>プロファイルなどの対象を指定してスキャンしてください（<a href="/configuration/engine-options/">エンジンオプション</a>を参照）。ベストプラクティスを含めると、<a href="/rules/page-zones-landmark/"><code>page-zones-landmark</code></a>が、それにあたるランドマークになっていないヘッダー、ナビゲーション、検索、フッターについて確認を求めます。
+						<strong>いくつかの不合格が、問いに変わります。</strong>
+						名前のないポスター付きの動画（<a href="/rules/video-poster-text-alternative-present/"><code>video-poster-text-alternative-present</code></a>。メッセージのキーは<code>_fail</code>から<code>_cantTell</code>に変わります）と、<code>&lt;ul role="navigation"&gt;</code>のように、リストのロールをランドマークや構造のロールで置き換えたリストの中のリスト項目（<a href="/rules/listitem-parent-valid/"><code>listitem-parent-valid</code></a>。<code>tablist</code>や<code>menu</code>などのウィジェットのロールの下では、引き続き不合格です）です。どちらもfail寄りです。
 					</li>
 					<li>
-						<strong>一部のルールが、より多くの達成基準に数えられます。</strong>
-						<code>css-focus-indicator-suppressed</code>は1.4.11と2.4.13にも対応付けられるため、その検出結果は1.4.11の結果にも表れます。<code>focus-not-removed-by-script</code>は2.4.13に対応付けられ、2.1.1に対応付けられる4つのルールは2.1.3にも対応付けられます。
+						<strong>ターゲットサイズは、より多くを測り、ネイティブのコントロールにはブラウザーの描画どおりに例外を適用します。</strong>
+						<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>と<a href="/rules/target-size-enhanced/"><code>target-size-enhanced</code></a>は、ボタンとリンクだけでなく、すべてのインタラクティブなウィジェット（チェックボックス、コンボボックス、選択肢、スライダー、タブなど）を測るので、新しい不合格が出ることがあります。スタイルを付けていないネイティブのコントロールにはユーザーエージェントの例外が適用されるので、一般的なリセット（normalize.css、<code>{"* { padding: 0 }"}</code>、Bootstrap Reboot）で、チェックボックスやラジオボタンのリストが不合格になることはなくなりました。独自の高さを指定したテキスト入力や、12〜16ピクセルの範囲外にサイズを変えたチェックボックスは、引き続き不合格になりえます。固定配置やstickyのターゲットは、一緒に動くターゲットとの間隔だけで判定されます。
 					</li>
 					<li>
-						<strong>メッセージが、ルールの見つけた根本原因を示します。</strong>
-						要素に名前がない理由（<code>data.details.nameCause</code>）、ロール、属性、<code>autocomplete</code>の値にありそうな入力ミス、要素を隠しているもの、<code>link-in-text-block</code>の不合格でのコントラスト、ターゲットが<code>target-size-minimum</code>に合格するまでの距離です。メッセージのテキストや、<code>target-size-minimum</code>のヒントのキー（現在は<code>_centerDistance</code>または<code>_regionDistance</code>）を比較するテストは更新が必要です。
+						<strong>コントラストは3つの点で変わります。</strong>
+						数字の隣の通貨記号（<code>&lt;span&gt;€&lt;/span&gt;45,00</code>）は、<code>contrast-minimum</code>がテキストとして4.5:1で判定します。<code>aria-disabled</code>がテキストを対象外にするのは、コントロール、ウィジェットのロール、フォーカス可能な要素の上か、その中だけです。単なる<code>&lt;span&gt;</code>や<code>&lt;div&gt;</code>の上では何も対象外にしません。jsdomでは、描画される図形の後にあるSVGのテキストと、背景を持つ位置指定された<code>::before</code>や<code>::after</code>の下にあるテキストは、推測したジオメトリから測るのではなく、確認を求めます（<code>contrast-computable</code>、<code>BACKGROUND_OVERLAP</code>）。Chromiumでは変わりません。
 					</li>
 					<li>
-						<strong>いくつかの検出結果が変わります。</strong>
-						<code>css-hidden-focus</code>は、要素が表示範囲外にあり、それを表示範囲に入れるものが何もわからない場合、fail寄りになります。<code>aria-hidden-focus</code>は、隠された<code>aria-hidden</code>のルートの中で<code>visibility: visible</code>に戻されたフォーカス可能な要素を不合格にします。<code>aria-conditional-attr</code>は、トークン以外の<code>aria-invalid</code>の値を合格にします。<code>link-in-text-block</code>は、リンク自身の行にあるテキストだけを数えます。
+						<strong>小さな表もチェックされます。</strong>
+						<a href="/rules/td-has-header/"><code>td-has-header</code></a>は、4×4セル以上の表だけでなく、2×2セルからの表をチェックします。見出しセルのない小さな表については確認を求め、見出しセルが一部ある表で見出しのないデータセルは不合格にします。
 					</li>
 					<li>
-						<strong>1.16向けに作られたパックは、スキップされることがあります。</strong>
-						coreの実験的なAPIを使うパックは、それより後のマイナーバージョンを受け入れないため、1.17向けのリリースが出るまで、1.17でのスキャンではスキップされます。<a href="/configuration/packs/#en-301-549-pack">EN 301 549パック</a>には1.4.0が必要です。また、1.17では規格の法律のフィールドが4つ削除され、それらがまだあるパックは拒否されます（<a href="/configuration/packs/#laws">パック</a>を参照）。
+						<strong>一部の検出結果が、別のルールやコードに移ります。</strong>
+						<code>button-name-present</code>は、<code>&lt;button role="tab"&gt;</code>など、名前のある別のロールを持つボタンをそのロールのルールに任せるので、報告は1回になります。<code>aria-prohibited-attr</code>は、<code>&lt;p&gt;</code>や<code>&lt;strong&gt;</code>などのロールを示します（<code>ARIA_ATTR_PROHIBITED</code>、傾きなし）。そのため、古いコードについて<code>leanFail: true</code>で書いたベースラインのエントリーは古くなります。2つのコードが原因ごとに分割されます（<code>deprecated-elements-not-used</code>の<code>MARQUEE_STOPS_ONLY_ON_HOVER</code>、<code>page-title-patterns</code>の<code>placeholderTitle</code>）。1.17のベースラインは、移った検出結果とも引き続き一致します（<a href="#baseline-after-upgrade">後の項目</a>を参照してください）。
+					</li>
+					<li>
+						<strong>除外した領域は文脈として読まれます。</strong>
+						<code>heading-order</code>、<code>page-has-heading-one</code>、<code>landmark-one-main</code>、<code>bypass-blocks-present</code>は、<code>excludeSelectors</code>で除外した領域の見出しとメインランドマークを読むので、サイトのヘッダーを除外しても、<code>&lt;h1&gt;</code>がない、見出しレベルが飛んでいるという結果が作り出されることはなくなりました。
+					</li>
+					<li>
+						<strong><code>pass</code>と示されたオカレンスは、合格として数えられます。</strong>
+						<code>occurrenceOutcome()</code>は、不合格のチェックの中でも、それに<code>'pass'</code>を返すので、SARIF、JUnit、HTMLレポート、ベースラインは、それを不合格として数えなくなりました。それに対する網羅的な<code>switch</code>には、<code>'pass'</code>のケースが必要です。
+					</li>
+					<li>
+						<strong>1.17向けに作られたパックは、スキップされることがあります。</strong>
+						<code>~1.17.0</code>のように、<code>core</code>の範囲に1.18が含まれないパックはスキップされ、<code>skippedPacks</code>がその理由を示します（<a href="#pack-did-not-run">後の項目</a>を参照してください）。<a href="/configuration/packs/#en-301-549-pack">EN 301 549パック</a>には1.5.0が必要です。1.16から実験的だったパックのAPIは安定版になったので、パックは範囲を<code>^1.18.0</code>に広げられます。
+					</li>
+					<li>
+						<strong>フレームの応答を長く待ちます。</strong>
+						<code>runa11yCoreAcrossFrames</code>は、子フレームのpingへの応答を500 msではなく2秒待つので、忙しいフレームが到達できないものとしてスキップされることはなくなりました。応答しない埋め込みのあるページでは、フレームの階層ごとに最大1.5秒長くかかります。以前の待ち時間に戻すには<code>engineOptions.pingWaitTime</code>を設定してください。
+					</li>
+					<li>
+						<strong>メッセージは、その言語の書き方で小数を書きます。</strong>
+						フランス語、ドイツ語、スペイン語では「2,85:1」、英語と日本語では「2.85:1」です。メッセージのテキストを比較するテストは更新が必要です。<code>data.details</code>と<code>i18n.params</code>は、数値をこれまでどおりに保ちます（<a href="/configuration/locales/">ロケール</a>を参照してください）。
+					</li>
+					<li>
+						<strong>オプションがより細かくチェックされます。</strong>
+						空の<code>runOnly</code>リスト、<code>runOnly</code>と並べた<code>rules</code>や<code>tags</code>のフィルター、ISO 8601の日時でない<code>timestamp</code>は警告され、<code>strictOptions</code>のもとでは拒否されます（<a href="#invalid-engine-options">後の項目</a>を参照してください）。1.17が受け付けた値は引き続き使えます。
 					</li>
 				</ul>
 				<p>
-					新しく追加され、使わない限り何も変えないもの：1.19.0まで実験的な、別のパックを基にしたパック（<code>uses</code>、<code>surea11y-pack new --kind derived</code>。<a href="/configuration/packs/#a-pack-built-on-another-pack">パック</a>）。ブラウザーバンドルは1,565 KBから1,829 KBに増えます。そのほとんどは新しいメッセージです。変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
+					新しく追加され、使わない限り何も変えないもの：スキャンの時間予算（<code>engineOptions.timeBudgetMs</code>。実行しなかったものを<code>notRun</code>に挙げ、合格とは読まれません）と、ルールごとに保持するオカレンスの上限（<code>engineOptions.output.maxOccurrencesPerRule</code>。判定結果は変えません）。どちらも<a href="/configuration/engine-options/#a-time-budget-timebudgetms">エンジンオプション</a>にあります。<code>Object.prototype</code>に値を置くページが、スキャンを変えることはなくなりました（<a href="#page-builtins-broken">後の項目</a>を参照してください）。Chromiumでの全体のスキャンは、新しいチェックの分だけ1.17.0より約9%遅くなり、ブラウザーバンドルは1,829 KBから2,088 KBに増えます。変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
 				</p>
 			</article>
 
@@ -164,10 +188,13 @@ export function FaqContent() {
 			<article>
 				<h2 id="page-builtins-broken">「スキャンが<code>PAGE_BUILTINS_BROKEN</code>を投げた」</h2>
 				<p>
-					ページ自身のスクリプトが、エンジンが依存するJavaScriptの組み込みオブジェクト（<code>Array.prototype.filter</code>、<code>Map</code>、<code>JSON.stringify</code>など）を変更しているため、そのページのスキャンは、もっともらしく見えて誤っている結果を返す可能性があります。エラーのメッセージとその<code>broken</code>リストが、それぞれを示します。ページのスクリプトがそれらを変更する前にスキャンしてください（バンドルをもっと早く注入するか、それを行うスクリプトを含まないビルドをスキャンします）。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
+					ページ自身のスクリプトが、エンジンが依存するJavaScriptの組み込みオブジェクト（<code>Array.prototype.filter</code>、<code>Map</code>、<code>JSON.stringify</code>など、または<code>Object.prototype</code>のゲッター）を変更しているため、そのページのスキャンは、もっともらしく見えて誤っている結果を返す可能性があります。エラーのメッセージとその<code>broken</code>リストが、それぞれを示します。組み込みオブジェクトの壊れ方がひどく、チェック自体がエラーを投げた場合、リストは空です。ページのスクリプトがそれらを変更する前にスキャンしてください（バンドルをもっと早く注入するか、それを行うスクリプトを含まないビルドをスキャンします）。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
 				</p>
 				<p>
 					<code>broken</code>が<code>Array.from</code>だけの場合は、ページがそれを置き換えていて（PrototypeとMooToolsがそうします）、スキャン中のパックのルールかカスタムルールがそれを使っています。coreのルールは1.16以降、それを使いません。そのルールをスプレッド構文（<code>[...x]</code>、<code>[...x].map(f)</code>）で書くか、選択から外してください。<a href="/configuration/packs/#wai-aria-pack">WAI-ARIAのパック</a>は1.0.2より前のリリースでこれを使っていました。更新してください。
+				</p>
+				<p>
+					スクリプトが<code>Object.prototype</code>に置いた単純な値（<code>Object.prototype.type = 'x'</code>。読み取り専用かどうかは問いません）は、core 1.18以降、スキャンを止めません。エンジンは自分のオブジェクトに設定するキーを代入ではなく定義し、オプション、ルールの結果、判定結果が依存するレコードを自身のキーとして読むので、そうした値はそれらを変えません。内部のレコードがすべてそのように読まれているわけではまだないため、そうした名前の値が結果を変えることはまだありえます。結果を変えたことがわかっている名前は、jsdomとChromiumでテストされています。ページ自身のDOMオブジェクトが継承するプロパティ（<code>disabled</code>、<code>getAttribute</code>）の値はそれらのオブジェクトを変え、エンジンはページが残したとおりにそれらを読みます。スキャンも<code>Object.prototype</code>を変えないので、スキャン中に実行されるページ自身のコードからは、ページが残したとおりに見えます。そこに置かれた、エラーを投げるか値を返すゲッターは、上のとおり引き続きスキャンを止めます。
 				</p>
 			</article>
 
@@ -428,7 +455,7 @@ export function FaqContent() {
 			<article>
 				<h2 id="baseline-after-upgrade">「アップグレード後、ベースラインが既知の検出結果を新規として、そのエントリーをstaleとして報告する」</h2>
 				<p>
-					検出結果の識別子には理由コードが含まれます。1.14では、理由コードを付けていなかった17のルールにコードが付き、いくつかのコードが原因ごとに分割されました。1.13で書いたベースラインは、<code>src/baseline-moves.json</code>によって、1.14.xでは引き続きそれらの検出結果と一致しますが、それらの移動を削除した1.15では一致しません。1.15では、古いコードのエントリーは古くなったものであり、その検出結果は新しいものになります。1.14.xのもとで<code>@surea11y/core/baseline</code>の<code>migrateBaselineEntries</code>でファイルのコードを書き換えてからアップグレードするか、1.15のもとでベースラインを再生成して差分を確認してください。1.15と1.16は理由コードを移動していないので、1.14で書いたベースラインは引き続き一致します。アップグレードで判定結果が変わった検出結果は、それでも新規になったり消えたりします。その理由は変更履歴に書かれています。<a href="/conformance/baseline/#upgrading">ベースライン／許可リスト</a>を参照してください。
+					検出結果の識別子には理由コードが含まれます。1.14では、理由コードを付けていなかった17のルールにコードが付き、いくつかのコードが原因ごとに分割されました。1.13で書いたベースラインは、<code>src/baseline-moves.json</code>によって、1.14.xでは引き続きそれらの検出結果と一致しますが、それらの移動を削除した1.15では一致しません。1.15では、古いコードのエントリーは古くなったものであり、その検出結果は新しいものになります。1.14.xのもとで<code>@surea11y/core/baseline</code>の<code>migrateBaselineEntries</code>でファイルのコードを書き換えてからアップグレードするか、1.15のもとでベースラインを再生成して差分を確認してください。1.15、1.16、1.17は理由コードを移動していないので、1.14で書いたベースラインは1.17まで引き続き一致します。1.18は2つのコードを原因ごとに分割します（<code>deprecated-elements-not-used</code>の<code>MARQUEE_STOPS_ONLY_ON_HOVER</code>、<code>page-title-patterns</code>の<code>placeholderTitle</code>）。1.17で書いたベースラインは、1.18.xではそれらの検出結果と引き続き一致し、1.19はその移動を削除するので、その先に進む前に1.18のもとで書き換えるか再生成してください。アップグレードで判定結果が変わった検出結果は、それでも新規になったり消えたりします。その理由は変更履歴に書かれています。<a href="/conformance/baseline/#upgrading">ベースライン／許可リスト</a>を参照してください。
 				</p>
 			</article>
 
@@ -440,46 +467,38 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2 id="results-changed-1-16">「core 1.16にアップグレードしたら、結果が変わった」</h2>
+				<h2 id="results-changed-1-17">「core 1.17にアップグレードしたら、結果が変わった」</h2>
 				<p>
-					1.16では、jsdomでの動作がブラウザーに近づき、メッセージがどの規格にも合う言い方になります。パイプラインに表れやすい変更は次のとおりです。
+					1.17では、ルールが4つ追加され、一部のルールがより多くの達成基準に対応付けられ、メッセージが検出結果の原因を示すようになります。それ以外では、既存のルールの判定結果と理由コードは変わりません。パイプラインに表れやすい変更は次のとおりです。
 				</p>
 				<ul>
 					<li>
-						<strong>jsdomでも、ブラウザーと同じく<code>showModal()</code>で開いたダイアログだけがモーダルになります。</strong>
-						<code>&lt;dialog open aria-modal="true"&gt;</code>の背後にあるページも判定されるようになったため、そのようにモーダルを模したjsdomのテストでは、その背後の検出結果が出ます。<code>engineOptions.assumeModal: true</code>で従来の動作を保てます（<a href="/help/known-limitations/">既知の制限事項</a>を参照。test-matchers 1.6.0では<code>installLiveRegionHook()</code>にも渡します。<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>を参照）。モーダルダイアログの背後にあるものはフォーカスを受け取らず、<code>showModal()</code>で複数開いた場合は最前面のものだけが判定されます。
+						<strong>ブラウザーでのWCAG 2.2 AAのスキャンが、2.4.11について確認を求めます。</strong>
+						<a href="/rules/focus-not-obscured-minimum/"><code>focus-not-obscured-minimum</code></a>は、タブ順序にある要素がその後ろに隠れた状態でフォーカスを受け取りうる、ヘッダー、フッター、バナーなどの固定配置やstickyのボックスについて確認を求め（<code>cantTell</code>）、<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>は2.4.12（AAA）について同じことを行います。jsdomでは、どちらも<code>notApplicable</code>です。そうしたスキャンは、Chromiumで約4%長くかかります（これらのルールが扱わないものは<a href="/help/known-limitations/">既知の制限事項</a>を参照してください）。
 					</li>
 					<li>
-						<strong>jsdomでも、ブラウザーが隠すものは隠されます。</strong>
-						<code>@layer</code>、<code>@supports</code>、<code>@container</code>の中のルールも要素を隠すので、Tailwind v4の<code>hidden</code>と<code>sr-only</code>が機能します。<code>clip: rect(0 0 0 0)</code>は切り取られたものとして扱われ、イメージマップの<code>&lt;area&gt;</code>はページ上にあるものとして扱われます。もともと隠れていたコンテンツについての検出結果はなくなります。
+						<strong>AAAのルールを実行するスキャンは、44px未満のターゲットを不合格にします。</strong>
+						<a href="/rules/target-size-enhanced/"><code>target-size-enhanced</code></a>（2.5.5）は、WCAGの対象を指定しない全体のスキャンと、AAAを対象とするスキャンで実行されます。全体のスキャンで<code>fail</code>が1つでもあれば失敗するパイプラインでは、新たな不合格が出ることがあります。AとAAだけで判定するには、<code>wcag22-aa</code>プロファイルなどの対象を指定してスキャンしてください（<a href="/configuration/engine-options/">エンジンオプション</a>を参照）。ベストプラクティスを含めると、<a href="/rules/page-zones-landmark/"><code>page-zones-landmark</code></a>が、それにあたるランドマークになっていないヘッダー、ナビゲーション、検索、フッターについて確認を求めます。
 					</li>
 					<li>
-						<strong>メッセージと手順は、WCAGの達成基準の名前を挙げる代わりに、チェックの内容を説明します。</strong>
-						すべてのロケールでそうなるので、ほかの規格のレポートでも正しく読めます。対応付けと<code>failWhen</code>は変わりません。メッセージのテキストを比較するテストは更新が必要です。
+						<strong>一部のルールが、より多くの達成基準に数えられます。</strong>
+						<code>css-focus-indicator-suppressed</code>は1.4.11と2.4.13にも対応付けられるため、その検出結果は1.4.11の結果にも表れます。<code>focus-not-removed-by-script</code>は2.4.13に対応付けられ、2.1.1に対応付けられる4つのルールは2.1.3にも対応付けられます。
 					</li>
 					<li>
-						<strong>深いページも判定されます。</strong>
-						200階層以上の深さにある要素も、その上にあるすべての要素とあわせて10,000階層まで判定されます。以前は、そこまで深い場所での不合格は<code>error</code>に記録される質問になっていたので、そこに不合格が出ることがあります。10,000階層を超えると質問になり、<a href="/results-reports/output-schema/"><code>ancestorWalkLimit</code></a>で報告されます。
+						<strong>メッセージが、ルールの見つけた根本原因を示します。</strong>
+						要素に名前がない理由（<code>data.details.nameCause</code>）、ロール、属性、<code>autocomplete</code>の値にありそうな入力ミス、要素を隠しているもの、<code>link-in-text-block</code>の不合格でのコントラスト、ターゲットが<code>target-size-minimum</code>に合格するまでの距離です。メッセージのテキストや、<code>target-size-minimum</code>のヒントのキー（現在は<code>_centerDistance</code>または<code>_regionDistance</code>）を比較するテストは更新が必要です。
 					</li>
 					<li>
-						<strong><code>Array.from</code>を置き換えるページ</strong>
-						（Prototype.js、MooTools）もスキャンされます。以前は<code>PAGE_BUILTINS_BROKEN</code>でスキャンが止まっていました（<a href="#page-builtins-broken">前述の項目</a>を参照）。
+						<strong>いくつかの検出結果が変わります。</strong>
+						<code>css-hidden-focus</code>は、要素が表示範囲外にあり、それを表示範囲に入れるものが何もわからない場合、fail寄りになります。<code>aria-hidden-focus</code>は、隠された<code>aria-hidden</code>のルートの中で<code>visibility: visible</code>に戻されたフォーカス可能な要素を不合格にします。<code>aria-conditional-attr</code>は、トークン以外の<code>aria-invalid</code>の値を合格にします。<code>link-in-text-block</code>は、リンク自身の行にあるテキストだけを数えます。
 					</li>
 					<li>
-						<strong>一部のセレクターが変わります。</strong>
-						制御文字はエスケープされ、256文字を超える値は要素のパスに置き換わります。<a href="/rules/page-title-present/"><code>page-title-present</code></a>と<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a>はtitle要素そのものを、それがなければ<code>&lt;head&gt;</code>を指します。検出結果の識別子にはセレクターが含まれないので、ベースラインは引き続き一致します。コントラストを1つも計算できなかった場合、コントラストのルールは出現箇所なしの<code>notApplicable</code>になります。
-					</li>
-					<li>
-						<strong>誤りは、何もないものとして読まれる代わりに報告されます。</strong>
-						空の<code>contextSelector</code>は引き続きページ全体をスキャンしますが、警告を出します。ベースラインでないものは、すべての不合格を新しいものにする代わりに<code>INVALID_BASELINE</code>を投げます。<code>strictOptions</code>のもとでは、不明なプロファイル名が例外を投げます。<code>section508</code>プロファイルは非推奨です。同じルールを実行する<code>wcag20-aa</code>を使ってください。
-					</li>
-					<li>
-						<strong>スキャンが速くなります。</strong>
-						検出結果は同じで、通常のページではChromiumで数パーセント、jsdomで10〜25%速くなり、最も遅かった場合（同一のリンクやフィールドが数千ある、長い表、多数のスタイルルール）ではさらに大きく速くなります。
+						<strong>1.16向けに作られたパックは、スキップされることがあります。</strong>
+						coreの実験的なAPIを使うパックは、それより後のマイナーバージョンを受け入れないため、1.17向けのリリースが出るまで、1.17でのスキャンではスキップされます。<a href="/configuration/packs/#en-301-549-pack">EN 301 549パック</a>には1.4.0が必要です。また、1.17では規格の法律のフィールドが4つ削除され、それらがまだあるパックは拒否されます（<a href="/configuration/packs/#laws">パック</a>を参照）。
 					</li>
 				</ul>
 				<p>
-					新しく追加され、使わない限り何も変えないもの：WCAG 2.0と2.1のプロファイル（<a href="/configuration/engine-options/#conformance-profiles">エンジンオプション</a>）と、1.18.0まで実験的な、データとしての規格、要件の下のテスト、ほかの規格を基にした規格、規格の評価の根拠となる法律（<a href="/configuration/packs/#experimental">パック</a>）。変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
+					新しく追加され、使わない限り何も変えないもの：1.19.0まで実験的な、別のパックを基にしたパック（<code>uses</code>、<code>surea11y-pack new --kind derived</code>。<a href="/configuration/packs/#a-pack-built-on-another-pack">パック</a>）。ブラウザーバンドルは1,565 KBから1,829 KBに増えます。そのほとんどは新しいメッセージです。変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。
 				</p>
 			</article>
 

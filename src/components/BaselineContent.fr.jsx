@@ -29,6 +29,21 @@ const baselineMoves = [
 	{ id: "p-as-heading", rules: ["p-as-heading"], from: ["BOLD_LARGE_PARAGRAPH", "BOLD_LARGE_DIV"], to: ["HEADING_LIKE_NUMBER", "HEADING_LIKE_LINK"] },
 ].map((row) => ({ ...row, rules: codes(row.rules), from: codes(row.from), to: codes(row.to) }));
 
+const baselineMoves118 = [
+	{
+		id: "marquee",
+		rules: <code>deprecated-elements-not-used</code>,
+		from: <code>MARQUEE_PAUSE_MECHANISM_UNKNOWN</code>,
+		to: <><code>MARQUEE_STOPS_ONLY_ON_HOVER</code> (un marquee qui ne s’arrête que tant que le pointeur est dessus)</>,
+	},
+	{
+		id: "placeholder-title",
+		rules: <code>page-title-patterns</code>,
+		from: <code>titleReview</code>,
+		to: <><code>placeholderTitle</code> (un texte de substitution laissé dans le titre, comme <code>undefined</code> ou <code>{"{{title}}"}</code>)</>,
+	},
+];
+
 export function BaselineContent() {
 	return (
 		<>
@@ -128,8 +143,27 @@ export function BaselineContent() {
 				précédent écrivait <code>src class="a b"</code> correspond ; les fichiers de baseline
 				écrits avant ce changement correspondent toujours, puisque la comparaison est faite au
 				moment de la correspondance.{" "}
+				Les noms de classes ne sont séparés qu’aux espaces, tabulations et sauts de ligne, comme
+				HTML les sépare : <code>class="a&nbsp;b"</code>, avec une espace insécable, est une seule
+				classe et ne correspond pas à <code>class="a b"</code>. Une balise ouvrante que la limite
+				de longueur de l’extrait coupe est mise en ordre aussi loin qu’elle va.{" "}
 				<code>selector</code> est toujours enregistré dans le fichier de baseline, mais uniquement
-				pour donner du contexte à la lecture d’un diff : il ne sert jamais à la correspondance.
+				pour donner du contexte à la lecture d’un diff : il ne sert jamais à la correspondance d’un
+				constat qui a un <code>html</code>.
+			</p>
+			<p id="findings-without-markup">
+				Un constat sans <code>html</code> (une analyse avec <code>output.includeHtml: false</code>,
+				ou une occurrence qu’une règle signale sans balisage) est identifié par son{" "}
+				<code>selector</code> depuis core 1.18.0 : <code>ruleId + reasonCode + selector</code>,
+				précédé des sélecteurs des hôtes shadow pour un élément dans une shadow root. Avant, tous
+				les échecs d’une règle et d’un code partageaient une clé, et une nouvelle violation
+				comptait comme l’une des connues. Une telle clé dépend de la position, donc elle{" "}
+				<strong>change quand le sélecteur change</strong> : un élément frère sans rapport ajouté
+				avant l’élément, ou un conteneur autour de lui, rend le constat nouveau et son ancienne
+				entrée périmée, et un élément corrigé pendant qu’un autre échoue à sa place passe pour
+				connu. Gardez <code>includeHtml</code> activé quand vous créez une baseline, si vous le
+				pouvez. Une entrée qui n’a ni <code>html</code> ni <code>selector</code> correspond
+				toujours à un tel constat, une fois que chaque constat a été cherché sous sa propre clé.
 			</p>
 			<p>
 				<strong>Limite connue</strong> : un élément dont le balisage <em>propre</em> contient du
@@ -238,8 +272,25 @@ export function BaselineContent() {
 			</p>
 			<p>
 				Le tableau couvre une version mineure : un déplacement y figure depuis la version qui l’a
-				apporté jusqu’à la version mineure suivante, qui le retire. La 1.15 et la 1.16 n’ont
-				déplacé aucun constat, le tableau est donc vide.
+				apporté jusqu’à la version mineure suivante, qui le retire. La 1.15, la 1.16 et la 1.17
+				n’ont déplacé aucun constat. La 1.18 déplace ceux-ci, depuis la 1.17, et la 1.19 les
+				retire :
+			</p>
+			<DataTable
+				label="Codes de raison déplacés en 1.18"
+				rowKey="id"
+				columns={[
+					{ key: "rules", label: "Règle", wrap: true, width: "30%" },
+					{ key: "from", label: "Ancien code", wrap: true },
+					{ key: "to", label: "Nouveau code", wrap: true },
+				]}
+				rows={baselineMoves118}
+			/>
+			<p>
+				Ce sont deux scissions : l’ancien code reste pour les autres constats de la règle. Une
+				baseline écrite par la 1.17 continue donc de correspondre à ceux-ci avec la 1.18.x, mais
+				pas avec la 1.19 : mettez-la à jour avec la 1.18.x, comme ci-dessous, avant de passer à la
+				1.19.
 			</p>
 			<p>La 1.14 a déplacé ceux-ci, depuis la 1.13, et la 1.15 les a retirés :</p>
 			<DataTable
@@ -257,7 +308,7 @@ export function BaselineContent() {
 				mais pas avec la 1.15 : là, une entrée sous un ancien code est périmée et son constat est
 				nouveau. Mettez une telle baseline à jour avec la 1.14.x, comme ci-dessous, avant de passer
 				à la 1.15 ; <code>migrateBaselineEntries</code> ne connaît plus ces déplacements en 1.15.
-				Une baseline écrite par la 1.14 continue de correspondre avec la 1.15 et la 1.16.
+				Une baseline écrite par la 1.14 continue de correspondre avec la 1.15, la 1.16 et la 1.17.
 			</p>
 			<p>
 				Régénérer la baseline avec <code>--write-baseline</code> (ou{" "}
@@ -290,7 +341,13 @@ export function BaselineContent() {
 				qui fait désormais échouer ce qu’elle demandait, ou demande ce qu’elle faisait échouer,
 				donne un constat que la baseline ne contenait pas, ou n’en donne plus un qu’elle
 				contenait, et le <a href={`${core}/CHANGELOG.md`}>journal des modifications</a> explique
-				pourquoi.
+				pourquoi. Il en va de même pour un constat qui ne penche plus vers l’échec : en 1.18,{" "}
+				<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a> juge{" "}
+				<code>&lt;p&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;time&gt;</code> et d’autres
+				éléments de ce type d’après leur rôle, si bien que <code>&lt;p aria-label&gt;</code> donne{" "}
+				<code>ARIA_ATTR_PROHIBITED</code>, sans tendance, là où il donnait{" "}
+				<code>ARIA_ATTR_PROHIBITED_ROLELESS_NEEDS_REVIEW</code>, qui penchait vers l’échec. Une
+				entrée écrite pour lui avec <code>leanFail: true</code> est désormais périmée.
 			</p>
 
 			<h2 id="several-profiles">Une analyse de plusieurs profils</h2>
@@ -358,6 +415,36 @@ export function BaselineContent() {
 				qui n’est pas une liste de chaînes. <code>migrateBaselineEntries</code> le vérifie de la
 				même façon. Auparavant, une telle valeur était lue comme une baseline vide, ce qui rendait
 				chaque échec nouveau sans un mot.
+			</p>
+
+			<h2 id="incomplete-scan">Une analyse incomplète</h2>
+			<p>
+				Une analyse qui n’a pas vérifié tout ce qu’elle a sélectionné ne peut pas dire qu’elle n’a
+				rien trouvé de nouveau. Quand son budget de temps (<code>engineOptions.timeBudgetMs</code>,
+				voir <a href="/configuration/engine-options/#a-time-budget-timebudgetms">Options du moteur</a>)
+				s’est épuisé avant que toutes les règles se soient exécutées, <code>matchBaseline</code>{" "}
+				ajoute <code>{"incomplete: { notRun }"}</code>, les identifiants des règles non exécutées,
+				à ce qu’il renvoie : un blocage qui lit <code>newCount</code> doit aussi échouer sur{" "}
+				<code>incomplete</code>, comme le font les reporters SARIF et JUnit (une erreur par règle
+				non exécutée). N’écrivez pas de baseline à partir d’une telle analyse : elle n’enregistre
+				aucun des échecs des règles qui ne se sont pas exécutées.
+			</p>
+			<p>
+				Un résultat plafonné par <code>engineOptions.output.maxOccurrencesPerRule</code> (voir le{" "}
+				<a href="/results-reports/output-schema/#occurrence-cap">schéma de sortie</a>) ne liste
+				qu’une partie des occurrences de chaque règle, il ne peut donc pas construire une baseline
+				complète : les échecs qu’il a laissés de côté n’ont pas d’entrée, et chaque analyse
+				suivante les trouve nouveaux. <code>buildBaselineEntries</code> avertit quand il reçoit un
+				tel résultat, ou un résultat que son budget de temps a interrompu ; écrivez la baseline à
+				partir d’une analyse sans plafond. Comparé à une baseline, un échec que le plafond a laissé
+				de côté ne peut pas être rapproché de ses entrées, il compte donc comme nouveau :{" "}
+				<code>matchBaseline</code> l’ajoute à <code>totalFail</code> et à <code>newCount</code>, et
+				indique combien dans <code>incomplete.occurrencesOmitted</code>. Avec{" "}
+				<code>leanFail: true</code>, un constat qui penche vers l’échec et que le plafond a laissé
+				de côté compte comme nouveau de la même façon : <code>leanFail</code> l’ajoute à son{" "}
+				<code>total</code> et à son <code>newCount</code>, et{" "}
+				<code>incomplete.occurrencesOmittedLeaningFail</code> indique combien. Les entrées auxquelles
+				il aurait correspondu peuvent alors compter comme périmées.
 			</p>
 
 			<h2>Combinaison avec <code>--json</code></h2>

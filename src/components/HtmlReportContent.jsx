@@ -20,6 +20,21 @@ export function HtmlReportContent() {
 
 			<h2>What it shows</h2>
 			<ul>
+				<li id="incomplete-scan">
+					<strong>Incomplete scan</strong>: only when the scan's time budget ran out before every
+					rule it selected had run (<code>engine.incomplete</code>, see{" "}
+					<a href="/configuration/engine-options/#a-time-budget-timebudgetms">A time budget</a>,
+					core 1.18.0 and later): a note before everything else names the budget and the rules
+					(and profiles) that did not run, and says nothing in the report passes them. The meta bar
+					counts them (“rules not run”), and the style sheets a browser scan left unread when the
+					budget ran out while it fetched them.
+				</li>
+				<li>
+					<strong>A capped scan</strong> (<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a>,
+					core 1.18.0 and later): the meta bar's total counts the occurrences left out, and a chip
+					says how many are not listed; a rule's first card counts them too and says “+N more not
+					listed”.
+				</li>
 				<li>
 					<strong>Hero</strong>: one plain-language headline ("N of M applicable checks passed")
 					plus a stacked bar and legend (icon + label + count — status is never color-only)
@@ -53,7 +68,11 @@ export function HtmlReportContent() {
 					it. A rule with an <code>http(s)</code> help link (<code>meta.helpUrl</code>, a custom
 					rule's included) gets a "How to fix &lt;rule&gt;" link on its card; a rule without one
 					links the Understanding document of the WCAG criterion it checks ("Understanding 1.1.1
-					Non-text Content").
+					Non-text Content"), naming the criterion in the report's language (“1.1.1
+					Nicht-Text-Inhalt verstehen”) where core's procedures dictionaries translate its title.
+					An earlier version's own title (WCAG 2.1's “Parsing”), or any title in the browser's{" "}
+					<code>surea11y.report.js</code>, stays English, marked <code>lang="en"</code> in a report
+					in another language.
 					</li>
 					<li>
 						<strong>Frames</strong>: only for a cross-frame result (<code>runa11yCoreAcrossFrames</code>,
@@ -143,10 +162,12 @@ export function HtmlReportContent() {
 			</p>
 			<p>
 				The meta bar under the header carries the rule count, occurrence count, engine tag, schema
-				version, the WCAG version the scan targeted, the <code>engineOptions.profile</code> it used
+				version, the packs the scan ran with (<code>engine.packs</code>, each by its name and
+				version, such as <code>@surea11y/pack-en301549 1.5.0</code>, when it ran any), the WCAG
+				version the scan targeted, the <code>engineOptions.profile</code> it used
 				(when there was one; every profile of a scan of several, joined with <code>+</code>, and
 				those that did not run) and, beside it, the law the profile is assessed under when a pack's
-				profile names one (core 1.16.0, experimental), the opt-in rule tags <code>engineOptions.optInRules</code> added (when
+				profile names one (core 1.16.0 and later), the opt-in rule tags <code>engineOptions.optInRules</code> added (when
 				it added any), the conditions the page was rendered under, and the locale the scan resolved
 				to. The conditions are the viewport (with the device pixel ratio when it isn't 1) and the
 				color scheme, and the web fonts when they were still loading; a scan with no layout, in
@@ -206,6 +227,20 @@ export function HtmlReportContent() {
 				browser (<code>surea11y.report.js</code>) it shows the steps the result already carries.
 				With the packs, “What's left for a person” also follows a pack's standard where the scan
 				ran its profile. <code>options.manualChecks: false</code> leaves that section out.
+			</p>
+			<p>
+				Given as a command line or an environment variable spells it (<code>'false'</code>,{" "}
+				<code>'0'</code>, <code>0</code>, <code>'true'</code>, <code>'1'</code>, <code>1</code>),{" "}
+				<code>manualChecks</code> is read as that, with a warning, and a number{" "}
+				<code>title</code> is written as text, with a warning; a value that can't be read (a{" "}
+				<code>BigInt</code>, an object) throws a <code>TypeError</code>, as does a{" "}
+				<code>manualChecks</code> other than <code>true</code> or <code>false</code> or a{" "}
+				<code>title</code> other than a string under <code>options.strictOptions: true</code>.{" "}
+				<code>null</code> options are no options. A key the report doesn't read that looks like a
+				misspelling of one it does (<code>titel</code>) is ignored with a <code>console.warn</code>{" "}
+				naming the option meant, as a scan warns about <code>engineOptions</code> (see{" "}
+				<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">Catching
+				mistakes in the options</a>). Core 1.18.0 and later.
 			</p>
 
 			<h2>Scope</h2>

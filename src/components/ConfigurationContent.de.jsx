@@ -30,7 +30,10 @@ export function ConfigurationContent() {
 				menschlichen Auditor im Vergleich zu einem unbeaufsichtigten CI-Gate sein sollen, und
 				ergänzen Sie eine organisationsspezifische Regel neben den eingebauten, wenn der Katalog
 				etwas nicht abdeckt, das Ihnen wichtig ist, und geben Sie den Regeln das CSS eines
-				Stylesheets von einem anderen Origin, das die Seite nicht lesen kann. Die vollständige
+				Stylesheets von einem anderen Origin, das die Seite nicht lesen kann. Halten Sie den Scan
+				einer schweren Seite innerhalb eines CI-Zeitlimits, oder einen Mangel, der sich in jeder
+				Zeile einer langen Tabelle wiederholt, bei einem lesbaren Ergebnis, ohne dass eines davon
+				als bestanden gilt oder ein Gate lockert. Die vollständige
 				Referenz finden Sie unter{" "}
 				<a href="/configuration/engine-options/">Engine-Optionen</a>.
 			</p>

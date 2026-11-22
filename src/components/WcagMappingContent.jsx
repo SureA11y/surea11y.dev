@@ -132,7 +132,7 @@ export function WcagMappingContent() {
 				<code>src/coverage/complete-applicability.js</code> (<code>COMPLETE_CHECK</code>), each with
 				the reason, and none is yet: each asks something the rules can't see, whether a text
 				alternative, a label, a heading or a link's text says the right thing, or how content a
-				script draws or changes meets it. <strong>So no WCAG composite passes in 1.14.</strong>
+				script draws or changes meets it. <strong>So no WCAG composite passes yet.</strong>
 			</p>
 			<p>
 				Likewise, a criterion is <code>notApplicable</code> only when its rules find every case it
@@ -233,7 +233,7 @@ export function WcagMappingContent() {
 				A rule carries one level tag per Success Criterion it maps to, and nothing more: a rule
 				mapped only to an AA criterion is tagged <code>wcag2aa</code> and <em>not</em>{" "}
 				<code>wcag2a</code>. Asking for <code>{"{ tags: ['wcag2aa'] }"}</code> on its own
-				therefore runs the 11 rules mapped to a 2.0 AA criterion, not the 105 that make up a 2.0
+				therefore runs the 12 rules mapped to a 2.0 AA criterion, not the 107 that make up a 2.0
 				A + AA target. List every level you mean, or use <code>runOnly.wcag</code>, which does not
 				have the problem. <code>engineOptions.profile</code> (<code>wcag20-aa</code>,{" "}
 				<code>wcag21-aa</code>, <code>wcag22-aa</code> and the other WCAG versions and levels)

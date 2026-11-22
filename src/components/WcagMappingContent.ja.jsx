@@ -141,7 +141,7 @@ export function WcagMappingContent() {
 			<h3 id="when-a-criterion-passes">達成基準が<code>pass</code>になるとき、適用されないとき</h3>
 			<p>
 				1.14からは、達成基準が<code>pass</code>になるのは、その達成基準が求めることをすべてルールがチェックする場合だけです。WCAGでも、達成基準はそのすべてが満たされたときにだけ満たされたとみなされます。ルールがすべて<code>pass</code>でも、わかるのはルールがチェックする部分が満たされていることだけです。<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>は<code>{'<html lang="fr">'}</code>が言語を示していることを確かめますが、ページがフランス語で書かれていることは確かめません（3.1.1）。<a href="/rules/page-title-present/"><code>page-title-present</code></a>はページにタイトルがあることを確かめますが、それがページを説明していることは確かめません（2.4.2）。そうした達成基準は<code>cantTell</code>になり、理由コードは<code>composite.rollup.cantTell.partialCheck</code>です。<a href="/results-reports/html-report/">HTMLレポート</a>では「一部のみ確認」と表示され、残りは人が確認します。ルールがすべてをチェックする達成基準は<code>src/coverage/complete-applicability.js</code>（<code>COMPLETE_CHECK</code>）にそれぞれの理由とともに列挙されますが、まだ1つもありません。どの達成基準にも、ルールからは見えないことが含まれています。代替テキスト、ラベル、見出し、リンクのテキストが正しい内容を伝えているか、スクリプトが描画・変更するコンテンツがそれを満たしているか、といったことです。
-				<strong>そのため、1.14ではWCAGの複合ルールが<code>pass</code>になることはありません。</strong>
+				<strong>そのため、今のところWCAGの複合ルールが<code>pass</code>になることはありません。</strong>
 			</p>
 			<p>
 				同じように、達成基準が<code>notApplicable</code>になるのは、その達成基準が適用されるすべてのケースをルールが見つけられる場合だけです。2.4.4と2.4.9ではリンク、2.4.3と2.4.7ではフォーカス可能な要素、2.5.3ではラベルの付いたコンポーネント、4.1.1ではマークアップがそれに当たります。フォームのフィールド（1.3.5、3.3.2）とポインターのターゲット（2.5.8）はこの一覧にありません。ARIAのロールで作ったフィールド、<code>autocomplete</code>のないフィールド、スクリプトによってだけターゲットになる要素は、それらのルールが何も見つけなかったページにもありえるからです。それ以外の達成基準では、ルールがすべて何も見つけなくても、わかるのはルールが探すケースがないことだけです。遅延の後にリダイレクトするスクリプトは<code>{'<meta http-equiv="refresh">'}</code>のない制限時間（2.2.1）ですし、ほかの言語の一節（3.1.2）に<code>lang</code>が付いているとは限りません。WCAG-EMの用語では、「存在しない」と言うにはコンテンツがありうる場所をすべて確認している必要があります。そのため、そうした達成基準は<code>cantTell</code>になり、理由コードは<code>composite.rollup.cantTell.partialCoverage</code>です。
@@ -241,7 +241,7 @@ export function WcagMappingContent() {
 				<em>付きません</em>
 				。そのため
 				<code>{"{ tags: ['wcag2aa'] }"}</code>
-				だけを指定すると、2.0のA＋AAを対象にする105件のルールではなく、2.0のAAの達成基準に対応する11件のルールだけが実行されます。対象にするレベルはすべて列挙するか、この問題がない
+				だけを指定すると、2.0のA＋AAを対象にする107件のルールではなく、2.0のAAの達成基準に対応する12件のルールだけが実行されます。対象にするレベルはすべて列挙するか、この問題がない
 				<code>runOnly.wcag</code>
 				を使ってください。
 				<code>engineOptions.profile</code>

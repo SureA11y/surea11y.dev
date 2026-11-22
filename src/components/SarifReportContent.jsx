@@ -23,14 +23,18 @@ const sarifFieldRows = [
 			<>
 				The SHA-256 digest, 64 hex digits, of the same <code>ruleId + reasonCode + html</code>{" "}
 				identity key used by <a href="/conformance/baseline/">Baseline / allowlist</a> (
-				<code>computeBaselineKey</code>) — a stable, content-based fingerprint rather than a
+				<code>computeBaselineKey</code>; <code>selector</code> in place of <code>html</code> for a
+				finding without markup, as with <code>output.includeHtml: false</code>) — a stable, content-based fingerprint rather than a
 				position-based one, for consumers that read it: the same finding gets the same digest in
 				every report. Before 1.11, <code>surea11y/violation/v1</code> held the key itself, so a
 				tool that read <code>v1</code> sees each finding as new once.{" "}
 				<strong>A finding whose reason code changes gets another digest</strong>: in 1.14, the
 				findings of the seventeen rules that now give a code, and those of the codes split by
 				cause, so their Code Scanning alerts close once and the findings come back as new (see{" "}
-				<a href="/conformance/baseline/">Baseline / allowlist</a>).
+				<a href="/conformance/baseline/">Baseline / allowlist</a>). In 1.18, a finding without
+				markup is keyed by its selector (before, every such finding of a rule and reason code
+				shared one digest), and the digest of a finding whose markup has a class name with a no-break space,
+				or a start tag cut by the snippet limit, changes once.
 			</>
 		),
 	},
@@ -55,17 +59,19 @@ const sarifFieldRows = [
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, the rule's help link, when it is an absolute <code>http(s)</code> URL; otherwise the Understanding document of the first WCAG criterion it maps to; absent for a rule with neither, which no built-in rule is: one mapped to no criterion links its section of the rule catalog.</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>The <code>toolVersion</code> option, if given (a tool wrapping the engine passes its own); otherwise <code>engine.version</code>, the engine release that produced the result.<code>"0.0.0"</code> only for a result without one, from a release before 1.10.0, or whose <code>engine.version</code> is not a string.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>The <code>category</code> option, with a trailing <code>/</code> added if it has none (GitHub reads everything up to the last slash as the category). Absent when no category is given. See <a href="#scanning-at-several-viewport-widths">Scanning at several viewport widths</a>.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>,source: <><code>wcagVersion</code>, <code>wcagLevel</code> (when the scan had a level: <code>engineOptions.wcagLevel</code>, or the one its selection gives), <code>profile</code> (the first profile, for a scan of several), <code>profiles</code> (a scan of several profiles only: every profile it ran, <code>engine.profiles</code>), <code>optInRules</code> and <code>environment</code> (a copy of <code>engine.environment</code>) from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, and an AA run from one at every level, the opt-in rule tags it added beyond that target when it added any, and the conditions the page was rendered under (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code> and every other field it has, the hooks' included; see <a href="/results-reports/output-schema/#top-level-result">Output schema</a>). Omitted for results from releases that predate those fields.</> },
+	{ id: "extensions", field: <code>tool.extensions</code>, source: <>Present only when the scan ran with packs (<code>engine.packs</code>): each pack as a tool component, <code>{"{ name, version }"}</code> (<code>{'{ "name": "@surea11y/pack-en301549", "version": "1.5.0" }'}</code>), sorted by name, from every frame of a cross-frame result, so a dashboard knows which pack and release judged the rules a pack added. Core 1.18.0 and later.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>wcagLevel</code> (when the scan had a level: <code>engineOptions.wcagLevel</code>, or the one its selection gives), <code>profile</code> (the first profile, for a scan of several), <code>profiles</code> (a scan of several profiles only: every profile it ran, <code>engine.profiles</code>), <code>optInRules</code>, <code>packs</code> (when the scan ran with packs: <code>engine.packs</code>, each <code>name@version</code>) and <code>environment</code> (a copy of <code>engine.environment</code>) from the result's <code>engine</code>: the conformance target the run used, so a dashboard can tell a WCAG 2.1 run from a 2.2 one, and an AA run from one at every level, the opt-in rule tags it added beyond that target when it added any, and the conditions the page was rendered under (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code> and every other field it has, the hooks' included; see <a href="/results-reports/output-schema/#top-level-result">Output schema</a>). Omitted for results from releases that predate those fields.</> },
 ];
 
 const sarifOptionRows = [
 	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>, for a tool wrapping the engine.</> },
 	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>, the tool's home page.</> },
 	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "none", effect: <>The baseline file as saved (<code>JSON.parse</code> of it) or its <code>entries</code> list, see <a href="/conformance/baseline/#file-format">File format</a>. Fail occurrences recorded there are left out, as <code>--baseline</code> does (see below). An entry written by the minor release before, under a reason code that has changed since, still matches the finding under its new one (see <a href="/conformance/baseline/#upgrading">Upgrading</a>).</> },
-	{ id: "allowProfilesNotRun", option: <code>allowProfilesNotRun</code>, def: <code>false</code>, effect: <>A scan of <a href="/configuration/engine-options/#several-profiles">several profiles</a> that ran fewer than it asked for (<code>engine.profilesNotRun</code>) counted less than it was asked to: each profile not run is an <code>error</code> notification, and the invocation is not <code>executionSuccessful</code>. <code>true</code> makes them warnings. A value other than <code>true</code> or <code>false</code> throws a <code>TypeError</code>. Core 1.15.0 and later.</> },
+	{ id: "allowProfilesNotRun", option: <code>allowProfilesNotRun</code>, def: <code>false</code>, effect: <>A scan of <a href="/configuration/engine-options/#several-profiles">several profiles</a> that ran fewer than it asked for (<code>engine.profilesNotRun</code>) counted less than it was asked to: each profile not run is an <code>error</code> notification, and the invocation is not <code>executionSuccessful</code>. <code>true</code> makes them warnings. Read as <code>leanFailWcagOnly</code> is. Core 1.15.0 and later.</> },
 	{ id: "category", option: <code>category</code>, def: "none", effect: <><code>runs[0].automationDetails.id</code>, see <a href="#scanning-at-several-viewport-widths">Scanning at several viewport widths</a>.</> },
 	{ id: "leanFailAs", option: <code>leanFailAs</code>, def: <code>'warning'</code>, effect: <><code>'error'</code> reports a <code>cantTell</code> finding whose lean points to fail at <code>error</code>, so a build gated on errors fails on likely failures too. Read in any case; another value throws a <code>TypeError</code>. A best-practice rule's too: such a rule, mapped to no WCAG criterion, never fails, and the facts it states lean fail without condition, so a skipped heading level (<code>heading-order</code>) is an <code>error</code>. A finding of a rule whose every criterion is outside the scan's target stays a <code>note</code>. A finding that leans fail and has an entry marked <code>lean: 'fail'</code> in <code>baselineEntries</code> stays a <code>warning</code>.</> },
-	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <>With <code>leanFailAs: 'error'</code>, <code>true</code> raises only the findings of rules mapped to a WCAG criterion in the scan's target, leaving the best-practice rules' leans at <code>warning</code>. A value other than <code>true</code> or <code>false</code> throws a <code>TypeError</code>. <code>leaningFailures(result, {"{ wcagOnly }"})</code>, from <code>@surea11y/core</code>, lists the findings these two options raise, before the baseline.</> },
+	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <>With <code>leanFailAs: 'error'</code>, <code>true</code> raises only the findings of rules mapped to a WCAG criterion in the scan's target, leaving the best-practice rules' leans at <code>warning</code>. Given as a command line or an environment variable spells it (<code>'true'</code>, <code>'false'</code>, <code>'1'</code>, <code>'0'</code>, <code>1</code>, <code>0</code>), it is read as that, with a warning; another string or number is ignored with a warning; a value that can't be read (a <code>BigInt</code>, an object) throws a <code>TypeError</code>, as does anything but <code>true</code> or <code>false</code> under <code>strictOptions</code>. <code>leaningFailures(result, {"{ wcagOnly }"})</code>, from <code>@surea11y/core</code>, lists the findings these two options raise, before the baseline.</> },
+	{ id: "strictOptions", option: <code>strictOptions</code>, def: <code>false</code>, effect: <><code>true</code> (or <code>'true'</code>, <code>'1'</code>, <code>1</code>) makes a switch given as anything but <code>true</code> or <code>false</code> throw a <code>TypeError</code>, as <a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions"><code>engineOptions.strictOptions</code></a> does for a scan. Core 1.18.0 and later.</> },
 	{ id: "packs", option: <code>packs</code>, def: "none", effect: <>The packs the scan ran (<code>engineOptions.packs</code>): in Node, a pack rule's undecided findings carry the steps of its own <code>meta.review</code> (<code>properties.howToCheck</code>).</> },
 ];
 
@@ -142,6 +148,27 @@ export function SarifReportContent() {
 				<code>error</code>-level notification in the same list,{" "}
 				<code>"The rule &lt;id&gt; did not complete: &lt;error&gt;"</code>, naming the rule in{" "}
 				<code>associatedRule.id</code>, so the gap in coverage doesn't read as a pass.
+			</p>
+			<p id="capped-occurrences">
+				A rule some of whose occurrences{" "}
+				<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a> left out of the result gets a{" "}
+				<code>note</code>-level notification,{" "}
+				<code>"+&lt;n&gt; more occurrences of the rule &lt;id&gt; not listed: output.maxOccurrencesPerRule kept &lt;k&gt;"</code>.
+				A failure left out can't be matched against <code>baselineEntries</code>: when the
+				baseline knew every failure kept, the rule gets one <code>error</code> result for those
+				left out (reason code <code>OCCURRENCES_OMITTED</code>, located at the page), so a capped
+				scan never reads as clean. Core 1.18.0 and later.
+			</p>
+			<p id="rules-not-run">
+				A rule the scan's time budget left unstarted (<code>notRun</code>, see{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">A time budget</a>)
+				checked nothing either: it is an <code>error</code>-level notification,{" "}
+				<code>"The rule &lt;id&gt; was not run: the scan reached its time budget of &lt;n&gt; ms first, so it checked nothing"</code>,
+				naming the rule in <code>associatedRule.id</code>, and the invocation is not{" "}
+				<code>executionSuccessful</code>. A profile of a scan of several that the budget left
+				unstarted (<code>engine.profilesNotRun</code>, reason <code>timeBudget</code>) is an{" "}
+				<code>error</code> too, whatever <code>allowProfilesNotRun</code> says. Core 1.18.0 and
+				later.
 			</p>
 			<DataTable
 				label="Engine outcomes as SARIF levels"
@@ -317,6 +344,12 @@ export function SarifReportContent() {
 				]}
 				rows={sarifOptionRows}
 			/>
+			<p>
+				<code>null</code> options are no options. A key the report doesn't read that looks like a
+				misspelling of one it does (<code>categroy</code>, or <code>baseline</code> for{" "}
+				<code>baselineEntries</code>) is ignored with a <code>console.warn</code> naming the
+				option meant, as a scan warns about <code>engineOptions</code>.
+			</p>
 
 			<h2>Combining with <code>--baseline</code></h2>
 			<p>

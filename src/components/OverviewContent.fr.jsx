@@ -245,7 +245,16 @@ export function OverviewContent() {
 				dessiné dans une image qui pourrait être du vrai texte) et, dans un navigateur, 2.4.11
 				« Focus non masqué (minimum) » (un en-tête, un pied de page ou un bandeau fixe ou sticky derrière
 				lequel des éléments de l’ordre de tabulation peuvent recevoir le focus en étant masqués,
-				confirmé par un test d’atteinte). Les quatre posent une question au lieu d’échouer. Le
+				confirmé par un test d’atteinte). Les quatre posent une question au lieu d’échouer. Deux
+				autres mesurent la page telle qu’un navigateur la met en page à une largeur étroite : à
+				320 pixels CSS de large, 1.4.10 « Redistribution » (un contenu qui fait défiler la page
+				horizontalement, ou que le bord coupe), et à 640, comme une fenêtre de 1 280 pixels affiche
+				une page à un zoom de 200 %, 1.4.4 « Redimensionnement du texte » (un texte qu’une boîte
+				coupe ou abrège). Les deux posent une question, n’échouent jamais et ne s’appliquent pas à
+				un viewport plus large : analysez la page à cette largeur pour les vérifier. De nouvelles
+				questions couvrent aussi les boutons radio et cases à cocher sans nom de groupe (1.3.1),
+				les symboles comme ★ employés comme graphiques sous 3:1 (1.4.11) et, dans une analyse qui
+				vise AAA, un lien nommé seulement « cliquez ici » que seule sa phrase explique (2.4.9). Le
 				message d’un constat nomme la cause là où la règle la connaît : pourquoi un élément n’a pas
 				de nom, une faute de frappe probable dans un rôle, un attribut ou une valeur{" "}
 				<code>autocomplete</code>, ce qui masque un élément. Les règles du clavier lisent les gestionnaires d’événements dans le
@@ -337,12 +346,12 @@ export function OverviewContent() {
 				<li>confirmer qu’un texte alternatif a du <em>sens</em>, seulement qu’il est présent (un attribut alt valant <code>"image123.png"</code> passe la vérification objective, et fait l’objet d’une question, penchant vers l’échec, en tant que nom de fichier) ;</li>
 				<li>juger si un choix de contraste de couleurs est esthétiquement approprié, seulement s’il atteint le rapport de contraste applicable ;</li>
 				<li>déterminer si un message d’erreur <em>explique</em> réellement le problème, car cela dépend d’une logique de validation qu’une analyse statique ne voit pas ;</li>
-				<li>détecter un piège au clavier ou un contenu rogné à un zoom de 400 %, car les deux exigent de simuler une véritable interaction utilisateur dans le temps, et pas seulement de lire le DOM à un instant donné.</li>
+				<li>détecter un piège au clavier, car cela exige de simuler une véritable interaction utilisateur dans le temps, et pas seulement de lire le DOM à un instant donné ;</li>
+				<li>zoomer lui-même sur la page : la redistribution et le texte coupé ne sont mesurés que dans une page mise en page à la largeur étroite qu’ils indiquent, et savoir si un contenu ou une fonction s’y perd reste à une personne.</li>
 			</ul>
 			<p>
 				Certaines vérifications implémentées renvoient <code>cantTell</code> quand une personne
-				doit trancher. D’autres aspects, dont les pièges au clavier et la redistribution au zoom,
-				ne sont pas du tout vérifiés par le moteur et demandent des tests à part : aucun{" "}
+				doit trancher. D’autres aspects, dont les pièges au clavier, ne sont pas du tout vérifiés par le moteur et demandent des tests à part : aucun{" "}
 				<code>cantTell</code> ne les remplace, donc un résultat qui n’en contient pas ne signifie
 				pas qu’ils ont été couverts. Voir{" "}
 				<a href="/help/known-limitations/">Limites connues</a> pour la liste complète, et les{" "}

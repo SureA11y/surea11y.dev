@@ -174,8 +174,12 @@ export function EarlReportContent() {
 				rows={earlOutcomeRows}
 			/>
 			<p>
-				<code>earl:untested</code> has no counterpart: a rule that did not run produces no result
-				to assert on, so it contributes no assertion rather than an untested one.
+				<code>earl:untested</code> is for a rule the scan selected and did not start, since its
+				time budget ran out first (<code>notRun</code>, see{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">A time budget</a>,
+				core 1.18.0 and later), unless another result for the same page ran it. Any other rule
+				that did not run produces no result to assert on, so it contributes no assertion rather
+				than an untested one.
 			</p>
 			<p>
 				<strong><code>cantTell</code> does not cost conformance credit.</strong> ACT's own
@@ -249,10 +253,16 @@ export function EarlReportContent() {
 					{ key: "meaning", label: "Meaning", wrap: true },
 				]}
 				rows={[
-					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Defaults the name to <code>surea11y</code>, and the version, given as the assertor's release, to the <code>engine.version</code> the results carry when they all carry the same one; results from different releases get no release unless you give one. Pass <code>null</code> to omit <code>assertedBy</code> entirely.</> },
+					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Defaults the name to <code>surea11y</code>, and the version, given as the assertor's release, to the <code>engine.version</code> the results carry when they all carry the same one; results from different releases get no release unless you give one. Pass <code>null</code> to omit <code>assertedBy</code> entirely. When every result ran the same packs (<code>engine.packs</code>), the assertor names each as a part of it, <code>{'"dct:hasPart": [{ "@type": "Software", "name": "@surea11y/pack-en301549", "release": { "@type": "Version", "revision": "1.5.0" } }]'}</code>, whatever <code>assertor</code> you give (core 1.18.0 and later).</> },
 					{ id: "mode", option: <code>mode</code>, meaning: <>An EARL test mode such as <code>'earl:automatic'</code>. Omitted when not supplied.</> },
 				]}
 			/>
+			<p>
+				<code>null</code> options are no options. A key the report doesn't read that looks like a
+				misspelling of one it does (<code>asserter</code>) is ignored with a{" "}
+				<code>console.warn</code> naming the option meant, as a scan warns about{" "}
+				<code>engineOptions</code>.
+			</p>
 
 			<h2>See also</h2>
 			<ul>

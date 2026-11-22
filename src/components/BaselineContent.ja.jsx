@@ -29,6 +29,21 @@ const baselineMoves = [
 	{ id: "p-as-heading", rules: ["p-as-heading"], from: ["BOLD_LARGE_PARAGRAPH", "BOLD_LARGE_DIV"], to: ["HEADING_LIKE_NUMBER", "HEADING_LIKE_LINK"] },
 ].map((row) => ({ ...row, rules: codes(row.rules), from: codes(row.from), to: codes(row.to) }));
 
+const baselineMoves118 = [
+	{
+		id: "marquee",
+		rules: <code>deprecated-elements-not-used</code>,
+		from: <code>MARQUEE_PAUSE_MECHANISM_UNKNOWN</code>,
+		to: <><code>MARQUEE_STOPS_ONLY_ON_HOVER</code>（ポインターが上にある間だけ止まるmarquee）</>,
+	},
+	{
+		id: "placeholder-title",
+		rules: <code>page-title-patterns</code>,
+		from: <code>titleReview</code>,
+		to: <><code>placeholderTitle</code>（<code>undefined</code>や<code>{"{{title}}"}</code>など、タイトルに残ったプレースホルダー）</>,
+	},
+];
+
 export function BaselineContent() {
 	return (
 		<>
@@ -110,9 +125,12 @@ export function BaselineContent() {
 				<code>"DEFAULT"</code>
 				）、
 				<code>html</code>
-				は検出箇所のouterHTMLのスニペットです。位置ではなく内容に基づくので、指摘された要素自体のマークアップが変わらない限り、要素がページ内で移動しても（並べ替え、無関係な兄弟要素の追加や削除）一致し続けます。<code>&lt;html&gt;</code>や<code>&lt;body&gt;</code>で報告される、ページそのものについての検出結果（<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>、<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>、<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>）では、スニペットは開始タグだけなので、ページの内容を編集しても新しい検出結果にはなりません。スニペットは、各タグの属性を名前順に、クラス名を並べ替えたうえで比較されます。そのため、前回のビルドが<code>src class="a b"</code>と書いたところを今回のビルドが<code>class="b a" src</code>と書いても一致します。比較は照合の時点で行われるので、この変更より前に書かれたベースラインファイルも引き続き一致します。
+				は検出箇所のouterHTMLのスニペットです。位置ではなく内容に基づくので、指摘された要素自体のマークアップが変わらない限り、要素がページ内で移動しても（並べ替え、無関係な兄弟要素の追加や削除）一致し続けます。<code>&lt;html&gt;</code>や<code>&lt;body&gt;</code>で報告される、ページそのものについての検出結果（<a href="/rules/html-lang-attr-present/"><code>html-lang-attr-present</code></a>、<a href="/rules/bypass-blocks-present/"><code>bypass-blocks-present</code></a>、<a href="/rules/landmark-one-main/"><code>landmark-one-main</code></a>）では、スニペットは開始タグだけなので、ページの内容を編集しても新しい検出結果にはなりません。スニペットは、各タグの属性を名前順に、クラス名を並べ替えたうえで比較されます。そのため、前回のビルドが<code>src class="a b"</code>と書いたところを今回のビルドが<code>class="b a" src</code>と書いても一致します。比較は照合の時点で行われるので、この変更より前に書かれたベースラインファイルも引き続き一致します。クラス名は、HTMLと同じく、スペース、タブ、改行だけで区切られます。ノーブレークスペースを含む<code>class="a&nbsp;b"</code>は1つのクラスで、<code>class="a b"</code>とは一致しません。スニペットの長さの上限で切れた開始タグも、残っている範囲で並べ替えられます。
 				<code>selector</code>
-				もベースラインファイルに記録されますが、差分を読む人のための手がかりにすぎず、照合には一切使いません。
+				もベースラインファイルに記録されますが、差分を読む人のための手がかりにすぎず、<code>html</code>を持つ検出結果の照合には使いません。
+			</p>
+			<p id="findings-without-markup">
+				<code>html</code>のない検出結果（<code>output.includeHtml: false</code>でのスキャンや、ルールがマークアップなしで報告する検出箇所）は、core 1.18.0以降、その<code>selector</code>で識別されます。<code>ruleId + reasonCode + selector</code>で、シャドウルート内の要素では、その前にシャドウホストのセレクターが付きます。以前は、1つのルールとコードのすべての不合格が1つのキーを共有していたため、新しい違反が既知のものとして数えられていました。このキーは位置に基づくので、<strong>セレクターが変わると変わります</strong>。要素の前に無関係な兄弟要素が追加されたり、要素がラッパーで囲まれたりすると、検出結果は新しいものになり、古いエントリーは古くなったものになります。また、修正した要素の代わりに別の要素が同じ位置で不合格になると、既知のものとして読まれます。できれば、ベースラインを作るときは<code>includeHtml</code>をオンにしておいてください。<code>html</code>も<code>selector</code>もないエントリーは、すべての検出結果をそれ自身のキーで探した後で、そうした検出結果と引き続き一致します。
 			</p>
 			<p>
 				<strong>既知の制限事項</strong>
@@ -191,7 +209,20 @@ export function BaselineContent() {
 				検出結果の識別子には理由コードが含まれ、マイナーリリースで検出結果に新しい理由コードが付くことがあります。理由コードを付けていなかったルール（<code>DEFAULT</code>）が付けるようになる場合や、1つのコードが原因ごとに2つに分かれる場合です（GitHub上の<code>API_STABILITY.md</code>の<a href={`${core}/docs/API_STABILITY.md#finding-identity`}>検出結果の識別子</a>を参照）。検出結果は同じで、アップグレード前に書いたベースラインも引き続き一致します。移動はそれぞれ<code>src/baseline-moves.json</code>（ルール、古いコード、新しいコード）に記録され、古いコードのエントリーは、識別子の残りの部分（ルール、マークアップ、フレーム）が同じなら、新しいコードの検出結果と一致します。<code>matchBaseline</code>も、SARIFとJUnitのレポートの<code>baselineEntries</code>オプションも、これを読み取ります。エントリーはまず検出結果自身のコードで探されるので、まったく同じ識別子を持つ別の検出結果があるときに、移動した検出結果に割り当てられることはありません。
 			</p>
 			<p>
-				この表が対象にするのは1つのマイナーリリースです。移動は、それが入ったリリースから次のマイナーリリースまで記録され、次のマイナーリリースで削除されます。1.15と1.16で移動した検出結果はないので、表は空です。
+				この表が対象にするのは1つのマイナーリリースです。移動は、それが入ったリリースから次のマイナーリリースまで記録され、次のマイナーリリースで削除されます。1.15、1.16、1.17で移動した検出結果はありません。1.18では1.17から次のコードが移動し、1.19でそれらが削除されます。
+			</p>
+			<DataTable
+				label="1.18で移動した理由コード"
+				rowKey="id"
+				columns={[
+					{ key: "rules", label: "ルール", wrap: true, width: "30%" },
+					{ key: "from", label: "古いコード", wrap: true },
+					{ key: "to", label: "新しいコード", wrap: true },
+				]}
+				rows={baselineMoves118}
+			/>
+			<p>
+				どちらも分割で、古いコードはルールのほかの検出結果に残ります。そのため、1.17で書いたベースラインは、これらについて1.18.xでは引き続き一致しますが、1.19では一致しません。1.19に移る前に、1.18.xのもとで下記の方法で最新にしてください。
 			</p>
 			<p>1.14では1.13から次のコードが移動し、1.15でそれらが削除されました。</p>
 			<DataTable
@@ -205,7 +236,7 @@ export function BaselineContent() {
 				rows={baselineMoves}
 			/>
 			<p>
-				そのため、1.13で書いたベースラインは、これらについて1.14.xでは引き続き一致しますが、1.15では一致しません。1.15では、古いコードのエントリーは古くなったものであり、その検出結果は新しいものになります。そうしたベースラインは、1.15に移る前に1.14.xのもとで下記の方法で最新にしてください。1.15の<code>migrateBaselineEntries</code>は、これらの移動をもう知りません。1.14で書いたベースラインは、1.15と1.16でも引き続き一致します。
+				そのため、1.13で書いたベースラインは、これらについて1.14.xでは引き続き一致しますが、1.15では一致しません。1.15では、古いコードのエントリーは古くなったものであり、その検出結果は新しいものになります。そうしたベースラインは、1.15に移る前に1.14.xのもとで下記の方法で最新にしてください。1.15の<code>migrateBaselineEntries</code>は、これらの移動をもう知りません。1.14で書いたベースラインは、1.15、1.16、1.17でも引き続き一致します。
 			</p>
 			<p>
 				アップグレードの後に<code>--write-baseline</code>（または<code>buildBaselineEntries</code>）でベースラインを再生成すると、すべての検出結果が現在のコードで書き込まれ、表は不要になります。ただし、アップグレードで新たに報告されるようになった検出結果もすべて受け入れてしまうので、差分を確認してください。新しいものを受け入れずにコードだけを更新するには、<code>@surea11y/core/baseline</code>の<code>migrateBaselineEntries</code>でファイルを書き換えます。
@@ -225,7 +256,7 @@ export function BaselineContent() {
 				この関数は、移動したエントリーを新しいコードにし、それ以外のエントリーはそのままにしたコピーを返します。結果を渡さない場合は、検出結果がなくてもわかる移動だけを書き換えます。ルールがもう出さず、1つの新しいコードに移ったもの（<code>img-alt-present</code>の<code>DEFAULT</code>）がそれに当たり、分割は対象外です。
 			</p>
 			<p>
-				アップグレードで判定結果が変わった検出結果は別の話です。それまで確認を求めていたものを不合格にするようになったルールや、それまで不合格にしていたものについて確認を求めるようになったルールは、ベースラインになかった検出結果を出したり、あった検出結果を出さなくなったりします。その理由は<a href={`${core}/CHANGELOG.md`}>変更履歴</a>に書かれています。
+				アップグレードで判定結果が変わった検出結果は別の話です。それまで確認を求めていたものを不合格にするようになったルールや、それまで不合格にしていたものについて確認を求めるようになったルールは、ベースラインになかった検出結果を出したり、あった検出結果を出さなくなったりします。その理由は<a href={`${core}/CHANGELOG.md`}>変更履歴</a>に書かれています。不合格に傾かなくなった検出結果も同じです。1.18では、<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a>が<code>&lt;p&gt;</code>、<code>&lt;strong&gt;</code>、<code>&lt;time&gt;</code>などの要素をそのロールで判断するので、<code>&lt;p aria-label&gt;</code>は、不合格に傾く<code>ARIA_ATTR_PROHIBITED_ROLELESS_NEEDS_REVIEW</code>ではなく、傾きのない<code>ARIA_ATTR_PROHIBITED</code>になります。これについて<code>leanFail: true</code>で書いたエントリーは、古くなったものになります。
 			</p>
 
 			<h2 id="several-profiles">複数のプロファイルでのスキャン</h2>
@@ -289,6 +320,14 @@ export function BaselineContent() {
 				です。
 				<code>migrateBaselineEntries</code>
 				も同じように確認します。以前は、そうした値は空のベースラインとして読まれ、何の知らせもなくすべての不合格が新しいものになっていました。
+			</p>
+
+			<h2 id="incomplete-scan">完了しなかったスキャン</h2>
+			<p>
+				選択したものをすべてチェックしなかったスキャンは、新しいものが見つからなかったとは言えません。時間の予算（<code>engineOptions.timeBudgetMs</code>。<a href="/configuration/engine-options/#a-time-budget-timebudgetms">エンジンオプション</a>を参照）がすべてのルールの実行前に尽きた場合、<code>matchBaseline</code>は戻り値に<code>{"incomplete: { notRun }"}</code>、つまり実行されなかったルールのIDを加えます。<code>newCount</code>を読むゲートは、SARIFとJUnitのレポーターと同じく（実行されなかったルールごとにエラー）、<code>incomplete</code>でも失敗させる必要があります。そのようなスキャンからベースラインを書かないでください。実行されなかったルールの不合格が1つも記録されません。
+			</p>
+			<p>
+				<code>engineOptions.output.maxOccurrencesPerRule</code>で上限がかかった結果（<a href="/results-reports/output-schema/#occurrence-cap">出力スキーマ</a>を参照）は、各ルールの検出箇所の一部しか列挙しないので、完全なベースラインを作れません。省かれた不合格にはエントリーができず、以後のスキャンのたびに新しいものとして見つかります。<code>buildBaselineEntries</code>は、そうした結果や、時間の予算で打ち切られた結果を渡されると警告します。ベースラインは上限なしのスキャンから書いてください。ベースラインと照合するとき、上限で省かれた不合格はエントリーと比べられないので、新しいものとして数えられます。<code>matchBaseline</code>はそれを<code>totalFail</code>と<code>newCount</code>に加え、その数を<code>incomplete.occurrencesOmitted</code>に示します。<code>leanFail: true</code>では、不合格に傾き、上限で省かれた検出結果も同じように新しいものとして数えられます。<code>leanFail</code>はそれを自身の<code>total</code>と<code>newCount</code>に加え、<code>incomplete.occurrencesOmittedLeaningFail</code>がその数を示します。そのとき、それらが一致したはずのエントリーが古くなったものとして数えられることがあります。
 			</p>
 
 			<h2><code>--json</code>との併用</h2>

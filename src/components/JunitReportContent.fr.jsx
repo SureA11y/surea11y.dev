@@ -50,6 +50,49 @@ const outcomeRows = [
 		junit: <><code>&lt;error type="ruleError"&gt;</code> avec l’erreur, comptée dans <code>errors</code></>,
 		why: "L’élément JUnit pour un test qui n’a pas pu s’exécuter. La page n’a pas été vérifiée au regard de la règle, ce qui n’est ni une réussite ni un point à examiner.",
 	},
+	{
+		id: "occurrencesOmitted",
+		outcome: <>une règle dont <a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a> a laissé de côté une partie des occurrences</>,
+		junit: (
+			<>
+				son cas de test les compte (<code>412 failing occurrences: …</code>) et ajoute{" "}
+				<code>+N more: … not listed (output.maxOccurrencesPerRule)</code> au corps
+			</>
+		),
+		why: (
+			<>
+				Un échec laissé de côté ne peut pas être comparé à <code>baselineEntries</code> : la règle
+				échoue donc même quand la baseline connaît chaque échec conservé. Core 1.18.0 et
+				ultérieur.
+			</>
+		),
+	},
+	{
+		id: "timeBudget",
+		outcome: (
+			<>
+				une règle que le budget de temps de l’analyse a laissée sans la démarrer (
+				<code>notRun</code>, voir{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">un budget de
+				temps</a>)
+			</>
+		),
+		junit: (
+			<>
+				<code>&lt;error type="timeBudget"&gt;</code>, comptée dans <code>errors</code>, dans une
+				suite <code>Rules not run</code> (avec une propriété <code>timeBudgetMs</code>), et chaque
+				suite reçoit une propriété <code>incomplete</code>
+			</>
+		),
+		why: (
+			<>
+				La règle n’a rien vérifié, donc le build ne la lit jamais comme réussie. Un profil que le
+				budget a laissé sans le démarrer est une <code>&lt;error&gt;</code> dans la suite{" "}
+				<code>Profiles</code>, quoi que dise <code>allowProfilesNotRun</code>. Core 1.18.0 et
+				ultérieur.
+			</>
+		),
+	},
 ];
 
 const optionRows = [
@@ -104,8 +147,13 @@ const optionRows = [
 			<>
 				Avec <code>leanFailAs: 'failure'</code>, <code>true</code> ne bloque que sur les constats
 				des règles associées à un critère WCAG de la cible de l’analyse, en laissant de côté les
-				tendances des règles de bonne pratique. Une valeur autre que <code>true</code> ou{" "}
-				<code>false</code> lève une <code>TypeError</code>.
+				tendances des règles de bonne pratique. Donnée comme l’écrit une ligne de commande ou une
+				variable d’environnement (<code>'true'</code>, <code>'false'</code>, <code>'1'</code>,{" "}
+				<code>'0'</code>, <code>1</code>, <code>0</code>), elle est lue comme telle, avec un
+				avertissement ; toute autre chaîne ou tout autre nombre est ignoré avec un avertissement ;
+				une valeur illisible (un <code>BigInt</code>, un objet) lève une <code>TypeError</code>,
+				tout comme ce qui n’est ni <code>true</code> ni <code>false</code> avec{" "}
+				<code>strictOptions</code>.
 			</>
 		),
 	},
@@ -113,7 +161,7 @@ const optionRows = [
 		id: "includeNotApplicable",
 		option: <code>includeNotApplicable</code>,
 		default: <code>false</code>,
-		effect: <>Inclut les règles <code>notApplicable</code> comme tests ignorés.</>,
+		effect: <>Inclut les règles <code>notApplicable</code> comme tests ignorés. Lue comme <code>leanFailWcagOnly</code>.</>,
 	},
 	{
 		id: "baselineEntries",
@@ -162,8 +210,7 @@ const optionRows = [
 				qui en a exécuté moins qu’elle n’en demandait (<code>engine.profilesNotRun</code>) a compté
 				moins que ce qui lui était demandé : chaque profil non exécuté est une{" "}
 				<code>&lt;error&gt;</code> dans une suite <code>Profiles</code>. <code>true</code> en fait
-				des tests ignorés. Une valeur autre que <code>true</code> ou <code>false</code> lève une{" "}
-				<code>TypeError</code>. Core 1.15.0 et ultérieur.
+				des tests ignorés. Lue comme <code>leanFailWcagOnly</code>. Core 1.15.0 et ultérieur.
 			</>
 		),
 	},
@@ -175,6 +222,22 @@ const optionRows = [
 			<>
 				Le <code>name</code> du <code>&lt;testsuites&gt;</code> racine, pour distinguer les rapports
 				de plusieurs pages dans un même tableau de bord.
+			</>
+		),
+	},
+	{
+		id: "strictOptions",
+		option: <code>strictOptions</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				<code>true</code> (ou <code>'true'</code>, <code>'1'</code>, <code>1</code>) fait qu’un
+				interrupteur donné autrement que <code>true</code> ou <code>false</code> lève une{" "}
+				<code>TypeError</code>, comme le fait{" "}
+				<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">
+					<code>engineOptions.strictOptions</code>
+				</a>{" "}
+				pour une analyse. Core 1.18.0 et ultérieur.
 			</>
 		),
 	},
@@ -339,7 +402,11 @@ export function JunitReportContent() {
 					<code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
 					<code>profile</code> (le premier profil, pour une analyse de plusieurs),{" "}
 					<code>profiles</code> (une analyse de plusieurs profils uniquement : chaque profil
-					qu’elle a exécuté, séparés par des virgules), <code>optInRules</code>, les conditions de
+					qu’elle a exécuté, séparés par des virgules), <code>optInRules</code>, <code>packs</code>{" "}
+					(les packs avec lesquels l’analyse s’est exécutée, sous la forme{" "}
+					<code>name@version</code>, séparés par des virgules :{" "}
+					<code>@surea11y/pack-en301549@1.5.0,pack-two@0.3.0</code> ; core 1.18.0 et ultérieur),
+					les conditions de
 					rendu issues de{" "}
 					<a href="/results-reports/output-schema/">
 						<code>engine.environment</code>
@@ -432,6 +499,13 @@ export function JunitReportContent() {
 				]}
 				rows={optionRows}
 			/>
+			<p>
+				Des options <code>null</code> valent absence d’options. Une clé que le rapport ne lit pas et
+				qui ressemble à une faute de frappe d’une clé qu’il lit (<code>cantTelAs</code>, ou{" "}
+				<code>baseline</code> pour <code>baselineEntries</code>) est ignorée avec un{" "}
+				<code>console.warn</code> qui nomme l’option voulue, comme une analyse le signale pour{" "}
+				<code>engineOptions</code>.
+			</p>
 
 			<h2>Déterminisme</h2>
 			<p>

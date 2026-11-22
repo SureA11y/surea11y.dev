@@ -103,7 +103,7 @@
 <a class="skip" href="#main">Zu den Prüfschritten springen</a>
 <header class="page">
 <h1>WCAG 2.2: wie jede Anforderung geprüft wird</h1>
-<p>Anforderungen: 55 · Prüfschritte: 53</p>
+<p>Anforderungen: 55 · Prüfschritte: 54</p>
 <ul><li>Stufen: A, AA</li></ul>
 
 </header>
@@ -259,8 +259,8 @@
 <ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Ein Screenreader</span></li></ul>
 <ol class="steps"><li>Suchen Sie jedes Formularfeld auf der Seite: Textfelder, Kontrollkästchen, Optionsfelder, Auswahllisten und benutzerdefinierte Bedienelemente.</li><li>Wählen Sie jedes davon im Bereich „Elemente“ der Entwicklertools aus und prüfen Sie, ob der Eintrag „Name“ im Bereich „Barrierefreiheit“ seine sichtbare Beschriftung enthält.</li><li>Prüfen Sie bei einer Gruppe von Feldern unter einer Frage, etwa Optionsfeldern oder einem Datum in drei Teilen, ob die Gruppe ein &lt;fieldset&gt; mit einer &lt;legend&gt; ist oder role=&quot;group&quot; mit einem Namen hat, sodass die Frage mit jedem Feld vorgelesen wird.</li><li>Prüfen Sie, ob neben einem Feld angezeigte Anweisungen (ein Format, eine Pflichtfeldmarkierung) über aria-describedby mit ihm verknüpft sind oder in seiner Beschriftung stehen.</li></ol>
 <dl class="verdict"><dt>Bestanden, wenn</dt><dd>Der Name jedes Feldes enthält seine sichtbare Beschriftung, Gruppen von Feldern sind nach ihrer Frage benannt, und die Anweisungen zu einem Feld sind mit ihm verknüpft.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Feld ist nur durch Text in der Nähe beschriftet, der nicht mit ihm verknüpft ist, oder die Frage einer Gruppe ist nicht mit ihren Feldern verknüpft, sodass ein Screenreader ein Feld vorliest, ohne zu sagen, wofür es dient; das verstößt gegen WCAG 1.3.1.</dd></dl>
-<p class="rules">Regeln, die es prüfen: <code>form-control-programmatic-label-present</code></p>
-<div class="covers"><p>Dieser Prüfschritt prüft auch:</p><ul><li>Formularelemente haben eine programmatisch ermittelbare Beschriftung (label/aria-label/aria-labelledby/title/placeholder)</li><li>Beschriftungen von Formularelementen sind angemessen</li></ul></div>
+<p class="rules">Regeln, die es prüfen: <code>form-control-programmatic-label-present</code>, <code>form-group-name-present</code></p>
+<div class="covers"><p>Dieser Prüfschritt prüft auch:</p><ul><li>Formularelemente haben eine programmatisch ermittelbare Beschriftung (label/aria-label/aria-labelledby/title/placeholder)</li><li>Beschriftungen von Formularelementen sind angemessen</li><li>Optionsfelder oder Kontrollkästchen mit gleichem Namen, die in keiner Gruppe mit Namen stehen (nur Hinweise)</li></ul></div>
 </section>
 <section class="facet" aria-labelledby="facet-1-3-1-aria-structure-valid">
 <h5 id="facet-1-3-1-aria-structure-valid">ARIA-Rollen und -Beziehungen ergeben dieselbe Struktur, die die Seite zeigt</h5>
@@ -368,8 +368,8 @@
 <ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Der Zoom des Browsers</span></li></ul>
 <ol class="steps"><li>Zoomen Sie den Browser auf 200 %.</li><li>Gehen Sie die ganze Seite durch und prüfen Sie, ob aller Text größer geworden ist und keiner abgeschnitten, überlagert oder verborgen ist.</li><li>Nutzen Sie die Bedienelemente, Menüs und Formulare der Seite in dieser Größe und prüfen Sie, ob alle noch funktionieren.</li><li>Prüfen Sie auf einem Smartphone, ob Sie die Seite mit zwei Fingern auf 200 % zoomen können. Verwenden Sie Chrome unter Android, wobei die Bedienungshilfe von Chrome, die das Zoomen erzwingt, ausgeschaltet ist: Safari unter iOS ignoriert einen Viewport, der das Zoomen sperrt, und kann diesen Fehler daher verdecken.</li><li>Lassen Sie Untertitel und Bilder von Text weg.</li></ol>
 <dl class="verdict"><dt>Bestanden, wenn</dt><dd>Bei 200 % ist aller Text größer geworden und bleibt lesbar, und alles funktioniert noch.</dd><dt>Nicht bestanden, wenn</dt><dd>Bei 200 % ist Text abgeschnitten, überlappt oder wird nicht größer, ein Bedienelement funktioniert nicht mehr, oder das Zoomen mit zwei Fingern ist gesperrt; das verstößt gegen WCAG 1.4.4.</dd></dl>
-<p class="rules">Regeln, die es prüfen: <code>meta-viewport-zoom-enabled</code></p>
-<div class="covers"><p>Dieser Prüfschritt prüft auch:</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; deaktiviert das Zoomen mit zwei Fingern nicht und begrenzt es nicht auf unter 200 %</li></ul></div>
+<p class="rules">Regeln, die es prüfen: <code>meta-viewport-zoom-enabled</code>, <code>resize-text-content-loss</code></p>
+<div class="covers"><p>Dieser Prüfschritt prüft auch:</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; deaktiviert das Zoomen mit zwei Fingern nicht und begrenzt es nicht auf unter 200 %</li><li>Bei 640 CSS-Pixeln Breite (200 % Zoom) wird Text in einem Kasten, der seinen Überlauf verbirgt, nicht abgeschnitten (es wird gefragt: Ob der vollständige Text auf anderem Weg angeboten wird, beurteilt ein Mensch)</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-5" aria-labelledby="req-1-4-5">
@@ -389,9 +389,10 @@
 <p class="meta"><span>Stufe AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-10-reflow-320">
 <h5 id="facet-1-4-10-reflow-320">Bei 320 CSS-Pixeln Breite erfordern Inhalte kein Scrollen in zwei Richtungen, und nichts geht verloren</h5>
-<ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li></ul>
-<p class="empty">Dafür gibt es noch keinen Prüfschritt.</p>
-
+<ul class="badges"><li class="badge auto-partial">Regeln entscheiden es zum Teil</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span>, <span>Der Zoom des Browsers</span></li></ul>
+<ol class="steps"><li>Stellen Sie das Browserfenster auf 320 CSS-Pixel Breite: Schalten Sie in den Entwicklertools die Gerätesymbolleiste ein und setzen Sie die Breite auf 320, oder zoomen Sie ein 1280 Pixel breites Fenster auf 400 %.</li><li>Scrollen Sie durch die ganze Seite und prüfen Sie, ob sie außer nach oben und unten auch seitlich scrollt.</li><li>Wo sie das tut, suchen Sie, was breiter als das Fenster ist. Inhalte, die zwei Dimensionen brauchen, um bedient oder verstanden zu werden, etwa eine Karte, ein Diagramm, ein Video, ein Spiel oder eine Datentabelle, dürfen für sich allein seitlich scrollen.</li><li>Prüfen Sie, dass alle Inhalte und alle Bedienelemente noch da sind und sich nutzen lassen: Menüs, Formulare und Schaltflächen dürfen sich verschieben oder zusammenklappen, aber nichts darf verloren gehen.</li></ol>
+<dl class="verdict"><dt>Bestanden, wenn</dt><dd>Bei 320 CSS-Pixeln Breite scrollt die Seite nur in eine Richtung, abgesehen von Inhalten, die zwei Dimensionen brauchen, und nichts geht verloren.</dd><dt>Nicht bestanden, wenn</dt><dd>Bei 320 CSS-Pixeln Breite muss die Seite seitlich gescrollt werden, um ihre Inhalte zu lesen oder zu nutzen, oder Inhalte oder Funktionen gehen verloren, was WCAG 1.4.10 nicht erfüllt.</dd></dl>
+<p class="rules">Regeln, die es prüfen: <code>reflow-horizontal-scroll</code></p>
 </section>
 </article>
 <article class="req" id="r-1-4-11" aria-labelledby="req-1-4-11">
@@ -410,7 +411,8 @@
 <ul class="badges"><li class="badge auto-manual">Nur ein Mensch kann es prüfen</li><li class="badge">Hilfsmittel: <span>Die Entwicklertools des Browsers</span></li></ul>
 <ol class="steps"><li>Suchen Sie nach Grafiken, die Informationen tragen: Symbole ohne Text daneben, Diagramme, Schaubilder, Karten und Infografiken.</li><li>Suchen Sie in jeder die Teile, die man zu ihrem Verständnis braucht, etwa die Form eines Symbols, die Linien und Balken eines Diagramms oder die Grenzen zwischen Flächen.</li><li>Messen Sie mit einem Kontrastprüfwerkzeug den Kontrast jedes Teils zu seiner Umgebung. Nötig sind mindestens 3:1. Ein Teil, der mit Text beschriftet ist oder dessen Information auch in Text daneben steht, braucht ihn nicht.</li><li>Lassen Sie dekorative Grafiken, Logos und Grafiken aus, deren besonderes Aussehen wesentlich ist, etwa ein Foto oder eine Flagge.</li></ol>
 <dl class="verdict"><dt>Bestanden, wenn</dt><dd>Jeder Teil einer Grafik, der zu ihrem Verständnis nötig ist, hat einen Kontrast von mindestens 3:1, oder seine Information wird auf andere Weise gegeben.</dd><dt>Nicht bestanden, wenn</dt><dd>Ein Teil einer Grafik, der zu ihrem Verständnis nötig ist, hat einen Kontrast unter 3:1, und seine Information wird nicht auf andere Weise gegeben; das verstößt gegen WCAG 1.4.11.</dd></dl>
-
+<p class="rules">Regeln, die es prüfen: <code>symbol-graphic-contrast</code></p>
+<div class="covers"><p>Dieser Prüfschritt prüft auch:</p><ul><li>Als Text ohne Buchstaben oder Ziffern gezeichnete Symbole, als Grafik verwendet, unter 3:1 (nur Hinweise)</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-12" aria-labelledby="req-1-4-12">

@@ -51,6 +51,47 @@ const outcomeRows = [
 		junit: <><code>&lt;error type="ruleError"&gt;</code> mit dem Fehler, gezählt in <code>errors</code></>,
 		why: "Das JUnit-Element für einen Test, der nicht laufen konnte. Die Seite wurde nicht gegen die Regel geprüft, was weder ein Bestehen ist noch etwas, das zu prüfen wäre.",
 	},
+	{
+		id: "occurrencesOmitted",
+		outcome: <>eine Regel, von deren Vorkommen <a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a> einige weggelassen hat</>,
+		junit: (
+			<>
+				ihr Testfall zählt sie (<code>412 failing occurrences: …</code>) und fügt dem Inhalt{" "}
+				<code>+N more: … not listed (output.maxOccurrencesPerRule)</code> hinzu
+			</>
+		),
+		why: (
+			<>
+				Ein weggelassenes fehlgeschlagenes Vorkommen lässt sich nicht mit{" "}
+				<code>baselineEntries</code> abgleichen, daher schlägt die Regel fehl, auch wenn die
+				Baseline jedes behaltene fehlgeschlagene Vorkommen kennt. Ab core 1.18.0.
+			</>
+		),
+	},
+	{
+		id: "timeBudget",
+		outcome: (
+			<>
+				eine Regel, die das Zeitbudget des Scans nicht mehr gestartet hat (<code>notRun</code>,
+				siehe <a href="/configuration/engine-options/#a-time-budget-timebudgetms">Zeitbudget</a>)
+			</>
+		),
+		junit: (
+			<>
+				<code>&lt;error type="timeBudget"&gt;</code>, gezählt in <code>errors</code>, in einer
+				Suite <code>Rules not run</code> (mit einer Eigenschaft <code>timeBudgetMs</code>), und jede
+				Suite erhält eine Eigenschaft <code>incomplete</code>
+			</>
+		),
+		why: (
+			<>
+				Die Regel hat nichts geprüft, daher liest der Build sie nie als bestanden. Ein Profil, das
+				das Budget nicht mehr gestartet hat, ist ein <code>&lt;error&gt;</code> in der{" "}
+				<code>Profiles</code>-Suite, unabhängig davon, was <code>allowProfilesNotRun</code> sagt.
+				Ab core 1.18.0.
+			</>
+		),
+	},
 ];
 
 const optionRows = [
@@ -106,8 +147,13 @@ const optionRows = [
 			<>
 				Mit <code>leanFailAs: 'failure'</code> lässt <code>true</code> den Build nur bei Befunden
 				von Regeln scheitern, die einem WCAG-Kriterium im Ziel des Scans zugeordnet sind, und lässt
-				die Tendenzen der Best-Practice-Regeln außen vor. Ein anderer Wert als <code>true</code>{" "}
-				oder <code>false</code> wirft einen <code>TypeError</code>.
+				die Tendenzen der Best-Practice-Regeln außen vor. So angegeben, wie eine Kommandozeile
+				oder eine Umgebungsvariable es schreibt (<code>'true'</code>, <code>'false'</code>,{" "}
+				<code>'1'</code>, <code>'0'</code>, <code>1</code>, <code>0</code>), wird der Wert als
+				solcher gelesen, mit einer Warnung; ein anderer String oder eine andere Zahl wird mit
+				einer Warnung ignoriert; ein Wert, der sich nicht lesen lässt (ein <code>BigInt</code>,
+				ein Objekt), wirft einen <code>TypeError</code>, ebenso alles außer <code>true</code>{" "}
+				oder <code>false</code> unter <code>strictOptions</code>.
 			</>
 		),
 	},
@@ -115,7 +161,7 @@ const optionRows = [
 		id: "includeNotApplicable",
 		option: <code>includeNotApplicable</code>,
 		default: <code>false</code>,
-		effect: <>Nimmt <code>notApplicable</code>-Regeln als übersprungene Tests auf.</>,
+		effect: <>Nimmt <code>notApplicable</code>-Regeln als übersprungene Tests auf. Wird gelesen wie <code>leanFailWcagOnly</code>.</>,
 	},
 	{
 		id: "baselineEntries",
@@ -164,8 +210,7 @@ const optionRows = [
 				der weniger ausgeführt hat, als er angefordert hat (<code>engine.profilesNotRun</code>),
 				hat weniger gezählt, als von ihm verlangt war: Jedes nicht ausgeführte Profil ist ein{" "}
 				<code>&lt;error&gt;</code> in einer <code>Profiles</code>-Suite. <code>true</code> macht
-				daraus Skips. Ein anderer Wert als <code>true</code> oder <code>false</code> wirft einen{" "}
-				<code>TypeError</code>. Ab core 1.15.0.
+				daraus Skips. Wird gelesen wie <code>leanFailWcagOnly</code>. Ab core 1.15.0.
 			</>
 		),
 	},
@@ -177,6 +222,22 @@ const optionRows = [
 			<>
 				Der <code>name</code> des obersten <code>&lt;testsuites&gt;</code>, um die Berichte mehrerer
 				Seiten in einem Dashboard auseinanderzuhalten.
+			</>
+		),
+	},
+	{
+		id: "strictOptions",
+		option: <code>strictOptions</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				<code>true</code> (oder <code>'true'</code>, <code>'1'</code>, <code>1</code>) lässt einen
+				Schalter, der als etwas anderes als <code>true</code> oder <code>false</code> angegeben
+				ist, einen <code>TypeError</code> werfen, so wie{" "}
+				<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">
+					<code>engineOptions.strictOptions</code>
+				</a>{" "}
+				es bei einem Scan tut. Ab core 1.18.0.
 			</>
 		),
 	},
@@ -343,7 +404,10 @@ export function JunitReportContent() {
 					<code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
 					<code>profile</code> (bei einem Scan mehrerer Profile das erste), <code>profiles</code> (nur
 					bei einem Scan mehrerer Profile: jedes Profil, das er ausgeführt hat, durch Kommas
-					getrennt), <code>optInRules</code>, die Darstellungsbedingungen aus{" "}
+					getrennt), <code>optInRules</code>, <code>packs</code> (die Packs, mit denen der Scan lief,
+					als <code>name@version</code>, durch Kommas getrennt:{" "}
+					<code>@surea11y/pack-en301549@1.5.0,pack-two@0.3.0</code>; ab core 1.18.0), die
+					Darstellungsbedingungen aus{" "}
 					<a href="/results-reports/output-schema/">
 						<code>engine.environment</code>
 					</a>{" "}
@@ -433,6 +497,13 @@ export function JunitReportContent() {
 				]}
 				rows={optionRows}
 			/>
+			<p>
+				<code>null</code> als Optionen gilt als keine Optionen. Ein Schlüssel, den der Bericht nicht
+				liest und der wie ein Tippfehler eines Schlüssels aussieht, den er liest (
+				<code>cantTelAs</code>, oder <code>baseline</code> für <code>baselineEntries</code>), wird
+				mit einem <code>console.warn</code> ignoriert, das die gemeinte Option nennt, so wie ein
+				Scan bei <code>engineOptions</code> warnt.
+			</p>
 
 			<h2>Determinismus</h2>
 			<p>

@@ -29,6 +29,21 @@ const baselineMoves = [
 	{ id: "p-as-heading", rules: ["p-as-heading"], from: ["BOLD_LARGE_PARAGRAPH", "BOLD_LARGE_DIV"], to: ["HEADING_LIKE_NUMBER", "HEADING_LIKE_LINK"] },
 ].map((row) => ({ ...row, rules: codes(row.rules), from: codes(row.from), to: codes(row.to) }));
 
+const baselineMoves118 = [
+	{
+		id: "marquee",
+		rules: <code>deprecated-elements-not-used</code>,
+		from: <code>MARQUEE_PAUSE_MECHANISM_UNKNOWN</code>,
+		to: <><code>MARQUEE_STOPS_ONLY_ON_HOVER</code> (a marquee that stops only while the pointer is over it)</>,
+	},
+	{
+		id: "placeholder-title",
+		rules: <code>page-title-patterns</code>,
+		from: <code>titleReview</code>,
+		to: <><code>placeholderTitle</code> (a placeholder left in the title, such as <code>undefined</code> or <code>{"{{title}}"}</code>)</>,
+	},
+];
+
 export function BaselineContent() {
 	return (
 		<>
@@ -120,9 +135,25 @@ export function BaselineContent() {
 				compared with each tag's attributes in name order and its class names sorted, so a build
 				that writes <code>class="b a" src</code> where the last one wrote{" "}
 				<code>src class="a b"</code> matches; baseline files written before this keep matching,
-				since the comparison is made at match time. <code>selector</code> is still recorded
-				in the baseline file, but purely for human context when reading a diff — it is never used
-				for matching.
+				since the comparison is made at match time. Class names are split at spaces, tabs and
+				line breaks only, as HTML splits them: <code>class="a&nbsp;b"</code>, with a no-break
+				space, is one class and doesn't match <code>class="a b"</code>. A start tag the snippet's
+				length limit cuts off is put in order as far as it goes. <code>selector</code> is still
+				recorded in the baseline file, but purely for human context when reading a diff — it is
+				never used for matching a finding that has <code>html</code>.
+			</p>
+			<p id="findings-without-markup">
+				A finding with no <code>html</code> (a scan with <code>output.includeHtml: false</code>, or
+				an occurrence a rule reports without markup) is named by its <code>selector</code> instead
+				since core 1.18.0: <code>ruleId + reasonCode + selector</code>, with the shadow hosts'
+				selectors before it for an element in a shadow root. Before, every failure of a rule and
+				code shared one key, and a new violation counted as one of the known ones. Such a key is
+				position-based, so it <strong>moves when the selector does</strong>: an unrelated sibling
+				added before the element, or a wrapper around it, makes the finding new and its old entry
+				stale, and an element fixed while another fails in its place reads as known. Keep{" "}
+				<code>includeHtml</code> on when you baseline, if you can. An entry with neither{" "}
+				<code>html</code> nor <code>selector</code> still matches such a finding, after every
+				finding has been looked up under its own key.
 			</p>
 			<p>
 				<strong>Known limitation</strong>: an element whose <em>own</em> markup includes dynamic
@@ -225,8 +256,23 @@ export function BaselineContent() {
 			</p>
 			<p>
 				The table covers one minor release: a move is listed from the release it shipped in until
-				the next minor release, which drops it. 1.15 and 1.16 moved no finding, so the table is
-				empty.
+				the next minor release, which drops it. 1.15, 1.16 and 1.17 moved no finding. 1.18 moves
+				these, from 1.17, and 1.19 drops them:
+			</p>
+			<DataTable
+				label="Reason codes moved in 1.18"
+				rowKey="id"
+				columns={[
+					{ key: "rules", label: "Rule", wrap: true, width: "30%" },
+					{ key: "from", label: "Old code", wrap: true },
+					{ key: "to", label: "New code", wrap: true },
+				]}
+				rows={baselineMoves118}
+			/>
+			<p>
+				Both are splits: the old code stays for the rule's other findings. So a baseline written
+				by 1.17 keeps matching these under 1.18.x, not under 1.19: bring it up to date under
+				1.18.x, as below, before moving to 1.19.
 			</p>
 			<p>1.14 moved these, from 1.13, and 1.15 dropped them:</p>
 			<DataTable
@@ -243,8 +289,8 @@ export function BaselineContent() {
 				So a baseline written by 1.13 keeps matching these under 1.14.x, not under 1.15: there an
 				entry under an old code is stale and its finding is new. Bring such a baseline up to date
 				under 1.14.x, as below, before moving to 1.15; <code>migrateBaselineEntries</code> in 1.15
-				no longer knows these moves. A baseline written by 1.14 keeps matching under 1.15 and
-				1.16.
+				no longer knows these moves. A baseline written by 1.14 keeps matching under 1.15, 1.16
+				and 1.17.
 			</p>
 			<p>
 				Regenerating the baseline with <code>--write-baseline</code> (or{" "}
@@ -275,7 +321,14 @@ export function BaselineContent() {
 				A finding whose outcome changed with the upgrade is another matter: a rule that now fails
 				what it asked about, or asks about what it failed, gives a finding the baseline didn't hold,
 				or no longer gives one it held, and the{" "}
-				<a href={`${core}/CHANGELOG.md`}>changelog</a> says why.
+				<a href={`${core}/CHANGELOG.md`}>changelog</a> says why. So does a finding that no
+				longer leans fail: in 1.18,{" "}
+				<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a> judges{" "}
+				<code>&lt;p&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;time&gt;</code> and other
+				such elements by their role, so <code>&lt;p aria-label&gt;</code> gives{" "}
+				<code>ARIA_ATTR_PROHIBITED</code>, with no lean, where it gave{" "}
+				<code>ARIA_ATTR_PROHIBITED_ROLELESS_NEEDS_REVIEW</code>, leaning fail. An entry written
+				for it with <code>leanFail: true</code> is now stale.
 			</p>
 
 			<h2 id="several-profiles">A scan of several profiles</h2>
@@ -338,6 +391,33 @@ export function BaselineContent() {
 				that is neither a string nor <code>null</code>, or a <code>frame</code> that isn't a list
 				of strings. <code>migrateBaselineEntries</code> checks it the same way. Before, such a
 				value was read as an empty baseline, which made every failure new without a word.
+			</p>
+
+			<h2 id="incomplete-scan">An incomplete scan</h2>
+			<p>
+				A scan that did not check everything it selected can't say it found nothing new. When its
+				time budget (<code>engineOptions.timeBudgetMs</code>, see{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">Engine options</a>) ran
+				out before every rule ran, <code>matchBaseline</code> adds{" "}
+				<code>{"incomplete: { notRun }"}</code>, the ids of the rules that did not run, to what it
+				returns: a gate that reads <code>newCount</code> has to fail on <code>incomplete</code>{" "}
+				too, as the SARIF and JUnit reporters do (an error per rule not run). Don't write a
+				baseline from such a scan: it records none of the failures of the rules that did not run.
+			</p>
+			<p>
+				A result capped by <code>engineOptions.output.maxOccurrencesPerRule</code> (see{" "}
+				<a href="/results-reports/output-schema/#occurrence-cap">Output schema</a>) lists only some
+				of each rule's occurrences, so it can't build a complete baseline: the failures it left out
+				get no entry, and every later scan finds them new. <code>buildBaselineEntries</code> warns
+				when given such a result, or one its time budget cut short; write the baseline from a scan
+				without the cap. Matched against a baseline, a failure the cap left out can't be compared
+				with its entries, so it counts as new: <code>matchBaseline</code> adds it to{" "}
+				<code>totalFail</code> and <code>newCount</code>, and says how many in{" "}
+				<code>incomplete.occurrencesOmitted</code>. With <code>leanFail: true</code>, a finding that
+				leans fail and the cap left out counts as new in the same way: <code>leanFail</code> adds it
+				to its <code>total</code> and <code>newCount</code>, and{" "}
+				<code>incomplete.occurrencesOmittedLeaningFail</code> says how many. The entries it would
+				have matched may then count as stale.
 			</p>
 
 			<h2>Combining with <code>--json</code></h2>

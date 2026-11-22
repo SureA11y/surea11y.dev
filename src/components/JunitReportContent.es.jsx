@@ -50,6 +50,49 @@ const outcomeRows = [
 		junit: <><code>&lt;error type="ruleError"&gt;</code> con el error, contado en <code>errors</code></>,
 		why: "El elemento de JUnit para una prueba que no se pudo ejecutar. La página no se comprobó con la regla, lo que no es ni un aprobado ni algo que revisar.",
 	},
+	{
+		id: "occurrencesOmitted",
+		outcome: <>una regla de la que <a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a> dejó fuera algunas ocurrencias</>,
+		junit: (
+			<>
+				su caso de prueba las cuenta (<code>412 failing occurrences: …</code>) y añade{" "}
+				<code>+N more: … not listed (output.maxOccurrencesPerRule)</code> al cuerpo
+			</>
+		),
+		why: (
+			<>
+				Un fallo que quedó fuera no se puede comparar con <code>baselineEntries</code>, así que la
+				regla falla aunque el baseline conozca todos los fallos conservados. Core 1.18.0 y
+				posteriores.
+			</>
+		),
+	},
+	{
+		id: "timeBudget",
+		outcome: (
+			<>
+				una regla que el presupuesto de tiempo del análisis dejó sin empezar (<code>notRun</code>,
+				ver{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">un presupuesto de
+				tiempo</a>)
+			</>
+		),
+		junit: (
+			<>
+				<code>&lt;error type="timeBudget"&gt;</code>, contado en <code>errors</code>, en una suite{" "}
+				<code>Rules not run</code> (con una propiedad <code>timeBudgetMs</code>), y cada suite
+				recibe una propiedad <code>incomplete</code>
+			</>
+		),
+		why: (
+			<>
+				La regla no comprobó nada, así que la compilación nunca la lee como superada. Un perfil
+				que el presupuesto dejó sin empezar es un <code>&lt;error&gt;</code> en la suite{" "}
+				<code>Profiles</code>, diga lo que diga <code>allowProfilesNotRun</code>. Core 1.18.0 y
+				posteriores.
+			</>
+		),
+	},
 ];
 
 const optionRows = [
@@ -103,8 +146,12 @@ const optionRows = [
 			<>
 				Con <code>leanFailAs: 'failure'</code>, <code>true</code> se condiciona solo a los hallazgos
 				de reglas asociadas a un criterio de WCAG dentro del objetivo del análisis, y deja fuera las
-				tendencias de las reglas de buenas prácticas. Un valor distinto de <code>true</code> o{" "}
-				<code>false</code> lanza un <code>TypeError</code>.
+				tendencias de las reglas de buenas prácticas. Dado como lo escribe una línea de comandos o
+				una variable de entorno (<code>'true'</code>, <code>'false'</code>, <code>'1'</code>,{" "}
+				<code>'0'</code>, <code>1</code>, <code>0</code>), se lee como tal, con un aviso;
+				cualquier otra cadena o número se ignora con un aviso; un valor que no se puede leer (un{" "}
+				<code>BigInt</code>, un objeto) lanza un <code>TypeError</code>, igual que cualquier cosa
+				que no sea <code>true</code> o <code>false</code> con <code>strictOptions</code>.
 			</>
 		),
 	},
@@ -112,7 +159,7 @@ const optionRows = [
 		id: "includeNotApplicable",
 		option: <code>includeNotApplicable</code>,
 		default: <code>false</code>,
-		effect: <>Incluye las reglas <code>notApplicable</code> como pruebas omitidas.</>,
+		effect: <>Incluye las reglas <code>notApplicable</code> como pruebas omitidas. Se lee igual que <code>leanFailWcagOnly</code>.</>,
 	},
 	{
 		id: "baselineEntries",
@@ -158,9 +205,8 @@ const optionRows = [
 				Un análisis de <a href="/configuration/engine-options/#several-profiles">varios perfiles</a>{" "}
 				que ejecutó menos de los que pidió (<code>engine.profilesNotRun</code>) contó menos de lo que
 				se le pidió: cada perfil no ejecutado es un <code>&lt;error&gt;</code> en una suite{" "}
-				<code>Profiles</code>. <code>true</code> los convierte en omisiones. Un valor distinto de{" "}
-				<code>true</code> o <code>false</code> lanza un <code>TypeError</code>. Core 1.15.0 y
-				posteriores.
+				<code>Profiles</code>. <code>true</code> los convierte en omisiones. Se lee igual que{" "}
+				<code>leanFailWcagOnly</code>. Core 1.15.0 y posteriores.
 			</>
 		),
 	},
@@ -172,6 +218,22 @@ const optionRows = [
 			<>
 				El <code>name</code> del <code>&lt;testsuites&gt;</code> raíz, para distinguir los informes
 				de varias páginas en un mismo panel.
+			</>
+		),
+	},
+	{
+		id: "strictOptions",
+		option: <code>strictOptions</code>,
+		default: <code>false</code>,
+		effect: (
+			<>
+				<code>true</code> (o <code>'true'</code>, <code>'1'</code>, <code>1</code>) hace que un
+				interruptor dado como cualquier cosa distinta de <code>true</code> o <code>false</code>{" "}
+				lance un <code>TypeError</code>, como hace{" "}
+				<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">
+					<code>engineOptions.strictOptions</code>
+				</a>{" "}
+				en un análisis. Core 1.18.0 y posteriores.
 			</>
 		),
 	},
@@ -332,7 +394,10 @@ export function JunitReportContent() {
 					<code>engine</code>, <code>schemaVersion</code>, <code>wcagVersion</code>,{" "}
 					<code>profile</code> (el primer perfil, en un análisis de varios), <code>profiles</code>{" "}
 					(solo en un análisis de varios perfiles: cada perfil que ejecutó, separados por comas),{" "}
-					<code>optInRules</code>, las condiciones de renderizado de{" "}
+					<code>optInRules</code>, <code>packs</code> (los packs con los que se ejecutó el análisis,
+					como <code>name@version</code>, separados por comas:{" "}
+					<code>@surea11y/pack-en301549@1.5.0,pack-two@0.3.0</code>; core 1.18.0 y posteriores),
+					las condiciones de renderizado de{" "}
 					<a href="/results-reports/output-schema/">
 						<code>engine.environment</code>
 					</a>{" "}
@@ -420,6 +485,12 @@ export function JunitReportContent() {
 				]}
 				rows={optionRows}
 			/>
+			<p>
+				Las opciones <code>null</code> equivalen a no dar opciones. Una clave que el informe no lee
+				y que parece una errata de una que sí lee (<code>cantTelAs</code>, o <code>baseline</code>{" "}
+				por <code>baselineEntries</code>) se ignora con un <code>console.warn</code> que nombra la
+				opción a la que se refería, igual que un análisis avisa sobre <code>engineOptions</code>.
+			</p>
 
 			<h2>Determinismo</h2>
 			<p>

@@ -36,6 +36,8 @@
 	"rulePage.severity": "Schweregrad: {value}",
 	"rulePage.exampleCodeLabel": "Beispiel {n}, {outcome}: HTML für {ruleId}",
 	"rulePage.exampleContext.browser": "In einem Browser",
+	"rulePage.exampleContext.width320": "Bei 320 CSS-Pixeln Breite",
+	"rulePage.exampleContext.width640": "Bei 640 CSS-Pixeln Breite",
 	"common.deprecated": "veraltet",
 	"rulesTable.ruleId": "Regel-ID",
 	"rulesTable.title": "Titel",

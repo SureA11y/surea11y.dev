@@ -85,7 +85,7 @@ const localeReasonRows = [
 	{
 		id: "partial-dictionary",
 		reason: <code>partial-dictionary</code>,
-		meaning: "The dictionary was used but is missing some keys, so those individual strings fell back to English.",
+			meaning: "The dictionary was used but is missing some keys (that its base language doesn't give either), so those individual strings fell back to English.",
 	},
 ];
 
@@ -133,8 +133,8 @@ export function LocalesContent() {
 			<p>
 				"Untranslated" counts values that match the English text character for character, apart
 				from words that are rightly the same in a language — French <em>Orientation</em>,{" "}
-				<em>Interruptions</em> and <em>Occurrences</em>, German <em>Frame</em>, <em>Frames</em>{" "}
-				and <em>Element</em>, Spanish <em>Selector</em>. Those are listed as such, each with the English text it was checked
+				<em>Interruptions</em> and <em>Occurrences</em>, German <em>Frame</em>, <em>Frames</em>,{" "}
+				<em>Element</em> and <em>Scan</em>, Spanish <em>Selector</em>. Those are listed as such, each with the English text it was checked
 				against, and counted as translated. If the English changes, the entry no longer applies
 				and the string counts as untranslated until someone checks it again. The count cannot see
 				an English word left inside an otherwise translated sentence; that is found by reading the
@@ -205,10 +205,24 @@ export function LocalesContent() {
 				actually read differently. Ship <code>de.json</code> and every German variant is covered.
 			</p>
 			<h3>Step 2 — resolve each string (per string)</h3>
-			<p>Within the chosen dictionary, every string is looked up on its own:</p>
+			<p>Every string is then looked up on its own, starting from the dictionary for your code:</p>
 			<ol>
-				<li>Take the key's value from the chosen dictionary.</li>
-				<li>If that key is missing, take the English one.</li>
+				<li>
+					Take the key's value from the dictionary for your code: your own{" "}
+					<code>engineOptions.messages</code> for it first, then the engine's.
+				</li>
+				<li>
+					If your code carries a subtag and that key is missing, take it from the base language,
+					again yours first, then the engine's. With <code>locale: 'de-AT'</code> and{" "}
+					<code>{"messages: { 'de-AT': { … one key … } }"}</code>, that key is yours and every other
+					string is the built-in German.
+				</li>
+				<li>
+					If that key is missing still, take the English one: your own{" "}
+					<code>engineOptions.messages.en</code> first, then the engine's. So a key you give only in
+					English shows in English under every locale, and an English override applies too when the
+					locale fell back to English.
+				</li>
 				<li>
 					If English is missing it too — which shouldn't happen for a built-in key, but can for a
 					hand-rolled one — use the literal text the rule itself carries.
@@ -216,8 +230,8 @@ export function LocalesContent() {
 			</ol>
 			<p>
 				<strong>The result is never a blank, an <code>undefined</code>, or a thrown error.</strong>{" "}
-				A half-finished translation renders in your language where it exists and in English
-				everywhere else.
+				A half-finished translation renders in your language where it exists, then in its base
+				language, and in English everywhere else.
 			</p>
 
 			<h2>Knowing which locale you actually got</h2>
@@ -281,7 +295,7 @@ export function LocalesContent() {
 				no page needs every language. Keeping English inline and the rest optional keeps the other
 				languages off the download, and stops it growing as languages are added. Each side file,{" "}
 				<code>surea11y.i18n.&lt;locale&gt;.js</code>, is about as large as the English text it
-				replaces (200 to 250 KB today), and a page loads only the ones it uses. Nothing else
+replaces (310 to 390 KB today), and a page loads only the ones it uses. Nothing else
 				changes: the Node package and the bindings are unaffected.
 			</p>
 			<CodeBlock
@@ -371,7 +385,15 @@ export function LocalesContent() {
 					"}, null);",
 				]}
 			/>
-			<p>Keys you don't supply fall back normally, so a partial override is fine.</p>
+			<p>
+				Keys you don't supply fall back normally, so a partial override is fine. That holds for a
+				regional code too: <code>{"messages: { 'de-AT': { … } }"}</code> with{" "}
+				<code>locale: 'de-AT'</code> overrides those strings, and the rest come from German (your{" "}
+				<code>messages.de</code> first, then the built-in or side-file German) before English;{" "}
+				<code>engine.locale</code> reports <code>ok</code> when German covers every key. The locale
+				key's case doesn't matter here either: <code>{"messages: { DE: … }"}</code> overrides the
+				German a scan with <code>locale: 'de'</code> shows, and the built-in German stays under it.
+			</p>
 
 			<h2 id="language-specific-matching">Language-specific matching</h2>
 			<p>
@@ -391,8 +413,12 @@ export function LocalesContent() {
 				them. Checking every list everywhere would flag words that are generic in one
 				language and a real name in another, such as "Suite" or "Plus" on an English page.
 				Transcript words are the exception: they are distinctive in every language and a page can
-				link a transcript in another language, so all of them are always checked. Text is
-				NFKC-normalized first, so full-width forms such as 「見出し２」 match.
+				link a transcript in another language, so all of them are always checked. So are the
+				default titles an editor, a starter template or a CMS gives a page nobody named
+				("Untitled", "Sin título", "Ohne Titel", "Sans titre", 「無題」, "Document", "Just another
+				WordPress site"): <code>page-title-patterns</code> reads them as generic whatever the
+				page's language. Text is NFKC-normalized first, so full-width forms such as 「見出し２」
+				match.
 			</p>
 			<p>
 				<code>page-title-patterns</code> also counts each Chinese, Japanese or Korean character as
@@ -422,7 +448,16 @@ export function LocalesContent() {
 				<li>
 					<strong>Occurrence-level</strong>: <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,
 					with <code>i18n.params</code> for <code>{"{{placeholder}}"}</code> interpolation —
-					resolve an occurrence's <code>summary</code>/<code>hint</code>. A lean's{" "}
+					resolve an occurrence's <code>summary</code>/<code>hint</code>. A param named for a
+					measurement (a name ending in <code>ratio</code>, <code>threshold</code> or{" "}
+					<code>Px</code>, such as <code>ratio</code>, <code>bestRatio</code>,{" "}
+					<code>fontSizePx</code>) whose value is a decimal is written with the decimal separator
+					of the language the message is written in, not of its region: "2,85:1" in French, German
+					and Spanish, "2.85:1" in English and Japanese, so <code>en-ZA</code> writes "2.85:1" and{" "}
+					<code>fr-CA</code> and <code>de-AT</code> "2,85:1". <code>data.details</code> and{" "}
+					<code>metrics</code> keep numbers, and <code>i18n.params</code> keeps each value
+					unformatted, with a point (<code>ratio: "2.85"</code>, a string). A decimal written in a
+					dictionary string ("4,5:1") follows the same rule. Core 1.18.0 and later. A lean's{" "}
 					<code>i18n.whyKey</code> / <code>i18n.cautionKey</code> resolve its <code>why</code> and{" "}
 					<code>caution</code> the same way. See{" "}
 					<a href="/results-reports/output-schema/">the output schema</a>.
@@ -464,6 +499,10 @@ export function LocalesContent() {
 					translation of the engine or of this site needs them.
 				</li>
 				<li>
+					<strong>Ask for a language</strong> you need, even if you can't translate it yourself,
+					with a <a href="https://github.com/SureA11y/core/issues/new?template=translation.md">translation issue on the engine</a>.
+				</li>
+				<li>
 					<strong>Translate</strong>: <a href={`${core}/docs/I18N.md#adding-your-language`}>Adding your language</a> has the steps
 					for the engine's messages, and <a href="https://github.com/SureA11y/surea11y.dev#adding-a-language">the site's README</a> for this site's
 					pages.
@@ -471,8 +510,13 @@ export function LocalesContent() {
 			</ul>
 			<p>
 				A new language, in the engine or on this site, is merged once someone who speaks it
-				natively and works in accessibility has reviewed it. A reviewer is as welcome as a
-				translator.
+				natively and works in accessibility has reviewed it: not only for grammar, but that each
+				text says what the English says, in the words people who test or fix pages in that
+				language use. A draft from machine translation is a fine place to start, as long as a
+				person then reads every string against the English. A fix to a few strings needs no such
+				review. A reviewer is as welcome as a translator (see{" "}
+				<a href={`${core}/docs/I18N.md#review-by-a-native-speaker`}>Review by a native speaker</a>,
+				on GitHub).
 			</p>
 		</>
 	);

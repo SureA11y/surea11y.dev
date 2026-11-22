@@ -147,13 +147,15 @@ const OUTCOME_STATE = {
 // An outcome heading can say where the outcome holds ("**Passed (in a
 // browser)**"); the page shows it as a translated label, keyed here.
 const EXAMPLE_CONTEXT = {
-  'in a browser': 'browser'
+  'in a browser': 'browser',
+  'at 320 CSS pixels wide': 'width320',
+  'at 640 CSS pixels wide': 'width640'
 };
 
 // One rule (manual-review) genuinely has only one outcome -- it has no
 // notApplicable branch, so there's no pair to show. A rule with a tiered
 // outcome adds a third, Flagged (cantTell), example, and one with several
-// distinct review cases (form-control-programmatic-label-quality) can have four. An outcome heading may carry a trailing annotation on the
+// distinct review cases (form-control-programmatic-label-quality) can have four, and resize-text-content-loss five. An outcome heading may carry a trailing annotation on the
 // same line (duplicate-id's "**Failed** (with `engineOptions...`)"); only
 // the bracketed word itself is the outcome.
 function parseExamples(md) {
@@ -217,8 +219,8 @@ function parseExamples(md) {
       });
     }
 
-    if (pairs.length < 1 || pairs.length > 4) {
-      throw new Error(`generate-rules-data: expected 1 to 4 examples for "${ruleId}", found ${pairs.length}`);
+    if (pairs.length < 1 || pairs.length > 5) {
+      throw new Error(`generate-rules-data: expected 1 to 5 examples for "${ruleId}", found ${pairs.length}`);
     }
     examples.set(ruleId, pairs);
   }
