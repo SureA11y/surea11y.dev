@@ -244,7 +244,16 @@ export function OverviewContent() {
 				gezeichneter Text, der echter Text sein könnte) und, im Browser, 2.4.11 „Fokus nicht
 				verdeckt (Minimum)“ (eine fixierte oder sticky positionierte Kopfzeile, Fußzeile oder ein
 				Banner, hinter dem Elemente in der Tab-Reihenfolge den Fokus verborgen erhalten können,
-				bestätigt per Hit-Test). Alle vier stellen eine Frage, statt fehlzuschlagen. Die Meldung
+				bestätigt per Hit-Test). Alle vier stellen eine Frage, statt fehlzuschlagen. Zwei weitere
+				messen die Seite so, wie ein Browser sie bei geringer Breite darstellt: bei 320 CSS-Pixeln
+				Breite 1.4.10 „Umfluss (Reflow)“ (Inhalt, der die Seite seitlich scrollen lässt oder den der Rand
+				abschneidet), und bei 640, wie ein 1280 Pixel breites Fenster eine Seite bei 200 % Zoom
+				zeigt, 1.4.4 „Textgröße ändern“ (Text, den eine Box abschneidet oder kürzt). Beide stellen
+				eine Frage, schlagen nie fehl und gelten bei einem breiteren Viewport nicht: Scannen Sie
+				die Seite in dieser Breite, um sie zu prüfen. Neue Fragen gelten außerdem Optionsfeldern
+				und Kontrollkästchen ohne Gruppennamen (1.3.1), Symbolen wie ★, die als Grafik unter 3:1
+				liegen (1.4.11), und, in einem Scan mit Ziel AAA, einem Link, der nur „hier klicken“ heißt
+				und den erst sein Satz erklärt (2.4.9). Die Meldung
 				eines Befunds nennt die Ursache, wo die Regel sie kennt: warum ein Element keinen Namen
 				hat, einen wahrscheinlichen Tippfehler in einer Rolle, einem Attribut oder einem{" "}
 				<code>autocomplete</code>-Wert, was ein Element ausblendet. Die Tastaturregeln lesen Event-Handler aus dem Markup; mit{" "}
@@ -337,11 +346,12 @@ export function OverviewContent() {
 				<li>bestätigen, dass ein Alternativtext <em>aussagekräftig</em> ist, nur dass er vorhanden ist (ein alt-Attribut <code>"image123.png"</code> besteht die objektive Prüfung und wird als Dateiname mit Tendenz zu <code>fail</code> als Frage gemeldet);</li>
 				<li>beurteilen, ob eine Farbkombination ästhetisch passt, nur ob sie das geltende Kontrastverhältnis erfüllt;</li>
 				<li>feststellen, ob eine Fehlermeldung das Problem tatsächlich <em>erklärt</em>, denn das hängt von Validierungslogik ab, die ein statischer Scan nicht sieht;</li>
-				<li>eine Tastaturfalle oder bei 400 % Zoom abgeschnittenen Inhalt erkennen, denn beides erfordert, echte Benutzerinteraktion über die Zeit zu simulieren, statt das DOM zu einem einzigen Zeitpunkt zu lesen.</li>
+				<li>eine Tastaturfalle erkennen, denn das erfordert, echte Benutzerinteraktion über die Zeit zu simulieren, statt das DOM zu einem einzigen Zeitpunkt zu lesen;</li>
+				<li>die Seite selbst zoomen: Umfluss und abgeschnittener Text werden nur in einer Seite gemessen, die in der geringen Breite dargestellt ist, die sie nennen, und ob dort Inhalt oder eine Funktion verloren geht, entscheidet weiterhin eine Person.</li>
 			</ul>
 			<p>
 				Einige implementierte Prüfungen melden <code>cantTell</code>, wenn eine Person entscheiden
-				muss. Andere Aspekte, darunter Tastaturfallen und Reflow beim Zoomen, prüft die Engine gar
+				muss. Andere Aspekte, darunter Tastaturfallen, prüft die Engine gar
 				nicht; sie brauchen eigene Tests. Kein <code>cantTell</code> steht für sie, ein Ergebnis
 				ohne <code>cantTell</code> heißt also nicht, dass sie abgedeckt wurden. Die vollständige Liste finden Sie unter{" "}
 				<a href="/help/known-limitations/">Bekannte Einschränkungen</a>, und in den{" "}

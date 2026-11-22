@@ -237,7 +237,16 @@ export function OverviewContent() {
 				texto real) y, en un navegador, 2.4.11 Foco no oculto (mínimo) (un encabezado, un pie de
 				página o un banner fijo o sticky detrás del cual los elementos del orden de tabulación
 				pueden recibir el foco ocultos, confirmado comprobando qué recibe el puntero). Las cuatro
-				preguntan en lugar de fallar. El mensaje de un hallazgo nombra la causa cuando la regla la
+				preguntan en lugar de fallar. Otras dos miden la página tal como un navegador la maqueta a
+				un ancho estrecho: a 320 píxeles CSS de ancho, 1.4.10 Reajuste del texto (contenido que
+				obliga a desplazar la página en horizontal, o que el borde corta), y a 640, como una
+				ventana de 1280 píxeles muestra una página al 200% de zoom, 1.4.4 Cambio de tamaño del
+				texto (texto que una caja corta o abrevia). Las dos preguntan, nunca fallan, y no se
+				aplican a un viewport más ancho, así que analiza la página a ese ancho para comprobarlas.
+				Nuevas preguntas cubren también los botones de opción y casillas de verificación sin
+				nombre de grupo (1.3.1), los símbolos como ★ usados como gráficos por debajo de 3:1
+				(1.4.11) y, en un análisis que apunta a AAA, un enlace llamado solo «haz clic aquí» que solo
+				su frase explica (2.4.9). El mensaje de un hallazgo nombra la causa cuando la regla la
 				conoce: por qué un elemento no tiene nombre, una probable errata en un rol, un atributo o
 				un valor de <code>autocomplete</code>, qué oculta un elemento. Las reglas de teclado leen los
 				controladores de eventos del marcado; con <code>listenerHookScript()</code>, otro script
@@ -328,12 +337,12 @@ export function OverviewContent() {
 				<li>confirma que un texto alternativo sea <em>significativo</em>, solo que esté presente (un atributo alt con el valor <code>"image123.png"</code> aprueba la comprobación objetiva, y se pregunta por él, inclinado hacia el fallo, como nombre de archivo);</li>
 				<li>juzga si una elección de contraste de color es estéticamente apropiada, solo si cumple la relación de contraste aplicable;</li>
 				<li>determina si un mensaje de error realmente <em>explica</em> el problema, ya que eso depende de una lógica de validación que un análisis estático no puede ver;</li>
-				<li>detecta una trampa de foco de teclado o contenido recortado al 400% de zoom, ya que ambos requieren simular una interacción real del usuario a lo largo del tiempo, no solo leer el DOM en un instante.</li>
+				<li>detecta una trampa de foco de teclado, ya que requiere simular una interacción real del usuario a lo largo del tiempo, no solo leer el DOM en un instante;</li>
+				<li>aplica zoom a la página por sí mismo: el reajuste y el texto cortado se miden solo en una página maquetada al ancho estrecho que indican, y si ahí se pierde contenido o una función lo sigue decidiendo una persona.</li>
 			</ul>
 			<p>
 				Algunas comprobaciones implementadas informan <code>cantTell</code> cuando una persona
-				tiene que decidir. Otros aspectos, como las trampas de teclado y el reflujo al aplicar
-				zoom, el motor no los comprueba en absoluto y necesitan pruebas aparte: ningún{" "}
+				tiene que decidir. Otros aspectos, como las trampas de teclado, el motor no los comprueba en absoluto y necesitan pruebas aparte: ningún{" "}
 				<code>cantTell</code> los sustituye, así que un resultado sin ninguno no significa que se
 				hayan cubierto. Consulta{" "}
 				<a href="/help/known-limitations/">Limitaciones conocidas</a> para ver la lista completa, y

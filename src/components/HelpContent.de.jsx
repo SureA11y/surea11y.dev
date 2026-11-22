@@ -14,7 +14,7 @@ export function HelpContent() {
 			<p>
 				Die häufigsten Fragen, klar beantwortet: warum eine Auswahl aus Tags und Regel-IDs keine
 				Regel ausführen und trotzdem ohne Befunde aussehen kann, warum eine Web Component{" "}
-				<code>cantTell</code> ergibt, was sich nach dem Update auf core 1.15 in Ihren Ergebnissen
+				<code>cantTell</code> ergibt, was sich nach dem Update auf core 1.18 in Ihren Ergebnissen
 				ändert, warum die Titel- und Sprachregeln in einem Frame <code>notApplicable</code> ergeben,
 				warum jedes WCAG-Kriterium <code>cantTell</code> ergibt, auch wenn alle Prüfungen{" "}
 				<code>pass</code> ergeben, warum eine geometrieabhängige Regel unter jsdom <code>notApplicable</code> meldet und was ein Scan ohne Befunde tatsächlich

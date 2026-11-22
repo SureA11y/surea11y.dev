@@ -141,7 +141,7 @@ export function WcagMappingContent() {
 				(<code>COMPLETE_CHECK</code>), cada uno con su motivo, y todavía no hay ninguno: cada uno
 				pide algo que las reglas no ven, ya sea si un texto alternativo, una etiqueta, un
 				encabezado o el texto de un enlace dicen lo correcto, o cómo lo cumple el contenido que un
-				script dibuja o cambia. <strong>Así que en la 1.14 no se cumple ningún compuesto de
+				script dibuja o cambia. <strong>Así que todavía no se cumple ningún compuesto de
 				WCAG.</strong>
 			</p>
 			<p>
@@ -255,8 +255,8 @@ export function WcagMappingContent() {
 				Una regla lleva una etiqueta de nivel por cada Criterio de Éxito al que se asocia, y nada
 				más: una regla asociada solo a un criterio AA lleva la etiqueta <code>wcag2aa</code> y{" "}
 				<em>no</em> <code>wcag2a</code>. Pedir <code>{"{ tags: ['wcag2aa'] }"}</code> por sí solo,
-				por tanto, ejecuta las 11 reglas asociadas a un criterio AA de la versión 2.0, no las
-				105 que forman un objetivo A + AA de la 2.0. Enumera cada nivel que quieras, o usa{" "}
+				por tanto, ejecuta las 12 reglas asociadas a un criterio AA de la versión 2.0, no las
+				107 que forman un objetivo A + AA de la 2.0. Enumera cada nivel que quieras, o usa{" "}
 				<code>runOnly.wcag</code>, que no tiene ese problema. <code>engineOptions.profile</code> (
 				<code>wcag20-aa</code>, <code>wcag21-aa</code>, <code>wcag22-aa</code> y las demás
 				versiones y niveles de WCAG) también lo hace por ti; ver{" "}

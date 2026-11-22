@@ -29,7 +29,10 @@ export function ConfigurationContent() {
 				des vérifications de contraste selon qu’elles servent un auditeur humain ou un contrôle de CI
 				sans surveillance, et ajoutez une règle propre à votre organisation à côté des règles
 				intégrées quand le catalogue ne couvre pas un point qui vous importe, et donnez aux règles
-				le CSS d’une feuille de style d’une autre origine que la page ne peut pas lire. Voir{" "}
+				le CSS d’une feuille de style d’une autre origine que la page ne peut pas lire. Gardez
+				l’analyse d’une page lourde dans la limite de temps d’une CI, ou un défaut répété à chaque
+				ligne d’un long tableau dans un résultat lisible, sans que l’un ou l’autre passe pour une
+				réussite ni n’assouplisse un contrôle. Voir{" "}
 				<a href="/configuration/engine-options/">Options du moteur</a> pour la référence complète.
 			</p>
 

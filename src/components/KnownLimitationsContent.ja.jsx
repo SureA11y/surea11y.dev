@@ -94,12 +94,12 @@ export function KnownLimitationsContent() {
 					のキーボードトラップの節を参照）、実装はしていません。スキャンはユーザー操作や、それによって生じる状態をたどらず、ページを一時的に変更するチェックのどれも、トラップの検出のようにページ内でフォーカスを動かしていくことはないからです。それまでの間、静的なマークアップで代わりになるものはありません。
 				</li>
 				<li>
-					<strong>拡大時のリフロー／切り取り</strong>
-					（WCAG 1.4.10）：320px相当のビューポートをシミュレートしたうえで、実際のレイアウト計測（
-					<code>clientWidth</code>
-					／
-					<code>scrollWidth</code>
-					）が必要です。このエンジンのほかの箇所にあるCSS宣言ベースのヒューリスティックとは違い、「400%に拡大したときにコンテンツが切れるか」を静的なマークアップから推し量る手がかりはまったくありません。
+					<strong>ページの拡大</strong>
+					（WCAG 1.4.4、1.4.10）：エンジンはページを拡大せず、ビューポートのサイズも変えません。
+					<code>reflow-horizontal-scroll</code>
+					と
+					<code>resize-text-content-loss</code>
+					は、幅320と640 CSSピクセルでレイアウトされたページを、その幅でスキャンしたときにだけ測ります（後の<a href="#reflow">リフロー</a>と<a href="#resize-text">テキストのサイズ変更</a>を参照）。そこでコンテンツや機能が失われるかどうかは、引き続き人が判断します。
 				</li>
 				<li>
 					<strong>動的な状態／操作後の状態</strong>
@@ -141,7 +141,11 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>エンジンはページ自身のJavaScriptの組み込みオブジェクトの上で動作します。</strong>
-					ページのスクリプトが、エンジンが依存する組み込みオブジェクト（<code>Array.prototype.filter</code>、<code>Map</code>、<code>JSON.stringify</code>、<code>String.prototype.toLowerCase</code>など）を壊している場合、もっともらしく見えて誤っている結果を返すのではなく、それぞれを示す<code>PAGE_BUILTINS_BROKEN</code>というコードのエラーでスキャンを止めます。バンドルを注入する前に壊されたもの（<code>Object.keys</code>）は、バンドルの読み込みを止めます。<code>Object.prototype</code>に<code>then</code>を追加するページは、ほかのページと同じようにスキャンされます。PrototypeやMooToolsのように<code>Array.from</code>を置き換えるページも、スキャンされます（core 1.16.0以降）。coreのコード自体はそれを使わないからです。それを使うパックのルールやカスタムルールは、選択がそのルールを外さない限り、<code>Array.from</code>を示す<code>PAGE_BUILTINS_BROKEN</code>でその時点でスキャンを止めます。ページが置き換えたDOMのメソッド（<code>getComputedStyle</code>、<code>querySelectorAll</code>、<code>getBoundingClientRect</code>）は確認しません。ルールはそれらが返すものを読みます。
+					ページのスクリプトが、エンジンが依存する組み込みオブジェクト（<code>Array.prototype.filter</code>、<code>Array.prototype.shift</code>、<code>Array.isArray</code>、<code>Map</code>、<code>WeakMap.prototype.has</code>、<code>JSON.stringify</code>、<code>String.prototype.split</code>、<code>String.prototype.indexOf</code>、<code>RegExp.prototype.test</code>、<code>Math.round</code>、3つ以上の値を渡した<code>Math.max</code>、<code>parseFloat</code>、<code>parseInt</code>、<code>URL</code>、<code>NodeFilter</code>など）を壊している場合、もっともらしく見えて誤っている結果を返すのではなく、それぞれを示す<code>PAGE_BUILTINS_BROKEN</code>というコードのエラーでスキャンを止めます。スクリプトが<code>Object.prototype</code>に置いた、エラーを投げるか値を返すゲッター（<code>Object.prototype.type</code>）や、チェック自体がエラーを投げるほどひどく壊された組み込みオブジェクトでも止めます（そのとき<code>broken</code>リストは空です）。バンドルを注入する前に壊されたもの（<code>Object.keys</code>）は、バンドルの読み込みを止めます。<code>Object.prototype</code>に<code>then</code>を追加するページは、ほかのページと同じようにスキャンされます。PrototypeやMooToolsのように<code>Array.from</code>を置き換えるページも、スキャンされます（core 1.16.0以降）。coreのコード自体はそれを使わないからです。それを使うパックのルールやカスタムルールは、選択がそのルールを外さない限り、<code>Array.from</code>を示す<code>PAGE_BUILTINS_BROKEN</code>でその時点でスキャンを止めます。ページが置き換えたDOMのメソッド（<code>getComputedStyle</code>、<code>querySelectorAll</code>、<code>getBoundingClientRect</code>）は確認しません。ルールはそれらが返すものを読みます。
+				</li>
+				<li>
+					<strong>DOMのメンバーを上書きするカスタム要素は、それが答えるとおりに読まれます。</strong>
+					エンジンは要素のプロパティとメソッドを、ページ自身のスクリプトと同じように読みます（それらの代わりになる名前付きのコントロールを越えて読むのは、フォームと文書の上だけです）。そのため、独自の<code>tagName</code>、<code>parentNode</code>、<code>getAttribute</code>、<code>textContent</code>などのメンバーをクラスやインスタンスに定義したカスタム要素クラスは、そのメンバーを通じて読まれます。それがDOMとは別のものを返す場合、ルールは返されたものを判定します。エラーを投げる場合、それを読むルールは判定ではなくそのエラーを報告し（結果の<code>error</code>、判定結果<code>cantTell</code>）、ほかのルールは続行します。
 				</li>
 				<li>
 					<strong>256階層より深く入れ子になったコンテンツからは、名前を求めません。</strong>
@@ -149,7 +153,11 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>閉じたシャドウルート内のコンテンツは読み取れません。</strong>
-					<code>{"attachShadow({ mode: 'closed' })"}</code>や宣言的な<code>shadowrootmode="closed"</code>の内側にはどのスクリプトも届かないため、ブラウザーがそこから求める名前をエンジンは見られません。<code>button-name-present</code>と<code>link-name-present</code>、そしてメニュー項目、オプション、タブ、ツリー項目、summary、ツールチップの名前のルールは、描画はされるが読み取れるコンテンツを示さないカスタム要素から名前が来ている可能性がある要素について、不合格にする代わりに確認を求めます。組み込み要素（<code>&lt;span&gt;</code>）上の閉じたルートは、CSSで描いたアイコンのような空のものと見分けがつかないため、その上にあるボタンは引き続き不合格になります。そうしたコンポーネントが何を公開しているかは、スクリーンリーダーなどを使って人が確認してください。
+					<code>{"attachShadow({ mode: 'closed' })"}</code>や宣言的な<code>shadowrootmode="closed"</code>の内側にはどのスクリプトも届かないため、ブラウザーがそこから求める名前をエンジンは見られません。<code>button-name-present</code>と<code>link-name-present</code>、そしてメニュー項目、オプション、タブ、ツリー項目、summary、ツールチップの名前のルールは、描画はされるが読み取れるコンテンツを示さないカスタム要素から名前が来ている可能性がある要素について、不合格にする代わりに確認を求めます。組み込み要素（<code>&lt;span&gt;</code>）上の閉じたルートは、CSSで描いたアイコンのような空のものと見分けがつかないため、その上にあるボタンは引き続き不合格になります。閉じたルートの内側は何もチェックされません。その要素、テキスト、フォームのフィールドを見つけるルールはありません。ページがその中にスロットで入れたものはチェックされますが、その周りにある閉じたルート自身の構造は見えません。閉じたルートの中にある<code>&lt;legend&gt;</code>付きの<code>&lt;fieldset&gt;</code>にスロットで入れたラジオボタンは、Chromiumのアクセシビリティツリーではグループに名前が付いていても、<a href="/rules/form-group-name-present/"><code>form-group-name-present</code></a>が引き続き確認を求めます（<code>RADIO_GROUP_NO_NAME</code>）。そうしたコンポーネントが何を公開しているかは、スクリーンリーダーなどを使って人が確認してください。
+				</li>
+				<li id="opening-closed-shadow-roots">
+					<strong>ブラウザーを操作するホストは、スキャンのために閉じたシャドウルートを開けます。</strong>
+					coreには閉じたルートのためのフックはありません。ページ自身のスクリプトより前に実行され、<code>Element.prototype.attachShadow</code>をラップしてすべてのルートを開いた状態で作る（<code>{"{ ...init, mode: 'open' }"}</code>）スクリプトを、Playwrightの<code>addInitScript</code>やCDPの<code>Page.addScriptToEvaluateOnNewDocument</code>で実行すれば、それらは読み取れるようになり、エンジンは開いたルートとして読みます。Chromiumで確認済みです。フックがあれば、上のラジオボタンは<code>form-group-name-present</code>に合格します。制限は2つあります。宣言的な<code>shadowrootmode="closed"</code>のルートは<code>attachShadow</code>ではなくHTMLパーサーが作るので、閉じたままです。また、フックはページを変えます。ページ自身のスクリプトもルートに届くようになる（<code>host.shadowRoot</code>が<code>null</code>でなくなる）ので、人が使うページではなく、スキャンのために使ってください。
 				</li>
 				<li>
 					<strong>カスタム要素が<code>ElementInternals</code>を通じて設定した名前や状態は読み取れません。</strong>
@@ -221,28 +229,16 @@ export function KnownLimitationsContent() {
 					jsdom 29.1.1で確認しています。シャドウルート内の<code>&lt;style&gt;</code>もその<code>adoptedStyleSheets</code>も、中の要素の計算済みスタイルに反映されないため、jsdomではそこで指定した色、サイズ、<code>display: none</code>や<code>visibility: hidden</code>が見えません。ルールはコンポーネントの中身をスタイルがないものとして判定します。コントラストはデフォルトの色で計測され、CSSで隠したコンテンツは表示されているものとして判定されます。唯一の例外はリンクの色で、コントラストのヘルパーがシャドウルートのスタイルシートから自分で求めます。スタイルを付けたWebコンポーネントで作ったページは、ブラウザーでスキャンしてください。
 				</li>
 				<li>
-					<strong>
-						jsdomで計算される
-						<code>text-shadow</code>
-						は、同じ要素を2回目に読むと信頼できません。
-					</strong>
-					jsdom 29.1.1で確認済みです。同じ要素の計算済み
-					<code>text-shadow</code>
-					の値を2回目に読むと、どのアクセサーを使っても、その要素について新たに取得したどの
-					<code>CSSStyleDeclaration</code>
-					からでも、キャッシュの有無に関係なく、実際に宣言された値ではなく「影なし」という誤った別の値が黙って返されます。1回目の読み取りは常に正しい値です。このエンジンは内部で、各要素の
-					<code>text-shadow</code>
-					を1回の実行につきちょうど1度だけ読み、その結果をキャッシュすることでこれを回避しています（
-					<code>src/core/contrast-helpers.js</code>
-					の
-					<code>__textShadowInfoEl</code>
-					を参照）。そのため1回のスキャンには影響しません。問題が表に出るのは、同じjsdomでパースした要素に対して、
-					<code>getComputedStyle(el).textShadow</code>
-					を自分で2回以上読んだ場合だけです。本物のブラウザーにはこのバグはありません。
+					<strong>jsdomで計算される<code>text-shadow</code>は、それより前に何を読んだかによって変わります。</strong>
+					jsdom 29.1.1で確認済みです。要素について返される値は、どのアクセサーを使っても、新たに取得した<code>CSSStyleDeclaration</code>からでも、読むたびに変わることがあります。ほとんどの要素では、1回目の読み取りは宣言された値で、それ以降は「影なし」という誤った値になります。影を持つ要素の中にある<code>button</code>、<code>input</code>、<code>select</code>、<code>textarea</code>ではその逆で、1回目は影なし、それ以降は継承した影になりますが、フォームのコントロールに<code>text-shadow: none</code>を与える独自のスタイルシートを持つブラウザーは、その影を描画しません。エンジンは各要素の<code>text-shadow</code>をスキャンごとに1回読んで保持し（<code>src/core/contrast-helpers.js</code>の<code>__textShadowInfoEl</code>を参照）、jsdomでは、フォームのコントロールの値をページ自身のルール（style属性か、それに一致するルール。<code>inherit</code>は親の値を取ります）から取り、それがなければ影なしとします。そのため、スキャンはChromiumと同じ影を読み、同じDOMを2回目にスキャンしても1回目と同じになります。スタイルシートやセレクターを読み取れない場合、フォームのコントロールの計算済みの値は、ほかの要素と同じように読みます。問題が表に出るのは、同じjsdomでパースした要素に対して、<code>getComputedStyle(el).textShadow</code>を自分で2回以上読んだ場合だけです。本物のブラウザーにはこのバグはありません。
 				</li>
 				<li>
 					<strong>同じjsdomのDOMを2回目にスキャンすると、ショートハンドを上書きするスタイルが失われることがあります。</strong>
 					jsdomは要素の計算済みスタイルを、一度読むと次にDOMが変わるまで保持しますが、そのキャッシュから返すコピーでは、詳細度の低いルールのショートハンドを上書きするロングハンドが失われます。<code>{"*{background:#888}"}</code>と<code>style="background-image:url(hero.png)"</code>がある場合、1回目の読み取りでは画像が得られ、それ以降はすべて<code>none</code>になります。スキャンは最初に読んだスタイルを使い続けるので影響を受けませんが、変更のない同じDOMを2回目にスキャンすると、画像を見落とし、1回目で確認を求めたテキストを合格にすることがあります（<code>contrast-computable</code>）。新しくパースしたものをスキャンするか、スキャンの間にDOMを変更してjsdomのキャッシュを消してください。<code>@surea11y/core/testing</code>は自身の2回目のスキャンでそうしています。本物のブラウザーにはこのバグはありません。
+				</li>
+				<li id="jsdom-synchronous-loop">
+					<strong>jsdomは、1回の同期的な実行で作ったページを、イベントループが回るまですべて保持します。</strong>
+					jsdom 29.1.1で確認済みです。新しい<code>JSDOM</code>は、<code>DOMContentLoaded</code>と<code>load</code>の処理をPromiseのジョブとしてキューに入れます。それらは実行されるまで文書とそのウィンドウを保持し、作成したコードが制御を譲ったときにはじめて実行されます。<code>window.close()</code>では解放されません。間に<code>await</code>のない単純な<code>for</code>ループで続けて行うスキャンは、そのためすべてのページを保持したままになります。75 KBのページで<code>runa11yCoreOnHtml</code>を使うと、スキャンごとに約80 MB増え、やがてNodeのメモリが尽きます。coreはそのどれも保持していません。スキャンの間で<code>{"await new Promise((r) => setImmediate(r))"}</code>のように制御を譲れば、メモリは一定に保たれます（同じページを20回スキャンして約210 MBのままでした）。テストランナーはテストの間で制御を譲るので、これが問題になるのは1つのテストやスクリプトの中のループです。
 				</li>
 				<li>
 					<strong>
@@ -263,6 +259,26 @@ export function KnownLimitationsContent() {
 					jsdomは、すべてのCSSルールを要素と照合してスタイルを計算します。エンジンはスキャン中にDOMを変更しないので、各要素の計算は1回だけですが、その1回にO(ルール数)のコストがかかります。保存したニュースサイトのページ（要素7,916個、CSSルール2,683個、jsdom 29.1.1）では、243秒のスキャンのうち約224秒が、5,735個の要素の最初の計算にかかりました。これはjsdomのコストで、本物のブラウザーは同じページを1秒もかからずに計算します。jsdomはカスタムプロパティも置換しないため、<code>var()</code>で指定した色はそこでは読み取れません。そのテキストや背景は計測されず、確認が求められます（<code>contrast-computable</code>）。大規模な本番のページには本物のブラウザーを使ってください。
 				</li>
 				<li>
+					<strong>Chromiumでは、壊れた画像や<code>src</code>のない画像が多い非常に大きなページで、<code>text-spacing-content-loss</code>が遅くなります。</strong>
+					このルールはWCAG 1.4.12の間隔をスタイルシートとして追加してテキストを再び計測しますが、その後のスタイルの再計算はChromiumのものです。画像の代わりに代替テキストを表示する画像（<code>src</code>がないか、読み込みに失敗したもの）では、その時間がそうした画像の数の2乗で増えます。計測では、4,000個で約1.3秒、8,000個で5.4秒でした。数百個程度のページは影響を受けません。そうしたスキャンではこのルールを外す（<code>{"runOnly.excludeRuleIds: ['text-spacing-content-loss']"}</code>または<code>engineOptions.rules.exclude</code>）か、画像を含む領域を外して（<code>excludeSelectors</code>）ください。
+				</li>
+				<li id="jsdom-contrast-asks">
+					<strong>jsdomでは、背景の位置を決めるのにレイアウトが必要な場所のコントラストは計測せず、そのテキストについて確認を求めます。</strong>
+					jsdomにはジオメトリがなく、エンジンはそれを推測しません（GitHub上の<a href={`${core}/docs/RULE_AUTHORING.md#87-contrast-edge-cases`}><code>RULE_AUTHORING.md</code></a>のコントラストの方針を参照）。<code>contrast-computable</code>は、次のものについて確認を求めます（<code>BACKGROUND_OVERLAP</code>。<code>blockerNoLayout</code>と、計測するレイアウトがなかったことを示すメッセージを伴います）。
+					<ul>
+						<li>
+							<code>&lt;svg&gt;</code>の中で、塗りや線を持ち、描画される（属性でもCSSでも、<code>display</code>や<code>visibility</code>で隠されていない）図形の後に描かれるSVGのテキスト。テキストを覆っているように見える<code>&lt;rect&gt;</code>でも同じです。ブラウザーでは、テキスト全体を覆う塗りつぶしの<code>&lt;rect&gt;</code>、<code>&lt;circle&gt;</code>、<code>&lt;ellipse&gt;</code>は、レイアウトから計測します。
+						</li>
+						<li>
+							テキスト自身の要素か、テキストに背景を与える要素（独自の不透明な背景を持つ最も近い祖先）が、スタイルシートによって内容、<code>absolute</code>または<code>fixed</code>の位置指定、背景を与えられ、隠されていない（<code>display: none</code>、<code>visibility: hidden</code>）<code>::before</code>や<code>::after</code>を持つテキスト。その大きさとオフセットは読まないので、それらの要素の隅にある小さなバッジでも、テキストは問いになります。その間にあるほかの祖先の疑似要素は見ません。独自の背景を持たないオーバーレイのホストの中に入れ子になったテキストは、その後ろの背景に対して計測され、それは誤っていることがあります。ブラウザーでは、疑似要素のボックスを計測します。
+						</li>
+					</ul>
+				</li>
+				<li>
+					<strong>jsdomでは、フレックスやグリッドの項目、フロート、位置指定されたボックスの中の通貨記号は、隣のテキストと一緒に読まれます。</strong>
+					ブラウザーは、フレックスやグリッドの項目、フロート、絶対配置のボックスの<code>display</code>をブロックとして計算するので、そこにある記号は隣の数字と同じ行にはなく、<a href="/rules/symbol-graphic-contrast/"><code>symbol-graphic-contrast</code></a>がグラフィックとして判定します。jsdomはそのような<code>display</code>を計算せず、エンジンも<code>flex</code>、<code>grid</code>、<code>float</code>、<code>position</code>からボックスを推測しません。テキストの並びを区切るのは、ブロック要素、<code>&lt;br&gt;</code>、リンクのテキスト（最も近い文字が数字の場合を除く）だけです。そのため<code>{'<div style="display:flex"><span>$</span><span>45.00</span></div>'}</code>はそこではテキストとなり、<code>contrast-minimum</code>がテキストの比率で判定します。レイアウトに基づく答えを得るには、ブラウザーでスキャンしてください。
+				</li>
+				<li>
 					<strong>jsdomでは、要素を隠すものについて、レイヤーや条件付きのCSSをjsdomのメディアのもとで適用します。</strong>
 					jsdomの<code>getComputedStyle</code>は<code>@layer</code>、<code>@supports</code>、<code>@container</code>の中のルールを読まないため、Tailwind v4のページの<code>hidden</code>や<code>sr-only</code>は、そこでは何も隠していませんでした。core 1.16.0以降、エンジンは要素が表示されているかどうかを判断するために読むプロパティについて、それらのルールを自分で適用しますが、<code>@media</code>はjsdomと同じように扱います。適用されるのは<code>all</code>と<code>screen</code>だけなので、<code>(width &gt;= 48rem)</code>の下のルールは、レイヤーの外と同じくレイヤーの中でも効きません。Tailwindの<code>hidden md:block</code>は、デスクトップのブラウザーなら表示されるところでも、jsdomでは隠れたままです。<code>@supports</code>はどのプロパティのテストでも、解析できる<code>selector()</code>でも成り立つものとし、<code>@container</code>は適用せず、<code>revert</code>、<code>revert-layer</code>、<code>var()</code>の値はjsdomの値のままにします。ほかのプロパティは、色も含めて引き続きjsdomの値です。ビューポートによって表示を変えるページは、ブラウザーでスキャンしてください。
 				</li>
@@ -272,11 +288,11 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>jsdomでは、テキストは計算済みの<code>font-size</code>で判定されます。</strong>
-					ブラウザーでは、コントラストのルールと<code>p-as-heading</code>は、テキストを描画されるサイズで判定します。CSSの<code>zoom</code>、SVGのtransform、<code>font-size-adjust</code>も含み、最後のものはフォント自身のメトリクスから求めます（<code>font-size: 24px; font-size-adjust: 0.3</code>はArialを約14pxで描画し、これは大きな文字ではありません）。jsdomはレイアウトを行わずフォントも読まないため、そこでは<code>font-size</code>をそのまま使います。そのようにテキストを拡大縮小するページは、ブラウザーでスキャンしてください。
+					ブラウザーでは、コントラストのルールと<code>p-as-heading</code>は、テキストを描画されるサイズで判定します。CSSの<code>zoom</code>、一様なtransformの拡大縮小、SVGのtransform、<code>font-size-adjust</code>も含み、最後のものはフォント自身のメトリクスから求めます（<code>font-size: 24px; font-size-adjust: 0.3</code>はArialを約14pxで描画し、これは大きな文字ではありません）。jsdomはレイアウトを行わずフォントも読まないため、そこでは<code>font-size</code>をそのまま使います。そのようにテキストを拡大縮小するページは、ブラウザーでスキャンしてください。
 				</li>
 				<li>
 					<strong>実際のブラウザーでは、一部のルールが確認の間だけページを変更し、ページ自身のスクリプトがそれに反応することがあります。</strong>
-					ブラウザーが描画する内容を計測するため、<code>css-hidden-focus</code>はキーボードと同じように要素にフォーカスを当て、計測する要素のトランジションを無効にします。<code>aria-hidden-focus</code>は、ページがすぐにフォーカスを移すかどうか（フォーカストラップの番兵）を確かめるため、<code>aria-hidden</code>のサブツリー内の要素にフォーカスを当てます。<code>text-spacing-content-loss</code>はWCAG 1.4.12の間隔を指定したスタイルシートを追加します。<code>focus-not-obscured-minimum</code>と<code>-enhanced</code>は、要素が固定配置やstickyのボックスの下に来るようにページをスクロールし、そこでヒットテストを行います。そのため、ページの<code>scroll</code>ハンドラーが、ルールの計測の後に実行されます（スクロールすると隠れるヘッダーが反応することがあります）。コントラストのルールは、プレースホルダーやドロップダウンの<code>&lt;select&gt;</code>についてブラウザー自身の色を読み取るため、画面外に空のフレームを追加します。スキャンは、ルールの実行中、実行中の各アニメーションを固定した時点に移します（有限のものは終わりに、無限のものは始まりに）。そのため、フェードインは落ち着いた状態で計測されます。これらはすべて、ルールやスキャンが終わる前に元に戻します。フォーカス、スクロール位置、style属性、アニメーション、追加したスタイルシート、フレームです。元に戻せないのは、それに反応してページのスクリプトが行う処理です。要素にフォーカスを当てるとその<code>focus</code>と<code>focusin</code>のハンドラーが実行されるため、カルーセルがフォーカスされたスライドに移動して<code>aria-hidden</code>も一緒に移したり、ボタンが有効になったりすることがあります。そのスキャンの検出結果は、見つけた時点のページのものです。<code>aria-hidden-focus</code>は、どのサブツリーが非表示か、そして報告するマークアップを、何かにフォーカスを当てる前に読み取ります。ただし、ページはスクリプトが変えたままの状態で残るため、同じページを2回目にスキャンすると別のものが見つかることがあります。引き続き使うページをスキャンする場合や、1つのページを2回スキャンする場合は、その間に再読み込みしてください。間隔は再び取り除かれるため、スキャンの後に撮ったスクリーンショットでは、<code>text-spacing-content-loss</code>が切れていると判定したテキストが収まって見えます。そうした検出結果は、それが得られた状態を示しており（<code>data.details.evidenceState: 'text-spacing'</code>）、<code>@surea11y/core</code>の<code>evidenceState()</code>は、バインディングの<code>.screenshots()</code>と同じように、撮影のためにページをその状態に戻します。
+					ブラウザーが描画する内容を計測するため、<code>css-hidden-focus</code>はキーボードと同じように要素にフォーカスを当て、計測する要素のトランジションを無効にします。<code>aria-hidden-focus</code>は、ページがすぐにフォーカスを移すかどうか（フォーカストラップの番兵）を確かめるため、<code>aria-hidden</code>のサブツリー内の要素にフォーカスを当てます。<code>text-spacing-content-loss</code>はWCAG 1.4.12の間隔を指定したスタイルシートを追加します。<code>focus-not-obscured-minimum</code>と<code>-enhanced</code>は、要素が固定配置やstickyのボックスの下に来るようにページをスクロールし、そこでヒットテストを行います（<code>scrollTo</code>が何もしないページなど、スクロールが起きないようにしているページでは何もヒットテストできず、そうしたボックスはそれぞれ傾きなしで、<code>notScrolled: true</code>を付けて確認を求めます）。その後にブラウザーが発生させる<code>scroll</code>と<code>scrollend</code>は、スキャンの前にページがウィンドウに付けたキャプチャーのリスナーを除き、ページのリスナーには届かないので、最初のスクロールで読み込むウィジェットは読み込まれないままです。コントラストのルールは、プレースホルダーやドロップダウンの<code>&lt;select&gt;</code>についてブラウザー自身の色を読み取るため、空のフレームを追加します（スキャンごとに1つで、<code>&lt;html&gt;</code>の末尾にある非表示の<code>&lt;surea11y-probe&gt;</code>要素の閉じたシャドウルートに置かれるので、どのルールにも見つからず、シャドウルートを越えないその<code>load</code>イベントは、キャプチャーのものも含めてページのどのリスナーにも届きません）。また、色、フォント、キャンバスを計測するための非表示の要素を追加し、すぐに取り除きます。ページの<code>MutationObserver</code>には、それらの追加（フレームの入れ物は1回、追加と削除）と、<code>text-spacing-content-loss</code>の<code>&lt;style&gt;</code>の追加と削除が見えます。そのレコードはスキャンが終わった後に渡され、文書のあらゆる変更に反応するスクリプト（再描画や、ノードの数え上げ）はそのときに実行されます。スキャンは、ルールの実行中、実行中の各アニメーションを固定した時点に移します（有限のものは終わりに、無限のものは始まりに）。そのため、フェードインは落ち着いた状態で計測されます。<code>includeShadowDom</code>がオフでない限り、開いたシャドウルート内の要素のアニメーションも同じです。閉じたシャドウルート内のアニメーションには届きません。これらはすべて、ルールやスキャンが終わる前に元に戻します。フォーカス、ページの選択範囲とキャレット（文書内と、フォーカスされたテキストフィールド内）、スクロール位置、style属性、アニメーション、追加したスタイルシート、フレームです。フォーカスは、開いたシャドウルートと同一オリジンのフレームの中までたどって元に戻します。元に戻せない唯一の場所は閉じたシャドウルートの中のフォーカスです。エンジンにはホストしか見えず、フォーカスを移すと、ルートの中のどこにあったかがわからなくなります。そのため、そのとき<code>aria-hidden-focus</code>は確かめを行いません。フォーカスはそのままで、隠されたフォーカス可能な要素は確かめなしで判定され、見つけるべき番兵がない場合と同じように報告されます。番兵として確認に回されることはありません。エンジンがシャドウルートを読めない、フォーカスされたカスタム要素は、それ自体が<code>tabindex</code>を持ってフォーカスされている場合でも、両者を区別できないため、そうしたホストとして扱います。シャドウルートを持つことができ、それ自体ではフォーカスを受け取れない、フォーカスされた<code>&lt;div&gt;</code>、<code>&lt;span&gt;</code>などの要素も同じです。元に戻せないのは、それに反応してページのスクリプトが行う処理です。要素にフォーカスを当てるとその<code>focus</code>と<code>focusin</code>のハンドラーが実行されるため、カルーセルがフォーカスされたスライドに移動して<code>aria-hidden</code>も一緒に移したり、ボタンが有効になったりすることがあります。そのスキャンの検出結果は、見つけた時点のページのものです。<code>aria-hidden-focus</code>は、どのサブツリーが非表示か、そして報告するマークアップを、何かにフォーカスを当てる前に読み取ります。ただし、ページはスクリプトが変えたままの状態で残るため、同じページを2回目にスキャンすると別のものが見つかることがあります。引き続き使うページをスキャンする場合や、1つのページを2回スキャンする場合は、その間に再読み込みしてください。間隔は再び取り除かれるため、スキャンの後に撮ったスクリーンショットでは、<code>text-spacing-content-loss</code>が切れていると判定したテキストが収まって見えます。そうした検出結果は、それが得られた状態を示しており（<code>data.details.evidenceState: 'text-spacing'</code>）、<code>@surea11y/core</code>の<code>evidenceState()</code>は、バインディングの<code>.screenshots()</code>と同じように、撮影のためにページをその状態に戻します。
 				</li>
 				<li>
 					<strong>別のオリジンのスタイルシートは、ページからは読み取れません。</strong>
@@ -304,9 +320,17 @@ export function KnownLimitationsContent() {
 					<code>cantTell</code>
 					までに抑えているのはそのためです。ハイドレーションの影響を受けるチェックでライブDOMの正確さが必要なら、静的に取得するCLIではなく、パターン2で読み込み済みのページに対してライブラリを直接実行してください。
 				</li>
+				<li id="reflow">
+					<strong>リフロー（1.4.10）は、それが定める幅でだけチェックされます。</strong>
+					<a href="/rules/reflow-horizontal-scroll/"><code>reflow-horizontal-scroll</code></a>は、幅320 CSSピクセル以下でレイアウトされたページに適用され、それより広いビューポートでは<code>notApplicable</code>です。リフローをチェックするには、その幅でページをスキャンしてください（スマートフォンのビューポートか、ホストが<code>topLevelDocument</code>でページとして指定した文書を表示する、幅320ピクセルのフレーム）。横方向のスクロールを計測し、ページが左右を切り取っている場所では、端で切れているものについて確認を求めます。メニューが折りたたまれたり、コントロールが移動したりしたときにコンテンツや機能が失われるかどうかは、引き続き人が判断します（GitHub上の<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#reflow`}><code>LAYOUT_MEASUREMENT.md</code></a>）。1.4.10が高さ256ピクセルで判定する縦書きのテキストは、チェックしません。
+				</li>
+				<li id="resize-text">
+					<strong>テキストのサイズ変更（1.4.4）で切れるテキストは、幅640 CSSピクセル以下でだけチェックされます。</strong>
+					<a href="/rules/resize-text-content-loss/"><code>resize-text-content-loss</code></a>は、1280ピクセルのウィンドウを200%に拡大したときのように、幅640 CSSピクセル以下のビューポートでレイアウトされたページに適用され、それより広いビューポートでは<code>notApplicable</code>です。その幅でページをスキャンしてください（ホストが<code>topLevelDocument</code>でページとして指定した文書を表示する幅640ピクセルのフレームか、その大きさのウィンドウ）。エンジン自身はページを拡大したりビューポートのサイズを変えたりしません。ページのスクリプトにはどちらもできず、ルートにCSSの<code>zoom</code>を指定しても、ブラウザーの拡大とは違ってメディアクエリが一致しないからです。overflowを隠すボックスが切り取ったり短くしたり（省略記号、行数の制限）するテキストについて確認を求め、不合格にはしません。全文がほかの方法で提供されているかどうかは人が判断します。ビューポート自体のoverflowだけで切れるテキスト、拡大しても大きくならないテキスト、200%で動かなくなるコントロールは計測しません（GitHub上の<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#resize-text`}><code>LAYOUT_MEASUREMENT.md</code></a>）。
+				</li>
 				<li>
 					<strong>レイアウトは、1つのビューポートで、その時点でページが持っているフォントを使って計測されます。</strong>
-					ブラウザーが描画する内容を計測するルール（<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>、<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>、<a href="/rules/skip-link/"><code>skip-link</code></a>）の結果は、ページをスキャンしたビューポートでのみ成り立ちます。レスポンシブなページは、ある幅ではテキストを切ったりターゲットを小さくしたりしても、別の幅ではそうしないことがあります。また、Webフォントの読み込み前に計測したテキストは、幅が異なります。結果はその両方を<a href="/results-reports/output-schema/"><code>engine.environment</code></a>に記録し、これらのルールの検出結果は、ビューポートを繰り返し記録したうえで、何を計測したか（テキストが端からどれだけはみ出したか、ターゲットの大きさと隣のターゲットとの近さ）を示します。そのため、実行によって異なる検出結果を、その条件までたどることができます。必要な幅ごとにスキャンし、スキャンの前にページが落ち着くのを待ってください。<code>waitForPageReady()</code>はloadイベント、Webフォント、画像を待ちます（スキャンの前に呼び出す方法は<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}><code>INTEGRATION.md</code></a>を参照してください）。結果には、フォントや画像がまだ読み込み中だったかどうかが<code>engine.environment</code>に記録されます。
+					ブラウザーが描画する内容を計測するルール（<a href="/rules/text-spacing-content-loss/"><code>text-spacing-content-loss</code></a>、<a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>、<a href="/rules/reflow-horizontal-scroll/"><code>reflow-horizontal-scroll</code></a>、<a href="/rules/resize-text-content-loss/"><code>resize-text-content-loss</code></a>、<a href="/rules/skip-link/"><code>skip-link</code></a>）の結果は、ページをスキャンしたビューポートでのみ成り立ちます。レスポンシブなページは、ある幅ではテキストを切ったりターゲットを小さくしたりしても、別の幅ではそうしないことがあります。また、Webフォントの読み込み前に計測したテキストは、幅が異なります。結果はその両方を<a href="/results-reports/output-schema/"><code>engine.environment</code></a>に記録し、これらのルールの検出結果は、ビューポートを繰り返し記録したうえで、何を計測したか（テキストが端からどれだけはみ出したか、ターゲットの大きさと隣のターゲットとの近さ）を示します。そのため、実行によって異なる検出結果を、その条件までたどることができます。必要な幅ごとにスキャンし、スキャンの前にページが落ち着くのを待ってください。<code>waitForPageReady()</code>はloadイベント、Webフォント、画像を待ちます（スキャンの前に呼び出す方法は<a href={`${core}/docs/INTEGRATION.md#waiting-for-the-page-before-a-scan`}><code>INTEGRATION.md</code></a>を参照してください）。結果には、フォントや画像がまだ読み込み中だったかどうかが<code>engine.environment</code>に記録されます。
 				</li>
 				<li>
 					<strong>ブラウザーでは、コントラストは、その時点のページでテキストの下に描画されているものに対して計測されます。</strong>
@@ -334,11 +358,11 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong><a href="/rules/target-size-minimum/"><code>target-size-minimum</code></a>は、ポインターが当たる領域を、ヒットテストではなくレイアウトから求めます。</strong>
-					スクロールしないと見えない位置や、スクロールするボックス内にあるターゲットは、そこまでスクロールしたものとして全体を計測します。ターゲットの上にある固定配置やstickyのボックスは無視します。3Dのtransform、ほとんどの<code>clip-path</code>の形状、祖先による角の丸い切り取りは、バウンディングボックスとして計測します。区切り文字だけを挟んで互いに詰まっているリンク（「<span lang="en">Edit | Delete</span>」）は、例外にせず確認を求めます。jsdomでは、このルールは<code>notApplicable</code>になります。詳細：<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#target-size`}><code>LAYOUT_MEASUREMENT.md</code></a>。
+					スクロールしないと見えない位置や、スクロールするボックス内にあるターゲットは、そこまでスクロールしたものとして全体を計測します。ターゲットの上に描画されるもの（オーバーレイ、固定配置やstickyのボックス）は、ターゲットから何も差し引きません。3Dのtransform、ほとんどの<code>clip-path</code>の形状、祖先による角の丸い切り取りは、バウンディングボックスとして計測します。区切り文字だけを挟んで互いに詰まっているリンク（「<span lang="en">Edit | Delete</span>」）は、例外にせず確認を求めます。jsdomでは、このルールは<code>notApplicable</code>になります。詳細：<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#target-size`}><code>LAYOUT_MEASUREMENT.md</code></a>。
 				</li>
 				<li>
 					<strong>フォーカスされた要素をコンテンツが覆うかどうかは、ページ自身のスクロールと、その固定配置やstickyのボックスについて求めます。</strong>
-					<a href="/rules/focus-not-obscured-minimum/"><code>focus-not-obscured-minimum</code></a>（2.4.11）と<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>（2.4.12）にはブラウザーが必要です。jsdomでは<code>notApplicable</code>（<code>data.reason: 'noLayout'</code>）になります。ブラウザーでは、スキャンが使うウィンドウとページの<code>scroll-padding</code>を前提に、何かを描画する<code>position: fixed</code>または<code>sticky</code>のボックスが、タブ順序にあるどの要素を隠しうるかを求め、そのうちいくつかをヒットテストして確かめます。対象外は、それ自体がスクロールするボックスの中や、固定配置やstickyのボックスの中にある要素、横方向のスクロール、要素の上に重なるほかのコンテンツ（絶対配置のボックス、固定配置でない非モーダルのポップアップ）、ブラウザーのヒットテストが素通りする<code>pointer-events: none</code>のボックス、後から現れるもの（時間をおいて出るチャットの吹き出し）やほかのウィンドウサイズで現れるものです。誰がボックスを開いたかもわかりません。達成基準は、ユーザーが開き、フォーカスを移動せずに閉じられるコンテンツを許容しているため、コントロールが展開済みとマークしているボックス（<code>aria-expanded="true"</code>と<code>aria-controls</code>）は傾きなしで、それ以外のボックスはその旨の注意を添えて、確認を求めます。
+					<a href="/rules/focus-not-obscured-minimum/"><code>focus-not-obscured-minimum</code></a>（2.4.11）と<a href="/rules/focus-not-obscured-enhanced/"><code>focus-not-obscured-enhanced</code></a>（2.4.12）にはブラウザーが必要です。jsdomでは<code>notApplicable</code>（<code>data.reason: 'noLayout'</code>）になります。ブラウザーでは、スキャンが使うウィンドウとページの<code>scroll-padding</code>を前提に、何かを描画する（背景や画像、ボックスを埋める内側の<code>box-shadow</code>、またはその上に位置指定された背景付きの<code>::before</code>や<code>::after</code>）<code>position: fixed</code>または<code>sticky</code>のボックスが、タブ順序にあるどの要素を隠しうるかを求め（transform、filter、<code>perspective</code>、containment、コンテナーの種類、<code>will-change</code>によって包含ブロックとなる祖先の中にある固定配置のボックスは、その祖先と一緒にスクロールするので、固定配置のボックスとしては扱いません）、そのうちいくつかをヒットテストして確かめます。対象外は、それ自体がスクロールするボックスの中や、固定配置やstickyのボックスの中にある要素、横方向のスクロール、要素の上に重なるほかのコンテンツ（絶対配置のボックス、固定配置でない非モーダルのポップアップ）、ブラウザーのヒットテストが素通りする<code>pointer-events: none</code>のボックス、後から現れるもの（時間をおいて出るチャットの吹き出し）やほかのウィンドウサイズで現れるものです。誰がボックスを開いたかもわかりません。達成基準は、ユーザーが開き、フォーカスを移動せずに閉じられるコンテンツを許容しているため、コントロールが展開済みとマークしているボックス（<code>aria-expanded="true"</code>と<code>aria-controls</code>）は傾きなしで、それ以外のボックスはその旨の注意を添えて、確認を求めます。
 				</li>
 				<li>
 					<strong>コントラストはsRGBで計算されます。</strong>

@@ -24,14 +24,14 @@ const functionRows = [
 
 const listOptionRows = [
 	{ id: "standard", option: <code>standard</code>, what: <><code>'wcag'</code> (el predeterminado), <code>'best-practice'</code>, o el estándar de un pack por clave o nombre.</> },
-	{ id: "version", option: <code>version</code>, what: <>La de WCAG (<code>'2.0'</code>, <code>'2.1'</code>, <code>'2.2'</code>, la predeterminada), o la del estándar del pack.</> },
+	{ id: "version", option: <code>version</code>, what: <>La de WCAG (<code>'2.0'</code>, <code>'2.1'</code>, <code>'2.2'</code>, la predeterminada), o la del estándar del pack. Un número se lee como la versión que escribe: <code>2.1</code> como <code>'2.1'</code>, <code>2</code> como <code>'2.0'</code> (core 1.18.0 y posteriores).</> },
 	{ id: "levels", option: <code>levels</code>, what: <>Solo WCAG: <code>'A'</code>, <code>'AA'</code>, <code>'AAA'</code> o una lista de ellos; todos los niveles por defecto.</> },
 	{ id: "locale", option: <code>locale</code>, what: <>Una etiqueta (<code>'fr-CA'</code> lee <code>fr-ca</code> y luego <code>fr</code>) o una lista, la preferida primero; inglés para cualquier texto que le falte a un locale.</> },
 	{ id: "tools", option: <code>tools</code>, what: <>Solo las facetas cuyo procedimiento necesita una de estas herramientas (<code>'screen-reader'</code>).</> },
 	{ id: "automation", option: <code>automation</code>, what: <>Solo las facetas que las reglas deciden por completo, en parte o nada: <code>['manual', 'partial']</code> es lo que un análisis deja a una persona.</> },
 	{ id: "rules", option: <code>rules</code>, what: <>Solo las facetas que reclama una de estas reglas (<code>'img-alt-present'</code>).</> },
 	{ id: "packs", option: <code>packs</code>, what: "Los packs cuyo estándar o reglas se leen." },
-	{ id: "profile", option: <code>profile</code>, what: <>El perfil de un pack que nombra una ley: solo los requisitos que pide esa ley, con la ley nombrada en la cabecera de la lista (core 1.16.0, experimental; consulta <a href="/configuration/packs/#laws">Packs</a>).</> },
+	{ id: "profile", option: <code>profile</code>, what: <>El perfil de un pack que nombra una ley: solo los requisitos que pide esa ley, con la ley nombrada en la cabecera de la lista (core 1.16.0 y posteriores; consulta <a href="/configuration/packs/#laws">Packs</a>). Estable desde core 1.18.0; las leyes de requisito por las que filtra (los <code>laws</code> propios de un requisito) siguen siendo experimentales hasta la 1.20.0. Un nombre que no tiene ningún perfil da <code>null</code>, donde la 1.17 listaba todo WCAG.</> },
 ];
 
 const renderOptionRows = [
@@ -136,12 +136,13 @@ export function ProceduresContent() {
 				Cada criterio que evalúa una regla de core, por completo, en parte o como{" "}
 				<code>cantTell</code>, tiene un procedimiento para cada faceta, incluidas las que ninguna
 				regla comprueba, ya que una persona las necesita para terminar lo que empezó el análisis:
-				36 de los 87 criterios de WCAG 2.2 en los niveles A, AA y AAA y el 4.1.1 (eliminado en la
-				2.2), con 170 facetas, 56 procedimientos propios y 114 facetas de tecnología cubiertas por
-				uno de ellos. Un criterio así es <code>complete</code>. Los otros 51 criterios, que no
+				42 de los 87 criterios de WCAG 2.2 en los niveles A, AA y AAA y el 4.1.1 (eliminado en la
+				2.2), con 186 facetas, 63 procedimientos propios y 123 facetas de tecnología cubiertas por
+				uno de ellos. Un criterio así es <code>complete</code>. Los otros 45 criterios, que no
 				evalúa ninguna regla (el 1.2.3 Audiodescripción o medio alternativo, por ejemplo), figuran
 				con sus facetas y sin procedimiento: cómo evaluarlos a mano queda fuera de core. Las buenas
-				prácticas tienen uno para cada una de sus 13 facetas: regiones de referencia, contenido en
+				prácticas tienen uno para cada una de sus 14 facetas: regiones de referencia, zonas de la
+				página como regiones de referencia, contenido en
 				regiones de referencia, encabezados, marcado de tablas, roles ARIA, orden del foco, teclas
 				de acceso, enlaces para saltar, nombres y etiquetas, zoom, nombres repetidos, ventanas
 				nuevas y descargas, y movimiento reducido.
@@ -223,9 +224,12 @@ export function ProceduresContent() {
 			/>
 			<p>
 				Los criterios de WCAG son los que tiene la versión, en sus niveles: la 2.0 y la 2.1
-				enumeran el 4.1.1 como criterio de nivel A titulado «Procesamiento», la 2.2 no. Con varios
-				filtros, una faceta debe cumplir cada uno; el <code>complete</code> de un requisito sigue
-				siendo el suyo.
+				enumeran el 4.1.1 como criterio de nivel A titulado «Procesamiento», la 2.2 no. Una
+				herramienta distinta de las de la tabla de arriba, o un nivel de automatización distinto de{" "}
+				<code>full</code>, <code>partial</code> y <code>manual</code>, lanza un error, igual que
+				un nivel desconocido: no listaría nada (core 1.18.0 y posteriores). Con varios filtros, una
+				faceta debe cumplir cada uno; el <code>complete</code> de un requisito sigue siendo el
+				suyo.
 			</p>
 
 			<h2 id="a-checklist">Una lista de comprobación</h2>
@@ -439,7 +443,7 @@ export function ProceduresContent() {
 				]}
 			/>
 			<p>
-				El <a href="/configuration/packs/#en-301-549-pack">pack de EN 301 549</a> 1.2.0 da
+				El <a href="/configuration/packs/#en-301-549-pack">pack de EN 301 549</a> da, desde su 1.2.0,
 				procedimientos para cada cláusula del capítulo 9 cuyo criterio evalúa una regla de core, en
 				cinco idiomas, y el <a href="/configuration/packs/#wai-aria-pack">pack de WAI-ARIA</a> da
 				una lista de comprobación para cada uno de sus requisitos, con los roles, estados y valores

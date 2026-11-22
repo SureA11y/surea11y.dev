@@ -15,7 +15,7 @@ export function HelpContent() {
 				Les questions les plus fréquentes, avec des réponses claires : pourquoi une sélection de
 				tags et d’identifiants de règle peut n’exécuter aucune règle et paraître pourtant sans
 				erreur, pourquoi un composant web revient en <code>cantTell</code>, ce qui change dans vos
-				résultats après la mise à jour vers core 1.15,
+				résultats après la mise à jour vers core 1.18,
 				pourquoi les règles de titre et de langue sont <code>notApplicable</code> dans une frame,
 				pourquoi chaque critère WCAG est{" "}
 				<code>cantTell</code> même quand toutes les vérifications renvoient <code>pass</code>, pourquoi une règle dépendant de la géométrie indique <code>notApplicable</code> sous jsdom, et ce

@@ -226,7 +226,11 @@ export function EarlReportContent() {
 			/>
 			<p>
 				<code>earl:untested</code>
-				に対応するものはありません。実行されなかったルールにはアサーションの元になる結果がないため、untestedのアサーションを出すのではなく、アサーション自体を出しません。
+				は、スキャンが選択したものの、時間の予算が先に尽きたために開始しなかったルールに使います（
+				<code>notRun</code>
+				。
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">時間の予算</a>
+				を参照。core 1.18.0以降）。ただし、同じページの別の結果がそのルールを実行した場合は除きます。それ以外の実行されなかったルールにはアサーションの元になる結果がないため、untestedのアサーションを出すのではなく、アサーション自体を出しません。
 			</p>
 			<p>
 				<strong>
@@ -306,10 +310,20 @@ export function EarlReportContent() {
 					{ key: "meaning", label: "意味", wrap: true },
 				]}
 				rows={[
-					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>。nameのデフォルトは<code>surea11y</code>です。versionはassertorの<code>release</code>として出力され、すべての結果が同じ<code>engine.version</code>を持つ場合はその値がデフォルトになります。異なるリリースの結果が混在する場合は、指定しない限り<code>release</code>は付きません。<code>assertedBy</code>を丸ごと省くには<code>null</code>を渡します。</> },
+					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>。nameのデフォルトは<code>surea11y</code>です。versionはassertorの<code>release</code>として出力され、すべての結果が同じ<code>engine.version</code>を持つ場合はその値がデフォルトになります。異なるリリースの結果が混在する場合は、指定しない限り<code>release</code>は付きません。<code>assertedBy</code>を丸ごと省くには<code>null</code>を渡します。すべての結果が同じパックを実行した場合（<code>engine.packs</code>）、指定した<code>assertor</code>にかかわらず、assertorはそれぞれのパックを自身の一部として示します（<code>{'"dct:hasPart": [{ "@type": "Software", "name": "@surea11y/pack-en301549", "release": { "@type": "Version", "revision": "1.5.0" } }]'}</code>）。core 1.18.0以降。</> },
 					{ id: "mode", option: <code>mode</code>, meaning: <><code>'earl:automatic'</code>などのEARLのテストモードです。指定しない場合は省略されます。</> },
 				]}
 			/>
+			<p>
+				<code>null</code>
+				のオプションは、オプションなしと同じです。レポートが読まないキーで、読むキーの書き間違いのように見えるもの（
+				<code>asserter</code>
+				）は無視され、意図したオプションを示す
+				<code>console.warn</code>
+				が出ます。スキャンが
+				<code>engineOptions</code>
+				について警告するのと同じです。
+			</p>
 
 			<h2>関連情報</h2>
 			<ul>

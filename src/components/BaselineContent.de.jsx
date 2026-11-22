@@ -29,6 +29,21 @@ const baselineMoves = [
 	{ id: "p-as-heading", rules: ["p-as-heading"], from: ["BOLD_LARGE_PARAGRAPH", "BOLD_LARGE_DIV"], to: ["HEADING_LIKE_NUMBER", "HEADING_LIKE_LINK"] },
 ].map((row) => ({ ...row, rules: codes(row.rules), from: codes(row.from), to: codes(row.to) }));
 
+const baselineMoves118 = [
+	{
+		id: "marquee",
+		rules: <code>deprecated-elements-not-used</code>,
+		from: <code>MARQUEE_PAUSE_MECHANISM_UNKNOWN</code>,
+		to: <><code>MARQUEE_STOPS_ONLY_ON_HOVER</code> (ein Marquee, das nur anhält, solange der Zeiger darüber ist)</>,
+	},
+	{
+		id: "placeholder-title",
+		rules: <code>page-title-patterns</code>,
+		from: <code>titleReview</code>,
+		to: <><code>placeholderTitle</code> (ein im Titel stehen gebliebener Platzhalter wie <code>undefined</code> oder <code>{"{{title}}"}</code>)</>,
+	},
+];
+
 export function BaselineContent() {
 	return (
 		<>
@@ -129,9 +144,28 @@ export function BaselineContent() {
 				Klassennamen verglichen, sodass ein Build, der <code>class="b a" src</code> schreibt, wo
 				der vorige <code>src class="a b"</code> geschrieben hat, übereinstimmt; Baseline-Dateien,
 				die vorher geschrieben wurden, stimmen weiterhin überein, da der Vergleich beim Abgleich
-				erfolgt. <code>selector</code> wird zwar weiterhin in der
-				Baseline-Datei gespeichert, aber nur als Kontext für Menschen beim Lesen eines Diffs — für
-				das Matching wird er nie verwendet.
+				erfolgt. Klassennamen werden nur an Leerzeichen, Tabulatoren und Zeilenumbrüchen getrennt,
+				wie HTML sie trennt: <code>class="a&nbsp;b"</code> mit einem geschützten Leerzeichen ist
+				eine Klasse und passt nicht auf <code>class="a b"</code>. Ein Start-Tag, das die
+				Längengrenze des Ausschnitts abschneidet, wird so weit sortiert, wie es reicht.{" "}
+				<code>selector</code> wird zwar weiterhin in der Baseline-Datei gespeichert, aber nur als
+				Kontext für Menschen beim Lesen eines Diffs — für das Matching eines Befunds mit{" "}
+				<code>html</code> wird er nie verwendet.
+			</p>
+			<p id="findings-without-markup">
+				Ein Befund ohne <code>html</code> (ein Scan mit <code>output.includeHtml: false</code> oder
+				ein Vorkommen, das eine Regel ohne Markup meldet) wird seit core 1.18.0 über seinen{" "}
+				<code>selector</code> benannt: <code>ruleId + reasonCode + selector</code>, bei einem
+				Element in einem Shadow Root mit den Selektoren der Shadow-Hosts davor. Vorher teilten sich
+				alle Fehler einer Regel und eines Codes einen Schlüssel, und ein neuer Verstoß zählte als
+				einer der bekannten. Ein solcher Schlüssel hängt von der Position ab, er{" "}
+				<strong>ändert sich also, wenn sich der Selektor ändert</strong>: Ein nicht zugehöriges
+				Geschwisterelement vor dem Element oder ein Wrapper darum macht den Befund neu und seinen
+				alten Eintrag veraltet, und ein behobenes Element, an dessen Stelle ein anderes
+				fehlschlägt, gilt als bekannt. Lassen Sie <code>includeHtml</code> beim Erstellen einer
+				Baseline nach Möglichkeit eingeschaltet. Ein Eintrag ohne <code>html</code> und ohne{" "}
+				<code>selector</code> passt weiterhin auf einen solchen Befund, nachdem jeder Befund unter
+				seinem eigenen Schlüssel gesucht wurde.
 			</p>
 			<p>
 				<strong>Bekannte Einschränkung</strong>: Ein Element, dessen <em>eigenes</em> Markup
@@ -242,8 +276,24 @@ export function BaselineContent() {
 			</p>
 			<p>
 				Die Tabelle gilt für ein Minor-Release: Eine Verschiebung steht darin ab dem Release, mit
-				dem sie kam, bis zum nächsten Minor-Release, das sie entfernt. 1.15 und 1.16 haben keinen
-				Befund verschoben, die Tabelle ist also leer.
+				dem sie kam, bis zum nächsten Minor-Release, das sie entfernt. 1.15, 1.16 und 1.17 haben
+				keinen Befund verschoben. 1.18 verschiebt diese, gegenüber 1.17, und 1.19 entfernt sie:
+			</p>
+			<DataTable
+				label="In 1.18 verschobene Reason-Codes"
+				rowKey="id"
+				columns={[
+					{ key: "rules", label: "Regel", wrap: true, width: "30%" },
+					{ key: "from", label: "Alter Code", wrap: true },
+					{ key: "to", label: "Neuer Code", wrap: true },
+				]}
+				rows={baselineMoves118}
+			/>
+			<p>
+				Beide sind Teilungen: Der alte Code bleibt für die anderen Befunde der Regel. Eine von
+				1.17 geschriebene Baseline passt also unter 1.18.x weiter auf diese, nicht aber unter
+				1.19: Bringen Sie sie unter 1.18.x auf den aktuellen Stand, wie unten beschrieben, bevor
+				Sie auf 1.19 wechseln.
 			</p>
 			<p>1.14 hat diese verschoben, gegenüber 1.13, und 1.15 hat sie entfernt:</p>
 			<DataTable
@@ -261,8 +311,8 @@ export function BaselineContent() {
 				unter 1.15: Dort ist ein Eintrag unter einem alten Code veraltet, und sein Befund ist neu.
 				Bringen Sie eine solche Baseline unter 1.14.x auf den aktuellen Stand, wie unten beschrieben,
 				bevor Sie auf 1.15 wechseln; <code>migrateBaselineEntries</code> kennt diese Verschiebungen
-				in 1.15 nicht mehr. Eine von 1.14 geschriebene Baseline passt unter 1.15 und
-				1.16 weiter.
+				in 1.15 nicht mehr. Eine von 1.14 geschriebene Baseline passt unter 1.15, 1.16
+				und 1.17 weiter.
 			</p>
 			<p>
 				Die Baseline nach einem Upgrade mit <code>--write-baseline</code> (oder{" "}
@@ -295,7 +345,14 @@ export function BaselineContent() {
 				Regel, die jetzt mit <code>fail</code> bewertet, wonach sie fragte, oder nach dem fragt, was
 				sie mit <code>fail</code> bewertete, gibt einen Befund, den die Baseline nicht enthielt,
 				oder keinen mehr, den sie enthielt, und das{" "}
-				<a href={`${core}/CHANGELOG.md`}>Changelog</a> sagt, warum.
+				<a href={`${core}/CHANGELOG.md`}>Changelog</a> sagt, warum. Dasselbe gilt für einen Befund,
+				der keine Tendenz zu <code>fail</code> mehr hat: In 1.18 beurteilt{" "}
+				<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a>{" "}
+				<code>&lt;p&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;time&gt;</code> und
+				ähnliche Elemente nach ihrer Rolle, sodass <code>&lt;p aria-label&gt;</code>{" "}
+				<code>ARIA_ATTR_PROHIBITED</code> ohne Tendenz ergibt, wo es{" "}
+				<code>ARIA_ATTR_PROHIBITED_ROLELESS_NEEDS_REVIEW</code> mit Tendenz zu <code>fail</code>{" "}
+				ergab. Ein dafür mit <code>leanFail: true</code> geschriebener Eintrag ist jetzt veraltet.
 			</p>
 
 			<h2 id="several-profiles">Ein Scan mehrerer Profile</h2>
@@ -361,6 +418,35 @@ export function BaselineContent() {
 				<code>frame</code>, der keine Liste von Strings ist. <code>migrateBaselineEntries</code>{" "}
 				prüft ihn genauso. Früher wurde ein solcher Wert als leere Baseline gelesen, wodurch jeder
 				Fehlschlag kommentarlos neu war.
+			</p>
+
+			<h2 id="incomplete-scan">Ein unvollständiger Scan</h2>
+			<p>
+				Ein Scan, der nicht alles geprüft hat, was er ausgewählt hat, kann nicht sagen, dass er
+				nichts Neues gefunden hat. Wenn sein Zeitbudget (<code>engineOptions.timeBudgetMs</code>,
+				siehe <a href="/configuration/engine-options/#a-time-budget-timebudgetms">Engine-Optionen</a>)
+				aufgebraucht war, bevor jede Regel lief, ergänzt <code>matchBaseline</code> seine Rückgabe
+				um <code>{"incomplete: { notRun }"}</code>, die IDs der Regeln, die nicht liefen: Ein Gate,
+				das <code>newCount</code> liest, muss auch bei <code>incomplete</code> fehlschlagen, wie es
+				die Reporter für SARIF und JUnit tun (ein Fehler je nicht ausgeführter Regel). Schreiben Sie
+				aus einem solchen Scan keine Baseline: Sie enthält keinen der Fehler der Regeln, die nicht
+				liefen.
+			</p>
+			<p>
+				Ein durch <code>engineOptions.output.maxOccurrencesPerRule</code> begrenztes Ergebnis
+				(siehe <a href="/results-reports/output-schema/#occurrence-cap">Ausgabeschema</a>) listet
+				nur einen Teil der Vorkommen jeder Regel und kann daher keine vollständige Baseline bilden:
+				Die weggelassenen Fehler bekommen keinen Eintrag, und jeder spätere Scan findet sie neu.{" "}
+				<code>buildBaselineEntries</code> warnt, wenn es ein solches Ergebnis erhält oder eines,
+				das sein Zeitbudget abgebrochen hat; schreiben Sie die Baseline aus einem Scan ohne
+				Obergrenze. Beim Abgleich mit einer Baseline lässt sich ein Fehler, den die Obergrenze
+				weggelassen hat, nicht mit ihren Einträgen vergleichen, er zählt also als neu:{" "}
+				<code>matchBaseline</code> zählt ihn zu <code>totalFail</code> und <code>newCount</code> und
+				nennt die Zahl in <code>incomplete.occurrencesOmitted</code>. Mit{" "}
+				<code>leanFail: true</code> zählt ein weggelassener Befund mit Tendenz zu <code>fail</code>{" "}
+				ebenso als neu: <code>leanFail</code> zählt ihn zu seinem <code>total</code> und{" "}
+				<code>newCount</code>, und <code>incomplete.occurrencesOmittedLeaningFail</code> nennt die
+				Zahl. Die Einträge, auf die er gepasst hätte, können dann als veraltet zählen.
 			</p>
 
 			<h2>Kombination mit <code>--json</code></h2>

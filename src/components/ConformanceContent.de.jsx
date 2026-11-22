@@ -48,7 +48,10 @@ export function ConformanceContent() {
 				ausliefern, bis alles perfekt ist“ und „Wir erkennen Regressionen ab heute“, und genau das bringt
 				ein Team dazu, das Gate tatsächlich einzuschalten. Sie kann auch Befunde akzeptieren, die zu{" "}
 				<code>fail</code> tendieren, eine Baseline deckt einen Scan mehrerer Profile ab, und eine vor einem Upgrade geschriebene Baseline passt weiter,
-				für ein Minor-Release, wenn der Reason-Code eines Befunds geteilt oder neu vergeben wird. Siehe{" "}
+				für ein Minor-Release, wenn der Reason-Code eines Befunds geteilt oder neu vergeben wird.
+				Der Abgleich meldet, wenn ein Zeitbudget einen Scan abgebrochen hat, und zählt einen Fehler,
+				den ein begrenztes Ergebnis weggelassen hat, als neu, sodass keines von beiden unbemerkt
+				durchgeht. Siehe{" "}
 				<a href="/conformance/baseline/">Baseline / Allowlist</a>.
 			</p>
 		</>

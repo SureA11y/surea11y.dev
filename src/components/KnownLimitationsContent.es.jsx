@@ -118,11 +118,12 @@ export function KnownLimitationsContent() {
 					nada en el marcado estático la sustituye.
 				</li>
 				<li>
-					<strong>Reflujo / recorte al aplicar zoom</strong> (WCAG 1.4.10): requiere una medición
-					real del diseño (<code>clientWidth</code>/<code>scrollWidth</code>) en un viewport
-					simulado equivalente a 320px. A diferencia de algunas heurísticas basadas en
-					declaraciones CSS presentes en otras partes de este motor, no existe ningún sustituto en
-					marcado estático para determinar si "el contenido se recorta al 400% de zoom".
+					<strong>Aplicar zoom a la página</strong> (WCAG 1.4.4, 1.4.10): el motor no aplica zoom a
+					la página ni cambia el tamaño del viewport. <code>reflow-horizontal-scroll</code> y{" "}
+					<code>resize-text-content-loss</code> miden una página maquetada a 320 y 640 píxeles CSS
+					de ancho, y solo cuando se analiza a ese ancho (consulta <a href="#reflow">Reflujo</a> y{" "}
+					<a href="#resize-text">Cambio de tamaño del texto</a> más abajo); si ahí se pierde
+					contenido o una función lo sigue decidiendo una persona.
 				</li>
 				<li>
 					<strong>Estado dinámico o posterior a la interacción</strong>: todo lo que solo existe
@@ -165,11 +166,19 @@ export function KnownLimitationsContent() {
 				<li>
 					<strong>El motor se ejecuta sobre los objetos integrados de JavaScript de la propia
 					página.</strong> Una página cuyos scripts rompen uno del que depende (
-					<code>Array.prototype.filter</code>, <code>Map</code>, <code>JSON.stringify</code>,{" "}
-					<code>String.prototype.toLowerCase</code> y otros) detiene el análisis con un error de
-					código <code>PAGE_BUILTINS_BROKEN</code> que nombra cada uno, en lugar de dar un resultado
-					que parece correcto y es erróneo; uno roto antes de inyectar el bundle (
-					<code>Object.keys</code>) impide que el bundle se cargue. Una página que añade{" "}
+					<code>Array.prototype.filter</code>, <code>Array.prototype.shift</code>,{" "}
+					<code>Array.isArray</code>, <code>Map</code>, <code>WeakMap.prototype.has</code>,{" "}
+					<code>JSON.stringify</code>, <code>String.prototype.split</code>,{" "}
+					<code>String.prototype.indexOf</code>, <code>RegExp.prototype.test</code>,{" "}
+					<code>Math.round</code>, <code>Math.max</code> con más de dos valores,{" "}
+					<code>parseFloat</code>, <code>parseInt</code>, <code>URL</code>, <code>NodeFilter</code>{" "}
+					y otros) detiene el análisis con un error de código <code>PAGE_BUILTINS_BROKEN</code> que
+					nombra cada uno, en lugar de dar un resultado que parece correcto y es erróneo; también lo
+					hace un getter que un script puso en <code>Object.prototype</code> y que lanza un error o
+					da un valor (<code>Object.prototype.type</code>), y un objeto integrado tan roto que la
+					propia comprobación lanza un error (su lista <code>broken</code> queda entonces vacía).
+					Uno roto antes de inyectar el bundle (<code>Object.keys</code>) impide que el bundle se
+					cargue. Una página que añade{" "}
 					<code>then</code> a <code>Object.prototype</code> se analiza como cualquier otra. Una
 					página que sustituye <code>Array.from</code>, como hacen Prototype y MooTools, también se
 					analiza (desde core 1.16.0): el código propio de core no lo usa. Una regla de un pack o
@@ -178,6 +187,18 @@ export function KnownLimitationsContent() {
 					métodos del DOM que una página sustituye (<code>getComputedStyle</code>,{" "}
 					<code>querySelectorAll</code>, <code>getBoundingClientRect</code>) no se comprueban: las
 					reglas leen lo que devuelven.
+				</li>
+				<li>
+					<strong>Un elemento personalizado que sobrescribe miembros del DOM se lee tal como
+					responde.</strong> El motor lee las propiedades y los métodos de un elemento como lo
+					harían los propios scripts de la página (solo en un formulario o en el documento lee más
+					allá de los controles con nombre que los sustituyen), así que una clase de elemento
+					personalizado que define su propio <code>tagName</code>, <code>parentNode</code>,{" "}
+					<code>getAttribute</code>, <code>textContent</code> u otro miembro, en la clase o en la
+					instancia, se lee a través de ese miembro. Donde uno devuelve algo distinto de lo que
+					devolvería el DOM, las reglas juzgan lo que devuelve; donde uno lanza un error, una regla
+					que lo lee informa del error (<code>error</code> en su resultado, resultado{" "}
+					<code>cantTell</code>) en lugar de un veredicto, y las demás reglas continúan.
 				</li>
 				<li>
 					<strong>Un nombre no se calcula a partir de contenido anidado a más de 256 niveles de
@@ -201,8 +222,32 @@ export function KnownLimitationsContent() {
 					podría venir de un elemento personalizado que se renderiza pero no muestra contenido
 					legible, en lugar de hacerlo fallar. Una raíz cerrada en un elemento incorporado (un{" "}
 					<code>&lt;span&gt;</code>) parece una vacía, como un icono dibujado con CSS, así que un
-					botón sobre una sigue fallando. Comprueba a mano lo que expone ese componente, por
-					ejemplo con un lector de pantalla.
+					botón sobre una sigue fallando. Dentro de una raíz cerrada no se comprueba nada: ninguna
+					regla encuentra sus elementos, su texto ni sus campos de formulario. Lo que la página
+					inserta en un slot de una sí se comprueba, pero no se ve la estructura propia de la raíz
+					cerrada a su alrededor: los botones de opción insertados en un{" "}
+					<code>&lt;fieldset&gt;</code> con un <code>&lt;legend&gt;</code> dentro de una raíz
+					cerrada siguen provocando la pregunta de{" "}
+					<a href="/rules/form-group-name-present/"><code>form-group-name-present</code></a> (
+					<code>RADIO_GROUP_NO_NAME</code>), aunque el árbol de accesibilidad de Chromium nombra su
+					grupo. Comprueba a mano lo que expone ese componente, por ejemplo con un lector de
+					pantalla.
+				</li>
+				<li id="opening-closed-shadow-roots">
+					<strong>Un host que controla el navegador puede abrir las raíces shadow cerradas para un
+					análisis.</strong>{" "}
+					Core no ofrece ningún hook para las raíces cerradas. Un script que se ejecuta antes que
+					los de la página y envuelve <code>Element.prototype.attachShadow</code> para crear
+					abiertas todas las raíces (<code>{"{ ...init, mode: 'open' }"}</code>), como lo ejecutan{" "}
+					<code>addInitScript</code> de Playwright o <code>Page.addScriptToEvaluateOnNewDocument</code>{" "}
+					de CDP, las hace legibles, y el motor lee entonces esas raíces como abiertas. Comprobado
+					en Chromium: con el hook, los botones de opción de arriba pasan{" "}
+					<code>form-group-name-present</code>. Dos límites: una raíz declarativa{" "}
+					<code>shadowrootmode="closed"</code> la crea el analizador de HTML, no{" "}
+					<code>attachShadow</code>, así que sigue cerrada; y el hook cambia la página, ya que sus
+					propios scripts también pueden llegar entonces a las raíces (<code>host.shadowRoot</code>{" "}
+					deja de ser <code>null</code>), así que úsalo para un análisis, no para la página que usan
+					las personas.
 				</li>
 				<li>
 					<strong>
@@ -403,20 +448,26 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>
-						El <code>text-shadow</code> calculado por jsdom no es fiable en una segunda lectura
-						del mismo elemento.
+						El <code>text-shadow</code> calculado por jsdom depende de lo que se leyó antes.
 					</strong>{" "}
-					Confirmado en jsdom 29.1.1: leer un valor calculado de <code>text-shadow</code> por
-					segunda vez en el mismo elemento (mediante cualquier propiedad de acceso, desde cualquier{" "}
-					<code>CSSStyleDeclaration</code> recién solicitado para ese elemento, sin importar el
-					caché) devuelve de forma silenciosa un valor distinto e incorrecto de "sin sombra" en
-					lugar del valor realmente declarado. La primera lectura siempre es correcta. Este motor
-					lo evita internamente leyendo el <code>text-shadow</code> de cada elemento exactamente
-					una vez por ejecución y guardando el resultado en caché (consulta{" "}
-					<code>__textShadowInfoEl</code> en <code>src/core/contrast-helpers.js</code>), así que un
-					único análisis no se ve afectado. Solo aparece si tú mismo lees{" "}
-					<code>getComputedStyle(el).textShadow</code> más de una vez sobre el mismo elemento
-					analizado por jsdom. Un navegador real no tiene este error.
+					Confirmado en jsdom 29.1.1: el valor que da para un elemento puede cambiar de una lectura
+					a la siguiente, mediante cualquier propiedad de acceso y desde un{" "}
+					<code>CSSStyleDeclaration</code> recién solicitado. En la mayoría de los elementos la
+					primera lectura es el valor declarado y una posterior un "sin sombra" incorrecto; en un{" "}
+					<code>button</code>, <code>input</code>, <code>select</code> o <code>textarea</code>{" "}
+					dentro de un elemento con sombra ocurre al revés: la primera lectura no da sombra y una
+					posterior da la sombra que hereda, que un navegador, cuya propia hoja de estilo da a los
+					controles de formulario <code>text-shadow: none</code>, nunca dibuja. El motor lee el{" "}
+					<code>text-shadow</code> de cada elemento una vez por análisis y lo conserva (consulta{" "}
+					<code>__textShadowInfoEl</code> en <code>src/core/contrast-helpers.js</code>), y bajo
+					jsdom toma el de un control de formulario de las propias reglas de la página (su atributo
+					style, o una regla que lo seleccione; <code>inherit</code> toma el de su padre) y ninguno
+					en otro caso, así que un análisis lee las mismas sombras que Chromium, y un segundo
+					análisis del mismo DOM las mismas que el primero. Donde no se puede leer una hoja o un
+					selector, el valor calculado del control de formulario se lee como el de cualquier
+					elemento. Solo aparece si tú mismo lees <code>getComputedStyle(el).textShadow</code> más
+					de una vez sobre el mismo elemento analizado por jsdom; un navegador real no tiene este
+					error.
 				</li>
 				<li>
 					<strong>
@@ -433,6 +484,24 @@ export function KnownLimitationsContent() {
 					primero preguntó (<code>contrast-computable</code>). Analiza un parseo nuevo, o cambia el
 					DOM entre análisis, lo que vacía la caché de jsdom; <code>@surea11y/core/testing</code>{" "}
 					lo hace en su propio segundo análisis. Un navegador real no tiene este error.
+				</li>
+				<li id="jsdom-synchronous-loop">
+					<strong>
+						jsdom conserva cada página creada en una misma ejecución síncrona hasta que gira el
+						bucle de eventos.
+					</strong>{" "}
+					Confirmado en jsdom 29.1.1: un <code>JSDOM</code> nuevo pone en cola su trabajo de{" "}
+					<code>DOMContentLoaded</code> y <code>load</code> como tareas de promesa, que retienen el
+					documento y su ventana hasta que se ejecutan, y solo se ejecutan cuando el código que lo
+					creó cede el control; <code>window.close()</code> no los libera. Varios análisis seguidos
+					en un bucle <code>for</code> simple, sin ningún <code>await</code> entre ellos, mantienen
+					así vivas todas las páginas: con <code>runa11yCoreOnHtml</code> sobre páginas de 75 KB,
+					unos 80 MB por análisis, hasta que Node se queda sin memoria. Core no retiene nada de
+					ello. Cede el control entre análisis,{" "}
+					<code>{"await new Promise((r) => setImmediate(r))"}</code>, y la memoria se mantiene
+					estable (20 análisis de la misma página se quedaron en unos 210 MB). Un ejecutor de
+					pruebas cede el control entre pruebas, así que esto importa en un bucle dentro de una
+					prueba o en un script.
 				</li>
 				<li>
 					<strong>
@@ -466,6 +535,73 @@ export function KnownLimitationsContent() {
 					color definido con <code>var()</code> no se puede leer ahí: se pregunta por el texto o el
 					fondo (<code>contrast-computable</code>) en lugar de medirlo. Usa un navegador real para
 					páginas grandes de producción.
+				</li>
+				<li>
+					<strong>
+						En Chromium, <code>text-spacing-content-loss</code> es lenta en una página muy grande
+						con muchas imágenes rotas o sin <code>src</code>.
+					</strong>{" "}
+					La regla añade el espaciado de WCAG 1.4.12 como hoja de estilo y vuelve a medir el texto,
+					y el recálculo de estilos que sigue es cosa de Chromium: para una imagen que muestra su
+					texto alternativo en lugar de una imagen (una cuyo <code>src</code> falta o no carga), su
+					tiempo crece con el cuadrado del número de esas imágenes. Medido: unos 1,3 s para 4.000,
+					5,4 s para 8.000; una página con unos cientos no se ve afectada. Deja la regla fuera de
+					ese análisis (<code>{"runOnly.excludeRuleIds: ['text-spacing-content-loss']"}</code>, o{" "}
+					<code>engineOptions.rules.exclude</code>), o la zona que contiene las imágenes (
+					<code>excludeSelectors</code>).
+				</li>
+				<li id="jsdom-contrast-asks">
+					<strong>
+						Bajo jsdom, el contraste no se mide donde el fondo necesita una maquetación para
+						situarse; se pregunta por el texto.
+					</strong>{" "}
+					jsdom no tiene geometría, y el motor no se inventa una (consulta la política de contraste
+					en{" "}
+					<a href={`${core}/docs/RULE_AUTHORING.md#87-contrast-edge-cases`}>
+						<code>RULE_AUTHORING.md</code>
+					</a>
+					, en GitHub). <code>contrast-computable</code> pregunta (<code>BACKGROUND_OVERLAP</code>,
+					con <code>blockerNoLayout</code> y un mensaje que dice que no había maquetación que medir)
+					por:
+					<ul>
+						<li>
+							El texto SVG pintado después de una forma de su <code>&lt;svg&gt;</code> que rellena
+							o traza y se dibuja (no oculta por <code>display</code> ni <code>visibility</code>,
+							como atributo o en CSS), incluso un <code>&lt;rect&gt;</code> que parece cubrir el
+							texto. En un navegador, un <code>&lt;rect&gt;</code>, <code>&lt;circle&gt;</code> o{" "}
+							<code>&lt;ellipse&gt;</code> sólido que cubre todo el texto se mide a partir de la
+							maquetación.
+						</li>
+						<li>
+							El texto cuyo propio elemento, o el elemento que le da su fondo (el ancestro más
+							cercano con un fondo opaco propio), tiene un <code>::before</code> o{" "}
+							<code>::after</code> al que las hojas de estilo dan contenido, una posición{" "}
+							<code>absolute</code> o <code>fixed</code> y un fondo, y que no ocultan (
+							<code>display: none</code>, <code>visibility: hidden</code>). No se leen su tamaño
+							ni sus desplazamientos, así que una pequeña insignia en una esquina de esos
+							elementos convierte también el texto en una pregunta. Un pseudoelemento en otro
+							ancestro entre ambos no se mira: el texto anidado en un host superpuesto sin fondo
+							propio se mide frente al fondo que hay detrás, lo que puede ser erróneo. En un
+							navegador se mide la caja del pseudoelemento.
+						</li>
+					</ul>
+				</li>
+				<li>
+					<strong>
+						Bajo jsdom, un símbolo de moneda en un elemento flex o grid, un float o una caja
+						posicionada se lee con el texto que tiene al lado.
+					</strong>{" "}
+					Un navegador calcula el <code>display</code> de un elemento flex o grid, de un float y de
+					una caja con posicionamiento absoluto como un bloque, así que un símbolo ahí no está en la
+					misma línea que las cifras que tiene al lado, y{" "}
+					<a href="/rules/symbol-graphic-contrast/"><code>symbol-graphic-contrast</code></a> lo
+					juzga como un gráfico. jsdom no calcula ese <code>display</code> y el motor no deduce
+					cajas a partir de <code>flex</code>, <code>grid</code>, <code>float</code> ni{" "}
+					<code>position</code>: solo los elementos de bloque, <code>&lt;br&gt;</code> y el texto
+					de un enlace (salvo que su carácter más cercano sea una cifra) terminan un tramo. Así que{" "}
+					<code>{'<div style="display:flex"><span>$</span><span>45.00</span></div>'}</code> es texto
+					ahí, sujeto a la relación del texto en <code>contrast-minimum</code>. Analiza en un
+					navegador para obtener la respuesta de la maquetación.
 				</li>
 				<li>
 					<strong>
@@ -504,7 +640,8 @@ export function KnownLimitationsContent() {
 				<li>
 					<strong>Bajo jsdom, el texto se juzga por su <code>font-size</code> calculado.</strong> En
 					un navegador, las reglas de contraste y <code>p-as-heading</code> juzgan el texto por el
-					tamaño al que se dibuja, incluidos el <code>zoom</code> de CSS, una transformación SVG y{" "}
+					tamaño al que se dibuja, incluidos el <code>zoom</code> de CSS, un escalado uniforme por
+					transformación, una transformación SVG y{" "}
 					<code>font-size-adjust</code>, este último a partir de las métricas de la propia fuente (
 					<code>font-size: 24px; font-size-adjust: 0.3</code> dibuja Arial a unos 14px, que no es
 					texto grande). jsdom no maqueta nada ni lee ninguna fuente, así que ahí el{" "}
@@ -523,17 +660,44 @@ export function KnownLimitationsContent() {
 					trampa de foco); <code>text-spacing-content-loss</code> añade una hoja de estilo con el espaciado de WCAG
 					1.4.12; <code>focus-not-obscured-minimum</code> y <code>-enhanced</code> desplazan la página
 					para que un elemento quede bajo una caja fija o sticky y comprobar ahí qué recibe el
-					puntero, lo que dispara los manejadores de <code>scroll</code> de la página después de que
-					estos hayan medido (un encabezado que se oculta al desplazarse puede reaccionar); las reglas de contraste añaden un frame vacío fuera de la pantalla para leer los
-					colores propios del navegador para un texto provisional o un{" "}
-					<code>&lt;select&gt;</code> desplegable. El análisis también lleva cada animación en
-					curso a un punto fijo mientras se ejecutan las reglas (una finita a su final, una
-					infinita a su inicio), así que un fundido de entrada se mide ya asentado. Todo esto se
-					restablece antes de que termine la regla o el análisis: el foco, la posición de
-					desplazamiento, los atributos style, las animaciones, la hoja de estilo añadida y el
-					frame. Lo que no se puede
-					restablecer es lo que hagan los scripts de la página en respuesta, ya que enfocar un
-					elemento dispara sus manejadores <code>focus</code> y <code>focusin</code>: un carrusel
+					puntero (en una página que impide el desplazamiento, como una cuyo <code>scrollTo</code>{" "}
+					no hace nada, no se puede comprobar nada, y se pregunta por cada una de esas cajas sin
+					tendencia, con <code>notScrolled: true</code>); los <code>scroll</code> y{" "}
+					<code>scrollend</code> que el navegador dispara después por ello no llegan a los oyentes
+					de la página, salvo a uno de captura que la página puso en la ventana antes del análisis,
+					así que un widget que una página carga en su primer desplazamiento sigue sin cargar; las
+					reglas de contraste añaden un frame vacío para leer los colores propios del navegador
+					para un texto provisional o un <code>&lt;select&gt;</code> desplegable (uno por análisis,
+					guardado en una raíz shadow cerrada de un elemento oculto{" "}
+					<code>&lt;surea11y-probe&gt;</code> al final de <code>&lt;html&gt;</code>, así que
+					ninguna regla lo encuentra y su evento <code>load</code>, que no cruza la raíz shadow, no
+					llega a ninguno de los oyentes de la página, ni siquiera a uno de captura), y un elemento
+					oculto con el que miden un color, una fuente o el lienzo, que se añade y se quita de
+					inmediato. Un <code>MutationObserver</code> de la página ve esas adiciones (el contenedor
+					del frame una vez, añadido y quitado), y el <code>&lt;style&gt;</code> de{" "}
+					<code>text-spacing-content-loss</code> al añadirse y quitarse: se le llama con esos
+					registros cuando el análisis termina, y un script que reacciona a cualquier cambio del
+					documento (volviendo a renderizar, o contando sus nodos) se ejecuta entonces. El análisis
+					también lleva cada animación en curso a un punto fijo mientras se ejecutan las reglas
+					(una finita a su final, una infinita a su inicio), así que un fundido de entrada se mide
+					ya asentado; también las de los elementos en raíces shadow abiertas, salvo que{" "}
+					<code>includeShadowDom</code> esté desactivado. Una animación en una raíz shadow cerrada
+					no se alcanza. Todo esto se restablece antes de que termine la regla o el análisis: el
+					foco, la selección de la página y el cursor de texto (en el documento y en un campo de
+					texto con el foco), la posición de desplazamiento, los atributos style, las animaciones,
+					la hoja de estilo añadida y el frame. El foco se sigue dentro de raíces shadow abiertas y
+					de frames del mismo origen, y se restablece ahí. El foco dentro de una raíz shadow
+					cerrada es el único lugar donde no se podría: el motor solo ve el host, y mover el foco
+					perdería en qué punto de la raíz estaba. Así que <code>aria-hidden-focus</code> no hace
+					la prueba en ese caso: el foco se queda donde está, y los elementos enfocables ocultos se
+					juzgan sin la prueba, informados como lo serían sin centinela que encontrar, nunca
+					pasados a revisión como si lo fueran. Un elemento personalizado con el foco cuya raíz
+					shadow el motor no puede leer se toma como ese host, incluso uno con{" "}
+					<code>tabindex</code> que tiene el foco él mismo, ya que no se pueden distinguir; igual
+					que un <code>&lt;div&gt;</code>, un <code>&lt;span&gt;</code> u otro elemento con el foco
+					que puede llevar una raíz shadow y no puede recibir el foco por sí solo. Lo que no se
+					puede restablecer es lo que hagan los scripts de la página en respuesta, ya que enfocar
+					un elemento dispara sus manejadores <code>focus</code> y <code>focusin</code>: un carrusel
 					puede pasar a la diapositiva enfocada, moviendo <code>aria-hidden</code> con ella, o
 					activar un botón. Los hallazgos de ese análisis son los de la página tal como se encontró:{" "}
 					<code>aria-hidden-focus</code> lee qué subárboles están ocultos, y el marcado que informa,
@@ -586,6 +750,45 @@ export function KnownLimitationsContent() {
 					directamente contra una página ya cargada mediante el Patrón 2, no la CLI de obtención
 					estática.
 				</li>
+				<li id="reflow">
+					<strong>El reflujo (1.4.10) solo se comprueba con el ancho que indica.</strong>{" "}
+					<a href="/rules/reflow-horizontal-scroll/"><code>reflow-horizontal-scroll</code></a> se
+					aplica a una página maquetada con 320 píxeles CSS de ancho o menos, y es{" "}
+					<code>notApplicable</code> en cualquier viewport más ancho: analiza la página con ese
+					ancho para comprobar el reflujo (el viewport de un teléfono, o un frame de 320 píxeles de
+					ancho cuyo documento el host designa como la página con <code>topLevelDocument</code>).
+					Mide el desplazamiento lateral, y pregunta por lo que corta el borde donde la página
+					recorta sus lados; si se pierde contenido o una función cuando un menú se pliega, o un
+					control se mueve, sigue siendo cosa de una persona (
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#reflow`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					, en GitHub). El texto vertical, que el 1.4.10 mide a 256 píxeles de alto, no se
+					comprueba.
+				</li>
+				<li id="resize-text">
+					<strong>
+						El cambio de tamaño del texto (1.4.4) solo se comprueba en busca de texto cortado con
+						640 píxeles CSS de ancho o menos.
+					</strong>{" "}
+					<a href="/rules/resize-text-content-loss/"><code>resize-text-content-loss</code></a> se
+					aplica a una página maquetada en un viewport de 640 píxeles CSS de ancho o menos, como la
+					muestra una ventana de 1280 píxeles al 200 % de zoom, y es <code>notApplicable</code> en
+					cualquier viewport más ancho: analiza la página con ese ancho (un frame de 640 píxeles de
+					ancho cuyo documento el host designa como la página con <code>topLevelDocument</code>, o
+					una ventana de ese tamaño). El motor no aplica zoom a la página ni cambia el tamaño del
+					viewport por sí mismo: el script de una página no puede hacer ninguna de las dos cosas, y
+					el <code>zoom</code> de CSS en la raíz no cumpliría las media queries como lo hace el zoom
+					del navegador. Pregunta por el texto que una caja con desbordamiento oculto corta o acorta
+					(puntos suspensivos, limitación de líneas), y nunca falla: si el texto completo se ofrece
+					de otro modo es cosa de una persona. No se mide el texto cortado solo por el
+					desbordamiento del propio viewport, el texto que no crece al aplicar zoom ni los controles
+					que dejan de funcionar al 200 % (
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#resize-text`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					, en GitHub).
+				</li>
 				<li>
 					<strong>El diseño se mide en un único viewport, con las fuentes que tiene la página en
 					ese momento.</strong> Las reglas que miden lo que dibuja el navegador,{" "}
@@ -595,6 +798,14 @@ export function KnownLimitationsContent() {
 					,{" "}
 					<a href="/rules/target-size-minimum/">
 						<code>target-size-minimum</code>
+					</a>
+					,{" "}
+					<a href="/rules/reflow-horizontal-scroll/">
+						<code>reflow-horizontal-scroll</code>
+					</a>
+					,{" "}
+					<a href="/rules/resize-text-content-loss/">
+						<code>resize-text-content-loss</code>
 					</a>{" "}
 					y{" "}
 					<a href="/rules/skip-link/">
@@ -730,8 +941,8 @@ export function KnownLimitationsContent() {
 						región de impacto a partir del diseño, no mediante pruebas de impacto (hit-testing).
 					</strong>{" "}
 					Los objetivos por debajo del pliegue o dentro de una caja con desplazamiento se miden
-					enteros, como si estuvieran desplazados a la vista; las cajas fijas y sticky sobre un
-					objetivo se ignoran; las transformaciones 3D, la mayoría de las formas de{" "}
+					enteros, como si estuvieran desplazados a la vista; lo que se pinta sobre un objetivo
+					(una capa superpuesta, una caja fija o sticky) no le quita nada; las transformaciones 3D, la mayoría de las formas de{" "}
 					<code>clip-path</code> y el recorte redondeado de un ancestro se miden como una caja
 					delimitadora; y los enlaces separados solo por separadores ("Edit | Delete") que se
 					amontonan entre sí se preguntan en lugar de quedar exentos. Bajo jsdom, la regla es{" "}
@@ -752,7 +963,12 @@ export function KnownLimitationsContent() {
 					(2.4.12) necesitan un navegador: bajo jsdom son <code>notApplicable</code>{" "}
 					(<code>data.reason: 'noLayout'</code>). En un navegador preguntan qué elementos del orden
 					de tabulación puede ocultar una caja <code>position: fixed</code> o <code>sticky</code> que
-					dibuja algo, dada la ventana que usa el análisis y el <code>scroll-padding</code> de la
+					dibuja algo (un fondo o una imagen, un <code>box-shadow</code> interior que la rellena, o
+					un <code>::before</code> o <code>::after</code> con fondo posicionado encima; una
+					caja fija dentro de un ancestro que es su bloque contenedor, mediante una transformación, un
+					filtro, <code>perspective</code>, contención, un tipo de contenedor o{" "}
+					<code>will-change</code>, se desplaza con ese ancestro y no cuenta como fija), dada la
+					ventana que usa el análisis y el <code>scroll-padding</code> de la
 					página, y lo confirman comprobando qué recibe el puntero en unos pocos de ellos. Quedan
 					fuera: un elemento dentro de una caja con desplazamiento propio, o dentro de una caja fija
 					o sticky; el desplazamiento horizontal; otro contenido superpuesto a un elemento (una caja

@@ -23,7 +23,9 @@ const sarifFieldRows = [
 			<>
 				Le condensé SHA-256, en 64 chiffres hexadécimaux, de la même clé d’identité{" "}
 				<code>ruleId + reasonCode + html</code> que celle utilisée par{" "}
-				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code>) :
+				<a href="/conformance/baseline/">Baseline / allowlist</a> (<code>computeBaselineKey</code> ;{" "}
+				<code>selector</code> à la place de <code>html</code> pour un constat sans balisage, comme
+				avec <code>output.includeHtml: false</code>) :
 				une empreinte stable fondée sur le contenu plutôt que sur la position, pour les
 				consommateurs qui la lisent ; le même constat reçoit le même condensé dans chaque
 				rapport. Avant la version 1.11, <code>surea11y/violation/v1</code> contenait la clé
@@ -33,7 +35,11 @@ const sarifFieldRows = [
 				1.14, les constats des dix-sept règles qui donnent désormais un code, et ceux des codes
 				scindés selon leur cause ; leurs alertes Code Scanning se ferment donc une fois et les
 				constats reviennent comme nouveaux (voir{" "}
-				<a href="/conformance/baseline/">Baseline / allowlist</a>).
+				<a href="/conformance/baseline/">Baseline / allowlist</a>). En 1.18, un constat sans
+				balisage est identifié par son sélecteur (auparavant, tous ces constats d’une même règle et
+				d’un même code de raison partageaient un condensé), et le condensé d’un constat dont le
+				balisage contient un nom de classe avec une espace insécable, ou une balise ouvrante
+				coupée par la limite de l’extrait, change une fois.
 			</>
 		),
 	},
@@ -59,17 +65,19 @@ const sarifFieldRows = [
 	{ id: "helpUri", field: <code>tool.driver.rules[].helpUri</code>, source: <><code>meta.helpUrl</code>, le lien d’aide de la règle, quand c’est une URL <code>http(s)</code> absolue ; sinon le document Understanding du premier critère WCAG auquel elle est associée ; absent pour une règle qui n’a ni l’un ni l’autre, ce qui n’est le cas d’aucune règle intégrée : une règle associée à aucun critère renvoie à sa section du catalogue des règles.</> },
 	{ id: "toolVersion", field: <code>tool.driver.version</code>, source: <>L’option <code>toolVersion</code>, si elle est fournie (un outil qui enveloppe le moteur passe la sienne) ; sinon <code>engine.version</code>, la version du moteur qui a produit le résultat.<code>"0.0.0"</code> seulement pour un résultat qui n’en a pas, issu d’une version antérieure à 1.10.0, ou dont l’<code>engine.version</code> n’est pas une chaîne.</> },
 	{ id: "category", field: <code>runs[0].automationDetails.id</code>, source: <>L’option <code>category</code>, avec un <code>/</code> final ajouté s’il n’y en a pas (GitHub lit tout ce qui précède la dernière barre oblique comme la catégorie). Absent lorsqu’aucune catégorie n’est fournie. Voir <a href="#scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</a>.</> },
-	{ id: "runProps", field: <code>runs[0].properties</code>,source: <><code>wcagVersion</code>, <code>wcagLevel</code> (quand l’analyse avait un niveau : <code>engineOptions.wcagLevel</code>, ou celui que donne sa sélection), <code>profile</code> (le premier profil, pour une analyse de plusieurs profils), <code>profiles</code> (une analyse de plusieurs profils uniquement : chaque profil qu’elle a exécuté, <code>engine.profiles</code>), <code>optInRules</code> et <code>environment</code> (une copie de <code>engine.environment</code>) issus de l’<code>engine</code> du résultat : la cible de conformité utilisée par l’exécution, pour qu’un tableau de bord distingue une exécution WCAG 2.1 d’une exécution 2.2, et une exécution AA d’une exécution à tous les niveaux, les tags de règles optionnelles qu’elle a ajoutés au-delà de cette cible, s’il y en a, et les conditions dans lesquelles la page a été rendue (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code> et tout autre champ qu’il contient, y compris ceux des hooks ; voir <a href="/results-reports/output-schema/#top-level-result">Schéma de sortie</a>). Omis pour les résultats de versions antérieures à ces champs.</> },
+	{ id: "extensions", field: <code>tool.extensions</code>, source: <>Présent uniquement quand l’analyse s’est exécutée avec des packs (<code>engine.packs</code>) : chaque pack comme composant de l’outil, <code>{"{ name, version }"}</code> (<code>{'{ "name": "@surea11y/pack-en301549", "version": "1.5.0" }'}</code>), triés par nom, depuis chaque frame d’un résultat multi-frames, pour qu’un tableau de bord sache quel pack et quelle version ont jugé les règles ajoutées par un pack. Core 1.18.0 et ultérieur.</> },
+	{ id: "runProps", field: <code>runs[0].properties</code>, source: <><code>wcagVersion</code>, <code>wcagLevel</code> (quand l’analyse avait un niveau : <code>engineOptions.wcagLevel</code>, ou celui que donne sa sélection), <code>profile</code> (le premier profil, pour une analyse de plusieurs profils), <code>profiles</code> (une analyse de plusieurs profils uniquement : chaque profil qu’elle a exécuté, <code>engine.profiles</code>), <code>optInRules</code>, <code>packs</code> (quand l’analyse s’est exécutée avec des packs : <code>engine.packs</code>, chacun sous la forme <code>name@version</code>) et <code>environment</code> (une copie de <code>engine.environment</code>) issus de l’<code>engine</code> du résultat : la cible de conformité utilisée par l’exécution, pour qu’un tableau de bord distingue une exécution WCAG 2.1 d’une exécution 2.2, et une exécution AA d’une exécution à tous les niveaux, les tags de règles optionnelles qu’elle a ajoutés au-delà de cette cible, s’il y en a, et les conditions dans lesquelles la page a été rendue (<code>layout</code>, <code>viewport</code>, <code>devicePixelRatio</code>, <code>colorScheme</code>, <code>forcedColors</code>, <code>fonts</code> et tout autre champ qu’il contient, y compris ceux des hooks ; voir <a href="/results-reports/output-schema/#top-level-result">Schéma de sortie</a>). Omis pour les résultats de versions antérieures à ces champs.</> },
 ];
 
 const sarifOptionRows = [
 	{ id: "toolVersion", option: <code>toolVersion</code>, def: <code>engine.version</code>, effect: <><code>tool.driver.version</code>, pour un outil qui enveloppe le moteur.</> },
 	{ id: "informationUri", option: <code>informationUri</code>, def: <code>'https://github.com/SureA11y/core'</code>, effect: <><code>tool.driver.informationUri</code>, la page d’accueil de l’outil.</> },
 	{ id: "baselineEntries", option: <code>baselineEntries</code>, def: "aucune", effect: <>Le fichier de baseline tel qu’enregistré (son <code>JSON.parse</code>) ou sa liste <code>entries</code>, voir <a href="/conformance/baseline/#file-format">Format du fichier</a>. Les occurrences <code>fail</code> qui y sont enregistrées sont omises, comme le fait <code>--baseline</code> (voir ci-dessous). Une entrée écrite par la version mineure précédente, sous un code de raison qui a changé depuis, correspond toujours au constat sous son nouveau code (voir <a href="/conformance/baseline/#upgrading">Mettre à jour</a>).</> },
-	{ id: "allowProfilesNotRun", option: <code>allowProfilesNotRun</code>, def: <code>false</code>, effect: <>Une analyse de <a href="/configuration/engine-options/#several-profiles">plusieurs profils</a> qui en a exécuté moins qu’elle n’en demandait (<code>engine.profilesNotRun</code>) a compté moins que ce qui lui était demandé : chaque profil non exécuté est une notification <code>error</code>, et l’invocation n’est pas <code>executionSuccessful</code>. <code>true</code> en fait des avertissements. Une valeur autre que <code>true</code> ou <code>false</code> lève une <code>TypeError</code>. Core 1.15.0 et ultérieur.</> },
+	{ id: "allowProfilesNotRun", option: <code>allowProfilesNotRun</code>, def: <code>false</code>, effect: <>Une analyse de <a href="/configuration/engine-options/#several-profiles">plusieurs profils</a> qui en a exécuté moins qu’elle n’en demandait (<code>engine.profilesNotRun</code>) a compté moins que ce qui lui était demandé : chaque profil non exécuté est une notification <code>error</code>, et l’invocation n’est pas <code>executionSuccessful</code>. <code>true</code> en fait des avertissements. Lue comme <code>leanFailWcagOnly</code>. Core 1.15.0 et ultérieur.</> },
 	{ id: "category", option: <code>category</code>, def: "aucune", effect: <><code>runs[0].automationDetails.id</code>, voir <a href="#scanning-at-several-viewport-widths">Analyser à plusieurs largeurs de viewport</a>.</> },
 	{ id: "leanFailAs", option: <code>leanFailAs</code>, def: <code>'warning'</code>, effect: <><code>'error'</code> signale au niveau <code>error</code> un constat <code>cantTell</code> dont la tendance pointe vers l’échec, si bien qu’un build bloqué sur les erreurs échoue aussi sur les échecs probables. Lue quelle que soit la casse ; toute autre valeur lève une <code>TypeError</code>. Y compris pour une règle de bonne pratique : une telle règle, associée à aucun critère WCAG, n’échoue jamais, et les faits qu’elle constate penchent vers l’échec sans condition, si bien qu’un niveau de titre sauté (<code>heading-order</code>) devient une <code>error</code>. Le constat d’une règle dont chaque critère est hors de la cible de l’analyse reste une <code>note</code>. Un constat qui penche vers l’échec et a une entrée marquée <code>lean: 'fail'</code> dans <code>baselineEntries</code> reste un <code>warning</code>.</> },
-	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <>Avec <code>leanFailAs: 'error'</code>, <code>true</code> ne relève que les constats des règles associées à un critère WCAG de la cible de l’analyse, en laissant les tendances des règles de bonne pratique au niveau <code>warning</code>. Une valeur autre que <code>true</code> ou <code>false</code> lève une <code>TypeError</code>. <code>leaningFailures(result, {"{ wcagOnly }"})</code>, de <code>@surea11y/core</code>, liste les constats que ces deux options relèvent, avant la baseline.</> },
+	{ id: "leanFailWcagOnly", option: <code>leanFailWcagOnly</code>, def: <code>false</code>, effect: <>Avec <code>leanFailAs: 'error'</code>, <code>true</code> ne relève que les constats des règles associées à un critère WCAG de la cible de l’analyse, en laissant les tendances des règles de bonne pratique au niveau <code>warning</code>. Donnée comme l’écrit une ligne de commande ou une variable d’environnement (<code>'true'</code>, <code>'false'</code>, <code>'1'</code>, <code>'0'</code>, <code>1</code>, <code>0</code>), elle est lue comme telle, avec un avertissement ; toute autre chaîne ou tout autre nombre est ignoré avec un avertissement ; une valeur illisible (un <code>BigInt</code>, un objet) lève une <code>TypeError</code>, tout comme ce qui n’est ni <code>true</code> ni <code>false</code> avec <code>strictOptions</code>. <code>leaningFailures(result, {"{ wcagOnly }"})</code>, de <code>@surea11y/core</code>, liste les constats que ces deux options relèvent, avant la baseline.</> },
+	{ id: "strictOptions", option: <code>strictOptions</code>, def: <code>false</code>, effect: <><code>true</code> (ou <code>'true'</code>, <code>'1'</code>, <code>1</code>) fait qu’un interrupteur donné autrement que <code>true</code> ou <code>false</code> lève une <code>TypeError</code>, comme le fait <a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions"><code>engineOptions.strictOptions</code></a> pour une analyse. Core 1.18.0 et ultérieur.</> },
 	{ id: "packs", option: <code>packs</code>, def: "aucune", effect: <>Les packs que l’analyse a exécutés (<code>engineOptions.packs</code>) : dans Node, les constats non tranchés d’une règle de pack portent les étapes de son propre <code>meta.review</code> (<code>properties.howToCheck</code>).</> },
 ];
 
@@ -152,6 +160,31 @@ export function SarifReportContent() {
 				<code>"The rule &lt;id&gt; did not complete: &lt;error&gt;"</code>, qui nomme la règle
 				dans <code>associatedRule.id</code>, pour que le trou dans la couverture ne se lise pas
 				comme une réussite.
+			</p>
+			<p id="capped-occurrences">
+				Une règle dont{" "}
+				<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a>{" "}
+				a laissé une partie des occurrences hors du résultat reçoit une notification de niveau{" "}
+				<code>note</code>,{" "}
+				<code>"+&lt;n&gt; more occurrences of the rule &lt;id&gt; not listed: output.maxOccurrencesPerRule kept &lt;k&gt;"</code>.
+				Un échec laissé de côté ne peut pas être comparé à <code>baselineEntries</code> : quand la
+				baseline connaissait chaque échec conservé, la règle reçoit un résultat{" "}
+				<code>error</code> pour ceux laissés de côté (code de raison{" "}
+				<code>OCCURRENCES_OMITTED</code>, situé sur la page), pour qu’une analyse plafonnée ne se
+				lise jamais comme sans constat. Core 1.18.0 et ultérieur.
+			</p>
+			<p id="rules-not-run">
+				Une règle que le budget de temps de l’analyse a laissée sans la démarrer (
+				<code>notRun</code>, voir{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">un budget de
+				temps</a>) n’a rien vérifié non plus : c’est une notification de niveau{" "}
+				<code>error</code>,{" "}
+				<code>"The rule &lt;id&gt; was not run: the scan reached its time budget of &lt;n&gt; ms first, so it checked nothing"</code>,
+				qui nomme la règle dans <code>associatedRule.id</code>, et l’invocation n’est pas{" "}
+				<code>executionSuccessful</code>. Un profil d’une analyse de plusieurs profils que le
+				budget a laissé sans le démarrer (<code>engine.profilesNotRun</code>, raison{" "}
+				<code>timeBudget</code>) est aussi de niveau <code>error</code>, quoi que dise{" "}
+				<code>allowProfilesNotRun</code>. Core 1.18.0 et ultérieur.
 			</p>
 			<DataTable
 				label="Résultats du moteur en niveaux SARIF"
@@ -339,6 +372,13 @@ export function SarifReportContent() {
 				]}
 				rows={sarifOptionRows}
 			/>
+			<p>
+				Des options <code>null</code> valent absence d’options. Une clé que le rapport ne lit pas et
+				qui ressemble à une faute de frappe d’une clé qu’il lit (<code>categroy</code>, ou{" "}
+				<code>baseline</code> pour <code>baselineEntries</code>) est ignorée avec un{" "}
+				<code>console.warn</code> qui nomme l’option voulue, comme une analyse le signale pour{" "}
+				<code>engineOptions</code>.
+			</p>
 
 			<h2>Combiner avec <code>--baseline</code></h2>
 			<p>

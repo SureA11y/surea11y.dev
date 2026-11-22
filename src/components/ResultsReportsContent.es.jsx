@@ -41,7 +41,8 @@ export function ResultsReportsContent() {
 				lo responde una persona, y algunos dicen hacia dónde apuntan los indicios de la página (una{" "}
 				<em>tendencia</em>), para que una revisión empiece por los fallos probables en lugar de por
 				una lista plana. Un análisis de varios perfiles recoge cada hallazgo una vez y dice qué hace
-				de él cada perfil. Vale la pena
+				de él cada perfil, y un análisis que su presupuesto de tiempo cortó nombra las reglas que no
+				ejecutó, así que nunca se lee como limpio. Vale la pena
 				leerlo una vez si estás construyendo algo sobre un resultado sin procesar. Ver{" "}
 				<a href="/results-reports/output-schema/">Esquema de salida</a> para la estructura completa.
 			</p>

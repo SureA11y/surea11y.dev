@@ -103,7 +103,7 @@
 <a class="skip" href="#main">Ir a los procedimientos</a>
 <header class="page">
 <h1>WCAG 2.2: cómo evaluar cada requisito</h1>
-<p>Requisitos: 55 · Procedimientos: 53</p>
+<p>Requisitos: 55 · Procedimientos: 54</p>
 <ul><li>Niveles: A, AA</li></ul>
 
 </header>
@@ -259,8 +259,8 @@
 <ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>Un lector de pantalla</span></li></ul>
 <ol class="steps"><li>Localizar cada campo de formulario de la página: campos de texto, casillas de verificación, botones de opción, listas desplegables y controles personalizados.</li><li>Para cada uno, seleccionarlo en el panel Elements de las herramientas para desarrolladores y comprobar que el nombre de su panel Accesibilidad contiene su etiqueta visible.</li><li>En un grupo de campos bajo una misma pregunta, como botones de opción o una fecha en tres partes, comprobar que el grupo es un &lt;fieldset&gt; con un &lt;legend&gt;, o que tiene role=&quot;group&quot; con nombre, para que la pregunta se lea con cada campo.</li><li>Comprobar que las instrucciones que se muestran junto a un campo (un formato, una marca de obligatorio) están vinculadas a él con aria-describedby o forman parte de su etiqueta.</li></ol>
 <dl class="verdict"><dt>Se supera si</dt><dd>El nombre de cada campo incluye su etiqueta visible, los grupos de campos tienen como nombre su pregunta y las instrucciones de cada campo están vinculadas a él.</dd><dt>No se supera si</dt><dd>Un campo solo está etiquetado por un texto cercano que no está vinculado a él, o la pregunta de un grupo no está vinculada a sus campos, así que un lector de pantalla lee un campo sin decir para qué sirve, lo que incumple WCAG 1.3.1.</dd></dl>
-<p class="rules">Reglas que lo comprueban: <code>form-control-programmatic-label-present</code></p>
-<div class="covers"><p>Este procedimiento también evalúa:</p><ul><li>Los controles de formulario tienen una etiqueta programática (label/aria-label/aria-labelledby/title/placeholder)</li><li>Las etiquetas de los controles de formulario son adecuadas</li></ul></div>
+<p class="rules">Reglas que lo comprueban: <code>form-control-programmatic-label-present</code>, <code>form-group-name-present</code></p>
+<div class="covers"><p>Este procedimiento también evalúa:</p><ul><li>Los controles de formulario tienen una etiqueta programática (label/aria-label/aria-labelledby/title/placeholder)</li><li>Las etiquetas de los controles de formulario son adecuadas</li><li>Botones de opción o casillas que comparten nombre y no están en ningún grupo con nombre (solo indicios)</li></ul></div>
 </section>
 <section class="facet" aria-labelledby="facet-1-3-1-aria-structure-valid">
 <h5 id="facet-1-3-1-aria-structure-valid">Los roles y las relaciones ARIA dan la misma estructura que muestra la página</h5>
@@ -352,10 +352,10 @@
 <h4 id="req-1-4-3"><span class="num">1.4.3</span> <span>Contraste (mínimo)</span></h4>
 <p class="meta"><span>Nivel AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-3-contrast-minimum-text">
-<h5 id="facet-1-4-3-contrast-minimum-text">El texto tiene un contraste de al menos 4.5:1 con su fondo, o de 3:1 si es grande</h5>
+<h5 id="facet-1-4-3-contrast-minimum-text">El texto tiene un contraste de al menos 4,5:1 con su fondo, o de 3:1 si es grande</h5>
 <ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
-<ol class="steps"><li>Recorrer la página en busca de texto que parezca tenue sobre su fondo: texto gris claro, texto sobre paneles de color, texto del atributo placeholder, texto sobre imágenes o degradados, texto en botones.</li><li>Para cada uno, inspeccionarlo y hacer clic en la muestra de su color en el panel Styles de las herramientas para desarrolladores: el selector de color muestra su relación de contraste con el fondo.</li><li>El selector de color mide respecto al color de fondo definido en CSS. Donde el texto esté sobre una imagen, un degradado o una capa semitransparente, o su color venga de la opacidad o de un modo de fusión, la cifra del selector no es fiable: usar en su lugar el paso siguiente.</li><li>Donde el fondo sea una imagen, un degradado o una capa semitransparente, medir el texto respecto a la parte del fondo en que menos se vea, con un analizador de contraste de color.</li><li>Comprobar que la relación es de al menos 4.5:1, o de 3:1 para texto grande: al menos 24 píxeles (18 pt), o 18.66 píxeles (14 pt) y en negrita.</li><li>No redondear el resultado: 4.49:1 no se supera. Comprobar también el texto en sus otros estados, como al pasar el puntero, con el foco y seleccionado, ya que un estado puede reducir el contraste.</li><li>Dejar fuera los logotipos y los nombres de marca, el texto de controles deshabilitados, el texto que es solo decorativo o que nadie puede ver, y el texto que forma parte de una imagen con otro contenido importante, como una señal de tráfico en una foto.</li></ol>
-<dl class="verdict"><dt>Se supera si</dt><dd>Todo el texto y todas las imágenes de texto tienen un contraste de al menos 4.5:1 con su fondo, o de 3:1 si son grandes.</dd><dt>No se supera si</dt><dd>Un texto tiene con su fondo un contraste inferior a 4.5:1 (3:1 para texto grande), así que las personas con baja visión no pueden leerlo, lo que incumple WCAG 1.4.3.</dd></dl>
+<ol class="steps"><li>Recorrer la página en busca de texto que parezca tenue sobre su fondo: texto gris claro, texto sobre paneles de color, texto del atributo placeholder, texto sobre imágenes o degradados, texto en botones.</li><li>Para cada uno, inspeccionarlo y hacer clic en la muestra de su color en el panel Styles de las herramientas para desarrolladores: el selector de color muestra su relación de contraste con el fondo.</li><li>El selector de color mide respecto al color de fondo definido en CSS. Donde el texto esté sobre una imagen, un degradado o una capa semitransparente, o su color venga de la opacidad o de un modo de fusión, la cifra del selector no es fiable: usar en su lugar el paso siguiente.</li><li>Donde el fondo sea una imagen, un degradado o una capa semitransparente, medir el texto respecto a la parte del fondo en que menos se vea, con un analizador de contraste de color.</li><li>Comprobar que la relación es de al menos 4,5:1, o de 3:1 para texto grande: al menos 24 píxeles (18 pt), o 18,66 píxeles (14 pt) y en negrita.</li><li>No redondear el resultado: 4,49:1 no se supera. Comprobar también el texto en sus otros estados, como al pasar el puntero, con el foco y seleccionado, ya que un estado puede reducir el contraste.</li><li>Dejar fuera los logotipos y los nombres de marca, el texto de controles deshabilitados, el texto que es solo decorativo o que nadie puede ver, y el texto que forma parte de una imagen con otro contenido importante, como una señal de tráfico en una foto.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Todo el texto y todas las imágenes de texto tienen un contraste de al menos 4,5:1 con su fondo, o de 3:1 si son grandes.</dd><dt>No se supera si</dt><dd>Un texto tiene con su fondo un contraste inferior a 4,5:1 (3:1 para texto grande), así que las personas con baja visión no pueden leerlo, lo que incumple WCAG 1.4.3.</dd></dl>
 <p class="rules">Reglas que lo comprueban: <code>contrast-minimum</code>, <code>contrast-computable</code></p>
 <div class="covers"><p>Este procedimiento también evalúa:</p><ul><li>El contraste del texto se puede calcular a partir del CSS para 1.4.3 (sin ambigüedad por imágenes, degradados o fusiones)</li></ul></div>
 </section>
@@ -368,8 +368,8 @@
 <ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>El zoom del navegador</span></li></ul>
 <ol class="steps"><li>Ampliar el zoom del navegador al 200 %.</li><li>Recorrer toda la página y comprobar que todo el texto ha aumentado de tamaño y que ninguno queda cortado, superpuesto u oculto.</li><li>Usar los controles, los menús y los formularios de la página a ese tamaño y comprobar que todos siguen funcionando.</li><li>En un teléfono, comprobar que se puede ampliar la página al 200 % pellizcando. Usar Chrome en Android con su ajuste de accesibilidad que fuerza la habilitación del zoom desactivado: Safari en iOS ignora una ventana gráfica que bloquea el zoom, así que puede ocultar este fallo.</li><li>Dejar fuera los subtítulos y las imágenes de texto.</li></ol>
 <dl class="verdict"><dt>Se supera si</dt><dd>Al 200 %, todo el texto ha aumentado de tamaño y sigue siendo legible, y todo sigue funcionando.</dd><dt>No se supera si</dt><dd>Al 200 %, el texto queda cortado, se superpone o no aumenta de tamaño, un control deja de funcionar o el zoom con los dedos está bloqueado, lo que incumple WCAG 1.4.4.</dd></dl>
-<p class="rules">Reglas que lo comprueban: <code>meta-viewport-zoom-enabled</code></p>
-<div class="covers"><p>Este procedimiento también evalúa:</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; no desactiva el zoom con los dedos ni lo limita por debajo del 200 %</li></ul></div>
+<p class="rules">Reglas que lo comprueban: <code>meta-viewport-zoom-enabled</code>, <code>resize-text-content-loss</code></p>
+<div class="covers"><p>Este procedimiento también evalúa:</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; no desactiva el zoom con los dedos ni lo limita por debajo del 200 %</li><li>A 640 píxeles CSS de ancho (zoom al 200 %), el texto dentro de una caja que oculta su desbordamiento no se recorta (se pregunta: si el texto completo se ofrece de otra forma lo decide una persona)</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-5" aria-labelledby="req-1-4-5">
@@ -389,9 +389,10 @@
 <p class="meta"><span>Nivel AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-10-reflow-320">
 <h5 id="facet-1-4-10-reflow-320">Con 320 píxeles CSS de ancho, el contenido no necesita desplazamiento en dos direcciones y no se pierde nada</h5>
-<ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li></ul>
-<p class="empty">Todavía no hay procedimiento para esto.</p>
-
+<ul class="badges"><li class="badge auto-partial">Las reglas deciden una parte</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>El zoom del navegador</span></li></ul>
+<ol class="steps"><li>Pon la ventana del navegador a 320 píxeles CSS de ancho: en las herramientas de desarrollo, activa la barra de dispositivos y pon el ancho a 320, o amplía al 400% una ventana de 1280 píxeles de ancho.</li><li>Recorre toda la página y comprueba si se desplaza hacia los lados además de hacia arriba y abajo.</li><li>Donde lo haga, busca qué es más ancho que la ventana. El contenido que necesita dos dimensiones para usarse o entenderse, como un mapa, un diagrama, un vídeo, un juego o una tabla de datos, puede desplazarse hacia los lados por sí solo.</li><li>Comprueba que todo el contenido y todos los controles siguen ahí y se pueden usar: los menús, formularios y botones pueden moverse o plegarse, pero no se puede perder nada.</li></ol>
+<dl class="verdict"><dt>Se supera si</dt><dd>Con 320 píxeles CSS de ancho la página se desplaza en una sola dirección, salvo el contenido que necesita dos dimensiones, y no se pierde nada.</dd><dt>No se supera si</dt><dd>Con 320 píxeles CSS de ancho la página necesita desplazarse hacia los lados para leer o usar su contenido, o se pierde algún contenido o función, lo que incumple WCAG 1.4.10.</dd></dl>
+<p class="rules">Reglas que lo comprueban: <code>reflow-horizontal-scroll</code></p>
 </section>
 </article>
 <article class="req" id="r-1-4-11" aria-labelledby="req-1-4-11">
@@ -410,7 +411,8 @@
 <ul class="badges"><li class="badge auto-manual">Solo una persona puede comprobarlo</li><li class="badge">Herramientas: <span>Las herramientas para desarrolladores del navegador</span></li></ul>
 <ol class="steps"><li>Buscar gráficos que transmitan información: iconos sin texto al lado, gráficos, diagramas, mapas e infografías.</li><li>En cada uno, localizar las partes necesarias para entenderlo, como la forma de un icono, las líneas y barras de un gráfico o los límites entre zonas.</li><li>Medir el contraste de cada parte con lo que la rodea con un comprobador de contraste. Necesita al menos 3:1. Una parte rotulada con texto, o cuya información también se da en un texto cercano, no lo necesita.</li><li>Dejar fuera los gráficos decorativos, los logotipos y los gráficos cuyo aspecto concreto es esencial, como una foto o una bandera.</li></ol>
 <dl class="verdict"><dt>Se supera si</dt><dd>Cada parte de un gráfico necesaria para entenderlo tiene un contraste de al menos 3:1, o su información se da de otra forma.</dd><dt>No se supera si</dt><dd>Una parte de un gráfico necesaria para entenderlo tiene un contraste inferior a 3:1, y su información no se da de otra forma, lo que incumple WCAG 1.4.11.</dd></dl>
-
+<p class="rules">Reglas que lo comprueban: <code>symbol-graphic-contrast</code></p>
+<div class="covers"><p>Este procedimiento también evalúa:</p><ul><li>Símbolos dibujados como texto sin letras ni cifras, usados como gráfico, por debajo de 3:1 (solo indicios)</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-12" aria-labelledby="req-1-4-12">

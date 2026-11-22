@@ -27,8 +27,10 @@ const optionRows = [
 			<>
 				Any string. A code with a subtag falls back to its base language first, so{" "}
 				<code>de-DE</code> uses <code>de</code>; failing that, English. Individual strings then
-				fall back the same way (chosen locale → <code>en</code> → the rule's literal English
-				text), so a partly-translated locale never produces missing text. All of that is silent
+				fall back the same way (chosen locale → its base language → <code>en</code> → the rule's
+					literal English text, with your <code>messages</code> before the built-in dictionary at
+					each step, so <code>{"messages: { 'de-AT': { … } }"}</code> keeps the built-in German for
+					the strings it leaves out), so a partly-translated locale never produces missing text. All of that is silent
 				in the strings themselves, so the result reports what actually happened in{" "}
 				<code>engine.locale</code> — check it if you need to know whether you got the language
 				you asked for. See <a href="/configuration/locales/">Locales</a>.
@@ -88,8 +90,11 @@ const optionRows = [
 				one in <code>engine.profiles</code>); otherwise ignored with a console warning. A name no
 				profile has throws <code>INVALID_ENGINE_OPTIONS</code> under <code>strictOptions</code>, in
 				a list too, with a message naming the profiles there are (also in the error's{" "}
-				<code>knownProfiles</code>): without a profile, the scan would run every rule. See{" "}
-				<a href="#conformance-profiles">"Conformance profiles"</a> above.
+				<code>knownProfiles</code>): without a profile, the scan would run every rule. An item of a
+					list that is not a name (an empty slot, <code>null</code>, a number, or a blank string such
+					as <code>''</code>) is ignored with a warning, and throws <code>INVALID_ENGINE_OPTIONS</code>{" "}
+					under <code>strictOptions</code>; so is a profile given empty, as <code>''</code> or{" "}
+					<code>[]</code>. See <a href="#conformance-profiles">"Conformance profiles"</a> above.
 			</>
 		),
 	},
@@ -286,15 +291,25 @@ const optionRows = [
 		meaning: (
 			<>
 				Elements matching any of these selectors (and their descendants, including what is in
-				their shadow roots, and the documents of frames among them) are skipped entirely, for{" "}
-				<strong>every</strong> rule — useful for cookie banners, third-party embeds, or
-				known-noisy widgets you don't control. To exclude something from just one specific rule
+				their shadow roots, and the documents of frames among them) get no findings, from{" "}
+					<strong>every</strong> rule — useful for cookie banners, third-party embeds, or
+					known-noisy widgets you don't control. They are still part of the page: a rule that judges
+					the page as a whole reads them as context (the page's heading outline in{" "}
+					<code>heading-order</code>, its level-one heading in <code>page-has-heading-one</code>, a
+					table's header row in <code>td-has-header</code>, its landmarks in{" "}
+					<code>page-zones-landmark</code>), so excluding a site header doesn't invent a skipped
+					heading level or a missing <code>&lt;h1&gt;</code>, and reports nothing in them. To
+					exclude something from just one specific rule
 				instead, use <code>rules[ruleId].excludeSelectors</code> below. An array of selectors, or
 				a string holding a selector list: <code>'#cookie-banner, img:not(.a, .b)'</code> is the
 				same as <code>['#cookie-banner', 'img:not(.a, .b)']</code>, since the string is cut only
 				at the commas between selectors. Each selector applies on its own: one that isn't valid
-				CSS excludes nothing, with a <code>console.warn</code>, and the others still apply.
-			</>
+				CSS excludes nothing, with a <code>console.warn</code>, and the others still apply. The
+					engine holds every rule to it, a pack's or a custom one included: an occurrence a rule
+					reports on an excluded element is dropped, and said in the result (
+					<code>excludedOccurrences</code> in{" "}
+					<a href="/results-reports/output-schema/#check-result">the output schema</a>). Core 1.18.0 and later.
+				</>
 		),
 	},
 	{
@@ -324,8 +339,11 @@ const optionRows = [
 			<>
 				Passed straight through to the result's top-level <code>timestamp</code> field; the
 				engine does not generate one itself (deterministic-by-design). A value that isn't a string
-				(a <code>Date</code>, a number) is ignored with a <code>console.warn</code>; pass{" "}
-				<code>new Date().toISOString()</code>.
+				(a <code>Date</code>, a number), or text that isn't an ISO 8601 date and time (
+					<code>'yesterday'</code>, a date alone such as <code>'2026-01-01'</code>, or a blank{" "}
+					<code>''</code>), is ignored with a <code>console.warn</code>, and throws{" "}
+					<code>INVALID_ENGINE_OPTIONS</code> under <code>strictOptions</code>; pass{" "}
+					<code>new Date().toISOString()</code>.
 			</>
 		),
 	},
@@ -400,7 +418,9 @@ const optionRows = [
 				<code>visibility</code>, <code>opacity</code>, ancestor-hiding, etc.{" "}
 				<code>'styleAndGeometry'</code>: adds real layout checks (
 				<code>getClientRects()</code>/<code>getBoundingClientRect()</code>) on top of that — text
-				with no client rects, or zero width/height, is excluded too, and so is text entirely
+				with no client rects, or zero width/height, is excluded too (an element with{" "}
+					<code>display: contents</code>, such as a <code>&lt;slot&gt;</code>, has no box of its own
+					and counts by the rects its content is drawn in), and so is text entirely
 				above or left of the page, where no scrolling reaches (the <code>left: -9999px</code>{" "}
 				technique), and text an ancestor with <code>overflow: hidden</code> or{" "}
 				<code>clip</code> cuts off completely (<code>height: 0; overflow: hidden</code>, a
@@ -469,7 +489,25 @@ const optionRows = [
 					core's catalog couldn't fill back in stays whole: every rule of a scan with{" "}
 					<code>packs</code>, a custom rule, and one the scan's <code>messages</code> reword. See{" "}
 					<a href="/results-reports/output-schema/#top-level-result"><code>engine.outputDetail</code></a>;
-					in TypeScript, such a result is a <code>CompactScanResult</code>.
+					in TypeScript, such a result is a <code>CompactScanResult</code>, which the reporters, the
+					baseline functions, <code>addHowToCheck</code>, <code>leaningFailures</code> and{" "}
+					<code>getMargins</code> take. The scan functions are typed as returning a{" "}
+					<code>ScanResult</code>, as in 1.17, so declare the result as a{" "}
+					<code>CompactScanResult</code> (or use <code>{"ScanResultFor<typeof options>"}</code>) to
+					type it as one.
+				</>
+			),
+		},
+		{
+			id: "output-max-occurrences",
+			option: <code>output.maxOccurrencesPerRule</code>,
+			meaning: (
+				<>
+					Optional: a whole number, 1 or more. Each check result keeps at most that many
+					occurrences, the failing first, and counts the rest in <code>occurrencesOmitted</code>;
+					outcomes, rollups and gates are as without it. See{" "}
+					<a href="#a-cap-on-occurrences-outputmaxoccurrencesperrule">"A cap on occurrences"</a>{" "}
+					below. Core 1.18.0 and later.
 				</>
 			),
 		},
@@ -513,8 +551,12 @@ const optionRows = [
 		option: <code>probes</code>,
 		meaning: (
 			<>
-				An optional, JSON-safe evidence object your host application supplies, for what a scan of
-				one page cannot see, such as the site's other pages. The engine caps it before rules read
+				An optional, JSON-safe evidence object your host application supplies: a plain object
+					whose values are strings, finite numbers, <code>true</code>, <code>false</code>,{" "}
+					<code>null</code>, arrays and plain objects. Anything else (a function, a{" "}
+					<code>Date</code>, an array at the top, a <code>BigInt</code>, a circular reference) is
+					ignored with a <code>console.warn</code>, and throws <code>INVALID_ENGINE_OPTIONS</code>{" "}
+					under <code>strictOptions</code>. It is for what a scan of one page cannot see, such as the site's other pages. The engine caps it before rules read
 				it (<code>ctx.inputs.probes</code>): six levels deep, 200 items per array, 50 keys per
 				object, 2,000 characters per string. <code>crawl.pageTitles</code> (
 				<code>{"{ pages: [{ url, title }] }"}</code>) is read by <code>page-title-patterns</code>,
@@ -548,6 +590,17 @@ const optionRows = [
 		),
 	},
 	{
+		id: "timeBudgetMs",
+		option: <code>timeBudgetMs</code>,
+		meaning: (
+			<>
+				Off by default. A number of milliseconds above 0 (<code>Infinity</code> is no limit, as
+				leaving it out): once the scan has spent that long, it starts no more rules. See{" "}
+				<a href="#a-time-budget-timebudgetms">"A time budget"</a> below. Core 1.18.0 and later.
+			</>
+		),
+	},
+	{
 		id: "frameWaitTime",
 		option: (
 			<>
@@ -560,7 +613,7 @@ const optionRows = [
 				<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}>
 					<code>INTEGRATION.md</code>
 				</a>
-				) — how long to wait for a child frame to answer a ping (default <code>500</code>ms) and
+				) — how long to wait for a child frame to answer a ping (default <code>2000</code>ms, <code>500</code> before 1.18.0) and
 				a full run request (default <code>60000</code>ms) before treating it as unreachable.
 				Ignored by <code>runDomRulesInPage</code>/<code>runa11yCoreInPage</code>.
 			</>
@@ -1192,7 +1245,12 @@ export function EngineOptionsContent() {
 				<code>runOnly</code>), or <code>engineOptions.rules</code>/<code>.tags</code>/
 				<code>.tests</code>/<code>.includeMode</code>. If <code>runOnly</code> contains any
 				filter, it wins outright; otherwise the engine falls back to <code>engineOptions</code>.{" "}
-				<strong>Don't mix them expecting both to apply — pick one.</strong>{" "}
+				<strong>Don't mix them expecting both to apply — pick one.</strong> A{" "}
+				<code>rules</code>, <code>tags</code> or <code>tests</code> filter given beside a{" "}
+				<code>runOnly</code> filter is not read, and the scan says so (
+				<code>[surea11y] engineOptions.tags: runOnly has a filter, which wins over it; ignored.</code>
+				); under <code>strictOptions</code> it throws <code>INVALID_ENGINE_OPTIONS</code>. A{" "}
+				<code>rules</code> entry for one rule's settings is no filter, and is read either way.{" "}
 				<code>engineOptions.rules</code>, <code>.tags</code> and <code>.tests</code> take{" "}
 				<code>{"{ include, exclude }"}</code>; a bare list or string is the include list.
 			</p>
@@ -1323,11 +1381,25 @@ export function EngineOptionsContent() {
 				names are checked like any rule ids or tags, and the other keys beside it (
 				<code>excludeTags</code>, <code>excludeRuleIds</code>...) still apply. A <code>Set</code> of
 				names is read as the list it holds. A key the object form doesn't read, beside ones it
-				does, is ignored with a warning. Any other <code>type</code> throws{" "}
+				does, is ignored with a warning; <code>includeTestIds</code> and{" "}
+				<code>excludeTestIds</code> are checked like <code>includeRuleIds</code>. A composite id may
+				carry the engine's legacy <code>a11ycore-</code> prefix, as a rule id may. Any other{" "}
+				<code>type</code> throws{" "}
 				<code>INVALID_RUN_ONLY</code>, and so does a <code>runOnly</code> that is a number or a
 				boolean, or an object none of whose keys the engine reads (
-				<code>{"{ includeRuleId: [...] }"}</code>): each used to run every rule. An empty array,
-				string or object still means the default selection.
+				<code>{"{ includeRuleId: [...] }"}</code>): each used to run every rule. An empty object (
+				<code>{"{}"}</code>) still means the default selection. So does an empty rule or tag list (
+				<code>[]</code>, <code>''</code>, an empty <code>Set</code>,{" "}
+				<code>{"{ type: 'rule', values: [] }"}</code>, <code>{"{ tags: [] }"}</code>,{" "}
+				<code>{"{ includeRuleIds: [] }"}</code>), and a <code>type</code> with no{" "}
+				<code>values</code> (<code>{"{ type: 'tag' }"}</code>), but the scan says so, since a list a
+				filter built may have come out empty by mistake:{" "}
+				<code>[surea11y] runOnly.values is an empty list: it selects no rule, so every rule runs.</code>{" "}
+				The same goes for an empty include list in <code>engineOptions.rules</code>,{" "}
+				<code>.tags</code> or <code>.tests</code> (<code>rules: []</code>, <code>tags: []</code>,{" "}
+				<code>{"tags: { include: [] }"}</code>) where <code>runOnly</code> has no filter. Under{" "}
+				<code>strictOptions</code> each throws <code>INVALID_ENGINE_OPTIONS</code>. Core 1.18.0 and
+				later.
 			</p>
 
 			<h3 id="which-criteria-a-scan-reports">Which criteria a scan reports</h3>
@@ -1556,7 +1628,9 @@ export function EngineOptionsContent() {
 			<p>
 				You do not have to do anything about that. The engine resolves a{" "}
 				<strong>target WCAG version</strong> for every run and, when that target is 2.2, a{" "}
-				<code>wcag22-removed</code> rule cannot report <code>fail</code>: it still runs, still
+				<code>wcag22-removed</code> rule cannot report <code>fail</code>, nor can a rule whose WCAG
+				criteria are all ones 2.2 removed, such as a custom or pack rule mapped only to 4.1.1
+				without the tag: it still runs, still
 				reports every occurrence it found, but its outcome is coerced to <code>cantTell</code> and
 				the result carries a <code>wcagVersionScope</code> field saying why (see{" "}
 				<a href="/results-reports/output-schema/">the output schema</a>). Nothing is silently dropped, and a 2.2
@@ -1681,6 +1755,7 @@ export function EngineOptionsContent() {
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
 					"  perfStats: false,                // default false — internal timing counters, debug-only shape",
 					"  profileRules: false,             // default false — per-rule timings; needs perfStats",
+					"  timeBudgetMs: undefined,         // optional — once the scan has spent this many ms, it starts no more rules (see below)",
 					"",
 					"  contrast: {",
 					"    mode: 'strictConformance',     // 'strictConformance' (default) | 'auditorAssist'",
@@ -1697,7 +1772,8 @@ export function EngineOptionsContent() {
 					"  output: {",
 					"    includeSelector: true,         // set false to suppress auto-filled selectors",
 					"    includeHtml: true,",
-					"    detail: 'full'                 // 'findings': pass/notApplicable results keep only rule, outcome, type",
+					"    detail: 'full',                // 'findings': pass/notApplicable results keep only rule, outcome, type",
+					"    maxOccurrencesPerRule: undefined  // optional — keep at most this many occurrences per rule, the rest counted (see below)",
 					"  },",
 					"",
 					"  rules: {",
@@ -1712,7 +1788,7 @@ export function EngineOptionsContent() {
 					"  packs: [ /* rules and standards from outside core, see Packs */ ],",
 					"",
 					"  // Only read by runa11yCoreAcrossFrames. Ignored by runDomRulesInPage/runa11yCoreInPage.",
-					"  pingWaitTime: 500,               // ms to wait for a child frame to answer a ping",
+					"  pingWaitTime: 2000,              // ms to wait for a child frame to answer a ping",
 					"  frameWaitTime: 60000             // ms to wait for a child frame's full scan result",
 					"};",
 				]}
@@ -1726,6 +1802,137 @@ export function EngineOptionsContent() {
 				]}
 				rows={optionRows}
 			/>
+
+			<h3 id="a-time-budget-timebudgetms">A time budget (<code>timeBudgetMs</code>)</h3>
+			<p>
+				<code>timeBudgetMs</code> caps how long a scan goes on starting rules. Once it has spent
+				that many milliseconds, counted from the start of the scan, it starts no more: a rule that
+				has started finishes, and each rule the selection selected that had not started is left
+				out of <code>checksResults</code> and listed in the result's <code>notRun</code>,{" "}
+				<code>{"[{ ruleId, reason: 'timeBudget' }]"}</code>. <code>engine.incomplete</code> then
+				says the scan was cut short, <code>{"{ reason: 'timeBudget', timeBudgetMs, rulesNotRun }"}</code>,
+				and a <code>console.warn</code> says how many rules did not run. Core 1.18.0 and later.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = runDomRulesInPage(url, null, { timeBudgetMs: 2000 }, null);",
+					"if (result.engine.incomplete) {",
+					"  // result.notRun: the rules that checked nothing",
+					"}",
+				]}
+			/>
+			<p>A scan cut short never reads as a pass:</p>
+			<ul>
+				<li>
+					A rollup with a rule that did not run is <code>cantTell</code> (
+					<code>composite.rollup.cantTell.missingChild</code>), its contributor marked{" "}
+					<code>notRun: 'timeBudget'</code>, as for any rule of it that did not run.
+				</li>
+				<li>
+					The HTML report says the scan is incomplete, and names the rules, before anything it
+					found; SARIF gives an <code>error</code> notification per rule and{" "}
+					<code>executionSuccessful: false</code>; JUnit gives an <code>error</code> test case per
+					rule, in a suite "Rules not run"; EARL asserts each one <code>earl:untested</code>; the
+					browser bundle's <code>table()</code> lists each as <code>notRun</code> and warns;{" "}
+					<code>matchBaseline</code> adds <code>{"incomplete: { notRun }"}</code>, so a gate that
+					reads <code>newCount</code> alone has to look at it too.
+				</li>
+				<li>
+					In a <a href="#several-profiles">scan of several profiles</a>, the budget is the whole
+					scan's: each profile after the first gets what is left of it, and a profile that would
+					start with none left is not run, listed in <code>engine.profilesNotRun</code> with reason{" "}
+					<code>timeBudget</code> (which <code>allowProfilesNotRun</code> does not accept), and its
+					rules are listed in <code>notRun</code> as for a profile that ran out, with the same
+					warning. Each entry of <code>notRun</code> names its <code>profile</code>.
+				</li>
+				<li>
+					Across frames (<code>runa11yCoreAcrossFrames</code>), the budget is the whole scan's
+					too, counted from the start of the top document's scan: each frame's scan, nested frames
+					included, gets only what is left of it when it starts. A frame the scan reaches with none
+					left starts no rule: its result lists every rule it selects in <code>notRun</code> and
+					has <code>engine.incomplete</code>, under that frame, with the same warning.{" "}
+					<code>engine.incomplete.timeBudgetMs</code> is always the budget the scan was given, not
+					what was left of it.
+				</li>
+				<li>
+					In the browser bundle, <code>runa11yCoreInPageAsync</code> fetches the style sheets the
+					page can't read before it scans, and the budget counts from before that. Fetching may
+					take half of the budget at most: then it stops waiting for sheets, and the scan runs its
+					rules without them in what is left, so one slow sheet can't leave a result with no rule
+					run. A sheet it gave up on is named in a warning and in{" "}
+					<code>engine.incomplete.styleSheetsNotRead</code>, and the result is incomplete (
+					<code>engine.incomplete</code>, with <code>rulesNotRun</code> 0 when every rule ran). A
+					rule that would have read such a sheet asks about it. Without a budget, each sheet is
+					waited for up to 5 seconds, as before.
+				</li>
+			</ul>
+			<p>
+				Off by default, and the results of a scan within its budget are as without it. Which rules
+				run before the budget runs out depends on the machine and its load, so a scan with a budget
+				is not deterministic: use it to keep a scan of a heavy page within a CI time limit, not for
+				results you diff. <code>Infinity</code> means no limit, the same as leaving it out, and is
+				accepted without a warning. Anything but a number above 0 is ignored with a{" "}
+				<code>console.warn</code>, and throws <code>INVALID_ENGINE_OPTIONS</code> under{" "}
+				<code>strictOptions</code>. It works in the same way in Node, in jsdom and in the browser
+				bundle.
+			</p>
+
+			<h3 id="a-cap-on-occurrences-outputmaxoccurrencesperrule">
+				A cap on occurrences (<code>output.maxOccurrencesPerRule</code>)
+			</h3>
+			<p>
+				A page with a defect repeated in every row of a long table gives a rule hundreds of
+				occurrences, and a result tens of megabytes. <code>output.maxOccurrencesPerRule</code>{" "}
+				keeps at most that many of each rule's occurrences in the result, and counts the others.
+				Core 1.18.0 and later.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"runDomRulesInPage(url, null, { output: { maxOccurrencesPerRule: 20 } }, null);",
+					"// checksResults[i]: occurrences (20 at most), occurrencesOmitted: 412,",
+					"//   occurrencesOmittedByOutcome: { fail: 412 }",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>Nothing is decided from what is kept.</strong> The cap applies after the scan has
+					decided everything: each rule's <code>outcome</code> and <code>severity</code>, the
+					rollups and their counts, and in a scan of several profiles each profile's verdicts, are
+					those of every occurrence the rule found. <code>engine.occurrenceCap</code> says the scan
+					was capped: <code>{"{ maxOccurrencesPerRule, occurrencesOmitted, rulesCapped }"}</code>.
+				</li>
+				<li>
+					<strong>The failures are kept first</strong>, then the undecided findings that lean fail,
+					then the other undecided ones, then the rest, each in the order the rule gave them, so a
+					failing rule always shows at least one failure.
+				</li>
+				<li>
+					<strong>The reporters count what is left out.</strong> The HTML report counts it in the
+					total and on the rule's card ("+412 more not listed"), SARIF adds a note per capped
+					rule, JUnit counts it in the failure's message and says "+412 more" in its body, and the
+					browser bundle's <code>table()</code> gives a "+412 more" row.
+				</li>
+				<li>
+					<strong>Gates stay exact.</strong> A capped failing rule still fails. Against a baseline,
+					a failure left out can't be matched, so it counts as new: <code>matchBaseline</code> adds
+					it to <code>totalFail</code> and <code>newCount</code> (and says so in{" "}
+					<code>incomplete.occurrencesOmitted</code>), JUnit fails the rule, and SARIF gives the
+					rule an <code>error</code> result for them when the baseline knew every failure kept.
+					The undecided findings that lean fail are counted apart (
+					<code>occurrencesOmittedLeaningFail</code>) and gate the same way where a lean-fail gate
+					is asked for: <code>matchBaseline</code>'s <code>leanFail</code>, JUnit's{" "}
+					<code>leanFailAs: 'failure'</code> and SARIF's <code>leanFailAs: 'error'</code>. A capped
+					result can't write a complete <a href="/conformance/baseline/#incomplete-scan">baseline</a>:{" "}
+					<code>buildBaselineEntries</code> warns.
+				</li>
+			</ul>
+			<p>
+				Unset, every occurrence is kept. Anything but a whole number of 1 or more is ignored with a{" "}
+				<code>console.warn</code>, and throws <code>INVALID_ENGINE_OPTIONS</code> under{" "}
+				<code>strictOptions</code>.
+			</p>
 
 			<h3 id="catching-mistakes-in-the-options-strictoptions">Catching mistakes in the options (<code>strictOptions</code>)</h3>
 			<p>
@@ -1741,24 +1948,38 @@ export function EngineOptionsContent() {
 					<code>[surea11y] engineOptions: unknown option "lcoale" (did you mean "locale"?); ignored.</code>
 				</li>
 				<li>
-					<strong>Always</strong>, a value of the wrong type is warned about and read as not given,
-					as is an <code>engineOptions</code> that isn't an object. On/off options (
+					<strong>Always</strong>, a value of the wrong type is warned about and read as not given (
+					<code>perfStats: 'maybe'</code>:{" "}
+					<code>[surea11y] engineOptions: perfStats must be true or false, not "maybe"; ignored.</code>
+					), as is an <code>engineOptions</code> that isn't an object. On/off options (
 					<code>includeShadowDom</code>, <code>includeHiddenElements</code>, <code>fragment</code>,{" "}
 					<code>perfStats</code>, <code>profileRules</code>, <code>output.includeHtml</code>,{" "}
-					<code>output.includeSelector</code>) take <code>true</code> or <code>false</code>, or{" "}
-					<code>'true'</code>, <code>'false'</code>, <code>'1'</code>, <code>'0'</code>,{" "}
-					<code>1</code> and <code>0</code> as a command line spells them:{" "}
-					<code>perfStats: 'false'</code> is off.
+					<code>output.includeSelector</code>) take <code>true</code> or <code>false</code>, and at
+					runtime also read <code>'true'</code>, <code>'false'</code>, <code>'1'</code>,{" "}
+					<code>'0'</code>, <code>1</code> and <code>0</code>, for untyped callers that pass a value
+					as a command-line flag, a query string or an environment variable spells it:{" "}
+					<code>perfStats: 'false'</code> is off. The TypeScript types take booleans only, so typed
+					code passes <code>true</code> or <code>false</code>. A <code>rules[ruleId]</code> key
+					naming no rule of the scan is warned about with the closest id, and throws under{" "}
+					<code>strictOptions</code>. <code>contrast.rootCanvasFallback</code> is read as CSS reads
+					a color, in a browser by the browser itself, and must be an opaque color: another value (
+					<code>inherit</code>, <code>currentColor</code>) is
+					measured as white, which the result echoes, with a warning, and throws under{" "}
+					<code>strictOptions</code>.
 				</li>
 				<li>
-					<strong>With <code>strictOptions: true</code></strong> (or <code>'true'</code>,{" "}
-					<code>'1'</code> or <code>1</code>), every option is checked before the scan, and any
+					<strong>With <code>strictOptions: true</code></strong> (at runtime also{" "}
+					<code>'true'</code>, <code>'1'</code> or <code>1</code>, for an untyped caller; the
+					TypeScript types take a boolean), every option is checked before the scan, and any
 					mistake throws an error with <code>code: 'INVALID_ENGINE_OPTIONS'</code>, naming each one,
 					with <code>problems</code> listing them as{" "}
 					<code>{"{ path, kind, message, suggestion }"}</code>: an unknown key (
 					<code>kind: 'unknown'</code>), in <code>engineOptions</code> or in one of its objects, and a
 					value of the wrong type or outside its set (<code>kind: 'invalid'</code>), such as{" "}
-					<code>includeHiddenElements: 'yes'</code> or <code>contrast.mode: 'strict'</code>.
+					<code>includeHiddenElements: 'yes'</code> or <code>contrast.mode: 'strict'</code>. A{" "}
+					<code>rules</code>, <code>tags</code> or <code>tests</code> filter beside a{" "}
+					<code>runOnly</code> filter throws too, since <code>runOnly</code> wins and it would not
+					be read.
 				</li>
 			</ul>
 			<CodeBlock
@@ -1769,6 +1990,14 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
+				Under <code>strictOptions</code>, the scan also refuses, with the same code, what would
+				otherwise only be warned about once it starts: a profile, a <code>mappings</code> standard
+				or an <code>optInRules</code> tag that doesn't exist, and a selector in{" "}
+				<code>excludeSelectors</code> (or a rule's own <code>rules[ruleId].excludeSelectors</code>)
+				that isn't valid CSS, which would exclude nothing. An empty slot in a list (
+				<code>{"excludeSelectors: [, 'main']"}</code>) is refused as a <code>null</code> is.
+			</p>
+			<p>
 				The catalog functions that take <code>engineOptions</code> (<code>getChecksCatalog</code>,{" "}
 				<code>getRulesCatalog</code>, <code>getCheckDefById</code>,{" "}
 				<code>getCompositeRuleById</code>, <code>getChecksForRunOnly</code>,{" "}
@@ -1776,16 +2005,32 @@ export function EngineOptionsContent() {
 				in the same words: <code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code> warns,
 				reads the level as not given, and lists what a scan with those options reports; with{" "}
 				<code>strictOptions: true</code> it throws <code>INVALID_ENGINE_OPTIONS</code>, as the scan
-				does. A selection that cancels itself (a rule both included and excluded, parts with no
+				does. Under <code>strictOptions</code> they also refuse what the scan refuses before it
+				runs: a <code>profile</code>, <code>optInRules</code> tag or <code>mappings</code> standard
+				that names none, settings in <code>rules</code> for a rule that isn't there, a{" "}
+				<code>policyContract</code> it doesn't know, a <code>contrast.rootCanvasFallback</code> that
+				isn't an opaque color, and an <code>excludeSelectors</code> (global or a rule's) that isn't
+				valid CSS. Selectors are tested against the global <code>document</code> where there is one
+				(a jsdom window set as global); without one, only the scan tests them, and so with a named
+				color such as <code>black</code>, which only a page can read. A selection that cancels itself (a rule both included and excluded, parts with no
 				rule in common) is said so as the scan says it: a warning, and{" "}
 				<code>INVALID_RUN_ONLY</code> under <code>strictOptions</code>.
 			</p>
 			<p>
-				Not checked: a rule's own settings (<code>rules[ruleId]</code>), the keys of{" "}
-				<code>messages</code>, and <code>probes</code>, which the engine passes on unread; and the
-				custom rules, which have checks of their own (<code>skippedCustomRules</code>). In
+				The options that take an object (<code>contrast</code>, <code>output</code>,{" "}
+				<code>policy</code>, <code>policyContract</code>, <code>rules</code>, <code>tags</code>,{" "}
+				<code>tests</code>, <code>messages</code>) take a plain one, as a literal or{" "}
+				<code>JSON.parse</code> writes it: a <code>Date</code>, a <code>Map</code> or a class
+				instance is refused like any other value of the wrong type. Not checked: a rule's own
+				settings (<code>rules[ruleId]</code>) and the keys of <code>messages</code>, which the
+				engine passes on unread (<code>probes</code> is checked as JSON-safe data, not by key); and
+				the custom rules, which have checks of their own (<code>skippedCustomRules</code>). In
 				TypeScript, <code>StrictEngineOptions</code> is the same set of options without the index
-				signature that lets any key compile, so a misspelt option is an error there too.
+				signature that lets any key compile, so a misspelt option is an error there too; and an
+				object written with <code>strictOptions: true</code> in the call itself (
+				<code>{"runDomRulesInPage(url, null, { strictOptions: true, lcoale: 'de' })"}</code>, a
+				catalog function, <code>runa11yCoreOnHtml</code>'s <code>engineOptions</code>) is checked
+				as one.
 			</p>
 
 			<h3 id="rule-scoped-excludeselectors">Rule-scoped <code>excludeSelectors</code></h3>
@@ -2073,7 +2318,8 @@ export function EngineOptionsContent() {
 					that isn't a function and isn't a reconstructable source string, an{" "}
 						<code>applicability</code> that can't be turned into a function, a <code>meta</code>{" "}
 					that fails validation, such as <code>deprecated: true</code> without{" "}
-					<code>deprecation</code>, an id another custom rule in the list already has, or the id
+					<code>deprecation</code> or a <code>wcagSc</code> entry that names no WCAG criterion (
+					<code>'9.9.9'</code>), an id another custom rule in the list already has, or the id
 					of a composite rule) is skipped with a <code>console.warn</code> naming the rule and the
 					reason, and listed in the result's <code>skippedCustomRules</code> — the rest of the scan, including every built-in rule, still runs normally. This isn't a
 					validation gap to fix: a custom rule is arbitrary caller-supplied code, so "fail this
@@ -2084,8 +2330,12 @@ export function EngineOptionsContent() {
 				<li>
 					Rules run synchronously. A <code>runInPage</code> or <code>applicability</code> that
 					returns a Promise (an <code>async</code> function) is reported as <code>cantTell</code>{" "}
-					with an <code>error</code> saying so, as is a <code>runInPage</code> that returns
-					anything but a result object. An <code>outcome</code> outside <code>pass</code>,{" "}
+					with an <code>error</code> saying so, as is an <code>applicability</code> that returns
+					anything but <code>true</code>, <code>false</code> or{" "}
+					<code>{"{ applicable: true | false }"}</code> (<code>undefined</code> from a forgotten{" "}
+					<code>return</code>, <code>0</code>, <code>null</code>, <code>'false'</code>), which ran
+					the rule everywhere before 1.18.0, and a <code>runInPage</code> that returns anything but
+					a result object. An <code>outcome</code> outside <code>pass</code>,{" "}
 					<code>fail</code>, <code>cantTell</code> and <code>notApplicable</code> (such as{" "}
 					<code>'failed'</code>) becomes <code>cantTell</code>, and <code>error</code> names the
 						value returned. A rule's <code>type</code> comes from its <code>meta</code>: a{" "}

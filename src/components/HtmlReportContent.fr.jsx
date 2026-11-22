@@ -20,6 +20,24 @@ export function HtmlReportContent() {
 
 			<h2>Ce qu’il affiche</h2>
 			<ul>
+				<li id="incomplete-scan">
+					<strong>Analyse incomplète</strong> : seulement quand le budget de temps de l’analyse
+					s’est épuisé avant que toutes les règles qu’elle a sélectionnées se soient exécutées (
+					<code>engine.incomplete</code>, voir{" "}
+					<a href="/configuration/engine-options/#a-time-budget-timebudgetms">un budget de
+					temps</a>, core 1.18.0 et ultérieur) : une note placée avant tout le reste nomme le budget
+					et les règles (et les profils) qui ne se sont pas exécutées, et dit que rien dans le
+					rapport ne les donne pour réussies. La barre de métadonnées les compte (« règles non
+					exécutées »), ainsi que les feuilles de style qu’une analyse dans le navigateur n’a pas
+					lues parce que le budget s’est épuisé pendant qu’elle les récupérait.
+				</li>
+				<li>
+					<strong>Une analyse plafonnée</strong> (
+					<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a>,
+					core 1.18.0 et ultérieur) : le total de la barre de métadonnées compte les occurrences
+					laissées de côté, et une pastille indique combien ne sont pas listées ; la première carte
+					d’une règle les compte aussi et indique « +N de plus, non listées ».
+				</li>
 				<li>
 					<strong>En-tête</strong> : un titre en langage clair (« <span lang="en">N of M applicable checks passed</span> »)
 					ainsi qu’une barre empilée et sa légende (icône + libellé + nombre :
@@ -59,7 +77,11 @@ export function HtmlReportContent() {
 					(<code>meta.helpUrl</code>, y compris celui d’une règle personnalisée) reçoit sur sa carte
 					un lien « <span lang="en">How to fix &lt;rule&gt;</span> » ; une règle qui n’en a pas
 					renvoie au document Understanding du critère WCAG qu’elle vérifie (« <span lang="en">Understanding 1.1.1
-					Non-text Content</span> »).
+					Non-text Content</span> »), en nommant le critère dans la langue du rapport (« Comprendre
+					1.1.1 Contenu non textuel ») là où les dictionnaires de procédures de core traduisent son
+					titre. Le titre propre d’une version antérieure (le « <span lang="en">Parsing</span> » de
+					WCAG 2.1), ou tout titre dans le <code>surea11y.report.js</code> du navigateur, reste en
+					anglais, marqué <code>lang="en"</code> dans un rapport dans une autre langue.
 					</li>
 					<li>
 						<strong>Frames</strong> : seulement pour un résultat multi-frames (
@@ -163,11 +185,13 @@ export function HtmlReportContent() {
 			</p>
 			<p>
 				La barre de métadonnées sous l’en-tête indique le nombre de règles, le nombre
-				d’occurrences, le tag du moteur, la version du schéma, la version de WCAG visée par
+				d’occurrences, le tag du moteur, la version du schéma, les packs avec lesquels l’analyse
+				s’est exécutée (<code>engine.packs</code>, chacun par son nom et sa version, comme{" "}
+				<code>@surea11y/pack-en301549 1.5.0</code>, quand elle en a exécuté), la version de WCAG visée par
 				l’analyse, le <code>engineOptions.profile</code> utilisé (s’il y en a un ; chaque profil d’une analyse
 				de plusieurs, joints par <code>+</code>, et ceux qui ne se sont pas exécutés) et, à côté, la loi
-				au titre de laquelle le profil est évalué quand le profil d’un pack en nomme une (core 1.16.0,
-				expérimental), les tags de règles
+				au titre de laquelle le profil est évalué quand le profil d’un pack en nomme une (core 1.16.0
+				et ultérieur), les tags de règles
 				optionnelles ajoutés par <code>engineOptions.optInRules</code> (s’il en a ajouté), les
 				conditions dans lesquelles la page a été rendue et la langue retenue pour l’analyse. Ces
 				conditions sont le viewport (avec le ratio de pixels de l’appareil lorsqu’il ne vaut pas 1)
@@ -235,6 +259,22 @@ export function HtmlReportContent() {
 				packs, « Ce qui reste à vérifier par une personne » suit aussi la norme d’un pack quand
 				l’analyse a exécuté son profil. <code>options.manualChecks: false</code> retire cette
 				section.
+			</p>
+			<p>
+				Donnée comme l’écrit une ligne de commande ou une variable d’environnement (
+				<code>'false'</code>, <code>'0'</code>, <code>0</code>, <code>'true'</code>,{" "}
+				<code>'1'</code>, <code>1</code>), <code>manualChecks</code> est lue comme telle, avec un
+				avertissement, et un <code>title</code> numérique est écrit comme du texte, avec un
+				avertissement ; une valeur illisible (un <code>BigInt</code>, un objet) lève une{" "}
+				<code>TypeError</code>, tout comme un <code>manualChecks</code> autre que{" "}
+				<code>true</code> ou <code>false</code> ou un <code>title</code> qui n’est pas une chaîne
+				avec <code>options.strictOptions: true</code>. Des options <code>null</code> valent
+				absence d’options. Une clé que le rapport ne lit pas et qui ressemble à une faute de frappe
+				d’une clé qu’il lit (<code>titel</code>) est ignorée avec un <code>console.warn</code>{" "}
+				qui nomme l’option voulue, comme une analyse le signale pour <code>engineOptions</code>{" "}
+				(voir{" "}
+				<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">Repérer
+				les erreurs dans les options</a>). Core 1.18.0 et ultérieur.
 			</p>
 
 			<h2>Périmètre</h2>

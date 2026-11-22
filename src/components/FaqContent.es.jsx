@@ -7,90 +7,163 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-17">"Mis resultados cambiaron al actualizar a core 1.17"</h2>
+				<h2 id="results-changed-1-18">"Mis resultados cambiaron al actualizar a core 1.18"</h2>
 				<p>
-					La 1.17 añade cuatro reglas, asigna algunas reglas a más criterios y hace que los mensajes
-					nombren la causa de un hallazgo. Por lo demás, los resultados y los códigos de motivo de
-					las reglas existentes no cambian. Los cambios que más probablemente se noten en un
-					pipeline:
+					La 1.18 añade cinco reglas que preguntan, convierte algunos fallos en preguntas donde las
+					evidencias de la página no bastan para decidirlos y mide más de lo que dibuja un
+					navegador. Los cambios que más probablemente se noten en un pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>Un análisis de WCAG 2.2 AA en un navegador pregunta por el 2.4.11.</strong>{" "}
-						<a href="/rules/focus-not-obscured-minimum/">
-							<code>focus-not-obscured-minimum</code>
+						<strong>Preguntas nuevas, nunca fallos nuevos.</strong>{" "}
+						<a href="/rules/form-group-name-present/">
+							<code>form-group-name-present</code>
 						</a>{" "}
-						pregunta (<code>cantTell</code>) por una caja fija o sticky, como un encabezado, un pie
-						de página o un banner, detrás de la cual los elementos del orden de tabulación pueden
-						recibir el foco ocultos, y{" "}
-						<a href="/rules/focus-not-obscured-enhanced/">
-							<code>focus-not-obscured-enhanced</code>
+						(1.3.1) pregunta por botones de opción y casillas que comparten nombre pero no están en
+						ningún grupo con nombre, y{" "}
+						<a href="/rules/symbol-graphic-contrast/">
+							<code>symbol-graphic-contrast</code>
 						</a>{" "}
-						hace lo mismo para el 2.4.12 (AAA). Con jsdom ambas son <code>notApplicable</code>. Un
-						análisis así tarda alrededor de un 4 % más en Chromium (consulta{" "}
-						<a href="/help/known-limitations/">Limitaciones conocidas</a> para ver lo que dejan
-						fuera).
+						(1.4.11) por símbolos como ★ por debajo de 3:1; ambas se ejecutan en un análisis de WCAG
+						2.2 AA.{" "}
+						<a href="/rules/reflow-horizontal-scroll/">
+							<code>reflow-horizontal-scroll</code>
+						</a>{" "}
+						(1.4.10) y{" "}
+						<a href="/rules/resize-text-content-loss/">
+							<code>resize-text-content-loss</code>
+						</a>{" "}
+						(1.4.4) solo se aplican a una página maquetada con 320 o 640 píxeles CSS de ancho o
+						menos, en un navegador, así que un análisis a un ancho habitual no cambia (consulta{" "}
+						<a href="/help/known-limitations/">Limitaciones conocidas</a>).{" "}
+						<a href="/rules/link-name-quality-link-only/">
+							<code>link-name-quality-link-only</code>
+						</a>{" "}
+						(2.4.9) solo se ejecuta en un análisis con objetivo AAA. Las cinco dan{" "}
+						<code>cantTell</code>, algunas con tendencia a <code>fail</code>.
 					</li>
 					<li>
-						<strong>Un análisis que ejecuta reglas AAA hace fallar los objetivos de menos de 44
-						px.</strong>{" "}
+						<strong>Algunos fallos pasan a preguntar.</strong> Un vídeo sin nombre con un póster (
+						<a href="/rules/video-poster-text-alternative-present/">
+							<code>video-poster-text-alternative-present</code>
+						</a>
+						, cuyas claves de mensaje pasan de <code>_fail</code> a <code>_cantTell</code>), y un
+						elemento de lista cuya lista tiene un rol de región de referencia o de estructura que
+						sustituye a list, como <code>&lt;ul role="navigation"&gt;</code> (
+						<a href="/rules/listitem-parent-valid/">
+							<code>listitem-parent-valid</code>
+						</a>
+						, que sigue fallando bajo un rol de widget como <code>tablist</code> o{" "}
+						<code>menu</code>). Ambos tienden a <code>fail</code>.
+					</li>
+					<li>
+						<strong>El tamaño del objetivo mide más y exime a los controles nativos tal como los
+						dibuja el navegador.</strong>{" "}
+						<a href="/rules/target-size-minimum/">
+							<code>target-size-minimum</code>
+						</a>{" "}
+						y{" "}
 						<a href="/rules/target-size-enhanced/">
 							<code>target-size-enhanced</code>
 						</a>{" "}
-						(2.5.5) se ejecuta en un análisis completo, uno sin objetivo de WCAG, y con un objetivo
-						AAA. Un pipeline que falla con cualquier <code>fail</code> de un análisis completo
-						puede ver fallos nuevos: analiza con un objetivo, como el perfil{" "}
-						<code>wcag22-aa</code>, para juzgar solo por A y AA (consulta{" "}
-						<a href="/configuration/engine-options/">Opciones del motor</a>). Con las buenas
-						prácticas,{" "}
-						<a href="/rules/page-zones-landmark/">
-							<code>page-zones-landmark</code>
+						miden cada widget interactivo (casilla, combobox, opción, control deslizante, pestaña y
+						similares), no solo botones y enlaces, así que pueden aparecer fallos nuevos. Un control
+						nativo sin estilos tiene la excepción del agente de usuario, así que los reinicios
+						habituales (normalize.css, <code>{"* { padding: 0 }"}</code>, Bootstrap Reboot) ya no
+						hacen fallar las listas de casillas y botones de opción; un campo de texto con su propia
+						altura, o una casilla redimensionada fuera de 12 a 16 píxeles, todavía puede fallar. Un
+						objetivo fijo o sticky solo se espacia respecto a los objetivos que se mueven con él.
+					</li>
+					<li>
+						<strong>El contraste cambia en tres puntos.</strong> Un símbolo de moneda junto a sus
+						cifras (<code>&lt;span&gt;€&lt;/span&gt;45,00</code>) se juzga como texto, a 4,5:1, con{" "}
+						<code>contrast-minimum</code>. <code>aria-disabled</code> exime el texto solo en un
+						control, un rol de widget o un elemento enfocable, o dentro de uno; en un{" "}
+						<code>&lt;span&gt;</code> o un <code>&lt;div&gt;</code> sin más no exime nada. Con
+						jsdom, el texto SVG tras una forma dibujada, y el texto bajo un <code>::before</code> o{" "}
+						<code>::after</code> posicionado con fondo, se preguntan (
+						<code>contrast-computable</code>, <code>BACKGROUND_OVERLAP</code>) en lugar de medirse
+						con una geometría supuesta; en Chromium no cambia nada.
+					</li>
+					<li>
+						<strong>Se comprueban tablas más pequeñas.</strong>{" "}
+						<a href="/rules/td-has-header/">
+							<code>td-has-header</code>
 						</a>{" "}
-						pregunta por un encabezado, una navegación, una búsqueda o un pie de página que no es
-						su región de referencia.
+						comprueba las tablas desde 2 por 2 celdas, donde antes solo miraba las de 4 por 4 o
+						más: se pregunta por una tabla pequeña sin celdas de encabezado, y falla una celda de
+						datos sin encabezado en una que tiene algunas.
 					</li>
 					<li>
-						<strong>Algunas reglas cuentan para más criterios.</strong>{" "}
-						<code>css-focus-indicator-suppressed</code> se asigna también al 1.4.11 y al 2.4.13,
-						así que sus hallazgos aparecen ahora en el resultado del 1.4.11;{" "}
-						<code>focus-not-removed-by-script</code> se asigna al 2.4.13, y cuatro reglas que se
-						asignan al 2.1.1 se asignan también al 2.1.3.
+						<strong>Algunos hallazgos pasan a otra regla o a otro código.</strong>{" "}
+						<code>button-name-present</code> deja un <code>&lt;button role="tab"&gt;</code>, u otro
+						rol con nombre, a la regla de ese rol, así que se informa una sola vez.{" "}
+						<code>aria-prohibited-attr</code> nombra el rol de un <code>&lt;p&gt;</code>, un{" "}
+						<code>&lt;strong&gt;</code> y similares (<code>ARIA_ATTR_PROHIBITED</code>, sin
+						tendencia), así que una entrada de baseline escrita con <code>leanFail: true</code> para
+						el código antiguo queda obsoleta. Dos códigos se dividen según la causa (
+						<code>MARQUEE_STOPS_ONLY_ON_HOVER</code> de <code>deprecated-elements-not-used</code>,{" "}
+						<code>placeholderTitle</code> de <code>page-title-patterns</code>), y un baseline de la
+						1.17 sigue coincidiendo con los hallazgos movidos (consulta{" "}
+						<a href="#baseline-after-upgrade">la entrada de más abajo</a>).
 					</li>
 					<li>
-						<strong>Los mensajes nombran la causa de fondo</strong> que encuentran las reglas: por
-						qué un elemento no tiene nombre (<code>data.details.nameCause</code>), una probable
-						errata en un rol, un atributo o un valor de <code>autocomplete</code>, qué oculta un
-						elemento, el contraste en un fallo de <code>link-in-text-block</code>, cuánto le falta
-						a un objetivo para pasar <code>target-size-minimum</code>. Una prueba que compare el
-						texto de los mensajes, o la clave de la pista de <code>target-size-minimum</code>{" "}
-						(ahora <code>_centerDistance</code> o <code>_regionDistance</code>), necesita
-						actualizarse.
+						<strong>Las zonas excluidas sirven de contexto.</strong> <code>heading-order</code>,{" "}
+						<code>page-has-heading-one</code>, <code>landmark-one-main</code> y{" "}
+						<code>bypass-blocks-present</code> leen los encabezados y la región principal de una
+						zona dejada fuera con <code>excludeSelectors</code>, así que excluir el encabezado del
+						sitio ya no se inventa un <code>&lt;h1&gt;</code> que falta o un nivel saltado.
 					</li>
 					<li>
-						<strong>Algunos hallazgos cambian.</strong> <code>css-hidden-focus</code> tiende a{" "}
-						<code>fail</code> cuando el elemento está fuera de la vista y no se sabe de nada que lo
-						traiga a la vista; <code>aria-hidden-focus</code> hace fallar un elemento enfocable
-						devuelto a <code>visibility: visible</code> dentro de una raíz <code>aria-hidden</code>{" "}
-						oculta; <code>aria-conditional-attr</code> da por bueno un valor de{" "}
-						<code>aria-invalid</code> fuera de sus tokens; <code>link-in-text-block</code> solo
-						cuenta el texto de la propia línea del enlace.
+						<strong>Una ocurrencia marcada <code>pass</code> cuenta como tal.</strong>{" "}
+						<code>occurrenceOutcome()</code> da <code>'pass'</code> para ella, también dentro de una
+						comprobación que falla, así que SARIF, JUnit, el informe HTML y los baselines ya no la
+						cuentan como fallo. Un <code>switch</code> exhaustivo sobre él necesita un caso{" "}
+						<code>'pass'</code>.
 					</li>
 					<li>
-						<strong>Los packs creados para la 1.16 pueden omitirse.</strong> Un pack que usa las
-						API experimentales de core no acepta ninguna versión menor posterior, así que un
-						análisis con la 1.17 lo omite hasta que tenga una versión para la 1.17: el{" "}
-						<a href="/configuration/packs/#en-301-549-pack">pack de EN 301 549</a> necesita la
-						1.4.0. Además, la 1.17 eliminó cuatro campos de las leyes de un estándar, y un pack que
-						todavía los tenga se rechaza (consulta{" "}
-						<a href="/configuration/packs/#laws">Packs</a>).
+						<strong>Los packs creados para la 1.17 pueden omitirse.</strong> Un pack cuyo rango{" "}
+						<code>core</code> deja fuera la 1.18, como <code>~1.17.0</code>, se omite, y{" "}
+						<code>skippedPacks</code> dice por qué (consulta{" "}
+						<a href="#pack-did-not-run">la entrada de más abajo</a>): el{" "}
+						<a href="/configuration/packs/#en-301-549-pack">pack de EN 301 549</a> necesita la 1.5.0.
+						Las API de packs que eran experimentales desde la 1.16 ya son estables, así que un pack
+						puede ampliar su rango a <code>^1.18.0</code>.
+					</li>
+					<li>
+						<strong>Los frames tienen más tiempo para responder.</strong>{" "}
+						<code>runa11yCoreAcrossFrames</code> espera 2 segundos el ping de un frame hijo, no 500
+						ms, así que un frame ocupado ya no se omite como inalcanzable; una página con un
+						contenido incrustado que nunca responde tarda hasta 1,5 s más por cada nivel de frames.
+						Usa <code>engineOptions.pingWaitTime</code> para conservar la espera anterior.
+					</li>
+					<li>
+						<strong>Los mensajes escriben los decimales como lo hace su idioma</strong>: "2,85:1" en
+						francés, alemán y español, "2.85:1" en inglés y japonés. Una prueba que compare el texto
+						de los mensajes necesita actualizarse; <code>data.details</code> e{" "}
+						<code>i18n.params</code> conservan los números como estaban (consulta{" "}
+						<a href="/configuration/locales/">Configuración regional</a>).
+					</li>
+					<li>
+						<strong>Las opciones se comprueban con más detalle.</strong> Una lista{" "}
+						<code>runOnly</code> vacía, un filtro <code>rules</code> o <code>tags</code> junto a{" "}
+						<code>runOnly</code>, o un <code>timestamp</code> que no es una fecha ISO 8601 generan
+						un aviso, y se rechazan con <code>strictOptions</code> (consulta{" "}
+						<a href="#invalid-engine-options">la entrada de más abajo</a>). Los valores que aceptaba
+						la 1.17 siguen funcionando.
 					</li>
 				</ul>
 				<p>
-					Nuevo, y sin cambiar nada salvo que lo uses: un pack construido sobre otro pack (
-					<code>uses</code>, <code>surea11y-pack new --kind derived</code>), experimental hasta la
-					1.19.0 (<a href="/configuration/packs/#a-pack-built-on-another-pack">Packs</a>). El
-					bundle para navegador pasa de 1.565 a 1.829 KB, sobre todo por los mensajes nuevos. La
-					lista completa está en el{" "}
+					Nuevo, y sin cambiar nada salvo que lo uses: un límite de tiempo para un análisis (
+					<code>engineOptions.timeBudgetMs</code>, que enumera en <code>notRun</code> lo que no
+					ejecutó y nunca se lee como un aprobado) y un tope de ocurrencias guardadas por regla (
+					<code>engineOptions.output.maxOccurrencesPerRule</code>, que no cambia ningún
+					resultado), ambos en <a href="/configuration/engine-options/#a-time-budget-timebudgetms">Opciones del motor</a>.
+					Una página que pone valores en <code>Object.prototype</code> ya no cambia un análisis
+					(consulta <a href="#page-builtins-broken">la entrada de más abajo</a>). Un análisis
+					completo en Chromium es alrededor de un 9 % más lento que con la 1.17.0, el coste de las
+					comprobaciones nuevas, y el bundle para navegador pasa de 1.829 a 2.088 KB. La lista
+					completa está en el{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>{" "}
@@ -309,11 +382,27 @@ export function FaqContent() {
 				<p>
 					Los propios scripts de la página cambiaron un objeto integrado de JavaScript del que
 					depende el motor (<code>Array.prototype.filter</code>, <code>Map</code>,{" "}
-					<code>JSON.stringify</code> y otros), así que un análisis de ella podría dar un resultado
-					que parece correcto y es erróneo. El mensaje del error y su lista <code>broken</code>{" "}
-					nombran cada uno. Analiza la página antes de que sus scripts los cambien (inyecta el bundle
+					<code>JSON.stringify</code> y otros, o un getter en <code>Object.prototype</code>), así
+					que un análisis de ella podría dar un resultado que parece correcto y es erróneo. El
+					mensaje del error y su lista <code>broken</code> nombran cada uno; la lista está vacía
+					cuando un objeto integrado está tan roto que la propia comprobación lanzó un error. Analiza la página antes de que sus scripts los cambien (inyecta el bundle
 					antes, o analiza una compilación sin el script que lo hace). Consulta{" "}
 					<a href="/help/known-limitations/">Limitaciones conocidas</a>.
+				</p>
+				<p>
+					Un valor simple que un script puso en <code>Object.prototype</code> (
+					<code>Object.prototype.type = 'x'</code>, de solo lectura o no) no detiene el análisis,
+					desde core 1.18: el motor define las claves que pone en sus propios objetos en lugar de
+					asignarlas, y lee sus opciones, los resultados de las reglas y los registros de los que
+					dependen los resultados como claves propias, así que ese valor no los cambia. No todos
+					los registros internos se leen así todavía, de modo que un valor con uno de esos nombres
+					aún puede cambiar un resultado; los nombres que se sabe que han cambiado alguno se
+					prueban en jsdom y en Chromium. Un valor en una propiedad que heredan los propios
+					objetos DOM de la página (<code>disabled</code>, <code>getAttribute</code>) cambia esos
+					objetos, y el motor los lee tal como la página los dejó. El análisis tampoco cambia nunca{" "}
+					<code>Object.prototype</code>, así que el propio código de la página que se ejecuta
+					durante él (un manejador de foco) lo ve tal como la página lo dejó. Un getter puesto ahí
+					que lanza un error o da un valor sigue deteniendo el análisis, como arriba.
 				</p>
 				<p>
 					Cuando <code>broken</code> es solo <code>Array.from</code>, la página lo sustituyó
@@ -643,8 +732,13 @@ export function FaqContent() {
 					una entrada con un código antiguo está obsoleta y su hallazgo es nuevo. Reescribe los
 					códigos del archivo con la 1.14.x con <code>migrateBaselineEntries</code> de{" "}
 					<code>@surea11y/core/baseline</code> y después actualiza, o regenéralo con la 1.15 y revisa
-					el diff. Ni la 1.15 ni la 1.16 movieron ningún código, así que un baseline escrito por la
-					1.14 sigue coincidiendo; un hallazgo cuyo resultado cambió con la actualización es nuevo o
+					el diff. Ni la 1.15, ni la 1.16 ni la 1.17 movieron ningún código, así que un baseline
+					escrito por la 1.14 sigue coincidiendo hasta la 1.17. La 1.18 divide dos códigos según la
+					causa (<code>MARQUEE_STOPS_ONLY_ON_HOVER</code> de{" "}
+					<code>deprecated-elements-not-used</code>, <code>placeholderTitle</code> de{" "}
+					<code>page-title-patterns</code>): un baseline escrito por la 1.17 sigue coincidiendo con
+					esos hallazgos con la 1.18.x, y la 1.19 quita esos cambios, así que reescríbelo o
+					regenéralo con la 1.18 antes de seguir. Un hallazgo cuyo resultado cambió con la actualización es nuevo o
 					desaparece igualmente, y el registro de cambios explica por qué. Consulta <a href="/conformance/baseline/#upgrading">Baseline / allowlist</a>.
 				</p>
 			</article>
@@ -669,86 +763,90 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2 id="results-changed-1-16">"Mis resultados cambiaron al actualizar a core 1.16"</h2>
+				<h2 id="results-changed-1-17">"Mis resultados cambiaron al actualizar a core 1.17"</h2>
 				<p>
-					La 1.16 acerca jsdom al navegador y redacta sus mensajes para cualquier estándar. Los
-					cambios que más probablemente se noten en un pipeline:
+					La 1.17 añade cuatro reglas, asigna algunas reglas a más criterios y hace que los mensajes
+					nombren la causa de un hallazgo. Por lo demás, los resultados y los códigos de motivo de
+					las reglas existentes no cambian. Los cambios que más probablemente se noten en un
+					pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>Con jsdom, solo un diálogo abierto con <code>showModal()</code> es
-						modal</strong>, como en un navegador. La página detrás de un{" "}
-						<code>&lt;dialog open aria-modal="true"&gt;</code> se juzga ahora, así que una prueba
-						con jsdom que simula un modal de esa manera ve hallazgos detrás de él;{" "}
-						<code>engineOptions.assumeModal: true</code> mantiene el comportamiento anterior
-						(consulta <a href="/help/known-limitations/">Limitaciones conocidas</a>; con
-						test-matchers 1.6.0, pásalo también a <code>installLiveRegionHook()</code>, consulta{" "}
-						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
-						Nada detrás
-						de un diálogo modal recibe el foco, y de varios abiertos con <code>showModal()</code>{" "}
-						solo se juzga el superior.
+						<strong>Un análisis de WCAG 2.2 AA en un navegador pregunta por el 2.4.11.</strong>{" "}
+						<a href="/rules/focus-not-obscured-minimum/">
+							<code>focus-not-obscured-minimum</code>
+						</a>{" "}
+						pregunta (<code>cantTell</code>) por una caja fija o sticky, como un encabezado, un pie
+						de página o un banner, detrás de la cual los elementos del orden de tabulación pueden
+						recibir el foco ocultos, y{" "}
+						<a href="/rules/focus-not-obscured-enhanced/">
+							<code>focus-not-obscured-enhanced</code>
+						</a>{" "}
+						hace lo mismo para el 2.4.12 (AAA). Con jsdom ambas son <code>notApplicable</code>. Un
+						análisis así tarda alrededor de un 4 % más en Chromium (consulta{" "}
+						<a href="/help/known-limitations/">Limitaciones conocidas</a> para ver lo que dejan
+						fuera).
 					</li>
 					<li>
-						<strong>jsdom oculta lo que oculta un navegador.</strong> Las reglas dentro de{" "}
-						<code>@layer</code>, <code>@supports</code> y <code>@container</code> ocultan
-						elementos, así que <code>hidden</code> y <code>sr-only</code> de Tailwind v4
-						funcionan; <code>clip: rect(0 0 0 0)</code> cuenta como recortado; el{" "}
-						<code>&lt;area&gt;</code> de un mapa de imagen está en la página. Desaparecen los
-						hallazgos sobre contenido que siempre estuvo oculto.
+						<strong>Un análisis que ejecuta reglas AAA hace fallar los objetivos de menos de 44
+						px.</strong>{" "}
+						<a href="/rules/target-size-enhanced/">
+							<code>target-size-enhanced</code>
+						</a>{" "}
+						(2.5.5) se ejecuta en un análisis completo, uno sin objetivo de WCAG, y con un objetivo
+						AAA. Un pipeline que falla con cualquier <code>fail</code> de un análisis completo
+						puede ver fallos nuevos: analiza con un objetivo, como el perfil{" "}
+						<code>wcag22-aa</code>, para juzgar solo por A y AA (consulta{" "}
+						<a href="/configuration/engine-options/">Opciones del motor</a>). Con las buenas
+						prácticas,{" "}
+						<a href="/rules/page-zones-landmark/">
+							<code>page-zones-landmark</code>
+						</a>{" "}
+						pregunta por un encabezado, una navegación, una búsqueda o un pie de página que no es
+						su región de referencia.
 					</li>
 					<li>
-						<strong>Los mensajes y los pasos describen la comprobación</strong> en lugar de nombrar
-						el criterio de WCAG, en todas las configuraciones regionales, así que un informe para
-						otro estándar se lee bien. Los mapeos y <code>failWhen</code> no cambian; una prueba
-						que compare el texto de los mensajes necesita actualizarse.
+						<strong>Algunas reglas cuentan para más criterios.</strong>{" "}
+						<code>css-focus-indicator-suppressed</code> se asigna también al 1.4.11 y al 2.4.13,
+						así que sus hallazgos aparecen ahora en el resultado del 1.4.11;{" "}
+						<code>focus-not-removed-by-script</code> se asigna al 2.4.13, y cuatro reglas que se
+						asignan al 2.1.1 se asignan también al 2.1.3.
 					</li>
 					<li>
-						<strong>Se juzgan las páginas profundas.</strong> Un elemento a 200 o más niveles de
-						profundidad se juzga con todo lo que tiene encima, hasta 10.000 niveles, donde un fallo
-						tan profundo pasaba a ser una pregunta anotada en <code>error</code>; así que pueden
-						aparecer fallos ahí. Más allá de 10.000 es una pregunta, informada en{" "}
-						<a href="/results-reports/output-schema/">
-							<code>ancestorWalkLimit</code>
-						</a>
-						.
+						<strong>Los mensajes nombran la causa de fondo</strong> que encuentran las reglas: por
+						qué un elemento no tiene nombre (<code>data.details.nameCause</code>), una probable
+						errata en un rol, un atributo o un valor de <code>autocomplete</code>, qué oculta un
+						elemento, el contraste en un fallo de <code>link-in-text-block</code>, cuánto le falta
+						a un objetivo para pasar <code>target-size-minimum</code>. Una prueba que compare el
+						texto de los mensajes, o la clave de la pista de <code>target-size-minimum</code>{" "}
+						(ahora <code>_centerDistance</code> o <code>_regionDistance</code>), necesita
+						actualizarse.
 					</li>
 					<li>
-						<strong>Las páginas que sustituyen <code>Array.from</code></strong> (Prototype.js,
-						MooTools) se analizan, donde antes el análisis se detenía con{" "}
-						<code>PAGE_BUILTINS_BROKEN</code> (consulta{" "}
-						<a href="#page-builtins-broken">la entrada de más arriba</a>).
+						<strong>Algunos hallazgos cambian.</strong> <code>css-hidden-focus</code> tiende a{" "}
+						<code>fail</code> cuando el elemento está fuera de la vista y no se sabe de nada que lo
+						traiga a la vista; <code>aria-hidden-focus</code> hace fallar un elemento enfocable
+						devuelto a <code>visibility: visible</code> dentro de una raíz <code>aria-hidden</code>{" "}
+						oculta; <code>aria-conditional-attr</code> da por bueno un valor de{" "}
+						<code>aria-invalid</code> fuera de sus tokens; <code>link-in-text-block</code> solo
+						cuenta el texto de la propia línea del enlace.
 					</li>
 					<li>
-						<strong>Algunos selectores son distintos.</strong> Los caracteres de control se
-						escapan, un valor de más de 256 caracteres deja paso a la ruta del elemento, y{" "}
-						<a href="/rules/page-title-present/"><code>page-title-present</code></a> y{" "}
-						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> apuntan al
-						propio elemento del título, o a <code>&lt;head&gt;</code> cuando no hay ninguno. La
-						identidad de un hallazgo no incluye su selector, así que los baselines siguen
-						coincidiendo. Las reglas de contraste son <code>notApplicable</code> sin ninguna
-						ocurrencia cuando no se pudo calcular ningún contraste.
-					</li>
-					<li>
-						<strong>Los errores se informan en lugar de leerse como nada.</strong> Un{" "}
-						<code>contextSelector</code> vacío sigue analizando toda la página, pero avisa; algo
-						que no es un baseline lanza <code>INVALID_BASELINE</code> en lugar de hacer nuevo cada
-						fallo; y con <code>strictOptions</code>, un nombre de perfil desconocido lanza un error.
-						El perfil <code>section508</code> está obsoleto: usa <code>wcag20-aa</code>, que
-						ejecuta las mismas reglas.
-					</li>
-					<li>
-						<strong>Análisis más rápidos</strong>, con los mismos hallazgos: un pequeño porcentaje
-						en Chromium en páginas corrientes, del 10 al 25 % con jsdom, y mucho más donde era peor
-						(miles de enlaces o campos idénticos, tablas largas, muchas reglas de estilo).
+						<strong>Los packs creados para la 1.16 pueden omitirse.</strong> Un pack que usa las
+						API experimentales de core no acepta ninguna versión menor posterior, así que un
+						análisis con la 1.17 lo omite hasta que tenga una versión para la 1.17: el{" "}
+						<a href="/configuration/packs/#en-301-549-pack">pack de EN 301 549</a> necesita la
+						1.4.0. Además, la 1.17 eliminó cuatro campos de las leyes de un estándar, y un pack que
+						todavía los tenga se rechaza (consulta{" "}
+						<a href="/configuration/packs/#laws">Packs</a>).
 					</li>
 				</ul>
 				<p>
-					Nuevo, y sin cambiar nada salvo que lo uses: los perfiles de WCAG 2.0 y 2.1 (
-					<a href="/configuration/engine-options/#conformance-profiles">Opciones del motor</a>) y,
-					experimentales hasta la 1.18.0, los estándares como datos, las pruebas bajo los
-					requisitos, los estándares construidos sobre otros y las leyes bajo las que se evalúa un
-					estándar (<a href="/configuration/packs/#experimental">Packs</a>). La lista completa está
-					en el{" "}
+					Nuevo, y sin cambiar nada salvo que lo uses: un pack construido sobre otro pack (
+					<code>uses</code>, <code>surea11y-pack new --kind derived</code>), experimental hasta la
+					1.19.0 (<a href="/configuration/packs/#a-pack-built-on-another-pack">Packs</a>). El
+					bundle para navegador pasa de 1.565 a 1.829 KB, sobre todo por los mensajes nuevos. La
+					lista completa está en el{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>{" "}

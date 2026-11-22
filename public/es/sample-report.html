@@ -106,6 +106,8 @@
   .pager button { padding: 5px 12px; border: 1px solid #ccc; background: #fff; border-radius: 5px; cursor: pointer; }
   .pager button:disabled { opacity: 0.4; cursor: default; }
   .note { font-size: 12.5px; opacity: 0.75; margin-top: 6px; }
+  .incomplete { border: 2px solid #a30000; border-radius: 8px; padding: 10px 14px; margin: 0 0 16px; font-weight: 600; line-height: 1.5; }
+  @media (prefers-color-scheme: dark) { .incomplete { border-color: #ff8a80 !important; } }
 </style>
 </head>
 <body>
@@ -116,10 +118,12 @@
 </header>
 
 <div class="meta-bar">
-  <div><b>149</b>reglas ejecutadas</div>
-  <div><b>18</b>apariciones en total</div>
+  <div><b>154</b>reglas ejecutadas</div>
+  <div><b>17</b>apariciones en total</div>
+  
   <div><b>a11ycore</b>motor</div>
   <div><b>1.0.0</b>versión del esquema</div>
+  
   <div><b>WCAG 2.2</b>objetivo</div>
   <div><b>1280×900</b>área de visualización</div>
   <div><b>light</b>esquema de color</div>
@@ -127,28 +131,29 @@
 </div>
 
 <main>
+  
   <div class="hero">
-    <p class="hero-headline">Se superaron <strong>42</strong> de <strong>52</strong> comprobaciones aplicables. <strong>5</strong> fallos requieren atención más abajo.</p>
-    <div class="hero-bar"><div class="hero-bar-seg" style="width:3.3557046979865772%; background:#b0441f" title="No superada: 5 (3,4 %)"></div><div class="hero-bar-seg" style="width:3.3557046979865772%; background:#8a6400" title="Requiere revisión: 5 (3,4 %)"></div><div class="hero-bar-seg" style="width:28.187919463087248%; background:#0b7d0b" title="Superada: 42 (28,2 %)"></div><div class="hero-bar-seg" style="width:65.1006711409396%; background:#5f6368" title="No aplicable: 97 (65,1 %)"></div></div>
+    <p class="hero-headline">Se superaron <strong>42</strong> de <strong>53</strong> comprobaciones aplicables. <strong>5</strong> fallos requieren atención más abajo.</p>
+    <div class="hero-bar"><div class="hero-bar-seg" style="width:3.2467532467532463%; background:#b0441f" title="No superada: 5 (3,2 %)"></div><div class="hero-bar-seg" style="width:3.896103896103896%; background:#8a6400" title="Requiere revisión: 6 (3,9 %)"></div><div class="hero-bar-seg" style="width:27.27272727272727%; background:#0b7d0b" title="Superada: 42 (27,3 %)"></div><div class="hero-bar-seg" style="width:65.5844155844156%; background:#5f6368" title="No aplicable: 101 (65,6 %)"></div></div>
     <div class="hero-legend"><div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
         <span class="hero-legend-label">No superada</span>
-        <span class="hero-legend-count">5 (3,4 %)</span>
+        <span class="hero-legend-count">5 (3,2 %)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
         <span class="hero-legend-label">Requiere revisión</span>
-        <span class="hero-legend-count">5 (3,4 %)</span>
+        <span class="hero-legend-count">6 (3,9 %)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#0b7d0b">✓</span>
         <span class="hero-legend-label">Superada</span>
-        <span class="hero-legend-count">42 (28,2 %)</span>
+        <span class="hero-legend-count">42 (27,3 %)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#5f6368">–</span>
         <span class="hero-legend-label">No aplicable</span>
-        <span class="hero-legend-count">97 (65,1 %)</span>
+        <span class="hero-legend-count">101 (65,6 %)</span>
       </div></div>
   </div>
 
@@ -161,11 +166,12 @@
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.4.6</span></div>
         <div class="card-selector"><span class="card-selector-label">Selector:</span> <code>html &gt; body &gt; main &gt; p:nth-of-type(1)</code></div>
-        <div class="card-snippet">El elemento tiene un contraste de color insuficiente (AAA) de 2.61:1 (primer plano: #a0a0a0, fondo: #ffffff, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 7:1 (texto normal). — Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 7:1.</div>
+        <div class="card-snippet">El elemento tiene un contraste de color insuficiente (AAA) de 2,61:1 (primer plano: #a0a0a0, fondo: #ffffff, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 7:1 (texto normal). — Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 7:1.</div>
         
         
         <p class="card-note">El selector y el resumen anteriores corresponden a una aparición representativa; 2 en total en esta regla.</p>
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html">Comprender 1.4.6 Contrast (Enhanced)</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html">Comprender 1.4.6 Contraste (mejorado)</a></p>
       </div>
     </div>
 <div class="card">
@@ -176,11 +182,12 @@
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.4.3</span></div>
         <div class="card-selector"><span class="card-selector-label">Selector:</span> <code>html &gt; body &gt; main &gt; p:nth-of-type(1)</code></div>
-        <div class="card-snippet">El elemento tiene un contraste de color insuficiente de 2.61:1 (primer plano: #a0a0a0, fondo: #ffffff, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 4.5:1 (texto normal). — Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 4.5:1.</div>
+        <div class="card-snippet">El elemento tiene un contraste de color insuficiente de 2,61:1 (primer plano: #a0a0a0, fondo: #ffffff, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 4,5:1 (texto normal). — Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 4,5:1.</div>
         
         
         <p class="card-note">El selector y el resumen anteriores corresponden a una aparición representativa; 2 en total en esta regla.</p>
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">Comprender 1.4.3 Contrast (Minimum)</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">Comprender 1.4.3 Contraste (mínimo)</a></p>
       </div>
     </div>
 <div class="card">
@@ -195,7 +202,8 @@
         
         
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprender 2.1.1 Keyboard</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprender 2.1.1 Teclado</a></p>
       </div>
     </div>
 <div class="card">
@@ -210,22 +218,24 @@
         
         
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprender 1.1.1 Non-text Content</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprender 1.1.1 Contenido no textual</a></p>
       </div>
     </div>
 <div class="card">
       <div class="card-head">
         <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
-        <span class="card-title"><strong>target-size-enhanced</strong> (No superada, gravedad moderada) <span class="card-count">× 5</span></span>
+        <span class="card-title"><strong>target-size-enhanced</strong> (No superada, gravedad moderada) <span class="card-count">× 3</span></span>
       </div>
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.5.5</span></div>
         <div class="card-selector"><span class="card-selector-label">Selector:</span> <code>html &gt; body &gt; header &gt; a</code></div>
-        <div class="card-snippet">El objetivo mide 37.6×18 px CSS en una ventana de 1280 px de ancho, menos de 44×44. — Hacer que el objetivo mida al menos 44×44 px CSS.</div>
+        <div class="card-snippet">El objetivo mide 37,6×18 px CSS en una ventana de 1280 px de ancho, menos de 44×44. — Hacer que el objetivo mida al menos 44×44 px CSS.</div>
         
         
-        <p class="card-note">El selector y el resumen anteriores corresponden a una aparición representativa; 5 en total en esta regla.</p>
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html">Comprender 2.5.5 Target Size (Enhanced)</a></p>
+        <p class="card-note">El selector y el resumen anteriores corresponden a una aparición representativa; 3 en total en esta regla.</p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html">Comprender 2.5.5 Tamaño del objetivo (mejorado)</a></p>
       </div>
     </div></div>
 <h3 class="cards-group">Probable fallo: confírmelo</h3><div class="cards"><div class="card">
@@ -240,7 +250,8 @@
         <p class="card-lean">Probable fallo: El mensaje de error vinculado al campo está oculto, así que probablemente no se comunica el error.</p>
         <details class="card-how"><summary>Cómo comprobarlo</summary><ol><li>Hacer que el campo no sea válido como lo haría un usuario (enviar el formulario vacío o escribir un valor erróneo).</li><li>Buscar el mensaje de error al que apunta el campo (su aria-errormessage) y comprobar si aparece en pantalla.</li><li>Si no aparece, buscar cualquier texto que le diga qué está mal: en la etiqueta, junto al campo o en un resumen en la parte superior del formulario.</li><li>Con un lector de pantalla, desplazarse hasta el campo y escuchar el error.</li></ol><p>Cumple: El error se muestra en texto, y se anuncia, en algún lugar vinculado al campo, aunque no sea en el mensaje que indica aria-errormessage.</p><p>Falla: Ningún texto le dice qué campo está mal ni por qué, o a quien usa lector de pantalla no se le comunica, lo que incumple WCAG 3.3.1.</p></details>
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html">Comprender 3.3.1 Error Identification</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html">Comprender 3.3.1 Identificación de errores</a></p>
       </div>
     </div>
 <div class="card">
@@ -255,7 +266,8 @@
         <p class="card-lean">Probable fallo: Un nombre de archivo, una dirección web o una palabra genérica no dice lo que muestra la imagen. Atención: La palabra puede ser todo lo que muestra la imagen, como una imagen de esa palabra.</p>
         <details class="card-how"><summary>Cómo comprobarlo</summary><ol><li>Localizar la imagen que indica el informe y leer su texto alternativo (el informe da el motivo por el que pareció sospechoso, si lo hay).</li><li>Observar la imagen y su contexto, y preguntarse qué muestra que sea importante para la página.</li><li>Si la alternativa textual solo nombra la imagen, como es habitual en gráficos y diagramas, los detalles pueden estar en otro sitio: en un pie, un texto o una tabla junto a ella, o en un enlace al lado. Solo cuenta si un usuario de lector de pantalla puede encontrarlo desde la imagen y da todo lo que muestra la imagen.</li><li>Decidir si el alt dice lo importante, o nombra la imagen mientras esa descripción da el resto; un nombre de archivo, una dirección web o una palabra genérica como «imagen» no hace ninguna de las dos cosas.</li></ol><p>Cumple: El texto alt transmite lo que muestra la imagen y necesita el usuario, o nombra la imagen y una descripción a la que un usuario de lector de pantalla llega desde ella da el resto.</p><p>Falla: Ni el texto alt ni una descripción accesible desde la imagen transmiten su contenido (por ejemplo, el alt es un nombre de archivo, una dirección o una palabra genérica), lo que incumple WCAG 1.1.1 (F30).</p></details>
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprender 1.1.1 Non-text Content</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprender 1.1.1 Contenido no textual</a></p>
       </div>
     </div></div>
 <h3 class="cards-group">Probablemente cumple: confírmelo</h3><div class="cards"><div class="card">
@@ -270,7 +282,8 @@
         <p class="card-lean">Probablemente cumple: WCAG 2.2 eliminó el criterio con el que se detectó esto. Atención: El defecto en sí sigue rompiendo lo que depende de él, y una norma que mantiene el criterio lo da por incumplido.</p>
         <details class="card-how"><summary>Cómo comprobarlo</summary><ol><li>Inspeccionar los elementos que indica el informe y anotar el id compartido.</li><li>Comprobar si algo remite a ese id: el for de un label, un atributo aria-* como aria-labelledby, o un enlace a #the-id.</li><li>Si algo remite a él, seguir la referencia (hacer clic en el label o en el enlace, o leer el nombre en el panel Accesibilidad) y comprobar que llega al elemento previsto.</li><li>Comprobar qué versión de WCAG y qué norma aplica la auditoría; con WCAG 2.2, o con 2.0/2.1 y la fe de erratas de 2023, el 4.1.1 se cumple para HTML.</li></ol><p>Cumple: Nada falla por el duplicado (las referencias llegan al elemento previsto) y la auditoría usa WCAG 2.2, o 2.0/2.1 con la fe de erratas, con las que el 4.1.1 se cumple.</p><p>Falla: Un label, una referencia ARIA o un enlace llega al elemento equivocado (WCAG 1.3.1 o 4.1.2), o la auditoría sigue una norma que conserva el texto del 4.1.1, como EN 301 549 V3.2.1, en la que los id duplicados incumplen el 4.1.1 (F77).</p></details>
         <p class="card-note">El selector y el resumen anteriores corresponden a una aparición representativa; 2 en total en esta regla.</p>
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG21/Understanding/parsing.html">Comprender 4.1.1 Parsing</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG21/Understanding/parsing.html">Comprender 4.1.1 <span lang="en">Parsing</span></a></p>
       </div>
     </div></div>
 <h3 class="cards-group">Lo debe revisar una persona</h3><div class="cards"><div class="card">
@@ -285,7 +298,24 @@
         
         <details class="card-how"><summary>Cómo comprobarlo</summary><ol><li>Hacer clic en la barra de direcciones del navegador y pulsar Tab repetidamente para recorrer todos los enlaces y controles de la página.</li><li>En cada parada, comprobar que ve dónde está el foco y que el orden sigue el orden de lectura de la página.</li><li>Accionar cada control con el teclado (Intro, Espacio, teclas de flecha) y abrir y cerrar los menús y los diálogos.</li><li>Donde algo no se pueda alcanzar o usar con el teclado, comprobar si la página ofrece otra forma de hacer lo mismo solo con el teclado, como los botones anterior y siguiente de un carrusel, o botones subir y bajar en una lista que se puede arrastrar. Solo cuenta si hace todo lo que puede hacer el ratón.</li><li>Comprobar que el foco nunca se queda atrapado dentro de un componente y que Esc o Tab le permiten continuar.</li></ol><p>Cumple: Todo funciona con el teclado, directamente o mediante otra forma que hace lo mismo, el foco se mueve en un orden lógico, siempre es visible y nunca se queda atrapado.</p><p>Falla: Algo no se puede alcanzar ni usar con el teclado de ninguna forma, el foco atrapa al usuario, el orden es confuso o el foco no se ve, lo que incumple WCAG 2.1.1, 2.1.2, 2.4.3 o 2.4.7.</p></details>
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprender 2.1.1 Keyboard</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprender 2.1.1 Teclado</a></p>
+      </div>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
+        <span class="card-title"><strong>link-name-quality-link-only</strong> (Requiere revisión, gravedad menor)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.4.9</span></div>
+        <div class="card-selector"><span class="card-selector-label">Selector:</span> <code>html &gt; body &gt; main &gt; p:nth-of-type(2) &gt; a</code></div>
+        <div class="card-snippet">El nombre de este enlace (&quot;Read more&quot;) es una frase genérica: solo el texto que lo rodea dice adónde lleva. — Haz que el propio texto del enlace diga adónde lleva o qué hace, como &quot;Descargar la guía de precios de 2026&quot; en lugar de &quot;Haz clic aquí&quot;, para que se entienda leído por sí solo, como en una lista de enlaces.</div>
+        
+        <details class="card-how"><summary>Cómo comprobarlo</summary><ol><li>Localizar el enlace que indica el informe, &quot;Read more&quot;, y leer su texto por sí solo, sin la frase, el elemento de lista o la celda que lo rodea.</li><li>Decidir si ese texto por sí solo dice adónde lleva el enlace o qué hace, tal como se leería en una lista de los enlaces de la página.</li><li>Si no lo dice, buscar en la página un control que haga descriptivo el texto de los enlaces por sí solo, como un ajuste que amplíe enlaces como este.</li></ol><p>Cumple: El texto del enlace dice por sí solo adónde lleva, o la página ofrece un control que hace que lo diga.</p><p>Falla: El propósito del enlace solo se entiende por el texto que lo rodea y la página no ofrece forma de hacer descriptivo el texto del enlace, lo que incumple WCAG 2.4.9 (F84).</p></details>
+        
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-link-only.html">Comprender 2.4.9 Propósito de los enlaces (solo enlaces)</a></p>
       </div>
     </div>
 <div class="card">
@@ -300,7 +330,8 @@
         
         <details class="card-how"><summary>Cómo comprobarlo</summary><ol><li>Leer el título de la página que da el informe; el navegador lo muestra en la pestaña.</li><li>Mirar el encabezado principal y el contenido de la página y anotar de qué trata.</li><li>Decidir si el título dice ese tema o esa finalidad.</li></ol><p>Cumple: El título dice de qué trata la página o para qué sirve.</p><p>Falla: El título no dice de qué trata la página ni para qué sirve, lo que incumple WCAG 2.4.2.</p></details>
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">Comprender 2.4.2 Page Titled</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">Comprender 2.4.2 Página titulada</a></p>
       </div>
     </div></div>
   
@@ -337,8 +368,8 @@
             <td class="sc-cell">WCAG 1.3.1</td>
             <td>Información y relaciones</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Requiere revisión</span></td>
-            <td class="note">3 superadas / 0 no superadas / 0 requieren revisión / 13 no aplicables<br>Comprobado en parte: sus comprobaciones cubren solo una parte de este criterio, y el resto lo comprueba una persona</td>
-            <td class="note">table-headers-attr-valid, table-th-has-data-cells, aria-hidden-body, list-children-valid, listitem-parent-valid, definition-list-children-valid, dlitem-parent-valid, aria-required-children, aria-prohibited-children, aria-required-parent, form-control-programmatic-label-present, p-as-heading, table-fake-caption, td-has-header, aria-roles-valid, aria-owns-valid</td>
+            <td class="note">3 superadas / 0 no superadas / 0 requieren revisión / 14 no aplicables<br>Comprobado en parte: sus comprobaciones cubren solo una parte de este criterio, y el resto lo comprueba una persona</td>
+            <td class="note">table-headers-attr-valid, table-th-has-data-cells, aria-hidden-body, list-children-valid, listitem-parent-valid, definition-list-children-valid, dlitem-parent-valid, aria-required-children, aria-prohibited-children, aria-required-parent, form-control-programmatic-label-present, p-as-heading, table-fake-caption, form-group-name-present, td-has-header, aria-roles-valid, aria-owns-valid</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 1.4.1</td>
@@ -483,8 +514,8 @@
             <td class="sc-cell">WCAG 1.4.4</td>
             <td>Cambio de tamaño del texto</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Requiere revisión</span></td>
-            <td class="note">0 superadas / 0 no superadas / 0 requieren revisión / 1 no aplicables</td>
-            <td class="note">meta-viewport-zoom-enabled</td>
+            <td class="note">0 superadas / 0 no superadas / 0 requieren revisión / 2 no aplicables</td>
+            <td class="note">meta-viewport-zoom-enabled, resize-text-content-loss</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 1.4.5</td>
@@ -494,11 +525,18 @@
             <td class="note">image-of-text</td>
           </tr>
 <tr>
+            <td class="sc-cell">WCAG 1.4.10</td>
+            <td>Reajuste del texto</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Requiere revisión</span></td>
+            <td class="note">0 superadas / 0 no superadas / 0 requieren revisión / 1 no aplicables</td>
+            <td class="note">reflow-horizontal-scroll</td>
+          </tr>
+<tr>
             <td class="sc-cell">WCAG 1.4.11</td>
             <td>Contraste no textual</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Requiere revisión</span></td>
-            <td class="note">0 superadas / 0 no superadas / 0 requieren revisión / 1 no aplicables</td>
-            <td class="note">css-focus-indicator-suppressed</td>
+            <td class="note">0 superadas / 0 no superadas / 0 requieren revisión / 2 no aplicables</td>
+            <td class="note">css-focus-indicator-suppressed, symbol-graphic-contrast</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 1.4.12</td>
@@ -587,8 +625,8 @@
             <td class="sc-cell">WCAG 2.4.9</td>
             <td>Propósito de los enlaces (solo enlaces)</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">Requiere revisión</span></td>
-            <td class="note">1 superadas / 0 no superadas / 0 requieren revisión / 2 no aplicables<br>Comprobado en parte: sus comprobaciones cubren solo una parte de este criterio, y el resto lo comprueba una persona</td>
-            <td class="note">identical-links-same-purpose, link-name-present, link-name-quality</td>
+            <td class="note">1 superadas / 0 no superadas / 1 requieren revisión / 2 no aplicables</td>
+            <td class="note">identical-links-same-purpose, link-name-present, link-name-quality, link-name-quality-link-only</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 2.4.12</td>
@@ -622,7 +660,7 @@
       </div>
 
   <h2 id="manual-checks-heading">Lo que queda para una persona</h2>
-  <p class="manual-intro">Ninguna regla lo decide por completo, así que una persona lo comprueba a mano: <strong>61</strong> comprobaciones para <strong>40</strong> requisitos de WCAG 2.2 (A, AA, AAA). Un requisito cuyas reglas se superan todas solo se cumple cuando también se superan aquí sus comprobaciones.</p>
+  <p class="manual-intro">Ninguna regla lo decide por completo, así que una persona lo comprueba a mano: <strong>62</strong> comprobaciones para <strong>41</strong> requisitos de WCAG 2.2 (A, AA, AAA). Un requisito cuyas reglas se superan todas solo se cumple cuando también se superan aquí sus comprobaciones.</p>
   <div class="manual-list"><details class="manual-req">
       <summary><span class="sc-cell">1.1.1</span> <span>Contenido no textual</span> <span class="chip" style="background:#fdece5;color:#b0441f">Análisis: No superada</span> <span class="card-count">Comprobaciones: 5</span></summary>
       <div class="manual-body"><div class="manual-facet">
@@ -758,11 +796,11 @@
     </details><details class="manual-req">
       <summary><span class="sc-cell">1.4.3</span> <span>Contraste (mínimo)</span> <span class="chip" style="background:#fdece5;color:#b0441f">Análisis: No superada</span> <span class="card-count">Comprobaciones: 1</span></summary>
       <div class="manual-body"><div class="manual-facet">
-          <p class="manual-label"><strong>El texto tiene un contraste de al menos 4.5:1 con su fondo, o de 3:1 si es grande</strong></p>
+          <p class="manual-label"><strong>El texto tiene un contraste de al menos 4,5:1 con su fondo, o de 3:1 si es grande</strong></p>
           <p class="manual-meta">Las reglas deciden una parte · Herramientas: <span>Las herramientas para desarrolladores del navegador</span></p>
-          <ol><li>Recorrer la página en busca de texto que parezca tenue sobre su fondo: texto gris claro, texto sobre paneles de color, texto del atributo placeholder, texto sobre imágenes o degradados, texto en botones.</li><li>Para cada uno, inspeccionarlo y hacer clic en la muestra de su color en el panel Styles de las herramientas para desarrolladores: el selector de color muestra su relación de contraste con el fondo.</li><li>El selector de color mide respecto al color de fondo definido en CSS. Donde el texto esté sobre una imagen, un degradado o una capa semitransparente, o su color venga de la opacidad o de un modo de fusión, la cifra del selector no es fiable: usar en su lugar el paso siguiente.</li><li>Donde el fondo sea una imagen, un degradado o una capa semitransparente, medir el texto respecto a la parte del fondo en que menos se vea, con un analizador de contraste de color.</li><li>Comprobar que la relación es de al menos 4.5:1, o de 3:1 para texto grande: al menos 24 píxeles (18 pt), o 18.66 píxeles (14 pt) y en negrita.</li><li>No redondear el resultado: 4.49:1 no se supera. Comprobar también el texto en sus otros estados, como al pasar el puntero, con el foco y seleccionado, ya que un estado puede reducir el contraste.</li><li>Dejar fuera los logotipos y los nombres de marca, el texto de controles deshabilitados, el texto que es solo decorativo o que nadie puede ver, y el texto que forma parte de una imagen con otro contenido importante, como una señal de tráfico en una foto.</li></ol>
-          <p><strong>Se supera si:</strong> <span>Todo el texto y todas las imágenes de texto tienen un contraste de al menos 4.5:1 con su fondo, o de 3:1 si son grandes.</span></p>
-          <p><strong>No se supera si:</strong> <span>Un texto tiene con su fondo un contraste inferior a 4.5:1 (3:1 para texto grande), así que las personas con baja visión no pueden leerlo, lo que incumple WCAG 1.4.3.</span></p>
+          <ol><li>Recorrer la página en busca de texto que parezca tenue sobre su fondo: texto gris claro, texto sobre paneles de color, texto del atributo placeholder, texto sobre imágenes o degradados, texto en botones.</li><li>Para cada uno, inspeccionarlo y hacer clic en la muestra de su color en el panel Styles de las herramientas para desarrolladores: el selector de color muestra su relación de contraste con el fondo.</li><li>El selector de color mide respecto al color de fondo definido en CSS. Donde el texto esté sobre una imagen, un degradado o una capa semitransparente, o su color venga de la opacidad o de un modo de fusión, la cifra del selector no es fiable: usar en su lugar el paso siguiente.</li><li>Donde el fondo sea una imagen, un degradado o una capa semitransparente, medir el texto respecto a la parte del fondo en que menos se vea, con un analizador de contraste de color.</li><li>Comprobar que la relación es de al menos 4,5:1, o de 3:1 para texto grande: al menos 24 píxeles (18 pt), o 18,66 píxeles (14 pt) y en negrita.</li><li>No redondear el resultado: 4,49:1 no se supera. Comprobar también el texto en sus otros estados, como al pasar el puntero, con el foco y seleccionado, ya que un estado puede reducir el contraste.</li><li>Dejar fuera los logotipos y los nombres de marca, el texto de controles deshabilitados, el texto que es solo decorativo o que nadie puede ver, y el texto que forma parte de una imagen con otro contenido importante, como una señal de tráfico en una foto.</li></ol>
+          <p><strong>Se supera si:</strong> <span>Todo el texto y todas las imágenes de texto tienen un contraste de al menos 4,5:1 con su fondo, o de 3:1 si son grandes.</span></p>
+          <p><strong>No se supera si:</strong> <span>Un texto tiene con su fondo un contraste inferior a 4,5:1 (3:1 para texto grande), así que las personas con baja visión no pueden leerlo, lo que incumple WCAG 1.4.3.</span></p>
         </div></div>
     </details><details class="manual-req">
       <summary><span class="sc-cell">1.4.4</span> <span>Cambio de tamaño del texto</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Análisis: Requiere revisión</span> <span class="card-count">Comprobaciones: 1</span></summary>
@@ -785,11 +823,20 @@
     </details><details class="manual-req">
       <summary><span class="sc-cell">1.4.6</span> <span>Contraste (mejorado)</span> <span class="chip" style="background:#fdece5;color:#b0441f">Análisis: No superada</span> <span class="card-count">Comprobaciones: 1</span></summary>
       <div class="manual-body"><div class="manual-facet">
-          <p class="manual-label"><strong>El texto tiene un contraste de al menos 7:1 con su fondo, o de 4.5:1 si es grande</strong></p>
+          <p class="manual-label"><strong>El texto tiene un contraste de al menos 7:1 con su fondo, o de 4,5:1 si es grande</strong></p>
           <p class="manual-meta">Las reglas deciden una parte · Herramientas: <span>Las herramientas para desarrolladores del navegador</span></p>
-          <ol><li>Recorrer la página en busca de texto que parezca tenue sobre su fondo, como en 1.4.3.</li><li>Para cada uno, inspeccionarlo y hacer clic en la muestra de su color en el panel Styles de las herramientas para desarrolladores: el selector de color muestra su relación de contraste.</li><li>Donde el fondo sea una imagen, un degradado o una capa semitransparente, medir el texto respecto a la parte del fondo en que menos se vea, con un analizador de contraste de color.</li><li>Comprobar que la relación es de al menos 7:1, o de 4.5:1 para texto grande: al menos 24 píxeles (18 pt), o 18.66 píxeles (14 pt) y en negrita.</li><li>No redondear el resultado: 6.99:1 no se supera. Comprobar también el texto al pasar el puntero, con el foco y seleccionado.</li><li>Dejar fuera los logotipos y los nombres de marca, el texto de controles deshabilitados, el texto que es solo decorativo o que nadie puede ver, y el texto que forma parte de una imagen con otro contenido importante.</li></ol>
-          <p><strong>Se supera si:</strong> <span>Todo el texto y todas las imágenes de texto tienen un contraste de al menos 7:1 con su fondo, o de 4.5:1 si son grandes.</span></p>
-          <p><strong>No se supera si:</strong> <span>Un texto tiene con su fondo un contraste inferior a 7:1 (4.5:1 para texto grande), lo que incumple WCAG 1.4.6.</span></p>
+          <ol><li>Recorrer la página en busca de texto que parezca tenue sobre su fondo, como en 1.4.3.</li><li>Para cada uno, inspeccionarlo y hacer clic en la muestra de su color en el panel Styles de las herramientas para desarrolladores: el selector de color muestra su relación de contraste.</li><li>Donde el fondo sea una imagen, un degradado o una capa semitransparente, medir el texto respecto a la parte del fondo en que menos se vea, con un analizador de contraste de color.</li><li>Comprobar que la relación es de al menos 7:1, o de 4,5:1 para texto grande: al menos 24 píxeles (18 pt), o 18,66 píxeles (14 pt) y en negrita.</li><li>No redondear el resultado: 6,99:1 no se supera. Comprobar también el texto al pasar el puntero, con el foco y seleccionado.</li><li>Dejar fuera los logotipos y los nombres de marca, el texto de controles deshabilitados, el texto que es solo decorativo o que nadie puede ver, y el texto que forma parte de una imagen con otro contenido importante.</li></ol>
+          <p><strong>Se supera si:</strong> <span>Todo el texto y todas las imágenes de texto tienen un contraste de al menos 7:1 con su fondo, o de 4,5:1 si son grandes.</span></p>
+          <p><strong>No se supera si:</strong> <span>Un texto tiene con su fondo un contraste inferior a 7:1 (4,5:1 para texto grande), lo que incumple WCAG 1.4.6.</span></p>
+        </div></div>
+    </details><details class="manual-req">
+      <summary><span class="sc-cell">1.4.10</span> <span>Reajuste del texto</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Análisis: Requiere revisión</span> <span class="card-count">Comprobaciones: 1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>Con 320 píxeles CSS de ancho, el contenido no necesita desplazamiento en dos direcciones y no se pierde nada</strong></p>
+          <p class="manual-meta">Las reglas deciden una parte · Herramientas: <span>Las herramientas para desarrolladores del navegador</span>, <span>El zoom del navegador</span></p>
+          <ol><li>Pon la ventana del navegador a 320 píxeles CSS de ancho: en las herramientas de desarrollo, activa la barra de dispositivos y pon el ancho a 320, o amplía al 400% una ventana de 1280 píxeles de ancho.</li><li>Recorre toda la página y comprueba si se desplaza hacia los lados además de hacia arriba y abajo.</li><li>Donde lo haga, busca qué es más ancho que la ventana. El contenido que necesita dos dimensiones para usarse o entenderse, como un mapa, un diagrama, un vídeo, un juego o una tabla de datos, puede desplazarse hacia los lados por sí solo.</li><li>Comprueba que todo el contenido y todos los controles siguen ahí y se pueden usar: los menús, formularios y botones pueden moverse o plegarse, pero no se puede perder nada.</li></ol>
+          <p><strong>Se supera si:</strong> <span>Con 320 píxeles CSS de ancho la página se desplaza en una sola dirección, salvo el contenido que necesita dos dimensiones, y no se pierde nada.</span></p>
+          <p><strong>No se supera si:</strong> <span>Con 320 píxeles CSS de ancho la página necesita desplazarse hacia los lados para leer o usar su contenido, o se pierde algún contenido o función, lo que incumple WCAG 1.4.10.</span></p>
         </div></div>
     </details><details class="manual-req">
       <summary><span class="sc-cell">1.4.11</span> <span>Contraste no textual</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Análisis: Requiere revisión</span> <span class="card-count">Comprobaciones: 2</span></summary>
@@ -1117,22 +1164,22 @@
       <h2>Resumen de resultados</h2>
       <div class="scorecard"><div class="tile" style="border-color:#b0441f; background:#fdece5">
       <div class="tile-num" style="color:#b0441f">5</div>
-      <div class="tile-pct">3,4 %</div>
+      <div class="tile-pct">3,2 %</div>
       <div class="tile-label">No superada</div>
     </div>
 <div class="tile" style="border-color:#8a6400; background:#fdf3d9">
-      <div class="tile-num" style="color:#8a6400">5</div>
-      <div class="tile-pct">3,4 %</div>
+      <div class="tile-num" style="color:#8a6400">6</div>
+      <div class="tile-pct">3,9 %</div>
       <div class="tile-label">Requiere revisión</div>
     </div>
 <div class="tile" style="border-color:#0b7d0b; background:#e9f7e9">
       <div class="tile-num" style="color:#0b7d0b">42</div>
-      <div class="tile-pct">28,2 %</div>
+      <div class="tile-pct">27,3 %</div>
       <div class="tile-label">Superada</div>
     </div>
 <div class="tile" style="border-color:#5f6368; background:#f1f2f3">
-      <div class="tile-num" style="color:#5f6368">97</div>
-      <div class="tile-pct">65,1 %</div>
+      <div class="tile-num" style="color:#5f6368">101</div>
+      <div class="tile-pct">65,6 %</div>
       <div class="tile-label">No aplicable</div>
     </div></div>
 
@@ -1162,7 +1209,7 @@
   </details>
 </main>
 
-<script type="application/json" id="report-data">[{"ruleId":"click-handler-keyboard-operable","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"Este elemento tiene role=\"button\" y un controlador de clic, y recibe el foco del teclado, pero no hay ningún detector de teclas en él, en un antepasado, en el documento ni en la ventana, así que Intro y Espacio no hacen nada.","summaryLang":"","hint":"Usar el elemento nativo (\u003cbutton>, \u003ca href> o \u003cinput type=\"checkbox\">), o gestionar keydown para que las teclas a las que responde un button hagan lo mismo que un clic.","lean":""},{"ruleId":"contrast-computable","outcome":"pass","severity":"serious","severityLabel":"grave","selector":"","html":"","summary":"El contraste es computable para todo el texto elegible (11 nodo(s) de texto).","summaryLang":"","hint":"Nada que cambiar. Si este texto alcanza su relación de contraste lo dicen las reglas de contraste mínimo (AA) y mejorado (AAA).","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"El elemento tiene un contraste de color insuficiente (AAA) de 2.61:1 (primer plano: #a0a0a0, fondo: #ffffff, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 7:1 (texto normal).","summaryLang":"","hint":"Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 7:1.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"El elemento tiene un contraste de color insuficiente (AAA) de 2.55:1 (primer plano: #ffffff, fondo: #00bb55, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 7:1 (texto normal).","summaryLang":"","hint":"Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 7:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"El elemento tiene un contraste de color insuficiente de 2.61:1 (primer plano: #a0a0a0, fondo: #ffffff, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 4.5:1 (texto normal).","summaryLang":"","hint":"Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 4.5:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"El elemento tiene un contraste de color insuficiente de 2.55:1 (primer plano: #ffffff, fondo: #00bb55, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 4.5:1 (texto normal).","summaryLang":"","hint":"Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 4.5:1.","lean":""},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"moderada","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"El id «code» se usa en 2 elementos del mismo árbol.","summaryLang":"","hint":"Dar a cada elemento su propio id. Un id duplicado rompe \u003clabel for>, los enlaces de fragmento, getElementById y todo atributo de referencia por id: todos resuelven solo a la primera coincidencia.","lean":"Probablemente cumple: WCAG 2.2 eliminó el criterio con el que se detectó esto."},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"moderada","selector":"html > body > footer > p","html":"\u003cp id=\"code\">© Shop\u003c/p>","summary":"El id «code» se usa en 2 elementos del mismo árbol.","summaryLang":"","hint":"Dar a cada elemento su propio id. Un id duplicado rompe \u003clabel for>, los enlaces de fragmento, getElementById y todo atributo de referencia por id: todos resuelven solo a la primera coincidencia.","lean":"Probablemente cumple: WCAG 2.2 eliminó el criterio con el que se detectó esto."},{"ruleId":"img-alt-present","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > img:nth-of-type(1)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\">","summary":"Este \u003cimg> no tiene atributo alt.","summaryLang":"","hint":"Agregar un atributo alt que diga lo que muestra la imagen, o alt=\"\" si la imagen es solo decorativa.","lean":""},{"ruleId":"img-alt-quality","outcome":"cantTell","severity":"minor","severityLabel":"menor","selector":"html > body > main > img:nth-of-type(2)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\" alt=\"IMG_2041.jpg\">","summary":"La alternativa textual de este \u003cimg>, \"IMG_2041.jpg\", parece un nombre de archivo.","summaryLang":"","hint":"Un nombre de archivo no le dice nada sobre la imagen a quien no puede verla. Sustituirlo por un texto que diga qué muestra la imagen o, en un enlace o botón, adónde lleva o qué hace. Mantenerlo solo si el nombre de archivo es lo que muestra la imagen, como en una captura de pantalla de una lista de archivos.","lean":"Probable fallo: Un nombre de archivo, una dirección web o una palabra genérica no dice lo que muestra la imagen."},{"ruleId":"invalid-field-error-message","outcome":"cantTell","severity":"serious","severityLabel":"grave","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"Este campo está marcado como no válido, pero el mensaje de error que nombra aria-errormessage (\"Enter an email address such as name@exa…\") está oculto por display: none en \u003cp id=\"email-error\">.","summaryLang":"","hint":"Mostrar el mensaje de error mientras el campo no sea válido.","lean":"Probable fallo: El mensaje de error vinculado al campo está oculto, así que probablemente no se comunica el error."},{"ruleId":"manual-review","outcome":"cantTell","severity":"moderate","severityLabel":"moderada","selector":"html","html":"","summary":"Comprobar a mano la navegación con teclado y el orden del foco.","summaryLang":"","hint":"Recorrer la página con el tabulador y comprobar que cada elemento interactivo se puede alcanzar y usar con el teclado, y que el foco siempre puede salir de él; que el orden del foco sigue el orden de lectura, también después de que un script abra o añada contenido; y que el foco está siempre visible.","lean":""},{"ruleId":"page-title-patterns","outcome":"cantTell","severity":"minor","severityLabel":"menor","selector":"html > head > title","html":"\u003ctitle>Checkout\u003c/title>","summary":"Comprobar que el título de la página, «Checkout», dice de qué trata la página.","summaryLang":"","hint":"Comprobar que el título dice de qué trata la página o para qué sirve, y la distingue de las demás páginas del sitio.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderada","selector":"html > body > header > a","html":"\u003ca href=\"/\">Shop\u003c/a>","summary":"El objetivo mide 37.6×18 px CSS en una ventana de 1280 px de ancho, menos de 44×44.","summaryLang":"","hint":"Hacer que el objetivo mida al menos 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderada","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(1)","html":"\u003ca href=\"/cart\">Cart\u003c/a>","summary":"El objetivo mide 31.1×18 px CSS en una ventana de 1280 px de ancho, menos de 44×44.","summaryLang":"","hint":"Hacer que el objetivo mida al menos 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderada","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(2)","html":"\u003ca href=\"/account\">Account\u003c/a>","summary":"El objetivo mide 60×18 px CSS en una ventana de 1280 px de ancho, menos de 44×44.","summaryLang":"","hint":"Hacer que el objetivo mida al menos 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderada","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"El objetivo mide 153×21 px CSS en una ventana de 1280 px de ancho, menos de 44×44.","summaryLang":"","hint":"Hacer que el objetivo mida al menos 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderada","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"El objetivo mide 153×21 px CSS en una ventana de 1280 px de ancho, menos de 44×44.","summaryLang":"","hint":"Hacer que el objetivo mida al menos 44×44 px CSS.","lean":""}]</script>
+<script type="application/json" id="report-data">[{"ruleId":"click-handler-keyboard-operable","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"Este elemento tiene role=\"button\" y un controlador de clic, y recibe el foco del teclado, pero no hay ningún detector de teclas en él, en un antepasado, en el documento ni en la ventana, así que Intro y Espacio no hacen nada.","summaryLang":"","hint":"Usar el elemento nativo (\u003cbutton>, \u003ca href> o \u003cinput type=\"checkbox\">), o gestionar keydown para que las teclas a las que responde un button hagan lo mismo que un clic.","lean":""},{"ruleId":"contrast-computable","outcome":"pass","severity":"serious","severityLabel":"grave","selector":"","html":"","summary":"El contraste es computable para todo el texto elegible (11 nodo(s) de texto).","summaryLang":"","hint":"Nada que cambiar. Si este texto alcanza su relación de contraste lo dicen las reglas de contraste mínimo (AA) y mejorado (AAA).","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"El elemento tiene un contraste de color insuficiente (AAA) de 2,61:1 (primer plano: #a0a0a0, fondo: #ffffff, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 7:1 (texto normal).","summaryLang":"","hint":"Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 7:1.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"El elemento tiene un contraste de color insuficiente (AAA) de 2,55:1 (primer plano: #ffffff, fondo: #00bb55, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 7:1 (texto normal).","summaryLang":"","hint":"Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 7:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"El elemento tiene un contraste de color insuficiente de 2,61:1 (primer plano: #a0a0a0, fondo: #ffffff, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 4,5:1 (texto normal).","summaryLang":"","hint":"Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 4,5:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"El elemento tiene un contraste de color insuficiente de 2,55:1 (primer plano: #ffffff, fondo: #00bb55, tamaño de fuente: 16px, grosor de fuente: normal). Se esperaba una relación de contraste de 4,5:1 (texto normal).","summaryLang":"","hint":"Cambiar el color del texto, el del fondo o ambos para que la relación de contraste alcance al menos 4,5:1.","lean":""},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"moderada","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"El id «code» se usa en 2 elementos del mismo árbol.","summaryLang":"","hint":"Dar a cada elemento su propio id. Un id duplicado rompe \u003clabel for>, los enlaces de fragmento, getElementById y todo atributo de referencia por id: todos resuelven solo a la primera coincidencia.","lean":"Probablemente cumple: WCAG 2.2 eliminó el criterio con el que se detectó esto."},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"moderada","selector":"html > body > footer > p","html":"\u003cp id=\"code\">© Shop\u003c/p>","summary":"El id «code» se usa en 2 elementos del mismo árbol.","summaryLang":"","hint":"Dar a cada elemento su propio id. Un id duplicado rompe \u003clabel for>, los enlaces de fragmento, getElementById y todo atributo de referencia por id: todos resuelven solo a la primera coincidencia.","lean":"Probablemente cumple: WCAG 2.2 eliminó el criterio con el que se detectó esto."},{"ruleId":"img-alt-present","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > img:nth-of-type(1)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\">","summary":"Este \u003cimg> no tiene atributo alt.","summaryLang":"","hint":"Agregar un atributo alt que diga lo que muestra la imagen, o alt=\"\" si la imagen es solo decorativa.","lean":""},{"ruleId":"img-alt-quality","outcome":"cantTell","severity":"minor","severityLabel":"menor","selector":"html > body > main > img:nth-of-type(2)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\" alt=\"IMG_2041.jpg\">","summary":"La alternativa textual de este \u003cimg>, \"IMG_2041.jpg\", parece un nombre de archivo.","summaryLang":"","hint":"Un nombre de archivo no le dice nada sobre la imagen a quien no puede verla. Sustituirlo por un texto que diga qué muestra la imagen o, en un enlace o botón, adónde lleva o qué hace. Mantenerlo solo si el nombre de archivo es lo que muestra la imagen, como en una captura de pantalla de una lista de archivos.","lean":"Probable fallo: Un nombre de archivo, una dirección web o una palabra genérica no dice lo que muestra la imagen."},{"ruleId":"invalid-field-error-message","outcome":"cantTell","severity":"serious","severityLabel":"grave","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"Este campo está marcado como no válido, pero el mensaje de error que nombra aria-errormessage (\"Enter an email address such as name@exa…\") está oculto por display: none en \u003cp id=\"email-error\">.","summaryLang":"","hint":"Mostrar el mensaje de error mientras el campo no sea válido.","lean":"Probable fallo: El mensaje de error vinculado al campo está oculto, así que probablemente no se comunica el error."},{"ruleId":"link-name-quality-link-only","outcome":"cantTell","severity":"minor","severityLabel":"menor","selector":"html > body > main > p:nth-of-type(2) > a","html":"\u003ca href=\"/help\">Read more\u003c/a>","summary":"El nombre de este enlace (\"Read more\") es una frase genérica: solo el texto que lo rodea dice adónde lleva.","summaryLang":"","hint":"Haz que el propio texto del enlace diga adónde lleva o qué hace, como \"Descargar la guía de precios de 2026\" en lugar de \"Haz clic aquí\", para que se entienda leído por sí solo, como en una lista de enlaces.","lean":""},{"ruleId":"manual-review","outcome":"cantTell","severity":"moderate","severityLabel":"moderada","selector":"html","html":"","summary":"Comprobar a mano la navegación con teclado y el orden del foco.","summaryLang":"","hint":"Recorrer la página con el tabulador y comprobar que cada elemento interactivo se puede alcanzar y usar con el teclado, y que el foco siempre puede salir de él; que el orden del foco sigue el orden de lectura, también después de que un script abra o añada contenido; y que el foco está siempre visible.","lean":""},{"ruleId":"page-title-patterns","outcome":"cantTell","severity":"minor","severityLabel":"menor","selector":"html > head > title","html":"\u003ctitle>Checkout\u003c/title>","summary":"Comprobar que el título de la página, «Checkout», dice de qué trata la página.","summaryLang":"","hint":"Comprobar que el título dice de qué trata la página o para qué sirve, y la distingue de las demás páginas del sitio.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderada","selector":"html > body > header > a","html":"\u003ca href=\"/\">Shop\u003c/a>","summary":"El objetivo mide 37,6×18 px CSS en una ventana de 1280 px de ancho, menos de 44×44.","summaryLang":"","hint":"Hacer que el objetivo mida al menos 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderada","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(1)","html":"\u003ca href=\"/cart\">Cart\u003c/a>","summary":"El objetivo mide 31,1×18 px CSS en una ventana de 1280 px de ancho, menos de 44×44.","summaryLang":"","hint":"Hacer que el objetivo mida al menos 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"moderada","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(2)","html":"\u003ca href=\"/account\">Account\u003c/a>","summary":"El objetivo mide 60×18 px CSS en una ventana de 1280 px de ancho, menos de 44×44.","summaryLang":"","hint":"Hacer que el objetivo mida al menos 44×44 px CSS.","lean":""}]</script>
 <script>
 (function () {
   var OUTCOME_INFO = {"fail":{"label":"No superada","defaultOn":true,"color":"#b0441f","bg":"#fdece5","icon":"⚠"},"cantTell":{"label":"Requiere revisión","defaultOn":true,"color":"#8a6400","bg":"#fdf3d9","icon":"ℹ"},"pass":{"label":"Superada","defaultOn":false,"color":"#0b7d0b","bg":"#e9f7e9","icon":"✓"},"notApplicable":{"label":"No aplicable","defaultOn":false,"color":"#5f6368","bg":"#f1f2f3","icon":"–"}};

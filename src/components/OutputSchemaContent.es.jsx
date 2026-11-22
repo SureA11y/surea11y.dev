@@ -140,7 +140,10 @@ const topLevelRows = [
 				Solo en un análisis de varios perfiles, y solo cuando uno de ellos no se ejecutó:{" "}
 				<code>{"[{ profile, reason }]"}</code>, con <code>reason</code>{" "}
 				<code>unknown-profile</code> (no existe ese perfil), <code>pack-skipped</code> (su pack se
-				omitió, ver <code>skippedPacks</code>) u <code>overridden-by-selection</code> (un include en{" "}
+				omitió, ver <code>skippedPacks</code>), <code>timeBudget</code> (el presupuesto de tiempo del
+				análisis se agotó antes de que empezara; ver{" "}
+				<a href="#incomplete-scan">Un análisis incompleto</a>) u{" "}
+				<code>overridden-by-selection</code> (un include en{" "}
 				<code>runOnly</code>, o ids o etiquetas de reglas en <code>engineOptions</code>, eligen las
 				reglas en su lugar, como lo harían para un perfil; lo hacen para el análisis de cada
 				perfil). El conjunto de motivos está abierto.
@@ -153,9 +156,12 @@ const topLevelRows = [
 		meaning: (
 			<>
 				Presente solo cuando el perfil aplicado deja reglas fuera:{" "}
-				<code>{"{ rules, criteria }"}</code>, las reglas que nombra y los criterios de WCAG que
-				deja fuera. Las reglas que nombra, las reglas cuyos criterios deja fuera todos, y los
-				resultados agregados de WCAG de esos criterios no se ejecutaron; una regla que también
+				<code>{"{ rules, criteria, requirements }"}</code>, las reglas que nombra, los criterios de
+				WCAG que deja fuera y los requisitos de su estándar que no exige la ley a la que sirve
+				(experimental hasta la 1.20.0, y solo cuando los hay; ver{" "}
+				<a href="/configuration/packs/#laws">Packs</a>). Las reglas que nombra, las reglas cuyos
+				criterios deja fuera todos, los resultados agregados de WCAG de esos criterios y los de
+				esos requisitos no se ejecutaron; una regla que también
 				comprueba un criterio que el perfil conserva sí se ejecutó, y cuenta para ese criterio.
 				Esto reduce el análisis sin cambiar lo que exige WCAG. Ningún perfil incluido
 				deja nada fuera.
@@ -167,11 +173,12 @@ const topLevelRows = [
 		field: <code>engine.law</code>,
 		meaning: (
 			<>
-				Experimental (core 1.16.0, hasta la 1.18.0). Presente solo cuando el perfil aplicado nombra
-				una ley, aquella bajo la que se evalúa el estándar de un pack (ver{" "}
-				<a href="/configuration/packs/#laws">Packs</a>):{" "}
+				Presente solo cuando el perfil aplicado nombra una ley, aquella bajo la que se evalúa el
+				estándar de un pack (ver <a href="/configuration/packs/#laws">Packs</a>):{" "}
 				<code>{"{ id, name, jurisdiction, lang }"}</code>, siendo <code>lang</code> el idioma en
-				que está <code>name</code>. Core indica la ley; nunca decide a quién se aplica.
+				que está <code>name</code>. En un análisis de varios perfiles, solo cuando todos sirven a
+				la misma ley; la de cada perfil está en <code>profiles[name].law</code>. Core indica la
+				ley; nunca decide a quién se aplica. Estable desde core 1.18.0.
 			</>
 		),
 	},
@@ -232,6 +239,42 @@ const topLevelRows = [
 				una regla personalizada, y uno cuyo título o descripción cambiaron los{" "}
 				<code>messages</code> del análisis. El resultado de una página vacía pasa de unos 263 KB a
 				90 KB.
+			</>
+		),
+	},
+	{
+		id: "engine.incomplete",
+		field: <code>engine.incomplete</code>,
+		meaning: (
+			<>
+				Presente solo cuando el análisis no ejecutó todas las reglas que seleccionó, o no leyó
+				todas las hojas de estilo que descarga, porque su <code>engineOptions.timeBudgetMs</code>{" "}
+				se agotó antes (ver <a href="#incomplete-scan">Un análisis incompleto</a>):{" "}
+				<code>{"{ reason, timeBudgetMs, rulesNotRun }"}</code>. <code>reason</code> es{" "}
+				<code>"timeBudget"</code>, <code>timeBudgetMs</code> el presupuesto indicado y{" "}
+				<code>rulesNotRun</code> cuántas entradas tiene <code>notRun</code>. En un análisis de
+				varios perfiles, <code>profilesNotRun</code> cuenta los perfiles que no empezaron. Desde{" "}
+				<code>runa11yCoreInPageAsync</code>, del bundle para navegador,{" "}
+				<code>styleSheetsNotRead</code> enumera las hojas de estilo que aún no había descargado
+				cuando se agotó la mitad del presupuesto que puede llevar la descarga (<code>rulesNotRun</code>{" "}
+				es entonces <code>0</code> si se ejecutaron todas las reglas). Un resultado así nunca es
+				limpio: las reglas de <code>notRun</code> no comprobaron nada, y los resultados agregados
+				que las agrupan son <code>cantTell</code>.
+			</>
+		),
+	},
+	{
+		id: "engine.occurrenceCap",
+		field: <code>engine.occurrenceCap</code>,
+		meaning: (
+			<>
+				Presente solo cuando <code>engineOptions.output.maxOccurrencesPerRule</code> dejó
+				ocurrencias fuera del resultado:{" "}
+				<code>{"{ maxOccurrencesPerRule, occurrencesOmitted, rulesCapped }"}</code>, el límite,
+				cuántas ocurrencias dejó fuera en total y de cuántas reglas. Cada uno de esos resultados de
+				comprobación indica las suyas (<code>occurrencesOmitted</code>). No cambia ningún
+				resultado, resultado agregado ni recuento; ver{" "}
+				<a href="#occurrence-cap">Un resultado limitado</a>.
 			</>
 		),
 	},
@@ -320,8 +363,9 @@ const topLevelRows = [
 		meaning: (
 			<>
 				<strong>No se genera automáticamente.</strong> Solo se establece si pasas{" "}
-				<code>engineOptions.timestamp</code> como una cadena no vacía: el motor no tiene reloj
-				integrado (es determinista por diseño). Si quieres una marca de tiempo del análisis en el
+				<code>engineOptions.timestamp</code> como una fecha y hora ISO 8601 (
+				<code>new Date().toISOString()</code>); otro texto se descarta con un aviso. El motor no
+				tiene reloj integrado (es determinista por diseño). Si quieres una marca de tiempo del análisis en el
 				resultado, súplela tú mismo.
 			</>
 		),
@@ -424,6 +468,23 @@ const topLevelRows = [
 				ninguna llamada a <code>packScript</code> registró exactamente el conjunto nombrado, o el
 				script se preparó con otra versión de core. Cada uno se registra también con{" "}
 				<code>console.warn</code>.
+			</>
+		),
+	},
+	{
+		id: "notRun",
+		field: <code>notRun</code>,
+		meaning: (
+			<>
+				Presente solo cuando el presupuesto de tiempo del análisis (
+				<code>engineOptions.timeBudgetMs</code>) se agotó antes de que empezaran todas las reglas
+				que seleccionó: cada regla que no empezó, <code>{'{ ruleId, reason: "timeBudget" }'}</code>,
+				con <code>profile</code> en un análisis de varios perfiles. Esa regla no tiene entrada en{" "}
+				<code>checksResults</code>. Un perfil que el presupuesto dejó sin empezar (
+				<code>engine.profilesNotRun</code>, motivo <code>timeBudget</code>) tiene enumeradas todas
+				las reglas que selecciona, con su <code>profile</code>; una de ellas que ejecutó otro perfil
+				conserva la entrada de ese perfil en <code>checksResults</code>. Entonces se establece{" "}
+				<code>engine.incomplete</code>.
 			</>
 		),
 	},
@@ -549,7 +610,19 @@ const occurrenceRows = [
 			</>
 		),
 	},
-	{ id: "summary", field: <code>summary</code>, meaning: <>Legible para humanos, ya localizado ("<span lang="en">This button has no accessible name.</span>").</> },
+	{
+		id: "summary",
+		field: <code>summary</code>,
+		meaning: (
+			<>
+				Legible para humanos, ya localizado ("<span lang="en">This button has no accessible name.</span>").
+				Desde core 1.18.0, un decimal se escribe con el separador decimal del idioma del mensaje,
+				no de su región: "2,85:1" en francés, alemán y español, "2.85:1" en inglés y japonés. El
+				texto de la página que cita (un id, un rol, una etiqueta) se corta en 120 caracteres, y una
+				lista que cita se detiene tras cinco elementos con <code>…</code>.
+			</>
+		),
+	},
 	{ id: "hint", field: <code>hint</code>, meaning: "Guía de corrección legible para humanos, ya localizada." },
 	{
 		id: "i18n",
@@ -558,7 +631,10 @@ const occurrenceRows = [
 			<>
 				Las claves de traducción originales detrás de <code>summary</code>/<code>hint</code>, por
 				si quieres volver a renderizarlas tú mismo en otro idioma sin volver a ejecutar el
-				análisis. <code>null</code> si la ocurrencia no usó i18n basado en claves.
+				análisis. <code>null</code> si la ocurrencia no usó i18n basado en claves.{" "}
+				<code>params</code> conserva cada valor sin formatear, un decimal con punto (
+				<code>ratio: "2.85"</code>, una cadena), y <code>data.details</code> y <code>metrics</code>{" "}
+				conservan números: solo el texto del mensaje sigue al idioma.
 			</>
 		),
 	},
@@ -640,13 +716,19 @@ const occurrenceRows = [
 				<code>occurrenceOutcome(check, occurrence)</code>, de <code>@surea11y/core</code>, da el
 				nivel tal como lo lee cada generador de informes, en ambos casos; desde core 1.16.0 da{" "}
 				<code>'pass'</code> para una ocurrencia de una comprobación que se cumple, donde daba{" "}
-				<code>null</code>. El resultado siempre
+				<code>null</code>, y desde la 1.18.0 también para una ocurrencia marcada{" "}
+				<code>'pass'</code> en una comprobación que falla o queda sin decidir, donde daba el
+				resultado de la comprobación, así que SARIF, JUnit, el informe HTML y las líneas base ya no
+				cuentan esa ocurrencia como un fallo. Un <code>switch</code> exhaustivo sobre él necesita
+				un caso <code>'pass'</code>. El resultado siempre
 				concuerda con los niveles: cualquier ocurrencia de nivel <code>fail</code> lo hace{" "}
 				<code>fail</code>, y un <code>fail</code> cuyas ocurrencias son todas de nivel{" "}
 				<code>cantTell</code> es <code>cantTell</code>, así que SARIF, JUnit, EARL y las líneas base
 				dan una sola respuesta. El motor resuelve una regla personalizada o de un pack que los
-				devuelve en desacuerdo; con la política predeterminada, una regla manual nunca es{" "}
-				<code>fail</code>. Los generadores de informes leen un resultado guardado antes de que el
+				devuelve en desacuerdo, y lee el nivel que da en cualquier caso (<code>'FAIL'</code> es{" "}
+				<code>fail</code>); cualquier otro valor (<code>'bogus'</code>) se descarta, de modo que la
+				ocurrencia toma el resultado de la regla, y se indica en el <code>error</code> del
+				resultado. Con la política predeterminada, una regla manual nunca es <code>fail</code>. Los generadores de informes leen un resultado guardado antes de que el
 				motor hiciera esto con la misma regla, bajo la política que registra su{" "}
 				<code>engineOptions</code>, y vuelven a calcular sus resultados agregados de WCAG a partir
 				de lo que leen.
@@ -714,11 +796,13 @@ export function OutputSchemaContent() {
 					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
 					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
-					"    profileExcludes?: { rules: string[], criteria: string[] },",
-					"    law?: { id: string, name: string, jurisdiction: string, lang: string },  // experimental",
+					"    profileExcludes?: { rules: string[], criteria: string[], requirements?: string[] },",
+					"    law?: { id: string, name: string, jurisdiction: string, lang: string },",
 					"    optInRules?: string[],",
 					'    outputDetail?: "findings",',
 					"    packs?: string[],      // name@version",
+					'    incomplete?: { reason: "timeBudget", timeBudgetMs: number, rulesNotRun: number, profilesNotRun?: number, styleSheetsNotRead?: string[] },',
+					"    occurrenceCap?: { maxOccurrencesPerRule: number, occurrencesOmitted: number, rulesCapped: number },",
 					"    environment: {",
 					"      layout: boolean,",
 					"      viewport?: { width: number, height: number },  // CSS px",
@@ -747,6 +831,7 @@ export function OutputSchemaContent() {
 					"  overriddenBuiltinIds: string[],",
 					"  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
 					"  skippedPacks?: Array<{ name: string | null, reason: string }>,",
+					'  notRun?: Array<{ ruleId: string, reason: "timeBudget", profile?: string }>,',
 					"  profiles?: { [profile: string]: { wcagVersion, wcagLevel?, standards, rulesResults } }  // a scan of several profiles only",
 					"}",
 				]}
@@ -803,7 +888,28 @@ export function OutputSchemaContent() {
 					solo para un perfil que apunta a un nivel de WCAG), siendo <code>rulesResults</code> el
 					resultado de cada uno de sus resultados agregados por id: lo que habría informado un
 					análisis solo de ese perfil. Un perfil que nombra una ley también tiene{" "}
-					<code>law</code>, como <code>engine.law</code> (experimental).
+					<code>law</code>, como <code>engine.law</code>.
+				</li>
+				<li>
+					<strong>Un perfil que no cuenta ninguno de los hallazgos de una regla</strong> (selecciona
+					la regla, pero su estándar no envía los hallazgos a ningún requisito) da a la
+					comprobación el resultado que le da un análisis solo de ese perfil, el de la propia regla,
+					no <code>pass</code>.
+				</li>
+				<li>
+					<strong>La <code>policy</code> del análisis</strong> (o <code>policyContract</code>)
+					rige cada veredicto: donde no permite <code>fail</code>, una comprobación que un estándar
+					hace fallar es <code>cantTell</code>, con <code>policyOutcome: 'fail'</code>, en un
+					análisis de un perfil o de varios.
+				</li>
+				<li>
+					<strong>El presupuesto de tiempo</strong> (<code>engineOptions.timeBudgetMs</code>) es
+					del análisis entero, no de cada perfil: cada perfil después del primero recibe lo que
+					queda, y uno que empezaría sin nada aparece en <code>engine.profilesNotRun</code> como{" "}
+					<code>timeBudget</code>, un error en SARIF y JUnit incluso con{" "}
+					<code>allowProfilesNotRun</code>. Las reglas que no empezó el análisis de un perfil están
+					en <code>notRun</code>, cada una con su <code>profile</code>, y un perfil que no empezó
+					tiene allí todas sus reglas.
 				</li>
 				<li>
 					<strong><code>severity</code></strong>: la más alta que le da a la regla cualquier perfil
@@ -877,6 +983,40 @@ export function OutputSchemaContent() {
 					},
 				]}
 			/>
+
+			<h2 id="incomplete-scan">Un análisis incompleto</h2>
+			<p>
+				Con <code>engineOptions.timeBudgetMs</code> (ver{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">Opciones del motor</a>),
+				un análisis no empieza más reglas cuando ha gastado esos milisegundos. Las reglas que no
+				empezó están en <code>notRun</code>, y <code>engine.incomplete</code> dice que el análisis
+				se cortó. <strong>Un resultado así nunca se lee como un aprobado</strong>: los resultados
+				agregados que agrupan esas reglas son <code>cantTell</code>, el{" "}
+				<a href="/results-reports/html-report/">informe HTML</a> dice que el análisis está
+				incompleto, <a href="/results-reports/sarif-report/">SARIF</a> da una notificación de error
+				por cada regla no ejecutada (<code>executionSuccessful: false</code>),{" "}
+				<a href="/results-reports/junit-report/">JUnit</a> un error por regla,{" "}
+				<a href="/results-reports/earl-report/">EARL</a> <code>earl:untested</code>, y{" "}
+				<code>matchBaseline</code> añade <code>incomplete</code> (ver{" "}
+				<a href="/conformance/baseline/#incomplete-scan">Baseline</a>).
+			</p>
+
+			<h2 id="occurrence-cap">Un resultado limitado</h2>
+			<p>
+				Con <code>engineOptions.output.maxOccurrencesPerRule</code> (ver{" "}
+				<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule">Opciones del motor</a>),
+				cada resultado de comprobación conserva como mucho ese número de ocurrencias: primero las
+				que fallan, luego las no decididas que tienden a fallar, luego el resto, en el orden de la
+				regla. Cuenta las que deja fuera en <code>occurrencesOmitted</code>,{" "}
+				<code>occurrencesOmittedByOutcome</code> y <code>occurrencesOmittedLeaningFail</code> (ver{" "}
+				<a href="#check-result">Un resultado de comprobación</a>), y{" "}
+				<code>engine.occurrenceCap</code> las suma para el análisis. <code>outcome</code>,{" "}
+				<code>severity</code>, los resultados agregados, sus recuentos y las puertas, incluidas las
+				de tendencia a fallar, son los de todas las ocurrencias que encontró la regla, también las
+				que se dejaron fuera. Los generadores de informes muestran «+N más». Frente a una línea
+				base, un fallo que el límite dejó fuera cuenta como nuevo (ver{" "}
+				<a href="/conformance/baseline/#incomplete-scan">Baseline</a>).
+			</p>
 
 			<h2 id="cross-frame-result">Resultado entre frames (<code>runa11yCoreAcrossFrames</code>)</h2>
 			<p>
@@ -965,7 +1105,7 @@ export function OutputSchemaContent() {
 					</li>
 					</ul>
 
-			<h2>Un resultado de comprobación (<code>checksResults[i]</code>)</h2>
+			<h2 id="check-result">Un resultado de comprobación (<code>checksResults[i]</code>)</h2>
 			<CodeBlock
 				lines={[
 					"{",
@@ -1006,6 +1146,9 @@ export function OutputSchemaContent() {
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  occurrencesOmitted?: number,  // output.maxOccurrencesPerRule only: how many occurrences were left out",
+					"  occurrencesOmittedByOutcome?: { fail?: number, cantTell?: number, pass?: number, notApplicable?: number },",
+					"  occurrencesOmittedLeaningFail?: number,  // of the cantTell ones left out, those that lean fail",
 					"  variantOf?: string,      // a pack's variant only: the id of the rule it runs at other settings; i18n.variantOfTitleKey is that rule's titleKey",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
@@ -1031,6 +1174,10 @@ export function OutputSchemaContent() {
 					"    limit: number,         // 10000: the ancestors read, the element included",
 					"    occurrences: number,   // the fail-tier occurrences made cantTell-tier",
 					'    coercedFrom?: "fail"   // no fail-tier occurrence was left, so the outcome went from fail to cantTell',
+					"  },",
+					"  excludedOccurrences?: {  // present only when the rule reported on elements left out with excludeSelectors",
+					"    dropped: number,       // the occurrences dropped",
+					'    coercedFrom?: "fail" | "cantTell" | "pass"  // the outcome changed; notApplicable when none was left',
 					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
@@ -1153,6 +1300,27 @@ export function OutputSchemaContent() {
 						<code>frame</code>, la ruta hasta él.
 					</li>
 				<li>
+					<strong><code>excludedOccurrences</code></strong>: los elementos que se dejan fuera con{" "}
+					<code>excludeSelectors</code> (global, o el de la propia regla en{" "}
+					<code>rules[ruleId]</code>) los omiten todas las reglas, y el motor obliga a cada regla a
+					hacerlo: una ocurrencia sobre uno de esos elementos se descarta, la encontrara como la
+					encontrara la regla, tanto si nombra el elemento como un nodo de texto dentro de él o
+					solo su selector, y también un elemento del documento de un frame dentro de una zona
+					excluida. Las reglas de core nunca informan una; la regla de un pack o una personalizada
+					que recorre el documento por su cuenta y olvida <code>helpers.isExcluded</code> sí puede.{" "}
+					<code>dropped</code> las cuenta, y lo mismo se anota en <code>error</code>, para que quien
+					escribió la regla se entere. Un resultado que se queda sin ocurrencias no encontró nada
+					fuera de esas zonas: pasa a <code>notApplicable</code>, ya que el motor no puede saber si
+					el resto de la página se cumplía o si la regla no tenía nada que juzgar allí. Uno que
+					conserva ocurrencias toma el resultado que estas dicen: un <code>fail</code> cuyas
+					ocurrencias de nivel <code>fail</code> se descartaron todas pasa a <code>cantTell</code>{" "}
+					si queda una de nivel <code>cantTell</code>, y a <code>pass</code> si solo quedan de nivel{" "}
+					<code>pass</code>; un <code>cantTell</code> que se queda solo con aprobados pasa a{" "}
+					<code>pass</code>. <code>coercedFrom</code> dice lo que dijo la regla siempre que el
+					resultado cambió. No aparece cuando no se descartó nada, como en todo análisis sin
+					exclusiones.
+				</li>
+				<li>
 					<strong><code>error</code></strong>: presente cuando la regla no terminó, o cuando el
 					motor cambió o ignoró parte de lo que devolvió la regla. Una regla que lanzó una excepción
 					(o devolvió algo que no es un resultado) siempre aparece como{" "}
@@ -1165,11 +1333,26 @@ export function OutputSchemaContent() {
 					<code>fail</code> manual descrita arriba, un <code>outcome</code> o un{" "}
 					<code>severity</code> fuera de su conjunto, un <code>type</code> distinto del de su meta,
 					ocurrencias que no son objetos (se dejan fuera), un <code>policyOutcome</code> o un{" "}
-					<code>ruleSeverity</code> que devolvió la regla (no se toman: el motor establece ambos), y
-					un <code>uncertainty.code</code> fuera del conjunto cerrado. Esos resultados conservan sus
-					ocurrencias: la regla terminó. (Antes de la 1.16.0, también se anotaba aquí un{" "}
+					<code>ruleSeverity</code> que devolvió la regla (no se toman: el motor establece ambos),
+					un <code>uncertainty.code</code> fuera del conjunto cerrado, un{" "}
+					<code>occurrenceOutcome</code> que no es ningún nivel, y ocurrencias sobre elementos
+					excluidos (se descartan; ver <code>excludedOccurrences</code> arriba). Esos resultados
+					conservan sus demás ocurrencias: la regla terminó. (Antes de la 1.16.0, también se anotaba aquí un{" "}
 					<code>fail</code> antes de cuyos elementos se detenía el recorrido de ancestros de 200
 					pasos; consulta <code>ancestorWalkLimit</code> más arriba.)
+				</li>
+				<li>
+					<strong><code>occurrencesOmitted</code></strong>,{" "}
+					<strong><code>occurrencesOmittedByOutcome</code></strong>: presentes solo cuando{" "}
+					<code>engineOptions.output.maxOccurrencesPerRule</code> conservó menos ocurrencias de las
+					que encontró la regla (ver <a href="#occurrence-cap">Un resultado limitado</a>): cuántas
+					se dejaron fuera, y cuántas de ellas son de cada nivel (<code>fail</code>,{" "}
+					<code>cantTell</code>, <code>pass</code>, <code>notApplicable</code>, cada uno solo cuando
+					las hay). <strong><code>occurrencesOmittedLeaningFail</code></strong>, solo cuando las hay,
+					cuenta las no decididas que se dejaron fuera cuya <code>lean</code> apunta a fallar, las
+					que cuentan las puertas de tendencia a fallar (<code>leanFailAs</code>, el{" "}
+					<code>leanFail</code> de <code>matchBaseline</code>); <code>leaningFailures</code> solo
+					enumera las conservadas.
 				</li>
 				<li>
 					<strong><code>policyOutcome</code></strong>: presente cuando el{" "}
@@ -1236,7 +1419,7 @@ export function OutputSchemaContent() {
 					"  summary: string,",
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
-					'  occurrenceOutcome?: "fail" | "cantTell",   // present when the rule graded its findings into tiers',
+					'  occurrenceOutcome?: "fail" | "cantTell" | "pass",   // present when the rule graded its findings into tiers; "pass" marks one that passes',
 					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only",
 					"  uncertainty?: {          // present only on a cantTell-tier occurrence",
 					'    code: "not-computable" | "runtime-dependent" | "spec-only"',
@@ -1373,9 +1556,11 @@ export function OutputSchemaContent() {
 				El mapeo de un estándar dirige los hallazgos por su <code>data.details</code> (ver{" "}
 				<a href="/configuration/packs/#sending-findings-to-requirements">Packs</a>), y una tendencia
 				queda fuera de él, así que <code>skip-link</code> copia ahí también la dirección de su
-				tendencia (core 1.16.0, experimental hasta la 1.18.0): <code>data.details.lean</code> es{" "}
+				tendencia (core 1.16.0, estable desde la 1.18.0): <code>data.details.lean</code> es{" "}
 				<code>fail</code> o <code>pass</code>, lo mismo que <code>lean.toward</code>, y no aparece
-				cuando el hallazgo no tiene tendencia.
+				cuando el hallazgo no tiene tendencia. El campo es estable; en qué hallazgos tiene
+				tendencia <code>skip-link</code>, y hacia dónde, aún puede cambiar en una versión menor,
+				como cualquier tendencia.
 			</p>
 
 			<h3 id="how-to-check">Cómo comprobarlo</h3>
@@ -1601,8 +1786,7 @@ export function OutputSchemaContent() {
 				<code>aria-prohibited-children</code>, <code>aria-required-parent</code>,{" "}
 				<code>aria-allowed-attr</code>, <code>form-control-programmatic-label-present</code>,{" "}
 				<code>identical-iframes-same-purpose</code>,{" "}
-				<code>svg-image-text-alternative-present</code>,{" "}
-				<code>video-poster-text-alternative-present</code>, <code>target-size-minimum</code> y{" "}
+				<code>svg-image-text-alternative-present</code>, <code>target-size-minimum</code> y{" "}
 				<code>text-spacing-content-loss</code>.{" "}
 				<code>confidence</code> está presente en todo resultado, así que un consumidor que solo
 				quiera los fallos más seguros puede filtrar directamente por él;{" "}
@@ -1637,7 +1821,7 @@ export function OutputSchemaContent() {
 					"{",
 					'  "engine": {',
 					'    "tag": "a11ycore",',
-					'    "version": "1.14.0",',
+					'    "version": "1.18.0",',
 					'    "schemaVersion": "1.0.0",',
 					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" },',
 					'    "wcagVersion": "2.2",',

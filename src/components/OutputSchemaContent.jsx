@@ -136,7 +136,9 @@ const topLevelRows = [
 							A scan of several profiles only, and only when one of them didn't run:{" "}
 							<code>{"[{ profile, reason }]"}</code>, <code>reason</code>{" "}
 							<code>unknown-profile</code> (no such profile), <code>pack-skipped</code> (its pack was
-							skipped, see <code>skippedPacks</code>) or <code>overridden-by-selection</code> (an
+							skipped, see <code>skippedPacks</code>), <code>timeBudget</code> (the scan's time
+							budget ran out before it started; see <a href="#incomplete-scan">An incomplete scan</a>)
+							or <code>overridden-by-selection</code> (an
 							include in <code>runOnly</code>, or rule ids or tags in <code>engineOptions</code>,
 							selects the rules instead, as it would for one profile; it does for every profile's
 							scan). The set of reasons is open.
@@ -148,9 +150,13 @@ const topLevelRows = [
 					field: <code>engine.profileExcludes</code>,
 					meaning: (
 						<>
-							Present only when the applied profile leaves rules out: <code>{"{ rules, criteria }"}</code>,
-							the rules it names and the WCAG criteria it leaves out. The rules it names, the rules
-							whose every criterion it leaves out, and those criteria's WCAG rollups did not run; a
+							Present only when the applied profile leaves rules out:{" "}
+							<code>{"{ rules, criteria, requirements }"}</code>, the rules it names, the WCAG
+							criteria it leaves out, and the requirements of its standard that the law it serves
+							doesn't ask for (experimental until 1.20.0, and only when there are some; see{" "}
+							<a href="/configuration/packs/#laws">Packs</a>). The rules it names, the rules whose
+							every criterion it leaves out, those criteria's WCAG rollups and those requirements'
+							rollups did not run; a
 							rule that also checks a criterion the profile keeps ran, and counts toward that
 							criterion. This narrows the scan without changing what WCAG requires. No built-in profile leaves anything out.
 						</>
@@ -161,11 +167,12 @@ const topLevelRows = [
 					field: <code>engine.law</code>,
 					meaning: (
 						<>
-							Experimental (core 1.16.0, until 1.18.0). Present only when the applied profile names
-							a law, the one a pack's standard is assessed under (see{" "}
-							<a href="/configuration/packs/#laws">Packs</a>):{" "}
+							Present only when the applied profile names a law, the one a pack's standard is
+							assessed under (see <a href="/configuration/packs/#laws">Packs</a>):{" "}
 							<code>{"{ id, name, jurisdiction, lang }"}</code>, <code>lang</code> the language{" "}
-							<code>name</code> is in. Core states the law; it never decides whom the law applies to.
+							<code>name</code> is in. In a scan of several profiles, only when every one serves the
+							same law; each profile's own is in <code>profiles[name].law</code>. Core states the
+							law; it never decides whom the law applies to. Stable since core 1.18.0.
 						</>
 					),
 				},
@@ -228,7 +235,40 @@ const topLevelRows = [
 					),
 				},
 				{
-					id: "engine.environment",
+					id: "engine.incomplete",
+		field: <code>engine.incomplete</code>,
+		meaning: (
+			<>
+				Present only when the scan did not run every rule it selected, or did not read every style
+				sheet it fetches, because its <code>engineOptions.timeBudgetMs</code> ran out first (see{" "}
+				<a href="#incomplete-scan">An incomplete scan</a>):{" "}
+				<code>{"{ reason, timeBudgetMs, rulesNotRun }"}</code>. <code>reason</code> is{" "}
+				<code>"timeBudget"</code>, <code>timeBudgetMs</code> the budget given and{" "}
+				<code>rulesNotRun</code> how many entries <code>notRun</code> has. In a scan of several
+				profiles, <code>profilesNotRun</code> counts the profiles not started. From the browser
+				bundle's <code>runa11yCoreInPageAsync</code>, <code>styleSheetsNotRead</code> lists the
+				style sheets it had not fetched when the half of the budget fetching may take ran out (
+				<code>rulesNotRun</code> is then <code>0</code> when every rule ran). Such a result is
+				never a clean one: the rules in <code>notRun</code> checked nothing, and the rollups that
+				group them are <code>cantTell</code>.
+			</>
+		),
+	},
+	{
+		id: "engine.occurrenceCap",
+		field: <code>engine.occurrenceCap</code>,
+		meaning: (
+			<>
+				Present only when <code>engineOptions.output.maxOccurrencesPerRule</code> left occurrences
+				out of the result: <code>{"{ maxOccurrencesPerRule, occurrencesOmitted, rulesCapped }"}</code>,
+				the cap, how many occurrences it left out in all, and of how many rules. Each such check
+				result says its own (<code>occurrencesOmitted</code>). No outcome, rollup or count
+				changes; see <a href="#occurrence-cap">A capped result</a>.
+			</>
+		),
+	},
+	{
+		id: "engine.environment",
 					field: <code>engine.environment</code>,
 					meaning: (
 						<>
@@ -309,9 +349,10 @@ const topLevelRows = [
 		meaning: (
 			<>
 				<strong>Not auto-generated.</strong> Only set if you pass{" "}
-				<code>engineOptions.timestamp</code> as a non-empty string — the engine has no built-in
-				clock (deterministic-by-design). If you want a scan timestamp in the result, supply it
-				yourself.
+				<code>engineOptions.timestamp</code> as an ISO 8601 date and time (
+				<code>new Date().toISOString()</code>); other text is dropped with a warning. The engine
+				has no built-in clock (deterministic-by-design). If you want a scan timestamp in the
+				result, supply it yourself.
 			</>
 		),
 	},
@@ -408,6 +449,22 @@ const topLevelRows = [
 				<code>name@version</code> given, and the reason says why the page didn't run it: no{" "}
 				<code>packScript</code> call registered exactly the named set, or the script was prepared
 				with another core version. Each is also logged with <code>console.warn</code>.
+			</>
+		),
+	},
+	{
+		id: "notRun",
+		field: <code>notRun</code>,
+		meaning: (
+			<>
+				Present only when the scan's time budget (<code>engineOptions.timeBudgetMs</code>) ran out
+				before every rule it selected had started: each rule it did not start,{" "}
+				<code>{'{ ruleId, reason: "timeBudget" }'}</code>, with <code>profile</code> in a scan of
+				several profiles. Such a rule has no entry in <code>checksResults</code>. A profile the
+				budget left unstarted (<code>engine.profilesNotRun</code>, reason <code>timeBudget</code>)
+				has every rule it selects listed, with its <code>profile</code>; one of them that another
+				profile ran keeps that profile's entry in <code>checksResults</code>.{" "}
+				<code>engine.incomplete</code> is then set.
 			</>
 		),
 	},
@@ -527,7 +584,19 @@ const occurrenceRows = [
 			</>
 		),
 	},
-	{ id: "summary", field: <code>summary</code>, meaning: 'Human-readable, already localized ("This button has no accessible name.").' },
+	{
+		id: "summary",
+		field: <code>summary</code>,
+		meaning: (
+			<>
+				Human-readable, already localized ("This button has no accessible name."). Since core
+				1.18.0, a decimal in it is written with the decimal separator of the language the message
+				is in, not of its region: "2,85:1" in French, German and Spanish, "2.85:1" in English and
+				Japanese. Page text it quotes (an id, a role, a label) is cut at 120 characters, and a list
+				it quotes stops after five items with <code>…</code>.
+			</>
+		),
+	},
 	{ id: "hint", field: <code>hint</code>, meaning: "Human-readable remediation guidance, already localized." },
 	{
 		id: "i18n",
@@ -536,7 +605,10 @@ const occurrenceRows = [
 			<>
 				The raw translation keys behind <code>summary</code>/<code>hint</code>, if you want to
 				re-render them in a different locale yourself without re-running the scan. <code>null</code>{" "}
-				if the occurrence didn't use key-based i18n.
+				if the occurrence didn't use key-based i18n. <code>params</code> keeps each value
+				unformatted, a decimal with a point (<code>ratio: "2.85"</code>, a string), and{" "}
+				<code>data.details</code> and <code>metrics</code> keep numbers: only the message text
+				follows the language.
 			</>
 		),
 	},
@@ -612,12 +684,18 @@ const occurrenceRows = [
 				the occurrence's tier. <code>occurrenceOutcome(check, occurrence)</code>, from{" "}
 				<code>@surea11y/core</code>, gives the tier as every reporter reads it, either way; since
 				core 1.16.0 it gives <code>'pass'</code> for an occurrence of a passing check, where it gave{" "}
-				<code>null</code>. The
+				<code>null</code>, and since 1.18.0 for an occurrence marked <code>'pass'</code> in a
+				failing or undecided check too, where it gave the check's outcome, so SARIF, JUnit, the
+				HTML report and baselines no longer count such an occurrence as a failure. An exhaustive{" "}
+				<code>switch</code> on it needs a <code>'pass'</code> case. The
 				outcome always agrees with the tiers: any{" "}
 				<code>fail</code>-tier occurrence makes it <code>fail</code>, and a <code>fail</code> whose
 				occurrences are all <code>cantTell</code>-tier is <code>cantTell</code>, so SARIF, JUnit,
 				EARL and baselines give one answer. The engine settles a custom or pack rule that returns
-				them at odds; under the default policy, a manual rule is never <code>fail</code>. The
+				them at odds, and reads the tier it gives in any case (<code>'FAIL'</code> is{" "}
+				<code>fail</code>); any other value (<code>'bogus'</code>) is dropped, so the occurrence
+				takes the rule's outcome, and said in the result's <code>error</code>. Under the default
+				policy, a manual rule is never <code>fail</code>. The
 				reporters read a result stored before the engine did this by the same rule, under the
 				policy its <code>engineOptions</code> record, and roll its WCAG rollups up again from what
 				they read.
@@ -685,11 +763,13 @@ export function OutputSchemaContent() {
 					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
 					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
-					"    profileExcludes?: { rules: string[], criteria: string[] },",
-					"    law?: { id: string, name: string, jurisdiction: string, lang: string },  // experimental",
+					"    profileExcludes?: { rules: string[], criteria: string[], requirements?: string[] },",
+					"    law?: { id: string, name: string, jurisdiction: string, lang: string },",
 					"    optInRules?: string[],",
 					'    outputDetail?: "findings",',
 					"    packs?: string[],      // name@version",
+					'    incomplete?: { reason: "timeBudget", timeBudgetMs: number, rulesNotRun: number, profilesNotRun?: number, styleSheetsNotRead?: string[] },',
+					"    occurrenceCap?: { maxOccurrencesPerRule: number, occurrencesOmitted: number, rulesCapped: number },",
 					"    environment: {",
 					"      layout: boolean,",
 					"      viewport?: { width: number, height: number },  // CSS px",
@@ -718,6 +798,7 @@ export function OutputSchemaContent() {
 					"  overriddenBuiltinIds: string[],",
 					"  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
 					"  skippedPacks?: Array<{ name: string | null, reason: string }>,",
+					'  notRun?: Array<{ ruleId: string, reason: "timeBudget", profile?: string }>,',
 					"  profiles?: { [profile: string]: { wcagVersion, wcagLevel?, standards, rulesResults } }  // a scan of several profiles only",
 					"}",
 				]}
@@ -771,8 +852,27 @@ export function OutputSchemaContent() {
 					<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code> (<code>wcagLevel</code>{" "}
 					only for a profile that targets a WCAG level), <code>rulesResults</code> the outcome of
 					each of its rollups by id: what a scan of that profile alone would have reported. A
-					profile that names a law has <code>law</code> too, as <code>engine.law</code>{" "}
-					(experimental).
+					profile that names a law has <code>law</code> too, as <code>engine.law</code>.
+				</li>
+				<li>
+					<strong>A profile that counts none of a rule's findings</strong> (it selects the rule,
+					but its standard sends the findings to no requirement) gives the check the outcome a scan
+					of that profile alone gives it, the rule's own, not <code>pass</code>.
+				</li>
+				<li>
+					<strong>The scan's <code>policy</code></strong> (or <code>policyContract</code>) holds
+					every verdict: where it doesn't allow <code>fail</code>, a check a standard fails is{" "}
+					<code>cantTell</code>, with <code>policyOutcome: 'fail'</code>, in a scan of one profile
+					or several.
+				</li>
+				<li>
+					<strong>The time budget</strong> (<code>engineOptions.timeBudgetMs</code>) is the whole
+					scan's, not each profile's: each profile after the first gets what is left of it, and one
+					that would start with none left is in <code>engine.profilesNotRun</code> as{" "}
+					<code>timeBudget</code>, an error in SARIF and JUnit even with{" "}
+					<code>allowProfilesNotRun</code>. The rules a profile's scan did not start are in{" "}
+					<code>notRun</code>, each naming its <code>profile</code>, and a profile not started has
+					all of its rules there.
 				</li>
 				<li>
 					<strong><code>severity</code></strong>: the highest any profile that fails or asks about
@@ -843,6 +943,38 @@ export function OutputSchemaContent() {
 					},
 				]}
 			/>
+
+			<h2 id="incomplete-scan">An incomplete scan</h2>
+			<p>
+				With <code>engineOptions.timeBudgetMs</code> (see{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">Engine options</a>), a
+				scan starts no more rules once it has spent that many milliseconds. The rules it did not
+				start are in <code>notRun</code>, and <code>engine.incomplete</code> says the scan was cut
+				short. <strong>Such a result never reads as a pass</strong>: the rollups that group those
+				rules are <code>cantTell</code>, the <a href="/results-reports/html-report/">HTML report</a>{" "}
+				says the scan is incomplete, <a href="/results-reports/sarif-report/">SARIF</a> gives an
+				error notification per rule not run (<code>executionSuccessful: false</code>),{" "}
+				<a href="/results-reports/junit-report/">JUnit</a> an error per rule,{" "}
+				<a href="/results-reports/earl-report/">EARL</a> <code>earl:untested</code>, and{" "}
+				<code>matchBaseline</code> adds <code>incomplete</code> (see{" "}
+				<a href="/conformance/baseline/#incomplete-scan">Baseline</a>).
+			</p>
+
+			<h2 id="occurrence-cap">A capped result</h2>
+			<p>
+				With <code>engineOptions.output.maxOccurrencesPerRule</code> (see{" "}
+				<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule">Engine options</a>),
+				each check result keeps at most that many occurrences: the failing ones first, then the
+				undecided ones that lean fail, then the rest, in the rule's order. It counts the ones left
+				out in <code>occurrencesOmitted</code>, <code>occurrencesOmittedByOutcome</code> and{" "}
+				<code>occurrencesOmittedLeaningFail</code> (see{" "}
+				<a href="#check-result">A check result</a>), and <code>engine.occurrenceCap</code> sums
+				them for the scan. <code>outcome</code>, <code>severity</code>, the rollups, their counts
+				and the gates, the lean-fail gates included, are those of every occurrence the rule found,
+				the ones left out included. The reporters show “+N more”. Against a baseline, a failure
+				the cap left out counts as new (see{" "}
+				<a href="/conformance/baseline/#incomplete-scan">Baseline</a>).
+			</p>
 
 			<h2 id="cross-frame-result">Cross-frame result (<code>runa11yCoreAcrossFrames</code>)</h2>
 			<p>
@@ -924,7 +1056,7 @@ export function OutputSchemaContent() {
 					</li>
 					</ul>
 
-			<h2>A check result (<code>checksResults[i]</code>)</h2>
+			<h2 id="check-result">A check result (<code>checksResults[i]</code>)</h2>
 			<CodeBlock
 				lines={[
 					"{",
@@ -965,6 +1097,9 @@ export function OutputSchemaContent() {
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  occurrencesOmitted?: number,  // output.maxOccurrencesPerRule only: how many occurrences were left out",
+					"  occurrencesOmittedByOutcome?: { fail?: number, cantTell?: number, pass?: number, notApplicable?: number },",
+					"  occurrencesOmittedLeaningFail?: number,  // of the cantTell ones left out, those that lean fail",
 					"  variantOf?: string,      // a pack's variant only: the id of the rule it runs at other settings; i18n.variantOfTitleKey is that rule's titleKey",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
@@ -990,6 +1125,10 @@ export function OutputSchemaContent() {
 					"    limit: number,         // 10000: the ancestors read, the element included",
 					"    occurrences: number,   // the fail-tier occurrences made cantTell-tier",
 					'    coercedFrom?: "fail"   // no fail-tier occurrence was left, so the outcome went from fail to cantTell',
+					"  },",
+					"  excludedOccurrences?: {  // present only when the rule reported on elements left out with excludeSelectors",
+					"    dropped: number,       // the occurrences dropped",
+					'    coercedFrom?: "fail" | "cantTell" | "pass"  // the outcome changed; notApplicable when none was left',
 					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
@@ -1106,6 +1245,25 @@ export function OutputSchemaContent() {
 							result, every frame's, a child frame's with <code>frame</code>, the path to it.
 						</li>
 				<li>
+					<strong><code>excludedOccurrences</code></strong>: elements left out with{" "}
+					<code>excludeSelectors</code> (global, or the rule's own under{" "}
+					<code>rules[ruleId]</code>) are skipped by every rule, and the engine holds a rule to it:
+					an occurrence reported on such an element is dropped, however the rule found it, whether
+					it names the element, a text node in it or only its selector, and an element in the
+					document of a frame inside an excluded area too. Core's rules never report one; a pack's
+					or a custom rule that walks the document itself and forgets{" "}
+					<code>helpers.isExcluded</code> can. <code>dropped</code> counts them, and the same is
+					noted in <code>error</code>, so the rule's author finds out. A result left with no
+					occurrence found nothing outside those areas: it becomes <code>notApplicable</code>, since
+					the engine can't tell whether the rest of the page passed or the rule had nothing to judge
+					there. One left with occurrences takes the outcome they say: a <code>fail</code> whose
+					fail-tier occurrences were all dropped becomes <code>cantTell</code> while a
+					cantTell-tier one is left and <code>pass</code> when only pass-tier ones are, and a{" "}
+					<code>cantTell</code> left with only passes becomes <code>pass</code>.{" "}
+					<code>coercedFrom</code> says what the rule said whenever the outcome changed. Absent when
+					nothing was dropped, as on every scan without exclusions.
+				</li>
+				<li>
 					<strong><code>error</code></strong>: present when the rule did not complete, or when the
 					engine changed or ignored part of what the rule returned. A rule that threw (or returned
 					something that is not a result) always surfaces as <code>outcome: "cantTell"</code> with{" "}
@@ -1117,10 +1275,24 @@ export function OutputSchemaContent() {
 					<code>outcome</code> or <code>severity</code> outside its set, a <code>type</code> that
 					differs from its meta's, occurrences that are not objects (left out), a{" "}
 					<code>policyOutcome</code> or <code>ruleSeverity</code> the rule returned (not taken: the
-					engine sets both), and an <code>uncertainty.code</code> outside the closed set. Those
-					results keep their occurrences: the rule completed. (Before 1.16.0, a{" "}
+					engine sets both), an <code>uncertainty.code</code> outside the closed set, an{" "}
+					<code>occurrenceOutcome</code> that is no tier, and occurrences on excluded elements
+					(dropped; <code>excludedOccurrences</code> above). Those results keep their other
+					occurrences: the rule completed. (Before 1.16.0, a{" "}
 					<code>fail</code> that the 200-step ancestor walk stopped short of was noted here too; see{" "}
 					<code>ancestorWalkLimit</code> above.)
+				</li>
+				<li>
+					<strong><code>occurrencesOmitted</code></strong>,{" "}
+					<strong><code>occurrencesOmittedByOutcome</code></strong>: present only when{" "}
+					<code>engineOptions.output.maxOccurrencesPerRule</code> kept fewer occurrences than the
+					rule found (see <a href="#occurrence-cap">A capped result</a>): how many were left out,
+					and how many of them are of each tier (<code>fail</code>, <code>cantTell</code>,{" "}
+					<code>pass</code>, <code>notApplicable</code>, each only when there are some).{" "}
+					<strong><code>occurrencesOmittedLeaningFail</code></strong>, only when there are some,
+					counts the undecided ones left out whose <code>lean</code> points to fail, which the
+					lean-fail gates count (<code>leanFailAs</code>, <code>matchBaseline</code>'s{" "}
+					<code>leanFail</code>); <code>leaningFailures</code> lists only the kept ones.
 				</li>
 				<li>
 					<strong><code>policyOutcome</code></strong>: present when the policy's{" "}
@@ -1186,7 +1358,7 @@ export function OutputSchemaContent() {
 					"  summary: string,",
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
-					'  occurrenceOutcome?: "fail" | "cantTell",   // present when the rule graded its findings into tiers',
+					'  occurrenceOutcome?: "fail" | "cantTell" | "pass",   // present when the rule graded its findings into tiers; "pass" marks one that passes',
 					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only",
 					"  uncertainty?: {          // present only on a cantTell-tier occurrence",
 					'    code: "not-computable" | "runtime-dependent" | "spec-only"',
@@ -1316,9 +1488,10 @@ export function OutputSchemaContent() {
 				A standard's mapping routes findings by their <code>data.details</code> (see{" "}
 				<a href="/configuration/packs/#sending-findings-to-requirements">Packs</a>), and a lean sits
 				outside them, so <code>skip-link</code> copies its lean's direction there as well (core
-				1.16.0, experimental until 1.18.0): <code>data.details.lean</code> is <code>fail</code> or{" "}
+				1.16.0, stable since 1.18.0): <code>data.details.lean</code> is <code>fail</code> or{" "}
 				<code>pass</code>, the same as <code>lean.toward</code>, and is absent when the finding has
-				no lean.
+				no lean. The field is stable; which findings <code>skip-link</code> leans on, and which
+				way, may still change in a minor release, as any lean may.
 			</p>
 
 			<h3 id="how-to-check">How to check</h3>
@@ -1527,8 +1700,7 @@ export function OutputSchemaContent() {
 				<code>aria-required-parent</code>, <code>aria-allowed-attr</code>,{" "}
 				<code>form-control-programmatic-label-present</code>,{" "}
 				<code>identical-iframes-same-purpose</code>,{" "}
-				<code>svg-image-text-alternative-present</code>,{" "}
-				<code>video-poster-text-alternative-present</code>, <code>target-size-minimum</code> and{" "}
+				<code>svg-image-text-alternative-present</code>, <code>target-size-minimum</code> and{" "}
 				<code>text-spacing-content-loss</code>.{" "}
 				<code>confidence</code> is on every result, so a consumer that wants only the most certain
 				failures can gate on it directly; <code>policy.allowedConfidence</code> will not do it for
@@ -1562,7 +1734,7 @@ export function OutputSchemaContent() {
 					"{",
 					'  "engine": {',
 					'    "tag": "a11ycore",',
-					'    "version": "1.14.0",',
+					'    "version": "1.18.0",',
 					'    "schemaVersion": "1.0.0",',
 					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" },',
 					'    "wcagVersion": "2.2",',

@@ -93,10 +93,17 @@ export function StandaloneUsageContent() {
 				es la otra vía independiente. Esto es el Patrón 1/Patrón 2 en{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom en Node sin
 				navegador real, o bien manejar tú mismo Puppeteer/Playwright en lugar de pasar por una integración.
+				Desde un módulo ES, cada export se puede importar por su nombre (
+				<code>{"import { runDomRulesInPage } from '@surea11y/core'"}</code>), desde core 1.18.0.
 				Para pruebas, <code>runa11yCoreOnHtml(html, options)</code> de{" "}
 				<code>@surea11y/core/testing</code> analiza una cadena HTML en jsdom y prepara
 				el documento por ti; desde core 1.12, su opción <code>contentType</code>{" "}
-				interpreta un documento SVG o XHTML como lo que es.
+				interpreta un documento SVG o XHTML como lo que es. Desde 1.18.0 avisa de una clave que no
+				conoce, nombrando la más cercana (<code>engineOption</code>: ¿querías decir{" "}
+				<code>engineOptions</code>?), y de una opción del motor que no lee junto a{" "}
+				<code>engineOptions</code> (<code>locale</code>: pásala como{" "}
+				<code>engineOptions.locale</code>); con <code>engineOptions.strictOptions</code> activado,
+				ambos casos lanzan una excepción.
 			</p>
 
 			<h2 id="from-the-browser-console">Desde la consola del navegador</h2>
@@ -127,7 +134,12 @@ export function StandaloneUsageContent() {
 				<code>run(options)</code> admite las opciones del motor y dos propias,{" "}
 				<code>context</code> (un selector, para analizar solo una parte de la página) y{" "}
 				<code>runOnly</code>, y antes de analizar descarga las hojas de estilo que la página no
-				puede leer por sí misma. <code>table()</code> imprime una fila por hallazgo: primero los
+				puede leer por sí misma. Desde core 1.18.0 las comprueba: rechaza opciones del motor
+				envueltas en <code>engineOptions</code> y la forma de selección antigua{" "}
+				<code>{"{ type: 'tag', values }"}</code> en el nivel superior (ambas ejecutaban todas las
+				reglas, sin ninguna de ellas), y avisa una vez de una errata cercana como{" "}
+				<code>lcoale</code> o de una clave que no es ninguna opción del motor.{" "}
+				<code>table()</code> imprime una fila por hallazgo: primero los
 				fallos, luego las preguntas con tendencia al fallo, las que tienen tendencia a cumplir y las que solo puede juzgar una persona. <code>highlight()</code> dibuja un recuadro
 				sobre cada elemento que nombra un <code>fail</code> (rojo continuo) o un{" "}
 				<code>cantTell</code> (ámbar discontinuo), en una capa propia que no toca los elementos de
@@ -263,7 +275,9 @@ export function StandaloneUsageContent() {
 				<code>css-focus-indicator-suppressed</code> lo leen. En el bundle,{" "}
 				<code>runa11yCoreInPageAsync</code> recibe los mismos cuatro argumentos que{" "}
 				<code>runa11yCoreInPage</code>, descarga con <code>preloadStyleSheets()</code> las hojas cuyo
-				servidor las comparte (CORS) y después analiza:
+				servidor las comparte (CORS) y después analiza, dentro de{" "}
+				<code>engineOptions.timeBudgetMs</code> si se indica (<a href="#a-time-limit-on-a-scan">más
+				abajo</a>):
 			</p>
 			<CodeBlock
 				lang="js"
@@ -274,7 +288,11 @@ export function StandaloneUsageContent() {
 			<p>
 				Una hoja cuyo servidor no la comparte no se puede leer en absoluto desde la página. Una
 				herramienta que controla el navegador puede descargarla desde fuera de la página, donde no
-				se aplica CORS, y pasarla en la misma opción; las integraciones lo hacen.
+				se aplica CORS, y pasarla en la misma opción; las integraciones lo hacen.{" "}
+				<code>preloadStyleSheets()</code> renuncia a cada hoja tras <code>timeoutMs</code>{" "}
+				(predeterminado <code>5000</code>), o en <code>deadline</code> (una hora de{" "}
+				<code>Date.now()</code>) si se indica, y nombra las hojas que interrumpió en el{" "}
+				<code>notRead</code> de la lista.
 			</p>
 
 			<h2 id="a-time-limit-on-a-scan">Un límite de tiempo para un análisis</h2>
@@ -317,6 +335,19 @@ export function StandaloneUsageContent() {
 				puede dispararse hasta que termine: ejecuta el análisis en un worker thread o en un proceso
 				hijo, y termínalo cuando pase el límite. El propio límite de tiempo de un trabajo de CI es el
 				último recurso en ambos casos.
+			</p>
+			<p>
+				Desde core 1.18.0, <code>engineOptions.timeBudgetMs</code> permite que el propio análisis
+				se detenga a tiempo en una página pesada: una vez que ha consumido esa cantidad de
+				milisegundos no inicia más reglas, y el resultado enumera las que no inició en{" "}
+				<code>notRun</code> y dice que está incompleto (<code>engine.incomplete</code>), así que un
+				análisis interrumpido nunca se lee como un <code>pass</code>. Una regla que ya ha empezado
+				termina, así que no sustituye al límite de arriba para una página que se cuelga. En{" "}
+				<code>runa11yCoreInPageAsync</code> cubre también la descarga de las hojas de estilo, que
+				puede consumir como máximo la mitad; entre frames es el de todo el análisis, y cada frame
+				recibe lo que queda. Consulta{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">"Un presupuesto de
+				tiempo"</a> en Opciones del motor.
 			</p>
 
 			<h2 id="internals-hook">Componentes web con internals privados</h2>
@@ -402,7 +433,10 @@ export function StandaloneUsageContent() {
 				puede leerlo: instálalos para ejecuciones de pruebas y auditorías. En un archivo de
 				configuración de jsdom, pasa <code>{"{ early: true }"}</code> y, para el hook de listeners,
 				ejecuta antes un selector (<code>document.querySelector('*')</code>), porque jsdom añade
-				listeners de teclado propios la primera vez que se ejecuta un selector. Una prueba con jsdom
+				listeners de teclado propios la primera vez que se ejecuta un selector. Un listener añadido mediante el{" "}
+				<code>addEventListener</code> de otro frame, llamado sobre un elemento de esta página, se ve
+				cuando el hook se ejecuta en ambos frames (core 1.18.0 y posteriores); sin el hook en ese
+				frame no se ve, ya que cada frame tiene su propia copia del método. Una prueba con jsdom
 				que sustituye <code>showModal()</code> poniendo <code>open</code> y{" "}
 				<code>aria-modal="true"</code> en un diálogo instala el hook de regiones vivas con{" "}
 				<code>{"{ early: true, assumeModal: true }"}</code> y analiza con{" "}

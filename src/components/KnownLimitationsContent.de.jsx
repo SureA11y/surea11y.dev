@@ -117,11 +117,12 @@ export function KnownLimitationsContent() {
 					ersetzt nichts im statischen Markup sie.
 				</li>
 				<li>
-					<strong>Reflow / Abschneiden beim Zoomen</strong> (WCAG 1.4.10): Erfordert echte
-					Layout-Messung (<code>clientWidth</code>/<code>scrollWidth</code>) bei einem simulierten
-					Viewport, der 320px entspricht. Anders als bei einigen Heuristiken dieser Engine, die auf
-					CSS-Deklarationen beruhen, gibt es für „wird Inhalt bei 400 % Zoom abgeschnitten“
-					überhaupt keinen Ersatz im statischen Markup.
+					<strong>Die Seite zoomen</strong> (WCAG 1.4.4, 1.4.10): Die Engine zoomt die Seite nicht
+					und ändert die Größe des Viewports nicht. <code>reflow-horizontal-scroll</code> und{" "}
+					<code>resize-text-content-loss</code> messen eine Seite, die bei 320 und 640 CSS-Pixeln
+					Breite dargestellt ist, und nur, wenn sie in dieser Breite gescannt wird (siehe{" "}
+					<a href="#reflow">Umfluss</a> und <a href="#resize-text">Textgröße ändern</a> unten);
+					ob dort Inhalt oder eine Funktion verloren geht, entscheidet weiterhin eine Person.
 				</li>
 				<li>
 					<strong>Dynamischer Zustand / Zustand nach Interaktion</strong>: Alles, was erst nach
@@ -164,11 +165,20 @@ export function KnownLimitationsContent() {
 				<li>
 					<strong>Die Engine läuft auf den eigenen JavaScript-Built-ins der Seite.</strong> Eine
 					Seite, deren Skripte eines beschädigen, auf das sie sich verlässt
-					(<code>Array.prototype.filter</code>, <code>Map</code>, <code>JSON.stringify</code>,{" "}
-					<code>String.prototype.toLowerCase</code> und weitere), beendet den Scan mit einem Fehler
-					mit dem Code <code>PAGE_BUILTINS_BROKEN</code>, der jedes davon nennt, statt ein Ergebnis zu
-					liefern, das sich gut liest und falsch ist; ist eines schon beschädigt, bevor das Bundle
-					eingefügt wird (<code>Object.keys</code>), lädt das Bundle nicht. Eine Seite, die{" "}
+					(<code>Array.prototype.filter</code>, <code>Array.prototype.shift</code>,{" "}
+					<code>Array.isArray</code>, <code>Map</code>, <code>WeakMap.prototype.has</code>,{" "}
+					<code>JSON.stringify</code>, <code>String.prototype.split</code>,{" "}
+					<code>String.prototype.indexOf</code>, <code>RegExp.prototype.test</code>,{" "}
+					<code>Math.round</code>, <code>Math.max</code> mit mehr als zwei Werten,{" "}
+					<code>parseFloat</code>, <code>parseInt</code>, <code>URL</code>,{" "}
+					<code>NodeFilter</code> und weitere), beendet den Scan mit einem Fehler mit dem Code{" "}
+					<code>PAGE_BUILTINS_BROKEN</code>, der jedes davon nennt, statt ein Ergebnis zu liefern,
+					das sich gut liest und falsch ist; ebenso ein Getter, den ein Skript auf{" "}
+					<code>Object.prototype</code> gesetzt hat und der einen Fehler wirft oder einen Wert
+					liefert (<code>Object.prototype.type</code>), und ein Built-in, das so stark beschädigt
+					ist, dass die Prüfung selbst einen Fehler wirft (ihre Liste <code>broken</code> ist dann
+					leer). Ist eines schon beschädigt, bevor das Bundle eingefügt wird (
+					<code>Object.keys</code>), lädt das Bundle nicht. Eine Seite, die{" "}
 					<code>Object.prototype</code> um <code>then</code> ergänzt, wird wie jede andere gescannt.
 					Eine Seite, die <code>Array.from</code> ersetzt, wie es Prototype und MooTools tun, wird
 					ebenfalls gescannt (ab core 1.16.0): Der eigene Code von core verwendet es nicht. Eine
@@ -177,6 +187,18 @@ export function KnownLimitationsContent() {
 					Auswahl lässt die Regel weg. DOM-Methoden, die eine Seite ersetzt (<code>getComputedStyle</code>,{" "}
 					<code>querySelectorAll</code>, <code>getBoundingClientRect</code>), werden nicht geprüft:
 					Regeln lesen, was sie zurückgeben.
+				</li>
+				<li>
+					<strong>Ein Custom Element, das DOM-Member überschreibt, wird so gelesen, wie es
+					antwortet.</strong> Die Engine liest die Eigenschaften und Methoden eines Elements so, wie
+					die eigenen Skripte der Seite es täten (nur bei einem Formular oder dem Dokument liest sie
+					an den benannten Bedienelementen vorbei, die an ihre Stelle treten), daher wird eine
+					Custom-Element-Klasse, die ihr eigenes <code>tagName</code>, <code>parentNode</code>,{" "}
+					<code>getAttribute</code>, <code>textContent</code> oder ein anderes Member definiert, an
+					der Klasse oder an der Instanz, über dieses Member gelesen. Wo eines etwas anderes
+					zurückgibt als das DOM, beurteilen die Regeln, was es zurückgibt; wo eines einen Fehler
+					wirft, meldet eine Regel, die es liest, den Fehler (<code>error</code> in ihrem Ergebnis,
+					Ergebnis <code>cantTell</code>) statt eines Urteils, und die anderen Regeln laufen weiter.
 				</li>
 				<li>
 					<strong>Ein Name wird nicht aus Inhalt ermittelt, der mehr als 256 Ebenen tief
@@ -199,8 +221,31 @@ export function KnownLimitationsContent() {
 					Custom Element stammen könnte, das gerendert wird, aber keinen lesbaren Inhalt zeigt, statt
 					es scheitern zu lassen. Ein geschlossener Root an einem eingebauten Element (einem{" "}
 					<code>&lt;span&gt;</code>) sieht aus wie ein leerer, etwa ein per CSS gezeichnetes Icon,
-					daher scheitert ein Button darüber weiterhin. Prüfen Sie von Hand, was eine solche
-					Komponente bereitstellt, etwa mit einem Screenreader.
+					daher scheitert ein Button darüber weiterhin. Nichts in einem geschlossenen Root wird
+					geprüft: Keine Regel findet seine Elemente, seinen Text oder seine Formularfelder. Was die
+					Seite in einen solchen Root einfügt (Slots), wird geprüft, aber die eigene Struktur des
+					geschlossenen Root darum herum wird nicht gesehen: Radiobuttons, die in ein{" "}
+					<code>&lt;fieldset&gt;</code> mit einer <code>&lt;legend&gt;</code> innerhalb eines
+					geschlossenen Root geslottet sind, werden von{" "}
+					<a href="/rules/form-group-name-present/"><code>form-group-name-present</code></a>{" "}
+					weiterhin nachgefragt (<code>RADIO_GROUP_NO_NAME</code>), obwohl der Accessibility Tree
+					von Chromium ihre Gruppe benennt. Prüfen Sie von Hand, was eine solche Komponente
+					bereitstellt, etwa mit einem Screenreader.
+				</li>
+				<li id="opening-closed-shadow-roots">
+					<strong>Ein Host, der den Browser steuert, kann geschlossene Shadow Roots für einen Scan
+					öffnen.</strong> Core bietet keinen Hook für geschlossene Roots. Ein Skript, das vor den
+					eigenen Skripten der Seite läuft und <code>Element.prototype.attachShadow</code> so
+					umhüllt, dass jeder Root offen erzeugt wird (<code>{"{ ...init, mode: 'open' }"}</code>),
+					wie es <code>addInitScript</code> von Playwright oder{" "}
+					<code>Page.addScriptToEvaluateOnNewDocument</code> von CDP ausführen, macht sie lesbar,
+					und die Engine liest diese Roots dann wie offene. Geprüft in Chromium: Mit dem Hook
+					bestehen die Radiobuttons oben <code>form-group-name-present</code>. Zwei Grenzen: Ein
+					deklarativer Root mit <code>shadowrootmode="closed"</code> wird vom HTML-Parser erzeugt,
+					nicht von <code>attachShadow</code>, und bleibt daher geschlossen; und der Hook verändert
+					die Seite, da auch ihre eigenen Skripte die Roots dann erreichen (
+					<code>host.shadowRoot</code> ist nicht mehr <code>null</code>), verwenden Sie ihn also für
+					einen Scan, nicht für die Seite, die Menschen benutzen.
 				</li>
 				<li>
 					<strong>
@@ -402,19 +447,27 @@ export function KnownLimitationsContent() {
 				</li>
 				<li>
 					<strong>
-						Das berechnete <code>text-shadow</code> von jsdom ist beim zweiten Lesen desselben
-						Elements unzuverlässig.
+						Das berechnete <code>text-shadow</code> von jsdom hängt davon ab, was vorher gelesen
+						wurde.
 					</strong>{" "}
-					Bestätigt in jsdom 29.1.1: Liest man einen berechneten <code>text-shadow</code>-Wert ein
-					zweites Mal am selben Element, egal über welchen Accessor, aus einer frisch angeforderten{" "}
-					<code>CSSStyleDeclaration</code> für dieses Element und unabhängig von Caching, kommt
-					stillschweigend ein anderer, falscher Wert „kein Schatten“ zurück statt des tatsächlich
-					deklarierten. Das erste Lesen ist immer korrekt. Die Engine umgeht das intern, indem sie{" "}
-					<code>text-shadow</code> jedes Elements genau einmal pro Lauf liest und das Ergebnis
-					zwischenspeichert (siehe <code>__textShadowInfoEl</code> in{" "}
-					<code>src/core/contrast-helpers.js</code>), ein einzelner Scan ist also nicht betroffen.
-					Das Problem tritt nur auf, wenn Sie <code>getComputedStyle(el).textShadow</code> selbst
-					mehr als einmal am selben von jsdom geparsten Element lesen. Ein echter Browser hat diesen
+					Bestätigt in jsdom 29.1.1: Der Wert, den es für ein Element liefert, kann sich von einem
+					Lesen zum nächsten ändern, über jeden Accessor und aus einer frisch angeforderten{" "}
+					<code>CSSStyleDeclaration</code>. Bei den meisten Elementen ist das erste Lesen der
+					deklarierte Wert und ein späteres ein falsches „kein Schatten“; bei einem{" "}
+					<code>button</code>, <code>input</code>, <code>select</code> oder <code>textarea</code>{" "}
+					in einem Element mit Schatten ist es umgekehrt: Das erste Lesen liefert keinen Schatten
+					und ein späteres den geerbten, den ein Browser, dessen eigenes Stylesheet Bedienelementen{" "}
+					<code>text-shadow: none</code> gibt, nie zeichnet. Die Engine liest{" "}
+					<code>text-shadow</code> jedes Elements einmal pro Scan und behält ihn (siehe{" "}
+					<code>__textShadowInfoEl</code> in <code>src/core/contrast-helpers.js</code>), und unter
+					jsdom nimmt sie den eines Formularelements aus den eigenen Regeln der Seite (seinem
+					style-Attribut oder einer passenden Regel; <code>inherit</code> nimmt den des
+					Elternelements) und sonst keinen, sodass ein Scan dieselben Schatten liest wie Chromium
+					und ein zweiter Scan desselben DOM dieselben wie der erste. Wo sich ein Stylesheet oder
+					Selektor nicht lesen lässt, wird der berechnete Wert des Formularelements wie bei jedem
+					Element gelesen. Das Problem tritt nur auf, wenn Sie{" "}
+					<code>getComputedStyle(el).textShadow</code> selbst mehr als einmal am selben von jsdom
+					geparsten Element lesen. Ein echter Browser hat diesen
 					Fehler nicht.
 				</li>
 				<li>
@@ -434,6 +487,24 @@ export function KnownLimitationsContent() {
 					das DOM zwischen den Scans, was den Cache von jsdom leert;{" "}
 					<code>@surea11y/core/testing</code> tut das für seinen eigenen zweiten Scan. Ein echter
 					Browser hat diesen Fehler nicht.
+				</li>
+				<li id="jsdom-synchronous-loop">
+					<strong>
+						jsdom behält jede Seite, die in einem synchronen Durchlauf erzeugt wurde, bis die
+						Event-Loop weiterläuft.
+					</strong>{" "}
+					Bestätigt in jsdom 29.1.1: Ein neues <code>JSDOM</code> stellt seine Arbeit für{" "}
+					<code>DOMContentLoaded</code> und <code>load</code> als Promise-Jobs ein, die das Dokument
+					und sein Fenster festhalten, bis sie laufen, und sie laufen erst, wenn der Code, der es
+					erzeugt hat, die Kontrolle abgibt; <code>window.close()</code> gibt sie nicht frei. Scans
+					nacheinander in einer einfachen <code>for</code>-Schleife, ohne <code>await</code>{" "}
+					dazwischen, halten daher jede Seite am Leben: mit <code>runa11yCoreOnHtml</code> auf
+					Seiten von 75 KB etwa 80 MB pro Scan, bis Node der Speicher ausgeht. Core hält nichts
+					davon. Geben Sie zwischen den Scans die Kontrolle ab,{" "}
+					<code>{"await new Promise((r) => setImmediate(r))"}</code>, und der Speicher bleibt
+					gleich (20 Scans derselben Seite blieben bei etwa 210 MB). Ein Test-Runner gibt zwischen
+					Tests die Kontrolle ab, das betrifft also eine Schleife innerhalb eines Tests oder ein
+					Skript.
 				</li>
 				<li>
 					<strong>
@@ -467,6 +538,73 @@ export function KnownLimitationsContent() {
 					Properties nicht ein, daher ist eine mit <code>var()</code> gesetzte Farbe dort nicht
 					lesbar: Zum Text oder Hintergrund wird nachgefragt (<code>contrast-computable</code>),
 					statt ihn zu messen. Verwenden Sie für große Produktionsseiten einen echten Browser.
+				</li>
+				<li>
+					<strong>
+						In Chromium ist <code>text-spacing-content-loss</code> auf einer sehr großen Seite mit
+						vielen defekten Bildern oder Bildern ohne <code>src</code> langsam.
+					</strong>{" "}
+					Die Regel fügt die Abstände aus WCAG 1.4.12 als Stylesheet hinzu und misst den Text
+					erneut, und die folgende Neuberechnung der Styles ist die von Chromium: Für ein Bild, das
+					statt eines Bildes seinen Alternativtext zeigt (eines, dessen <code>src</code> fehlt oder
+					nicht lädt), wächst ihre Dauer mit dem Quadrat der Anzahl solcher Bilder. Gemessen: etwa
+					1,3 s für 4.000 davon, 5,4 s für 8.000; eine Seite mit einigen Hundert ist nicht
+					betroffen. Lassen Sie die Regel bei einem solchen Scan weg (
+					<code>{"runOnly.excludeRuleIds: ['text-spacing-content-loss']"}</code> oder{" "}
+					<code>engineOptions.rules.exclude</code>), oder den Bereich mit den Bildern (
+					<code>excludeSelectors</code>).
+				</li>
+				<li id="jsdom-contrast-asks">
+					<strong>
+						Unter jsdom wird Kontrast nicht gemessen, wo sich der Hintergrund nur mit einem Layout
+						platzieren lässt; zum Text wird nachgefragt.
+					</strong>{" "}
+					jsdom hat keine Geometrie, und die Engine schätzt keine (siehe die Kontrast-Richtlinie in{" "}
+					<a href={`${core}/docs/RULE_AUTHORING.md#87-contrast-edge-cases`}>
+						<code>RULE_AUTHORING.md</code>
+					</a>
+					, auf GitHub). <code>contrast-computable</code> fragt nach (
+					<code>BACKGROUND_OVERLAP</code>, mit <code>blockerNoLayout</code> und einer Meldung, dass
+					kein Layout zum Messen da war):
+					<ul>
+						<li>
+							SVG-Text, der nach einer Form in seinem <code>&lt;svg&gt;</code> gezeichnet wird, die
+							füllt oder eine Kontur hat und gezeichnet wird (nicht durch <code>display</code> oder{" "}
+							<code>visibility</code> verborgen, als Attribut oder in CSS), auch ein{" "}
+							<code>&lt;rect&gt;</code>, das den Text zu bedecken scheint. Im Browser wird ein
+							deckendes <code>&lt;rect&gt;</code>, <code>&lt;circle&gt;</code> oder{" "}
+							<code>&lt;ellipse&gt;</code>, das den ganzen Text bedeckt, aus dem Layout gemessen.
+						</li>
+						<li>
+							Text, dessen eigenes Element oder das Element, das ihm seinen Hintergrund gibt (der
+							nächste Vorfahr mit einem eigenen deckenden Hintergrund), ein <code>::before</code>{" "}
+							oder <code>::after</code> hat, dem die Stylesheets Inhalt, eine Position{" "}
+							<code>absolute</code> oder <code>fixed</code> und einen Hintergrund geben und das sie
+							nicht verbergen (<code>display: none</code>, <code>visibility: hidden</code>). Seine
+							Größe und Versätze werden nicht gelesen, daher macht auch ein kleines Eck-Badge an
+							diesen Elementen den Text zu einer Frage. Ein Pseudo-Element an einem anderen Vorfahren
+							dazwischen wird nicht betrachtet: Text in einem Overlay-Host ohne eigenen Hintergrund
+							wird gegen den Hintergrund dahinter gemessen, was falsch sein kann. Im Browser wird
+							die Box des Pseudo-Elements gemessen.
+						</li>
+					</ul>
+				</li>
+				<li>
+					<strong>
+						Unter jsdom wird ein Währungszeichen in einem Flex- oder Grid-Element, einem Float oder
+						einer positionierten Box mit dem Text daneben gelesen.
+					</strong>{" "}
+					Ein Browser berechnet das <code>display</code> eines Flex- oder Grid-Elements, eines
+					Floats und einer absolut positionierten Box als Block, daher steht ein Zeichen dort nicht
+					auf derselben Zeile wie die Ziffern daneben, und{" "}
+					<a href="/rules/symbol-graphic-contrast/"><code>symbol-graphic-contrast</code></a>{" "}
+					beurteilt es als Grafik. jsdom berechnet kein solches <code>display</code>, und die Engine
+					leitet keine Boxen aus <code>flex</code>, <code>grid</code>, <code>float</code> oder{" "}
+					<code>position</code> ab: Nur Block-Elemente, <code>&lt;br&gt;</code> und der Text eines
+					Links (außer wenn sein nächstes Zeichen eine Ziffer ist) beenden einen Abschnitt. Daher
+					ist <code>{'<div style="display:flex"><span>$</span><span>45.00</span></div>'}</code> dort
+					Text und wird von <code>contrast-minimum</code> am Verhältnis für Text gemessen. Scannen
+					Sie im Browser, um die Antwort des Layouts zu erhalten.
 				</li>
 				<li>
 					<strong>
@@ -505,8 +643,8 @@ export function KnownLimitationsContent() {
 				<li>
 					<strong>Unter jsdom wird Text nach seinem berechneten <code>font-size</code> beurteilt.</strong>{" "}
 					Im Browser beurteilen die Kontrastregeln und <code>p-as-heading</code> Text in der Größe,
-					in der er gezeichnet wird, einschließlich CSS-<code>zoom</code>, einer SVG-Transformation
-					und <code>font-size-adjust</code>, Letzteres aus den Metriken der Schrift selbst (
+					in der er gezeichnet wird, einschließlich CSS-<code>zoom</code>, einer gleichmäßigen
+					Skalierung per Transform, einer SVG-Transformation und <code>font-size-adjust</code>, Letzteres aus den Metriken der Schrift selbst (
 					<code>font-size: 24px; font-size-adjust: 0.3</code> zeichnet Arial bei etwa 14px, was
 					kein großer Text ist). jsdom berechnet kein Layout und liest keine Schrift, daher wird{" "}
 					<code>font-size</code> dort genommen, wie es ist. Scannen Sie eine Seite, die ihren Text so
@@ -525,16 +663,44 @@ export function KnownLimitationsContent() {
 					<code>text-spacing-content-loss</code> fügt ein Stylesheet mit den Abständen aus WCAG
 					1.4.12 hinzu; <code>focus-not-obscured-minimum</code> und <code>-enhanced</code> scrollen
 					die Seite so, dass ein Element unter einer fixierten oder sticky positionierten Box liegt,
-					um dort einen Hit-Test auszuführen, was die <code>scroll</code>-Handler der Seite auslöst,
-					nachdem diese gemessen haben (ein Kopfbereich, der sich beim Scrollen ausblendet, kann
-					darauf reagieren); die Kontrastregeln fügen einen leeren Frame außerhalb des sichtbaren
-					Bereichs hinzu, um die eigenen Farben des Browsers für einen Platzhalter oder ein
-					Aufklapp-<code>&lt;select&gt;</code> zu lesen. Der Scan setzt außerdem jede laufende
-					Animation für die Dauer der Regeln auf einen festen Punkt (eine endliche an ihr Ende, eine
-					endlose an ihren Anfang), sodass ein Einblenden im Endzustand gemessen wird. All das wird
-					zurückgesetzt, bevor die Regel oder der Scan endet: Fokus, Scrollposition,
-					style-Attribute, Animationen, das hinzugefügte Stylesheet und der Frame. Nicht zurücksetzen lässt
-					sich, was die Skripte der Seite daraufhin tun, denn das Fokussieren eines Elements löst
+					um dort einen Hit-Test auszuführen (auf einer Seite, die das Scrollen verhindert, etwa
+					einer, deren <code>scrollTo</code> nichts tut, lässt sich kein Hit-Test ausführen, und zu
+					jeder solchen Box wird ohne Tendenz nachgefragt, mit <code>notScrolled: true</code>); die
+					Ereignisse <code>scroll</code> und <code>scrollend</code>, die der Browser danach auslöst,
+					werden von den Listenern der Seite ferngehalten, außer von einem Capture-Listener, den die
+					Seite vor dem Scan am Fenster registriert hat, sodass ein Widget, das eine Seite beim
+					ersten Scrollen lädt, ungeladen bleibt; die Kontrastregeln fügen einen leeren Frame
+					hinzu, um die eigenen Farben des Browsers für einen Platzhalter oder ein
+					Aufklapp-<code>&lt;select&gt;</code> zu lesen (einen pro Scan, in einem geschlossenen
+					Shadow Root eines verborgenen <code>&lt;surea11y-probe&gt;</code>-Elements am Ende von{" "}
+					<code>&lt;html&gt;</code>, sodass keine Regel ihn findet und sein <code>load</code>
+					-Ereignis, das den Shadow Root nicht verlässt, keinen Listener der Seite erreicht, auch
+					keinen Capture-Listener), und ein verborgenes Element, mit dem sie eine Farbe, eine
+					Schrift oder die Canvas messen, das sofort hinzugefügt und wieder entfernt wird. Ein{" "}
+					<code>MutationObserver</code> der Seite sieht diese Hinzufügungen (den Container des
+					Frames einmal, hinzugefügt und entfernt) und das <code>&lt;style&gt;</code> von{" "}
+					<code>text-spacing-content-loss</code>, das hinzugefügt und entfernt wird: Er wird mit
+					diesen Einträgen aufgerufen, sobald der Scan zurückkehrt, und ein Skript, das auf jede
+					Änderung im Dokument reagiert (neu rendert oder seine Knoten zählt), läuft dann. Der Scan
+					setzt außerdem jede laufende Animation für die Dauer der Regeln auf einen festen Punkt
+					(eine endliche an ihr Ende, eine endlose an ihren Anfang), sodass ein Einblenden im
+					Endzustand gemessen wird; auch die von Elementen in offenen Shadow Roots, außer wenn{" "}
+					<code>includeShadowDom</code> aus ist. Eine Animation in einem geschlossenen Shadow Root
+					wird nicht erreicht. All das wird zurückgesetzt, bevor die Regel oder der Scan endet:
+					Fokus, die Auswahl der Seite und die Einfügemarke (im Dokument und in einem fokussierten
+					Textfeld), Scrollposition, style-Attribute, Animationen, das hinzugefügte Stylesheet und
+					der Frame. Der Fokus wird in offene Shadow Roots und Frames gleichen Ursprungs verfolgt
+					und dort zurückgesetzt. Fokus in einem geschlossenen Shadow Root ist die einzige Stelle,
+					an der das nicht ginge: Die Engine sieht nur den Host, und den Fokus wegzubewegen würde
+					verlieren, wo im Root er war. Daher probt <code>aria-hidden-focus</code> dann nicht: Der
+					Fokus bleibt, wo er ist, und die verborgenen fokussierbaren Elemente werden ohne die Probe
+					beurteilt, gemeldet, wie sie ohne zu findendes Wächterelement gemeldet würden, nie als
+					solches zur Prüfung weitergegeben. Ein fokussiertes Custom Element, dessen Shadow Root die
+					Engine nicht lesen kann, gilt als ein solcher Host, auch eines mit{" "}
+					<code>tabindex</code>, das selbst fokussiert ist, da sich beides nicht unterscheiden
+					lässt; ebenso ein fokussiertes <code>&lt;div&gt;</code>, <code>&lt;span&gt;</code> oder
+					anderes Element, das einen Shadow Root tragen kann und von sich aus keinen Fokus
+					annimmt. Nicht zurücksetzen lässt sich, was die Skripte der Seite daraufhin tun, denn das Fokussieren eines Elements löst
 					seine <code>focus</code>- und <code>focusin</code>-Handler aus: Ein Karussell springt
 					vielleicht zur fokussierten Folie und verschiebt dabei <code>aria-hidden</code>, oder es
 					aktiviert einen Button. Die Befunde dieses Scans sind die der Seite, wie sie vorgefunden
@@ -586,6 +752,46 @@ export function KnownLimitationsContent() {
 					Bibliothek direkt über <span lang="en">Pattern 2</span> gegen eine bereits geladene Seite aus, nicht über die
 					CLI mit statischem Abruf.
 				</li>
+				<li id="reflow">
+					<strong>Umfluss (1.4.10) wird nur bei der Breite geprüft, die das Kriterium nennt.</strong>{" "}
+					<a href="/rules/reflow-horizontal-scroll/"><code>reflow-horizontal-scroll</code></a>{" "}
+					gilt für eine Seite, die mit 320 CSS-Pixeln Breite oder weniger dargestellt wird, und ist
+					bei jedem breiteren Viewport <code>notApplicable</code>: Scannen Sie die Seite bei dieser
+					Breite, um den Umfluss zu prüfen (der Viewport eines Smartphones, oder ein 320 Pixel breiter
+					Frame, dessen Dokument der Host mit <code>topLevelDocument</code> als die Seite
+					benennt). Die Regel misst seitliches Scrollen und fragt nach dem, was der Rand
+					abschneidet, wo die Seite ihre Seiten beschneidet; ob Inhalt oder eine Funktion verloren
+					geht, wenn ein Menü zusammenklappt oder ein Bedienelement sich verschiebt, bleibt Sache
+					eines Menschen (
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#reflow`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					, auf GitHub). Vertikaler Text, den 1.4.10 bei 256 Pixeln Höhe misst, wird nicht geprüft.
+				</li>
+				<li id="resize-text">
+					<strong>
+						Textgröße ändern (1.4.4) wird auf abgeschnittenen Text nur bei 640 CSS-Pixeln Breite
+						oder weniger geprüft.
+					</strong>{" "}
+					<a href="/rules/resize-text-content-loss/"><code>resize-text-content-loss</code></a>{" "}
+					gilt für eine Seite, die in einem Viewport von 640 CSS-Pixeln Breite oder weniger
+					dargestellt wird, wie ein 1280 Pixel breites Fenster sie bei 200 % Zoom zeigt, und ist bei
+					jedem breiteren Viewport <code>notApplicable</code>: Scannen Sie die Seite bei dieser
+					Breite (ein 640 Pixel breiter Frame, dessen Dokument der Host mit{" "}
+					<code>topLevelDocument</code> als die Seite benennt, oder ein Fenster dieser Größe). Die
+					Engine zoomt die Seite nicht und ändert die Größe des Viewports nicht selbst: Das Skript
+					einer Seite kann beides nicht, und CSS-<code>zoom</code> auf dem Root würde Media Queries
+					nicht so treffen wie der Browser-Zoom. Die Regel fragt nach Text, den eine Box mit
+					verborgenem Überlauf abschneidet oder kürzt (Auslassungspunkte, Line Clamp), und scheitert
+					nie: Ob der vollständige Text auf anderem Weg angeboten wird, entscheidet ein Mensch. Text,
+					den nur der eigene Überlauf des Viewports abschneidet, Text, der beim Zoomen nicht
+					wächst, und Bedienelemente, die bei 200 % nicht mehr funktionieren, werden nicht gemessen
+					(
+					<a href={`${core}/docs/LAYOUT_MEASUREMENT.md#resize-text`}>
+						<code>LAYOUT_MEASUREMENT.md</code>
+					</a>
+					, auf GitHub).
+				</li>
 				<li>
 					<strong>Ein Layout wird bei einem einzigen Viewport gemessen, mit den Schriften, die die
 					Seite in diesem Moment hat.</strong> Regeln, die messen, was der Browser zeichnet,{" "}
@@ -595,6 +801,14 @@ export function KnownLimitationsContent() {
 					,{" "}
 					<a href="/rules/target-size-minimum/">
 						<code>target-size-minimum</code>
+					</a>
+					,{" "}
+					<a href="/rules/reflow-horizontal-scroll/">
+						<code>reflow-horizontal-scroll</code>
+					</a>
+					,{" "}
+					<a href="/rules/resize-text-content-loss/">
+						<code>resize-text-content-loss</code>
 					</a>{" "}
 					und{" "}
 					<a href="/rules/skip-link/">
@@ -732,8 +946,8 @@ export function KnownLimitationsContent() {
 						die Trefferfläche aus dem Layout statt durch Hit-Testing.
 					</strong>{" "}
 					Ziele unterhalb des sichtbaren Bereichs oder in einer scrollenden Box werden ganz
-					gemessen, als wären sie in den sichtbaren Bereich gescrollt; feste und sticky Boxen über
-					einem Ziel werden ignoriert; 3D-Transformationen, die meisten <code>clip-path</code>
+					gemessen, als wären sie in den sichtbaren Bereich gescrollt; was über ein Ziel gezeichnet
+					wird (ein Overlay, eine feste oder sticky Box), nimmt ihm nichts weg; 3D-Transformationen, die meisten <code>clip-path</code>
 					-Formen und die abgerundete Beschneidung eines Vorfahren werden als umgebende Box
 					gemessen; und Links, die nur durch Trennzeichen getrennt sind („
 					<span lang="en">Edit | Delete</span>“) und einander zu nahe kommen, werden nachgefragt
@@ -754,7 +968,12 @@ export function KnownLimitationsContent() {
 					(2.4.12) brauchen einen Browser: Unter jsdom sind sie <code>notApplicable</code>{" "}
 					(<code>data.reason: 'noLayout'</code>). Im Browser fragen sie, welche Elemente in der
 					Tab-Reihenfolge eine Box mit <code>position: fixed</code> oder <code>sticky</code>, die
-					etwas zeichnet, verbergen kann, bei dem Fenster, das der Scan verwendet, und dem{" "}
+					etwas zeichnet (einen Hintergrund oder ein Bild, einen inneren <code>box-shadow</code>,
+					der sie füllt, oder ein <code>::before</code> oder <code>::after</code> mit Hintergrund,
+					das über ihr positioniert ist), verbergen kann (eine fixierte Box in einem Vorfahren, der
+					durch eine Transformation, einen Filter, <code>perspective</code>, Containment, einen
+					Container-Typ oder <code>will-change</code> ihr umgebender Block ist, scrollt mit diesem
+					Vorfahren und ist keine), bei dem Fenster, das der Scan verwendet, und dem{" "}
 					<code>scroll-padding</code> der Seite, und bestätigen das per Hit-Test an einigen davon.
 					Nicht berücksichtigt: ein Element in einer Box, die selbst scrollt, oder in einer fixierten
 					oder sticky positionierten Box; horizontales Scrollen; anderer Inhalt, der über einem

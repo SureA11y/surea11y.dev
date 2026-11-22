@@ -86,7 +86,7 @@ const localeReasonRows = [
 	{
 		id: "partial-dictionary",
 		reason: <code>partial-dictionary</code>,
-		meaning: "Se usó el diccionario, pero le faltan algunas claves, así que esas cadenas concretas recurrieron al inglés.",
+		meaning: "Se usó el diccionario, pero le faltan algunas claves (que tampoco da su idioma base), así que esas cadenas concretas recurrieron al inglés.",
 	},
 ];
 
@@ -146,7 +146,8 @@ export function LocalesContent() {
 				inglés, salvo las palabras que con razón son iguales en un idioma: en francés{" "}
 				<em lang="fr">Orientation</em>, <em lang="fr">Interruptions</em> y{" "}
 				<em lang="fr">Occurrences</em>, en alemán <em lang="de">Frame</em>,{" "}
-				<em lang="de">Frames</em> y <em lang="de">Element</em>, en español{" "}
+				<em lang="de">Frames</em>, <em lang="de">Element</em> y <em lang="de">Scan</em>, en
+				español{" "}
 				<em lang="es">Selector</em>. Esas palabras figuran en una lista, cada una con el texto en
 				inglés con el que se comprobó, y cuentan como traducidas. Si el inglés cambia, la entrada
 				deja de aplicarse y la cadena cuenta como no traducida hasta que alguien la vuelva a
@@ -222,10 +223,27 @@ export function LocalesContent() {
 				alemán queda cubierta.
 			</p>
 			<h3>Paso 2: resolver cada cadena (por cadena)</h3>
-			<p>Dentro del diccionario elegido, cada cadena se busca de forma individual:</p>
+			<p>
+				Después, cada cadena se busca de forma individual, empezando por el diccionario de tu
+				código:
+			</p>
 			<ol>
-				<li>Toma el valor de la clave del diccionario elegido.</li>
-				<li>Si esa clave falta, toma la inglesa.</li>
+				<li>
+					Toma el valor de la clave del diccionario de tu código: primero tu propio{" "}
+					<code>engineOptions.messages</code> para él, después el del motor.
+				</li>
+				<li>
+					Si tu código lleva una subetiqueta y esa clave falta, tómala del idioma base, de nuevo
+					primero la tuya y después la del motor. Con <code>locale: 'de-AT'</code> y{" "}
+					<code>{"messages: { 'de-AT': { … one key … } }"}</code>, esa clave es la tuya y todas las
+					demás cadenas son el alemán incorporado.
+				</li>
+				<li>
+					Si esa clave sigue faltando, toma la inglesa: primero tu propio{" "}
+					<code>engineOptions.messages.en</code>, después la del motor. Así, una clave que das solo
+					en inglés se muestra en inglés con cualquier configuración regional, y una sobrescritura
+					en inglés también se aplica cuando la configuración regional recurrió al inglés.
+				</li>
 				<li>
 					Si el inglés tampoco la tiene (algo que no debería ocurrir con una clave incorporada,
 					pero puede pasar con una escrita a mano), usa el texto literal que la propia regla lleva.
@@ -233,7 +251,8 @@ export function LocalesContent() {
 			</ol>
 			<p>
 				<strong>El resultado nunca es un vacío, un <code>undefined</code>, ni un error lanzado.</strong>{" "}
-				Una traducción a medias se muestra en tu idioma donde existe y en inglés en todo lo demás.
+				Una traducción a medias se muestra en tu idioma donde existe, después en su idioma base, y
+				en inglés en todo lo demás.
 			</p>
 
 			<h2>Saber qué configuración regional obtuviste realmente</h2>
@@ -299,7 +318,7 @@ export function LocalesContent() {
 				necesita todos los idiomas. Mantener el inglés incorporado y el resto como opcional deja los
 				demás idiomas fuera de la descarga, y evita que siga creciendo a medida que se añaden
 				idiomas. Cada archivo lateral, <code>surea11y.i18n.&lt;locale&gt;.js</code>, ocupa
-				más o menos lo mismo que el texto en inglés al que sustituye (entre 200 y 250 KB hoy), y
+				más o menos lo mismo que el texto en inglés al que sustituye(entre 310 y 390 KB hoy), y
 				una página carga solo los que usa. Nada más cambia: el paquete de Node y las integraciones
 				no se ven afectados.
 			</p>
@@ -395,7 +414,17 @@ export function LocalesContent() {
 					"}, null);",
 				]}
 			/>
-			<p>Las claves que no proporciones recurren al valor por defecto normalmente, así que una sobrescritura parcial es válida.</p>
+			<p>
+				Las claves que no proporciones recurren al valor por defecto normalmente, así que una
+				sobrescritura parcial es válida. Eso vale también para un código regional:{" "}
+				<code>{"messages: { 'de-AT': { … } }"}</code> con <code>locale: 'de-AT'</code> sobrescribe
+				esas cadenas, y el resto sale del alemán (primero tu <code>messages.de</code>, después el
+				alemán incorporado o del archivo lateral) antes que del inglés;{" "}
+				<code>engine.locale</code> indica <code>ok</code> cuando el alemán cubre todas las claves.
+				Las mayúsculas de la clave de la configuración regional tampoco importan aquí:{" "}
+				<code>{"messages: { DE: … }"}</code> sobrescribe el alemán que muestra un análisis con{" "}
+				<code>locale: 'de'</code>, y el alemán incorporado sigue por debajo.
+			</p>
 
 			<h2 id="language-specific-matching">Coincidencia específica por idioma</h2>
 			<p>
@@ -420,7 +449,13 @@ export function LocalesContent() {
 				son genéricas en un idioma y un nombre real en otro, como "<span lang="fr">Suite</span>" o
 				"<span lang="fr">Plus</span>" en una página en inglés. Las palabras de transcripción son la
 				excepción: son distintivas en todos los idiomas y una página puede enlazar una transcripción
-				en otro idioma, así que se comprueban todas siempre. El texto se normaliza primero en NFKC,
+				en otro idioma, así que se comprueban todas siempre. También los títulos por defecto que
+				un editor, una plantilla inicial o un CMS da a una página a la que nadie puso nombre ("
+				<span lang="en">Untitled</span>", "Sin título", "<span lang="de">Ohne Titel</span>", "
+				<span lang="fr">Sans titre</span>", 「<span lang="ja">無題</span>」, "
+				<span lang="en">Document</span>", "<span lang="en">Just another WordPress site</span>"):{" "}
+				<code>page-title-patterns</code> los considera genéricos sea cual sea el idioma de la
+				página. El texto se normaliza primero en NFKC,
 				así que coinciden las formas de ancho completo como 「<span lang="ja">見出し２</span>」.
 			</p>
 			<p>
@@ -451,7 +486,16 @@ export function LocalesContent() {
 				<li>
 					<strong>A nivel de ocurrencia</strong>: <code>i18n.summaryKey</code> / <code>i18n.hintKey</code>,
 					con <code>i18n.params</code> para la interpolación de <code>{"{{placeholder}}"}</code>,
-					resuelven el <code>summary</code>/<code>hint</code> de una ocurrencia.{" "}
+					resuelven el <code>summary</code>/<code>hint</code> de una ocurrencia. Un parámetro con
+					nombre de medida (un nombre que termina en <code>ratio</code>, <code>threshold</code> o{" "}
+					<code>Px</code>, como <code>ratio</code>, <code>bestRatio</code>,{" "}
+					<code>fontSizePx</code>) cuyo valor es un decimal se escribe con el separador decimal del
+					idioma en que está escrito el mensaje, no de su región: "2,85:1" en francés, alemán y
+					español, "2.85:1" en inglés y japonés, así que <code>en-ZA</code> escribe "2.85:1" y{" "}
+					<code>fr-CA</code> y <code>de-AT</code>, "2,85:1". <code>data.details</code> y{" "}
+					<code>metrics</code> conservan números, e <code>i18n.params</code> conserva cada valor
+					sin formatear, con punto (<code>ratio: "2.85"</code>, una cadena). Un decimal escrito en
+					una cadena de un diccionario ("4,5:1") sigue la misma regla. Core 1.18.0 y posteriores.{" "}
 					<code>i18n.whyKey</code> / <code>i18n.cautionKey</code> resuelven del mismo modo el{" "}
 					<code>why</code> y el <code>caution</code> de una tendencia. Consulta{" "}
 					<a href="/results-reports/output-schema/">el esquema de salida</a>.
@@ -493,6 +537,10 @@ export function LocalesContent() {
 					avisa cuando una traducción del motor o de este sitio las necesita.
 				</li>
 				<li>
+					<strong>Pide un idioma</strong> que necesites, aunque no puedas traducirlo tú, con una{" "}
+					<a href="https://github.com/SureA11y/core/issues/new?template=translation.md">incidencia de traducción en el motor</a>.
+				</li>
+				<li>
 					<strong>Traduce</strong>:{" "}
 					<a href={`${core}/docs/I18N.md#adding-your-language`}>
 						<span lang="en">Adding your language</span>
@@ -503,8 +551,16 @@ export function LocalesContent() {
 			</ul>
 			<p>
 				Un idioma nuevo, en el motor o en este sitio, se incorpora cuando alguien que lo habla
-				como lengua materna y trabaja en accesibilidad lo ha revisado. Quien revisa es tan
-				bienvenido como quien traduce.
+				como lengua materna y trabaja en accesibilidad lo ha revisado: no solo la gramática, sino
+				que cada texto diga lo que dice el inglés, con las palabras que usan quienes prueban o
+				corrigen páginas en ese idioma. Un borrador de traducción automática es un buen punto de
+				partida, siempre que después una persona lea cada cadena frente al inglés. Corregir unas
+				pocas cadenas no necesita esa revisión. Quien revisa es tan bienvenido como quien traduce
+				(consulta{" "}
+				<a href={`${core}/docs/I18N.md#review-by-a-native-speaker`}>
+					<span lang="en">Review by a native speaker</span>
+				</a>
+				, en inglés, en GitHub).
 			</p>
 		</>
 	);

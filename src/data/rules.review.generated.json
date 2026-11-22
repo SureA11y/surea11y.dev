@@ -2562,7 +2562,7 @@
           "steps": [
             "Localizar el texto que indica el informe y anotar el ancestro con una opacidad inferior a 1.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto y el fondo tal como se ven en pantalla (atenuados), con un cuentagotas sobre la página representada.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Los colores atenuados en pantalla alcanzan el umbral, o el texto atenuado es un control inactivo (deshabilitado), que está exento.",
           "failWhen": "Los colores atenuados en pantalla dan una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6), salvo que el texto forme parte de un control inactivo."
@@ -2615,7 +2615,7 @@
             "Localizar el texto que indica el informe y anotar el filter o backdrop-filter que tiene él o un ancestro (en el panel Styles de las herramientas para desarrolladores).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir los colores del texto y del fondo tal como se ven en pantalla con el filtro aplicado, usando un cuentagotas sobre la página representada en lugar de los valores declarados.",
             "En un desenfoque o un backdrop-filter sobre contenido cambiante, desplazarse o esperar para que pase contenido distinto por detrás, y comprobar el peor caso.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Con el filtro aplicado, la relación en pantalla alcanza el umbral.",
           "failWhen": "Con el filtro aplicado, la relación en pantalla queda por debajo del umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2670,7 +2670,7 @@
             "Localizar el texto que indica el informe y observar la imagen o el degradado que hay detrás.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente a las partes más clara y más oscura del fondo situado justo detrás de las letras.",
             "Si la imagen cambia (diapositivas, vídeo, imágenes adaptables), comprobar cada versión y con varios anchos de ventana.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Todas las partes del fondo situadas detrás de las letras dan al menos la relación del umbral.",
           "failWhen": "Alguna parte del fondo situada detrás del texto da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2722,7 +2722,7 @@
           "steps": [
             "Localizar en la página el texto que indica el informe.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al color que se ve justo detrás de las letras, tomando los puntos más oscuro y más claro si varía.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral en todo el fondo situado detrás del texto.",
           "failWhen": "La relación es inferior al umbral en algún punto detrás del texto, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2775,7 +2775,7 @@
             "Localizar el texto que indica el informe; la página no define ningún fondo opaco detrás de él, así que lo que se ve es el lienzo que pinta el navegador o, en un marco, la página que lo rodea.",
             "Visualizar la página donde se muestra: dentro de la página que la inserta, sin colores forzados y en cada esquema de color que admite (claro y oscuro).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto frente al fondo que se ve realmente en cada configuración.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral en todas las configuraciones en que se muestra la página.",
           "failWhen": "En alguna configuración en que se muestra la página, la relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2807,7 +2807,7 @@
       "text": {
         "de": {
           "steps": [
-            "Suchen Sie den im Bericht genannten Text und prüfen Sie, welches Element tatsächlich dahinter gezeichnet wird (untersuchen Sie es und schalten Sie das überlappende Element aus und wieder ein).",
+            "Suchen Sie den im Bericht genannten Text und prüfen Sie, welches Element tatsächlich dahinter gezeichnet wird (untersuchen Sie es und schalten Sie das überlappende Element aus und wieder ein). Steht der Text in einem fixierten Kasten oder einem, der beim Scrollen haften bleibt, scrollen Sie die Seite und prüfen Sie den Text über jedem Teil der Seite, der darunter vorbeizieht.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Textfarbe gegen die Farbe, die hinter den Buchstaben tatsächlich zu sehen ist.",
             "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
@@ -2816,7 +2816,7 @@
         },
         "en": {
           "steps": [
-            "Find the text the report names and check which element actually paints behind it (inspect it and toggle the overlapping element off and on).",
+            "Find the text the report names and check which element actually paints behind it (inspect it and toggle the overlapping element off and on). If the text is in a box fixed in place, or one that sticks as the page scrolls, scroll the page and check the text over each part of the page that passes under it.",
             "Use the color picker in the browser's developer tools, or a contrast calculator with colors picked by an eyedropper, to measure the text color against the color actually seen behind the letters.",
             "Compare the ratio with 4.5:1 (3:1 for large text) for minimum contrast, and 7:1 (4.5:1 for large text) for enhanced contrast."
           ],
@@ -2825,16 +2825,16 @@
         },
         "es": {
           "steps": [
-            "Localizar el texto que indica el informe y comprobar qué elemento se pinta realmente detrás de él (inspeccionarlo y desactivar y reactivar el elemento superpuesto).",
+            "Localizar el texto que indica el informe y comprobar qué elemento se pinta realmente detrás de él (inspeccionarlo y desactivar y reactivar el elemento superpuesto). Si el texto está en una caja fija, o que se queda pegada al desplazar la página, desplazar la página y comprobar el texto sobre cada parte de la página que pasa por debajo.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al color que se ve realmente detrás de las letras.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "El color que hay realmente detrás del texto da al menos la relación del umbral.",
           "failWhen": "El color que hay realmente detrás del texto da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
         },
         "fr": {
           "steps": [
-            "Repérez le texte indiqué par le rapport et vérifiez quel élément est réellement peint derrière lui (inspectez-le et masquez puis réaffichez l’élément qui le recouvre).",
+            "Repérez le texte indiqué par le rapport et vérifiez quel élément est réellement peint derrière lui (inspectez-le et masquez puis réaffichez l’élément qui le recouvre). Si le texte se trouve dans une boîte fixe, ou qui reste collée quand la page défile, faites défiler la page et vérifiez le texte au-dessus de chaque partie de la page qui passe dessous.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte par rapport à la couleur réellement visible derrière les lettres.",
             "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
@@ -2843,7 +2843,7 @@
         },
         "ja": {
           "steps": [
-            "レポートに示されたテキストを見つけ、実際にその背後に描画されている要素を確認してください（要素を調べ、重なっている要素の表示を切り替えます）。",
+            "レポートに示されたテキストを見つけ、実際にその背後に描画されている要素を確認してください（要素を調べ、重なっている要素の表示を切り替えます）。テキストが固定されたボックス、またはスクロール時に貼り付くボックスの中にある場合は、ページをスクロールし、その下を通過するページの各部分の上でテキストを確認してください。",
             "ブラウザーの開発者ツールのカラーピッカー、またはスポイトで色を取得したコントラスト計算ツールを使い、文字の背後に実際に見える色に対して、テキストの色を測定してください。",
             "比を、最低限のコントラストでは4.5:1（大きなテキストは3:1）、より高いコントラストでは7:1（大きなテキストは4.5:1）と比べてください。"
           ],
@@ -2877,7 +2877,7 @@
           "steps": [
             "Localizar el texto que indica el informe e inspeccionar el valor del color de fondo en las herramientas para desarrolladores (a menudo con una sintaxis más reciente, como oklch(), lab() o color()).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al fondo tal como se representa en pantalla.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral.",
           "failWhen": "La relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2927,7 +2927,7 @@
           "steps": [
             "Abrir la página en un navegador configurado con el esquema de color que indica el informe (blockerValue: light o dark), o emularlo en las herramientas para desarrolladores (Renderizado, prefers-color-scheme).",
             "Localizar el texto que indica el informe y, con el selector de color de las herramientas para desarrolladores del navegador o una calculadora de contraste con colores tomados con un cuentagotas, medirlo frente al fondo que tiene detrás.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "En ese esquema de color la relación alcanza el umbral.",
           "failWhen": "En ese esquema de color la relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -2977,7 +2977,7 @@
           "steps": [
             "Localizar el texto que indica el informe y anotar la opacidad inferior a 1 de su elemento.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto y el fondo tal como se ven en pantalla (atenuados), con un cuentagotas sobre la página representada.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Los colores atenuados en pantalla alcanzan el umbral, o el texto atenuado es un control inactivo (deshabilitado), que está exento.",
           "failWhen": "Los colores atenuados en pantalla dan una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6), salvo que el texto forme parte de un control inactivo."
@@ -3009,7 +3009,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text (die Prüfung wurde vorzeitig beendet, daher wurde nichts gemessen).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Textfarbe gegen den Hintergrund direkt hinter den Buchstaben.",
-            "Notieren Sie Schriftgröße und -stärke, um zu entscheiden, ob der Text als groß gilt (mindestens 24px oder 18.66px und fett).",
+            "Notieren Sie Schriftgröße und -stärke, um zu entscheiden, ob der Text als groß gilt (mindestens 24px oder 18,66px und fett).",
             "Vergleichen Sie das Verhältnis für den Mindestkontrast mit 4,5:1 (3:1 für großen Text) und für den erhöhten Kontrast mit 7:1 (4,5:1 für großen Text)."
           ],
           "passWhen": "Das Verhältnis erreicht den Schwellenwert für seine Größe.",
@@ -3029,8 +3029,8 @@
           "steps": [
             "Localizar el texto que indica el informe (la comprobación se detuvo antes de tiempo, así que no se midió nada).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al fondo situado justo detrás de las letras.",
-            "Anotar el tamaño y el grosor del texto para saber si cuenta como texto grande (al menos 24px, o 18.66px y en negrita).",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Anotar el tamaño y el grosor del texto para saber si cuenta como texto grande (al menos 24px, o 18,66px y en negrita).",
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral correspondiente a su tamaño.",
           "failWhen": "La relación es inferior al umbral correspondiente a su tamaño, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3039,7 +3039,7 @@
           "steps": [
             "Repérez le texte indiqué par le rapport (la vérification s’est arrêtée tôt, donc rien n’a été mesuré).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte par rapport à l’arrière-plan situé juste derrière les lettres.",
-            "Notez la taille et la graisse du texte pour savoir s’il compte comme texte de grande taille (au moins 24px, ou 18.66px en gras).",
+            "Notez la taille et la graisse du texte pour savoir s’il compte comme texte de grande taille (au moins 24px, ou 18,66px en gras).",
             "Comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille) pour le contraste minimum, et à 7:1 (4,5:1 pour le texte de grande taille) pour le contraste renforcé."
           ],
           "passWhen": "Le ratio atteint le seuil correspondant à sa taille.",
@@ -3082,7 +3082,7 @@
           "steps": [
             "Localizar el texto que indica el informe e inspeccionar su valor de color en las herramientas para desarrolladores (a menudo con una sintaxis más reciente, como oklch(), lab() o color()).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto tal como se representa frente a su fondo.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "La relación alcanza el umbral.",
           "failWhen": "La relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3135,7 +3135,7 @@
             "Localizar el elemento que indica el informe y buscar el texto que su ::before o ::after dibuja en pantalla (está posicionado lejos de su elemento).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color de ese texto frente a lo que se vea detrás de él en su posición real.",
             "Cambiar el tamaño de la ventana y desplazarse para comprobar otras posiciones en las que pueda quedar sobre otro fondo.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Quede donde quede, el texto generado alcanza el umbral.",
           "failWhen": "Donde queda el texto generado, la relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3190,7 +3190,7 @@
             "Localizar el elemento que indica el informe y observar el texto que dibuja su ::before, ::after o marcador de lista (un número, una viñeta o una etiqueta).",
             "Decidir si es texto que hay que leer (un número, una palabra o una etiqueta) o una forma puramente decorativa.",
             "Si es texto, medir su color frente al fondo que tiene detrás con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "El texto generado alcanza el umbral, o es puramente decorativo.",
           "failWhen": "El texto generado es contenido legible y su relación es inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3245,7 +3245,7 @@
             "Localizar el texto que indica el informe y anotar el mix-blend-mode que tiene él o su contenedor.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir los colores fusionados del texto y del fondo tal como se ven en pantalla, con un cuentagotas sobre la página representada.",
             "Si detrás puede quedar contenido distinto (desplazamiento, carruseles), comprobar el peor caso.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Los colores fusionados en pantalla alcanzan el umbral.",
           "failWhen": "Los colores fusionados en pantalla dan una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3300,7 +3300,7 @@
             "Localizar el texto que indica el informe y anotar el color de ::first-line o ::first-letter en el panel Styles.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir frente al fondo tanto el color del texto del elemento como el color de la primera línea o de la primera letra.",
             "Cambiar el tamaño de la ventana para ver que el color de la primera línea se aplica a palabras distintas con anchos distintos.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Ambos colores alcanzan el umbral.",
           "failWhen": "Alguno de los colores da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3352,7 +3352,7 @@
           "steps": [
             "Localizar la lista desplegable que indica el informe y abrirla con el ratón y con Alt+Flecha abajo.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto de cada opción frente a su fondo en la lista abierta, incluida la opción resaltada, en cada navegador que admite la página.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "Todas las opciones de la lista abierta alcanzan el umbral.",
           "failWhen": "Una opción de la lista abierta da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3405,7 +3405,7 @@
             "Localizar el texto que indica el informe y anotar su text-shadow.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color de relleno del texto frente al fondo.",
             "Si el relleno no alcanza el umbral, ampliar y comprobar si la sombra forma un contorno o halo sólido alrededor de cada letra; si es así, medir el color de la sombra frente al fondo y el relleno frente a la sombra.",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "El relleno alcanza el umbral frente al fondo, o un halo sólido rodea cada letra y da la relación del umbral.",
           "failWhen": "Ni el relleno frente al fondo ni un halo sólido alrededor de las letras alcanzan el umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3460,7 +3460,7 @@
             "Localizar el texto que indica el informe y anotar el ancho y el color de su -webkit-text-stroke.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color de relleno frente al fondo, y el color del trazo frente al fondo.",
             "Ampliar para ver qué color forma la mayor parte de cada letra (un trazo fino cuenta menos que el relleno).",
-            "Comparar la relación con 4.5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4.5:1 para texto grande) para el contraste mejorado."
+            "Comparar la relación con 4,5:1 (3:1 para texto grande) para el contraste mínimo, y con 7:1 (4,5:1 para texto grande) para el contraste mejorado."
           ],
           "passWhen": "El relleno y el trazo alcanzan ambos el umbral, o lo alcanza el color que claramente forma las letras.",
           "failWhen": "El color que forma las letras da una relación inferior al umbral, lo que incumple WCAG 1.4.3 (o 1.4.6)."
@@ -3546,7 +3546,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text (die Prüfung wurde vorzeitig beendet, daher wurde nichts gemessen).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Textfarbe gegen den Hintergrund direkt hinter den Buchstaben.",
-            "Notieren Sie Schriftgröße und -stärke und vergleichen Sie das Verhältnis mit 7:1 (4,5:1 für großen Text: mindestens 24px oder 18.66px und fett)."
+            "Notieren Sie Schriftgröße und -stärke und vergleichen Sie das Verhältnis mit 7:1 (4,5:1 für großen Text: mindestens 24px oder 18,66px und fett)."
           ],
           "passWhen": "Das Verhältnis erreicht den Schwellenwert für seine Größe.",
           "failWhen": "Das Verhältnis liegt unter dem Schwellenwert für seine Größe; das verstößt gegen WCAG 1.4.6."
@@ -3564,7 +3564,7 @@
           "steps": [
             "Localizar el texto que indica el informe (la comprobación se detuvo antes de tiempo, así que no se midió nada).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al fondo situado justo detrás de las letras.",
-            "Anotar el tamaño y el grosor del texto y comparar la relación con 7:1 (4.5:1 para texto grande: al menos 24px, o 18.66px y en negrita)."
+            "Anotar el tamaño y el grosor del texto y comparar la relación con 7:1 (4,5:1 para texto grande: al menos 24px, o 18,66px y en negrita)."
           ],
           "passWhen": "La relación alcanza el umbral correspondiente a su tamaño.",
           "failWhen": "La relación es inferior al umbral correspondiente a su tamaño, lo que incumple WCAG 1.4.6."
@@ -3573,7 +3573,7 @@
           "steps": [
             "Repérez le texte indiqué par le rapport (la vérification s’est arrêtée tôt, donc rien n’a été mesuré).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte par rapport à l’arrière-plan situé juste derrière les lettres.",
-            "Notez la taille et la graisse du texte et comparez le ratio à 7:1 (4,5:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras)."
+            "Notez la taille et la graisse du texte et comparez le ratio à 7:1 (4,5:1 pour le texte de grande taille : au moins 24px, ou 18,66px en gras)."
           ],
           "passWhen": "Le ratio atteint le seuil correspondant à sa taille.",
           "failWhen": "Le ratio est inférieur au seuil correspondant à sa taille, ce qui ne respecte pas le critère WCAG 1.4.6."
@@ -3596,7 +3596,7 @@
           "steps": [
             "Suchen Sie das im Bericht genannte Feld und leeren Sie es, damit der Platzhalter erscheint.",
             "Prüfen Sie im Bereich „Stile“, ob das CSS der Seite Farbe oder Deckkraft von ::placeholder oder den Hintergrund des Feldes setzt.",
-            "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben den Platzhaltertext gegen den Feldhintergrund und vergleichen Sie mit 7:1 (4,5:1 für großen Text: mindestens 24px oder 18.66px und fett).",
+            "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben den Platzhaltertext gegen den Feldhintergrund und vergleichen Sie mit 7:1 (4,5:1 für großen Text: mindestens 24px oder 18,66px und fett).",
             "Prüfen Sie, ob der Platzhalter Informationen enthält, die zum Ausfüllen des Feldes nötig sind (ein Format oder eine Anweisung), statt nur eines Beispiels."
           ],
           "passWhen": "Der Platzhalter erreicht 7:1 (oder 4,5:1, wenn groß), oder er wird vollständig in den eigenen Standardfarben des Browsers gezeichnet.",
@@ -3616,17 +3616,17 @@
           "steps": [
             "Localizar el campo que indica el informe y vaciarlo para que se muestre el texto provisional.",
             "En el panel Styles, comprobar si el CSS de la página define el color o la opacidad de ::placeholder, o el fondo del campo.",
-            "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto provisional frente al fondo del campo y compararlo con 7:1 (4.5:1 para texto grande: al menos 24px, o 18.66px y en negrita).",
+            "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto provisional frente al fondo del campo y compararlo con 7:1 (4,5:1 para texto grande: al menos 24px, o 18,66px y en negrita).",
             "Comprobar si el texto provisional contiene información necesaria para rellenar el campo (un formato o una instrucción), y no solo un ejemplo."
           ],
-          "passWhen": "El texto provisional alcanza 7:1 (o 4.5:1 si es grande), o se dibuja enteramente con los colores predeterminados del propio navegador.",
+          "passWhen": "El texto provisional alcanza 7:1 (o 4,5:1 si es grande), o se dibuja enteramente con los colores predeterminados del propio navegador.",
           "failWhen": "La página define los colores del texto provisional o del campo y la relación es inferior al umbral, lo que incumple WCAG 1.4.6."
         },
         "fr": {
           "steps": [
             "Repérez le champ indiqué par le rapport et videz-le pour que le placeholder s’affiche.",
             "Dans le panneau Styles, vérifiez si le CSS de la page définit la couleur ou l’opacité de ::placeholder, ou l’arrière-plan du champ.",
-            "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte du placeholder par rapport à l’arrière-plan du champ et comparez à 7:1 (4,5:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras).",
+            "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte du placeholder par rapport à l’arrière-plan du champ et comparez à 7:1 (4,5:1 pour le texte de grande taille : au moins 24px, ou 18,66px en gras).",
             "Vérifiez si le placeholder contient une information nécessaire pour remplir le champ (un format ou une consigne), plutôt qu’un simple exemple."
           ],
           "passWhen": "Le placeholder atteint 7:1 (ou 4,5:1 s’il est de grande taille), ou il est entièrement dessiné avec les couleurs par défaut du navigateur.",
@@ -3651,7 +3651,7 @@
           "steps": [
             "Suchen Sie das im Bericht genannte Zeichen (etwa ×, ☰, › oder eine Glyphe aus einer Icon-Schrift).",
             "Entscheiden Sie, ob es Text ist, den Menschen lesen (Teil von Wörtern, eine Zahl), oder ein Symbol, das für eine Aktion steht, etwa ein Schließen- oder Menüsymbol.",
-            "Ist es Text, messen Sie es mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund und vergleichen Sie mit 7:1 (4,5:1 für großen Text: mindestens 24px oder 18.66px und fett).",
+            "Ist es Text, messen Sie es mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund und vergleichen Sie mit 7:1 (4,5:1 für großen Text: mindestens 24px oder 18,66px und fett).",
             "Ist es ein Symbol, prüfen Sie zuerst, ob sichtbarer Text daneben dasselbe sagt, etwa das Wort „Schließen“ neben einem Schließen-Symbol. Dann ist das Symbol nicht der einzige Weg, es zu verstehen, und braucht das Verhältnis 3:1 nicht.",
             "Andernfalls messen Sie das Symbol gegen seinen Hintergrund und vergleichen mit 3:1, dem Verhältnis für grafische Objekte."
           ],
@@ -3673,7 +3673,7 @@
           "steps": [
             "Localizar el carácter que indica el informe (como ×, ☰, › o un glifo de una fuente de iconos).",
             "Decidir si es texto que se lee (parte de palabras, un número) o un icono que sustituye a una acción, como un símbolo de cerrar o de menú.",
-            "Si es texto, medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, y compararlo con 7:1 (4.5:1 para texto grande: al menos 24px, o 18.66px y en negrita).",
+            "Si es texto, medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, y compararlo con 7:1 (4,5:1 para texto grande: al menos 24px, o 18,66px y en negrita).",
             "Si es un icono, comprobar primero si un texto visible junto a él dice lo mismo, como la palabra «Cerrar» al lado de un símbolo de cerrar. Si es así, el icono no es la única forma de entenderlo y no necesita la relación 3:1.",
             "Si no, medir el icono contra su fondo y comparar con 3:1, la relación de los objetos gráficos."
           ],
@@ -3684,7 +3684,7 @@
           "steps": [
             "Repérez le caractère indiqué par le rapport (comme ×, ☰, › ou un glyphe de police d’icônes).",
             "Déterminez s’il s’agit d’un texte que l’on lit (une partie de mot, un nombre) ou d’une icône qui représente une action, comme un symbole de fermeture ou de menu.",
-            "S’il s’agit de texte, avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le caractère par rapport à son arrière-plan et comparez à 7:1 (4,5:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras).",
+            "S’il s’agit de texte, avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le caractère par rapport à son arrière-plan et comparez à 7:1 (4,5:1 pour le texte de grande taille : au moins 24px, ou 18,66px en gras).",
             "S’il s’agit d’une icône, vérifiez d’abord si un texte visible à côté dit la même chose, comme le mot « Fermer » à côté d’un symbole de fermeture. Dans ce cas, l’icône n’est pas le seul moyen de la comprendre et n’a pas besoin du rapport 3:1.",
             "Sinon, mesurez l’icône par rapport à son arrière-plan et comparez avec 3:1, le ratio des éléments graphiques."
           ],
@@ -3713,7 +3713,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Kontrastschalter und prüfen Sie, ob er leicht zu finden ist, oben auf der Seite oder auf jeder Seite, und per Tastatur erreichbar ist.",
             "Schalten Sie den Schalter ein.",
-            "Suchen Sie den im Bericht genannten Text und messen Sie ihn mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund; vergleichen Sie mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18.66px und fett).",
+            "Suchen Sie den im Bericht genannten Text und messen Sie ihn mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund; vergleichen Sie mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18,66px und fett).",
             "Wechseln Sie zu einer anderen Seite und prüfen Sie, ob die Einstellung erhalten bleibt."
           ],
           "passWhen": "Der Schalter ist leicht zu finden und zu bedienen, und wenn er eingeschaltet ist, erreicht der Text sein Verhältnis (G174).",
@@ -3733,7 +3733,7 @@
           "steps": [
             "Localizar el conmutador de contraste que indica el informe y comprobar que es fácil de encontrar, cerca de la parte superior de la página o en todas las páginas, y que se puede alcanzar con el teclado.",
             "Activar el conmutador.",
-            "Localizar el texto que indica el informe y medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, comparándolo con 4.5:1 (3:1 para texto grande: al menos 24px, o 18.66px y en negrita).",
+            "Localizar el texto que indica el informe y medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, comparándolo con 4,5:1 (3:1 para texto grande: al menos 24px, o 18,66px y en negrita).",
             "Ir a otra página y comprobar que la configuración se mantiene."
           ],
           "passWhen": "El conmutador es fácil de encontrar y de usar, y con él activado el texto alcanza su relación (G174).",
@@ -3743,7 +3743,7 @@
           "steps": [
             "Repérez le sélecteur de contraste indiqué par le rapport et vérifiez qu’il est facile à trouver, en haut de la page ou sur chaque page, et accessible au clavier.",
             "Activez le sélecteur.",
-            "Repérez le texte indiqué par le rapport et, avec la pipette de couleur des outils de développement du navigateur ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez-le par rapport à son arrière-plan en comparant à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras).",
+            "Repérez le texte indiqué par le rapport et, avec la pipette de couleur des outils de développement du navigateur ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez-le par rapport à son arrière-plan en comparant à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18,66px en gras).",
             "Passez à une autre page et vérifiez que le réglage est conservé."
           ],
           "passWhen": "Le sélecteur est facile à trouver et à utiliser, et une fois activé, le texte atteint son ratio (G174).",
@@ -3768,7 +3768,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text (die Prüfung wurde vorzeitig beendet, daher wurde nichts gemessen).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Textfarbe gegen den Hintergrund direkt hinter den Buchstaben.",
-            "Notieren Sie Schriftgröße und -stärke und vergleichen Sie das Verhältnis mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18.66px und fett)."
+            "Notieren Sie Schriftgröße und -stärke und vergleichen Sie das Verhältnis mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18,66px und fett)."
           ],
           "passWhen": "Das Verhältnis erreicht den Schwellenwert für seine Größe.",
           "failWhen": "Das Verhältnis liegt unter dem Schwellenwert für seine Größe; das verstößt gegen WCAG 1.4.3."
@@ -3786,7 +3786,7 @@
           "steps": [
             "Localizar el texto que indica el informe (la comprobación se detuvo antes de tiempo, así que no se midió nada).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color del texto frente al fondo situado justo detrás de las letras.",
-            "Anotar el tamaño y el grosor del texto y comparar la relación con 4.5:1 (3:1 para texto grande: al menos 24px, o 18.66px y en negrita)."
+            "Anotar el tamaño y el grosor del texto y comparar la relación con 4,5:1 (3:1 para texto grande: al menos 24px, o 18,66px y en negrita)."
           ],
           "passWhen": "La relación alcanza el umbral correspondiente a su tamaño.",
           "failWhen": "La relación es inferior al umbral correspondiente a su tamaño, lo que incumple WCAG 1.4.3."
@@ -3795,7 +3795,7 @@
           "steps": [
             "Repérez le texte indiqué par le rapport (la vérification s’est arrêtée tôt, donc rien n’a été mesuré).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur du texte par rapport à l’arrière-plan situé juste derrière les lettres.",
-            "Notez la taille et la graisse du texte et comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras)."
+            "Notez la taille et la graisse du texte et comparez le ratio à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18,66px en gras)."
           ],
           "passWhen": "Le ratio atteint le seuil correspondant à sa taille.",
           "failWhen": "Le ratio est inférieur au seuil correspondant à sa taille, ce qui ne respecte pas le critère WCAG 1.4.3."
@@ -3818,7 +3818,7 @@
           "steps": [
             "Suchen Sie den im Bericht genannten Text (oft im Kopfbereich der Website oder in ihrem Link zur Startseite).",
             "Entscheiden Sie, ob er Teil eines Logos oder Markennamens ist, etwa der Name der Website in ihrer Logogestaltung, und nicht ein Slogan, Menüeintrag oder anderer Text.",
-            "Ist es kein Logotext, messen Sie ihn mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund und vergleichen Sie mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18.66px und fett)."
+            "Ist es kein Logotext, messen Sie ihn mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund und vergleichen Sie mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18,66px und fett)."
           ],
           "passWhen": "Der Text ist Teil eines Logos oder Markennamens, für den keine Kontrastanforderung gilt, oder er erreicht sein Verhältnis.",
           "failWhen": "Der Text ist nicht Teil eines Logos oder Markennamens und liegt unter seinem Verhältnis; das verstößt gegen WCAG 1.4.3."
@@ -3836,7 +3836,7 @@
           "steps": [
             "Localizar el texto que indica el informe (a menudo en la cabecera del sitio o en su enlace a la página de inicio).",
             "Decidir si forma parte de un logotipo o nombre de marca, como el nombre del sitio en su tratamiento de logotipo, y no de un eslogan, un elemento de menú u otro texto.",
-            "Si no es texto de logotipo, medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, y compararlo con 4.5:1 (3:1 para texto grande: al menos 24px, o 18.66px y en negrita)."
+            "Si no es texto de logotipo, medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, y compararlo con 4,5:1 (3:1 para texto grande: al menos 24px, o 18,66px y en negrita)."
           ],
           "passWhen": "El texto forma parte de un logotipo o nombre de marca, que no tiene requisito de contraste, o alcanza su relación.",
           "failWhen": "El texto no forma parte de un logotipo ni de un nombre de marca y está por debajo de su relación, lo que incumple WCAG 1.4.3."
@@ -3845,7 +3845,7 @@
           "steps": [
             "Repérez le texte indiqué par le rapport (souvent dans l’en-tête du site ou son lien vers l’accueil).",
             "Déterminez s’il fait partie d’un logo ou d’un nom de marque, comme le nom du site dans son traitement de logo, plutôt que d’un slogan, d’un élément de menu ou d’un autre texte.",
-            "S’il ne s’agit pas du texte d’un logo, avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte par rapport à son arrière-plan et comparez à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras)."
+            "S’il ne s’agit pas du texte d’un logo, avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte par rapport à son arrière-plan et comparez à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18,66px en gras)."
           ],
           "passWhen": "Le texte fait partie d’un logo ou d’un nom de marque, qui n’a pas d’exigence de contraste, ou il atteint son ratio.",
           "failWhen": "Le texte ne fait pas partie d’un logo ou d’un nom de marque et reste sous son ratio, ce qui ne respecte pas le critère WCAG 1.4.3."
@@ -3868,7 +3868,7 @@
           "steps": [
             "Suchen Sie das im Bericht genannte Feld und leeren Sie es, damit der Platzhalter erscheint.",
             "Prüfen Sie im Bereich „Stile“, ob das CSS der Seite Farbe oder Deckkraft von ::placeholder oder den Hintergrund des Feldes setzt.",
-            "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben den Platzhaltertext gegen den Feldhintergrund und vergleichen Sie mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18.66px und fett).",
+            "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben den Platzhaltertext gegen den Feldhintergrund und vergleichen Sie mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18,66px und fett).",
             "Prüfen Sie, ob der Platzhalter Informationen enthält, die zum Ausfüllen des Feldes nötig sind (ein Format oder eine Anweisung), statt nur eines Beispiels."
           ],
           "passWhen": "Der Platzhalter erreicht 4,5:1 (oder 3:1, wenn groß), oder er wird vollständig in den eigenen Standardfarben des Browsers gezeichnet.",
@@ -3888,17 +3888,17 @@
           "steps": [
             "Localizar el campo que indica el informe y vaciarlo para que se muestre el texto provisional.",
             "En el panel Styles, comprobar si el CSS de la página define el color o la opacidad de ::placeholder, o el fondo del campo.",
-            "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto provisional frente al fondo del campo y compararlo con 4.5:1 (3:1 para texto grande: al menos 24px, o 18.66px y en negrita).",
+            "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el texto provisional frente al fondo del campo y compararlo con 4,5:1 (3:1 para texto grande: al menos 24px, o 18,66px y en negrita).",
             "Comprobar si el texto provisional contiene información necesaria para rellenar el campo (un formato o una instrucción), y no solo un ejemplo."
           ],
-          "passWhen": "El texto provisional alcanza 4.5:1 (o 3:1 si es grande), o se dibuja enteramente con los colores predeterminados del propio navegador.",
+          "passWhen": "El texto provisional alcanza 4,5:1 (o 3:1 si es grande), o se dibuja enteramente con los colores predeterminados del propio navegador.",
           "failWhen": "La página define los colores del texto provisional o del campo y la relación es inferior al umbral, lo que incumple WCAG 1.4.3."
         },
         "fr": {
           "steps": [
             "Repérez le champ indiqué par le rapport et videz-le pour que le placeholder s’affiche.",
             "Dans le panneau Styles, vérifiez si le CSS de la page définit la couleur ou l’opacité de ::placeholder, ou l’arrière-plan du champ.",
-            "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte du placeholder par rapport à l’arrière-plan du champ et comparez à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras).",
+            "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le texte du placeholder par rapport à l’arrière-plan du champ et comparez à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18,66px en gras).",
             "Vérifiez si le placeholder contient une information nécessaire pour remplir le champ (un format ou une consigne), plutôt qu’un simple exemple."
           ],
           "passWhen": "Le placeholder atteint 4,5:1 (ou 3:1 s’il est de grande taille), ou il est entièrement dessiné avec les couleurs par défaut du navigateur.",
@@ -3924,7 +3924,7 @@
             "Suchen Sie den im Bericht genannten Text und notieren Sie die Farbe von ::first-line oder ::first-letter im Bereich „Stile“.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben sowohl die Textfarbe des Elements als auch die Farbe der ersten Zeile oder des ersten Buchstabens gegen den Hintergrund.",
             "Ändern Sie die Fenstergröße, um zu sehen, für welche Wörter die Farbe der ersten Zeile bei unterschiedlichen Breiten gilt.",
-            "Vergleichen Sie jedes Verhältnis mit dem, das der Bericht für diese Farbe als erforderlich angibt: 4,5:1 für die meisten Texte oder 3:1 für großen Text (mindestens 24px oder 18.66px und fett)."
+            "Vergleichen Sie jedes Verhältnis mit dem, das der Bericht für diese Farbe als erforderlich angibt: 4,5:1 für die meisten Texte oder 3:1 für großen Text (mindestens 24px oder 18,66px und fett)."
           ],
           "passWhen": "Beide Farben erreichen das für sie erforderliche Verhältnis.",
           "failWhen": "Eine der Farben ergibt ein Verhältnis unter dem für sie erforderlichen; der Text besteht die Prüfung nicht."
@@ -3944,7 +3944,7 @@
             "Localizar el texto que indica el informe y anotar el color de ::first-line o ::first-letter en el panel Styles.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir frente al fondo tanto el color del texto del elemento como el color de la primera línea o de la primera letra.",
             "Cambiar el tamaño de la ventana para ver a qué palabras se aplica el color de la primera línea con anchos distintos.",
-            "Comparar cada relación con la que el informe indica como necesaria para ese color: 4.5:1 para la mayoría del texto, o 3:1 para texto grande (al menos 24px, o 18.66px y en negrita)."
+            "Comparar cada relación con la que el informe indica como necesaria para ese color: 4,5:1 para la mayoría del texto, o 3:1 para texto grande (al menos 24px, o 18,66px y en negrita)."
           ],
           "passWhen": "Ambos colores alcanzan la relación que necesitan.",
           "failWhen": "Alguno de los colores da una relación inferior a la que necesita, por lo que el texto no supera la comprobación."
@@ -3954,7 +3954,7 @@
             "Repérez le texte indiqué par le rapport et notez la couleur de ::first-line ou ::first-letter dans le panneau Styles.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez à la fois la couleur du texte de l’élément et la couleur de la première ligne ou de la première lettre par rapport à l’arrière-plan.",
             "Redimensionnez la fenêtre pour voir à quels mots la couleur de la première ligne s’applique selon la largeur.",
-            "Comparez chaque ratio à celui que le rapport indique comme requis pour cette couleur : 4,5:1 pour la plupart des textes, ou 3:1 pour le texte de grande taille (au moins 24px, ou 18.66px en gras)."
+            "Comparez chaque ratio à celui que le rapport indique comme requis pour cette couleur : 4,5:1 pour la plupart des textes, ou 3:1 pour le texte de grande taille (au moins 24px, ou 18,66px en gras)."
           ],
           "passWhen": "Les deux couleurs atteignent le ratio qui leur est requis.",
           "failWhen": "L’une des couleurs donne un ratio inférieur à celui qui lui est requis : le texte ne satisfait pas à la vérification."
@@ -3996,10 +3996,10 @@
           "steps": [
             "Localizar el texto seminegrita que indica el informe.",
             "Compararlo junto a un texto en negrita (grosor 700) del mismo tamaño y fuente en la página o en las herramientas para desarrolladores, alternando font-weight.",
-            "Decidir si se percibe como negrita; si es así, cuenta como texto grande y necesita 3:1; si no, 4.5:1."
+            "Decidir si se percibe como negrita; si es así, cuenta como texto grande y necesita 3:1; si no, 4,5:1."
           ],
           "passWhen": "El texto se percibe como negrita, así que es texto grande y su relación cumple 3:1.",
-          "failWhen": "El texto no se percibe como negrita, así que es texto normal por debajo de 4.5:1, lo que incumple WCAG 1.4.3."
+          "failWhen": "El texto no se percibe como negrita, así que es texto normal por debajo de 4,5:1, lo que incumple WCAG 1.4.3."
         },
         "fr": {
           "steps": [
@@ -4028,12 +4028,12 @@
           "steps": [
             "Suchen Sie das im Bericht genannte Zeichen (etwa ×, ☰, › oder eine Glyphe aus einer Icon-Schrift).",
             "Entscheiden Sie, ob es Text ist, den Menschen lesen (Teil von Wörtern, eine Zahl), oder ein Symbol, das für eine Aktion steht, etwa ein Schließen- oder Menüsymbol.",
-            "Ist es Text, messen Sie es mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund und vergleichen Sie mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18.66px und fett).",
+            "Ist es Text, messen Sie es mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben gegen seinen Hintergrund und vergleichen Sie mit 4,5:1 (3:1 für großen Text: mindestens 24px oder 18,66px und fett).",
             "Ist es ein Symbol, prüfen Sie zuerst, ob sichtbarer Text daneben dasselbe sagt, etwa das Wort „Schließen“ neben einem Schließen-Symbol. Dann ist das Symbol nicht der einzige Weg, es zu verstehen, und braucht das Verhältnis 3:1 nicht.",
             "Andernfalls messen Sie das Symbol gegen seinen Hintergrund und vergleichen mit 3:1, dem Verhältnis für grafische Objekte."
           ],
           "passWhen": "Es ist Text und erreicht sein Verhältnis, oder es ist ein Symbol, das 3:1 erreicht oder dessen Bedeutung auch sichtbarer Text daneben wiedergibt.",
-          "failWhen": "Es ist Text unter 4.5:1; das verstößt gegen WCAG 1.4.3; oder ein Symbol unter 3:1, das der einzige sichtbare Hinweis darauf ist, was es bedeutet oder tut; das verstößt gegen WCAG 1.4.11."
+          "failWhen": "Es ist Text unter 4,5:1; das verstößt gegen WCAG 1.4.3; oder ein Symbol unter 3:1, das der einzige sichtbare Hinweis darauf ist, was es bedeutet oder tut; das verstößt gegen WCAG 1.4.11."
         },
         "en": {
           "steps": [
@@ -4050,23 +4050,23 @@
           "steps": [
             "Localizar el carácter que indica el informe (como ×, ☰, › o un glifo de una fuente de iconos).",
             "Decidir si es texto que se lee (parte de palabras, un número) o un icono que sustituye a una acción, como un símbolo de cerrar o de menú.",
-            "Si es texto, medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, y compararlo con 4.5:1 (3:1 para texto grande: al menos 24px, o 18.66px y en negrita).",
+            "Si es texto, medirlo frente a su fondo con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, y compararlo con 4,5:1 (3:1 para texto grande: al menos 24px, o 18,66px y en negrita).",
             "Si es un icono, comprobar primero si un texto visible junto a él dice lo mismo, como la palabra «Cerrar» al lado de un símbolo de cerrar. Si es así, el icono no es la única forma de entenderlo y no necesita la relación 3:1.",
             "Si no, medir el icono contra su fondo y comparar con 3:1, la relación de los objetos gráficos."
           ],
           "passWhen": "Es texto y alcanza su relación, o es un icono que alcanza 3:1 o cuyo significado también da un texto visible junto a él.",
-          "failWhen": "Es texto por debajo de 4.5:1, lo que incumple WCAG 1.4.3; o un icono por debajo de 3:1 que es la única forma visible de saber qué significa o qué hace, lo que incumple WCAG 1.4.11."
+          "failWhen": "Es texto por debajo de 4,5:1, lo que incumple WCAG 1.4.3; o un icono por debajo de 3:1 que es la única forma visible de saber qué significa o qué hace, lo que incumple WCAG 1.4.11."
         },
         "fr": {
           "steps": [
             "Repérez le caractère indiqué par le rapport (comme ×, ☰, › ou un glyphe de police d’icônes).",
             "Déterminez s’il s’agit d’un texte que l’on lit (une partie de mot, un nombre) ou d’une icône qui représente une action, comme un symbole de fermeture ou de menu.",
-            "S’il s’agit de texte, avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le caractère par rapport à son arrière-plan et comparez à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18.66px en gras).",
+            "S’il s’agit de texte, avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez le caractère par rapport à son arrière-plan et comparez à 4,5:1 (3:1 pour le texte de grande taille : au moins 24px, ou 18,66px en gras).",
             "S’il s’agit d’une icône, vérifiez d’abord si un texte visible à côté dit la même chose, comme le mot « Fermer » à côté d’un symbole de fermeture. Dans ce cas, l’icône n’est pas le seul moyen de la comprendre et n’a pas besoin du rapport 3:1.",
             "Sinon, mesurez l’icône par rapport à son arrière-plan et comparez avec 3:1, le ratio des éléments graphiques."
           ],
           "passWhen": "C’est du texte qui atteint son rapport, ou une icône qui atteint 3:1 ou dont le sens est aussi donné par un texte visible à côté.",
-          "failWhen": "C’est du texte sous 4.5:1, ce qui ne respecte pas le critère WCAG 1.4.3 ; ou une icône sous 3:1 qui est le seul moyen visible de savoir ce qu’elle signifie ou fait, ce qui ne respecte pas le critère WCAG 1.4.11."
+          "failWhen": "C’est du texte sous 4,5:1, ce qui ne respecte pas le critère WCAG 1.4.3 ; ou une icône sous 3:1 qui est le seul moyen visible de savoir ce qu’elle signifie ou fait, ce qui ne respecte pas le critère WCAG 1.4.11."
         },
         "ja": {
           "steps": [
@@ -4089,7 +4089,7 @@
             "Suchen Sie den im Bericht genannten Text und notieren Sie seinen text-shadow.",
             "Zoomen Sie hinein und prüfen Sie, ob der Schatten eine geschlossene Kontur oder einen Halo um jeden Buchstaben bildet.",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben die Farbe, die die Buchstaben bildet, gegen den Hintergrund.",
-            "Vergleichen Sie das Verhältnis mit dem, das der Bericht als erforderlich angibt: 4,5:1 für die meisten Texte oder 3:1 für großen Text (mindestens 24px oder 18.66px und fett)."
+            "Vergleichen Sie das Verhältnis mit dem, das der Bericht als erforderlich angibt: 4,5:1 für die meisten Texte oder 3:1 für großen Text (mindestens 24px oder 18,66px und fett)."
           ],
           "passWhen": "Die Farbe, die die Buchstaben bildet, erreicht das erforderliche Verhältnis.",
           "failWhen": "Die Farbe, die die Buchstaben bildet, ergibt ein Verhältnis unter dem erforderlichen; der Text besteht die Prüfung nicht."
@@ -4109,7 +4109,7 @@
             "Localizar el texto que indica el informe y anotar su text-shadow.",
             "Ampliar y comprobar si la sombra forma un contorno o halo sólido alrededor de cada letra.",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir el color que forma las letras frente al fondo.",
-            "Comparar la relación con la que el informe indica como necesaria: 4.5:1 para la mayoría del texto, o 3:1 para texto grande (al menos 24px, o 18.66px y en negrita)."
+            "Comparar la relación con la que el informe indica como necesaria: 4,5:1 para la mayoría del texto, o 3:1 para texto grande (al menos 24px, o 18,66px y en negrita)."
           ],
           "passWhen": "El color que forma las letras alcanza la relación necesaria.",
           "failWhen": "El color que forma las letras da una relación inferior a la necesaria, por lo que el texto no supera la comprobación."
@@ -4119,7 +4119,7 @@
             "Repérez le texte indiqué par le rapport et notez son text-shadow.",
             "Zoomez et vérifiez si l’ombre forme un contour plein ou un halo autour de chaque lettre.",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez la couleur qui forme les lettres par rapport à l’arrière-plan.",
-            "Comparez le ratio à celui que le rapport indique comme requis : 4,5:1 pour la plupart des textes, ou 3:1 pour le texte de grande taille (au moins 24px, ou 18.66px en gras)."
+            "Comparez le ratio à celui que le rapport indique comme requis : 4,5:1 pour la plupart des textes, ou 3:1 pour le texte de grande taille (au moins 24px, ou 18,66px en gras)."
           ],
           "passWhen": "La couleur qui forme les lettres atteint le ratio requis.",
           "failWhen": "La couleur qui forme les lettres donne un ratio inférieur au ratio requis : le texte ne satisfait pas à la vérification."
@@ -4144,7 +4144,7 @@
             "Suchen Sie den im Bericht genannten Text und notieren Sie Breite und Farbe seines -webkit-text-stroke.",
             "Zoomen Sie hinein, um zu sehen, welche Farbe den Großteil jedes Buchstabens bildet (eine dünne Kontur zählt weniger als die Füllung).",
             "Messen Sie mit dem Farbwähler in den Entwicklertools des Browsers oder mit einem Kontrastrechner und per Pipette aufgenommenen Farben diese Farbe gegen den Hintergrund.",
-            "Vergleichen Sie das Verhältnis mit dem, das der Bericht als erforderlich angibt: 4,5:1 für die meisten Texte oder 3:1 für großen Text (mindestens 24px oder 18.66px und fett)."
+            "Vergleichen Sie das Verhältnis mit dem, das der Bericht als erforderlich angibt: 4,5:1 für die meisten Texte oder 3:1 für großen Text (mindestens 24px oder 18,66px und fett)."
           ],
           "passWhen": "Die Farbe, die die Buchstaben bildet, erreicht das erforderliche Verhältnis.",
           "failWhen": "Die Farbe, die die Buchstaben bildet, ergibt ein Verhältnis unter dem erforderlichen; der Text besteht die Prüfung nicht."
@@ -4164,7 +4164,7 @@
             "Localizar el texto que indica el informe y anotar el ancho y el color de su -webkit-text-stroke.",
             "Ampliar para ver qué color forma la mayor parte de cada letra (un trazo fino cuenta menos que el relleno).",
             "Con el selector de color de las herramientas para desarrolladores del navegador, o con una calculadora de contraste y colores tomados con un cuentagotas, medir ese color frente al fondo.",
-            "Comparar la relación con la que el informe indica como necesaria: 4.5:1 para la mayoría del texto, o 3:1 para texto grande (al menos 24px, o 18.66px y en negrita)."
+            "Comparar la relación con la que el informe indica como necesaria: 4,5:1 para la mayoría del texto, o 3:1 para texto grande (al menos 24px, o 18,66px y en negrita)."
           ],
           "passWhen": "El color que forma las letras alcanza la relación necesaria.",
           "failWhen": "El color que forma las letras da una relación inferior a la necesaria, por lo que el texto no supera la comprobación."
@@ -4174,7 +4174,7 @@
             "Repérez le texte indiqué par le rapport et notez l’épaisseur et la couleur de son -webkit-text-stroke.",
             "Zoomez pour voir quelle couleur forme l’essentiel de chaque lettre (un contour fin compte moins que le remplissage).",
             "Avec la pipette de couleur des outils de développement du navigateur, ou un calculateur de contraste alimenté par des couleurs prélevées à la pipette, mesurez cette couleur par rapport à l’arrière-plan.",
-            "Comparez le ratio à celui que le rapport indique comme requis : 4,5:1 pour la plupart des textes, ou 3:1 pour le texte de grande taille (au moins 24px, ou 18.66px en gras)."
+            "Comparez le ratio à celui que le rapport indique comme requis : 4,5:1 pour la plupart des textes, ou 3:1 pour le texte de grande taille (au moins 24px, ou 18,66px en gras)."
           ],
           "passWhen": "La couleur qui forme les lettres atteint le ratio requis.",
           "failWhen": "La couleur qui forme les lettres donne un ratio inférieur au ratio requis : le texte ne satisfait pas à la vérification."
@@ -4760,6 +4760,61 @@
           ],
           "passWhen": "キーボードで操作できるコントロールによって、スクロールするテキストを一時停止、停止、または非表示にできます（または5秒以内に自動で止まります）。",
           "failWhen": "テキストがスクロールし続け、一時停止、停止、または非表示にする方法がないため、WCAG 2.2.2を満たしません（F16）。"
+        }
+      }
+    },
+    {
+      "code": "MARQUEE_STOPS_ONLY_ON_HOVER",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie den im Bericht genannten Lauftext und notieren Sie, ob er sich länger als 5 Sekunden bewegt.",
+            "Bewegen Sie den Mauszeiger über den Text und wieder weg: Er hält nur an, solange der Zeiger darüber ist, was Nutzer mit Tastatur oder Touchscreen nicht können.",
+            "Suchen Sie in seiner Nähe und an anderer Stelle der Seite nach einer anderen Möglichkeit, ihn anzuhalten, zu stoppen oder auszublenden, etwa einer Pause-Schaltfläche.",
+            "Erreichen Sie dieses Bedienelement mit Tab, aktivieren Sie es mit Eingabetaste oder der Leertaste und prüfen Sie, ob der Text aufhört, sich zu bewegen, oder verschwindet."
+          ],
+          "passWhen": "Außer dem Anhalten unter dem Mauszeiger hält ein per Tastatur bedienbares Bedienelement den Lauftext an, stoppt ihn oder blendet ihn aus (oder er stoppt innerhalb von 5 Sekunden von selbst).",
+          "failWhen": "Der Text hält nur an, solange der Mauszeiger darüber ist, und es gibt keine andere, per Tastatur bedienbare Möglichkeit, ihn anzuhalten, zu stoppen oder auszublenden; das verstößt gegen WCAG 2.2.2 (F16)."
+        },
+        "en": {
+          "steps": [
+            "Find the scrolling text the report names and note whether it moves for more than 5 seconds.",
+            "Move the pointer over the text and away again: it stops only while the pointer is over it, which keyboard and touch users cannot do.",
+            "Look near it, and elsewhere on the page, for another way to pause, stop or hide it, such as a pause button.",
+            "Press Tab to reach that control, activate it with Enter or Space, and check that the text stops moving or disappears."
+          ],
+          "passWhen": "Besides stopping under the pointer, a keyboard-operable control pauses, stops or hides the scrolling text (or it stops on its own within 5 seconds).",
+          "failWhen": "The text stops only while the pointer is over it, and there is no other way to pause, stop or hide it that works with the keyboard, which fails WCAG 2.2.2 (F16)."
+        },
+        "es": {
+          "steps": [
+            "Localizar el texto en desplazamiento que indica el informe y anotar si se mueve durante más de 5 segundos.",
+            "Pasar el puntero sobre el texto y retirarlo: solo se detiene mientras el puntero está sobre él, algo que no pueden hacer quienes usan el teclado o una pantalla táctil.",
+            "Buscar cerca de él, y en otras partes de la página, otra forma de pausarlo, detenerlo u ocultarlo, como un botón de pausa.",
+            "Pulsar Tab hasta llegar a ese control, activarlo con Intro o Espacio y comprobar que el texto deja de moverse o desaparece."
+          ],
+          "passWhen": "Además de detenerse bajo el puntero, un control que se puede usar con el teclado pausa, detiene u oculta el texto en desplazamiento (o este se detiene solo en 5 segundos).",
+          "failWhen": "El texto solo se detiene mientras el puntero está sobre él, y no hay otra forma de pausarlo, detenerlo u ocultarlo que funcione con el teclado, lo que incumple WCAG 2.2.2 (F16)."
+        },
+        "fr": {
+          "steps": [
+            "Repérez le texte défilant indiqué par le rapport et notez s’il bouge pendant plus de 5 secondes.",
+            "Passez le pointeur sur le texte puis retirez-le : il ne s’arrête que tant que le pointeur le survole, ce que les utilisateurs du clavier ou d’un écran tactile ne peuvent pas faire.",
+            "Cherchez à proximité, et ailleurs sur la page, un autre moyen de le mettre en pause, de l’arrêter ou de le masquer, comme un bouton de pause.",
+            "Appuyez sur Tab pour atteindre ce contrôle, activez-le avec Entrée ou Espace, et vérifiez que le texte cesse de bouger ou disparaît."
+          ],
+          "passWhen": "En plus de s’arrêter sous le pointeur, un contrôle utilisable au clavier met en pause, arrête ou masque le texte défilant (ou celui-ci s’arrête de lui-même en moins de 5 secondes).",
+          "failWhen": "Le texte ne s’arrête que tant que le pointeur le survole, et aucun autre moyen utilisable au clavier ne permet de le mettre en pause, de l’arrêter ou de le masquer, ce qui ne respecte pas le critère WCAG 2.2.2 (F16)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたスクロールするテキストを見つけ、5秒を超えて動き続けるかを控えてください。",
+            "ポインターをテキストの上に動かしてから離してください。ポインターが上にある間だけ止まり、キーボードやタッチ操作の利用者にはそれができません。",
+            "その近くやページのほかの場所で、一時停止ボタンなど、一時停止、停止、または非表示にする別の手段を探してください。",
+            "Tabキーでそのコントロールに移動してEnterまたはSpaceで操作し、テキストの動きが止まるか、テキストが消えることを確認してください。"
+          ],
+          "passWhen": "ポインターの下で止まることに加えて、キーボードで操作できるコントロールによって、スクロールするテキストを一時停止、停止、または非表示にできます（または5秒以内に自動で止まります）。",
+          "failWhen": "テキストはポインターが上にある間だけ止まり、キーボードで使える別の一時停止、停止、非表示の手段がないため、WCAG 2.2.2を満たしません（F16）。"
         }
       }
     }
@@ -6363,6 +6418,208 @@
           ],
           "passWhen": "連結された名前は明確です。ラベルが互いに繰り返しになっているか、追加のラベルが「必須」のような目印にすぎません。",
           "failWhen": "連結された名前がわかりにくいか誤解を招きます。たとえば、関係のない2つのラベルがつながっており、WCAG 3.3.2を満たしません（2.5.3と4.1.2も満たさない場合があります）。"
+        }
+      }
+    }
+  ],
+  "form-group-name-present": [
+    {
+      "code": "CHECKBOX_GROUP_NO_NAME",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie die im Bericht genannten Kontrollkästchen und den Text darüber oder daneben, falls vorhanden, der sagt, wofür sie sind.",
+            "Entscheiden Sie, ob sie zusammen eine Frage beantworten, etwa eine Liste von Interessen, oder getrennte Felder sind, die nur einen Namen teilen.",
+            "Wenn sie eine Frage beantworten, prüfen Sie im Barrierefreiheitsbereich der Entwicklerwerkzeuge des Browsers, ob sie in einem fieldset stehen, dessen legend sie nennt, oder in einem Element mit der Rolle group, dessen Name sie nennt."
+          ],
+          "passWhen": "Die Kontrollkästchen sind getrennte Felder, oder sie stehen in einer Gruppe, deren Name sagt, wofür sie sind, oder jede Beschriftung sagt es selbst.",
+          "failWhen": "Die Kontrollkästchen beantworten eine Frage, die nur als Text in ihrer Nähe steht und mit keiner Gruppe um sie verknüpft ist; das verstößt gegen WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "en": {
+          "steps": [
+            "Find the checkboxes the report names, and the text shown above or beside them, if any, that says what they are for.",
+            "Decide whether they answer one question together, such as a list of interests, or are separate fields that only share a name.",
+            "If they answer one question, check in the browser's accessibility panel whether they sit in a fieldset whose legend gives it, or in an element with role group whose name gives it."
+          ],
+          "passWhen": "The checkboxes are separate fields, or they are in a group whose name says what they are for, or each label says it on its own.",
+          "failWhen": "The checkboxes answer one question that is shown only as text near them, tied to no group around them, which fails WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "es": {
+          "steps": [
+            "Localizar las casillas de verificación que indica el informe y el texto que se muestra encima o al lado, si lo hay, que dice para qué son.",
+            "Decidir si responden juntas a una sola pregunta, como una lista de intereses, o son campos distintos que solo comparten nombre.",
+            "Si responden a una sola pregunta, comprobar en el panel de accesibilidad del navegador si están en un fieldset cuyo legend la da, o en un elemento con rol group cuyo nombre la da."
+          ],
+          "passWhen": "Las casillas son campos distintos, o están en un grupo cuyo nombre dice para qué son, o cada etiqueta lo dice por sí sola.",
+          "failWhen": "Las casillas responden a una sola pregunta que solo se muestra como texto cerca de ellas, sin ligarla a ningún grupo que las contenga, lo que incumple WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "fr": {
+          "steps": [
+            "Repérez les cases à cocher indiquées par le rapport, et le texte affiché au-dessus ou à côté, s’il y en a un, qui dit à quoi elles servent.",
+            "Décidez si elles répondent ensemble à une seule question, comme une liste de centres d’intérêt, ou si ce sont des champs distincts qui partagent seulement un nom.",
+            "Si elles répondent à une seule question, vérifiez dans le panneau d’accessibilité du navigateur si elles sont dans un fieldset dont la legend la donne, ou dans un élément de rôle group dont le nom la donne."
+          ],
+          "passWhen": "Les cases à cocher sont des champs distincts, ou elles sont dans un groupe dont le nom dit à quoi elles servent, ou chaque étiquette le dit à elle seule.",
+          "failWhen": "Les cases à cocher répondent à une seule question affichée seulement comme un texte proche d’elles, liée à aucun groupe qui les contient, ce qui ne respecte pas le critère WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたチェックボックスと、その上や横に表示され、何のためのものかを伝えるテキストがあればそれを見つけてください。",
+            "それらが興味のある分野の一覧のように一緒に一つの質問に答えるものか、nameが同じなだけの別々の項目かを判断してください。",
+            "一つの質問に答えるものなら、ブラウザーのアクセシビリティパネルで、その質問をlegendに持つfieldsetか、名前がその質問になっているgroupロールの要素に入っているか確認してください。"
+          ],
+          "passWhen": "チェックボックスは別々の項目であるか、何のためのものかを名前で伝えるグループに入っているか、各ラベルだけでそれを伝えています。",
+          "failWhen": "チェックボックスは一つの質問に答えるものですが、その質問は近くのテキストでしか示されておらず、チェックボックスを囲むグループに関連付けられていないため、WCAG 1.3.1を満たしません（H71、ARIA17）。"
+        }
+      }
+    },
+    {
+      "code": "CHECKBOX_GROUP_SPLIT",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie die im Bericht genannten Kontrollkästchen und den Namen jeder Gruppe, in der sie stehen, wie der Bericht sie aufführt.",
+            "Lesen Sie den Text über oder neben jeder Gruppe und entscheiden Sie, ob die Kontrollkästchen zusammen eine Frage beantworten oder getrennte Fragen, die nur denselben Namen haben.",
+            "Wenn sie eine Frage beantworten, prüfen Sie im Barrierefreiheitsbereich der Entwicklerwerkzeuge des Browsers, ob eine Gruppe um alle einen Namen hat, der sie nennt."
+          ],
+          "passWhen": "Die Kontrollkästchen beantworten getrennte Fragen, jede benannt durch die Gruppe, in der sie steht, oder sie stehen in einer Gruppe, deren Name die Frage nennt.",
+          "failWhen": "Die Kontrollkästchen beantworten zusammen eine Frage, sind aber auf Gruppen mit verschiedenen Namen verteilt, sodass Screenreader-Nutzende einen Gruppennamen hören, der nur für einige von ihnen gilt; das verstößt gegen WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "en": {
+          "steps": [
+            "Find the checkboxes the report names, and the name of each group they sit in, as the report lists them.",
+            "Read the text shown above or beside each group, and decide whether the checkboxes answer one question together or separate questions that only share a name.",
+            "If they answer one question, check in the browser's accessibility panel whether one group around all of them has a name that gives it."
+          ],
+          "passWhen": "The checkboxes answer separate questions, each named by the group it is in, or they are in one group whose name says the question.",
+          "failWhen": "The checkboxes answer one question together, but are split over groups with different names, so a screen reader user hears a group name that covers only some of them, which fails WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "es": {
+          "steps": [
+            "Localizar las casillas de verificación que indica el informe y el nombre de cada grupo en el que están, según los enumera el informe.",
+            "Leer el texto que se muestra encima o al lado de cada grupo y decidir si las casillas responden juntas a una pregunta o a preguntas distintas que solo comparten nombre.",
+            "Si responden a una sola pregunta, comprobar en el panel de accesibilidad del navegador si un grupo que las contiene a todas tiene un nombre que la da."
+          ],
+          "passWhen": "Las casillas responden a preguntas distintas, cada una nombrada por el grupo en el que está, o están en un solo grupo cuyo nombre dice la pregunta.",
+          "failWhen": "Las casillas responden juntas a una sola pregunta, pero están repartidas entre grupos con nombres distintos, así que quien usa un lector de pantalla oye un nombre de grupo que solo abarca algunas de ellas, lo que incumple WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "fr": {
+          "steps": [
+            "Repérez les cases à cocher indiquées par le rapport, et le nom de chaque groupe où elles se trouvent, tel que le rapport les liste.",
+            "Lisez le texte affiché au-dessus ou à côté de chaque groupe, et décidez si les cases à cocher répondent ensemble à une question ou à des questions distinctes qui partagent seulement un nom.",
+            "Si elles répondent à une seule question, vérifiez dans le panneau d’accessibilité du navigateur si un groupe autour de toutes a un nom qui la donne."
+          ],
+          "passWhen": "Les cases à cocher répondent à des questions distinctes, chacune nommée par le groupe où elle se trouve, ou elles sont dans un seul groupe dont le nom dit la question.",
+          "failWhen": "Les cases à cocher répondent ensemble à une seule question, mais sont réparties entre des groupes aux noms différents : un utilisateur de lecteur d’écran entend un nom de groupe qui ne couvre qu’une partie d’entre elles, ce qui ne respecte pas le critère WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたチェックボックスと、レポートに挙げられた、それぞれが入っているグループの名前を確認してください。",
+            "各グループの上や横に表示されたテキストを読み、チェックボックスが一緒に一つの質問に答えるものか、nameが同じなだけの別々の質問に答えるものかを判断してください。",
+            "一つの質問に答えるものなら、ブラウザーのアクセシビリティパネルで、すべてを囲む一つのグループにその質問を伝える名前があるか確認してください。"
+          ],
+          "passWhen": "チェックボックスはそれぞれが入っているグループの名前で示される別々の質問に答えるものであるか、その質問を名前で伝える一つのグループに入っています。",
+          "failWhen": "チェックボックスは一緒に一つの質問に答えるものですが、名前の異なるグループに分かれているため、スクリーンリーダーの利用者は一部にしか当てはまらないグループ名を聞くことになり、WCAG 1.3.1を満たしません（H71、ARIA17）。"
+        }
+      }
+    },
+    {
+      "code": "RADIO_GROUP_NO_NAME",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie die im Bericht genannte Gruppe von Optionsfeldern und den Text darüber oder daneben, der sagt, wofür sie sind, etwa eine Frage.",
+            "Prüfen Sie im Barrierefreiheitsbereich der Entwicklerwerkzeuge des Browsers, ob sie in einer Gruppe mit Namen stehen: einem fieldset, dessen legend diesen Text gibt, oder einem Element mit der Rolle radiogroup oder group, dessen Name ihn gibt.",
+            "Lesen Sie die Beschriftung jeder Option für sich, wie ein Screenreader sie ansagt, und entscheiden Sie, ob sie ohne den Text darüber sagt, was ausgewählt wird."
+          ],
+          "passWhen": "Die Optionen stehen in einer Gruppe, deren Name sagt, was ausgewählt wird, oder die Beschriftung jeder Option sagt es selbst.",
+          "failWhen": "Wofür die Optionen sind, steht nur als Text in ihrer Nähe und ist mit keiner Gruppe um sie verknüpft, sodass Screenreader-Nutzende die Optionen ohne die Frage hören; das verstößt gegen WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "en": {
+          "steps": [
+            "Find the group of radio buttons the report names, and the text shown above or beside them that says what they are for, such as a question.",
+            "In the browser's accessibility panel, check whether they sit in a group with a name: a fieldset whose legend gives that text, or an element with role radiogroup or group whose name gives it.",
+            "Read each option's label on its own, as a screen reader announces it, and decide whether it says what is being chosen without the text above."
+          ],
+          "passWhen": "The options are in a group whose name says what is being chosen, or each option's label says it on its own.",
+          "failWhen": "What the options are for is shown only as text near them, tied to no group around them, so a screen reader user hears the options without the question, which fails WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "es": {
+          "steps": [
+            "Localizar el grupo de botones de opción que indica el informe y el texto que se muestra encima o al lado y dice para qué son, como una pregunta.",
+            "En el panel de accesibilidad del navegador, comprobar si están en un grupo con nombre: un fieldset cuyo legend da ese texto, o un elemento con rol radiogroup o group cuyo nombre lo da.",
+            "Leer la etiqueta de cada opción por separado, como la anuncia un lector de pantalla, y decidir si dice qué se elige sin el texto de encima."
+          ],
+          "passWhen": "Las opciones están en un grupo cuyo nombre dice qué se elige, o la etiqueta de cada opción lo dice por sí sola.",
+          "failWhen": "Para qué son las opciones solo se muestra como texto cerca de ellas, sin ligarlo a ningún grupo que las contenga, así que quien usa un lector de pantalla oye las opciones sin la pregunta, lo que incumple WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "fr": {
+          "steps": [
+            "Repérez le groupe de boutons radio indiqué par le rapport, et le texte affiché au-dessus ou à côté qui dit à quoi ils servent, comme une question.",
+            "Dans le panneau d’accessibilité du navigateur, vérifiez s’ils sont dans un groupe nommé : un fieldset dont la legend donne ce texte, ou un élément de rôle radiogroup ou group dont le nom le donne.",
+            "Lisez l’étiquette de chaque option seule, comme un lecteur d’écran l’annonce, et décidez si elle dit ce qui est choisi sans le texte au-dessus."
+          ],
+          "passWhen": "Les options sont dans un groupe dont le nom dit ce qui est choisi, ou l’étiquette de chaque option le dit à elle seule.",
+          "failWhen": "Ce à quoi servent les options n’est affiché que comme un texte proche d’elles, lié à aucun groupe qui les contient : un utilisateur de lecteur d’écran entend les options sans la question, ce qui ne respecte pas le critère WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたラジオボタンのグループと、その上や横に表示され、何のための選択肢かを伝えるテキスト（質問など）を見つけてください。",
+            "ブラウザーのアクセシビリティパネルで、名前のあるグループに入っているか確認してください。そのテキストをlegendに持つfieldsetか、名前がそのテキストになっているradiogroupまたはgroupロールの要素です。",
+            "スクリーンリーダーが読み上げるように各選択肢のラベルを単独で読み、上のテキストなしで何を選ぶのかがわかるか判断してください。"
+          ],
+          "passWhen": "選択肢は、何を選ぶのかを名前で伝えるグループに入っているか、各選択肢のラベルだけでそれを伝えています。",
+          "failWhen": "選択肢が何のためのものかは近くのテキストでしか示されておらず、選択肢を囲むグループに関連付けられていないため、スクリーンリーダーの利用者は質問なしで選択肢を聞くことになり、WCAG 1.3.1を満たしません（H71、ARIA17）。"
+        }
+      }
+    },
+    {
+      "code": "RADIO_GROUP_SPLIT",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie die im Bericht genannten Optionsfelder und den Namen jeder Gruppe, in der sie stehen, wie der Bericht sie aufführt.",
+            "Wählen Sie eine Option und drücken Sie die Pfeiltasten: Der Browser wechselt durch alle Optionen, in jeder Gruppe, als eine einzige Auswahl.",
+            "Entscheiden Sie, ob sie zusammen eine Frage beantworten oder getrennte Fragen sind, die nur denselben Namen haben."
+          ],
+          "passWhen": "Die Optionen sind getrennte Fragen, jede mit eigenem Namen im Code der Seite, oder sie sind eine Auswahl in einer Gruppe, deren Name sagt, was ausgewählt wird.",
+          "failWhen": "Eine Auswahl ist auf Gruppen mit verschiedenen Namen verteilt, sodass Screenreader-Nutzende einen Gruppennamen hören, der nur für einige der Optionen gilt; das verstößt gegen WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "en": {
+          "steps": [
+            "Find the radio buttons the report names, and the name of each group they sit in, as the report lists them.",
+            "Select one option and press the arrow keys: a browser moves through all of them, in every group, as one choice.",
+            "Decide whether they answer one question together or are separate questions that only share a name."
+          ],
+          "passWhen": "The options are separate questions, each with its own name in the page's code, or they are one choice in one group whose name says what is chosen.",
+          "failWhen": "One choice is split over groups with different names, so a screen reader user hears a group name that covers only some of the options, which fails WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "es": {
+          "steps": [
+            "Localizar los botones de opción que indica el informe y el nombre de cada grupo en el que están, según los enumera el informe.",
+            "Seleccionar una opción y pulsar las flechas: el navegador recorre todas, en todos los grupos, como una sola elección.",
+            "Decidir si responden juntas a una pregunta o son preguntas distintas que solo comparten nombre."
+          ],
+          "passWhen": "Las opciones son preguntas distintas, cada una con su propio nombre en el código de la página, o son una sola elección en un solo grupo cuyo nombre dice qué se elige.",
+          "failWhen": "Una sola elección está repartida entre grupos con nombres distintos, así que quien usa un lector de pantalla oye un nombre de grupo que solo abarca algunas de las opciones, lo que incumple WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "fr": {
+          "steps": [
+            "Repérez les boutons radio indiqués par le rapport, et le nom de chaque groupe où ils se trouvent, tel que le rapport les liste.",
+            "Sélectionnez une option et appuyez sur les flèches : le navigateur les parcourt toutes, dans chaque groupe, comme un seul choix.",
+            "Décidez s’ils répondent ensemble à une question ou s’il s’agit de questions distinctes qui partagent seulement un nom."
+          ],
+          "passWhen": "Les options sont des questions distinctes, chacune avec son propre nom dans le code de la page, ou elles forment un seul choix dans un seul groupe dont le nom dit ce qui est choisi.",
+          "failWhen": "Un seul choix est réparti entre des groupes aux noms différents : un utilisateur de lecteur d’écran entend un nom de groupe qui ne couvre qu’une partie des options, ce qui ne respecte pas le critère WCAG 1.3.1 (H71, ARIA17)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたラジオボタンと、レポートに挙げられた、それぞれが入っているグループの名前を確認してください。",
+            "選択肢を一つ選んで矢印キーを押してください。ブラウザーはすべてのグループのすべての選択肢を、一つの選択として順に移動します。",
+            "それらが一緒に一つの質問に答えるものか、nameが同じなだけの別々の質問かを判断してください。"
+          ],
+          "passWhen": "選択肢はページのコードでそれぞれ別のnameを持つ別々の質問であるか、何を選ぶのかを名前で伝える一つのグループに入った一つの選択です。",
+          "failWhen": "一つの選択が名前の異なるグループに分かれているため、スクリーンリーダーの利用者は一部の選択肢にしか当てはまらないグループ名を聞くことになり、WCAG 1.3.1を満たしません（H71、ARIA17）。"
         }
       }
     }
@@ -9601,6 +9858,108 @@
           "failWhen": "リンクテキストも周囲の文脈もリンク先を伝えていないため、WCAG 2.4.4を満たしません（F84）。リンクテキストだけでは不明確な場合は、2.4.9を満たしません。"
         }
       }
+    },
+    {
+      "code": "GENERIC_LINK_TEXT_IN_CONTEXT",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie den im Bericht genannten Link „den Link“ und lesen Sie seinen Text für sich, ohne den Satz, den Listeneintrag oder die Zelle um ihn herum.",
+            "Entscheiden Sie, ob dieser Text allein sagt, wohin der Link führt oder was er tut, so wie er in einer Liste der Links der Seite gelesen würde.",
+            "Wenn nicht, suchen Sie auf der Seite ein Bedienelement, das Linktexte für sich aussagekräftig macht, etwa eine Einstellung, die Links wie diesen erweitert."
+          ],
+          "passWhen": "Der Linktext sagt für sich, wohin er führt, oder die Seite bietet ein Bedienelement, das ihn das sagen lässt.",
+          "failWhen": "Der Zweck des Links ist nur aus dem umgebenden Text klar, und die Seite bietet keine Möglichkeit, den Linktext aussagekräftig zu machen; das verstößt gegen WCAG 2.4.9 (F84)."
+        },
+        "en": {
+          "steps": [
+            "Find the link the report names, \"the link\", and read its text on its own, without the sentence, list item or cell around it.",
+            "Decide whether that text alone says where the link leads or what it does, as it would read in a list of the page's links.",
+            "If it doesn't, look for a control on the page that makes link text descriptive on its own, such as a setting that expands links like this one."
+          ],
+          "passWhen": "The link text says where it leads on its own, or the page offers a control that makes it do so.",
+          "failWhen": "The link's purpose is clear only from the text around it, and the page offers no way to make the link text descriptive, which fails WCAG 2.4.9 (F84)."
+        },
+        "es": {
+          "steps": [
+            "Localizar el enlace que indica el informe, \"el enlace\", y leer su texto por sí solo, sin la frase, el elemento de lista o la celda que lo rodea.",
+            "Decidir si ese texto por sí solo dice adónde lleva el enlace o qué hace, tal como se leería en una lista de los enlaces de la página.",
+            "Si no lo dice, buscar en la página un control que haga descriptivo el texto de los enlaces por sí solo, como un ajuste que amplíe enlaces como este."
+          ],
+          "passWhen": "El texto del enlace dice por sí solo adónde lleva, o la página ofrece un control que hace que lo diga.",
+          "failWhen": "El propósito del enlace solo se entiende por el texto que lo rodea y la página no ofrece forma de hacer descriptivo el texto del enlace, lo que incumple WCAG 2.4.9 (F84)."
+        },
+        "fr": {
+          "steps": [
+            "Repérez le lien indiqué par le rapport, « le lien », et lisez son texte seul, sans la phrase, l’élément de liste ou la cellule qui l’entoure.",
+            "Déterminez si ce texte dit à lui seul où mène le lien ou ce qu’il fait, tel qu’il se lirait dans une liste des liens de la page.",
+            "S’il ne le dit pas, cherchez sur la page une commande qui rend le texte des liens explicite à lui seul, comme un réglage qui développe les liens comme celui-ci."
+          ],
+          "passWhen": "Le texte du lien dit à lui seul où il mène, ou la page offre une commande qui le lui fait dire.",
+          "failWhen": "Le but du lien ne se comprend que par le texte qui l’entoure et la page n’offre aucun moyen de rendre le texte du lien explicite, ce qui ne respecte pas WCAG 2.4.9 (F84)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたリンク「リンク」を見つけ、周囲の文、リスト項目、セルを除いて、そのテキストだけを読んでください。",
+            "ページのリンク一覧で読まれるときのように、そのテキストだけでリンク先やリンクの動作がわかるかを判断してください。",
+            "わからない場合は、このようなリンクを展開する設定など、リンクテキストを単独で説明的にする操作がページにあるかを探してください。"
+          ],
+          "passWhen": "リンクテキストが単独でリンク先を示しているか、ページにそうさせる操作があります。",
+          "failWhen": "リンクの目的は周囲のテキストからしかわからず、ページにリンクテキストを説明的にする方法もないため、WCAG 2.4.9（F84）を満たしません。"
+        }
+      }
+    }
+  ],
+  "link-name-quality-link-only": [
+    {
+      "code": "GENERIC_LINK_TEXT_IN_CONTEXT",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie den im Bericht genannten Link „den Link“ und lesen Sie seinen Text für sich, ohne den Satz, den Listeneintrag oder die Zelle um ihn herum.",
+            "Entscheiden Sie, ob dieser Text allein sagt, wohin der Link führt oder was er tut, so wie er in einer Liste der Links der Seite gelesen würde.",
+            "Wenn nicht, suchen Sie auf der Seite ein Bedienelement, das Linktexte für sich aussagekräftig macht, etwa eine Einstellung, die Links wie diesen erweitert."
+          ],
+          "passWhen": "Der Linktext sagt für sich, wohin er führt, oder die Seite bietet ein Bedienelement, das ihn das sagen lässt.",
+          "failWhen": "Der Zweck des Links ist nur aus dem umgebenden Text klar, und die Seite bietet keine Möglichkeit, den Linktext aussagekräftig zu machen; das verstößt gegen WCAG 2.4.9 (F84)."
+        },
+        "en": {
+          "steps": [
+            "Find the link the report names, \"the link\", and read its text on its own, without the sentence, list item or cell around it.",
+            "Decide whether that text alone says where the link leads or what it does, as it would read in a list of the page's links.",
+            "If it doesn't, look for a control on the page that makes link text descriptive on its own, such as a setting that expands links like this one."
+          ],
+          "passWhen": "The link text says where it leads on its own, or the page offers a control that makes it do so.",
+          "failWhen": "The link's purpose is clear only from the text around it, and the page offers no way to make the link text descriptive, which fails WCAG 2.4.9 (F84)."
+        },
+        "es": {
+          "steps": [
+            "Localizar el enlace que indica el informe, \"el enlace\", y leer su texto por sí solo, sin la frase, el elemento de lista o la celda que lo rodea.",
+            "Decidir si ese texto por sí solo dice adónde lleva el enlace o qué hace, tal como se leería en una lista de los enlaces de la página.",
+            "Si no lo dice, buscar en la página un control que haga descriptivo el texto de los enlaces por sí solo, como un ajuste que amplíe enlaces como este."
+          ],
+          "passWhen": "El texto del enlace dice por sí solo adónde lleva, o la página ofrece un control que hace que lo diga.",
+          "failWhen": "El propósito del enlace solo se entiende por el texto que lo rodea y la página no ofrece forma de hacer descriptivo el texto del enlace, lo que incumple WCAG 2.4.9 (F84)."
+        },
+        "fr": {
+          "steps": [
+            "Repérez le lien indiqué par le rapport, « le lien », et lisez son texte seul, sans la phrase, l’élément de liste ou la cellule qui l’entoure.",
+            "Déterminez si ce texte dit à lui seul où mène le lien ou ce qu’il fait, tel qu’il se lirait dans une liste des liens de la page.",
+            "S’il ne le dit pas, cherchez sur la page une commande qui rend le texte des liens explicite à lui seul, comme un réglage qui développe les liens comme celui-ci."
+          ],
+          "passWhen": "Le texte du lien dit à lui seul où il mène, ou la page offre une commande qui le lui fait dire.",
+          "failWhen": "Le but du lien ne se comprend que par le texte qui l’entoure et la page n’offre aucun moyen de rendre le texte du lien explicite, ce qui ne respecte pas WCAG 2.4.9 (F84)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたリンク「リンク」を見つけ、周囲の文、リスト項目、セルを除いて、そのテキストだけを読んでください。",
+            "ページのリンク一覧で読まれるときのように、そのテキストだけでリンク先やリンクの動作がわかるかを判断してください。",
+            "わからない場合は、このようなリンクを展開する設定など、リンクテキストを単独で説明的にする操作がページにあるかを探してください。"
+          ],
+          "passWhen": "リンクテキストが単独でリンク先を示しているか、ページにそうさせる操作があります。",
+          "failWhen": "リンクの目的は周囲のテキストからしかわからず、ページにリンクテキストを説明的にする方法もないため、WCAG 2.4.9（F84）を満たしません。"
+        }
+      }
     }
   ],
   "list-children-valid": [
@@ -9817,8 +10176,8 @@
             "Prüfen Sie, ob die Seite es als Eintrag einer Liste zeigt, mit Aufzählungszeichen oder Nummer, neben anderen Einträgen.",
             "Lesen Sie den Inhalt mit einem Screenreader und notieren Sie, ob eine Liste und die Anzahl ihrer Einträge angesagt werden."
           ],
-          "passWhen": "Das Element wird nicht als Eintrag einer Liste gezeigt, daher fehlt keine auf der Seite gezeigte Liste im Markup. Korrigieren Sie das Markup trotzdem: HTML erlaubt <li> nur in einer Liste.",
-          "failWhen": "Die Seite zeigt das Element als Eintrag einer Liste, das Markup setzt es aber in keine Liste, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
+          "passWhen": "Das Element wird nicht als Eintrag einer Liste gezeigt, oder der Inhalt gibt ohne die Liste, ihre Einträge und deren Anzahl dieselbe Information (einige Links in einer Navigationsleiste), daher geht nichts verloren, was die Seite zeigt. Korrigieren Sie das Markup trotzdem: Das <li> steht in keiner Liste. Verschieben Sie die Rolle auf ein Element um die Liste herum, oder entfernen Sie die <li>-Struktur.",
+          "failWhen": "Die Seite zeigt das Element als Eintrag einer Liste, und die Liste (ihre Einträge, deren Anzahl oder Reihenfolge) sagt etwas, das der Inhalt sonst nicht sagt, das Markup setzt es aber in keine Liste, daher ist diese Beziehung nicht programmatisch ermittelbar (WCAG 1.3.1)."
         },
         "en": {
           "steps": [
@@ -9826,8 +10185,8 @@
             "Look at whether the page shows it as an item of a list, with a bullet or number, next to other items.",
             "With a screen reader, read the content and note whether a list and its number of items are announced."
           ],
-          "passWhen": "The element is not shown as an item of a list, so no list the page shows is missing from the markup. Still fix the markup: HTML allows an <li> only in a list.",
-          "failWhen": "The page shows the element as an item of a list, but the markup puts it in no list, so that relationship is not programmatically determinable (WCAG 1.3.1)."
+          "passWhen": "The element is not shown as an item of a list, or the content gives the same information without the list, its items and their number (a few links in a navigation bar), so nothing the page shows is lost. Still fix the markup: the <li> is in no list. Move the role to an element around the list, or remove the <li> structure.",
+          "failWhen": "The page shows the element as an item of a list, and the list (its items, their number or their order) tells something the content doesn't say otherwise, but the markup puts it in no list, so that relationship is not programmatically determinable (WCAG 1.3.1)."
         },
         "es": {
           "steps": [
@@ -9835,8 +10194,8 @@
             "Observe si la página lo muestra como un elemento de una lista, con viñeta o número, junto a otros elementos.",
             "Con un lector de pantalla, lea el contenido y anote si se anuncian una lista y su número de elementos."
           ],
-          "passWhen": "El elemento no se muestra como un elemento de una lista, así que no falta en el marcado ninguna lista que muestre la página. Aun así, corrija el marcado: HTML solo permite <li> en una lista.",
-          "failWhen": "La página muestra el elemento como un elemento de una lista, pero el marcado no lo pone en ninguna lista, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
+          "passWhen": "El elemento no se muestra como un elemento de una lista, o el contenido da la misma información sin la lista, sus elementos y su número (unos pocos enlaces en una barra de navegación), así que no se pierde nada de lo que muestra la página. Aun así, corrija el marcado: el <li> no está en ninguna lista. Mueva el rol a un elemento que envuelva la lista, o quite la estructura de <li>.",
+          "failWhen": "La página muestra el elemento como un elemento de una lista, y la lista (sus elementos, su número o su orden) dice algo que el contenido no dice de otro modo, pero el marcado no lo pone en ninguna lista, así que esa relación no se puede determinar mediante programación (WCAG 1.3.1)."
         },
         "fr": {
           "steps": [
@@ -9844,8 +10203,8 @@
             "Regardez si la page l’affiche comme élément d’une liste, avec une puce ou un numéro, à côté d’autres éléments.",
             "Avec un lecteur d’écran, lisez le contenu et notez si une liste et son nombre d’éléments sont annoncés."
           ],
-          "passWhen": "L’élément n’est pas affiché comme élément d’une liste : aucune liste affichée ne manque dans le balisage. Corrigez tout de même le balisage : HTML n’autorise <li> que dans une liste.",
-          "failWhen": "La page affiche l’élément comme élément d’une liste, mais le balisage ne le place dans aucune liste : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
+          "passWhen": "L’élément n’est pas affiché comme élément d’une liste, ou le contenu donne la même information sans la liste, ses éléments et leur nombre (quelques liens dans une barre de navigation) : rien de ce que la page affiche n’est perdu. Corrigez tout de même le balisage : le <li> n’est dans aucune liste. Déplacez le rôle vers un élément qui entoure la liste, ou retirez la structure en <li>.",
+          "failWhen": "La page affiche l’élément comme élément d’une liste, et la liste (ses éléments, leur nombre ou leur ordre) dit quelque chose que le contenu ne dit pas autrement, mais le balisage ne le place dans aucune liste : cette relation n’est donc pas déterminable par programmation (WCAG 1.3.1)."
         },
         "ja": {
           "steps": [
@@ -9853,8 +10212,8 @@
             "行頭記号や番号付きで、他の項目と並んでリストの項目として表示されているか確認してください。",
             "スクリーンリーダーで内容を読み、リストとその項目数が読み上げられるか確認してください。"
           ],
-          "passWhen": "要素はリストの項目として表示されていないため、ページに表示されたリストでマークアップに欠けているものはありません。それでもマークアップを修正してください。HTMLでは<li>はリストの中にしか置けません。",
-          "failWhen": "ページは要素をリストの項目として表示していますが、マークアップではどのリストにも属していないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
+          "passWhen": "要素はリストの項目として表示されていないか、リストとその項目や項目数がなくても内容が同じ情報を伝えている（ナビゲーションバーの数個のリンクなど）ため、ページに表示されたもので失われるものはありません。それでもマークアップを修正してください。<li>はどのリストの中にもありません。ロールをリストを囲む要素に移すか、<li>の構造を取り除いてください。",
+          "failWhen": "ページは要素をリストの項目として表示しており、リスト（その項目、項目数、順序）が内容からは他に得られない情報を伝えていますが、マークアップではどのリストにも属していないため、その関係がプログラムで判別できません（WCAG 1.3.1）。"
         }
       }
     }
@@ -11307,6 +11666,56 @@
       }
     },
     {
+      "code": "BOLD_SHORT_PARAGRAPH",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie den im Bericht genannten fetten Absatz und lesen Sie ihn zusammen mit dem Text, der ihm folgt.",
+            "Entscheiden Sie, ob er diesen Text wie ein Abschnittstitel einleitet, etwa „Öffnungszeiten“ über den Zeiten, oder eine Hervorhebung ist, die zum Text gehört.",
+            "Wirkt er als Titel, prüfen Sie im Bereich „Barrierefreiheit“ der Entwicklertools oder mit der Überschriftenliste eines Screenreaders, ob er als Überschrift bereitgestellt wird."
+          ],
+          "passWhen": "Die fette Zeile ist eine Hervorhebung, eine Beschriftung oder ein Hinweis, der als Teil des Textes gelesen wird, oder sie ist als Überschrift ausgezeichnet (h1 bis h6 oder role=\"heading\").",
+          "failWhen": "Die fette Zeile betitelt den folgenden Text, ist aber keine Überschrift, sodass seine Struktur nur durch die Gestaltung gezeigt wird; das verstößt gegen WCAG 1.3.1 (F2)."
+        },
+        "en": {
+          "steps": [
+            "Find the bold paragraph the report names and read it together with the text that follows it.",
+            "Decide whether it introduces that text as a section title does, such as \"Opening hours\" above the hours, or is emphasis that belongs to the text.",
+            "If it acts as a title, check in the Accessibility pane of the developer tools, or with a screen reader's heading list, whether it is exposed as a heading."
+          ],
+          "passWhen": "The bold line is emphasis, a label or a note that reads as part of the text, or it is marked up as a heading (h1 to h6 or role=\"heading\").",
+          "failWhen": "The bold line titles the text after it but is not a heading, so its structure is shown only by style, which fails WCAG 1.3.1 (F2)."
+        },
+        "es": {
+          "steps": [
+            "Localizar el párrafo en negrita que indica el informe y leerlo junto con el texto que lo sigue.",
+            "Decidir si presenta ese texto como lo hace un título de sección, como \"Horario\" encima del horario, o si es un énfasis que forma parte del texto.",
+            "Si actúa como título, comprobar en el panel Accesibilidad de las herramientas para desarrolladores, o con la lista de encabezados de un lector de pantalla, si se expone como encabezado."
+          ],
+          "passWhen": "La línea en negrita es énfasis, una etiqueta o una nota que se lee como parte del texto, o está marcada como encabezado (h1 a h6 o role=\"heading\").",
+          "failWhen": "La línea en negrita titula el texto que la sigue pero no es un encabezado, así que su estructura solo se muestra mediante el estilo, lo que incumple WCAG 1.3.1 (F2)."
+        },
+        "fr": {
+          "steps": [
+            "Repérez le paragraphe en gras indiqué par le rapport et lisez-le avec le texte qui le suit.",
+            "Déterminez s’il introduit ce texte comme le fait un titre de section, comme « Horaires » au-dessus des horaires, ou s’il s’agit d’une mise en valeur qui fait partie du texte.",
+            "S’il sert de titre, vérifiez dans le panneau Accessibilité des outils de développement, ou avec la liste des titres d’un lecteur d’écran, s’il est exposé comme un titre."
+          ],
+          "passWhen": "La ligne en gras est une mise en valeur, une étiquette ou une note qui se lit comme une partie du texte, ou elle est balisée comme un titre (h1 à h6 ou role=\"heading\").",
+          "failWhen": "La ligne en gras sert de titre au texte qui la suit mais n’est pas un titre : sa structure n’est indiquée que par le style, ce qui ne respecte pas WCAG 1.3.1 (F2)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された太字の段落を見つけ、後に続くテキストと一緒に読んでください。",
+            "それが、時間の上にある「営業時間」のように、セクションのタイトルとしてそのテキストを導入しているのか、テキストの一部である強調なのかを判断してください。",
+            "タイトルとして機能している場合は、開発者ツールのアクセシビリティペインまたはスクリーンリーダーの見出し一覧で、見出しとして公開されているかを確認してください。"
+          ],
+          "passWhen": "太字の行は、テキストの一部として読まれる強調、ラベル、または注記であるか、見出し（h1からh6、またはrole=\"heading\"）としてマークアップされています。",
+          "failWhen": "太字の行は後に続くテキストのタイトルになっていますが見出しではないため、構造がスタイルでしか示されておらず、WCAG 1.3.1（F2）を満たしません。"
+        }
+      }
+    },
+    {
       "code": "HEADING_LIKE_LINK",
       "text": {
         "de": {
@@ -11460,6 +11869,56 @@
     }
   ],
   "page-title-patterns": [
+    {
+      "code": "placeholderTitle",
+      "text": {
+        "de": {
+          "steps": [
+            "Lesen Sie den Seitentitel, den der Bericht angibt; der Browser zeigt ihn im Tab.",
+            "Suchen Sie im Titel den Platzhalter, den der Bericht nennt, etwa „undefined“ oder ein Wort in geschweiften Klammern.",
+            "Laden Sie die Seite neu, warten Sie, bis sie fertig geladen ist, und lesen Sie den Titel erneut: Ein Skript kann ihn später füllen."
+          ],
+          "passWhen": "Sobald die Seite geladen ist, sagt der Titel ohne den Platzhalter, worum es auf der Seite geht.",
+          "failWhen": "Der Titel enthält weiterhin den Platzhalter statt Worten über die Seite und sagt daher nicht, worum es auf der Seite geht; das verstößt gegen WCAG 2.4.2 (F25)."
+        },
+        "en": {
+          "steps": [
+            "Read the page title the report gives; the browser shows it in the tab.",
+            "Find in the title the placeholder the report names, such as “undefined” or a word between braces.",
+            "Reload the page and wait for it to finish loading, then read the title again: a script may fill it in later."
+          ],
+          "passWhen": "Once the page has loaded, the title says what the page is about, without the placeholder.",
+          "failWhen": "The title still holds the placeholder instead of words about the page, so it does not say what the page is about, which fails WCAG 2.4.2 (F25)."
+        },
+        "es": {
+          "steps": [
+            "Leer el título de la página que da el informe; el navegador lo muestra en la pestaña.",
+            "Buscar en el título el marcador de posición que nombra el informe, como «undefined» o una palabra entre llaves.",
+            "Recargar la página y esperar a que termine de cargar, y volver a leer el título: un script puede rellenarlo más tarde."
+          ],
+          "passWhen": "Una vez cargada la página, el título dice de qué trata, sin el marcador de posición.",
+          "failWhen": "El título sigue conteniendo el marcador de posición en lugar de palabras sobre la página, así que no dice de qué trata, lo que incumple WCAG 2.4.2 (F25)."
+        },
+        "fr": {
+          "steps": [
+            "Lisez le titre de la page donné par le rapport ; le navigateur l’affiche dans l’onglet.",
+            "Repérez dans le titre l’espace réservé que nomme le rapport, comme « undefined » ou un mot entre accolades.",
+            "Rechargez la page, attendez la fin du chargement, puis relisez le titre : un script peut le remplir plus tard."
+          ],
+          "passWhen": "Une fois la page chargée, le titre dit de quoi elle parle, sans l’espace réservé.",
+          "failWhen": "Le titre contient toujours l’espace réservé au lieu de mots sur la page, il ne dit donc pas de quoi elle parle, ce qui ne respecte pas le critère WCAG 2.4.2 (F25)."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたページタイトルを読んでください。ブラウザーのタブにも表示されます。",
+            "レポートが示すプレースホルダー（「undefined」や波かっこで囲まれた語など）をタイトルの中で見つけてください。",
+            "ページを再読み込みし、読み込みが終わるのを待ってから、もう一度タイトルを読んでください。スクリプトが後から設定することがあります。"
+          ],
+          "passWhen": "ページの読み込みが終わると、タイトルはプレースホルダーなしでページの内容を伝えています。",
+          "failWhen": "タイトルにはページについての言葉ではなくプレースホルダーが残っており、ページの内容を伝えていないため、WCAG 2.4.2を満たしません（F25）。"
+        }
+      }
+    },
     {
       "code": "genericTitle",
       "text": {
@@ -12264,6 +12723,408 @@
       }
     }
   ],
+  "reflow-horizontal-scroll": [
+    {
+      "code": "HORIZONTAL_SCROLL",
+      "text": {
+        "de": {
+          "steps": [
+            "Stellen Sie das Browserfenster auf 320 CSS-Pixel Breite, etwa mit der Gerätesymbolleiste der Entwicklertools, und suchen Sie das Element, das der Bericht nennt.",
+            "Scrollen Sie die Seite seitlich und sehen Sie, was nur so erreicht wird: der Teil des Elements jenseits des Randes und alles daneben.",
+            "Entscheiden Sie, ob diese Inhalte gelesen oder bedient werden müssen und ob sie zwei Dimensionen brauchen, wie eine Datentabelle, eine Karte oder ein Diagramm. Text, Felder und Menüs brauchen das nicht: Sie müssen in die Breite passen."
+          ],
+          "passWhen": "Seitliches Scrollen zeigt nichts, was gelesen oder bedient werden muss, oder nur Inhalte, die zwei Dimensionen brauchen, etwa eine Datentabelle oder eine Karte.",
+          "failWhen": "Zum Lesen oder Bedienen der Seite muss bei dieser Breite seitlich gescrollt werden, und was dabei erreicht wird, ist keine Datentabelle, Karte oder andere Inhalte, die zwei Dimensionen brauchen; das verstößt gegen WCAG 1.4.10."
+        },
+        "en": {
+          "steps": [
+            "Make the browser window 320 CSS pixels wide, as in the developer tools' device toolbar, and find the element the report names.",
+            "Scroll the page sideways and see what is only reached that way: the part of the element past the edge, and anything beside it.",
+            "Decide whether that content has to be read or used, and whether it needs two dimensions, as a data table, a map or a diagram does. Text, fields and menus do not: they have to fit the width."
+          ],
+          "passWhen": "Scrolling sideways shows nothing that has to be read or used, or only content that needs two dimensions, such as a data table or a map.",
+          "failWhen": "Reading or using the page at this width needs scrolling sideways, and what that reaches is not a data table, a map or other content that needs two dimensions, which fails WCAG 1.4.10."
+        },
+        "es": {
+          "steps": [
+            "Pon la ventana del navegador a 320 píxeles CSS de ancho, como con la barra de dispositivos de las herramientas de desarrollo, y busca el elemento que indica el informe.",
+            "Desplaza la página hacia los lados y mira qué se alcanza solo así: la parte del elemento más allá del borde y lo que hay a su lado.",
+            "Decide si ese contenido hay que leerlo o usarlo, y si necesita dos dimensiones, como una tabla de datos, un mapa o un diagrama. El texto, los campos y los menús no: tienen que caber en el ancho."
+          ],
+          "passWhen": "El desplazamiento lateral no muestra nada que haya que leer o usar, o solo contenido que necesita dos dimensiones, como una tabla de datos o un mapa.",
+          "failWhen": "Leer o usar la página con este ancho exige desplazarse hacia los lados, y lo que se alcanza así no es una tabla de datos, un mapa u otro contenido que necesita dos dimensiones, lo que incumple WCAG 1.4.10."
+        },
+        "fr": {
+          "steps": [
+            "Réglez la fenêtre du navigateur sur 320 pixels CSS de large, par exemple avec la barre d’appareils des outils de développement, et trouvez l’élément que le rapport nomme.",
+            "Faites défiler la page horizontalement et voyez ce qui n’est atteint que de cette façon : la partie de l’élément au-delà du bord, et ce qui est à côté.",
+            "Déterminez si ce contenu doit être lu ou utilisé, et s’il a besoin de deux dimensions, comme un tableau de données, une carte ou un diagramme. Le texte, les champs et les menus n’en ont pas besoin : ils doivent tenir dans la largeur."
+          ],
+          "passWhen": "Le défilement horizontal ne montre rien qui doive être lu ou utilisé, ou seulement un contenu qui a besoin de deux dimensions, comme un tableau de données ou une carte.",
+          "failWhen": "Lire ou utiliser la page à cette largeur exige de défiler horizontalement, et ce qui est atteint ainsi n’est pas un tableau de données, une carte ou un autre contenu qui a besoin de deux dimensions, ce qui ne respecte pas WCAG 1.4.10."
+        },
+        "ja": {
+          "steps": [
+            "ブラウザーのウィンドウを、開発者ツールのデバイスツールバーなどで幅320 CSSピクセルにし、レポートが示す要素を見つけます。",
+            "ページを横にスクロールし、その方法でしか表示されないもの（端を越えた要素の部分と、その横にあるもの）を確認します。",
+            "そのコンテンツを読んだり操作したりする必要があるか、またデータテーブル、地図、図のように2次元を必要とするかを判断します。テキスト、フィールド、メニューは2次元を必要とせず、幅に収まる必要があります。"
+          ],
+          "passWhen": "横スクロールで表示されるのは、読んだり操作したりする必要のないものか、データテーブルや地図のように2次元を必要とするコンテンツだけです。",
+          "failWhen": "この幅でページを読む、または操作するのに横スクロールが必要で、それによって表示されるものがデータテーブル、地図、その他2次元を必要とするコンテンツではないため、WCAG 1.4.10を満たしません。"
+        }
+      }
+    },
+    {
+      "code": "HORIZONTAL_SCROLL_UNATTRIBUTED",
+      "text": {
+        "de": {
+          "steps": [
+            "Stellen Sie das Browserfenster auf 320 CSS-Pixel Breite, etwa mit der Gerätesymbolleiste der Entwicklertools.",
+            "Scrollen Sie die Seite seitlich und finden Sie, was sie breiter als das Fenster macht, etwa einen Rand, generierte Inhalte oder eine Komponente, deren Inneres der Scan nicht lesen kann.",
+            "Entscheiden Sie, ob etwas, das nur durch seitliches Scrollen erreicht wird, gelesen oder bedient werden muss und ob es zwei Dimensionen braucht, wie eine Datentabelle oder eine Karte."
+          ],
+          "passWhen": "Seitliches Scrollen zeigt nichts, was gelesen oder bedient werden muss, oder nur Inhalte, die zwei Dimensionen brauchen, etwa eine Datentabelle oder eine Karte.",
+          "failWhen": "Zum Lesen oder Bedienen der Seite muss bei dieser Breite seitlich gescrollt werden, und was dabei erreicht wird, sind keine Inhalte, die zwei Dimensionen brauchen; das verstößt gegen WCAG 1.4.10."
+        },
+        "en": {
+          "steps": [
+            "Make the browser window 320 CSS pixels wide, as in the developer tools' device toolbar.",
+            "Scroll the page sideways and find what makes it wider than the window, such as a margin, generated content or a component whose inside the scan can't read.",
+            "Decide whether anything reached only by scrolling sideways has to be read or used, and whether it needs two dimensions, as a data table or a map does."
+          ],
+          "passWhen": "Scrolling sideways shows nothing that has to be read or used, or only content that needs two dimensions, such as a data table or a map.",
+          "failWhen": "Reading or using the page at this width needs scrolling sideways, and what that reaches is not content that needs two dimensions, which fails WCAG 1.4.10."
+        },
+        "es": {
+          "steps": [
+            "Pon la ventana del navegador a 320 píxeles CSS de ancho, como con la barra de dispositivos de las herramientas de desarrollo.",
+            "Desplaza la página hacia los lados y busca qué la hace más ancha que la ventana, como un margen, contenido generado o un componente cuyo interior el análisis no puede leer.",
+            "Decide si algo que solo se alcanza desplazándose hacia los lados hay que leerlo o usarlo, y si necesita dos dimensiones, como una tabla de datos o un mapa."
+          ],
+          "passWhen": "El desplazamiento lateral no muestra nada que haya que leer o usar, o solo contenido que necesita dos dimensiones, como una tabla de datos o un mapa.",
+          "failWhen": "Leer o usar la página con este ancho exige desplazarse hacia los lados, y lo que se alcanza así no es contenido que necesita dos dimensiones, lo que incumple WCAG 1.4.10."
+        },
+        "fr": {
+          "steps": [
+            "Réglez la fenêtre du navigateur sur 320 pixels CSS de large, par exemple avec la barre d’appareils des outils de développement.",
+            "Faites défiler la page horizontalement et trouvez ce qui la rend plus large que la fenêtre, comme une marge, un contenu généré ou un composant dont l’analyse ne peut pas lire l’intérieur.",
+            "Déterminez si quelque chose qui n’est atteint qu’en défilant horizontalement doit être lu ou utilisé, et s’il a besoin de deux dimensions, comme un tableau de données ou une carte."
+          ],
+          "passWhen": "Le défilement horizontal ne montre rien qui doive être lu ou utilisé, ou seulement un contenu qui a besoin de deux dimensions, comme un tableau de données ou une carte.",
+          "failWhen": "Lire ou utiliser la page à cette largeur exige de défiler horizontalement, et ce qui est atteint ainsi n’est pas un contenu qui a besoin de deux dimensions, ce qui ne respecte pas WCAG 1.4.10."
+        },
+        "ja": {
+          "steps": [
+            "ブラウザーのウィンドウを、開発者ツールのデバイスツールバーなどで幅320 CSSピクセルにします。",
+            "ページを横にスクロールし、ページをウィンドウより広くしているもの（マージン、生成コンテンツ、スキャンが内部を読めないコンポーネントなど）を見つけます。",
+            "横スクロールでしか表示されないものを読んだり操作したりする必要があるか、またデータテーブルや地図のように2次元を必要とするかを判断します。"
+          ],
+          "passWhen": "横スクロールで表示されるのは、読んだり操作したりする必要のないものか、データテーブルや地図のように2次元を必要とするコンテンツだけです。",
+          "failWhen": "この幅でページを読む、または操作するのに横スクロールが必要で、それによって表示されるものが2次元を必要とするコンテンツではないため、WCAG 1.4.10を満たしません。"
+        }
+      }
+    },
+    {
+      "code": "WIDE_TABLE",
+      "text": {
+        "de": {
+          "steps": [
+            "Stellen Sie das Browserfenster auf 320 CSS-Pixel Breite, etwa mit der Gerätesymbolleiste der Entwicklertools, und suchen Sie das Element, das der Bericht nennt.",
+            "Prüfen Sie, ob es eine Datentabelle ist, deren Zeilen und Spalten ihre Zellen in Beziehung setzen, oder eine Tabelle, die nur die Seite gestaltet.",
+            "Prüfen Sie bei einer Datentabelle, dass die Tabelle für sich allein seitlich scrollt und der Rest der Seite nicht."
+          ],
+          "passWhen": "Es ist eine Datentabelle, und nur die Tabelle scrollt seitlich.",
+          "failWhen": "Es ist eine Tabelle für das Layout, oder die ganze Seite scrollt mit ihr seitlich, was WCAG 1.4.10 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "Make the browser window 320 CSS pixels wide, as in the developer tools' device toolbar, and find the element the report names.",
+            "Check whether it is a data table, whose rows and columns relate its cells, or a table used only to lay out the page.",
+            "For a data table, check that the table scrolls sideways on its own, and the rest of the page doesn't."
+          ],
+          "passWhen": "It is a data table, and only the table scrolls sideways.",
+          "failWhen": "It is a table used for layout, or the whole page scrolls sideways with it, which fails WCAG 1.4.10."
+        },
+        "es": {
+          "steps": [
+            "Pon la ventana del navegador a 320 píxeles CSS de ancho, como con la barra de dispositivos de las herramientas de desarrollo, y busca el elemento que indica el informe.",
+            "Comprueba si es una tabla de datos, cuyas filas y columnas relacionan sus celdas, o una tabla usada solo para maquetar la página.",
+            "Si es una tabla de datos, comprueba que la tabla se desplace hacia los lados por sí sola y que el resto de la página no lo haga."
+          ],
+          "passWhen": "Es una tabla de datos y solo la tabla se desplaza hacia los lados.",
+          "failWhen": "Es una tabla usada para maquetar, o toda la página se desplaza hacia los lados con ella, lo que incumple WCAG 1.4.10."
+        },
+        "fr": {
+          "steps": [
+            "Réglez la fenêtre du navigateur sur 320 pixels CSS de large, par exemple avec la barre d’appareils des outils de développement, et trouvez l’élément que le rapport nomme.",
+            "Vérifiez s’il s’agit d’un tableau de données, dont les lignes et les colonnes relient les cellules, ou d’un tableau servant seulement à mettre en page.",
+            "Pour un tableau de données, vérifiez que le tableau défile horizontalement à lui seul, et pas le reste de la page."
+          ],
+          "passWhen": "C’est un tableau de données, et seul le tableau défile horizontalement.",
+          "failWhen": "C’est un tableau de mise en page, ou toute la page défile horizontalement avec lui, ce qui ne respecte pas WCAG 1.4.10."
+        },
+        "ja": {
+          "steps": [
+            "ブラウザーのウィンドウを、開発者ツールのデバイスツールバーなどで幅320 CSSピクセルにし、レポートが示す要素を見つけます。",
+            "行と列でセルを関連付けるデータ表か、ページのレイアウトだけに使う表かを確認します。",
+            "データ表の場合は、表がそれ自体で横にスクロールし、ページの他の部分は横にスクロールしないことを確認します。"
+          ],
+          "passWhen": "データ表であり、表だけが横にスクロールする。",
+          "failWhen": "レイアウト用の表であるか、ページ全体が表と一緒に横にスクロールしており、WCAG 1.4.10を満たしていない。"
+        }
+      }
+    },
+    {
+      "code": "WIDE_MEDIA",
+      "text": {
+        "de": {
+          "steps": [
+            "Stellen Sie das Browserfenster auf 320 CSS-Pixel Breite, etwa mit der Gerätesymbolleiste der Entwicklertools, und suchen Sie das Element, das der Bericht nennt.",
+            "Prüfen Sie, ob es seine Größe braucht, um bedient oder verstanden zu werden, wie es bei einer Karte, einem Diagramm oder einem Spiel sein kann. Ein Foto oder ein Video lässt sich kleiner zeigen.",
+            "Wenn es seine Größe braucht, prüfen Sie, dass nur es seitlich scrollt und der Rest der Seite nicht."
+          ],
+          "passWhen": "Es braucht seine Größe, und nur es scrollt seitlich.",
+          "failWhen": "Es ließe sich kleiner zeigen, oder die ganze Seite scrollt mit ihm seitlich, was WCAG 1.4.10 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "Make the browser window 320 CSS pixels wide, as in the developer tools' device toolbar, and find the element the report names.",
+            "Check whether it needs its size to be used or understood, as a map, a diagram or a game may. A photo or a video can be shown smaller.",
+            "If it needs its size, check that only it scrolls sideways, and the rest of the page doesn't."
+          ],
+          "passWhen": "It needs its size and only it scrolls sideways.",
+          "failWhen": "It could be shown smaller, or the whole page scrolls sideways with it, which fails WCAG 1.4.10."
+        },
+        "es": {
+          "steps": [
+            "Pon la ventana del navegador a 320 píxeles CSS de ancho, como con la barra de dispositivos de las herramientas de desarrollo, y busca el elemento que indica el informe.",
+            "Comprueba si necesita su tamaño para usarse o entenderse, como puede pasar con un mapa, un diagrama o un juego. Una foto o un vídeo pueden mostrarse más pequeños.",
+            "Si necesita su tamaño, comprueba que solo él se desplace hacia los lados y que el resto de la página no lo haga."
+          ],
+          "passWhen": "Necesita su tamaño y solo él se desplaza hacia los lados.",
+          "failWhen": "Podría mostrarse más pequeño, o toda la página se desplaza hacia los lados con él, lo que incumple WCAG 1.4.10."
+        },
+        "fr": {
+          "steps": [
+            "Réglez la fenêtre du navigateur sur 320 pixels CSS de large, par exemple avec la barre d’appareils des outils de développement, et trouvez l’élément que le rapport nomme.",
+            "Vérifiez s’il a besoin de sa taille pour être utilisé ou compris, comme peut l’avoir une carte, un diagramme ou un jeu. Une photo ou une vidéo peut être affichée plus petite.",
+            "S’il a besoin de sa taille, vérifiez que lui seul défile horizontalement, et pas le reste de la page."
+          ],
+          "passWhen": "Il a besoin de sa taille et lui seul défile horizontalement.",
+          "failWhen": "Il pourrait être affiché plus petit, ou toute la page défile horizontalement avec lui, ce qui ne respecte pas WCAG 1.4.10."
+        },
+        "ja": {
+          "steps": [
+            "ブラウザーのウィンドウを、開発者ツールのデバイスツールバーなどで幅320 CSSピクセルにし、レポートが示す要素を見つけます。",
+            "地図、図、ゲームのように、使用や理解にその大きさが必要かを確認します。写真や動画は小さく表示できます。",
+            "大きさが必要な場合は、それだけが横にスクロールし、ページの他の部分は横にスクロールしないことを確認します。"
+          ],
+          "passWhen": "大きさが必要であり、それだけが横にスクロールする。",
+          "failWhen": "小さく表示できるか、ページ全体が一緒に横にスクロールしており、WCAG 1.4.10を満たしていない。"
+        }
+      }
+    },
+    {
+      "code": "WIDE_PREFORMATTED",
+      "text": {
+        "de": {
+          "steps": [
+            "Stellen Sie das Browserfenster auf 320 CSS-Pixel Breite, etwa mit der Gerätesymbolleiste der Entwicklertools, und suchen Sie das Element, das der Bericht nennt.",
+            "Lesen Sie ihn und entscheiden Sie, ob seine Zeilen bleiben müssen, wie sie sind, um verstanden zu werden, wie bei Code oder einem Gedicht, dessen Anordnung Bedeutung trägt.",
+            "Wenn sie das müssen, prüfen Sie, dass nur dieser Block seitlich scrollt und der Rest der Seite nicht."
+          ],
+          "passWhen": "Seine Zeilen müssen bleiben, wie sie sind, und nur dieser Block scrollt seitlich.",
+          "failWhen": "Seine Zeilen könnten umbrechen, oder die ganze Seite scrollt mit ihm seitlich, was WCAG 1.4.10 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "Make the browser window 320 CSS pixels wide, as in the developer tools' device toolbar, and find the element the report names.",
+            "Read it and decide whether its lines must stay as they are to be understood, as for code or a poem whose layout carries meaning.",
+            "If they must, check that only this block scrolls sideways, and the rest of the page doesn't."
+          ],
+          "passWhen": "Its lines must stay as they are and only this block scrolls sideways.",
+          "failWhen": "Its lines could wrap, or the whole page scrolls sideways with it, which fails WCAG 1.4.10."
+        },
+        "es": {
+          "steps": [
+            "Pon la ventana del navegador a 320 píxeles CSS de ancho, como con la barra de dispositivos de las herramientas de desarrollo, y busca el elemento que indica el informe.",
+            "Léelo y decide si sus líneas deben quedar como están para entenderse, como en el código o en un poema cuya disposición tiene sentido.",
+            "Si deben quedar así, comprueba que solo este bloque se desplace hacia los lados y que el resto de la página no lo haga."
+          ],
+          "passWhen": "Sus líneas deben quedar como están y solo este bloque se desplaza hacia los lados.",
+          "failWhen": "Sus líneas podrían partirse, o toda la página se desplaza hacia los lados con él, lo que incumple WCAG 1.4.10."
+        },
+        "fr": {
+          "steps": [
+            "Réglez la fenêtre du navigateur sur 320 pixels CSS de large, par exemple avec la barre d’appareils des outils de développement, et trouvez l’élément que le rapport nomme.",
+            "Lisez-le et décidez si ses lignes doivent rester telles quelles pour être comprises, comme pour du code ou un poème dont la disposition a un sens.",
+            "Si c’est le cas, vérifiez que seul ce bloc défile horizontalement, et pas le reste de la page."
+          ],
+          "passWhen": "Ses lignes doivent rester telles quelles et seul ce bloc défile horizontalement.",
+          "failWhen": "Ses lignes pourraient passer à la ligne, ou toute la page défile horizontalement avec lui, ce qui ne respecte pas WCAG 1.4.10."
+        },
+        "ja": {
+          "steps": [
+            "ブラウザーのウィンドウを、開発者ツールのデバイスツールバーなどで幅320 CSSピクセルにし、レポートが示す要素を見つけます。",
+            "読んで、コードや配置に意味がある詩のように、理解するために行をそのまま保つ必要があるかを判断します。",
+            "必要な場合は、このブロックだけが横にスクロールし、ページの他の部分は横にスクロールしないことを確認します。"
+          ],
+          "passWhen": "行をそのまま保つ必要があり、このブロックだけが横にスクロールする。",
+          "failWhen": "行を折り返せるか、ページ全体が一緒に横にスクロールしており、WCAG 1.4.10を満たしていない。"
+        }
+      }
+    },
+    {
+      "code": "CLIPPED_BY_CONTAINER",
+      "text": {
+        "de": {
+          "steps": [
+            "Stellen Sie das Browserfenster auf 320 CSS-Pixel Breite, etwa mit der Gerätesymbolleiste der Entwicklertools, und suchen Sie das Element, das der Bericht nennt.",
+            "Sehen Sie sich den Teil an, der über den Rand des Kastens um das Element hinausragt (eine Karte, ein Panel oder ein Wrapper, der Überlauf verbirgt): Dieser Teil ist verborgen, und der Kasten scrollt nicht.",
+            "Prüfen Sie, ob dieser Teil auf andere Weise erreichbar ist, etwa über die Weiter-Schaltfläche eines Karussells oder die Pfeile einer Tab-Leiste, mit der Tastatur ebenso wie mit einem Zeiger. Eine Datentabelle in einem Kasten, der Überlauf verbirgt, ist abgeschnitten, nicht scrollbar."
+          ],
+          "passWhen": "Alles darin ist auf andere Weise erreichbar, nichts wird abgeschnitten, oder es wird auch in einem breiten Fenster genauso abgeschnitten: Dann ist das Problem keines des Umfließens.",
+          "failWhen": "Ein Teil ist durch einen Kasten um das Element abgeschnitten und nicht erreichbar, was WCAG 1.4.10 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "Make the browser window 320 CSS pixels wide, as in the developer tools' device toolbar, and find the element the report names.",
+            "Look at the part of it that sticks out past the edge of the box around it (a card, panel or wrapper that hides overflow): that part is hidden, and the box doesn't scroll.",
+            "Check whether that part can be reached another way, such as a carousel's next button or a tab's arrows, with the keyboard as well as a pointer. A data table in a box that hides overflow is cut off, not scrollable."
+          ],
+          "passWhen": "Everything in it can be reached another way, none of it is cut off, or it is cut off the same way in a wide window too: then the problem is not one of reflow.",
+          "failWhen": "Part of it is cut off by a box around it and can't be reached, which fails WCAG 1.4.10."
+        },
+        "es": {
+          "steps": [
+            "Pon la ventana del navegador a 320 píxeles CSS de ancho, como con la barra de dispositivos de las herramientas de desarrollo, y busca el elemento que indica el informe.",
+            "Mira la parte que sobresale del borde de la caja que lo rodea (una tarjeta, un panel o un contenedor que oculta el desbordamiento): esa parte está oculta y la caja no se desplaza.",
+            "Comprueba si esa parte se puede alcanzar de otra forma, como con el botón «siguiente» de un carrusel o las flechas de unas pestañas, tanto con el teclado como con un puntero. Una tabla de datos en una caja que oculta el desbordamiento queda cortada, no desplazable."
+          ],
+          "passWhen": "Todo se puede alcanzar de otra forma, no se corta nada, o se corta igual también con una ventana ancha: entonces el problema no es de reajuste.",
+          "failWhen": "Una parte queda cortada por una caja que la rodea y no se puede alcanzar, lo que incumple WCAG 1.4.10."
+        },
+        "fr": {
+          "steps": [
+            "Réglez la fenêtre du navigateur sur 320 pixels CSS de large, par exemple avec la barre d’appareils des outils de développement, et trouvez l’élément que le rapport nomme.",
+            "Regardez la partie qui dépasse du bord de la boîte qui l’entoure (une carte, un panneau ou un conteneur qui masque le débordement) : cette partie est masquée, et la boîte ne défile pas.",
+            "Vérifiez si cette partie peut être atteinte autrement, par exemple avec le bouton suivant d’un carrousel ou les flèches d’un jeu d’onglets, au clavier comme avec un pointeur. Un tableau de données dans une boîte qui masque le débordement est coupé, non défilable."
+          ],
+          "passWhen": "Tout peut être atteint autrement, rien n’est coupé, ou c’est coupé de la même façon dans une fenêtre large aussi : le problème n’est alors pas de redistribution.",
+          "failWhen": "Une partie est coupée par une boîte qui l’entoure et ne peut pas être atteinte, ce qui ne respecte pas WCAG 1.4.10."
+        },
+        "ja": {
+          "steps": [
+            "ブラウザーのウィンドウを、開発者ツールのデバイスツールバーなどで幅320 CSSピクセルにし、レポートが示す要素を見つけます。",
+            "要素を囲むボックス（はみ出しを隠すカード、パネル、ラッパーなど）の端からはみ出している部分を見ます。その部分は隠れており、ボックスはスクロールしません。",
+            "その部分に、カルーセルの次へボタンやタブの矢印など、別の方法でキーボードでもポインターでも到達できるかを確認します。はみ出しを隠すボックス内のデータテーブルは、スクロールできず切れています。"
+          ],
+          "passWhen": "すべてに別の方法で到達できるか、何も切れていないか、広いウィンドウでも同じように切れている（その場合はリフローの問題ではない）。",
+          "failWhen": "一部が囲むボックスに切られていて到達できず、WCAG 1.4.10を満たしていない。"
+        }
+      }
+    },
+    {
+      "code": "SCROLLS_IN_CONTAINER",
+      "text": {
+        "de": {
+          "steps": [
+            "Stellen Sie das Browserfenster auf 320 CSS-Pixel Breite, etwa mit der Gerätesymbolleiste der Entwicklertools, und suchen Sie das Element, das der Bericht nennt.",
+            "Sehen Sie sich den Kasten um es an (einen Dialog, ein Panel oder eine Karte, die scrollt): Scrollen Sie ihn seitlich und prüfen Sie, was nur so erreichbar ist.",
+            "Entscheiden Sie, ob dieser Inhalt sein Layout braucht, um verstanden zu werden, wie eine Datentabelle, Code oder eine Karte. Felder, Text und Menüs brauchen es nicht: Sie müssen in die Breite passen."
+          ],
+          "passWhen": "Es ist eine Datentabelle, Code oder eine Karte, die ihr Layout braucht, oder der Rest ist ohne seitliches Scrollen auf andere Weise erreichbar.",
+          "failWhen": "Der Inhalt braucht seitliches Scrollen in seinem Kasten und ist keine Tabelle, kein Code und keine Karte, die ihr Layout braucht, was WCAG 1.4.10 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "Make the browser window 320 CSS pixels wide, as in the developer tools' device toolbar, and find the element the report names.",
+            "Look at the box around it (a dialog, panel or card that scrolls): scroll it sideways and see what is only reached that way.",
+            "Decide whether that content needs its layout to be understood, as a data table, code or a map does. Fields, text and menus do not: they have to fit the width."
+          ],
+          "passWhen": "It is a data table, code or a map that needs its layout, or the rest can be reached another way without scrolling sideways.",
+          "failWhen": "The content needs sideways scrolling inside its box, and it is not a table, code or a map that needs its layout, which fails WCAG 1.4.10."
+        },
+        "es": {
+          "steps": [
+            "Pon la ventana del navegador a 320 píxeles CSS de ancho, como con la barra de dispositivos de las herramientas de desarrollo, y busca el elemento que indica el informe.",
+            "Mira la caja que lo rodea (un diálogo, un panel o una tarjeta con desplazamiento): desplázala de lado y comprueba qué solo se alcanza así.",
+            "Decide si ese contenido necesita su disposición para entenderse, como una tabla de datos, código o un mapa. Los campos, el texto y los menús no: tienen que caber en el ancho."
+          ],
+          "passWhen": "Es una tabla de datos, código o un mapa que necesita su disposición, o el resto se puede alcanzar de otra forma sin desplazarse de lado.",
+          "failWhen": "El contenido necesita desplazamiento lateral dentro de su caja y no es una tabla, código ni un mapa que necesite su disposición, lo que incumple WCAG 1.4.10."
+        },
+        "fr": {
+          "steps": [
+            "Réglez la fenêtre du navigateur sur 320 pixels CSS de large, par exemple avec la barre d’appareils des outils de développement, et trouvez l’élément que le rapport nomme.",
+            "Regardez la boîte qui l’entoure (une boîte de dialogue, un panneau ou une carte qui défile) : faites-la défiler latéralement et voyez ce qui n’est atteint que de cette façon.",
+            "Décidez si ce contenu a besoin de sa mise en page pour être compris, comme un tableau de données, du code ou une carte. Les champs, le texte et les menus n’en ont pas besoin : ils doivent tenir dans la largeur."
+          ],
+          "passWhen": "C’est un tableau de données, du code ou une carte qui a besoin de sa mise en page, ou le reste peut être atteint autrement sans défiler latéralement.",
+          "failWhen": "Le contenu demande un défilement latéral dans sa boîte et n’est ni un tableau, ni du code, ni une carte qui a besoin de sa mise en page, ce qui ne respecte pas WCAG 1.4.10."
+        },
+        "ja": {
+          "steps": [
+            "ブラウザーのウィンドウを、開発者ツールのデバイスツールバーなどで幅320 CSSピクセルにし、レポートが示す要素を見つけます。",
+            "それを囲むボックス（スクロールするダイアログ、パネル、カードなど）を確認します。横にスクロールして、その方法でしか届かない部分を見ます。",
+            "その内容が、データテーブル、コード、地図のようにレイアウトを必要とするかを判断します。フィールド、テキスト、メニューは必要とせず、幅に収まる必要があります。"
+          ],
+          "passWhen": "レイアウトが必要なデータテーブル、コード、地図であるか、横スクロールなしで別の方法で残りに到達できる。",
+          "failWhen": "内容が自身のボックス内で横スクロールを必要とし、レイアウトが必要な表、コード、地図でもなく、WCAG 1.4.10を満たしていない。"
+        }
+      }
+    },
+    {
+      "code": "CLIPPED_AT_VIEWPORT_EDGE",
+      "text": {
+        "de": {
+          "steps": [
+            "Stellen Sie das Browserfenster auf 320 CSS-Pixel Breite, etwa mit der Gerätesymbolleiste der Entwicklertools, und suchen Sie das Element, das der Bericht nennt.",
+            "Sehen Sie sich den Teil jenseits des Fensterrands an: Die Seite scrollt nicht dorthin.",
+            "Prüfen Sie, ob dieser Teil auf andere Weise erreichbar ist, etwa über die Weiter-Schaltfläche eines Karussells oder den Schalter eines Menüs, mit der Tastatur ebenso wie mit einem Zeiger."
+          ],
+          "passWhen": "Alles darin ist auf andere Weise erreichbar, nichts wird abgeschnitten, oder es wird auch in einem breiten Fenster genauso abgeschnitten: Dann ist das Problem keines des Umfließens.",
+          "failWhen": "Ein Teil ist abgeschnitten und nicht erreichbar, was WCAG 1.4.10 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "Make the browser window 320 CSS pixels wide, as in the developer tools' device toolbar, and find the element the report names.",
+            "Look at the part of it past the edge of the window: the page doesn't scroll there.",
+            "Check whether that part can be reached another way, such as a carousel's next button or a menu's toggle, with the keyboard as well as a pointer."
+          ],
+          "passWhen": "Everything in it can be reached another way, none of it is cut off, or it is cut off the same way in a wide window too: then the problem is not one of reflow.",
+          "failWhen": "Part of it is cut off and can't be reached, which fails WCAG 1.4.10."
+        },
+        "es": {
+          "steps": [
+            "Pon la ventana del navegador a 320 píxeles CSS de ancho, como con la barra de dispositivos de las herramientas de desarrollo, y busca el elemento que indica el informe.",
+            "Mira la parte que queda más allá del borde de la ventana: la página no se desplaza hasta ahí.",
+            "Comprueba si esa parte se puede alcanzar de otra forma, como con el botón «siguiente» de un carrusel o el botón que abre un menú, tanto con el teclado como con un puntero."
+          ],
+          "passWhen": "Todo se puede alcanzar de otra forma, no se corta nada, o se corta igual también con una ventana ancha: entonces el problema no es de reajuste.",
+          "failWhen": "Una parte queda cortada y no se puede alcanzar, lo que incumple WCAG 1.4.10."
+        },
+        "fr": {
+          "steps": [
+            "Réglez la fenêtre du navigateur sur 320 pixels CSS de large, par exemple avec la barre d’appareils des outils de développement, et trouvez l’élément que le rapport nomme.",
+            "Regardez la partie située au-delà du bord de la fenêtre : la page ne défile pas jusque-là.",
+            "Vérifiez si cette partie peut être atteinte autrement, par exemple avec le bouton suivant d’un carrousel ou le bouton qui ouvre un menu, au clavier comme avec un pointeur."
+          ],
+          "passWhen": "Tout peut être atteint autrement, rien n’est coupé, ou c’est coupé de la même façon dans une fenêtre large aussi : le problème n’est alors pas de redistribution.",
+          "failWhen": "Une partie est coupée et ne peut pas être atteinte, ce qui ne respecte pas WCAG 1.4.10."
+        },
+        "ja": {
+          "steps": [
+            "ブラウザーのウィンドウを、開発者ツールのデバイスツールバーなどで幅320 CSSピクセルにし、レポートが示す要素を見つけます。",
+            "ウィンドウの端より先にある部分を見ます。ページはそこまでスクロールしません。",
+            "その部分に、カルーセルの次へボタンやメニューの開閉ボタンなど、別の方法でキーボードでもポインターでも到達できるかを確認します。"
+          ],
+          "passWhen": "すべてに別の方法で到達できるか、何も切れていないか、広いウィンドウでも同じように切れている（その場合はリフローの問題ではない）。",
+          "failWhen": "一部が切れていて到達できず、WCAG 1.4.10を満たしていない。"
+        }
+      }
+    }
+  ],
   "region": [
     {
       "code": "CONTENT_OUTSIDE_LANDMARK",
@@ -12312,6 +13173,108 @@
           ],
           "passWhen": "コンテンツはランドマークの中にあるか、ランドマークを必要としないもの（スキップリンクやダイアログなど）です。",
           "failWhen": "実際のページのコンテンツがすべてのランドマークの外にあるため、ランドマークで移動する人が見落とす可能性があります（ベストプラクティス、ARIA11）。"
+        }
+      }
+    }
+  ],
+  "resize-text-content-loss": [
+    {
+      "code": "TEXT_CLIPPED_AT_640",
+      "text": {
+        "de": {
+          "steps": [
+            "Vergrößern Sie ein 1280 CSS-Pixel breites Browserfenster auf 200 %, oder stellen Sie das Fenster in der Gerätesymbolleiste der Entwicklertools auf 640 CSS-Pixel Breite, und suchen Sie das Element, das der Bericht nennt.",
+            "Prüfen Sie, ob sein ganzer Text zu sehen ist: Nichts davon ist an einem Rand des Kastens abgeschnitten oder unter ihm verborgen, ohne dass man zum Rest scrollen kann.",
+            "Ist ein Teil verborgen, suchen Sie einen anderen Weg, den vollständigen Text zu lesen, der mit der Tastatur funktioniert, etwa eine Schaltfläche, die den Kasten öffnet, oder denselben Text an anderer Stelle der Seite."
+          ],
+          "passWhen": "Bei 200 % ist der ganze Text zu sehen, oder der vollständige Text lässt sich auf einem anderen Weg lesen, der mit der Tastatur funktioniert.",
+          "failWhen": "Bei 200 % ist ein Teil des Textes abgeschnitten und lässt sich auf keinem anderen Weg lesen, was WCAG 1.4.4 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "Zoom a browser window 1280 CSS pixels wide to 200%, or make the window 640 CSS pixels wide in the developer tools' device toolbar, and find the element the report names.",
+            "Check whether all of its text shows: none of it is cut at an edge of the box or hidden below it, with no way to scroll to the rest.",
+            "If part of it is hidden, look for another way to read the full text that works with the keyboard, such as a button that opens the box, or the same text elsewhere on the page."
+          ],
+          "passWhen": "At 200% the whole text shows, or the full text can be read another way that works with the keyboard.",
+          "failWhen": "At 200% part of the text is cut off and can't be read any other way, which fails WCAG 1.4.4."
+        },
+        "es": {
+          "steps": [
+            "Ampliar al 200 % una ventana del navegador de 1280 píxeles CSS de ancho, o dejar la ventana en 640 píxeles CSS de ancho con la barra de dispositivos de las herramientas de desarrollo, y localizar el elemento que indica el informe.",
+            "Comprobar si se ve todo su texto: que nada quede cortado en un borde de la caja ni oculto debajo de ella, sin forma de desplazarse hasta el resto.",
+            "Si una parte queda oculta, buscar otra forma de leer el texto completo que funcione con el teclado, como un botón que abre la caja o el mismo texto en otro lugar de la página."
+          ],
+          "passWhen": "Al 200 % se ve todo el texto, o el texto completo puede leerse de otra forma que funciona con el teclado.",
+          "failWhen": "Al 200 % parte del texto queda recortada y no puede leerse de ninguna otra forma, lo que incumple WCAG 1.4.4."
+        },
+        "fr": {
+          "steps": [
+            "Zoomez à 200 % une fenêtre de navigateur de 1280 pixels CSS de large, ou réglez la fenêtre sur 640 pixels CSS de large dans la barre d’appareils des outils de développement, et trouvez l’élément que nomme le rapport.",
+            "Vérifiez que tout son texte s’affiche : rien n’est coupé à un bord de la boîte ni caché en dessous, sans moyen de faire défiler jusqu’au reste.",
+            "Si une partie est masquée, cherchez un autre moyen de lire le texte complet utilisable au clavier, comme un bouton qui ouvre la boîte, ou le même texte ailleurs sur la page."
+          ],
+          "passWhen": "À 200 % tout le texte s’affiche, ou le texte complet peut être lu d’une autre façon utilisable au clavier.",
+          "failWhen": "À 200 % une partie du texte est rognée et ne peut être lue d’aucune autre façon, ce qui ne satisfait pas WCAG 1.4.4."
+        },
+        "ja": {
+          "steps": [
+            "幅1280 CSSピクセルのブラウザーウィンドウを200%にズームするか、開発者ツールのデバイスツールバーでウィンドウの幅を640 CSSピクセルにし、レポートが示す要素を見つけます。",
+            "そのテキストがすべて表示されているかを確認します。ボックスの端で切れている部分や、ボックスの下に隠れていて残りまでスクロールできない部分がないかを見ます。",
+            "一部が隠れている場合は、ボックスを開くボタンや、ページ内の別の場所にある同じテキストなど、キーボードで使える別の方法で全文を読めるかを探します。"
+          ],
+          "passWhen": "200%でテキスト全体が表示されているか、キーボードで使える別の方法で全文を読めます。",
+          "failWhen": "200%でテキストの一部が切り取られ、ほかのどの方法でも読めません。これはWCAG 1.4.4を満たしていません。"
+        }
+      }
+    },
+    {
+      "code": "TEXT_TRUNCATED_AT_640",
+      "text": {
+        "de": {
+          "steps": [
+            "Vergrößern Sie ein 1280 CSS-Pixel breites Browserfenster auf 200 %, oder stellen Sie das Fenster in der Gerätesymbolleiste der Entwicklertools auf 640 CSS-Pixel Breite, und suchen Sie das Element, das der Bericht nennt.",
+            "Prüfen Sie, ob der Text mit Auslassungspunkten (…) endet oder nach einer festen Zahl von Zeilen aufhört, sodass ein Teil davon nicht angezeigt wird.",
+            "Ist er gekürzt, suchen Sie einen anderen Weg, den vollständigen Text zu lesen, der mit der Tastatur funktioniert, etwa einen Link „Weiterlesen“ oder denselben Text auf der Seite, zu der er führt. Ein Tooltip, der nur beim Überfahren mit der Maus erscheint, zählt nicht."
+          ],
+          "passWhen": "Bei 200 % ist der ganze Text zu sehen, oder der vollständige Text lässt sich auf einem anderen Weg lesen, der mit der Tastatur funktioniert.",
+          "failWhen": "Bei 200 % ist der Text gekürzt, und der vollständige Text lässt sich auf keinem anderen Weg lesen, was WCAG 1.4.4 nicht erfüllt."
+        },
+        "en": {
+          "steps": [
+            "Zoom a browser window 1280 CSS pixels wide to 200%, or make the window 640 CSS pixels wide in the developer tools' device toolbar, and find the element the report names.",
+            "Check whether the text ends in an ellipsis (…) or stops after a set number of lines, so that part of it isn't shown.",
+            "If it is shortened, look for another way to read the full text that works with the keyboard, such as a \"read more\" link or the same text on the page it leads to. A tooltip shown only on mouse hover doesn't count."
+          ],
+          "passWhen": "At 200% the whole text shows, or the full text can be read another way that works with the keyboard.",
+          "failWhen": "At 200% the text is shortened and the full text can't be read any other way, which fails WCAG 1.4.4."
+        },
+        "es": {
+          "steps": [
+            "Ampliar al 200 % una ventana del navegador de 1280 píxeles CSS de ancho, o dejar la ventana en 640 píxeles CSS de ancho con la barra de dispositivos de las herramientas de desarrollo, y localizar el elemento que indica el informe.",
+            "Comprobar si el texto termina en puntos suspensivos (…) o se detiene tras un número fijo de líneas, de modo que parte de él no se muestra.",
+            "Si está acortado, buscar otra forma de leer el texto completo que funcione con el teclado, como un enlace «leer más» o el mismo texto en la página a la que lleva. Un texto emergente que solo aparece al pasar el ratón no cuenta."
+          ],
+          "passWhen": "Al 200 % se ve todo el texto, o el texto completo puede leerse de otra forma que funciona con el teclado.",
+          "failWhen": "Al 200 % el texto queda acortado y el texto completo no puede leerse de ninguna otra forma, lo que incumple WCAG 1.4.4."
+        },
+        "fr": {
+          "steps": [
+            "Zoomez à 200 % une fenêtre de navigateur de 1280 pixels CSS de large, ou réglez la fenêtre sur 640 pixels CSS de large dans la barre d’appareils des outils de développement, et trouvez l’élément que nomme le rapport.",
+            "Vérifiez si le texte se termine par des points de suspension (…) ou s’arrête après un nombre fixe de lignes, de sorte qu’une partie n’est pas affichée.",
+            "S’il est raccourci, cherchez un autre moyen de lire le texte complet utilisable au clavier, comme un lien « lire la suite » ou le même texte sur la page vers laquelle il mène. Une infobulle affichée seulement au survol de la souris ne compte pas."
+          ],
+          "passWhen": "À 200 % tout le texte s’affiche, ou le texte complet peut être lu d’une autre façon utilisable au clavier.",
+          "failWhen": "À 200 % le texte est raccourci et le texte complet ne peut être lu d’aucune autre façon, ce qui ne satisfait pas WCAG 1.4.4."
+        },
+        "ja": {
+          "steps": [
+            "幅1280 CSSピクセルのブラウザーウィンドウを200%にズームするか、開発者ツールのデバイスツールバーでウィンドウの幅を640 CSSピクセルにし、レポートが示す要素を見つけます。",
+            "テキストが省略記号（…）で終わっているか、決まった行数で途切れていて、一部が表示されていないかを確認します。",
+            "短くされている場合は、「続きを読む」リンクや、そのリンク先のページにある同じテキストなど、キーボードで使える別の方法で全文を読めるかを探します。マウスを重ねたときだけ表示されるツールチップは含めません。"
+          ],
+          "passWhen": "200%でテキスト全体が表示されているか、キーボードで使える別の方法で全文を読めます。",
+          "failWhen": "200%でテキストが短くされ、ほかのどの方法でも全文を読めません。これはWCAG 1.4.4を満たしていません。"
         }
       }
     }
@@ -12426,7 +13389,7 @@
       "text": {
         "de": {
           "steps": [
-            "Suchen Sie das im Bericht genannte Element und prüfen Sie bei den Größen, in denen die Seite genutzt wird, ob sein Inhalt überläuft (eine Bildlaufleiste erscheint oder Inhalt wird abgeschnitten).",
+            "Suchen Sie das im Bericht genannte Element und prüfen Sie bei den Größen, in denen die Seite genutzt wird, ob sein Inhalt überläuft (eine Bildlaufleiste erscheint oder Inhalt wird abgeschnitten). Lief die Prüfung ohne Layout (wie in jsdom), konnte der Bericht das nicht messen.",
             "Läuft er nicht über, ist die Prüfung bestanden.",
             "Läuft er über, klicken Sie direkt davor und drücken Sie Tab, bis der Fokus ihn erreicht.",
             "Drücken Sie bei fokussiertem Element die Pfeiltasten, Bild ab und die Leertaste und prüfen Sie, ob der Inhalt scrollt.",
@@ -12437,7 +13400,7 @@
         },
         "en": {
           "steps": [
-            "Find the element the report names and check, at the sizes the page is used at, whether its content overflows (a scrollbar appears or content is cut off).",
+            "Find the element the report names and check, at the sizes the page is used at, whether its content overflows (a scrollbar appears or content is cut off). Where the scan ran without a layout (as in jsdom), the report could not measure this.",
             "If it does not overflow, it passes.",
             "If it does, click just before it and press Tab until focus reaches it.",
             "With focus on it, press the arrow keys, Page Down and Space, and check that the content scrolls.",
@@ -12448,7 +13411,7 @@
         },
         "es": {
           "steps": [
-            "Localizar el elemento que indica el informe y comprobar, en los tamaños en que se usa la página, si su contenido desborda (aparece una barra de desplazamiento o el contenido queda cortado).",
+            "Localizar el elemento que indica el informe y comprobar, en los tamaños en que se usa la página, si su contenido desborda (aparece una barra de desplazamiento o el contenido queda cortado). Si la comprobación se hizo sin maquetación (como en jsdom), el informe no pudo medirlo.",
             "Si no desborda, cumple.",
             "Si desborda, hacer clic justo antes de él y pulsar Tab hasta que el foco llegue a él.",
             "Con el foco en él, pulsar las teclas de flecha, Av Pág y Espacio, y comprobar que el contenido se desplaza.",
@@ -12459,7 +13422,7 @@
         },
         "fr": {
           "steps": [
-            "Repérez l’élément indiqué par le rapport et vérifiez, aux tailles auxquelles la page est utilisée, si son contenu déborde (une barre de défilement apparaît ou du contenu est coupé).",
+            "Repérez l’élément indiqué par le rapport et vérifiez, aux tailles auxquelles la page est utilisée, si son contenu déborde (une barre de défilement apparaît ou du contenu est coupé). Si l’analyse s’est faite sans mise en page (comme dans jsdom), le rapport n’a pas pu le mesurer.",
             "S’il ne déborde pas, la vérification est réussie.",
             "S’il déborde, cliquez juste avant lui et appuyez sur Tab jusqu’à ce que le focus l’atteigne.",
             "Une fois le focus sur lui, appuyez sur les touches fléchées, Page suivante et Espace, et vérifiez que le contenu défile.",
@@ -12470,7 +13433,7 @@
         },
         "ja": {
           "steps": [
-            "レポートに示された要素を見つけ、ページが使われるサイズで、そのコンテンツがはみ出すか（スクロールバーが現れるか、コンテンツが切れるか）確認してください。",
+            "レポートに示された要素を見つけ、ページが使われるサイズで、そのコンテンツがはみ出すか（スクロールバーが現れるか、コンテンツが切れるか）確認してください。レイアウトなしで検査した場合（jsdomなど）、レポートはこれを測定できていません。",
             "はみ出さない場合は合格です。",
             "はみ出す場合は、そのすぐ手前をクリックし、フォーカスが届くまでTabキーを押してください。",
             "フォーカスがある状態で矢印キー、Page Downキー、Spaceを押し、コンテンツがスクロールすることを確認してください。",
@@ -13006,6 +13969,58 @@
       }
     }
   ],
+  "symbol-graphic-contrast": [
+    {
+      "code": "SYMBOLS_BELOW_GRAPHIC_THRESHOLD",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie die im Bericht genannten Symbole, etwa Bewertungssterne, und notieren Sie, was sie zeigen, etwa eine Bewertung oder einen Status.",
+            "Prüfen Sie, ob ein Text daneben, oder einer, der mit ihnen gelesen wird, dasselbe sagt, etwa „4 von 5“.",
+            "Messen Sie mit einem Kontrastprüfer die Farbe der Symbole gegen die Farbe direkt dahinter, in jedem Zustand, in dem sie gezeigt werden."
+          ],
+          "passWhen": "Die Symbole erreichen 3:1, oder sie schmücken nur, oder ein sichtbarer Text daneben gibt dieselbe Information.",
+          "failWhen": "Die Symbole tragen Informationen, die man braucht, und liegen unter 3:1 zu ihrem Hintergrund; das verstößt gegen WCAG 1.4.11."
+        },
+        "en": {
+          "steps": [
+            "Find the symbols the report names, such as rating stars, and note what they show, such as a rating or a status.",
+            "Check whether a text beside them, or read with them, says the same, such as “4 out of 5”.",
+            "Measure the symbols' colour against the colour right behind them with a contrast checker, in each state they are shown in."
+          ],
+          "passWhen": "The symbols reach 3:1, or they only decorate, or a visible text beside them gives the same information.",
+          "failWhen": "The symbols carry information a person needs and are under 3:1 against their background, which fails WCAG 1.4.11."
+        },
+        "es": {
+          "steps": [
+            "Localizar los símbolos que indica el informe, como estrellas de valoración, y anotar qué muestran, como una valoración o un estado.",
+            "Comprobar si un texto a su lado, o leído con ellos, dice lo mismo, como «4 de 5».",
+            "Medir con un comprobador de contraste el color de los símbolos frente al color que tienen justo detrás, en cada estado en que se muestran."
+          ],
+          "passWhen": "Los símbolos alcanzan 3:1, o solo decoran, o un texto visible a su lado da la misma información.",
+          "failWhen": "Los símbolos transmiten información necesaria y están por debajo de 3:1 con su fondo, lo que incumple WCAG 1.4.11."
+        },
+        "fr": {
+          "steps": [
+            "Repérez les symboles indiqués par le rapport, comme des étoiles de notation, et notez ce qu’ils montrent, comme une note ou un état.",
+            "Vérifiez si un texte à côté d’eux, ou lu avec eux, dit la même chose, comme « 4 sur 5 ».",
+            "Mesurez avec un vérificateur de contraste la couleur des symboles par rapport à la couleur juste derrière eux, dans chaque état où ils s’affichent."
+          ],
+          "passWhen": "Les symboles atteignent 3:1, ou ils ne font que décorer, ou un texte visible à côté donne la même information.",
+          "failWhen": "Les symboles portent une information nécessaire et sont sous 3:1 avec leur arrière-plan, ce qui ne respecte pas le critère WCAG 1.4.11."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された記号（評価の星など）を見つけ、評価や状態など、何を示しているかを控えてください。",
+            "横にあるテキストや一緒に読み上げられるテキストが、「5段階中4」のように同じことを伝えているか確認してください。",
+            "コントラストチェッカーで、記号の色とそのすぐ後ろの色を、表示される各状態で測ってください。"
+          ],
+          "passWhen": "記号が3:1に達しているか、装飾にすぎないか、横に見えるテキストが同じ情報を伝えています。",
+          "failWhen": "記号は必要な情報を伝えているのに背景に対して3:1を下回っており、WCAG 1.4.11を満たしません。"
+        }
+      }
+    }
+  ],
   "tab-name-present": [
     {
       "code": "name_closedContent",
@@ -13536,6 +14551,61 @@
           ],
           "passWhen": "リンクが文や段落の一部である、それぞれが24 × 24 CSSピクセル以上あるかもう一方から十分に離れている、またはサイズを満たすほかのコントロールがページ上で同じ機能を持っています。",
           "failWhen": "リンクが区切り文字だけで区切られた独立した並びで、一方が24 × 24 CSSピクセル未満かつもう一方に近く、直径24ピクセルの円どうしが重なり、サイズを満たして同じ機能を持つほかのコントロールもページ上にないため、WCAG 2.5.8を満たしません。"
+        }
+      }
+    },
+    {
+      "code": "undersized-pinned-over-page",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie das im Bericht genannte Ziel: Es steht in einem Kasten, der beim Scrollen der Seite an seinem Platz bleibt, etwa ein Nach-oben-Button oder eine haftende Kopfzeile.",
+            "Scrollen Sie die Seite langsam von oben nach unten und beobachten Sie die kleinen Ziele der Seite, die darunter oder daneben vorbeiziehen, etwa das im Bericht genannte.",
+            "Wo eines nahe kommt, untersuchen Sie beide im Boxmodell der Entwicklertools und prüfen Sie, ob ein auf das Ziel zentrierter Kreis mit 24 Pixeln Durchmesser das andere Ziel berühren würde, oder dessen Kreis, wenn es kleiner als 24 mal 24 CSS-Pixel ist.",
+            "Wenn ja, suchen Sie auf derselben Seite ein anderes Bedienelement, das dasselbe tut und diese Größe oder diesen Abstand einhält."
+          ],
+          "passWhen": "An jeder Scrollposition bleibt das Ziel weit genug von den Zielen der Seite entfernt, oder es ist mindestens 24 mal 24 CSS-Pixel groß, oder ein anderes Bedienelement der Seite, das die Größe einhält, tut dasselbe.",
+          "failWhen": "An mindestens einer Scrollposition ist das Ziel kleiner als 24 mal 24 CSS-Pixel und einem Ziel der Seite so nahe, dass ein darauf zentrierter Kreis mit 24 Pixeln Durchmesser dieses Ziel oder dessen Kreis erreicht, und kein anderes Bedienelement der Seite, das die Größe einhält, tut dasselbe; das verstößt gegen WCAG 2.5.8."
+        },
+        "en": {
+          "steps": [
+            "Find the target the report names: it is in a box that stays in place as the page scrolls, such as a back-to-top button or a sticky header.",
+            "Scroll the page slowly from top to bottom, and watch the small targets of the page that pass under or beside it, such as the one the report names.",
+            "Where one comes close, inspect both in the developer tools' box model and check whether a 24-pixel circle centred on the target would touch the other target, or the circle of the other where it is smaller than 24 by 24 CSS pixels.",
+            "If it would, look for another control on the same page that does the same thing and meets that size or spacing."
+          ],
+          "passWhen": "At every scroll position the target stays far enough from the page's targets, or it is at least 24 by 24 CSS pixels, or another control on the page that meets the size does the same thing.",
+          "failWhen": "At some scroll position, the target is smaller than 24 by 24 CSS pixels and so close to a target of the page that a 24-pixel circle centred on it reaches that target or its circle, and no control elsewhere on the page that meets the size does the same, which fails WCAG 2.5.8."
+        },
+        "es": {
+          "steps": [
+            "Buscar el objetivo que indica el informe: está en una caja que se queda en su sitio al desplazar la página, como un botón para volver arriba o una cabecera fija.",
+            "Desplazar la página despacio de arriba abajo y observar los objetivos pequeños de la página que pasan por debajo o al lado, como el que indica el informe.",
+            "Donde uno se acerque, inspeccionar ambos en el modelo de caja de las herramientas de desarrollo y comprobar si un círculo de 24 píxeles centrado en el objetivo tocaría el otro objetivo, o el círculo del otro si mide menos de 24 por 24 píxeles CSS.",
+            "Si es así, buscar en la misma página otro control que haga lo mismo y cumpla ese tamaño o esa separación."
+          ],
+          "passWhen": "En todas las posiciones de desplazamiento el objetivo queda lo bastante lejos de los objetivos de la página, o mide al menos 24 por 24 píxeles CSS, o hay otro control en la página que cumple el tamaño y hace lo mismo.",
+          "failWhen": "En alguna posición de desplazamiento, el objetivo mide menos de 24 por 24 píxeles CSS y está tan cerca de un objetivo de la página que un círculo de 24 píxeles centrado en él alcanza ese objetivo o su círculo, y ningún otro control de la página que cumpla el tamaño hace lo mismo, lo que incumple WCAG 2.5.8."
+        },
+        "fr": {
+          "steps": [
+            "Repérez la cible indiquée par le rapport : elle se trouve dans une boîte qui reste en place quand la page défile, comme un bouton de retour en haut ou un en-tête collant.",
+            "Faites défiler lentement la page de haut en bas et observez les petites cibles de la page qui passent dessous ou à côté, comme celle que nomme le rapport.",
+            "Là où l’une s’approche, inspectez les deux dans le modèle de boîte des outils de développement et vérifiez si un cercle de 24 pixels centré sur la cible toucherait l’autre cible, ou le cercle de l’autre si elle fait moins de 24 pixels CSS sur 24.",
+            "Si c’est le cas, cherchez dans la même page un autre contrôle qui fait la même chose et respecte cette taille ou cet espacement."
+          ],
+          "passWhen": "À toutes les positions de défilement, la cible reste assez loin des cibles de la page, ou elle fait au moins 24 pixels CSS sur 24, ou un autre contrôle de la page qui respecte la taille fait la même chose.",
+          "failWhen": "À une position de défilement au moins, la cible fait moins de 24 pixels CSS sur 24 et est si proche d’une cible de la page qu’un cercle de 24 pixels centré sur elle atteint cette cible ou son cercle, et aucun autre contrôle de la page qui respecte la taille ne fait la même chose, ce qui ne respecte pas le critère WCAG 2.5.8."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示されたターゲットを見つけてください。これは、トップへ戻るボタンや固定ヘッダーのように、ページをスクロールしても位置が変わらないボックスの中にあります。",
+            "ページを上から下までゆっくりスクロールし、レポートに示されたもののように、その下や横を通過するページの小さなターゲットを観察してください。",
+            "近づくものがあれば、開発者ツールのボックスモデルで両方を調べ、ターゲットを中心とする直径24ピクセルの円がもう一方のターゲットに接するか、もう一方が24 × 24 CSSピクセル未満ならその円に接するかを確認してください。",
+            "接する場合は、同じページに同じ機能を持ち、そのサイズまたは間隔を満たすほかのコントロールがあるかを探してください。"
+          ],
+          "passWhen": "どのスクロール位置でもターゲットがページのターゲットから十分に離れている、ターゲットが24 × 24 CSSピクセル以上ある、またはサイズを満たすほかのコントロールがページ上で同じ機能を持っています。",
+          "failWhen": "いずれかのスクロール位置で、ターゲットが24 × 24 CSSピクセル未満で、ターゲットを中心とする直径24ピクセルの円がページのターゲットまたはその円に届くほど近く、サイズを満たして同じ機能を持つほかのコントロールもページ上にないため、WCAG 2.5.8を満たしません。"
         }
       }
     },
@@ -14628,6 +15698,56 @@
     }
   ],
   "video-poster-text-alternative-present": [
+    {
+      "code": "TEXT_ALTERNATIVE_MISSING",
+      "text": {
+        "de": {
+          "steps": [
+            "Suchen Sie das im Bericht genannte Video und betrachten Sie sein Vorschaubild, bevor es abgespielt wird.",
+            "Prüfen Sie den zugänglichen Namen des Videos im Barrierefreiheitsbereich der Entwicklerwerkzeuge des Browsers und suchen Sie nach Text, der mit ihm verknüpft ist, etwa einer Überschrift oder Bildunterschrift, auf die sein aria-labelledby verweist.",
+            "Entscheiden Sie, ob jemand, der das Vorschaubild nicht sieht, erkennen kann, was das Video ist."
+          ],
+          "passWhen": "Etwas, das mit dem Video verknüpft ist, kennzeichnet es; mehr muss die Textalternative zeitbasierter Medien nicht leisten (beschreibende Kennzeichnung).",
+          "failWhen": "Nichts, was mit dem Video verknüpft ist, kennzeichnet es für jemanden, der sein Vorschaubild nicht sieht; es hat also keine Textalternative, was gegen WCAG 1.1.1 verstößt."
+        },
+        "en": {
+          "steps": [
+            "Find the video the report names and look at its poster image before it plays.",
+            "Check the video's accessible name in the browser's accessibility panel, and look for text tied to it, such as a heading or caption that its aria-labelledby points to.",
+            "Decide whether someone who cannot see the poster can tell what the video is."
+          ],
+          "passWhen": "Something tied to the video identifies it, which is all the text alternative of time-based media has to do (descriptive identification).",
+          "failWhen": "Nothing tied to the video identifies it to someone who cannot see its poster, so it has no text alternative, which fails WCAG 1.1.1."
+        },
+        "es": {
+          "steps": [
+            "Localizar el vídeo que indica el informe y observar su imagen de portada antes de que se reproduzca.",
+            "Comprobar el nombre accesible del vídeo en el panel de accesibilidad del navegador y buscar un texto ligado a él, como un encabezado o un pie al que apunte su aria-labelledby.",
+            "Decidir si alguien que no ve la imagen de portada puede saber qué vídeo es."
+          ],
+          "passWhen": "Algo ligado al vídeo lo identifica, que es todo lo que tiene que hacer la alternativa textual de un medio tempodependiente (identificación descriptiva).",
+          "failWhen": "Nada ligado al vídeo lo identifica para quien no ve su imagen de portada, así que no tiene alternativa textual, lo que incumple WCAG 1.1.1."
+        },
+        "fr": {
+          "steps": [
+            "Repérez la vidéo indiquée par le rapport et regardez son image d’affiche avant la lecture.",
+            "Vérifiez le nom accessible de la vidéo dans le panneau d’accessibilité du navigateur, et cherchez un texte qui lui est lié, comme un titre ou une légende que désigne son aria-labelledby.",
+            "Décidez si une personne qui ne voit pas l’affiche peut savoir de quelle vidéo il s’agit."
+          ],
+          "passWhen": "Quelque chose de lié à la vidéo l’identifie, ce qui est tout ce que doit faire l’équivalent textuel d’un média temporel (identification descriptive).",
+          "failWhen": "Rien de lié à la vidéo ne l’identifie pour une personne qui ne voit pas son affiche : elle n’a donc pas d’équivalent textuel, ce qui ne respecte pas le critère WCAG 1.1.1."
+        },
+        "ja": {
+          "steps": [
+            "レポートに示された動画を見つけ、再生前のポスター画像を確認してください。",
+            "ブラウザーのアクセシビリティパネルで動画のアクセシブルな名前を確認し、aria-labelledbyが指す見出しやキャプションなど、動画に関連付けられたテキストを探してください。",
+            "ポスターが見えない人が、何の動画かを判別できるか判断してください。"
+          ],
+          "passWhen": "動画に関連付けられたものが動画を識別しており、時間依存メディアのテキストによる代替に必要なのはそれだけです（説明的な識別）。",
+          "failWhen": "ポスターが見えない人に対して動画を識別するものが何も関連付けられておらず、テキストによる代替がないため、WCAG 1.1.1を満たしません。"
+        }
+      }
+    },
     {
       "code": "VIDEO_POSTER_FIGCAPTION_REVIEW",
       "text": {

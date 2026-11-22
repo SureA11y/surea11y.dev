@@ -21,6 +21,20 @@ export function HtmlReportContent() {
 
 			<h2>表示される内容</h2>
 			<ul>
+				<li id="incomplete-scan">
+					<strong>不完全なスキャン</strong>
+					：選択したすべてのルールが実行される前にスキャンの時間の予算が尽きた場合だけ（
+					<code>engine.incomplete</code>
+					。
+					<a href="/configuration/engine-options/#a-time-budget-timebudgetms">時間の予算</a>
+					を参照。core 1.18.0以降）、ほかのすべてより前に注記が表示され、予算と、実行されなかったルール（とプロファイル）を示し、レポートのどの部分もそれらを合格とはしていないことを伝えます。メタ情報バーはそれらの数を「未実行のルール」として示し、ブラウザーでのスキャンがスタイルシートの取得中に予算を使い切って読み込めなかったスタイルシートの数も示します。
+				</li>
+				<li>
+					<strong>上限付きのスキャン</strong>
+					（
+					<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule"><code>engineOptions.output.maxOccurrencesPerRule</code></a>
+					。core 1.18.0以降）：メタ情報バーの合計は省かれた検出箇所も数え、一覧にない数をチップで示します。ルールの最初のカードもそれらを数え、「ほかにN件（一覧には表示されません）」と示します。
+				</li>
 				<li>
 					<strong>ヒーロー</strong>
 					：「<span lang="en">N of M applicable checks passed</span>」のような平易な言葉の見出し1つと、判定結果（
@@ -51,7 +65,11 @@ export function HtmlReportContent() {
 					<code>http(s)</code>
 					のヘルプリンク（
 					<code>meta.helpUrl</code>
-					。カスタムルールのものも含む）を持つルールのカードには「<span lang="en">How to fix &lt;rule&gt;</span>」のリンクが付きます。ヘルプリンクのないルールは、検査するWCAG達成基準のUnderstanding文書にリンクします（「<span lang="en">Understanding 1.1.1 Non-text Content</span>」）。
+					。カスタムルールのものも含む）を持つルールのカードには「<span lang="en">How to fix &lt;rule&gt;</span>」のリンクが付きます。ヘルプリンクのないルールは、検査するWCAG達成基準のUnderstanding文書にリンクします（「<span lang="en">Understanding 1.1.1 Non-text Content</span>」）。coreの手順の辞書が達成基準の名前を翻訳している場合は、レポートの言語でその名前を示します（「1.1.1非テキストコンテンツの解説」）。以前のバージョン独自の名前（WCAG 2.1の「<span lang="en">Parsing</span>」）や、ブラウザー用の
+					<code>surea11y.report.js</code>
+					での名前は英語のままで、ほかの言語のレポートでは
+					<code>lang="en"</code>
+					が付きます。
 				</li>
 				<li>
 					<strong>フレーム</strong>
@@ -120,9 +138,13 @@ export function HtmlReportContent() {
 				レポートは320 CSS px幅でリフローし（WCAG 1.4.10）、ページが横にスクロールすることはありません。ウィンドウより幅の広い表は専用のボックスの中でスクロールします。このボックスは表の見出しで名前が付いた領域で、キーボードフォーカスを受け取るため、矢印キーでスクロールできます。
 			</p>
 			<p>
-				ヘッダーの下のメタ情報バーには、ルール数、検出箇所の数、エンジンのタグ、スキーマのバージョン、スキャンが対象としたWCAGのバージョン、使用した
+				ヘッダーの下のメタ情報バーには、ルール数、検出箇所の数、エンジンのタグ、スキーマのバージョン、スキャンがパックを実行した場合はそのパック（
+				<code>engine.packs</code>
+				。
+				<code>@surea11y/pack-en301549 1.5.0</code>
+				のように、それぞれの名前とバージョン）、スキャンが対象としたWCAGのバージョン、使用した
 				<code>engineOptions.profile</code>
-				（ある場合。複数のプロファイルでのスキャンでは、すべてのプロファイルを<code>+</code>でつないだものと、実行されなかったもの）とその横に、パックのプロファイルが法律を示す場合はプロファイルの評価の根拠となる法律（core 1.16.0、実験的）、
+				（ある場合。複数のプロファイルでのスキャンでは、すべてのプロファイルを<code>+</code>でつないだものと、実行されなかったもの）とその横に、パックのプロファイルが法律を示す場合はプロファイルの評価の根拠となる法律（core 1.16.0以降）、
 				<code>engineOptions.optInRules</code>
 				が追加したオプトインルールのタグ（追加した場合）、ページがレンダリングされた条件、スキャンで解決されたロケールが表示されます。条件とは、ビューポート（デバイスピクセル比が1でない場合はその値も）とカラースキーム、そしてWebフォントがまだ読み込み中だった場合はそのことです。jsdomでのスキャンのようにレイアウトがない場合は、代わりにそのことが表示されます。レイアウトに依存する検出結果はビューポートの幅によって出たり消えたりするため、レポートがどの幅を表しているかをチップで示します。ロケールのフォールバックは文字列単位で行われ、テキスト自体からは見分けがつきません。そのため、
 				<strong>エンジンが持っていない言語で要求したレポートは、ふつうの英語のレポートとして表示されます</strong>
@@ -192,6 +214,51 @@ export function HtmlReportContent() {
 				を参照）。ブラウザー（
 				<code>surea11y.report.js</code>
 				）では、結果がすでに持っている手順を表示します。パックを渡すと、「人による確認が残っているもの」も、スキャンがプロファイルを実行したパックの規格に従います。<code>options.manualChecks: false</code>にすると、このセクションを省きます。
+			</p>
+			<p>
+				コマンドラインや環境変数が書くような値（
+				<code>'false'</code>
+				、
+				<code>'0'</code>
+				、
+				<code>0</code>
+				、
+				<code>'true'</code>
+				、
+				<code>'1'</code>
+				、
+				<code>1</code>
+				）で
+				<code>manualChecks</code>
+				を指定すると、警告を出したうえでその値として読み、数値の
+				<code>title</code>
+				は警告を出したうえで文字列として書きます。読み取れない値（
+				<code>BigInt</code>
+				やオブジェクト）は
+				<code>TypeError</code>
+				を投げます。
+				<code>options.strictOptions: true</code>
+				のときは、
+				<code>true</code>
+				でも
+				<code>false</code>
+				でもない
+				<code>manualChecks</code>
+				や、文字列でない
+				<code>title</code>
+				も同じく
+				<code>TypeError</code>
+				を投げます。
+				<code>null</code>
+				のオプションは、オプションなしと同じです。レポートが読まないキーで、読むキーの書き間違いのように見えるもの（
+				<code>titel</code>
+				）は無視され、意図したオプションを示す
+				<code>console.warn</code>
+				が出ます。スキャンが
+				<code>engineOptions</code>
+				について警告するのと同じです（
+				<a href="/configuration/engine-options/#catching-mistakes-in-the-options-strictoptions">オプションの誤りを見つける</a>
+				を参照）。core 1.18.0以降です。
 			</p>
 
 			<h2>対象範囲</h2>

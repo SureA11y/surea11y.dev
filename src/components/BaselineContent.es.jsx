@@ -29,6 +29,21 @@ const baselineMoves = [
 	{ id: "p-as-heading", rules: ["p-as-heading"], from: ["BOLD_LARGE_PARAGRAPH", "BOLD_LARGE_DIV"], to: ["HEADING_LIKE_NUMBER", "HEADING_LIKE_LINK"] },
 ].map((row) => ({ ...row, rules: codes(row.rules), from: codes(row.from), to: codes(row.to) }));
 
+const baselineMoves118 = [
+	{
+		id: "marquee",
+		rules: <code>deprecated-elements-not-used</code>,
+		from: <code>MARQUEE_PAUSE_MECHANISM_UNKNOWN</code>,
+		to: <><code>MARQUEE_STOPS_ONLY_ON_HOVER</code> (un marquee que se detiene solo mientras el puntero está encima)</>,
+	},
+	{
+		id: "placeholder-title",
+		rules: <code>page-title-patterns</code>,
+		from: <code>titleReview</code>,
+		to: <><code>placeholderTitle</code> (un marcador de posición que quedó en el título, como <code>undefined</code> o <code>{"{{title}}"}</code>)</>,
+	},
+];
+
 export function BaselineContent() {
 	return (
 		<>
@@ -129,8 +144,27 @@ export function BaselineContent() {
 				<code>class="b a" src</code> donde la anterior escribió <code>src class="a b"</code>{" "}
 				coincide; los archivos de baseline escritos antes de esto siguen coincidiendo, porque la
 				comparación se hace en el momento de buscar coincidencias. El{" "}
-				<code>selector</code> sigue registrándose en el archivo de baseline, pero únicamente como
-				contexto para una persona que lea un diff; nunca se usa para la coincidencia.
+				Los nombres de clase se separan solo en espacios, tabuladores y saltos de línea, como los
+				separa HTML: <code>class="a&nbsp;b"</code>, con un espacio de no separación, es una sola
+				clase y no coincide con <code>class="a b"</code>. Una etiqueta de apertura que corta el
+				límite de longitud del fragmento se ordena hasta donde llega. El <code>selector</code>{" "}
+				sigue registrándose en el archivo de baseline, pero únicamente como contexto para una
+				persona que lea un diff; nunca se usa para la coincidencia de un hallazgo que tiene{" "}
+				<code>html</code>.
+			</p>
+			<p id="findings-without-markup">
+				Un hallazgo sin <code>html</code> (un análisis con <code>output.includeHtml: false</code>, o
+				una ocurrencia que una regla informa sin marcado) se identifica por su{" "}
+				<code>selector</code> desde core 1.18.0: <code>ruleId + reasonCode + selector</code>, con
+				los selectores de los hosts de shadow delante para un elemento dentro de un shadow root.
+				Antes, todos los fallos de una regla y un código compartían una clave, y una infracción
+				nueva contaba como una de las conocidas. Esa clave se basa en la posición, así que{" "}
+				<strong>cambia cuando cambia el selector</strong>: un elemento hermano no relacionado
+				añadido antes del elemento, o un contenedor a su alrededor, convierte el hallazgo en nuevo
+				y su entrada antigua en obsoleta, y un elemento corregido mientras otro falla en su lugar
+				se lee como conocido. Mantén <code>includeHtml</code> activado cuando generes un baseline,
+				si puedes. Una entrada sin <code>html</code> ni <code>selector</code> sigue coincidiendo
+				con un hallazgo así, después de buscar cada hallazgo con su propia clave.
 			</p>
 			<p>
 				<strong>Limitación conocida</strong>: un elemento cuyo propio marcado incluye contenido
@@ -236,8 +270,23 @@ export function BaselineContent() {
 			</p>
 			<p>
 				La tabla cubre una versión menor: un cambio figura desde la versión en que llegó hasta la
-				siguiente versión menor, que lo quita. Ni la 1.15 ni la 1.16 movieron ningún hallazgo, así
-				que la tabla está vacía.
+				siguiente versión menor, que lo quita. Ni la 1.15, ni la 1.16, ni la 1.17 movieron ningún
+				hallazgo. La 1.18 mueve estos, desde la 1.17, y la 1.19 los quita:
+			</p>
+			<DataTable
+				label="Códigos de motivo movidos en la 1.18"
+				rowKey="id"
+				columns={[
+					{ key: "rules", label: "Regla", wrap: true, width: "30%" },
+					{ key: "from", label: "Código antiguo", wrap: true },
+					{ key: "to", label: "Código nuevo", wrap: true },
+				]}
+				rows={baselineMoves118}
+			/>
+			<p>
+				Los dos son divisiones: el código antiguo se mantiene para los demás hallazgos de la regla.
+				Así, un baseline escrito por la 1.17 sigue coincidiendo con estos en la 1.18.x, no en la
+				1.19: ponlo al día en la 1.18.x, como se explica abajo, antes de pasar a la 1.19.
 			</p>
 			<p>La 1.14 movió estos, desde la 1.13, y la 1.15 los quitó:</p>
 			<DataTable
@@ -255,7 +304,7 @@ export function BaselineContent() {
 				1.15: allí una entrada con un código antiguo está obsoleta y su hallazgo es nuevo. Pon al
 				día ese baseline en la 1.14.x, como se explica abajo, antes de pasar a la 1.15;{" "}
 				<code>migrateBaselineEntries</code> de la 1.15 ya no conoce estos cambios. Un baseline
-				escrito por la 1.14 sigue coincidiendo en la 1.15 y la 1.16.
+				escrito por la 1.14 sigue coincidiendo en la 1.15, la 1.16 y la 1.17.
 			</p>
 			<p>
 				Regenerar el baseline con <code>--write-baseline</code> (o{" "}
@@ -286,7 +335,14 @@ export function BaselineContent() {
 				Otra cosa es un hallazgo cuyo resultado cambió con la actualización: una regla que ahora
 				hace fallar lo que antes preguntaba, o pregunta por lo que antes hacía fallar, da un
 				hallazgo que el baseline no tenía, o deja de dar uno que tenía, y el{" "}
-				<a href={`${core}/CHANGELOG.md`}>registro de cambios</a> explica por qué.
+				<a href={`${core}/CHANGELOG.md`}>registro de cambios</a> explica por qué. Lo mismo pasa con
+				un hallazgo que deja de apuntar a un fallo: en la 1.18,{" "}
+				<a href="/rules/aria-prohibited-attr/"><code>aria-prohibited-attr</code></a> juzga{" "}
+				<code>&lt;p&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;time&gt;</code> y otros
+				elementos así por su rol, de modo que <code>&lt;p aria-label&gt;</code> da{" "}
+				<code>ARIA_ATTR_PROHIBITED</code>, sin tendencia, donde daba{" "}
+				<code>ARIA_ATTR_PROHIBITED_ROLELESS_NEEDS_REVIEW</code>, que apuntaba a un fallo. Una entrada
+				escrita para él con <code>leanFail: true</code> queda obsoleta.
 			</p>
 
 			<h2 id="several-profiles">Un análisis de varios perfiles</h2>
@@ -351,6 +407,35 @@ export function BaselineContent() {
 				que no es ni una cadena ni <code>null</code>, o un <code>frame</code> que no es una lista
 				de cadenas. <code>migrateBaselineEntries</code> lo comprueba de la misma manera. Antes, ese
 				valor se leía como un baseline vacío, lo que hacía nuevo cada fallo sin avisar.
+			</p>
+
+			<h2 id="incomplete-scan">Un análisis incompleto</h2>
+			<p>
+				Un análisis que no comprobó todo lo que seleccionó no puede decir que no encontró nada
+				nuevo. Cuando su presupuesto de tiempo (<code>engineOptions.timeBudgetMs</code>, ver{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">Opciones del motor</a>)
+				se agotó antes de que se ejecutaran todas las reglas, <code>matchBaseline</code> añade{" "}
+				<code>{"incomplete: { notRun }"}</code>, los ids de las reglas que no se ejecutaron, a lo
+				que devuelve: una puerta que lee <code>newCount</code> tiene que fallar también con{" "}
+				<code>incomplete</code>, como hacen los generadores de informes SARIF y JUnit (un error por
+				cada regla no ejecutada). No escribas un baseline a partir de un análisis así: no registra
+				ninguno de los fallos de las reglas que no se ejecutaron.
+			</p>
+			<p>
+				Un resultado limitado por <code>engineOptions.output.maxOccurrencesPerRule</code> (ver el{" "}
+				<a href="/results-reports/output-schema/#occurrence-cap">esquema de salida</a>) solo
+				enumera algunas de las ocurrencias de cada regla, así que no puede construir un baseline
+				completo: los fallos que dejó fuera no tienen entrada, y cada análisis posterior los
+				encuentra nuevos. <code>buildBaselineEntries</code> avisa cuando recibe un resultado así, o
+				uno que su presupuesto de tiempo cortó; escribe el baseline a partir de un análisis sin el
+				límite. Frente a un baseline, un fallo que el límite dejó fuera no puede compararse con sus
+				entradas, así que cuenta como nuevo: <code>matchBaseline</code> lo suma a{" "}
+				<code>totalFail</code> y <code>newCount</code>, y dice cuántos en{" "}
+				<code>incomplete.occurrencesOmitted</code>. Con <code>leanFail: true</code>, un hallazgo que
+				apunta a un fallo y que el límite dejó fuera cuenta como nuevo de la misma forma:{" "}
+				<code>leanFail</code> lo suma a su <code>total</code> y su <code>newCount</code>, y{" "}
+				<code>incomplete.occurrencesOmittedLeaningFail</code> dice cuántos. Las entradas con las que
+				habría coincidido pueden contar entonces como obsoletas.
 			</p>
 
 			<h2>

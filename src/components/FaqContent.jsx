@@ -7,80 +7,155 @@ export function FaqContent() {
 	return (
 		<>
 			<article>
-				<h2 id="results-changed-1-17">"My results changed after upgrading to core 1.17"</h2>
+				<h2 id="results-changed-1-18">"My results changed after upgrading to core 1.18"</h2>
 				<p>
-					1.17 adds four rules, maps some rules to more criteria, and makes messages name the cause
-					of a finding. Outcomes and reason codes of the existing rules are otherwise unchanged. The
-					changes most likely to show in a pipeline:
+					1.18 adds five rules that ask, turns a few failures into questions where the page's
+					evidence can't settle them, and measures more of what a browser draws. The changes most
+					likely to show in a pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>A WCAG 2.2 AA scan in a browser asks about 2.4.11.</strong>{" "}
-						<a href="/rules/focus-not-obscured-minimum/">
-							<code>focus-not-obscured-minimum</code>
+						<strong>New questions, never new failures.</strong>{" "}
+						<a href="/rules/form-group-name-present/">
+							<code>form-group-name-present</code>
 						</a>{" "}
-						asks (<code>cantTell</code>) about a fixed or sticky box, such as a header, footer or
-						banner, that elements in the tab order can take focus hidden behind, and{" "}
-						<a href="/rules/focus-not-obscured-enhanced/">
-							<code>focus-not-obscured-enhanced</code>
+						(1.3.1) asks about radio buttons and checkboxes that share a name but sit in no named
+						group, and{" "}
+						<a href="/rules/symbol-graphic-contrast/">
+							<code>symbol-graphic-contrast</code>
 						</a>{" "}
-						does the same for 2.4.12 (AAA). Under jsdom both are <code>notApplicable</code>. Such
-						a scan takes about 4% longer in Chromium (see{" "}
-						<a href="/help/known-limitations/">Known limitations</a> for what they leave out).
+						(1.4.11) about symbols such as ★ under 3:1; both run in a WCAG 2.2 AA scan.{" "}
+						<a href="/rules/reflow-horizontal-scroll/">
+							<code>reflow-horizontal-scroll</code>
+						</a>{" "}
+						(1.4.10) and{" "}
+						<a href="/rules/resize-text-content-loss/">
+							<code>resize-text-content-loss</code>
+						</a>{" "}
+						(1.4.4) apply only to a page laid out 320 or 640 CSS pixels wide or less, in a browser,
+						so a scan at a usual width is unchanged (see{" "}
+						<a href="/help/known-limitations/">Known limitations</a>).{" "}
+						<a href="/rules/link-name-quality-link-only/">
+							<code>link-name-quality-link-only</code>
+						</a>{" "}
+						(2.4.9) runs only in a scan that targets AAA. All five report <code>cantTell</code>,
+						some with a lean to fail.
 					</li>
 					<li>
-						<strong>A scan that runs AAA rules fails targets under 44 px.</strong>{" "}
+						<strong>A few failures ask instead.</strong> An unnamed video with a poster (
+						<a href="/rules/video-poster-text-alternative-present/">
+							<code>video-poster-text-alternative-present</code>
+						</a>
+						, whose message keys move from <code>_fail</code> to <code>_cantTell</code>), and a list
+						item whose list has a landmark or structure role that replaces list, such as{" "}
+						<code>&lt;ul role="navigation"&gt;</code> (
+						<a href="/rules/listitem-parent-valid/">
+							<code>listitem-parent-valid</code>
+						</a>
+						, still a failure under a widget role such as <code>tablist</code> or{" "}
+						<code>menu</code>). Both lean fail.
+					</li>
+					<li>
+						<strong>Target size measures more, and exempts native controls as browsers draw
+						them.</strong>{" "}
+						<a href="/rules/target-size-minimum/">
+							<code>target-size-minimum</code>
+						</a>{" "}
+						and{" "}
 						<a href="/rules/target-size-enhanced/">
 							<code>target-size-enhanced</code>
 						</a>{" "}
-						(2.5.5) runs in a full scan, one with no WCAG target, and under a AAA target. A
-						pipeline that fails on any <code>fail</code> of a full scan can see new failures:
-						scan with a target, such as the <code>wcag22-aa</code> profile, to judge by A and AA
-						only (see <a href="/configuration/engine-options/">Engine options</a>). With best
-						practices,{" "}
-						<a href="/rules/page-zones-landmark/">
-							<code>page-zones-landmark</code>
+						measure every interactive widget (checkbox, combobox, option, slider, tab and the like),
+						not only buttons and links, so new failures can appear. An unstyled native control has
+						the user agent exception, so common resets (normalize.css, <code>{"* { padding: 0 }"}</code>,
+						Bootstrap Reboot) no longer fail checkbox and radio lists; a text input given its own
+						height, or a checkbox resized outside 12 to 16 pixels, still can. A fixed or sticky
+						target is spaced only against the targets that move with it.
+					</li>
+					<li>
+						<strong>Contrast changes in three places.</strong> A currency sign beside its digits (
+						<code>&lt;span&gt;€&lt;/span&gt;45,00</code>) is judged as text, at 4.5:1, by{" "}
+						<code>contrast-minimum</code>. <code>aria-disabled</code> exempts text only on a
+						control, a widget role or a focusable element, or inside one; on a plain{" "}
+						<code>&lt;span&gt;</code> or <code>&lt;div&gt;</code> it exempts nothing. Under jsdom,
+						SVG text after a drawn shape, and text under a positioned <code>::before</code> or{" "}
+						<code>::after</code> with a background, are asked about (<code>contrast-computable</code>
+						, <code>BACKGROUND_OVERLAP</code>) instead of measured from a guessed geometry; Chromium
+						is unchanged.
+					</li>
+					<li>
+						<strong>Smaller tables are checked.</strong>{" "}
+						<a href="/rules/td-has-header/">
+							<code>td-has-header</code>
 						</a>{" "}
-						asks about a header, navigation, search or footer that isn't its landmark.
+						checks tables from 2 by 2 cells, where it looked only at 4 by 4 or more: a small table
+						with no header cell is asked about, and a data cell left without a header in one that
+						has some fails.
 					</li>
 					<li>
-						<strong>Some rules count toward more criteria.</strong>{" "}
-						<code>css-focus-indicator-suppressed</code> maps to 1.4.11 and 2.4.13 too, so its
-						findings now show in 1.4.11's result; <code>focus-not-removed-by-script</code> maps
-						to 2.4.13, and four rules that map to 2.1.1 map to 2.1.3 too.
+						<strong>Some findings move to another rule or code.</strong>{" "}
+						<code>button-name-present</code> leaves a <code>&lt;button role="tab"&gt;</code>, or
+						another named role, to that role's rule, so it is reported once.{" "}
+						<code>aria-prohibited-attr</code> names the role of a <code>&lt;p&gt;</code>,{" "}
+						<code>&lt;strong&gt;</code> and the like (<code>ARIA_ATTR_PROHIBITED</code>, with no
+						lean), so a baseline entry written with <code>leanFail: true</code> for the old code is
+						stale. Two codes are split by cause (<code>deprecated-elements-not-used</code>'s{" "}
+						<code>MARQUEE_STOPS_ONLY_ON_HOVER</code>, <code>page-title-patterns</code>'{" "}
+						<code>placeholderTitle</code>), and a 1.17 baseline still matches the moved findings
+						(see <a href="#baseline-after-upgrade">the entry below</a>).
 					</li>
 					<li>
-						<strong>Messages name the root cause</strong> the rules find: why an element has no
-						name (<code>data.details.nameCause</code>), a likely typo in a role, attribute or{" "}
-						<code>autocomplete</code> value, what hides an element, the contrast in a{" "}
-						<code>link-in-text-block</code> fail, how far a target is from passing{" "}
-						<code>target-size-minimum</code>. A test that compares message text, or{" "}
-						<code>target-size-minimum</code>'s hint key (now <code>_centerDistance</code> or{" "}
-						<code>_regionDistance</code>), needs updating.
+						<strong>Excluded areas are context.</strong> <code>heading-order</code>,{" "}
+						<code>page-has-heading-one</code>, <code>landmark-one-main</code> and{" "}
+						<code>bypass-blocks-present</code> read the headings and main landmark of an area left
+						out with <code>excludeSelectors</code>, so excluding a site header no longer invents a
+						missing <code>&lt;h1&gt;</code> or a skipped level.
 					</li>
 					<li>
-						<strong>A few findings move.</strong> <code>css-hidden-focus</code> leans fail when
-						the element is out of view and nothing is known to bring it into view;{" "}
-						<code>aria-hidden-focus</code> fails a focusable element set back to{" "}
-						<code>visibility: visible</code> inside a hidden <code>aria-hidden</code> root;{" "}
-						<code>aria-conditional-attr</code> passes an <code>aria-invalid</code> value outside
-						its tokens; <code>link-in-text-block</code> counts only text on the link's own line.
+						<strong>An occurrence marked <code>pass</code> counts as one.</strong>{" "}
+						<code>occurrenceOutcome()</code> gives <code>'pass'</code> for it, also inside a failing
+						check, so SARIF, JUnit, the HTML report and baselines no longer count it as a failure.
+						An exhaustive <code>switch</code> on it needs a <code>'pass'</code> case.
 					</li>
 					<li>
-						<strong>Packs built for 1.16 may be skipped.</strong> A pack that uses core's
-						experimental APIs takes no later minor, so a scan with 1.17 skips it until it has a
-						release for 1.17: the{" "}
-						<a href="/configuration/packs/#en-301-549-pack">EN 301 549 pack</a> needs 1.4.0. And
-						1.17 removed four fields of a standard's laws, which a pack that still has them is
-						refused for (see <a href="/configuration/packs/#laws">Packs</a>).
+						<strong>Packs built for 1.17 may be skipped.</strong> A pack whose <code>core</code>{" "}
+						range leaves out 1.18, such as <code>~1.17.0</code>, is skipped, and{" "}
+						<code>skippedPacks</code> says why (see{" "}
+						<a href="#pack-did-not-run">the entry below</a>): the{" "}
+						<a href="/configuration/packs/#en-301-549-pack">EN 301 549 pack</a> needs 1.5.0. The
+						pack APIs that were experimental since 1.16 are stable now, so a pack can widen its
+						range to <code>^1.18.0</code>.
+					</li>
+					<li>
+						<strong>Frames get longer to answer.</strong> <code>runa11yCoreAcrossFrames</code>{" "}
+						waits 2 seconds for a child frame's ping, not 500 ms, so a busy frame is no longer
+						skipped as unreachable; a page with an embed that never answers takes up to 1.5 s more
+						per level of frames. Set <code>engineOptions.pingWaitTime</code> to keep the old wait.
+					</li>
+					<li>
+						<strong>Messages write decimals as their language does</strong>: "2,85:1" in French,
+						German and Spanish, "2.85:1" in English and Japanese. A test that compares message
+						text needs updating; <code>data.details</code> and <code>i18n.params</code> keep the
+						numbers as they were (see <a href="/configuration/locales/">Locales</a>).
+					</li>
+					<li>
+						<strong>Options are checked more closely.</strong> An empty <code>runOnly</code> list,
+						a <code>rules</code> or <code>tags</code> filter beside <code>runOnly</code>, or a{" "}
+						<code>timestamp</code> that isn't an ISO 8601 date is warned about, and refused under{" "}
+						<code>strictOptions</code> (see <a href="#invalid-engine-options">the entry below</a>).
+						Values 1.17 accepted still work.
 					</li>
 				</ul>
 				<p>
-					New, and changing nothing unless you use it: a pack built on another pack (
-					<code>uses</code>, <code>surea11y-pack new --kind derived</code>), experimental until
-					1.19.0 (<a href="/configuration/packs/#a-pack-built-on-another-pack">Packs</a>). The
-					browser bundle grows from 1,565 to 1,829 KB, mostly the new messages. The full list is in
-					core's{" "}
+					New, and changing nothing unless you use it: a time budget for a scan (
+					<code>engineOptions.timeBudgetMs</code>, which lists what it didn't run in{" "}
+					<code>notRun</code> and never reads as a pass) and a cap on the occurrences kept per rule (
+					<code>engineOptions.output.maxOccurrencesPerRule</code>, which changes no outcome), both
+					in <a href="/configuration/engine-options/#a-time-budget-timebudgetms">Engine options</a>. A page that puts values on{" "}
+					<code>Object.prototype</code> no longer changes a scan (see{" "}
+					<a href="#page-builtins-broken">the entry below</a>). A full scan in Chromium is about 9%
+					slower than with 1.17.0, the cost of the new checks, and the browser bundle grows from
+					1,829 to 2,088 KB. The full list is in core's{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>
@@ -287,10 +362,26 @@ export function FaqContent() {
 				<p>
 					The page's own scripts changed a JavaScript built-in the engine relies on (
 					<code>Array.prototype.filter</code>, <code>Map</code>, <code>JSON.stringify</code> and
-					others), so a scan of it could give a result that reads well and is wrong. The error's
-					message and its <code>broken</code> list name each one. Scan the page before its scripts
-					change them (inject the bundle earlier, or scan a build without the script that does
-					it). See <a href="/help/known-limitations/">Known limitations</a>.
+					others, or a getter on <code>Object.prototype</code>), so a scan of it could give a result
+					that reads well and is wrong. The error's message and its <code>broken</code> list name
+					each one; the list is empty when a built-in is broken so badly that the check itself
+					threw. Scan the page before its scripts change them (inject the bundle earlier, or scan a
+					build without the script that does it). See{" "}
+					<a href="/help/known-limitations/">Known limitations</a>.
+				</p>
+				<p>
+					A plain value a script put on <code>Object.prototype</code> (
+					<code>Object.prototype.type = 'x'</code>, read-only or not) doesn't stop the scan, since
+					core 1.18: the engine defines the keys it sets on its own objects rather than assigning
+					them, and reads its options, rule results and the records outcomes depend on as their own
+					keys, so such a value doesn't change them. Not every internal record is read that way
+					yet, so a value of such a name can still change a result; the names known to have changed
+					one are tested in jsdom and in Chromium. A value on a property the page's own DOM objects
+					inherit (<code>disabled</code>, <code>getAttribute</code>) changes those objects, and the
+					engine reads them as the page left them. The scan never changes{" "}
+					<code>Object.prototype</code> either, so the page's own code that runs during it sees it as
+					the page left it. A getter put there that throws or gives a value still stops the scan,
+					as above.
 				</p>
 				<p>
 					When <code>broken</code> is only <code>Array.from</code>, the page replaced it
@@ -597,10 +688,14 @@ export function FaqContent() {
 					1.15, which dropped those moves: there an entry under an old code is stale and its finding
 					is new. Rewrite the file's codes under 1.14.x with <code>migrateBaselineEntries</code>{" "}
 					from <code>@surea11y/core/baseline</code>, then upgrade, or regenerate it under 1.15 and
-					review the diff. 1.15 and 1.16 moved no code, so a baseline written by 1.14 keeps
-					matching;
-					a finding whose outcome changed with the upgrade is new or gone all the same, and the
-					changelog says why. See <a href="/conformance/baseline/#upgrading">Baseline / allowlist</a>.
+					review the diff. 1.15, 1.16 and 1.17 moved no code, so a baseline written by 1.14 keeps
+					matching up to 1.17. 1.18 splits two codes by cause (
+					<code>deprecated-elements-not-used</code>'s <code>MARQUEE_STOPS_ONLY_ON_HOVER</code>,{" "}
+					<code>page-title-patterns</code>' <code>placeholderTitle</code>): a baseline written by
+					1.17 keeps matching those findings under 1.18.x, and 1.19 drops the moves, so rewrite or
+					regenerate it under 1.18 before going further. A finding whose outcome changed with the
+					upgrade is new or gone all the same, and the changelog says why. See{" "}
+					<a href="/conformance/baseline/#upgrading">Baseline / allowlist</a>.
 				</p>
 			</article>
 
@@ -623,83 +718,80 @@ export function FaqContent() {
 			</article>
 
 			<article>
-				<h2 id="results-changed-1-16">"My results changed after upgrading to core 1.16"</h2>
+				<h2 id="results-changed-1-17">"My results changed after upgrading to core 1.17"</h2>
 				<p>
-					1.16 brings jsdom closer to the browser and words its messages for any standard. The
+					1.17 adds four rules, maps some rules to more criteria, and makes messages name the cause
+					of a finding. Outcomes and reason codes of the existing rules are otherwise unchanged. The
 					changes most likely to show in a pipeline:
 				</p>
 				<ul>
 					<li>
-						<strong>Under jsdom, only a dialog opened with <code>showModal()</code> is
-						modal</strong>, as in a browser. The page behind a{" "}
-						<code>&lt;dialog open aria-modal="true"&gt;</code> is now judged, so a jsdom test that
-						fakes a modal that way sees findings behind it;{" "}
-						<code>engineOptions.assumeModal: true</code> keeps the old behaviour (see{" "}
-						<a href="/help/known-limitations/">Known limitations</a>; with test-matchers 1.6.0,
-						give it to <code>installLiveRegionHook()</code> too, see{" "}
-						<a href="/getting-started/test-matchers/#modal-dialogs-in-jsdom">test-matchers</a>).
-						Nothing behind a modal
-						dialog takes focus, and of several opened with <code>showModal()</code> only the
-						topmost is judged.
+						<strong>A WCAG 2.2 AA scan in a browser asks about 2.4.11.</strong>{" "}
+						<a href="/rules/focus-not-obscured-minimum/">
+							<code>focus-not-obscured-minimum</code>
+						</a>{" "}
+						asks (<code>cantTell</code>) about a fixed or sticky box, such as a header, footer or
+						banner, that elements in the tab order can take focus hidden behind, and{" "}
+						<a href="/rules/focus-not-obscured-enhanced/">
+							<code>focus-not-obscured-enhanced</code>
+						</a>{" "}
+						does the same for 2.4.12 (AAA). Under jsdom both are <code>notApplicable</code>. Such
+						a scan takes about 4% longer in Chromium (see{" "}
+						<a href="/help/known-limitations/">Known limitations</a> for what they leave out).
 					</li>
 					<li>
-						<strong>jsdom hides what a browser hides.</strong> Rules inside <code>@layer</code>,{" "}
-						<code>@supports</code> and <code>@container</code> hide elements, so Tailwind v4's{" "}
-						<code>hidden</code> and <code>sr-only</code> work; <code>clip: rect(0 0 0 0)</code>{" "}
-						counts as clipped; an image map's <code>&lt;area&gt;</code> is on the page. Findings
-						on content that was hidden all along go away.
+						<strong>A scan that runs AAA rules fails targets under 44 px.</strong>{" "}
+						<a href="/rules/target-size-enhanced/">
+							<code>target-size-enhanced</code>
+						</a>{" "}
+						(2.5.5) runs in a full scan, one with no WCAG target, and under a AAA target. A
+						pipeline that fails on any <code>fail</code> of a full scan can see new failures:
+						scan with a target, such as the <code>wcag22-aa</code> profile, to judge by A and AA
+						only (see <a href="/configuration/engine-options/">Engine options</a>). With best
+						practices,{" "}
+						<a href="/rules/page-zones-landmark/">
+							<code>page-zones-landmark</code>
+						</a>{" "}
+						asks about a header, navigation, search or footer that isn't its landmark.
 					</li>
 					<li>
-						<strong>Messages and steps describe the check</strong> instead of naming the WCAG
-						criterion, in every locale, so a report for another standard reads right. Mappings
-						and <code>failWhen</code> are unchanged; a test that compares message text needs
-						updating.
+						<strong>Some rules count toward more criteria.</strong>{" "}
+						<code>css-focus-indicator-suppressed</code> maps to 1.4.11 and 2.4.13 too, so its
+						findings now show in 1.4.11's result; <code>focus-not-removed-by-script</code> maps
+						to 2.4.13, and four rules that map to 2.1.1 map to 2.1.3 too.
 					</li>
 					<li>
-						<strong>Deep pages are judged.</strong> An element 200 or more levels deep is judged
-						with everything above it, up to 10,000 levels, where a fail that deep used to become a
-						question noted in <code>error</code>; so failures can appear there. Past 10,000 it is a
-						question, reported in{" "}
-						<a href="/results-reports/output-schema/">
-							<code>ancestorWalkLimit</code>
-						</a>
-						.
+						<strong>Messages name the root cause</strong> the rules find: why an element has no
+						name (<code>data.details.nameCause</code>), a likely typo in a role, attribute or{" "}
+						<code>autocomplete</code> value, what hides an element, the contrast in a{" "}
+						<code>link-in-text-block</code> fail, how far a target is from passing{" "}
+						<code>target-size-minimum</code>. A test that compares message text, or{" "}
+						<code>target-size-minimum</code>'s hint key (now <code>_centerDistance</code> or{" "}
+						<code>_regionDistance</code>), needs updating.
 					</li>
 					<li>
-						<strong>Pages that replace <code>Array.from</code></strong> (Prototype.js, MooTools)
-						are scanned, where the scan stopped with <code>PAGE_BUILTINS_BROKEN</code> (see{" "}
-						<a href="#page-builtins-broken">the entry above</a>).
+						<strong>A few findings move.</strong> <code>css-hidden-focus</code> leans fail when
+						the element is out of view and nothing is known to bring it into view;{" "}
+						<code>aria-hidden-focus</code> fails a focusable element set back to{" "}
+						<code>visibility: visible</code> inside a hidden <code>aria-hidden</code> root;{" "}
+						<code>aria-conditional-attr</code> passes an <code>aria-invalid</code> value outside
+						its tokens; <code>link-in-text-block</code> counts only text on the link's own line.
 					</li>
 					<li>
-						<strong>Some selectors are different.</strong> Control characters are escaped, a value
-						over 256 characters gives way to the element's path, and{" "}
-						<a href="/rules/page-title-present/"><code>page-title-present</code></a> and{" "}
-						<a href="/rules/page-title-patterns/"><code>page-title-patterns</code></a> point at
-						the title element itself, or at <code>&lt;head&gt;</code> when there is none. A
-						finding's identity doesn't include its selector, so baselines still match. The
-						contrast rules are <code>notApplicable</code> with no occurrence when no contrast
-						could be computed.
-					</li>
-					<li>
-						<strong>Mistakes are reported instead of read as nothing.</strong> An empty{" "}
-						<code>contextSelector</code> still scans the whole page, but warns; something that
-						isn't a baseline throws <code>INVALID_BASELINE</code> instead of making every failure
-						new; and under <code>strictOptions</code>, an unknown profile name throws. The{" "}
-						<code>section508</code> profile is deprecated: use <code>wcag20-aa</code>, which runs
-						the same rules.
-					</li>
-					<li>
-						<strong>Faster scans</strong>, with the same findings: a few percent in Chromium on
-						ordinary pages, 10 to 25% under jsdom, and much more where it was worst (thousands of
-						identical links or fields, long tables, many style rules).
+						<strong>Packs built for 1.16 may be skipped.</strong> A pack that uses core's
+						experimental APIs takes no later minor, so a scan with 1.17 skips it until it has a
+						release for 1.17: the{" "}
+						<a href="/configuration/packs/#en-301-549-pack">EN 301 549 pack</a> needs 1.4.0. And
+						1.17 removed four fields of a standard's laws, which a pack that still has them is
+						refused for (see <a href="/configuration/packs/#laws">Packs</a>).
 					</li>
 				</ul>
 				<p>
-					New, and changing nothing unless you use it: the WCAG 2.0 and 2.1 profiles (
-					<a href="/configuration/engine-options/#conformance-profiles">Engine options</a>), and,
-					experimental until 1.18.0, standards as data, tests under requirements, standards built
-					on others and the laws a standard is assessed under (
-					<a href="/configuration/packs/#experimental">Packs</a>). The full list is in core's{" "}
+					New, and changing nothing unless you use it: a pack built on another pack (
+					<code>uses</code>, <code>surea11y-pack new --kind derived</code>), experimental until
+					1.19.0 (<a href="/configuration/packs/#a-pack-built-on-another-pack">Packs</a>). The
+					browser bundle grows from 1,565 to 1,829 KB, mostly the new messages. The full list is in
+					core's{" "}
 					<a href={`${core}/CHANGELOG.md`}>
 						<code>CHANGELOG.md</code>
 					</a>

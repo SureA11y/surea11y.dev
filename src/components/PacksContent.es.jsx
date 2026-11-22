@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Las reglas de lint de core para reglas." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Solo para un estándar: los requisitos y las reglas que comprueban cada uno." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Solo para un estándar: cómo evalúa una persona a mano cada requisito, y una prueba de que cada requisito tiene un procedimiento para cada una de sus facetas." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, con <code>@surea11y/core</code> como dependencia peer en la versión que lo escribió (<code>^1.17.0</code>), y eslint, jsdom y Playwright como dependencias de desarrollo.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, con <code>@surea11y/core</code> como dependencia peer en la versión que lo escribió (<code>^1.18.0</code>; <code>~1.18.0</code> en un pack derivado), y eslint, jsdom y Playwright como dependencias de desarrollo.</> },
 	{ id: "derived", file: <><code>standard-data.js</code>, <code>tests/standard.test.js</code></>, what: <>Solo en un pack derivado, y sus únicos archivos además de <code>index.js</code>, <code>README.md</code>, <code>package.json</code>, <code>eslint.config.js</code> y <code>.gitignore</code>: el estándar derivado de los datos de la base, la base tal cual hasta que la cambies, y sus pruebas (<a href="#a-pack-built-on-another-pack">Un pack construido sobre otro pack</a>).</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "La guía del propio pack sobre estos archivos, y lo que git deja fuera." },
 ];
@@ -164,11 +164,12 @@ export function PacksContent() {
 				V4.1.1. Tiene un perfil por versión, <code>en301549-v4.1.1</code> y{" "}
 				<code>en301549-v3.2.1</code>, que informa un resultado por cláusula, y{" "}
 				<code>mappings: ['en301549']</code> para nombrar las cláusulas en los resultados de
-				cualquier análisis, también uno de WCAG. Su última versión, la 1.4.0, necesita{" "}
-				<code>@surea11y/core</code> 1.17 (<code>~1.17.0</code>): su estándar se construye a partir
-				de <a href="#standards-as-data">datos de estándar</a>, que son experimentales en core hasta
-				la 1.18.0, así que hasta entonces no admite ninguna versión menor posterior. Para core 1.16,
-				usa sus versiones 1.3, y para core 1.13 a 1.15, sus versiones 1.2.
+				cualquier análisis, también uno de WCAG. Su última versión, la 1.5.0, necesita{" "}
+				<code>@surea11y/core</code> 1.18 o posterior (<code>^1.18.0</code>): su estándar se
+				construye a partir de <a href="#standards-as-data">datos de estándar</a>, estables en core
+				desde la 1.18.0, así que vuelve a admitir versiones menores posteriores y no usa ninguna API
+				experimental. Para core 1.17, usa sus versiones 1.4, para core 1.16 sus versiones 1.3, y
+				para core 1.13 a 1.15 sus versiones 1.2.
 			</p>
 			<p>
 				Su versión 1.1.0, hecha sobre core 1.14.0, juzga cada cláusula como core juzga el
@@ -203,6 +204,13 @@ export function PacksContent() {
 				1.17, evalúa dos cláusulas más con reglas de core: la 9.1.4.11 Contraste no textual, en
 				ambas versiones, mediante <code>css-focus-indicator-suppressed</code>, y la 9.2.4.11 Foco no
 				oculto (mínimo) de V4.1.1, mediante la nueva <code>focus-not-obscured-minimum</code> de core.
+				Su versión 1.5.0, para core 1.18, evalúa la 9.1.4.10 Reajuste del texto, en ambas
+				versiones, mediante la nueva <code>reflow-horizontal-scroll</code> de core, una regla manual
+				que mide el reajuste y pregunta a una persona por lo que encuentra; nunca falla. Las demás
+				reglas manuales nuevas de core 1.18 añaden preguntas, no fallos, a cláusulas que otras
+				reglas ya comprueban: <code>form-group-name-present</code> a la 9.1.3.1,{" "}
+				<code>symbol-graphic-contrast</code> a la 9.1.4.11 y <code>resize-text-content-loss</code>{" "}
+				a la 9.1.4.4.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -222,7 +230,7 @@ export function PacksContent() {
 				para V3.2.1, mantienen el 4.1.1 <span lang="en">Parsing</span> (<code>keepsParsing</code>).
 				Sus cláusulas reformulan criterios de WCAG uno a uno (<code>applicability: 'wcag'</code>), y
 				su mapa de reglas se deriva del catálogo de la versión de core instalada, así que una regla
-				que core añade queda cubierta sin cambiar el pack: así ganó la 1.4.0 sus dos cláusulas. Un estándar con requisitos que WCAG no
+				que core añade queda cubierta sin cambiar el pack: así ganaron la 1.4.0 y la 1.5.0 sus cláusulas. Un estándar con requisitos que WCAG no
 				tiene usa la misma forma y añade reglas propias. Su código es breve y vale la pena leerlo
 				junto a <a href="#writing-a-pack">Escribir un pack</a>, más abajo.
 			</p>
@@ -239,7 +247,8 @@ export function PacksContent() {
 				un resultado por cada requisito de autoría que las reglas pueden comprobar, a partir de las
 				reglas ARIA de core juzgadas según la propia redacción de WAI-ARIA. Su perfil,{" "}
 				<code>wai-aria-1.2</code>, ejecuta las reglas ARIA de core y las propias del pack, y nada
-				más. Necesita <code>@surea11y/core</code> 1.15.0 o posterior.
+				más. Necesita <code>@surea11y/core</code> 1.15.0 o posterior; su última versión, la 1.1.1,
+				está probada con core 1.17 y 1.18, y no usa ninguna API experimental.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -315,7 +324,11 @@ export function PacksContent() {
 				pack, así que un <code>role="grid"</code> sin nombre son dos comprobaciones, la{" "}
 				<code>aria-role-name-present</code> de core (
 				<code>{"{ 'wcag22-aa': 'cantTell' }"}</code>) y la variante (
-				<code>{"{ 'wai-aria-1.2': 'fail' }"}</code>).
+				<code>{"{ 'wai-aria-1.2': 'fail' }"}</code>). Con core 1.18, un análisis solo del perfil{" "}
+				<code>wai-aria-1.2</code> da lo mismo: la comprobación de la variante falla, como falla el
+				requisito <code>name-required</code>, donde con core 1.17 la comprobación era{" "}
+				<code>cantTell</code> y solo fallaba el requisito (
+				<a href="#sending-findings-to-requirements">más abajo</a>).
 			</p>
 			<p>
 				<strong>Cómo responde una persona a una pregunta.</strong> Con <code>wai-aria-1.2</code>,
@@ -357,7 +370,10 @@ export function PacksContent() {
 				El pack se prepara una vez y se conserva para el siguiente análisis con el mismo objeto de
 				pack, así que un rastreo que pasa los mismos packs a cada página los prepara una sola vez.{" "}
 				<code>definePack</code> congela el objeto del pack: trátalo como inmutable y reutiliza el
-				mismo objeto entre análisis. Pasar un pack lo registra para el análisis; no selecciona sus
+				mismo objeto entre análisis. Desde core 1.18.0, un pack que se pasa como objeto simple, sin{" "}
+				<code>definePack</code>, no se congela: el análisis usa una copia congelada de sus datos,
+				con sus funciones tal cual, así que el pack y cualquier objeto tuyo al que llegue quedan
+				como estaban, y el siguiente análisis ve un cambio posterior en el pack. Pasar un pack lo registra para el análisis; no selecciona sus
 				reglas. Una regla de un pack etiquetada con el espacio de nombres del pack es opcional: sin
 				uno de los perfiles del pack, solo se ejecuta cuando se selecciona por id o por esa etiqueta
 				(consulta <a href="#names">Nombres</a>). Una regla de un pack sin la etiqueta se selecciona
@@ -520,7 +536,11 @@ export function PacksContent() {
 			<p>
 				Un hallazgo del que un estándar tiene certeza donde WCAG pregunta (<code>outcome: 'fail'</code>{" "}
 				en su mapa de reglas) hace fallar el análisis, y sus <code>verdicts</code> dicen qué hace de
-				él cada perfil. Un perfil cuyo pack se omite figura en <code>engine.profilesNotRun</code>, y
+				él cada perfil. La <code>policy</code> de un análisis rige cada veredicto: donde no admite{" "}
+				<code>fail</code>, una comprobación que un estándar hace fallar es <code>cantTell</code>, con{" "}
+				<code>policyOutcome: 'fail'</code>, y un perfil cuyo estándar no cuenta ninguno de los
+				hallazgos de una regla da a la comprobación el resultado propio de la regla, como lo da un
+				análisis solo de ese perfil, no <code>pass</code>. Un perfil cuyo pack se omite figura en <code>engine.profilesNotRun</code>, y
 				los demás se siguen ejecutando. Las integraciones aceptan la lista en{" "}
 				<code>.options({"{ profile }"})</code>, los test matchers en sus opciones y la CLI como un{" "}
 				<code>--profile</code> repetido.
@@ -530,7 +550,10 @@ export function PacksContent() {
 			<ul>
 				<li>
 					<code>engine.packs</code> nombra cada pack que se ejecutó, como <code>name@version</code>,
-					y <code>engine.profile</code> el perfil que se aplicó.
+					y <code>engine.profile</code> el perfil que se aplicó. Desde core 1.18.0 los informes
+					también los nombran: el informe HTML junto al motor, SARIF en{" "}
+					<code>tool.extensions</code> y <code>runs[0].properties.packs</code>, JUnit como una
+					propiedad <code>packs</code>, y EARL como <code>dct:hasPart</code> del evaluador.
 				</li>
 				<li>
 					Las reglas de un pack aparecen en <code>checksResults</code> igual que las de core, con
@@ -542,6 +565,12 @@ export function PacksContent() {
 					comprueban, para los generadores de informes, y ningún otro estándar (EN 301 549, que
 					asocia cada regla por sus criterios de WCAG) las reclama. Una sustitución cuenta en lugar de la regla de core a la que reemplaza,
 					donde la sitúe su propio mapeo.
+				</li>
+				<li>
+					Desde core 1.18.0, el motor somete las reglas de un pack a <code>excludeSelectors</code>{" "}
+					igual que las de core: una ocurrencia en un elemento excluido se descarta y se cuenta en{" "}
+					<code>excludedOccurrences</code>, y un resultado que se queda sin ocurrencias es{" "}
+					<code>notApplicable</code>.
 				</li>
 				<li>
 					Los elementos de una lista de comprobación, o los requisitos de un estándar, son
@@ -589,7 +618,11 @@ export function PacksContent() {
 				<code>skippedPacks</code> antes de dar el análisis por completo. Desde core 1.17.0, un pack
 				construido sobre otro (<a href="#a-pack-built-on-another-pack">más abajo</a>) también se
 				omite cuando los packs que usa no están en el análisis en la versión con la que se hizo, y
-				lo mismo los packs que lo usan a él.
+				lo mismo los packs que lo usan a él. Desde core 1.18.0, un pack que lanza un error al
+				leerlo (un getter o una trampa de Proxy en su <code>name</code>, <code>version</code>,{" "}
+				<code>standard</code> o cualquier otra cosa) se omite de la misma forma, donde el análisis
+				lanzaba el error, y un pack cuyo rango es <code>~1.16</code> o <code>~1.17</code> lo omite
+				la 1.18 hasta que lo amplíe (consulta <a href="#experimental">API experimentales</a>).
 			</p>
 			<p>Cada herramienta convierte un pack omitido en un fallo visible:</p>
 			<ul>
@@ -700,7 +733,7 @@ export function PacksContent() {
 					packs nuevos en 1.11.1: el paquete 1.11.0 omitía un archivo que los packs necesitan en
 					Node. Un análisis
 					con un core fuera de él omite el pack, con el motivo en <code>skippedPacks</code>.{" "}
-					<code>surea11y-pack new</code> escribe la versión que generó el pack (<code>^1.17.0</code>);
+					<code>surea11y-pack new</code> escribe la versión que generó el pack (<code>^1.18.0</code>);
 					mantén un rango que empiece en 1.14 si el pack usa lo que añadió la 1.14:{" "}
 					<code>meta.review</code>, filas con <code>reasonCodes</code> y <code>findings</code>,{" "}
 					<code>meta.contributions</code>, <code>applicability</code>, <code>partial</code> o{" "}
@@ -708,7 +741,7 @@ export function PacksContent() {
 					<code>outcome: 'fail'</code>. Lo demás que lee la 1.15 (los procedimientos, grupos y
 					traducciones de un estándar, sus propios pasos de revisión) lo ignora un core anterior.
 					Un pack que usa una API que core marca como experimental declara un rango que no admite
-					ninguna versión menor posterior (<code>'~1.17.0'</code>); consulta{" "}
+					ninguna versión menor posterior (<code>'~1.18.0'</code>); consulta{" "}
 					<a href="#experimental">API experimentales</a>.
 				</li>
 				<li>
@@ -838,10 +871,18 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				Solo hace fallar el requisito del estándar: el resultado propio de la comprobación, y cada
-				resultado agregado de WCAG, quedan como estaban. Enumera solo los códigos que el estándar
-				declara con certeza; un código que se deja fuera se juzga según el resultado propio de la
-				regla. Un estándar que escribe sus propios resultados agregados usa del mismo modo el acto{" "}
+				Hace fallar el requisito del estándar y, desde core 1.18.0, en un análisis del perfil del
+				estándar también falla el hallazgo, y con él su comprobación, como en un análisis de varios
+				perfiles: SARIF, JUnit y las líneas base se rigen por ello. Cada resultado agregado de WCAG
+				queda como estaba, y la comprobación conserva el resultado propio de la regla en{" "}
+				<code>checkOutcome</code>, según el cual EARL afirma los criterios de WCAG de la regla.
+				Enumera solo los códigos que el estándar declara con certeza; un código que se deja fuera
+				se juzga según el resultado propio de la regla. Desde core 1.18.0, <code>checkPack</code>{" "}
+				informa de una entrada para un código que su regla nunca da, con la que ningún hallazgo
+				puede coincidir: los códigos de una regla de core son los que enumera el catálogo de reglas
+				de core, los de una regla de un pack los de su <code>meta.reasonCodes</code>, y una regla de
+				un pack que no declara ninguno no se comprueba. Solo informa de ello: el pack se sigue
+				cargando. Un estándar que escribe sus propios resultados agregados usa del mismo modo el acto{" "}
 				<code>'fail'</code> en <code>meta.contributions</code>.
 			</p>
 			<p>
@@ -872,8 +913,9 @@ export function PacksContent() {
 				de <code>contrast-computable</code>, <code>element</code> y <code>parentElement</code> de
 				las reglas de listas, <code>role</code> de <code>aria-role-name-present</code>,{" "}
 				<code>linkKind</code> de las reglas de enlaces, <code>messageKind</code> de{" "}
-				<code>live-region-announcements</code> y, de forma experimental, <code>lean</code> de{" "}
-				<code>skip-link</code> (consulta el{" "}
+				<code>live-region-announcements</code> y <code>lean</code> de <code>skip-link</code>, el
+				sentido de su tendencia, que sigue a la tendencia y por eso puede cambiar en una versión
+				menor (consulta el{" "}
 				<a href="/results-reports/output-schema/#occurrence">esquema de salida</a>). La tipografía de
 				<code>contrast-computable</code>, <code>linkKind</code>, <code>messageKind</code> y{" "}
 				<code>lean</code> son nuevos en core 1.16.0, para un estándar que clasifica los hallazgos bajo
@@ -900,16 +942,18 @@ export function PacksContent() {
 				explica paso a paso. Todo esto necesita core 1.14.0.
 			</p>
 			<p>
-				<strong>Pruebas bajo los requisitos</strong> (core 1.16.0,{" "}
-				<a href="#experimental">experimental</a>). Un estándar que juzga pruebas bajo sus
+				<strong>Pruebas bajo los requisitos</strong> (core 1.16.0, estables desde la 1.18.0). Un estándar que juzga pruebas bajo sus
 				requisitos, como RGAA juzga pruebas bajo cada criterio, da a{" "}
 				<code>ruleMappedStandard</code> una tercera tabla, <code>tests</code>, por versión: el{" "}
 				<code>title</code> de cada prueba y los <code>requirements</code> a los que pertenece. Una
 				fila del mapa de reglas nombra entonces pruebas, y puede indicar dónde sus hallazgos son
 				solo preguntas, con <code>asks</code>. Sigue habiendo un resultado agregado por requisito,
 				que agrupa las reglas de sus pruebas; cada hallazgo cuenta para la prueba que hace fallar,
-				y los resultados nombran cada prueba con el requisito al que pertenece (
-				<code>criterion</code>):
+				y los resultados nombran cada prueba con el requisito al que pertenece: una entrada de una
+				prueba lleva el id de la prueba en <code>requirement</code> y su requisito en{" "}
+				<code>criterion</code> (<code>{"{ requirement: '4.2.1', criterion: '4.2' }"}</code>).{" "}
+				<code>asks</code> solo se lee con pruebas: <code>definePack</code> lo rechaza en un
+				estándar sin ellas, donde no haría nada.
 			</p>
 			<CodeBlock
 				lang="js"
@@ -928,13 +972,15 @@ export function PacksContent() {
 
 			<h3 id="standards-as-data">Un estándar como datos, o construido sobre otros</h3>
 			<p>
-				Desde core 1.16.0 (<a href="#experimental">experimental</a>), las mismas tablas, con las
+				Desde core 1.16.0, estables desde la 1.18.0, las mismas tablas, con las
 				versiones, los grupos, los perfiles y los textos del estándar, pueden ser un solo objeto
 				JSON en el formato <code>surea11y-standard/1</code>, que describe{" "}
 				<code>@surea11y/core/schemas/standard.schema.json</code>, de modo que cualquier herramienta
 				puede leer el estándar sin ejecutar el pack. <code>checkStandardData(data)</code> enumera
-				lo que está mal en él, <code>standardFromData(data)</code> construye a partir de él el{" "}
-				<code>standard</code> del pack, y <code>standardDataOf(standard)</code> lo devuelve. El{" "}
+				lo que está mal en él, filas del mapa de reglas incluidas,{" "}
+				<code>standardFromData(data, extras)</code> construye a partir de él el{" "}
+				<code>standard</code> del pack (<code>extras</code> añade lo que los datos no dan, y no
+				puede reemplazar lo que dan), y <code>standardDataOf(standard)</code> lo devuelve. El{" "}
 				<a href="#en-301-549-pack">pack de EN 301 549</a> se construye así desde su versión 1.3.0, y
 				sus datos son el punto de partida de un estándar construido sobre EN 301 549.
 			</p>
@@ -944,7 +990,7 @@ export function PacksContent() {
 					"const { definePack, standardFromData } = require('@surea11y/core/pack');",
 					"const data = require('./standard.json');   // { format: 'surea11y-standard/1', key: 'city', ... }",
 					"",
-					"module.exports = definePack({ name, version, namespace: 'city', core: '~1.17.0',",
+					"module.exports = definePack({ name, version, namespace: 'city', core: '^1.18.0',",
 					"  standard: standardFromData(data) });",
 				]}
 			/>
@@ -965,7 +1011,7 @@ export function PacksContent() {
 
 			<h3 id="a-pack-built-on-another-pack">Un pack construido sobre otro pack</h3>
 			<p>
-				Desde core 1.17.0 (<a href="#experimental">experimental</a>), cuando el pack de la base
+				Desde core 1.17.0 (<a href="#experimental">experimental</a> hasta la 1.19.0), cuando el pack de la base
 				tiene reglas propias, un pack cuyo estándar se deriva de ella las usa en lugar de copiarlas:
 				nombra los packs sobre los que se construye en <code>uses</code>, y su estándar asigna sus
 				reglas por id como asigna las de core.
@@ -976,7 +1022,7 @@ export function PacksContent() {
 					"const base = require('@acme/pack-base');",
 					"",
 					"module.exports = definePack({",
-					"  name: '@acme/pack-derived', version: '1.0.0', namespace: 'derived', core: '~1.17.0',",
+					"  name: '@acme/pack-derived', version: '1.0.0', namespace: 'derived', core: '~1.18.0',",
 					"  uses: [base],   // the pack itself, as installed (a dependency in package.json)",
 					"  standard        // its rule map may name the base's rules, and its profiles run them",
 					"});",
@@ -1013,7 +1059,7 @@ export function PacksContent() {
 				es la base tal cual: <code>standard-data.js</code> deriva cada requisito de la última
 				versión de la base, con sus pruebas y su mapa de reglas, y tiene una tabla de cambios vacía
 				con un ejemplo de cada tipo; <code>index.js</code> usa la base; el rango de core es{" "}
-				<code>~</code>, y la base es una dependencia en la versión instalada. Sus pruebas comprueban
+				<code>~</code> (<code>~1.18.0</code>), ya que <code>uses</code> es experimental, y la base es una dependencia en la versión instalada. Sus pruebas comprueban
 				que los datos son válidos, que cada fila que no cambia es la de la base, y que su perfil se
 				ejecuta con la base y se omite sin ella.
 			</p>
@@ -1245,22 +1291,29 @@ export function PacksContent() {
 				<code>{"step<n>"}</code>, <code>pass</code> o <code>fail</code> (
 				<code>acme_standardReview_aria-valid-attr-value_ARIA_HASPOPUP_ROLE_MISMATCH_step1</code>);
 				un hallazgo los lee solo donde el diccionario traduce la entrada entera, y el inglés en
-				caso contrario. Estas claves son <a href="#experimental">experimentales</a> (core 1.16.0).
+				caso contrario. Las claves no nombran ninguna versión del estándar: traducen{" "}
+				<code>standard.review</code>, y una versión cuyos propios pasos reemplazan una entrada (
+				<code>reviewByVersion</code>) se lee ahí en inglés, nunca con las palabras de otra versión,
+				salvo que se traduzca por id (<code>{"review.<rule>.<CODE>.*"}</code> en{" "}
+				<code>standard.texts</code>); <code>checkPack</code> informa de una clave cuya entrada
+				reemplaza una versión. Estables desde core 1.18.0.
 			</p>
 			<p>
-				<strong>Traducciones por id</strong> (core 1.16.0,{" "}
-				<a href="#experimental">experimental</a>). <code>standard.texts</code> traduce un estándar
+				<strong>Traducciones por id</strong> (core 1.16.0, estables desde la 1.18.0). <code>standard.texts</code> traduce un estándar
 				por versión según qué es cada texto y no según su redacción (
 				<code>requirements.4.2.title</code>, <code>groups.4.title</code>,{" "}
 				<code>review.&lt;rule&gt;.&lt;CODE&gt;.steps</code>), así que dos textos redactados igual
 				pueden traducirse por separado y una versión puede redactar un id a su manera. Un texto con
 				su clave en <code>texts</code> se lee de ahí; uno sin ella, de <code>translations</code>,
-				así que un estándar puede pasar de uno a otro texto a texto.
+				así que un estándar puede pasar de uno a otro texto a texto. Las claves unen ids con
+				puntos, así que <code>definePack</code> rechaza un estándar con <code>texts</code> donde dos
+				ids darían las mismas claves (un id con un segmento <code>facets</code> o{" "}
+				<code>replace</code>).
 			</p>
 
 			<h3 id="laws">La ley para la que se usa un perfil</h3>
 			<p>
-				Desde core 1.16.0 (<a href="#experimental">experimental</a>), un perfil puede nombrar la ley
+				Desde core 1.16.0, estable desde la 1.18.0, un perfil puede nombrar la ley
 				para la que se usa (<code>law</code>), una de las <code>standard.laws</code> de su estándar,
 				de modo que los resultados y el informe dicen para qué ley se ejecutó un análisis. Core
 				comprueba los requisitos de un estándar; identifica la ley y no la documenta. Una ley tiene
@@ -1284,30 +1337,48 @@ export function PacksContent() {
 				]}
 			/>
 			<p>
-				<strong>Core nunca decide a quién se aplica una ley.</strong> Los resultados nombran la ley del perfil (<code>engine.law</code>, consulta el{" "}
+				<strong>Core nunca decide a quién se aplica una ley.</strong> Los resultados nombran la ley del perfil (<code>engine.law</code>, en un análisis de varios perfiles solo
+				cuando todos sirven a la misma ley; consulta el{" "}
 				<a href="/results-reports/output-schema/">esquema de salida</a>), el{" "}
 				<a href="/results-reports/html-report/">informe HTML</a> la muestra junto al perfil,{" "}
-				<code>{"listProcedures({ profile })"}</code> enumera solo los requisitos que pide esa ley
-				(cuando un estándar sirve a varias leyes, un requisito que solo piden algunas de ellas las
-				enumera en <code>laws</code>), y <code>describePacks</code> enumera las leyes de cada
+				<code>{"listProcedures({ profile })"}</code> enumera solo los requisitos que pide esa ley,
+				y <code>describePacks</code> enumera las leyes de cada
 				estándar con los perfiles que las usan. <code>lawOf(standard, id, locale)</code> de{" "}
 				<code>@surea11y/core/pack</code> da una ley con su nombre en un idioma. Un estándar derivado de otro nombra sus propias leyes; no las hereda.
+			</p>
+			<p>
+				Cuando un estándar sirve a varias leyes y un requisito solo lo piden algunas de ellas, el
+				requisito las enumera, <code>laws</code> en su entrada de <code>standard.procedures</code>{" "}
+				(<a href="#experimental">experimental</a> hasta la 1.20.0). Uno sin <code>laws</code> lo
+				piden todas. Desde core 1.18.0, bajo un perfil cuya ley no está entre ellas, o que no sirve
+				a ninguna, el requisito ni se enumera ni se juzga: el análisis deja fuera su resultado
+				agregado y lo nombra en <code>engine.profileExcludes.requirements</code>.
 			</p>
 
 			<h3 id="experimental">API experimentales</h3>
 			<p>
-				Core 1.16.0 marca algunas API como experimentales: pueden cambiar en una versión menor,
-				nunca en un parche, y pasan a ser estables o se eliminan en un plazo de dos versiones
-				menores. Hoy son los estándares como datos, las pruebas bajo los requisitos, los estándares
-				construidos sobre otros, las traducciones por id y <code>reviewByVersion</code>, las leyes,
-				las claves de diccionario <code>_standardReview_</code> y el{" "}
-				<code>data.details.lean</code> de <code>skip-link</code>, experimentales hasta la 1.18.0, y
-				el <code>uses</code> de un pack y <code>surea11y-pack new --kind derived</code>, desde la
-				1.17.0 hasta la 1.19.0. Las leyes muestran lo que eso significa: la 1.17.0 eliminó cuatro de
-				sus campos. Un pack que usa una declara un rango de <code>core</code> que no admite ninguna
-				versión menor posterior (<code>'~1.17.0'</code>), ya que la siguiente versión menor puede
-				cambiarla: <code>checkPack</code> informa de uno más amplio, y <code>describePacks</code>{" "}
-				enumera lo que usa cada pack. Todo lo demás de esta página es estable en toda la 1.x. La{" "}
+				Core marca algunas API como experimentales: pueden cambiar en una versión menor, nunca en
+				un parche, y pasan a ser estables o se eliminan en un plazo de dos versiones menores. Core
+				1.18.0 hizo estables las que eran experimentales desde la 1.16.0: los estándares como
+				datos, las pruebas bajo los requisitos, los estándares construidos sobre otros (
+				<code>deriveStandard</code> y <code>basedOn</code>), las traducciones por id y{" "}
+				<code>reviewByVersion</code>, las leyes, las claves de diccionario{" "}
+				<code>_standardReview_</code> y el <code>data.details.lean</code> de{" "}
+				<code>skip-link</code>. Quedan dos: el <code>laws</code> de un requisito, hasta la 1.20.0,
+				ya que el análisis solo empezó a respetarlo en la 1.18.0, y el <code>uses</code> de un pack
+				y <code>surea11y-pack new --kind derived</code>, desde la 1.17.0 hasta la 1.19.0. Las leyes
+				mostraron lo que significa experimental: la 1.17.0 eliminó cuatro de sus campos.
+			</p>
+			<p>
+				Un pack que usa una API experimental declara un rango de <code>core</code> que no admite
+				ninguna versión menor posterior (<code>'~1.18.0'</code>), ya que la siguiente versión menor
+				puede cambiarla: <code>checkPack</code> informa de uno más amplio, también de un rango que
+				admite la siguiente versión mayor (<code>{"'~1.18.0 || ^2.0.0'"}</code>), y{" "}
+				<code>describePacks</code> enumera lo que usa cada pack. Core 1.18.0 omite un pack que
+				declaró <code>~1.16</code> o <code>~1.17</code> por las API ya estables, con el motivo en{" "}
+				<code>skippedPacks</code>, hasta que amplía su rango a <code>'^1.18.0'</code>, como hizo la
+				1.5.0 del <a href="#en-301-549-pack">pack de EN 301 549</a>. Todo lo demás de esta página
+				es estable en toda la 1.x. La{" "}
 				<a href={`${core}/docs/API_STABILITY.md#experimental-may-change-in-a-minor`}>política de estabilidad de la API</a>{" "}
 				de core en GitHub mantiene la lista.
 			</p>
@@ -1331,7 +1402,16 @@ export function PacksContent() {
 					contra las reglas de core y las del pack, como hace un análisis, así que una versión sin
 					su <code>wcagVersion</code>, o un hallazgo enviado a un requisito que la tabla no tiene, se
 					rechaza ahí en lugar de hacer que todos los análisis omitan el pack. Core 1.14.0 y
-					posteriores.
+					posteriores. Desde core 1.18.0 ambos preparan además el pack como lo hace un análisis,
+					con los packs que usa, y rechazan aquello por lo que un análisis lo omitiría: una
+					variante cuyo <code>from</code> no nombra ninguna regla, o nombra una regla que no
+					declara ajustes; un <code>rules</code>, <code>severity</code> o <code>exclude.rules</code> de un
+					perfil que no nombra ninguna regla, o una <code>severity</code> que no es un nivel; un{" "}
+					<code>checksIds</code> de un resultado agregado que no nombra ninguna regla; un estándar
+					nombrado como uno de los de core. <code>checkPack</code> informa también de un campo de
+					perfil que ningún perfil tiene (<code>rule</code> por <code>rules</code>) y de una
+					etiqueta en los <code>tags</code> de un perfil que no lleva ninguna regla ni resultado
+					agregado, que no selecciona nada; el pack se sigue cargando.
 				</li>
 				<li>
 					<strong>El lint</strong> (<code>npm run lint</code>,{" "}

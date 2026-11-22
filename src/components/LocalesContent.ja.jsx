@@ -94,7 +94,7 @@ const localeReasonRows = [
 	{
 		id: "partial-dictionary",
 		reason: <code>partial-dictionary</code>,
-		meaning: "辞書は使われましたが一部のキーが欠けているため、その文字列だけ英語にフォールバックしました。",
+		meaning: "辞書は使われましたが一部のキーが（基本言語にもなく）欠けているため、その文字列だけ英語にフォールバックしました。",
 	},
 ];
 
@@ -141,7 +141,7 @@ export function LocalesContent() {
 				}))}
 			/>
 			<p>
-				「未翻訳」は、英語のテキストと1文字残らず一致する値の数です。ただし、フランス語の「<span lang="fr">Orientation</span>」「<span lang="fr">Interruptions</span>」「<span lang="fr">Occurrences</span>」、ドイツ語の「<span lang="de">Frame</span>」「<span lang="de">Frames</span>」「<span lang="de">Element</span>」、スペイン語の「<span lang="es">Selector</span>」のように、その言語でも同じ語であるのが正しいものは除きます。こうした語は、照合した英語のテキストとともに一覧に登録され、翻訳済みとして数えられます。英語が変わるとその登録は当てはまらなくなり、誰かが改めて確認するまで、その文字列は未翻訳として数えられます。訳文の中に英単語が残っていても、この数には表れません。それはテキストを読んで見つけるもので、上のロケールには1つも残っていません。また、訳が正確か、その言語で通常使われるアクセシビリティの用語を使っているかも測りません。それには、その言語を読める人が必要です。
+				「未翻訳」は、英語のテキストと1文字残らず一致する値の数です。ただし、フランス語の「<span lang="fr">Orientation</span>」「<span lang="fr">Interruptions</span>」「<span lang="fr">Occurrences</span>」、ドイツ語の「<span lang="de">Frame</span>」「<span lang="de">Frames</span>」「<span lang="de">Element</span>」「<span lang="de">Scan</span>」、スペイン語の「<span lang="es">Selector</span>」のように、その言語でも同じ語であるのが正しいものは除きます。こうした語は、照合した英語のテキストとともに一覧に登録され、翻訳済みとして数えられます。英語が変わるとその登録は当てはまらなくなり、誰かが改めて確認するまで、その文字列は未翻訳として数えられます。訳文の中に英単語が残っていても、この数には表れません。それはテキストを読んで見つけるもので、上のロケールには1つも残っていません。また、訳が正確か、その言語で通常使われるアクセシビリティの用語を使っているかも測りません。それには、その言語を読める人が必要です。
 			</p>
 
 			<h3 id="reading-coverage-from-the-package">パッケージからカバー率を読み取る</h3>
@@ -233,10 +233,11 @@ export function LocalesContent() {
 				を用意すれば、ドイツ語のバリエーションはすべてカバーされます。
 			</p>
 			<h3>ステップ2：文字列ごとに解決する（文字列単位）</h3>
-			<p>選ばれた辞書の中で、文字列は1つずつ個別に引かれます。</p>
+			<p>そのうえで、文字列は指定したコードの辞書から始めて、1つずつ個別に引かれます。</p>
 			<ol>
-				<li>選ばれた辞書からそのキーの値を取ります。</li>
-				<li>そのキーがなければ、英語の値を取ります。</li>
+				<li>指定したコードの辞書からそのキーの値を取ります。自分の<code>engineOptions.messages</code>のものが先で、次にエンジンのものです。</li>
+				<li>コードにサブタグがあり、そのキーがなければ、基本言語から取ります。ここでも自分のものが先で、次にエンジンのものです。<code>locale: 'de-AT'</code>と<code>{"messages: { 'de-AT': { … one key … } }"}</code>なら、そのキーは自分のもので、ほかの文字列はすべて組み込みのドイツ語です。</li>
+				<li>それでもそのキーがなければ、英語の値を取ります。自分の<code>engineOptions.messages.en</code>が先で、次にエンジンのものです。そのため、英語だけで渡したキーはどのロケールでも英語で表示され、ロケールが英語にフォールバックしたときにも英語の上書きが適用されます。</li>
 				<li>
 					英語にもない場合（組み込みのキーでは起こらないはずですが、独自に作ったキーでは起こりえます）は、ルール自体が持っているテキストをそのまま使います。
 				</li>
@@ -247,7 +248,7 @@ export function LocalesContent() {
 					<code>undefined</code>
 					になったり、エラーが投げられたりすることはありません。
 				</strong>
-				翻訳が途中でも、訳がある部分は指定した言語で、それ以外はすべて英語で表示されます。
+				翻訳が途中でも、訳がある部分は指定した言語で、次に基本言語で、それ以外はすべて英語で表示されます。
 			</p>
 
 			<h2>実際にどのロケールになったかを確認する</h2>
@@ -314,7 +315,7 @@ export function LocalesContent() {
 				rows={dictionaryLocationRows}
 			/>
 			<p>
-				バンドルを分けているのは、それを使うすべてのページにネットワーク経由で配信されるうえ、すべての言語を必要とするページはないからです。英語だけを内蔵し、残りを任意にしたことで、ほかの言語はダウンロードに含まれず、言語を追加しても増えなくなりました。各別ファイル<code>surea11y.i18n.&lt;locale&gt;.js</code>の大きさは、置き換える英語のテキストとほぼ同じで（現在200〜250 KB）、ページが読み込むのは使うものだけです。それ以外は何も変わりません。Nodeパッケージとバインディングには影響しません。
+				バンドルを分けているのは、それを使うすべてのページにネットワーク経由で配信されるうえ、すべての言語を必要とするページはないからです。英語だけを内蔵し、残りを任意にしたことで、ほかの言語はダウンロードに含まれず、言語を追加しても増えなくなりました。各別ファイル<code>surea11y.i18n.&lt;locale&gt;.js</code>の大きさは、置き換える英語のテキストとほぼ同じで（現在310〜390 KB）、ページが読み込むのは使うものだけです。それ以外は何も変わりません。Nodeパッケージとバインディングには影響しません。
 			</p>
 			<CodeBlock
 				lang="html"
@@ -399,7 +400,9 @@ export function LocalesContent() {
 					"}, null);",
 				]}
 			/>
-			<p>渡さなかったキーは通常どおりフォールバックするので、一部だけの上書きでも問題ありません。</p>
+			<p>
+				渡さなかったキーは通常どおりフォールバックするので、一部だけの上書きでも問題ありません。地域のコードでも同じです。<code>locale: 'de-AT'</code>で<code>{"messages: { 'de-AT': { … } }"}</code>を渡すとそれらの文字列が上書きされ、残りは英語より前にドイツ語（自分の<code>messages.de</code>が先で、次に組み込みか別ファイルのドイツ語）から取られます。ドイツ語がすべてのキーを持っていれば、<code>engine.locale</code>は<code>ok</code>を報告します。ここでもロケールのキーの大文字小文字は問いません。<code>{"messages: { DE: … }"}</code>は<code>locale: 'de'</code>のスキャンが表示するドイツ語を上書きし、その下には組み込みのドイツ語が残ります。
+			</p>
 
 			<h2 id="language-specific-matching">言語ごとの照合</h2>
 			<p>
@@ -436,7 +439,7 @@ export function LocalesContent() {
 				<code>lang</code>
 				が宣言されていない場合、
 				<code>link-name-quality</code>
-				はすべての言語のリストを確認します。リンクがどの言語でもありうるためです。すべてのリストをどこでも確認すると、ある言語では一般的な語でも別の言語では実際の名前になる語、例えば英語のページの「<span lang="fr">Suite</span>」や「<span lang="fr">Plus</span>」を検出してしまうためです。文字起こしを表す語は例外です。どの言語でも紛れがなく、ページが別の言語の文字起こしにリンクすることもあるため、常にすべて確認します。テキストは最初にNFKC正規化するので、「見出し２」のような全角の形も一致します。
+				はすべての言語のリストを確認します。リンクがどの言語でもありうるためです。すべてのリストをどこでも確認すると、ある言語では一般的な語でも別の言語では実際の名前になる語、例えば英語のページの「<span lang="fr">Suite</span>」や「<span lang="fr">Plus</span>」を検出してしまうためです。文字起こしを表す語は例外です。どの言語でも紛れがなく、ページが別の言語の文字起こしにリンクすることもあるため、常にすべて確認します。エディター、スターターテンプレート、CMSが名前のないページに付ける既定のタイトル（「<span lang="en">Untitled</span>」「<span lang="es">Sin título</span>」「<span lang="de">Ohne Titel</span>」「<span lang="fr">Sans titre</span>」「無題」「<span lang="en">Document</span>」「<span lang="en">Just another WordPress site</span>」）も同じです。<code>page-title-patterns</code>は、ページの言語にかかわらず、それらを一般的なタイトルとして読みます。テキストは最初にNFKC正規化するので、「見出し２」のような全角の形も一致します。
 			</p>
 			<p>
 				<code>page-title-patterns</code>
@@ -492,7 +495,7 @@ export function LocalesContent() {
 					<code>summary</code>
 					／
 					<code>hint</code>
-					を解決します。傾きの
+					を解決します。計測値にちなむ名前（末尾が<code>ratio</code>、<code>threshold</code>、<code>Px</code>のもの。<code>ratio</code>、<code>bestRatio</code>、<code>fontSizePx</code>など）のパラメーターで値が小数のものは、地域ではなく、メッセージが書かれている言語の小数点で書かれます。フランス語、ドイツ語、スペイン語では「2,85:1」、英語と日本語では「2.85:1」なので、<code>en-ZA</code>は「2.85:1」、<code>fr-CA</code>と<code>de-AT</code>は「2,85:1」と書きます。<code>data.details</code>と<code>metrics</code>は数値のままで、<code>i18n.params</code>は各値を書式化せず、小数点をピリオドにして保ちます（<code>ratio: "2.85"</code>、文字列）。辞書の文字列に書かれた小数（「4,5:1」）も同じ規則に従います。core 1.18.0以降です。傾きの
 					<code>i18n.whyKey</code>
 					／
 					<code>i18n.cautionKey</code>
@@ -557,6 +560,12 @@ export function LocalesContent() {
 					に加わってください。エンジンやこのサイトの翻訳にレビューが必要なときに依頼が届きます。
 				</li>
 				<li>
+					<strong>言語をリクエストする</strong>
+					：自分で翻訳できなくても、必要な言語は
+					<a href="https://github.com/SureA11y/core/issues/new?template=translation.md">エンジンの翻訳Issue</a>
+					でリクエストしてください。
+				</li>
+				<li>
 					<strong>翻訳する</strong>
 					：エンジンのメッセージの手順は
 					<a href={`${core}/docs/I18N.md#adding-your-language`}>
@@ -568,7 +577,7 @@ export function LocalesContent() {
 				</li>
 			</ul>
 			<p>
-				新しい言語は、エンジンでもこのサイトでも、その言語を母語としアクセシビリティの仕事をしている人がレビューしてから取り込みます。翻訳する人と同じくらい、レビューする人も歓迎します。
+				新しい言語は、エンジンでもこのサイトでも、その言語を母語としアクセシビリティの仕事をしている人がレビューしてから取り込みます。文法だけでなく、各テキストが英語と同じことを、その言語でページをテストしたり修正したりする人が使う言葉で述べているかを確認します。機械翻訳の下訳から始めてもかまいませんが、その後で人がすべての文字列を英語と照らし合わせて読む必要があります。いくつかの文字列の修正には、このレビューは不要です。翻訳する人と同じくらい、レビューする人も歓迎します（GitHub上の<a href={`${core}/docs/I18N.md#review-by-a-native-speaker`}><span lang="en">Review by a native speaker</span></a>（英語）を参照してください）。
 			</p>
 		</>
 	);

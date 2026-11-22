@@ -27,8 +27,11 @@ const optionRows = [
 			<>
 				Ein beliebiger String. Ein Code mit Subtag fällt zuerst auf seine Basissprache zurück,{" "}
 				<code>de-DE</code> verwendet also <code>de</code>; gibt es die nicht, Englisch. Einzelne
-				Strings fallen anschließend nach demselben Muster zurück (gewählte Locale →{" "}
-				<code>en</code> → der wörtliche englische Text der Regel), sodass eine nur teilweise
+				Strings fallen anschließend nach demselben Muster zurück (gewählte Locale → ihre
+				Basissprache → <code>en</code> → der wörtliche englische Text der Regel, wobei Ihre{" "}
+				<code>messages</code> auf jeder Stufe vor dem eingebauten Wörterbuch stehen, sodass{" "}
+				<code>{"messages: { 'de-AT': { … } }"}</code> für die Strings, die es auslässt, das
+				eingebaute Deutsch behält), sodass eine nur teilweise
 				übersetzte Locale nie zu fehlendem Text führt. In den Strings selbst ist davon nichts zu
 				sehen, deshalb meldet das Ergebnis in <code>engine.locale</code>, was tatsächlich
 				passiert ist. Prüfen Sie diesen Wert, wenn Sie wissen müssen, ob Sie die angeforderte
@@ -95,8 +98,12 @@ const optionRows = [
 				andernfalls mit einer Konsolenwarnung ignoriert. Ein Name, den kein Profil hat, wirft unter{" "}
 				<code>strictOptions</code> <code>INVALID_ENGINE_OPTIONS</code>, auch in einer Liste, mit
 				einer Meldung, die die vorhandenen Profile nennt (auch in <code>knownProfiles</code> des
-				Fehlers): Ohne Profil würde der Scan jede Regel ausführen. Siehe <a href="#conformance-profiles">„Konformitätsprofile“</a>{" "}
-				oben.
+				Fehlers): Ohne Profil würde der Scan jede Regel ausführen. Ein Eintrag einer Liste, der
+				kein Name ist (eine leere Stelle, <code>null</code>, eine Zahl oder ein leerer String wie{" "}
+				<code>''</code>), wird mit einer Warnung ignoriert und wirft unter{" "}
+				<code>strictOptions</code> <code>INVALID_ENGINE_OPTIONS</code>; ebenso ein leer angegebenes
+				Profil, als <code>''</code> oder <code>[]</code>. Siehe{" "}
+				<a href="#conformance-profiles">„Konformitätsprofile“</a> oben.
 			</>
 		),
 	},
@@ -305,17 +312,26 @@ const optionRows = [
 		meaning: (
 			<>
 				Elemente, auf die einer dieser Selektoren passt (samt ihren Nachfahren, einschließlich
-				dessen, was in ihren Shadow Roots liegt, und der Dokumente von Frames darunter), werden
-				für <strong>jede</strong> Regel vollständig übersprungen. Nützlich für Cookie-Banner,
-				Einbettungen von Drittanbietern oder bekanntermaßen auffällige Widgets, die Sie nicht
-				kontrollieren. Um etwas stattdessen nur von einer bestimmten Regel auszuschließen,
+				dessen, was in ihren Shadow Roots liegt, und der Dokumente von Frames darunter), erhalten
+				von <strong>keiner</strong> Regel Befunde. Nützlich für Cookie-Banner, Einbettungen von
+				Drittanbietern oder bekanntermaßen auffällige Widgets, die Sie nicht kontrollieren. Sie
+				bleiben trotzdem Teil der Seite: Eine Regel, die die Seite als Ganzes beurteilt, liest sie
+				als Kontext (die Überschriftengliederung der Seite in <code>heading-order</code>, ihre
+				Überschrift der ersten Ebene in <code>page-has-heading-one</code>, die Kopfzeile einer
+				Tabelle in <code>td-has-header</code>, ihre Landmarks in{" "}
+				<code>page-zones-landmark</code>), sodass das Ausschließen eines Website-Headers keine
+				übersprungene Überschriftenebene und kein fehlendes <code>&lt;h1&gt;</code> erfindet, und
+				meldet nichts in ihnen. Um etwas stattdessen nur von einer bestimmten Regel auszuschließen,
 				verwenden Sie <code>rules[ruleId].excludeSelectors</code> weiter unten. Ein Array von
 				Selektoren oder ein String mit einer Selektorliste:{" "}
 				<code>'#cookie-banner, img:not(.a, .b)'</code> ist dasselbe wie{" "}
 				<code>['#cookie-banner', 'img:not(.a, .b)']</code>, da der String nur an den Kommas
 				zwischen Selektoren getrennt wird. Jeder Selektor gilt für sich: Einer, der kein gültiges
 				CSS ist, schließt nichts aus, mit einem <code>console.warn</code>, und die anderen gelten
-				weiterhin.
+				weiterhin. Die Engine hält jede Regel daran, auch die eines Packs oder eine eigene: Ein
+				Vorkommen, das eine Regel an einem ausgeschlossenen Element meldet, wird verworfen und im
+				Ergebnis genannt (<code>excludedOccurrences</code> im{" "}
+				<a href="/results-reports/output-schema/#check-result">Ausgabeschema</a>). Core 1.18.0 und später.
 			</>
 		),
 	},
@@ -346,8 +362,11 @@ const optionRows = [
 			<>
 				Wird unverändert in das Feld <code>timestamp</code> auf oberster Ebene des Ergebnisses
 				übernommen; die Engine erzeugt selbst keinen (bewusst deterministisch). Ein Wert, der kein
-				String ist (ein <code>Date</code>, eine Zahl), wird mit einem <code>console.warn</code>{" "}
-				ignoriert; übergeben Sie <code>new Date().toISOString()</code>.
+				String ist (ein <code>Date</code>, eine Zahl), oder Text, der kein Datum mit Uhrzeit nach
+				ISO 8601 ist (<code>'yesterday'</code>, ein Datum allein wie <code>'2026-01-01'</code>{" "}
+				oder ein leeres <code>''</code>), wird mit einem <code>console.warn</code> ignoriert und
+				wirft unter <code>strictOptions</code> <code>INVALID_ENGINE_OPTIONS</code>; übergeben Sie{" "}
+				<code>new Date().toISOString()</code>.
 			</>
 		),
 	},
@@ -428,7 +447,9 @@ const optionRows = [
 				<code>visibility</code>, <code>opacity</code>, Verbergen durch Vorfahren usw.{" "}
 				<code>'styleAndGeometry'</code>: ergänzt das um echte Layout-Prüfungen (
 				<code>getClientRects()</code>/<code>getBoundingClientRect()</code>); Text ohne Client
-				Rects oder mit Breite/Höhe null wird ebenfalls ausgeschlossen, ebenso Text, der ganz
+				Rects oder mit Breite/Höhe null wird ebenfalls ausgeschlossen (ein Element mit{" "}
+				<code>display: contents</code>, etwa ein <code>&lt;slot&gt;</code>, hat keine eigene Box und
+				zählt nach den Rects, in denen sein Inhalt gezeichnet wird), ebenso Text, der ganz
 				oberhalb oder links der Seite liegt, wo kein Scrollen hinkommt (die Technik{" "}
 				<code>left: -9999px</code>), und Text, den ein Vorfahr mit{" "}
 				<code>overflow: hidden</code> oder <code>clip</code> vollständig abschneidet (
@@ -498,7 +519,25 @@ const optionRows = [
 				könnte, bleibt vollständig: jede Regel eines Scans mit <code>packs</code>, eine eigene
 				Regel und eine, die die <code>messages</code> des Scans umformulieren. Siehe{" "}
 				<a href="/results-reports/output-schema/#top-level-result"><code>engine.outputDetail</code></a>;
-				in TypeScript ist ein solches Ergebnis ein <code>CompactScanResult</code>.
+				in TypeScript ist ein solches Ergebnis ein <code>CompactScanResult</code>, den die
+				Reporter, die Baseline-Funktionen, <code>addHowToCheck</code>,{" "}
+				<code>leaningFailures</code> und <code>getMargins</code> annehmen. Die Scan-Funktionen sind
+				wie in 1.17 so typisiert, dass sie ein <code>ScanResult</code> zurückgeben; deklarieren Sie
+				das Ergebnis daher als <code>CompactScanResult</code> (oder verwenden Sie{" "}
+				<code>{"ScanResultFor<typeof options>"}</code>), um es als solches zu typisieren.
+			</>
+		),
+	},
+	{
+		id: "output-max-occurrences",
+		option: <code>output.maxOccurrencesPerRule</code>,
+		meaning: (
+			<>
+				Optional: eine ganze Zahl ab 1. Jedes Prüfergebnis behält höchstens so viele Vorkommen,
+				die fehlschlagenden zuerst, und zählt den Rest in <code>occurrencesOmitted</code>;
+				Ergebnisse, Zusammenfassungen und Gates bleiben wie ohne die Option. Siehe{" "}
+				<a href="#a-cap-on-occurrences-outputmaxoccurrencesperrule">„Eine Obergrenze für Vorkommen“</a>{" "}
+				weiter unten. Core 1.18.0 und später.
 			</>
 		),
 	},
@@ -545,8 +584,13 @@ const optionRows = [
 		option: <code>probes</code>,
 		meaning: (
 			<>
-				Ein optionales, JSON-sicheres Evidenzobjekt, das Ihre Host-Anwendung liefert, für das, was
-				der Scan einer einzelnen Seite nicht sehen kann, etwa die anderen Seiten der Website. Die
+				Ein optionales, JSON-sicheres Evidenzobjekt, das Ihre Host-Anwendung liefert: ein
+				einfaches Objekt, dessen Werte Strings, endliche Zahlen, <code>true</code>,{" "}
+				<code>false</code>, <code>null</code>, Arrays und einfache Objekte sind. Alles andere (eine
+				Funktion, ein <code>Date</code>, ein Array auf oberster Ebene, ein <code>BigInt</code>,
+				ein zirkulärer Verweis) wird mit einem <code>console.warn</code> ignoriert und wirft unter{" "}
+				<code>strictOptions</code> <code>INVALID_ENGINE_OPTIONS</code>. Es ist für das, was der
+				Scan einer einzelnen Seite nicht sehen kann, etwa die anderen Seiten der Website. Die
 				Engine begrenzt es, bevor Regeln es lesen (<code>ctx.inputs.probes</code>): sechs Ebenen
 				tief, 200 Einträge pro Array, 50 Schlüssel pro Objekt, 2.000 Zeichen pro String.{" "}
 				<code>page-title-patterns</code> liest <code>crawl.pageTitles</code> (
@@ -582,6 +626,18 @@ const optionRows = [
 		),
 	},
 	{
+		id: "timeBudgetMs",
+		option: <code>timeBudgetMs</code>,
+		meaning: (
+			<>
+				Standardmäßig aus. Eine Anzahl Millisekunden über 0 (<code>Infinity</code> heißt keine
+				Grenze, wie das Weglassen): Hat der Scan so lange gebraucht, startet er keine Regeln mehr.
+				Siehe <a href="#a-time-budget-timebudgetms">„Ein Zeitbudget“</a> weiter unten. Core 1.18.0
+				und später.
+			</>
+		),
+	},
+	{
 		id: "frameWaitTime",
 		option: (
 			<>
@@ -595,7 +651,7 @@ const optionRows = [
 					<code>INTEGRATION.md</code>
 				</a>
 				): wie lange auf die Antwort eines Child-Frames auf einen Ping (Standard{" "}
-				<code>500</code> ms) und auf eine vollständige Laufanfrage (Standard <code>60000</code>{" "}
+				<code>2000</code> ms, vor 1.18.0 <code>500</code> ms) und auf eine vollständige Laufanfrage (Standard <code>60000</code>{" "}
 				ms) gewartet wird, bevor er als nicht erreichbar gilt. Von{" "}
 				<code>runDomRulesInPage</code>/<code>runa11yCoreInPage</code> ignoriert.
 			</>
@@ -1250,7 +1306,13 @@ export function EngineOptionsContent() {
 				<code>runOnly</code> irgendeinen Filter, gewinnt es vollständig; andernfalls greift die
 				Engine auf <code>engineOptions</code> zurück.{" "}
 				<strong>Mischen Sie beide nicht in der Erwartung, dass beide gelten. Entscheiden Sie
-				sich für einen.</strong> <code>engineOptions.rules</code>, <code>.tags</code> und{" "}
+				sich für einen.</strong> Ein Filter in <code>rules</code>, <code>tags</code> oder{" "}
+				<code>tests</code> neben einem <code>runOnly</code>-Filter wird nicht gelesen, und der Scan
+				sagt es (
+				<code>[surea11y] engineOptions.tags: runOnly has a filter, which wins over it; ignored.</code>
+				); unter <code>strictOptions</code> wirft er <code>INVALID_ENGINE_OPTIONS</code>. Ein
+				Eintrag in <code>rules</code> mit den Einstellungen einer Regel ist kein Filter und wird in
+				jedem Fall gelesen. <code>engineOptions.rules</code>, <code>.tags</code> und{" "}
 				<code>.tests</code> nehmen <code>{"{ include, exclude }"}</code> an; eine einfache Liste
 				oder ein String ist die Include-Liste.
 			</p>
@@ -1391,12 +1453,25 @@ export function EngineOptionsContent() {
 				Schlüssel daneben (<code>excludeTags</code>, <code>excludeRuleIds</code>...) gelten
 				weiterhin. Ein <code>Set</code> von Namen wird als die Liste gelesen, die es enthält. Ein
 				Schlüssel, den die Objektform nicht liest, neben solchen, die sie liest, wird mit einer
-				Warnung ignoriert. Jeder andere <code>type</code> wirft{" "}
+				Warnung ignoriert; <code>includeTestIds</code> und <code>excludeTestIds</code> werden wie{" "}
+				<code>includeRuleIds</code> geprüft. Eine Composite-ID darf das alte Präfix{" "}
+				<code>a11ycore-</code> der Engine tragen, wie eine Regel-ID. Jeder andere{" "}
+				<code>type</code> wirft{" "}
 				<code>INVALID_RUN_ONLY</code>, ebenso ein <code>runOnly</code>, das eine Zahl oder ein
 				Boolean ist, oder ein Objekt, von dessen Keys die Engine keinen liest (
 				<code>{"{ includeRuleId: [...] }"}</code>): Jeder dieser Fälle führte früher jede Regel
-				aus. Ein leeres Array, ein leerer String oder ein leeres Objekt bedeutet weiterhin die
-				Standardauswahl.
+				aus. Ein leeres Objekt (<code>{"{}"}</code>) bedeutet weiterhin die Standardauswahl.
+				Ebenso eine leere Regel- oder Tag-Liste (<code>[]</code>, <code>''</code>, ein leeres{" "}
+				<code>Set</code>, <code>{"{ type: 'rule', values: [] }"}</code>,{" "}
+				<code>{"{ tags: [] }"}</code>, <code>{"{ includeRuleIds: [] }"}</code>) und ein{" "}
+				<code>type</code> ohne <code>values</code> (<code>{"{ type: 'tag' }"}</code>), doch der
+				Scan sagt es, da eine Liste, die ein Filter erstellt hat, versehentlich leer sein kann:{" "}
+				<code>[surea11y] runOnly.values is an empty list: it selects no rule, so every rule runs.</code>{" "}
+				Dasselbe gilt für eine leere Include-Liste in <code>engineOptions.rules</code>,{" "}
+				<code>.tags</code> oder <code>.tests</code> (<code>rules: []</code>, <code>tags: []</code>,{" "}
+				<code>{"tags: { include: [] }"}</code>), wenn <code>runOnly</code> keinen Filter hat. Unter{" "}
+				<code>strictOptions</code> wirft jeder dieser Fälle <code>INVALID_ENGINE_OPTIONS</code>. Core
+				1.18.0 und später.
 			</p>
 
 			<h3 id="which-criteria-a-scan-reports">Welche Kriterien ein Scan meldet</h3>
@@ -1644,7 +1719,9 @@ export function EngineOptionsContent() {
 			<p>
 				Sie müssen dafür nichts tun. Die Engine ermittelt für jeden Lauf eine{" "}
 				<strong>WCAG-Zielversion</strong>, und ist dieses Ziel 2.2, kann eine Regel mit{" "}
-				<code>wcag22-removed</code> kein <code>fail</code> melden: Sie läuft weiterhin, meldet
+				<code>wcag22-removed</code> kein <code>fail</code> melden, ebenso wenig eine Regel, deren
+				WCAG-Kriterien alle von 2.2 entfernt wurden, etwa eine eigene Regel oder die eines Packs,
+				die nur auf 4.1.1 abgebildet ist, ohne den Tag: Sie läuft weiterhin, meldet
 				weiterhin jedes gefundene Vorkommen, aber ihr Ergebnis wird zu <code>cantTell</code>{" "}
 				umgewandelt, und das Ergebnis enthält ein Feld <code>wcagVersionScope</code>, das den
 				Grund nennt (siehe <a href="/results-reports/output-schema/">das Ausgabeschema</a>).
@@ -1771,6 +1848,7 @@ export function EngineOptionsContent() {
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
 					"  perfStats: false,                // default false — internal timing counters, debug-only shape",
 					"  profileRules: false,             // default false — per-rule timings; needs perfStats",
+					"  timeBudgetMs: undefined,         // optional — once the scan has spent this many ms, it starts no more rules (see below)",
 					"",
 					"  contrast: {",
 					"    mode: 'strictConformance',     // 'strictConformance' (default) | 'auditorAssist'",
@@ -1787,7 +1865,8 @@ export function EngineOptionsContent() {
 					"  output: {",
 					"    includeSelector: true,         // set false to suppress auto-filled selectors",
 					"    includeHtml: true,",
-					"    detail: 'full'                 // 'findings': pass/notApplicable results keep only rule, outcome, type",
+					"    detail: 'full',                // 'findings': pass/notApplicable results keep only rule, outcome, type",
+					"    maxOccurrencesPerRule: undefined  // optional — keep at most this many occurrences per rule, the rest counted (see below)",
 					"  },",
 					"",
 					"  rules: {",
@@ -1802,7 +1881,7 @@ export function EngineOptionsContent() {
 					"  packs: [ /* rules and standards from outside core, see Packs */ ],",
 					"",
 					"  // Only read by runa11yCoreAcrossFrames. Ignored by runDomRulesInPage/runa11yCoreInPage.",
-					"  pingWaitTime: 500,               // ms to wait for a child frame to answer a ping",
+					"  pingWaitTime: 2000,              // ms to wait for a child frame to answer a ping",
 					"  frameWaitTime: 60000             // ms to wait for a child frame's full scan result",
 					"};",
 				]}
@@ -1816,6 +1895,146 @@ export function EngineOptionsContent() {
 				]}
 				rows={optionRows}
 			/>
+
+			<h3 id="a-time-budget-timebudgetms">Ein Zeitbudget (<code>timeBudgetMs</code>)</h3>
+			<p>
+				<code>timeBudgetMs</code> begrenzt, wie lange ein Scan weiter Regeln startet. Hat er so
+				viele Millisekunden gebraucht, gezählt ab dem Start des Scans, startet er keine weiteren:
+				Eine gestartete Regel läuft zu Ende, und jede von der Auswahl gewählte Regel, die noch nicht
+				gestartet war, fehlt in <code>checksResults</code> und steht in <code>notRun</code> des
+				Ergebnisses, <code>{"[{ ruleId, reason: 'timeBudget' }]"}</code>.{" "}
+				<code>engine.incomplete</code> sagt dann, dass der Scan abgebrochen wurde,{" "}
+				<code>{"{ reason: 'timeBudget', timeBudgetMs, rulesNotRun }"}</code>, und ein{" "}
+				<code>console.warn</code> sagt, wie viele Regeln nicht liefen. Core 1.18.0 und später.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = runDomRulesInPage(url, null, { timeBudgetMs: 2000 }, null);",
+					"if (result.engine.incomplete) {",
+					"  // result.notRun: the rules that checked nothing",
+					"}",
+				]}
+			/>
+			<p>Ein abgebrochener Scan gilt nie als bestanden:</p>
+			<ul>
+				<li>
+					Eine Zusammenfassung mit einer Regel, die nicht lief, ist <code>cantTell</code> (
+					<code>composite.rollup.cantTell.missingChild</code>), ihr Beitrag mit{" "}
+					<code>notRun: 'timeBudget'</code> markiert, wie für jede ihrer Regeln, die nicht lief.
+				</li>
+				<li>
+					Der HTML-Bericht sagt, noch vor allem, was er gefunden hat, dass der Scan
+					unvollständig ist, und nennt die Regeln; SARIF gibt pro Regel eine <code>error</code>-Notification und{" "}
+					<code>executionSuccessful: false</code>; JUnit gibt pro Regel einen{" "}
+					<code>error</code>-Testfall in einer Suite „Rules not run“; EARL weist jede als{" "}
+					<code>earl:untested</code> aus; <code>table()</code> im Browser-Bundle listet jede als{" "}
+					<code>notRun</code> und warnt; <code>matchBaseline</code> ergänzt{" "}
+					<code>{"incomplete: { notRun }"}</code>, sodass ein Gate, das nur <code>newCount</code>{" "}
+					liest, auch darauf achten muss.
+				</li>
+				<li>
+					In einem <a href="#several-profiles">Scan mehrerer Profile</a> gilt das Budget für den
+					ganzen Scan: Jedes Profil nach dem ersten bekommt, was davon übrig ist, und ein Profil,
+					das ohne Rest beginnen würde, läuft nicht, steht in <code>engine.profilesNotRun</code>{" "}
+					mit dem Grund <code>timeBudget</code> (den <code>allowProfilesNotRun</code> nicht
+					akzeptiert), und seine Regeln stehen in <code>notRun</code> wie bei einem Profil, dem das
+					Budget ausging, mit derselben Warnung. Jeder Eintrag von <code>notRun</code> nennt sein{" "}
+					<code>profile</code>.
+				</li>
+				<li>
+					Über Frames hinweg (<code>runa11yCoreAcrossFrames</code>) gilt das Budget ebenfalls für
+					den ganzen Scan, gezählt ab dem Start des Scans des obersten Dokuments: Der Scan jedes
+					Frames, verschachtelte eingeschlossen, bekommt nur, was beim Start davon übrig ist. Ein
+					Frame, den der Scan ohne Rest erreicht, startet keine Regel: Sein Ergebnis listet jede
+					Regel, die er auswählt, in <code>notRun</code> und hat <code>engine.incomplete</code>,
+					unter diesem Frame, mit derselben Warnung. <code>engine.incomplete.timeBudgetMs</code>{" "}
+					ist immer das Budget, das der Scan bekommen hat, nicht der Rest davon.
+				</li>
+				<li>
+					Im Browser-Bundle lädt <code>runa11yCoreInPageAsync</code> vor dem Scan die Stylesheets,
+					die die Seite nicht lesen kann, und das Budget zählt ab davor. Das Laden darf höchstens
+					die Hälfte des Budgets brauchen: Dann wartet es nicht länger auf Stylesheets, und der
+					Scan führt seine Regeln im Rest ohne sie aus, sodass ein langsames Stylesheet kein
+					Ergebnis ohne jede gelaufene Regel hinterlassen kann. Ein Stylesheet, das es aufgegeben
+					hat, wird in einer Warnung und in <code>engine.incomplete.styleSheetsNotRead</code>{" "}
+					genannt, und das Ergebnis ist unvollständig (<code>engine.incomplete</code>, mit{" "}
+					<code>rulesNotRun</code> 0, wenn jede Regel lief). Eine Regel, die ein solches Stylesheet
+					gelesen hätte, fragt danach. Ohne Budget wird auf jedes Stylesheet bis zu 5 Sekunden
+					gewartet, wie bisher.
+				</li>
+			</ul>
+			<p>
+				Standardmäßig aus, und die Ergebnisse eines Scans innerhalb seines Budgets sind wie ohne.
+				Welche Regeln laufen, bevor das Budget aufgebraucht ist, hängt vom Rechner und seiner Last
+				ab, daher ist ein Scan mit Budget nicht deterministisch: Verwenden Sie es, um den Scan einer
+				schweren Seite innerhalb eines CI-Zeitlimits zu halten, nicht für Ergebnisse, die Sie per
+				Diff vergleichen. <code>Infinity</code> heißt keine Grenze, wie das Weglassen, und wird ohne
+				Warnung akzeptiert. Alles außer einer Zahl über 0 wird mit einem{" "}
+				<code>console.warn</code> ignoriert und wirft unter <code>strictOptions</code>{" "}
+				<code>INVALID_ENGINE_OPTIONS</code>. Es funktioniert gleich in Node, in jsdom und im
+				Browser-Bundle.
+			</p>
+
+			<h3 id="a-cap-on-occurrences-outputmaxoccurrencesperrule">
+				Eine Obergrenze für Vorkommen (<code>output.maxOccurrencesPerRule</code>)
+			</h3>
+			<p>
+				Eine Seite mit einem Mangel, der sich in jeder Zeile einer langen Tabelle wiederholt, gibt
+				einer Regel Hunderte von Vorkommen und ein Ergebnis von zig Megabyte.{" "}
+				<code>output.maxOccurrencesPerRule</code> behält von den Vorkommen jeder Regel höchstens so
+				viele im Ergebnis und zählt die übrigen. Core 1.18.0 und später.
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"runDomRulesInPage(url, null, { output: { maxOccurrencesPerRule: 20 } }, null);",
+					"// checksResults[i]: occurrences (20 at most), occurrencesOmitted: 412,",
+					"//   occurrencesOmittedByOutcome: { fail: 412 }",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>Nichts wird nach dem Behaltenen entschieden.</strong> Die Obergrenze greift, nachdem
+					der Scan alles entschieden hat: <code>outcome</code> und <code>severity</code> jeder
+					Regel, die Zusammenfassungen und ihre Zählungen und in einem Scan mehrerer Profile die
+					Urteile jedes Profils sind die aller Vorkommen, die die Regel gefunden hat.{" "}
+					<code>engine.occurrenceCap</code> sagt, dass der Scan begrenzt wurde:{" "}
+					<code>{"{ maxOccurrencesPerRule, occurrencesOmitted, rulesCapped }"}</code>.
+				</li>
+				<li>
+					<strong>Die Fehlschläge werden zuerst behalten</strong>, dann die offenen Befunde mit
+					Tendenz zu <code>fail</code>, dann die übrigen offenen, dann der Rest, jeweils in der
+					Reihenfolge, in der die Regel sie geliefert hat, sodass eine fehlschlagende Regel immer
+					mindestens einen Fehlschlag zeigt.
+				</li>
+				<li>
+					<strong>Die Reporter zählen, was fehlt.</strong> Der HTML-Bericht zählt es in der Summe
+					und auf der Karte der Regel („+412 weitere, nicht aufgeführt“), SARIF ergänzt pro begrenzter Regel
+					eine Notiz, JUnit zählt es in der Meldung des Fehlschlags und schreibt „+412 more“ in
+					seinen Text, und <code>table()</code> im Browser-Bundle gibt eine Zeile „+412 more“.
+				</li>
+				<li>
+					<strong>Gates bleiben genau.</strong> Eine begrenzte fehlschlagende Regel schlägt weiterhin
+					fehl. Gegen eine Baseline kann ein weggelassener Fehlschlag nicht abgeglichen werden und
+					zählt daher als neu: <code>matchBaseline</code> rechnet ihn zu <code>totalFail</code> und{" "}
+					<code>newCount</code> (und sagt es in <code>incomplete.occurrencesOmitted</code>), JUnit
+					lässt die Regel fehlschlagen, und SARIF gibt der Regel dafür ein{" "}
+					<code>error</code>-Ergebnis, wenn die Baseline jeden behaltenen Fehlschlag kannte. Die
+					offenen Befunde mit Tendenz zu <code>fail</code> werden getrennt gezählt (
+					<code>occurrencesOmittedLeaningFail</code>) und wirken genauso, wo ein Gate auf die
+					Tendenz verlangt ist: <code>leanFail</code> von <code>matchBaseline</code>,{" "}
+					<code>leanFailAs: 'failure'</code> von JUnit und <code>leanFailAs: 'error'</code> von
+					SARIF. Ein begrenztes Ergebnis kann keine vollständige{" "}
+					<a href="/conformance/baseline/#incomplete-scan">Baseline</a> schreiben:{" "}
+					<code>buildBaselineEntries</code> warnt.
+				</li>
+			</ul>
+			<p>
+				Ohne die Option wird jedes Vorkommen behalten. Alles außer einer ganzen Zahl ab 1 wird mit
+				einem <code>console.warn</code> ignoriert und wirft unter <code>strictOptions</code>{" "}
+				<code>INVALID_ENGINE_OPTIONS</code>.
+			</p>
 
 			<h3 id="catching-mistakes-in-the-options-strictoptions">Fehler in den Optionen abfangen (<code>strictOptions</code>)</h3>
 			<p>
@@ -1833,24 +2052,38 @@ export function EngineOptionsContent() {
 				</li>
 				<li>
 					<strong>Immer</strong> gibt es eine Warnung zu einem Wert vom falschen Typ, und er wird
-					als nicht angegeben gelesen, ebenso ein <code>engineOptions</code>, das kein Objekt ist.
+					als nicht angegeben gelesen (<code>perfStats: 'maybe'</code>:{" "}
+					<code>[surea11y] engineOptions: perfStats must be true or false, not "maybe"; ignored.</code>
+					), ebenso ein <code>engineOptions</code>, das kein Objekt ist.
 					Ein/Aus-Optionen (<code>includeShadowDom</code>, <code>includeHiddenElements</code>,{" "}
 					<code>fragment</code>, <code>perfStats</code>, <code>profileRules</code>,{" "}
 					<code>output.includeHtml</code>, <code>output.includeSelector</code>) nehmen{" "}
-					<code>true</code> oder <code>false</code> an, oder <code>'true'</code>,{" "}
-					<code>'false'</code>, <code>'1'</code>, <code>'0'</code>, <code>1</code> und{" "}
-					<code>0</code>, so wie eine Kommandozeile sie schreibt: <code>perfStats: 'false'</code>{" "}
-					ist aus.
+					<code>true</code> oder <code>false</code> an und lesen zur Laufzeit auch{" "}
+					<code>'true'</code>, <code>'false'</code>, <code>'1'</code>, <code>'0'</code>,{" "}
+					<code>1</code> und <code>0</code>, für untypisierten Code, der einen Wert so übergibt, wie
+					ihn ein Kommandozeilen-Flag, ein Query-String oder eine Umgebungsvariable schreibt:{" "}
+					<code>perfStats: 'false'</code> ist aus. Die TypeScript-Typen nehmen nur Booleans an,
+					typisierter Code übergibt also <code>true</code> oder <code>false</code>. Ein Schlüssel in{" "}
+					<code>rules[ruleId]</code>, der keine Regel des Scans nennt, erhält eine Warnung mit der
+					nächstliegenden ID und wirft unter <code>strictOptions</code>.{" "}
+					<code>contrast.rootCanvasFallback</code> wird gelesen, wie CSS eine Farbe liest, im
+					Browser vom Browser selbst, und muss eine deckende Farbe sein: Ein anderer Wert (
+					<code>inherit</code>, <code>currentColor</code>) wird als Weiß gemessen, was das Ergebnis
+					zurückgibt, mit einer Warnung, und wirft unter <code>strictOptions</code>.
 				</li>
 				<li>
-					<strong>Mit <code>strictOptions: true</code></strong> (oder <code>'true'</code>,{" "}
-					<code>'1'</code> oder <code>1</code>) wird jede Option vor dem Scan geprüft, und jeder
+					<strong>Mit <code>strictOptions: true</code></strong> (zur Laufzeit auch{" "}
+					<code>'true'</code>, <code>'1'</code> oder <code>1</code>, für untypisierten Code; die
+					TypeScript-Typen nehmen ein Boolean an) wird jede Option vor dem Scan geprüft, und jeder
 					Fehler wirft einen Fehler mit <code>code: 'INVALID_ENGINE_OPTIONS'</code>, der jeden
 					davon nennt, wobei <code>problems</code> sie als{" "}
 					<code>{"{ path, kind, message, suggestion }"}</code> auflistet: ein unbekannter Schlüssel
 					(<code>kind: 'unknown'</code>) in <code>engineOptions</code> oder in einem seiner Objekte
 					und ein Wert vom falschen Typ oder außerhalb seiner Menge (<code>kind: 'invalid'</code>),
 					etwa <code>includeHiddenElements: 'yes'</code> oder <code>contrast.mode: 'strict'</code>.
+					Ein Filter in <code>rules</code>, <code>tags</code> oder <code>tests</code> neben einem{" "}
+					<code>runOnly</code>-Filter wirft ebenfalls, da <code>runOnly</code> gewinnt und er nicht
+					gelesen würde.
 				</li>
 			</ul>
 			<CodeBlock
@@ -1861,6 +2094,15 @@ export function EngineOptionsContent() {
 				]}
 			/>
 			<p>
+				Unter <code>strictOptions</code> lehnt der Scan mit demselben Code auch ab, was sonst erst
+				beim Start eine Warnung erhielte: ein Profil, einen <code>mappings</code>-Standard oder
+				einen <code>optInRules</code>-Tag, die es nicht gibt, und einen Selektor in{" "}
+				<code>excludeSelectors</code> (oder in <code>rules[ruleId].excludeSelectors</code> einer
+				Regel), der kein gültiges CSS ist und nichts ausschließen würde. Eine leere Stelle in einer
+				Liste (<code>{"excludeSelectors: [, 'main']"}</code>) wird wie ein <code>null</code>{" "}
+				abgelehnt.
+			</p>
+			<p>
 				Die Katalogfunktionen, die <code>engineOptions</code> entgegennehmen (
 				<code>getChecksCatalog</code>, <code>getRulesCatalog</code>, <code>getCheckDefById</code>,{" "}
 				<code>getCompositeRuleById</code>, <code>getChecksForRunOnly</code>,{" "}
@@ -1869,17 +2111,35 @@ export function EngineOptionsContent() {
 				<code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code> warnt, behandelt die
 				Stufe als nicht angegeben und listet, was ein Scan mit diesen Optionen meldet; mit{" "}
 				<code>strictOptions: true</code> wirft sie <code>INVALID_ENGINE_OPTIONS</code>, wie der
-				Scan. Eine Auswahl, die sich selbst aufhebt (eine Regel zugleich ein- und ausgeschlossen,
+				Scan. Unter <code>strictOptions</code> lehnen sie auch ab, was der Scan vor dem Lauf
+				ablehnt: ein <code>profile</code>, einen <code>optInRules</code>-Tag oder einen{" "}
+				<code>mappings</code>-Standard, die nichts benennen, Einstellungen in <code>rules</code> für
+				eine Regel, die es nicht gibt, einen unbekannten <code>policyContract</code>, ein{" "}
+				<code>contrast.rootCanvasFallback</code>, das keine deckende Farbe ist, und ein{" "}
+				<code>excludeSelectors</code> (global oder das einer Regel), das kein gültiges CSS ist.
+				Selektoren werden am globalen <code>document</code> getestet, wo es eines gibt (ein als
+				global gesetztes jsdom-Window); ohne eines testet sie nur der Scan, ebenso eine benannte
+				Farbe wie <code>black</code>, die nur eine Seite lesen kann. Eine Auswahl, die sich selbst aufhebt (eine Regel zugleich ein- und ausgeschlossen,
 				Teile ohne gemeinsame Regel), wird so gemeldet, wie der Scan sie meldet: mit einer Warnung
 				und unter <code>strictOptions</code> mit <code>INVALID_RUN_ONLY</code>.
 			</p>
 			<p>
-				Nicht geprüft werden: die eigenen Einstellungen einer Regel (<code>rules[ruleId]</code>),
-				die Schlüssel von <code>messages</code> und <code>probes</code>, die die Engine ungelesen
-				weitergibt, sowie die eigenen Regeln, die eigene Prüfungen haben
-				(<code>skippedCustomRules</code>). In TypeScript ist <code>StrictEngineOptions</code>{" "}
-				dieselbe Menge von Optionen ohne die Index-Signatur, mit der jeder Schlüssel kompiliert,
-				daher ist eine falsch geschriebene Option auch dort ein Fehler.
+				Die Optionen, die ein Objekt annehmen (<code>contrast</code>, <code>output</code>,{" "}
+				<code>policy</code>, <code>policyContract</code>, <code>rules</code>, <code>tags</code>,{" "}
+				<code>tests</code>, <code>messages</code>), nehmen ein einfaches an, wie es ein Literal oder{" "}
+				<code>JSON.parse</code> schreibt: Ein <code>Date</code>, eine <code>Map</code> oder eine
+				Klasseninstanz wird wie jeder andere Wert vom falschen Typ abgelehnt. Nicht geprüft werden:
+				die eigenen Einstellungen einer Regel (<code>rules[ruleId]</code>) und die Schlüssel von{" "}
+				<code>messages</code>, die die Engine ungelesen weitergibt (<code>probes</code> wird als
+				JSON-sichere Daten geprüft, nicht nach Schlüsseln), sowie die eigenen Regeln, die eigene
+				Prüfungen haben (<code>skippedCustomRules</code>). In TypeScript ist{" "}
+				<code>StrictEngineOptions</code> dieselbe Menge von Optionen ohne die Index-Signatur, mit
+				der jeder Schlüssel kompiliert, daher ist eine falsch geschriebene Option auch dort ein
+				Fehler; und ein Objekt, das im Aufruf selbst mit <code>strictOptions: true</code>{" "}
+				geschrieben ist (
+				<code>{"runDomRulesInPage(url, null, { strictOptions: true, lcoale: 'de' })"}</code>, eine
+				Katalogfunktion, <code>engineOptions</code> von <code>runa11yCoreOnHtml</code>), wird als
+				solches geprüft.
 			</p>
 
 			<h3 id="rule-scoped-excludeselectors"><code>excludeSelectors</code> pro Regel</h3>
@@ -2187,7 +2447,8 @@ export function EngineOptionsContent() {
 					ein <code>runInPage</code>, das weder eine Funktion noch ein rekonstruierbarer
 					Quelltext-String ist, eine <code>applicability</code>, die sich nicht in eine Funktion
 					umwandeln lässt, ein <code>meta</code>, das die Validierung nicht besteht, etwa{" "}
-					<code>deprecated: true</code> ohne <code>deprecation</code>, eine ID, die schon eine
+					<code>deprecated: true</code> ohne <code>deprecation</code> oder ein Eintrag in{" "}
+					<code>wcagSc</code>, der kein WCAG-Kriterium nennt (<code>'9.9.9'</code>), eine ID, die schon eine
 					andere eigene Regel in der Liste hat, oder die ID einer Composite-Regel) wird mit einem{" "}
 					<code>console.warn</code> übersprungen, das die Regel und den Grund nennt, und im{" "}
 					<code>skippedCustomRules</code> des Ergebnisses aufgeführt. Der Rest des Scans,
@@ -2201,7 +2462,11 @@ export function EngineOptionsContent() {
 				<li>
 					Regeln laufen synchron. Ein <code>runInPage</code> oder <code>applicability</code>, das
 					ein Promise zurückgibt (eine <code>async</code>-Funktion), wird als{" "}
-					<code>cantTell</code> gemeldet, mit einem <code>error</code>, der das sagt, ebenso ein{" "}
+					<code>cantTell</code> gemeldet, mit einem <code>error</code>, der das sagt, ebenso eine{" "}
+					<code>applicability</code>, die etwas anderes als <code>true</code>, <code>false</code>{" "}
+					oder <code>{"{ applicable: true | false }"}</code> zurückgibt (<code>undefined</code> aus
+					einem vergessenen <code>return</code>, <code>0</code>, <code>null</code>,{" "}
+					<code>'false'</code>), was die Regel vor 1.18.0 überall ausführte, und ein{" "}
 					<code>runInPage</code>, das etwas anderes als ein Ergebnisobjekt zurückgibt. Ein{" "}
 					<code>outcome</code> außerhalb von <code>pass</code>, <code>fail</code>,{" "}
 					<code>cantTell</code> und <code>notApplicable</code> (etwa <code>'failed'</code>) wird

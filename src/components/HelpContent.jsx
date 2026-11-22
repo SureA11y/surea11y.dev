@@ -14,7 +14,7 @@ export function HelpContent() {
 			<p>
 				The questions that come up most, answered plainly: why a selection of tags and rule ids
 				can run no rule and still look clean, why a web component comes back{" "}
-				<code>cantTell</code>, what changes in your results after upgrading to core 1.15,
+				<code>cantTell</code>, what changes in your results after upgrading to core 1.18,
 				why the title and language rules are <code>notApplicable</code> in a frame,
 				why each WCAG criterion reads <code>cantTell</code> even when every check passed, why a
 				geometry-dependent rule reports <code>notApplicable</code> under jsdom, and what a clean

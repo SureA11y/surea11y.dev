@@ -181,9 +181,13 @@ export function EarlReportContent() {
 				rows={earlOutcomeRows}
 			/>
 			<p>
-				<code>earl:untested</code> n’a pas d’équivalent : une règle qui ne s’est pas exécutée ne
-				produit aucun résultat sur lequel se prononcer, elle ne donne donc lieu à aucune assertion
-				plutôt qu’à une assertion « non testé ».
+				<code>earl:untested</code> sert pour une règle que l’analyse a sélectionnée et n’a pas
+				démarrée, parce que son budget de temps s’est épuisé avant (<code>notRun</code>, voir{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">un budget de
+				temps</a>, core 1.18.0 et ultérieur), sauf si un autre résultat pour la même page l’a
+				exécutée. Toute autre règle qui ne s’est pas exécutée ne produit aucun résultat sur lequel
+				se prononcer : elle ne donne donc lieu à aucune assertion plutôt qu’à une assertion
+				« non testé ».
 			</p>
 			<p>
 				<strong><code>cantTell</code> ne pénalise pas l’implémentation au regard d’ACT.</strong> Les règles
@@ -263,10 +267,16 @@ export function EarlReportContent() {
 					{ key: "meaning", label: "Signification", wrap: true },
 				]}
 				rows={[
-					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Le nom vaut <code>surea11y</code> par défaut, et la version, donnée comme <code>release</code> de l’assertor, vaut par défaut l’<code>engine.version</code> que portent les résultats lorsqu’ils portent tous la même ; des résultats issus de versions différentes n’ont pas de <code>release</code>, sauf si vous en indiquez une. Passez <code>null</code> pour omettre entièrement <code>assertedBy</code>.</> },
+					{ id: "assertor", option: <code>assertor</code>, meaning: <><code>{"{ name, version }"}</code>. Le nom vaut <code>surea11y</code> par défaut, et la version, donnée comme <code>release</code> de l’assertor, vaut par défaut l’<code>engine.version</code> que portent les résultats lorsqu’ils portent tous la même ; des résultats issus de versions différentes n’ont pas de <code>release</code>, sauf si vous en indiquez une. Passez <code>null</code> pour omettre entièrement <code>assertedBy</code>. Quand tous les résultats ont exécuté les mêmes packs (<code>engine.packs</code>), l’assertor nomme chacun comme une de ses parties, <code>{'"dct:hasPart": [{ "@type": "Software", "name": "@surea11y/pack-en301549", "release": { "@type": "Version", "revision": "1.5.0" } }]'}</code>, quel que soit l’<code>assertor</code> fourni (core 1.18.0 et ultérieur).</> },
 					{ id: "mode", option: <code>mode</code>, meaning: <>Un mode de test EARL, par exemple <code>'earl:automatic'</code>. Omis s’il n’est pas fourni.</> },
 				]}
 			/>
+			<p>
+				Des options <code>null</code> valent absence d’options. Une clé que le rapport ne lit pas et
+				qui ressemble à une faute de frappe d’une clé qu’il lit (<code>asserter</code>) est ignorée
+				avec un <code>console.warn</code> qui nomme l’option voulue, comme une analyse le signale
+				pour <code>engineOptions</code>.
+			</p>
 
 			<h2>Voir aussi</h2>
 			<ul>

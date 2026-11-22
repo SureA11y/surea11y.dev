@@ -106,6 +106,8 @@
   .pager button { padding: 5px 12px; border: 1px solid #ccc; background: #fff; border-radius: 5px; cursor: pointer; }
   .pager button:disabled { opacity: 0.4; cursor: default; }
   .note { font-size: 12.5px; opacity: 0.75; margin-top: 6px; }
+  .incomplete { border: 2px solid #a30000; border-radius: 8px; padding: 10px 14px; margin: 0 0 16px; font-weight: 600; line-height: 1.5; }
+  @media (prefers-color-scheme: dark) { .incomplete { border-color: #ff8a80 !important; } }
 </style>
 </head>
 <body>
@@ -116,10 +118,12 @@
 </header>
 
 <div class="meta-bar">
-  <div><b>149</b>règles exécutées</div>
-  <div><b>18</b>occurrences au total</div>
+  <div><b>154</b>règles exécutées</div>
+  <div><b>17</b>occurrences au total</div>
+  
   <div><b>a11ycore</b>moteur</div>
   <div><b>1.0.0</b>version du schéma</div>
+  
   <div><b>WCAG 2.2</b>cible</div>
   <div><b>1280×900</b>zone d’affichage</div>
   <div><b>light</b>schéma de couleurs</div>
@@ -127,28 +131,29 @@
 </div>
 
 <main>
+  
   <div class="hero">
-    <p class="hero-headline"><strong>42</strong> contrôles applicables réussis sur <strong>52</strong>. <strong>5</strong> échecs demandent votre attention ci-dessous.</p>
-    <div class="hero-bar"><div class="hero-bar-seg" style="width:3.3557046979865772%; background:#b0441f" title="Échec: 5 (3,4 %)"></div><div class="hero-bar-seg" style="width:3.3557046979865772%; background:#8a6400" title="À vérifier: 5 (3,4 %)"></div><div class="hero-bar-seg" style="width:28.187919463087248%; background:#0b7d0b" title="Réussite: 42 (28,2 %)"></div><div class="hero-bar-seg" style="width:65.1006711409396%; background:#5f6368" title="Non applicable: 97 (65,1 %)"></div></div>
+    <p class="hero-headline"><strong>42</strong> contrôles applicables réussis sur <strong>53</strong>. <strong>5</strong> échecs demandent votre attention ci-dessous.</p>
+    <div class="hero-bar"><div class="hero-bar-seg" style="width:3.2467532467532463%; background:#b0441f" title="Échec: 5 (3,2 %)"></div><div class="hero-bar-seg" style="width:3.896103896103896%; background:#8a6400" title="À vérifier: 6 (3,9 %)"></div><div class="hero-bar-seg" style="width:27.27272727272727%; background:#0b7d0b" title="Réussite: 42 (27,3 %)"></div><div class="hero-bar-seg" style="width:65.5844155844156%; background:#5f6368" title="Non applicable: 101 (65,6 %)"></div></div>
     <div class="hero-legend"><div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
         <span class="hero-legend-label">Échec</span>
-        <span class="hero-legend-count">5 (3,4 %)</span>
+        <span class="hero-legend-count">5 (3,2 %)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
         <span class="hero-legend-label">À vérifier</span>
-        <span class="hero-legend-count">5 (3,4 %)</span>
+        <span class="hero-legend-count">6 (3,9 %)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#0b7d0b">✓</span>
         <span class="hero-legend-label">Réussite</span>
-        <span class="hero-legend-count">42 (28,2 %)</span>
+        <span class="hero-legend-count">42 (27,3 %)</span>
       </div>
 <div class="hero-legend-item">
         <span class="hero-legend-swatch" style="background:#5f6368">–</span>
         <span class="hero-legend-label">Non applicable</span>
-        <span class="hero-legend-count">97 (65,1 %)</span>
+        <span class="hero-legend-count">101 (65,6 %)</span>
       </div></div>
   </div>
 
@@ -161,11 +166,12 @@
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.4.6</span></div>
         <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html &gt; body &gt; main &gt; p:nth-of-type(1)</code></div>
-        <div class="card-snippet">L’élément présente un contraste de couleur insuffisant renforcé (AAA) de 2.61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de … — Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 7:1.</div>
+        <div class="card-snippet">L’élément présente un contraste de couleur insuffisant renforcé (AAA) de 2,61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de … — Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 7:1.</div>
         
         
         <p class="card-note">Le sélecteur et le résumé ci-dessus proviennent d’une occurrence représentative ; 2 au total pour cette règle.</p>
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html">Comprendre 1.4.6 Contrast (Enhanced)</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html">Comprendre 1.4.6 Contraste (amélioré)</a></p>
       </div>
     </div>
 <div class="card">
@@ -176,11 +182,12 @@
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 1.4.3</span></div>
         <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html &gt; body &gt; main &gt; p:nth-of-type(1)</code></div>
-        <div class="card-snippet">L’élément présente un contraste de couleur insuffisant de 2.61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 4.5:1 (texte no… — Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 4.5:1.</div>
+        <div class="card-snippet">L’élément présente un contraste de couleur insuffisant de 2,61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 4,5:1 (texte no… — Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 4,5:1.</div>
         
         
         <p class="card-note">Le sélecteur et le résumé ci-dessus proviennent d’une occurrence représentative ; 2 au total pour cette règle.</p>
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">Comprendre 1.4.3 Contrast (Minimum)</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">Comprendre 1.4.3 Contraste (minimum)</a></p>
       </div>
     </div>
 <div class="card">
@@ -195,7 +202,8 @@
         
         
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprendre 2.1.1 Keyboard</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprendre 2.1.1 Clavier</a></p>
       </div>
     </div>
 <div class="card">
@@ -210,22 +218,24 @@
         
         
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprendre 1.1.1 Non-text Content</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprendre 1.1.1 Contenu non textuel</a></p>
       </div>
     </div>
 <div class="card">
       <div class="card-head">
         <span class="hero-legend-swatch" style="background:#b0441f">⚠</span>
-        <span class="card-title"><strong>target-size-enhanced</strong> (Échec, gravité modérée) <span class="card-count">× 5</span></span>
+        <span class="card-title"><strong>target-size-enhanced</strong> (Échec, gravité modérée) <span class="card-count">× 3</span></span>
       </div>
       <div class="card-body">
         <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.5.5</span></div>
         <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html &gt; body &gt; header &gt; a</code></div>
-        <div class="card-snippet">La cible mesure 37.6×18 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44. — Donnez à la cible au moins 44×44 px CSS.</div>
+        <div class="card-snippet">La cible mesure 37,6×18 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44. — Donnez à la cible au moins 44×44 px CSS.</div>
         
         
-        <p class="card-note">Le sélecteur et le résumé ci-dessus proviennent d’une occurrence représentative ; 5 au total pour cette règle.</p>
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html">Comprendre 2.5.5 Target Size (Enhanced)</a></p>
+        <p class="card-note">Le sélecteur et le résumé ci-dessus proviennent d’une occurrence représentative ; 3 au total pour cette règle.</p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html">Comprendre 2.5.5 Taille de la cible (amélioré)</a></p>
       </div>
     </div></div>
 <h3 class="cards-group">Échec probable : à confirmer</h3><div class="cards"><div class="card">
@@ -240,7 +250,8 @@
         <p class="card-lean">Échec probable : Le message d’erreur lié au champ est masqué : l’erreur n’est probablement pas signalée.</p>
         <details class="card-how"><summary>Comment vérifier</summary><ol><li>Rendez le champ non valide comme le ferait un utilisateur (soumettez le formulaire vide, ou saisissez une valeur erronée).</li><li>Cherchez le message d’erreur vers lequel pointe le champ (son aria-errormessage), et vérifiez s’il apparaît à l’écran.</li><li>Sinon, cherchez tout texte qui indique ce qui ne va pas : dans le label, à côté du champ ou dans un récapitulatif en haut du formulaire.</li><li>Avec un lecteur d’écran, placez-vous sur le champ et écoutez si l’erreur est annoncée.</li></ol><p>Réussite : L’erreur est indiquée par un texte, et annoncée, à un endroit rattaché au champ, même si ce n’est pas dans le message que désigne aria-errormessage.</p><p>Échec : Aucun texte n’indique quel champ est erroné ni pourquoi, ou l’utilisateur de lecteur d’écran n’en est pas informé, ce qui ne respecte pas le critère WCAG 3.3.1.</p></details>
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html">Comprendre 3.3.1 Error Identification</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html">Comprendre 3.3.1 Identification des erreurs</a></p>
       </div>
     </div>
 <div class="card">
@@ -255,7 +266,8 @@
         <p class="card-lean">Échec probable : Un nom de fichier, une adresse web ou un mot générique ne dit pas ce que montre l’image. Attention : Le mot est peut-être tout ce que montre l’image, par exemple une image de ce mot.</p>
         <details class="card-how"><summary>Comment vérifier</summary><ol><li>Repérez l’image indiquée par le rapport et lisez son texte alt (le rapport donne la raison pour laquelle il semblait suspect, le cas échéant).</li><li>Regardez l’image et son contexte, et demandez-vous ce qu’elle montre d’important pour la page.</li><li>Si l’équivalent textuel ne fait que nommer l’image, comme c’est courant pour les graphiques et les schémas, les détails peuvent se trouver ailleurs : dans une légende, un texte ou un tableau à côté, ou dans un lien juste à côté. Cela ne compte que si un utilisateur de lecteur d’écran peut les trouver depuis l’image et qu’ils donnent tout ce que montre l’image.</li><li>Décidez si l’alt dit ce qui compte, ou nomme l’image pendant que cette description donne le reste ; un nom de fichier, une adresse web ou un mot générique comme « image » ne fait ni l’un ni l’autre.</li></ol><p>Réussite : Le texte alt transmet ce que montre l’image et dont l’utilisateur a besoin, ou il nomme l’image et une description qu’un utilisateur de lecteur d’écran atteint depuis elle donne le reste.</p><p>Échec : Ni le texte alt ni une description atteignable depuis l’image ne transmettent son contenu (par exemple, l’alt est un nom de fichier, une adresse ou un mot générique), ce qui ne respecte pas le critère WCAG 1.1.1 (F30).</p></details>
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprendre 1.1.1 Non-text Content</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html">Comprendre 1.1.1 Contenu non textuel</a></p>
       </div>
     </div></div>
 <h3 class="cards-group">Réussite probable : à confirmer</h3><div class="cards"><div class="card">
@@ -270,7 +282,8 @@
         <p class="card-lean">Réussite probable : Les WCAG 2.2 ont supprimé le critère au regard duquel ce point a été relevé. Attention : Le défaut lui-même casse toujours ce qui en dépend, et une norme qui conserve le critère le considère comme un échec.</p>
         <details class="card-how"><summary>Comment vérifier</summary><ol><li>Inspectez les éléments indiqués par le rapport et notez l’id qu’ils partagent.</li><li>Vérifiez si quelque chose fait référence à cet id : l’attribut for d’un label, un attribut aria-* comme aria-labelledby, ou un lien vers #the-id.</li><li>Si quelque chose y fait référence, suivez la référence (cliquez sur le label ou le lien, ou lisez le nom dans le panneau Accessibilité) et vérifiez qu’elle atteint l’élément voulu.</li><li>Vérifiez quelle version des WCAG et quelle norme l’audit applique ; selon WCAG 2.2, ou 2.0/2.1 avec l’errata de 2023, le critère 4.1.1 est satisfait pour le HTML.</li></ol><p>Réussite : Rien ne casse à cause du doublon (les références atteignent l’élément voulu) et l’audit utilise WCAG 2.2, ou 2.0/2.1 avec l’errata, selon lesquels le critère 4.1.1 est satisfait.</p><p>Échec : Un label, une référence ARIA ou un lien atteint le mauvais élément (WCAG 1.3.1 ou 4.1.2), ou l’audit suit une norme qui conserve le texte du critère 4.1.1, comme l’EN 301 549 V3.2.1, selon laquelle les id en double ne respectent pas le critère 4.1.1 (F77).</p></details>
         <p class="card-note">Le sélecteur et le résumé ci-dessus proviennent d’une occurrence représentative ; 2 au total pour cette règle.</p>
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG21/Understanding/parsing.html">Comprendre 4.1.1 Parsing</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG21/Understanding/parsing.html">Comprendre 4.1.1 <span lang="en">Parsing</span></a></p>
       </div>
     </div></div>
 <h3 class="cards-group">À examiner par une personne</h3><div class="cards"><div class="card">
@@ -285,7 +298,24 @@
         
         <details class="card-how"><summary>Comment vérifier</summary><ol><li>Cliquez dans la barre d’adresse du navigateur, puis appuyez plusieurs fois sur Tab pour parcourir chaque lien et chaque contrôle de la page.</li><li>À chaque arrêt, vérifiez que vous voyez où se trouve le focus, et que l’ordre suit l’ordre de lecture de la page.</li><li>Actionnez chaque contrôle au clavier (Entrée, Espace, touches fléchées), et ouvrez et fermez les menus et les boîtes de dialogue.</li><li>Là où quelque chose ne peut pas être atteint ou utilisé au clavier, vérifiez si la page propose un autre moyen de faire la même chose au clavier seul, comme les boutons précédent et suivant d’un carrousel, ou des boutons monter et descendre pour une liste qu’on peut faire glisser. Cela ne compte que s’il fait tout ce que permet la souris.</li><li>Vérifiez que le focus ne reste jamais bloqué dans un composant et que Échap ou Tab permet de continuer.</li></ol><p>Réussite : Tout fonctionne au clavier, directement ou par un autre moyen qui fait la même chose, le focus suit un ordre logique, reste toujours visible et ne se bloque jamais.</p><p>Échec : Quelque chose ne peut être atteint ou utilisé au clavier d’aucune façon, le focus piège l’utilisateur, l’ordre est déroutant ou le focus est invisible, ce qui ne respecte pas le critère WCAG 2.1.1, 2.1.2, 2.4.3 ou 2.4.7.</p></details>
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprendre 2.1.1 Keyboard</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">Comprendre 2.1.1 Clavier</a></p>
+      </div>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <span class="hero-legend-swatch" style="background:#8a6400">ℹ</span>
+        <span class="card-title"><strong>link-name-quality-link-only</strong> (À vérifier, gravité mineure)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="chip" style="background:#f1f2f3;color:#5f6368">WCAG 2.4.9</span></div>
+        <div class="card-selector"><span class="card-selector-label">Sélecteur :</span> <code>html &gt; body &gt; main &gt; p:nth-of-type(2) &gt; a</code></div>
+        <div class="card-snippet">Le nom de ce lien (« Read more ») est une formule générique : seul le texte qui l’entoure dit où il mène. — Faites dire au texte du lien lui-même où il mène ou ce qu’il fait, par exemple « Télécharger la grille tarifaire 2026 » plutôt que « Cliquez ici », pour qu’il soit clair lu seul, comme dans une liste de liens.</div>
+        
+        <details class="card-how"><summary>Comment vérifier</summary><ol><li>Repérez le lien indiqué par le rapport, « Read more », et lisez son texte seul, sans la phrase, l’élément de liste ou la cellule qui l’entoure.</li><li>Déterminez si ce texte dit à lui seul où mène le lien ou ce qu’il fait, tel qu’il se lirait dans une liste des liens de la page.</li><li>S’il ne le dit pas, cherchez sur la page une commande qui rend le texte des liens explicite à lui seul, comme un réglage qui développe les liens comme celui-ci.</li></ol><p>Réussite : Le texte du lien dit à lui seul où il mène, ou la page offre une commande qui le lui fait dire.</p><p>Échec : Le but du lien ne se comprend que par le texte qui l’entoure et la page n’offre aucun moyen de rendre le texte du lien explicite, ce qui ne respecte pas WCAG 2.4.9 (F84).</p></details>
+        
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-link-only.html">Comprendre 2.4.9 Fonction du lien (lien uniquement)</a></p>
       </div>
     </div>
 <div class="card">
@@ -300,7 +330,8 @@
         
         <details class="card-how"><summary>Comment vérifier</summary><ol><li>Lisez le titre de la page donné par le rapport ; le navigateur l’affiche dans l’onglet.</li><li>Regardez le titre principal et le contenu de la page et notez de quoi elle parle.</li><li>Décidez si le titre dit ce sujet ou cette fonction.</li></ol><p>Réussite : Le titre dit de quoi parle la page ou à quoi elle sert.</p><p>Échec : Le titre ne dit pas de quoi parle la page ni à quoi elle sert, ce qui ne respecte pas le critère WCAG 2.4.2.</p></details>
         
-        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">Comprendre 2.4.2 Page Titled</a></p>
+        
+        <p class="card-help"><a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">Comprendre 2.4.2 Titre de page</a></p>
       </div>
     </div></div>
   
@@ -337,8 +368,8 @@
             <td class="sc-cell">WCAG 1.3.1</td>
             <td>Information et relations</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
-            <td class="note">3 réussites / 0 échecs / 0 à vérifier / 13 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
-            <td class="note">table-headers-attr-valid, table-th-has-data-cells, aria-hidden-body, list-children-valid, listitem-parent-valid, definition-list-children-valid, dlitem-parent-valid, aria-required-children, aria-prohibited-children, aria-required-parent, form-control-programmatic-label-present, p-as-heading, table-fake-caption, td-has-header, aria-roles-valid, aria-owns-valid</td>
+            <td class="note">3 réussites / 0 échecs / 0 à vérifier / 14 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
+            <td class="note">table-headers-attr-valid, table-th-has-data-cells, aria-hidden-body, list-children-valid, listitem-parent-valid, definition-list-children-valid, dlitem-parent-valid, aria-required-children, aria-prohibited-children, aria-required-parent, form-control-programmatic-label-present, p-as-heading, table-fake-caption, form-group-name-present, td-has-header, aria-roles-valid, aria-owns-valid</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 1.4.1</td>
@@ -483,8 +514,8 @@
             <td class="sc-cell">WCAG 1.4.4</td>
             <td>Redimensionnement du texte</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
-            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
-            <td class="note">meta-viewport-zoom-enabled</td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 2 non applicables</td>
+            <td class="note">meta-viewport-zoom-enabled, resize-text-content-loss</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 1.4.5</td>
@@ -494,11 +525,18 @@
             <td class="note">image-of-text</td>
           </tr>
 <tr>
+            <td class="sc-cell">WCAG 1.4.10</td>
+            <td>Redistribution</td>
+            <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
+            <td class="note">reflow-horizontal-scroll</td>
+          </tr>
+<tr>
             <td class="sc-cell">WCAG 1.4.11</td>
             <td>Contraste du contenu non textuel</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
-            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 1 non applicables</td>
-            <td class="note">css-focus-indicator-suppressed</td>
+            <td class="note">0 réussites / 0 échecs / 0 à vérifier / 2 non applicables</td>
+            <td class="note">css-focus-indicator-suppressed, symbol-graphic-contrast</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 1.4.12</td>
@@ -587,8 +625,8 @@
             <td class="sc-cell">WCAG 2.4.9</td>
             <td>Fonction du lien (lien uniquement)</td>
             <td><span class="chip" style="background:#fdf3d9;color:#8a6400">À vérifier</span></td>
-            <td class="note">1 réussites / 0 échecs / 0 à vérifier / 2 non applicables<br>Vérifié en partie : ses contrôles ne couvrent qu’une partie de ce critère, et une personne vérifie le reste</td>
-            <td class="note">identical-links-same-purpose, link-name-present, link-name-quality</td>
+            <td class="note">1 réussites / 0 échecs / 1 à vérifier / 2 non applicables</td>
+            <td class="note">identical-links-same-purpose, link-name-present, link-name-quality, link-name-quality-link-only</td>
           </tr>
 <tr>
             <td class="sc-cell">WCAG 2.4.12</td>
@@ -622,7 +660,7 @@
       </div>
 
   <h2 id="manual-checks-heading">Ce qui reste à vérifier par une personne</h2>
-  <p class="manual-intro">Aucune règle n’en décide entièrement : une personne les vérifie à la main. <strong>61</strong> vérifications pour <strong>40</strong> exigences de WCAG 2.2 (A, AA, AAA). Une exigence dont toutes les règles réussissent n’est satisfaite que si ses vérifications ici réussissent aussi.</p>
+  <p class="manual-intro">Aucune règle n’en décide entièrement : une personne les vérifie à la main. <strong>62</strong> vérifications pour <strong>41</strong> exigences de WCAG 2.2 (A, AA, AAA). Une exigence dont toutes les règles réussissent n’est satisfaite que si ses vérifications ici réussissent aussi.</p>
   <div class="manual-list"><details class="manual-req">
       <summary><span class="sc-cell">1.1.1</span> <span>Contenu non textuel</span> <span class="chip" style="background:#fdece5;color:#b0441f">Analyse : Échec</span> <span class="card-count">Vérifications : 5</span></summary>
       <div class="manual-body"><div class="manual-facet">
@@ -790,6 +828,15 @@
           <ol><li>Parcourez la page à la recherche de texte qui semble peu visible sur son arrière-plan, comme pour le critère 1.4.3.</li><li>Pour chacun, inspectez-le et cliquez sur l’échantillon de sa couleur dans le panneau Styles des outils de développement : le sélecteur de couleur affiche son rapport de contraste.</li><li>Quand l’arrière-plan est une image, un dégradé ou un calque semi-transparent, mesurez le texte par rapport à la partie de l’arrière-plan où il est le moins visible, avec un outil de vérification du contraste des couleurs.</li><li>Vérifiez que le rapport est d’au moins 7:1, ou 4,5:1 pour le texte de grande taille : au moins 24 pixels (18 pt), ou 18,66 pixels (14 pt) en gras.</li><li>N’arrondissez pas le résultat : 6,99:1 échoue. Vérifiez aussi le texte au survol, au focus et une fois sélectionné.</li><li>Laissez de côté les logos et les noms de marque, le texte des contrôles désactivés, le texte purement décoratif ou que personne ne peut voir, et le texte qui fait partie d’une image contenant d’autres éléments visuels importants.</li></ol>
           <p><strong>Conforme si :</strong> <span>Tout le texte et tout le texte sous forme d’image ont un contraste d’au moins 7:1 avec leur arrière-plan, ou 4,5:1 pour le texte de grande taille.</span></p>
           <p><strong>Non conforme si :</strong> <span>Le texte a un contraste avec son arrière-plan inférieur à 7:1 (4,5:1 pour le texte de grande taille), ce qui ne respecte pas le critère WCAG 1.4.6.</span></p>
+        </div></div>
+    </details><details class="manual-req">
+      <summary><span class="sc-cell">1.4.10</span> <span>Redistribution</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Analyse : À vérifier</span> <span class="card-count">Vérifications : 1</span></summary>
+      <div class="manual-body"><div class="manual-facet">
+          <p class="manual-label"><strong>À 320 pixels CSS de large, le contenu ne nécessite pas de défilement dans deux directions et rien n’est perdu</strong></p>
+          <p class="manual-meta">Les règles en décident en partie · Outils : <span>Les outils de développement du navigateur</span>, <span>Le zoom du navigateur</span></p>
+          <ol><li>Réglez la fenêtre du navigateur sur 320 pixels CSS de large : dans les outils de développement, activez la barre d’appareils et réglez la largeur sur 320, ou zoomez à 400 % une fenêtre de 1280 pixels de large.</li><li>Parcourez toute la page et vérifiez si elle défile horizontalement en plus de verticalement.</li><li>Là où c’est le cas, trouvez ce qui est plus large que la fenêtre. Un contenu qui a besoin de deux dimensions pour être utilisé ou compris, comme une carte, un diagramme, une vidéo, un jeu ou un tableau de données, peut défiler horizontalement à lui seul.</li><li>Vérifiez que tout le contenu et tous les contrôles sont toujours là et utilisables : les menus, formulaires et boutons peuvent se déplacer ou se replier, mais rien ne doit être perdu.</li></ol>
+          <p><strong>Conforme si :</strong> <span>À 320 pixels CSS de large, la page ne défile que dans une direction, hormis le contenu qui a besoin de deux dimensions, et rien n’est perdu.</span></p>
+          <p><strong>Non conforme si :</strong> <span>À 320 pixels CSS de large, la page doit défiler horizontalement pour lire ou utiliser son contenu, ou un contenu ou une fonction est perdu, ce qui ne respecte pas WCAG 1.4.10.</span></p>
         </div></div>
     </details><details class="manual-req">
       <summary><span class="sc-cell">1.4.11</span> <span>Contraste du contenu non textuel</span> <span class="chip" style="background:#fdf3d9;color:#8a6400">Analyse : À vérifier</span> <span class="card-count">Vérifications : 2</span></summary>
@@ -1117,22 +1164,22 @@
       <h2>Tableau de bord</h2>
       <div class="scorecard"><div class="tile" style="border-color:#b0441f; background:#fdece5">
       <div class="tile-num" style="color:#b0441f">5</div>
-      <div class="tile-pct">3,4 %</div>
+      <div class="tile-pct">3,2 %</div>
       <div class="tile-label">Échec</div>
     </div>
 <div class="tile" style="border-color:#8a6400; background:#fdf3d9">
-      <div class="tile-num" style="color:#8a6400">5</div>
-      <div class="tile-pct">3,4 %</div>
+      <div class="tile-num" style="color:#8a6400">6</div>
+      <div class="tile-pct">3,9 %</div>
       <div class="tile-label">À vérifier</div>
     </div>
 <div class="tile" style="border-color:#0b7d0b; background:#e9f7e9">
       <div class="tile-num" style="color:#0b7d0b">42</div>
-      <div class="tile-pct">28,2 %</div>
+      <div class="tile-pct">27,3 %</div>
       <div class="tile-label">Réussite</div>
     </div>
 <div class="tile" style="border-color:#5f6368; background:#f1f2f3">
-      <div class="tile-num" style="color:#5f6368">97</div>
-      <div class="tile-pct">65,1 %</div>
+      <div class="tile-num" style="color:#5f6368">101</div>
+      <div class="tile-pct">65,6 %</div>
       <div class="tile-label">Non applicable</div>
     </div></div>
 
@@ -1162,7 +1209,7 @@
   </details>
 </main>
 
-<script type="application/json" id="report-data">[{"ruleId":"click-handler-keyboard-operable","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"Cet élément a role=\"button\" et un gestionnaire de clic, et reçoit le focus clavier, mais aucun écouteur de touches n’est posé sur lui, sur un ancêtre, sur le document ni sur la fenêtre : Entrée et Espace ne font rien.","summaryLang":"","hint":"Utilisez l’élément natif (\u003cbutton>, \u003ca href> ou \u003cinput type=\"checkbox\">), ou gérez keydown pour que les touches auxquelles répond un button fassent ce que fait un clic.","lean":""},{"ruleId":"contrast-computable","outcome":"pass","severity":"serious","severityLabel":"grave","selector":"","html":"","summary":"Le contraste est calculable pour tout le texte éligible (11 nœud(s) de texte).","summaryLang":"","hint":"Rien à changer. Ce sont les règles de contraste minimum (AA) et renforcé (AAA) qui disent si ce texte atteint son ratio.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"L’élément présente un contraste de couleur insuffisant renforcé (AAA) de 2.61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 7:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 7:1.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"L’élément présente un contraste de couleur insuffisant renforcé (AAA) de 2.55:1 (premier plan : #ffffff, arrière-plan : #00bb55, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 7:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 7:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"L’élément présente un contraste de couleur insuffisant de 2.61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 4.5:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 4.5:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"L’élément présente un contraste de couleur insuffisant de 2.55:1 (premier plan : #ffffff, arrière-plan : #00bb55, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 4.5:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 4.5:1.","lean":""},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"modérée","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"L’identifiant « code » est utilisé sur 2 éléments du même arbre.","summaryLang":"","hint":"Donnez à chaque élément son propre identifiant. Un doublon casse \u003clabel for>, les liens d’ancrage, getElementById et tout attribut de référence par identifiant : tous ne résolvent que la première correspondance.","lean":"Réussite probable : Les WCAG 2.2 ont supprimé le critère au regard duquel ce point a été relevé."},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"modérée","selector":"html > body > footer > p","html":"\u003cp id=\"code\">© Shop\u003c/p>","summary":"L’identifiant « code » est utilisé sur 2 éléments du même arbre.","summaryLang":"","hint":"Donnez à chaque élément son propre identifiant. Un doublon casse \u003clabel for>, les liens d’ancrage, getElementById et tout attribut de référence par identifiant : tous ne résolvent que la première correspondance.","lean":"Réussite probable : Les WCAG 2.2 ont supprimé le critère au regard duquel ce point a été relevé."},{"ruleId":"img-alt-present","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > img:nth-of-type(1)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\">","summary":"Cet élément \u003cimg> n’a pas d’attribut alt.","summaryLang":"","hint":"Ajoutez un attribut alt qui dit ce que montre l’image, ou alt=\"\" si l’image est purement décorative.","lean":""},{"ruleId":"img-alt-quality","outcome":"cantTell","severity":"minor","severityLabel":"mineure","selector":"html > body > main > img:nth-of-type(2)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\" alt=\"IMG_2041.jpg\">","summary":"L’équivalent textuel de cet \u003cimg>, « IMG_2041.jpg », ressemble à un nom de fichier.","summaryLang":"","hint":"Un nom de fichier n’apprend rien sur l’image à quelqu’un qui ne la voit pas. Remplacez-le par un texte qui dit ce que montre l’image ou, sur un lien ou un bouton, où il mène ou ce qu’il fait. Ne le gardez que si le nom de fichier est lui-même ce que montre l’image, comme une capture d’écran d’une liste de fichiers.","lean":"Échec probable : Un nom de fichier, une adresse web ou un mot générique ne dit pas ce que montre l’image."},{"ruleId":"invalid-field-error-message","outcome":"cantTell","severity":"serious","severityLabel":"grave","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"Ce champ est marqué comme invalide, mais le message d’erreur que nomme aria-errormessage (« Enter an email address such as name@exa… ») est masqué par display: none sur \u003cp id=\"email-error\">.","summaryLang":"","hint":"Affichez le message d’erreur tant que le champ est invalide.","lean":"Échec probable : Le message d’erreur lié au champ est masqué : l’erreur n’est probablement pas signalée."},{"ruleId":"manual-review","outcome":"cantTell","severity":"moderate","severityLabel":"modérée","selector":"html","html":"","summary":"Vérifiez à la main la navigation au clavier et l’ordre du focus.","summaryLang":"","hint":"Parcourez la page avec la touche Tab et vérifiez que chaque élément interactif peut être atteint et utilisé au clavier, et que le focus peut toujours en sortir ; que l’ordre du focus suit l’ordre de lecture, y compris après qu’un script a ouvert ou ajouté du contenu ; et que le focus est toujours visible.","lean":""},{"ruleId":"page-title-patterns","outcome":"cantTell","severity":"minor","severityLabel":"mineure","selector":"html > head > title","html":"\u003ctitle>Checkout\u003c/title>","summary":"Vérifiez que le titre de la page, « Checkout », indique de quoi parle la page.","summaryLang":"","hint":"Vérifiez que le titre dit de quoi parle la page ou à quoi elle sert, et la distingue des autres pages du site.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"modérée","selector":"html > body > header > a","html":"\u003ca href=\"/\">Shop\u003c/a>","summary":"La cible mesure 37.6×18 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44.","summaryLang":"","hint":"Donnez à la cible au moins 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"modérée","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(1)","html":"\u003ca href=\"/cart\">Cart\u003c/a>","summary":"La cible mesure 31.1×18 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44.","summaryLang":"","hint":"Donnez à la cible au moins 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"modérée","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(2)","html":"\u003ca href=\"/account\">Account\u003c/a>","summary":"La cible mesure 60×18 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44.","summaryLang":"","hint":"Donnez à la cible au moins 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"modérée","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"La cible mesure 153×21 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44.","summaryLang":"","hint":"Donnez à la cible au moins 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"modérée","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"La cible mesure 153×21 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44.","summaryLang":"","hint":"Donnez à la cible au moins 44×44 px CSS.","lean":""}]</script>
+<script type="application/json" id="report-data">[{"ruleId":"click-handler-keyboard-operable","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"Cet élément a role=\"button\" et un gestionnaire de clic, et reçoit le focus clavier, mais aucun écouteur de touches n’est posé sur lui, sur un ancêtre, sur le document ni sur la fenêtre : Entrée et Espace ne font rien.","summaryLang":"","hint":"Utilisez l’élément natif (\u003cbutton>, \u003ca href> ou \u003cinput type=\"checkbox\">), ou gérez keydown pour que les touches auxquelles répond un button fassent ce que fait un clic.","lean":""},{"ruleId":"contrast-computable","outcome":"pass","severity":"serious","severityLabel":"grave","selector":"","html":"","summary":"Le contraste est calculable pour tout le texte éligible (11 nœud(s) de texte).","summaryLang":"","hint":"Rien à changer. Ce sont les règles de contraste minimum (AA) et renforcé (AAA) qui disent si ce texte atteint son ratio.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"L’élément présente un contraste de couleur insuffisant renforcé (AAA) de 2,61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 7:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 7:1.","lean":""},{"ruleId":"contrast-enhanced","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"L’élément présente un contraste de couleur insuffisant renforcé (AAA) de 2,55:1 (premier plan : #ffffff, arrière-plan : #00bb55, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 7:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 7:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > p:nth-of-type(1)","html":"\u003cp class=\"hint\">Delivery takes three to five working days.\u003c/p>","summary":"L’élément présente un contraste de couleur insuffisant de 2,61:1 (premier plan : #a0a0a0, arrière-plan : #ffffff, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 4,5:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 4,5:1.","lean":""},{"ruleId":"contrast-minimum","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"#pay","html":"\u003cdiv class=\"pay\" role=\"button\" tabindex=\"0\" id=\"pay\">Pay now\u003c/div>","summary":"L’élément présente un contraste de couleur insuffisant de 2,55:1 (premier plan : #ffffff, arrière-plan : #00bb55, taille de police : 16px, graisse de police : normal). Le ratio de contraste attendu est de 4,5:1 (texte normal).","summaryLang":"","hint":"Modifiez la couleur du texte, celle de l’arrière-plan, ou les deux, pour que le ratio de contraste atteigne au moins 4,5:1.","lean":""},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"modérée","selector":"html > body > main > form > input:nth-of-type(2)","html":"\u003cinput id=\"code\" type=\"text\">","summary":"L’identifiant « code » est utilisé sur 2 éléments du même arbre.","summaryLang":"","hint":"Donnez à chaque élément son propre identifiant. Un doublon casse \u003clabel for>, les liens d’ancrage, getElementById et tout attribut de référence par identifiant : tous ne résolvent que la première correspondance.","lean":"Réussite probable : Les WCAG 2.2 ont supprimé le critère au regard duquel ce point a été relevé."},{"ruleId":"duplicate-id","outcome":"cantTell","severity":"moderate","severityLabel":"modérée","selector":"html > body > footer > p","html":"\u003cp id=\"code\">© Shop\u003c/p>","summary":"L’identifiant « code » est utilisé sur 2 éléments du même arbre.","summaryLang":"","hint":"Donnez à chaque élément son propre identifiant. Un doublon casse \u003clabel for>, les liens d’ancrage, getElementById et tout attribut de référence par identifiant : tous ne résolvent que la première correspondance.","lean":"Réussite probable : Les WCAG 2.2 ont supprimé le critère au regard duquel ce point a été relevé."},{"ruleId":"img-alt-present","outcome":"fail","severity":"serious","severityLabel":"grave","selector":"html > body > main > img:nth-of-type(1)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\">","summary":"Cet élément \u003cimg> n’a pas d’attribut alt.","summaryLang":"","hint":"Ajoutez un attribut alt qui dit ce que montre l’image, ou alt=\"\" si l’image est purement décorative.","lean":""},{"ruleId":"img-alt-quality","outcome":"cantTell","severity":"minor","severityLabel":"mineure","selector":"html > body > main > img:nth-of-type(2)","html":"\u003cimg src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" width=\"120\" height=\"80\" alt=\"IMG_2041.jpg\">","summary":"L’équivalent textuel de cet \u003cimg>, « IMG_2041.jpg », ressemble à un nom de fichier.","summaryLang":"","hint":"Un nom de fichier n’apprend rien sur l’image à quelqu’un qui ne la voit pas. Remplacez-le par un texte qui dit ce que montre l’image ou, sur un lien ou un bouton, où il mène ou ce qu’il fait. Ne le gardez que si le nom de fichier est lui-même ce que montre l’image, comme une capture d’écran d’une liste de fichiers.","lean":"Échec probable : Un nom de fichier, une adresse web ou un mot générique ne dit pas ce que montre l’image."},{"ruleId":"invalid-field-error-message","outcome":"cantTell","severity":"serious","severityLabel":"grave","selector":"#email","html":"\u003cinput id=\"email\" type=\"email\" aria-invalid=\"true\" aria-errormessage=\"email-error\">","summary":"Ce champ est marqué comme invalide, mais le message d’erreur que nomme aria-errormessage (« Enter an email address such as name@exa… ») est masqué par display: none sur \u003cp id=\"email-error\">.","summaryLang":"","hint":"Affichez le message d’erreur tant que le champ est invalide.","lean":"Échec probable : Le message d’erreur lié au champ est masqué : l’erreur n’est probablement pas signalée."},{"ruleId":"link-name-quality-link-only","outcome":"cantTell","severity":"minor","severityLabel":"mineure","selector":"html > body > main > p:nth-of-type(2) > a","html":"\u003ca href=\"/help\">Read more\u003c/a>","summary":"Le nom de ce lien (« Read more ») est une formule générique : seul le texte qui l’entoure dit où il mène.","summaryLang":"","hint":"Faites dire au texte du lien lui-même où il mène ou ce qu’il fait, par exemple « Télécharger la grille tarifaire 2026 » plutôt que « Cliquez ici », pour qu’il soit clair lu seul, comme dans une liste de liens.","lean":""},{"ruleId":"manual-review","outcome":"cantTell","severity":"moderate","severityLabel":"modérée","selector":"html","html":"","summary":"Vérifiez à la main la navigation au clavier et l’ordre du focus.","summaryLang":"","hint":"Parcourez la page avec la touche Tab et vérifiez que chaque élément interactif peut être atteint et utilisé au clavier, et que le focus peut toujours en sortir ; que l’ordre du focus suit l’ordre de lecture, y compris après qu’un script a ouvert ou ajouté du contenu ; et que le focus est toujours visible.","lean":""},{"ruleId":"page-title-patterns","outcome":"cantTell","severity":"minor","severityLabel":"mineure","selector":"html > head > title","html":"\u003ctitle>Checkout\u003c/title>","summary":"Vérifiez que le titre de la page, « Checkout », indique de quoi parle la page.","summaryLang":"","hint":"Vérifiez que le titre dit de quoi parle la page ou à quoi elle sert, et la distingue des autres pages du site.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"modérée","selector":"html > body > header > a","html":"\u003ca href=\"/\">Shop\u003c/a>","summary":"La cible mesure 37,6×18 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44.","summaryLang":"","hint":"Donnez à la cible au moins 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"modérée","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(1)","html":"\u003ca href=\"/cart\">Cart\u003c/a>","summary":"La cible mesure 31,1×18 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44.","summaryLang":"","hint":"Donnez à la cible au moins 44×44 px CSS.","lean":""},{"ruleId":"target-size-enhanced","outcome":"fail","severity":"moderate","severityLabel":"modérée","selector":"nav[aria-label=\"Main\"] > a:nth-of-type(2)","html":"\u003ca href=\"/account\">Account\u003c/a>","summary":"La cible mesure 60×18 px CSS dans une zone d’affichage de 1280 px de large, moins de 44×44.","summaryLang":"","hint":"Donnez à la cible au moins 44×44 px CSS.","lean":""}]</script>
 <script>
 (function () {
   var OUTCOME_INFO = {"fail":{"label":"Échec","defaultOn":true,"color":"#b0441f","bg":"#fdece5","icon":"⚠"},"cantTell":{"label":"À vérifier","defaultOn":true,"color":"#8a6400","bg":"#fdf3d9","icon":"ℹ"},"pass":{"label":"Réussite","defaultOn":false,"color":"#0b7d0b","bg":"#e9f7e9","icon":"✓"},"notApplicable":{"label":"Non applicable","defaultOn":false,"color":"#5f6368","bg":"#f1f2f3","icon":"–"}};

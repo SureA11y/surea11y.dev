@@ -36,6 +36,8 @@
 	"rulePage.severity": "severity: {value}",
 	"rulePage.exampleCodeLabel": "Example {n}, {outcome}: HTML for {ruleId}",
 	"rulePage.exampleContext.browser": "In a browser",
+	"rulePage.exampleContext.width320": "At 320 CSS pixels wide",
+	"rulePage.exampleContext.width640": "At 640 CSS pixels wide",
 	"common.deprecated": "deprecated",
 	"rulesTable.ruleId": "Rule ID",
 	"rulesTable.title": "Title",

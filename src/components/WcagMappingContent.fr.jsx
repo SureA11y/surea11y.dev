@@ -136,8 +136,8 @@ export function WcagMappingContent() {
 				avec sa raison, et il n’y en a encore aucun : chacun demande quelque chose que les règles
 				ne voient pas, qu’il s’agisse de savoir si une alternative textuelle, un libellé, un titre
 				ou le texte d’un lien dit ce qu’il faut, ou comment un contenu qu’un script dessine ou
-				modifie y répond. <strong>Aucune règle composite WCAG ne renvoie donc <code>pass</code> en
-				1.14.</strong>
+				modifie y répond. <strong>Aucune règle composite WCAG ne renvoie donc encore{" "}
+				<code>pass</code>.</strong>
 			</p>
 			<p>
 				De même, un critère n’est <code>notApplicable</code> que si ses règles trouvent tous les cas
@@ -248,7 +248,7 @@ export function WcagMappingContent() {
 				Une règle porte un tag de niveau par critère de succès auquel elle correspond, et rien de
 				plus : une règle associée uniquement à un critère AA porte le tag <code>wcag2aa</code> et{" "}
 				<em>pas</em> <code>wcag2a</code>. Demander <code>{"{ tags: ['wcag2aa'] }"}</code> seul
-				exécute donc les 11 règles associées à un critère AA de la version 2.0, et non les 105
+				exécute donc les 12 règles associées à un critère AA de la version 2.0, et non les 107
 				qui constituent une cible A + AA en 2.0. Listez chaque niveau que vous visez, ou utilisez{" "}
 				<code>runOnly.wcag</code>, qui n’a pas ce problème. <code>engineOptions.profile</code>{" "}
 				(<code>wcag20-aa</code>, <code>wcag21-aa</code>, <code>wcag22-aa</code> et les autres

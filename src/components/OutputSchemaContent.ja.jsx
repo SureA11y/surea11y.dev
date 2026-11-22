@@ -83,7 +83,7 @@ const topLevelRows = [
 		field: <code>engine.profilesNotRun</code>,
 		meaning: (
 			<>
-				複数のプロファイルでのスキャンで、そのうちのどれかが実行されなかった場合のみ：<code>{"[{ profile, reason }]"}</code>。<code>reason</code>は<code>unknown-profile</code>（そのようなプロファイルがない）、<code>pack-skipped</code>（そのパックがスキップされた。<code>skippedPacks</code>を参照）、<code>overridden-by-selection</code>（<code>runOnly</code>の含める指定、または<code>engineOptions</code>のルールIDやタグが、1つのプロファイルの場合と同じく代わりにルールを選ぶ。これはすべてのプロファイルのスキャンで起こります）のいずれかです。理由の種類は今後増えることがあります。
+				複数のプロファイルでのスキャンで、そのうちのどれかが実行されなかった場合のみ：<code>{"[{ profile, reason }]"}</code>。<code>reason</code>は<code>unknown-profile</code>（そのようなプロファイルがない）、<code>pack-skipped</code>（そのパックがスキップされた。<code>skippedPacks</code>を参照）、<code>timeBudget</code>（開始する前にスキャンの時間の予算が尽きた。<a href="#incomplete-scan">完了しなかったスキャン</a>を参照）、<code>overridden-by-selection</code>（<code>runOnly</code>の含める指定、または<code>engineOptions</code>のルールIDやタグが、1つのプロファイルの場合と同じく代わりにルールを選ぶ。これはすべてのプロファイルのスキャンで起こります）のいずれかです。理由の種類は今後増えることがあります。
 			</>
 		),
 	},
@@ -92,7 +92,7 @@ const topLevelRows = [
 		field: <code>engine.profileExcludes</code>,
 		meaning: (
 			<>
-				適用されたプロファイルがルールを除外する場合にだけ含まれます。<code>{"{ rules, criteria }"}</code>で、指定されたルールと、除外されるWCAGの達成基準です。指定されたルール、すべての達成基準が除外されるルール、除外される達成基準のWCAGの集約は実行されていません。プロファイルが残す達成基準もチェックするルールは実行され、その達成基準に数えられます。これはスキャンの範囲を狭めるもので、WCAGが求めることは変わりません。組み込みのプロファイルで何かを除外するものはありません。
+				適用されたプロファイルがルールを除外する場合にだけ含まれます。<code>{"{ rules, criteria, requirements }"}</code>で、指定されたルール、除外されるWCAGの達成基準、そしてプロファイルが従う法律が求めない、その規格の要件です（要件は1.20.0まで実験的で、ある場合にだけ含まれます。<a href="/configuration/packs/#laws">パック</a>を参照）。指定されたルール、すべての達成基準が除外されるルール、除外される達成基準のWCAGの集約、それらの要件の集約は実行されていません。プロファイルが残す達成基準もチェックするルールは実行され、その達成基準に数えられます。これはスキャンの範囲を狭めるもので、WCAGが求めることは変わりません。組み込みのプロファイルで何かを除外するものはありません。
 			</>
 		),
 	},
@@ -101,7 +101,7 @@ const topLevelRows = [
 		field: <code>engine.law</code>,
 		meaning: (
 			<>
-				実験的（core 1.16.0から1.18.0まで）。適用されたプロファイルが法律、つまりパックの規格の評価の根拠となる法律を示す場合にだけ含まれます（<a href="/configuration/packs/#laws">パック</a>を参照）。<code>{"{ id, name, jurisdiction, lang }"}</code>で、<code>lang</code>は<code>name</code>の言語です。coreは法律を示すだけで、その法律が誰に適用されるかを決めることはありません。
+				適用されたプロファイルが法律、つまりパックの規格の評価の根拠となる法律を示す場合にだけ含まれます（<a href="/configuration/packs/#laws">パック</a>を参照）。<code>{"{ id, name, jurisdiction, lang }"}</code>で、<code>lang</code>は<code>name</code>の言語です。複数のプロファイルでのスキャンでは、すべてのプロファイルが同じ法律に従う場合にだけ含まれます。各プロファイルの法律は<code>profiles[name].law</code>にあります。coreは法律を示すだけで、その法律が誰に適用されるかを決めることはありません。core 1.18.0から安定しています。
 			</>
 		),
 	},
@@ -142,6 +142,24 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "engine.incomplete",
+		field: <code>engine.incomplete</code>,
+		meaning: (
+			<>
+				<code>engineOptions.timeBudgetMs</code>が先に尽きたために、スキャンが選択したルールをすべて実行しなかった場合、または取得するスタイルシートをすべて読まなかった場合にだけ含まれます（<a href="#incomplete-scan">完了しなかったスキャン</a>を参照）。<code>{"{ reason, timeBudgetMs, rulesNotRun }"}</code>で、<code>reason</code>は<code>"timeBudget"</code>、<code>timeBudgetMs</code>は指定された予算、<code>rulesNotRun</code>は<code>notRun</code>のエントリの数です。複数のプロファイルでのスキャンでは、<code>profilesNotRun</code>が開始されなかったプロファイルを数えます。ブラウザー用バンドルの<code>runa11yCoreInPageAsync</code>では、取得に使える予算の半分が尽きた時点でまだ取得していなかったスタイルシートを<code>styleSheetsNotRead</code>が列挙します（すべてのルールが実行された場合、<code>rulesNotRun</code>は<code>0</code>になります）。このような結果が問題なしの結果になることはありません。<code>notRun</code>のルールは何もチェックしておらず、それらをまとめる集約は<code>cantTell</code>になります。
+			</>
+		),
+	},
+	{
+		id: "engine.occurrenceCap",
+		field: <code>engine.occurrenceCap</code>,
+		meaning: (
+			<>
+				<code>engineOptions.output.maxOccurrencesPerRule</code>が結果から検出箇所を省いた場合にだけ含まれます。<code>{"{ maxOccurrencesPerRule, occurrencesOmitted, rulesCapped }"}</code>で、上限、省いた検出箇所の総数、そのルールの数です。該当する各チェック結果は、自身の数を<code>occurrencesOmitted</code>に示します。判定結果、集約、件数は何も変わりません。<a href="#occurrence-cap">検出箇所の上限がある結果</a>を参照してください。
+			</>
+		),
+	},
+	{
 		id: "engine.environment",
 		field: <code>engine.environment</code>,
 		meaning: (
@@ -157,7 +175,7 @@ const topLevelRows = [
 		field: <code>timestamp</code>,
 		meaning: (
 			<>
-				<strong>自動では生成されません。</strong><code>engineOptions.timestamp</code>に空でない文字列を渡した場合にだけ設定されます。エンジンは組み込みの時計を持ちません（決定論的であるための設計です）。結果にスキャンのタイムスタンプを入れたい場合は、自分で渡してください。
+				<strong>自動では生成されません。</strong><code>engineOptions.timestamp</code>にISO 8601の日時（<code>new Date().toISOString()</code>）を渡した場合にだけ設定されます。それ以外のテキストは警告とともに捨てられます。エンジンは組み込みの時計を持ちません（決定論的であるための設計です）。結果にスキャンのタイムスタンプを入れたい場合は、自分で渡してください。
 			</>
 		),
 	},
@@ -221,6 +239,15 @@ const topLevelRows = [
 		),
 	},
 	{
+		id: "notRun",
+		field: <code>notRun</code>,
+		meaning: (
+			<>
+				スキャンの時間の予算（<code>engineOptions.timeBudgetMs</code>）が、選択したルールがすべて開始する前に尽きた場合にだけ含まれます。開始しなかったルールそれぞれの<code>{'{ ruleId, reason: "timeBudget" }'}</code>で、複数のプロファイルでのスキャンでは<code>profile</code>も付きます。そのようなルールには<code>checksResults</code>のエントリがありません。予算のために開始されなかったプロファイル（<code>engine.profilesNotRun</code>、理由<code>timeBudget</code>）では、選択するルールがすべてその<code>profile</code>とともに列挙されます。そのうち別のプロファイルが実行したルールは、そのプロファイルの<code>checksResults</code>のエントリを保ちます。このとき<code>engine.incomplete</code>が設定されます。
+			</>
+		),
+	},
+	{
 		id: "overriddenBuiltinIds",
 		field: <code>overriddenBuiltinIds</code>,
 		meaning: (
@@ -277,14 +304,22 @@ const occurrenceRows = [
 			</>
 		),
 	},
-	{ id: "summary", field: <code>summary</code>, meaning: <>人が読むための文で、解決されたロケールの言語でローカライズ済みです（「<span lang="en">This button has no accessible name.</span>」）。</> },
+	{
+		id: "summary",
+		field: <code>summary</code>,
+		meaning: (
+			<>
+				人が読むための文で、解決されたロケールの言語でローカライズ済みです（「<span lang="en">This button has no accessible name.</span>」）。core 1.18.0以降、文中の小数は、地域ではなくメッセージの言語の小数点で書かれます。フランス語、ドイツ語、スペイン語では「2,85:1」、英語と日本語では「2.85:1」です。引用するページのテキスト（ID、ロール、ラベル）は120文字で切られ、引用するリストは5項目の後に<code>…</code>を付けて止まります。
+			</>
+		),
+	},
 	{ id: "hint", field: <code>hint</code>, meaning: "人が読むための修正ガイダンスで、summaryと同じくローカライズ済みです。" },
 	{
 		id: "i18n",
 		field: <code>i18n</code>,
 		meaning: (
 			<>
-				<code>summary</code>/<code>hint</code>の元になった翻訳キーです。スキャンをやり直さずに、別のロケールで自分で表示し直したい場合に使えます。検出箇所がキーによるi18nを使っていない場合は<code>null</code>です。
+				<code>summary</code>/<code>hint</code>の元になった翻訳キーです。スキャンをやり直さずに、別のロケールで自分で表示し直したい場合に使えます。検出箇所がキーによるi18nを使っていない場合は<code>null</code>です。<code>params</code>は各値を書式化せずに保ち、小数は小数点にピリオドを使います（<code>ratio: "2.85"</code>、文字列）。<code>data.details</code>と<code>metrics</code>は数値を保ちます。言語に合わせるのはメッセージのテキストだけです。
 			</>
 		),
 	},
@@ -311,7 +346,7 @@ const occurrenceRows = [
 		field: <code>occurrenceOutcome</code>,
 		meaning: (
 			<>
-				検出結果を確実な<code>fail</code>の層と、レビューが必要な<code>cantTell</code>の層に分けて評価するルールで、この検出箇所がどちらの層に属するかを示します。1つの層しか報告しないルールでは省略され、その場合は結果自体の<code>outcome</code>が検出箇所の層になります。<code>@surea11y/core</code>の<code>occurrenceOutcome(check, occurrence)</code>は、どちらの場合でも、すべてのレポーターが読むとおりの層を返します。core 1.16.0以降、合格したチェックの検出箇所には、<code>null</code>ではなく<code>'pass'</code>を返します。判定結果は常に層と一致します。<code>fail</code>の層の検出箇所が1つでもあれば<code>fail</code>になり、検出箇所がすべて<code>cantTell</code>の層である<code>fail</code>は<code>cantTell</code>になるため、SARIF、JUnit、EARL、ベースラインは同じ答えを返します。カスタムルールやパックのルールが食い違うものを返した場合はエンジンが整合させます。デフォルトのポリシーでは、手動ルールが<code>fail</code>になることはありません。レポーターは、エンジンがこれを行う前に保存された結果も、その<code>engineOptions</code>が記録するポリシーのもとで同じ規則で読み、読んだものからWCAGの集約をまとめ直します。
+				検出結果を確実な<code>fail</code>の層と、レビューが必要な<code>cantTell</code>の層に分けて評価するルールで、この検出箇所がどちらの層に属するかを示します。1つの層しか報告しないルールでは省略され、その場合は結果自体の<code>outcome</code>が検出箇所の層になります。<code>@surea11y/core</code>の<code>occurrenceOutcome(check, occurrence)</code>は、どちらの場合でも、すべてのレポーターが読むとおりの層を返します。core 1.16.0以降、合格したチェックの検出箇所には、<code>null</code>ではなく<code>'pass'</code>を返します。1.18.0以降は、不合格や未確定のチェックで<code>'pass'</code>と記された検出箇所にも、チェックの判定結果ではなく<code>'pass'</code>を返すので、SARIF、JUnit、HTMLレポート、ベースラインはそのような検出箇所を不合格として数えなくなりました。これを網羅的に扱う<code>switch</code>には<code>'pass'</code>のケースが必要です。判定結果は常に層と一致します。<code>fail</code>の層の検出箇所が1つでもあれば<code>fail</code>になり、検出箇所がすべて<code>cantTell</code>の層である<code>fail</code>は<code>cantTell</code>になるため、SARIF、JUnit、EARL、ベースラインは同じ答えを返します。カスタムルールやパックのルールが食い違うものを返した場合はエンジンが整合させ、ルールが示す層は大文字・小文字にかかわらず読みます（<code>'FAIL'</code>は<code>fail</code>）。それ以外の値（<code>'bogus'</code>）は捨てられ、検出箇所はルールの判定結果をとります。このことは結果の<code>error</code>に記されます。デフォルトのポリシーでは、手動ルールが<code>fail</code>になることはありません。レポーターは、エンジンがこれを行う前に保存された結果も、その<code>engineOptions</code>が記録するポリシーのもとで同じ規則で読み、読んだものからWCAGの集約をまとめ直します。
 </>
 		),
 	},
@@ -370,11 +405,13 @@ export function OutputSchemaContent() {
 					"    profiles?: string[],   // a scan of several profiles only: the profiles that ran",
 					"    profilesNotRun?: { profile: string, reason: string }[],  // a scan of several profiles only",
 					'    mappings?: string[],   // e.g. ["en301549"] or ["en301549:V3.2.1"]',
-					"    profileExcludes?: { rules: string[], criteria: string[] },",
-					"    law?: { id: string, name: string, jurisdiction: string, lang: string },  // experimental",
+					"    profileExcludes?: { rules: string[], criteria: string[], requirements?: string[] },",
+					"    law?: { id: string, name: string, jurisdiction: string, lang: string },",
 					"    optInRules?: string[],",
 					'    outputDetail?: "findings",',
 					"    packs?: string[],      // name@version",
+					'    incomplete?: { reason: "timeBudget", timeBudgetMs: number, rulesNotRun: number, profilesNotRun?: number, styleSheetsNotRead?: string[] },',
+					"    occurrenceCap?: { maxOccurrencesPerRule: number, occurrencesOmitted: number, rulesCapped: number },",
 					"    environment: {",
 					"      layout: boolean,",
 					"      viewport?: { width: number, height: number },  // CSS px",
@@ -403,6 +440,7 @@ export function OutputSchemaContent() {
 					"  overriddenBuiltinIds: string[],",
 "  skippedCustomRules: Array<{ id: string | null, reason: string, excluded?: true }>,",
 					"  skippedPacks?: Array<{ name: string | null, reason: string }>,",
+					'  notRun?: Array<{ ruleId: string, reason: "timeBudget", profile?: string }>,',
 					"  profiles?: { [profile: string]: { wcagVersion, wcagLevel?, standards, rulesResults } }  // a scan of several profiles only",
 					"}",
 				]}
@@ -436,7 +474,19 @@ export function OutputSchemaContent() {
 				</li>
 				<li>
 					<strong><code>profiles</code></strong>
-					：実行されたプロファイルごとに<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code>（<code>wcagLevel</code>はWCAGのレベルを対象にするプロファイルのみ）。<code>rulesResults</code>は、その各集約の判定結果をIDごとに示したもので、そのプロファイルだけをスキャンした場合に報告されたはずのものです。法律を示すプロファイルには、<code>engine.law</code>と同じ<code>law</code>もあります（実験的）。
+					：実行されたプロファイルごとに<code>{"{ wcagVersion, wcagLevel, standards, rulesResults }"}</code>（<code>wcagLevel</code>はWCAGのレベルを対象にするプロファイルのみ）。<code>rulesResults</code>は、その各集約の判定結果をIDごとに示したもので、そのプロファイルだけをスキャンした場合に報告されたはずのものです。法律を示すプロファイルには、<code>engine.law</code>と同じ<code>law</code>もあります。
+				</li>
+				<li>
+					<strong>ルールの検出結果を1つも数えないプロファイル</strong>
+					（ルールを選択するが、その規格が検出結果をどの要件にも送らない）は、そのプロファイルだけでのスキャンと同じ判定結果、つまりルール自身の判定結果をチェックに与えます。<code>pass</code>ではありません。
+				</li>
+				<li>
+					<strong>スキャンの<code>policy</code></strong>
+					（または<code>policyContract</code>）はすべての判定に適用されます。<code>fail</code>を許可しないポリシーでは、規格が不合格にするチェックは<code>cantTell</code>になり、<code>policyOutcome: 'fail'</code>が付きます。プロファイルが1つでも複数でも同じです。
+				</li>
+				<li>
+					<strong>時間の予算</strong>
+					（<code>engineOptions.timeBudgetMs</code>）はプロファイルごとではなくスキャン全体のものです。最初より後の各プロファイルは残りを受け取り、残りがない状態で始まるはずのプロファイルは<code>engine.profilesNotRun</code>に<code>timeBudget</code>として記録されます。これは<code>allowProfilesNotRun</code>があってもSARIFとJUnitでエラーになります。プロファイルのスキャンが開始しなかったルールは、それぞれ<code>profile</code>とともに<code>notRun</code>に入り、開始されなかったプロファイルはそのすべてのルールがそこに入ります。
 				</li>
 				<li>
 					<strong><code>severity</code></strong>
@@ -499,6 +549,16 @@ export function OutputSchemaContent() {
 				]}
 			/>
 
+			<h2 id="incomplete-scan">完了しなかったスキャン</h2>
+			<p>
+				<code>engineOptions.timeBudgetMs</code>（<a href="/configuration/engine-options/#a-time-budget-timebudgetms">エンジンオプション</a>を参照）を指定すると、スキャンはそのミリ秒数を使い切った時点でそれ以上ルールを開始しません。開始しなかったルールは<code>notRun</code>に入り、<code>engine.incomplete</code>がスキャンが途中で打ち切られたことを示します。<strong>このような結果が合格と読まれることはありません。</strong>それらのルールをまとめる集約は<code>cantTell</code>になり、<a href="/results-reports/html-report/">HTMLレポート</a>はスキャンが完了していないことを示し、<a href="/results-reports/sarif-report/">SARIF</a>は実行されなかったルールごとにエラーの通知を出し（<code>executionSuccessful: false</code>）、<a href="/results-reports/junit-report/">JUnit</a>はルールごとにエラーを、<a href="/results-reports/earl-report/">EARL</a>は<code>earl:untested</code>を出し、<code>matchBaseline</code>は<code>incomplete</code>を加えます（<a href="/conformance/baseline/#incomplete-scan">ベースライン／許可リスト</a>を参照）。
+			</p>
+
+			<h2 id="occurrence-cap">検出箇所の上限がある結果</h2>
+			<p>
+				<code>engineOptions.output.maxOccurrencesPerRule</code>（<a href="/configuration/engine-options/#a-cap-on-occurrences-outputmaxoccurrencesperrule">エンジンオプション</a>を参照）を指定すると、各チェック結果は最大でその数の検出箇所を保持します。不合格のものが先で、次に不合格に傾く未確定のもの、その後に残りが、ルールの順で並びます。省いたものは<code>occurrencesOmitted</code>、<code>occurrencesOmittedByOutcome</code>、<code>occurrencesOmittedLeaningFail</code>に数え（<a href="#check-result">チェック結果</a>を参照）、<code>engine.occurrenceCap</code>がスキャン全体の合計を示します。<code>outcome</code>、<code>severity</code>、集約とその件数、ゲート（不合格への傾きによるゲートを含む）は、省いたものも含め、ルールが見つけたすべての検出箇所に基づきます。レポーターは「+N件」と表示します。ベースラインと照合すると、上限で省かれた不合格は新しいものとして数えられます（<a href="/conformance/baseline/#incomplete-scan">ベースライン／許可リスト</a>を参照）。
+			</p>
+
 			<h2 id="cross-frame-result">フレームをまたぐ結果（<code>runa11yCoreAcrossFrames</code>）</h2>
 			<p>
 				<code>runa11yCoreAcrossFrames</code>（<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}><code>INTEGRATION.md</code></a>を参照）は、通常のトップレベルの結果ではなく、別の再帰的な形を返します。
@@ -536,7 +596,7 @@ export function OutputSchemaContent() {
 				</li>
 			</ul>
 
-			<h2>チェック結果（<code>checksResults[i]</code>）</h2>
+			<h2 id="check-result">チェック結果（<code>checksResults[i]</code>）</h2>
 			<CodeBlock
 				lines={[
 					"{",
@@ -577,6 +637,9 @@ export function OutputSchemaContent() {
 					"  engineOptions: object,   // the resolved engineOptions this rule actually ran under",
 					"  schemaVersion: string,",
 					"  rollupIds: string[],     // the rulesResults entries that group this rule in this run; [] if none",
+					"  occurrencesOmitted?: number,  // output.maxOccurrencesPerRule only: how many occurrences were left out",
+					"  occurrencesOmittedByOutcome?: { fail?: number, cantTell?: number, pass?: number, notApplicable?: number },",
+					"  occurrencesOmittedLeaningFail?: number,  // of the cantTell ones left out, those that lean fail",
 					"  variantOf?: string,      // a pack's variant only: the id of the rule it runs at other settings; i18n.variantOfTitleKey is that rule's titleKey",
 					"  data?: object,           // page-level data a rule reports whatever its outcome; see below",
 					"  margin?: {               // the closest a measurement came to its threshold while meeting it; see below",
@@ -602,6 +665,10 @@ export function OutputSchemaContent() {
 					"    limit: number,         // 10000: the ancestors read, the element included",
 					"    occurrences: number,   // the fail-tier occurrences made cantTell-tier",
 					'    coercedFrom?: "fail"   // no fail-tier occurrence was left, so the outcome went from fail to cantTell',
+					"  },",
+					"  excludedOccurrences?: {  // present only when the rule reported on elements left out with excludeSelectors",
+					"    dropped: number,       // the occurrences dropped",
+					'    coercedFrom?: "fail" | "cantTell" | "pass"  // the outcome changed; notApplicable when none was left',
 					"  },",
 					"  error?: string           // present when the rule did not complete, or the engine noted a change — see below",
 					"}",
@@ -634,7 +701,13 @@ export function OutputSchemaContent() {
 					<strong><code>margin</code></strong>：カタログでmarginを宣言しているルール（<code>getChecksCatalog()[i].margin</code>、<code>{"{ measure, unit, limit, band? }"}</code>）で、少なくとも1つの要素がルールのしきい値を満たし、宣言に<code>band</code>があればその範囲内に入った場合にだけ含まれます。<code>band.relative</code>はしきい値に対する割合です。<code>contrast-minimum</code>、<code>contrast-enhanced</code>、<code>link-in-text-block</code>は<code>0.1</code>で、必要な比の10%以内の比についてだけmarginを報告します（4.5:1に対して4.5〜4.95、3:1に対して3〜3.3）。<code>band.absolute</code>は<code>unit</code>での量です。<code>target-size-minimum</code>は<code>6</code>で30 pxまでのターゲットだけを、<code>text-spacing-content-loss</code>は<code>8</code>でボックスの端から6 px以内の行だけを報告します。21:1のテキストや48 pxのボタンは何にも近くないので、それを示すmarginはありません。しきい値を満たしつつ最もしきい値に近づいた要素を示すので、4.5:1に対して4.52:1での<code>pass</code>や、テキストが切れるまであと0.4 pxでの<code>pass</code>を、余裕のある<code>pass</code>と区別できます。判定結果に添えられる情報で、検出結果ではありません。検出箇所を追加、削除、変更することはなく、ベースライン、SARIF、JUnit、EARLはこれを無視します。一部の要素が合格していれば、<code>fail</code>や<code>cantTell</code>の結果にも含まれます。<code>limit</code>は、値がしきい値に達する必要がある場合（コントラスト、サイズ）は<code>min</code>、しきい値を下回る必要がある場合（はみ出し）は<code>max</code>です。<code>headroom</code>はしきい値の内側にどれだけ余裕があるかを<code>unit</code>で表したもので、<code>min</code>なら<code>value - threshold</code>、<code>max</code>なら<code>threshold - value</code>となり、負になることはありません。<code>threshold</code>はその要素の判定に使われたしきい値で、要素ごとに異なることがあります（大きな文字なら3:1）。ピクセルは小数点以下1桁で示されます。CSSピクセルや、15pxのフォントの半分といったしきい値は小数になり、表示する側が人のために丸めるからです。比は丸めません。WCAGはコントラストを丸めないためです。同じ値の要素が複数あれば文書順で最初の要素が選ばれるので、同じページでは常に同じmarginになります。<code>measure</code>と<code>unit</code>はオープンな集合で、マイナーリリースで増えることがあります。<code>context</code>はルール固有で、<code>data.details</code>と同じく安定した契約ではありません。<code>getMargins(result)</code>は、結果に含まれるすべてのmarginを<code>ruleId</code>順に並べた<code>{"[{ ruleId, ...margin }]"}</code>として返します。フレームをまたぐ結果ではすべてのフレームのmarginを返し、子フレームのものには、そのフレームへのパスである<code>frame</code>が付きます。
 				</li>
 				<li>
-					<strong><code>error</code></strong>：ルールが完了しなかった場合、またはルールが返したものの一部をエンジンが変更したり無視したりした場合に含まれます。例外を投げた（または結果でないものを返した）ルールは、必ず<code>outcome: "cantTell"</code>、<code>occurrences: []</code>、例外メッセージを設定した<code>error</code>として現れます。そのため、検出箇所がなく<code>error</code>を持つ<code>cantTell</code>が、完了しなかったルールの見分け方です。エンジンは、壊れたルール1つでスキャン全体をクラッシュさせることはありません。それ以外の場合、<code>error</code>はエンジンの注記を保持し、ルール自身が返した<code>error</code>があればその後に<code>|</code>でつなげます。注記の対象は、上記の手動ルールの強制変換、集合の外にある<code>outcome</code>や<code>severity</code>、metaと異なる<code>type</code>、オブジェクトでない検出箇所（除外されます）、ルールが返した<code>policyOutcome</code>や<code>ruleSeverity</code>（どちらもエンジンが設定するため採用されません）、閉じた集合の外にある<code>uncertainty.code</code>です。これらの結果は検出箇所を保持します。ルールは完了しているからです。（1.16.0より前は、200段階の祖先をたどる処理が届かずに止まった<code>fail</code>もここに記録されていました。前述の<code>ancestorWalkLimit</code>を参照してください。）
+					<strong><code>excludedOccurrences</code></strong>：<code>excludeSelectors</code>（全体のもの、または<code>rules[ruleId]</code>のルール自身のもの）で除外された要素はどのルールも飛ばし、エンジンはそれをすべてのルールに守らせます。そうした要素について報告された検出箇所は、ルールがどう見つけたかにかかわらず捨てられます。要素を示すもの、その中のテキストノードを示すもの、セレクターだけを示すもの、除外された領域にあるフレームの文書の要素も同じです。coreのルールがそれを報告することはありません。自分で文書をたどり、<code>helpers.isExcluded</code>を使い忘れたパックやカスタムのルールでは起こりえます。<code>dropped</code>がその数を示し、同じことが<code>error</code>にも記されるので、ルールの作成者が気づけます。検出箇所が1つも残らなかった結果は、それらの領域の外で何も見つけなかったことになり、<code>notApplicable</code>になります。ページの残りが合格したのか、ルールがそこで判断するものを持たなかったのか、エンジンには分からないからです。検出箇所が残った結果は、それらが示す判定結果になります。<code>fail</code>の層の検出箇所がすべて捨てられた<code>fail</code>は、<code>cantTell</code>の層のものが残れば<code>cantTell</code>に、<code>pass</code>の層のものだけが残れば<code>pass</code>になり、合格だけが残った<code>cantTell</code>は<code>pass</code>になります。判定結果が変わった場合は、<code>coercedFrom</code>がルールの判定を示します。何も捨てられなかった場合は含まれません。除外のないスキャンではすべてそうです。
+				</li>
+				<li>
+					<strong><code>error</code></strong>：ルールが完了しなかった場合、またはルールが返したものの一部をエンジンが変更したり無視したりした場合に含まれます。例外を投げた（または結果でないものを返した）ルールは、必ず<code>outcome: "cantTell"</code>、<code>occurrences: []</code>、例外メッセージを設定した<code>error</code>として現れます。そのため、検出箇所がなく<code>error</code>を持つ<code>cantTell</code>が、完了しなかったルールの見分け方です。エンジンは、壊れたルール1つでスキャン全体をクラッシュさせることはありません。それ以外の場合、<code>error</code>はエンジンの注記を保持し、ルール自身が返した<code>error</code>があればその後に<code>|</code>でつなげます。注記の対象は、上記の手動ルールの強制変換、集合の外にある<code>outcome</code>や<code>severity</code>、metaと異なる<code>type</code>、オブジェクトでない検出箇所（除外されます）、ルールが返した<code>policyOutcome</code>や<code>ruleSeverity</code>（どちらもエンジンが設定するため採用されません）、閉じた集合の外にある<code>uncertainty.code</code>、どの層でもない<code>occurrenceOutcome</code>、除外された要素についての検出箇所（捨てられます。前述の<code>excludedOccurrences</code>を参照）です。これらの結果はほかの検出箇所を保持します。ルールは完了しているからです。（1.16.0より前は、200段階の祖先をたどる処理が届かずに止まった<code>fail</code>もここに記録されていました。前述の<code>ancestorWalkLimit</code>を参照してください。）
+				</li>
+				<li>
+					<strong><code>occurrencesOmitted</code></strong>、<strong><code>occurrencesOmittedByOutcome</code></strong>：<code>engineOptions.output.maxOccurrencesPerRule</code>が、ルールの見つけた数より少ない検出箇所しか保持しなかった場合にだけ含まれます（<a href="#occurrence-cap">検出箇所の上限がある結果</a>を参照）。省かれた数と、そのうち各層（<code>fail</code>、<code>cantTell</code>、<code>pass</code>、<code>notApplicable</code>。それぞれある場合のみ）に属する数です。<strong><code>occurrencesOmittedLeaningFail</code></strong>は、ある場合にだけ含まれ、省かれた未確定の検出箇所のうち<code>lean</code>が不合格に傾くものを数えます。不合格への傾きによるゲート（<code>leanFailAs</code>、<code>matchBaseline</code>の<code>leanFail</code>）が数えるものです。<code>leaningFailures</code>は保持されたものだけを列挙します。
 				</li>
 				<li>
 					<strong><code>policyOutcome</code></strong>：ポリシーの<code>allowedOutcomes</code>が、ルールの見つけた判定結果を許可しない場合に含まれます。その場合、結果は<code>cantTell</code>になり、ルール自身の判定結果がここに入り、<code>error</code>は付きません。そのため、レポーターがこれを完了しなかったルールとして読むことはありません。
@@ -661,7 +734,7 @@ export function OutputSchemaContent() {
 					"  summary: string,",
 					"  hint: string,",
 					"  i18n: { summaryKey: string, hintKey: string, params: object } | null,",
-					'  occurrenceOutcome?: "fail" | "cantTell",   // present when the rule graded its findings into tiers',
+					'  occurrenceOutcome?: "fail" | "cantTell" | "pass",   // present when the rule graded its findings into tiers; "pass" marks one that passes',
 					"  verdicts?: { [profile: string]: string },  // a scan of several profiles only",
 					"  uncertainty?: {          // present only on a cantTell-tier occurrence",
 					'    code: "not-computable" | "runtime-dependent" | "spec-only"',
@@ -737,7 +810,7 @@ export function OutputSchemaContent() {
 				新しい傾きはマイナーリリースでルールごとに追加され、測定で誤りが多すぎると分かった傾きは削除されることがあります。傾きは、あるかないかが変わりうる助言として扱い、<strong>検出結果の同一性の一部として扱わないでください</strong>。フィンガープリントには含まれません。
 			</p>
 			<p>
-				規格の対応付けは検出結果をその<code>data.details</code>で振り分けますが（<a href="/configuration/packs/#sending-findings-to-requirements">パック</a>を参照）、傾きはその外にあります。そのため、<code>skip-link</code>は傾きの向きをそこにも写します（core 1.16.0、1.18.0まで実験的）。<code>data.details.lean</code>は<code>fail</code>または<code>pass</code>で、<code>lean.toward</code>と同じです。検出結果に傾きがない場合は含まれません。
+				規格の対応付けは検出結果をその<code>data.details</code>で振り分けますが（<a href="/configuration/packs/#sending-findings-to-requirements">パック</a>を参照）、傾きはその外にあります。そのため、<code>skip-link</code>は傾きの向きをそこにも写します（core 1.16.0、1.18.0から安定）。<code>data.details.lean</code>は<code>fail</code>または<code>pass</code>で、<code>lean.toward</code>と同じです。検出結果に傾きがない場合は含まれません。このフィールドは安定していますが、<code>skip-link</code>がどの検出結果でどちらに傾くかは、ほかの傾きと同じく、マイナーリリースでまだ変わることがあります。
 			</p>
 
 			<h3 id="how-to-check">確認方法</h3>
@@ -836,7 +909,7 @@ export function OutputSchemaContent() {
 				</li>
 			</ul>
 			<p>
-				<strong><code>fail</code>が常に<code>confidence: "high"</code>とは限りませんが、それは矛盾ではありません。</strong>判定結果が表すのは判定の手順（推測せずに問いを解決したこと）であり、<code>confidence</code>が表すのは、その判定の拠り所となったモデルです。いくつかの自動ルールは、それ自体が近似であるもの（厳選したWAI-ARIAのロールの表、ネイティブ要素のロールの対応、静的なマークアップから推定したアクセシビリティツリー）に対して決定論的に判定し、<code>medium</code>を報告します。<code>aria-required-children</code>、<code>aria-prohibited-children</code>、<code>aria-required-parent</code>、<code>aria-allowed-attr</code>、<code>form-control-programmatic-label-present</code>、<code>identical-iframes-same-purpose</code>、<code>svg-image-text-alternative-present</code>、<code>video-poster-text-alternative-present</code>、<code>target-size-minimum</code>、<code>text-spacing-content-loss</code>です。<code>confidence</code>はすべての結果に含まれるので、最も確実な不合格だけが欲しい利用側はこれで直接ゲートできます。<code>policy.allowedConfidence</code>ではこれはできません。許可されていない値は、判定結果を変えるのではなく、ルール自身の<code>defaultConfidence</code>に置き換えられるからです（<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>を参照）。
+				<strong><code>fail</code>が常に<code>confidence: "high"</code>とは限りませんが、それは矛盾ではありません。</strong>判定結果が表すのは判定の手順（推測せずに問いを解決したこと）であり、<code>confidence</code>が表すのは、その判定の拠り所となったモデルです。いくつかの自動ルールは、それ自体が近似であるもの（厳選したWAI-ARIAのロールの表、ネイティブ要素のロールの対応、静的なマークアップから推定したアクセシビリティツリー）に対して決定論的に判定し、<code>medium</code>を報告します。<code>aria-required-children</code>、<code>aria-prohibited-children</code>、<code>aria-required-parent</code>、<code>aria-allowed-attr</code>、<code>form-control-programmatic-label-present</code>、<code>identical-iframes-same-purpose</code>、<code>svg-image-text-alternative-present</code>、<code>target-size-minimum</code>、<code>text-spacing-content-loss</code>です。<code>confidence</code>はすべての結果に含まれるので、最も確実な不合格だけが欲しい利用側はこれで直接ゲートできます。<code>policy.allowedConfidence</code>ではこれはできません。許可されていない値は、判定結果を変えるのではなく、ルール自身の<code>defaultConfidence</code>に置き換えられるからです（<a href={`${core}/docs/POLICY.md`}><code>POLICY.md</code></a>を参照）。
 			</p>
 
 			<h2>実例</h2>
@@ -860,7 +933,7 @@ export function OutputSchemaContent() {
 					"{",
 					'  "engine": {',
 					'    "tag": "a11ycore",',
-					'    "version": "1.14.0",',
+					'    "version": "1.18.0",',
 					'    "schemaVersion": "1.0.0",',
 					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" },',
 					'    "wcagVersion": "2.2",',

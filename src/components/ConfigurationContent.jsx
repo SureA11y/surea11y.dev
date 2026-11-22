@@ -26,7 +26,9 @@ export function ConfigurationContent() {
 				coverage everywhere else, tune how aggressive the contrast checks are for a human auditor
 				versus an unattended CI gate, and drop in an org-specific rule alongside the built-ins when
 				the catalog doesn't cover something you care about, and hand the rules the CSS of a style
-				sheet from another origin that the page can't read. See{" "}
+				sheet from another origin that the page can't read. Keep a scan of a heavy page within a CI
+				time limit, or a defect repeated in every row of a long table to a readable result, without
+				either one reading as a pass or loosening a gate. See{" "}
 				<a href="/configuration/engine-options/">Engine options</a> for the full reference.
 			</p>
 

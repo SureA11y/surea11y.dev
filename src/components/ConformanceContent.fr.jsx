@@ -50,7 +50,9 @@ export function ConformanceContent() {
 				constats qui penchent vers l’échec, une même baseline couvre une analyse de plusieurs
 				profils, et une baseline écrite avant une mise à jour continue de
 				correspondre pendant une version mineure quand le code de raison d’un constat est scindé
-				ou nouvellement attribué. Voir{" "}
+				ou nouvellement attribué. La correspondance signale une analyse que son budget de temps a
+				interrompue, et compte comme nouveau un échec qu’un résultat plafonné a laissé de côté :
+				ni l’une ni l’autre ne passe sans bruit. Voir{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
 		</>

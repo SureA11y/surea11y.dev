@@ -24,14 +24,14 @@ const functionRows = [
 
 const listOptionRows = [
 	{ id: "standard", option: <code>standard</code>, what: <><code>'wcag'</code> (the default), <code>'best-practice'</code>, or a pack's standard by key or name.</> },
-	{ id: "version", option: <code>version</code>, what: <>WCAG's (<code>'2.0'</code>, <code>'2.1'</code>, <code>'2.2'</code>, the default), or the pack's standard's.</> },
+	{ id: "version", option: <code>version</code>, what: <>WCAG's (<code>'2.0'</code>, <code>'2.1'</code>, <code>'2.2'</code>, the default), or the pack's standard's. A number is read as the version it writes: <code>2.1</code> as <code>'2.1'</code>, <code>2</code> as <code>'2.0'</code> (core 1.18.0 and later).</> },
 	{ id: "levels", option: <code>levels</code>, what: <>WCAG only: <code>'A'</code>, <code>'AA'</code>, <code>'AAA'</code> or a list of them; every level by default.</> },
 	{ id: "locale", option: <code>locale</code>, what: <>A tag (<code>'fr-CA'</code> reads <code>fr-ca</code>, then <code>fr</code>) or a list, most wanted first; English for any text a locale lacks.</> },
 	{ id: "tools", option: <code>tools</code>, what: <>Only facets whose procedure needs one of these tools (<code>'screen-reader'</code>).</> },
 	{ id: "automation", option: <code>automation</code>, what: <>Only facets rules decide in full, in part or not at all: <code>['manual', 'partial']</code> is what a scan leaves to a person.</> },
 	{ id: "rules", option: <code>rules</code>, what: <>Only facets one of these rules claims (<code>'img-alt-present'</code>).</> },
 	{ id: "packs", option: <code>packs</code>, what: "The packs whose standard or rules to read." },
-	{ id: "profile", option: <code>profile</code>, what: <>A pack's profile that names a law: only the requirements that law asks for, with the law named in the list's head (core 1.16.0, experimental; see <a href="/configuration/packs/#laws">Packs</a>).</> },
+	{ id: "profile", option: <code>profile</code>, what: <>A pack's profile that names a law: only the requirements that law asks for, with the law named in the list's head (core 1.16.0 and later; see <a href="/configuration/packs/#laws">Packs</a>). Stable since core 1.18.0; the requirement laws it filters by (a requirement's own <code>laws</code>) stay experimental until 1.20.0. A name no profile has gives <code>null</code>, where 1.17 listed all of WCAG.</> },
 ];
 
 const renderOptionRows = [
@@ -130,12 +130,12 @@ export function ProceduresContent() {
 			<p>
 				Every criterion a core rule evaluates, in full, in part or as <code>cantTell</code>, has a
 				procedure for every facet, the facets no rule checks included, since a person needs them
-				to finish what the scan began: 36 of the 87 criteria of WCAG 2.2 at levels A, AA and AAA
-				and 4.1.1 (removed in 2.2), with 170 facets, 56 procedures of their own and 114 technology
-				facets covered by one of them. Such a criterion is <code>complete</code>. The other 51
+				to finish what the scan began: 42 of the 87 criteria of WCAG 2.2 at levels A, AA and AAA
+				and 4.1.1 (removed in 2.2), with 186 facets, 63 procedures of their own and 123 technology
+				facets covered by one of them. Such a criterion is <code>complete</code>. The other 45
 				criteria, which no rule evaluates (1.2.3 Audio Description or Media Alternative, say), are
 				listed with their facets and no procedure: how to assess those by hand is outside core.
-				The best practices have one for each of their 13 facets: landmarks, content in landmarks,
+				The best practices have one for each of their 14 facets: landmarks, page zones as landmarks, content in landmarks,
 				headings, table markup, ARIA roles, focus order, access keys, skip links, names and labels,
 				zoom, repeated names, new windows and downloads, and reduced motion.
 			</p>
@@ -216,8 +216,11 @@ export function ProceduresContent() {
 			/>
 			<p>
 				WCAG's criteria are those the version has, at its levels: 2.0 and 2.1 list 4.1.1 as a
-				Level A criterion titled “Parsing”, 2.2 doesn't. Given several filters, a facet must match
-				each; a requirement's <code>complete</code> stays its own.
+				Level A criterion titled “Parsing”, 2.2 doesn't. A tool other than those in the table
+				above, or an automation level other than <code>full</code>, <code>partial</code> and{" "}
+				<code>manual</code>, throws, as an unknown level does: it would list nothing (core 1.18.0
+				and later). Given several filters, a facet must match each; a requirement's{" "}
+				<code>complete</code> stays its own.
 			</p>
 
 			<h2 id="a-checklist">A checklist</h2>
@@ -425,7 +428,7 @@ export function ProceduresContent() {
 				]}
 			/>
 			<p>
-				The <a href="/configuration/packs/#en-301-549-pack">EN 301 549 pack</a> 1.2.0 gives
+				The <a href="/configuration/packs/#en-301-549-pack">EN 301 549 pack</a> gives, since its 1.2.0,
 				procedures for every chapter 9 clause whose criterion a core rule evaluates, in five
 				languages, and the <a href="/configuration/packs/#wai-aria-pack">WAI-ARIA pack</a> gives a
 				checklist for each of its requirements, with the roles, states and values that are valid

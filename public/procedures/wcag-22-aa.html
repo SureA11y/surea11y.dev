@@ -103,7 +103,7 @@
 <a class="skip" href="#main">Skip to the procedures</a>
 <header class="page">
 <h1>WCAG 2.2: how to assess each requirement</h1>
-<p>Requirements: 55 · Procedures: 53</p>
+<p>Requirements: 55 · Procedures: 54</p>
 <ul><li>Levels: A, AA</li></ul>
 
 </header>
@@ -259,8 +259,8 @@
 <ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>A screen reader</span></li></ul>
 <ol class="steps"><li>Find every form field on the page: text fields, check boxes, radio buttons, drop-downs and custom controls.</li><li>For each, select it in the developer tools&#39; Elements pane and check that the Name in its Accessibility pane contains its visible label.</li><li>For a group of fields under one question, such as radio buttons or a date in three parts, check that the group is a &lt;fieldset&gt; with a &lt;legend&gt;, or has role=&quot;group&quot; with a name, so the question is read with each field.</li><li>Check that instructions shown next to a field (a format, a required mark) are tied to it with aria-describedby or are in its label.</li></ol>
 <dl class="verdict"><dt>Passes when</dt><dd>Every field&#39;s name includes its visible label, groups of fields are named by their question, and a field&#39;s instructions are tied to it.</dd><dt>Fails when</dt><dd>A field is labelled only by nearby text that isn&#39;t tied to it, or a group&#39;s question isn&#39;t tied to its fields, so a screen reader reads a field without saying what it is for, which fails WCAG 1.3.1.</dd></dl>
-<p class="rules">Rules that test it: <code>form-control-programmatic-label-present</code></p>
-<div class="covers"><p>This procedure also assesses:</p><ul><li>Form controls have a programmatic label (label/aria-label/aria-labelledby/title/placeholder)</li><li>Form control labels are appropriate</li></ul></div>
+<p class="rules">Rules that test it: <code>form-control-programmatic-label-present</code>, <code>form-group-name-present</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Form controls have a programmatic label (label/aria-label/aria-labelledby/title/placeholder)</li><li>Form control labels are appropriate</li><li>Radio buttons or checkboxes sharing a name that are in no group with a name (evidence only)</li></ul></div>
 </section>
 <section class="facet" aria-labelledby="facet-1-3-1-aria-structure-valid">
 <h5 id="facet-1-3-1-aria-structure-valid">ARIA roles and relationships give the same structure the page shows</h5>
@@ -368,8 +368,8 @@
 <ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s zoom</span></li></ul>
 <ol class="steps"><li>Zoom the browser to 200%.</li><li>Go through the whole page and check that all text has grown, and none is cut off, overlapped or hidden.</li><li>Use the page&#39;s controls, menus and forms at that size and check that they all still work.</li><li>On a phone, check that you can pinch to zoom the page to 200%. Use Chrome on Android with its &quot;Force enable zoom&quot; accessibility setting turned off: Safari on iOS ignores a viewport that blocks zoom, so it can hide this failure.</li><li>Leave out captions and images of text.</li></ol>
 <dl class="verdict"><dt>Passes when</dt><dd>At 200% all text has grown and stays readable, and everything still works.</dd><dt>Fails when</dt><dd>At 200% text is cut off, overlaps or doesn&#39;t grow, a control stops working, or pinch zoom is blocked, which fails WCAG 1.4.4.</dd></dl>
-<p class="rules">Rules that test it: <code>meta-viewport-zoom-enabled</code></p>
-<div class="covers"><p>This procedure also assesses:</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; does not disable or cap pinch-zoom below 200%</li></ul></div>
+<p class="rules">Rules that test it: <code>meta-viewport-zoom-enabled</code>, <code>resize-text-content-loss</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; does not disable or cap pinch-zoom below 200%</li><li>At 640 CSS pixels wide (200% zoom), text in a box that hides its overflow is not cut off (asked about: whether the full text is offered another way is for a person)</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-5" aria-labelledby="req-1-4-5">
@@ -389,9 +389,10 @@
 <p class="meta"><span>Level AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-10-reflow-320">
 <h5 id="facet-1-4-10-reflow-320">At 320 CSS pixels wide, content needs no scrolling in two directions and nothing is lost</h5>
-<ul class="badges"><li class="badge auto-manual">Only a person can check it</li></ul>
-<p class="empty">No procedure for this yet.</p>
-
+<ul class="badges"><li class="badge auto-partial">Rules decide part of it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span>, <span>The browser&#39;s zoom</span></li></ul>
+<ol class="steps"><li>Make the browser window 320 CSS pixels wide: in the developer tools, turn on the device toolbar and set the width to 320, or zoom a window 1280 pixels wide to 400%.</li><li>Scroll through the whole page and check whether it scrolls sideways as well as up and down.</li><li>Where it does, find what is wider than the window. Content that needs two dimensions to be used or understood, such as a map, a diagram, a video, a game or a data table, may scroll sideways on its own.</li><li>Check that all content and every control is still there and can be used: menus, forms and buttons may move or collapse, but nothing may be lost.</li></ol>
+<dl class="verdict"><dt>Passes when</dt><dd>At 320 CSS pixels wide the page scrolls in one direction only, apart from content that needs two dimensions, and nothing is lost.</dd><dt>Fails when</dt><dd>At 320 CSS pixels wide the page needs scrolling sideways to read or use its content, or some content or function is lost, which fails WCAG 1.4.10.</dd></dl>
+<p class="rules">Rules that test it: <code>reflow-horizontal-scroll</code></p>
 </section>
 </article>
 <article class="req" id="r-1-4-11" aria-labelledby="req-1-4-11">
@@ -410,7 +411,8 @@
 <ul class="badges"><li class="badge auto-manual">Only a person can check it</li><li class="badge">Tools: <span>The browser&#39;s developer tools</span></li></ul>
 <ol class="steps"><li>Look for graphics that carry information: icons without text beside them, charts, diagrams, maps and infographics.</li><li>In each, find the parts a person needs to understand it, such as an icon&#39;s shape, a chart&#39;s lines and bars, or the boundaries between areas.</li><li>Measure each part&#39;s contrast against what is next to it with a contrast checker. It needs at least 3:1. A part that is labelled in text, or whose information is also given in text nearby, doesn&#39;t need it.</li><li>Leave out decorative graphics, logos, and graphics whose particular look is essential, such as a photo or a flag.</li></ol>
 <dl class="verdict"><dt>Passes when</dt><dd>Every part of a graphic needed to understand it has a contrast of at least 3:1, or its information is given another way.</dd><dt>Fails when</dt><dd>A part of a graphic needed to understand it has a contrast below 3:1, and its information is not given another way, which fails WCAG 1.4.11.</dd></dl>
-
+<p class="rules">Rules that test it: <code>symbol-graphic-contrast</code></p>
+<div class="covers"><p>This procedure also assesses:</p><ul><li>Symbols drawn as text with no letter or digit, used as a graphic, under 3:1 (evidence only)</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-12" aria-labelledby="req-1-4-12">

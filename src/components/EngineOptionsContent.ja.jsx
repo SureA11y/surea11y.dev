@@ -21,7 +21,7 @@ const optionRows = [
 		option: <code>locale</code>,
 		meaning: (
 			<>
-				任意の文字列を指定できます。サブタグ付きのコードはまずベース言語にフォールバックするので、<code>de-DE</code>は<code>de</code>を使い、それもなければ英語になります。個々の文字列も同じ順にフォールバックする（指定したロケール → <code>en</code> → ルールに書かれた英語の原文）ため、翻訳が一部しかないロケールでも文字列が欠けることはありません。こうしたフォールバックは文字列そのものからは分からないので、実際に何が起きたかは結果の<code>engine.locale</code>に記録されます。指定した言語が使われたかを確かめたいときはここを確認してください。詳しくは<a href="/configuration/locales/">ロケール</a>を参照してください。
+				任意の文字列を指定できます。サブタグ付きのコードはまずベース言語にフォールバックするので、<code>de-DE</code>は<code>de</code>を使い、それもなければ英語になります。個々の文字列も同じ順にフォールバックする（指定したロケール → そのベース言語 → <code>en</code> → ルールに書かれた英語の原文。各段階で、組み込みの辞書より先に<code>messages</code>が参照されるので、<code>{"messages: { 'de-AT': { … } }"}</code>は、指定しなかった文字列については組み込みのドイツ語を使います）ため、翻訳が一部しかないロケールでも文字列が欠けることはありません。こうしたフォールバックは文字列そのものからは分からないので、実際に何が起きたかは結果の<code>engine.locale</code>に記録されます。指定した言語が使われたかを確かめたいときはここを確認してください。詳しくは<a href="/configuration/locales/">ロケール</a>を参照してください。
 			</>
 		),
 	},
@@ -48,7 +48,7 @@ const optionRows = [
 		option: <code>profile</code>,
 		meaning: (
 			<>
-				名前付きの適合性の目標（省略可）：<code>'wcag20-a'</code>、<code>'wcag20-aa'</code>、<code>'wcag20-aaa'</code>、<code>'wcag21-a'</code>、<code>'wcag21-aa'</code>、<code>'wcag21-aaa'</code>、<code>'wcag22-a'</code>、<code>'wcag22-aa'</code>、<code>'wcag22-aaa'</code>、非推奨の<code>'en301549-v4.1.1'</code>、<code>'en301549-v3.2.1'</code>、<code>'section508'</code>、またはパック独自のもの。あるいは、複数のプロファイルで同時にスキャンするためのそれらのリスト。ほかに含める指定がない場合に、対応するタグセットでルールを選び、WCAGの対象バージョンはそのタグから決まります。効果があった場合は<code>engine.profile</code>として返し（リストの場合は実行された最初のもので、すべてが<code>engine.profiles</code>に入ります）、なかった場合はコンソールに警告を出して無視します。どのプロファイルにもない名前は、<code>strictOptions</code>のもとではリストの中でも<code>INVALID_ENGINE_OPTIONS</code>を投げ、存在するプロファイルをメッセージで示します（エラーの<code>knownProfiles</code>にも入ります）。プロファイルがなければ、スキャンはすべてのルールを実行してしまうためです。前述の<a href="#conformance-profiles">「適合性プロファイル」</a>を参照してください。
+				名前付きの適合性の目標（省略可）：<code>'wcag20-a'</code>、<code>'wcag20-aa'</code>、<code>'wcag20-aaa'</code>、<code>'wcag21-a'</code>、<code>'wcag21-aa'</code>、<code>'wcag21-aaa'</code>、<code>'wcag22-a'</code>、<code>'wcag22-aa'</code>、<code>'wcag22-aaa'</code>、非推奨の<code>'en301549-v4.1.1'</code>、<code>'en301549-v3.2.1'</code>、<code>'section508'</code>、またはパック独自のもの。あるいは、複数のプロファイルで同時にスキャンするためのそれらのリスト。ほかに含める指定がない場合に、対応するタグセットでルールを選び、WCAGの対象バージョンはそのタグから決まります。効果があった場合は<code>engine.profile</code>として返し（リストの場合は実行された最初のもので、すべてが<code>engine.profiles</code>に入ります）、なかった場合はコンソールに警告を出して無視します。どのプロファイルにもない名前は、<code>strictOptions</code>のもとではリストの中でも<code>INVALID_ENGINE_OPTIONS</code>を投げ、存在するプロファイルをメッセージで示します（エラーの<code>knownProfiles</code>にも入ります）。プロファイルがなければ、スキャンはすべてのルールを実行してしまうためです。リストの項目のうち名前でないもの（空の要素、<code>null</code>、数値、<code>''</code>のような空白の文字列）は警告を出して無視され、<code>strictOptions</code>のもとでは<code>INVALID_ENGINE_OPTIONS</code>を投げます。<code>''</code>や<code>[]</code>のように空で指定したプロファイルも同様です。前述の<a href="#conformance-profiles">「適合性プロファイル」</a>を参照してください。
 			</>
 		),
 	},
@@ -156,7 +156,7 @@ const optionRows = [
 		option: <code>excludeSelectors</code>,
 		meaning: (
 			<>
-				これらのセレクターのいずれかに一致する要素（とその子孫。シャドウルートの中にあるものや、その中にあるフレームのドキュメントも含みます）は、<strong>すべての</strong>ルールで完全にスキップされます。Cookieバナーやサードパーティの埋め込み、自分では管理できない、ノイズが多いと分かっているウィジェットに便利です。特定のルール1つだけから除外したい場合は、後述の<code>rules[ruleId].excludeSelectors</code>を使ってください。セレクターの配列か、セレクターリストを持つ文字列を指定します。文字列はセレクターの間のカンマでだけ区切られるので、<code>'#cookie-banner, img:not(.a, .b)'</code>は<code>['#cookie-banner', 'img:not(.a, .b)']</code>と同じです。各セレクターは個別に適用されます。有効なCSSでないセレクターは<code>console.warn</code>を出して何も除外せず、ほかのセレクターは引き続き適用されます。
+				これらのセレクターのいずれかに一致する要素（とその子孫。シャドウルートの中にあるものや、その中にあるフレームのドキュメントも含みます）は、<strong>すべての</strong>ルールで検出結果の対象になりません。Cookieバナーやサードパーティの埋め込み、自分では管理できない、ノイズが多いと分かっているウィジェットに便利です。それでもページの一部ではあります。ページ全体を判断するルールは、それらを文脈として読みます（<code>heading-order</code>ではページの見出しの構成、<code>page-has-heading-one</code>ではレベル1の見出し、<code>td-has-header</code>では表の見出し行、<code>page-zones-landmark</code>ではランドマーク）。そのため、サイトのヘッダーを除外しても、見出しレベルの飛びや<code>&lt;h1&gt;</code>の欠如が生まれることはなく、その中では何も報告されません。特定のルール1つだけから除外したい場合は、後述の<code>rules[ruleId].excludeSelectors</code>を使ってください。セレクターの配列か、セレクターリストを持つ文字列を指定します。文字列はセレクターの間のカンマでだけ区切られるので、<code>'#cookie-banner, img:not(.a, .b)'</code>は<code>['#cookie-banner', 'img:not(.a, .b)']</code>と同じです。各セレクターは個別に適用されます。有効なCSSでないセレクターは<code>console.warn</code>を出して何も除外せず、ほかのセレクターは引き続き適用されます。エンジンは、パックのルールやカスタムルールも含め、すべてのルールにこれを守らせます。ルールが除外された要素について報告した検出箇所は取り除かれ、そのことが結果に記録されます（<a href="/results-reports/output-schema/#check-result">出力スキーマ</a>の<code>excludedOccurrences</code>）。core 1.18.0以降です。
 			</>
 		),
 	},
@@ -174,7 +174,7 @@ const optionRows = [
 		option: <code>timestamp</code>,
 		meaning: (
 			<>
-				結果のトップレベルの<code>timestamp</code>フィールドにそのまま渡されます。エンジン自身はタイムスタンプを生成しません（決定論的であるための設計です）。文字列でない値（<code>Date</code>、数値）は<code>console.warn</code>を出して無視されます。<code>new Date().toISOString()</code>を渡してください。
+				結果のトップレベルの<code>timestamp</code>フィールドにそのまま渡されます。エンジン自身はタイムスタンプを生成しません（決定論的であるための設計です）。文字列でない値（<code>Date</code>、数値）や、ISO 8601の日時でないテキスト（<code>'yesterday'</code>、<code>'2026-01-01'</code>のような日付だけのもの、空白の<code>''</code>）は、<code>console.warn</code>を出して無視され、<code>strictOptions</code>のもとでは<code>INVALID_ENGINE_OPTIONS</code>を投げます。<code>new Date().toISOString()</code>を渡してください。
 			</>
 		),
 	},
@@ -210,7 +210,7 @@ const optionRows = [
 		option: <code>visibilityMode</code>,
 		meaning: (
 			<>
-				3つのコントラストルール（<code>contrast-minimum</code>、<code>contrast-enhanced</code>、<code>contrast-computable</code>）が、テキストノードを実際にチェック対象とするかどうかをどれだけ厳密に判断するかを制御します。<strong>他のルールはこのオプションを読みません。</strong>指定しない場合（デフォルト）、ページにレイアウトがあれば（ブラウザーでのスキャンはすべてそうです）<code>'styleAndGeometry'</code>、ない場合（jsdom）は<code>'styleOnly'</code>になります。読み手に見えるのは見える場所に描画されたテキストだけで、それを判断できるのはレイアウトだけだからです。<code>'styleOnly'</code>：対象かどうかをCSSだけで判断します（<code>display</code>、<code>visibility</code>、<code>opacity</code>、祖先による非表示など）。<code>'styleAndGeometry'</code>：それに加えて実際のレイアウトをチェックします（<code>getClientRects()</code>/<code>getBoundingClientRect()</code>）。クライアント矩形を持たないテキストや、幅または高さがゼロのテキストも除外されます。ページの完全に上側や左側にあり、スクロールしても届かないテキスト（<code>left: -9999px</code>の手法）や、<code>overflow: hidden</code>または<code>clip</code>の祖先に完全に切り取られたテキスト（<code>height: 0; overflow: hidden</code>、表示範囲外のカルーセルのスライド）も同様です。スクロールするボックス（<code>auto</code>、<code>scroll</code>）は、読み手がそのテキストまでたどり着けるため、除外の理由になりません。<code>&lt;select&gt;</code>の選択肢は、その<code>&lt;select&gt;</code>がページ上にある位置で判断されます。どちらのモードでも、フォントサイズが0のテキストや完全に透明な色のテキストは、何も描画されないため除外されます。ただし、グリフを通して背景を見せる透明なテキスト（そのテキストか祖先の<code>background-clip: text</code>）は除外されません。背景が単色ならその色で計測され、グラデーションや画像なら確認が必要なものとして扱われます。ブラウザーで、以前のリリースと同じように計算済みスタイルだけからテキストをチェックするには<code>'styleOnly'</code>を指定してください。素のjsdom（<code>runDomRulesInPage</code>）には本物のレイアウトエンジンがないため、<code>'styleAndGeometry'</code>で加わるのは主に<code>getBoundingClientRect()</code>によるサイズゼロのチェックで、本当の意味でのクリッピングやオーバーフローの検出にはなりません。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
+				3つのコントラストルール（<code>contrast-minimum</code>、<code>contrast-enhanced</code>、<code>contrast-computable</code>）が、テキストノードを実際にチェック対象とするかどうかをどれだけ厳密に判断するかを制御します。<strong>他のルールはこのオプションを読みません。</strong>指定しない場合（デフォルト）、ページにレイアウトがあれば（ブラウザーでのスキャンはすべてそうです）<code>'styleAndGeometry'</code>、ない場合（jsdom）は<code>'styleOnly'</code>になります。読み手に見えるのは見える場所に描画されたテキストだけで、それを判断できるのはレイアウトだけだからです。<code>'styleOnly'</code>：対象かどうかをCSSだけで判断します（<code>display</code>、<code>visibility</code>、<code>opacity</code>、祖先による非表示など）。<code>'styleAndGeometry'</code>：それに加えて実際のレイアウトをチェックします（<code>getClientRects()</code>/<code>getBoundingClientRect()</code>）。クライアント矩形を持たないテキストや、幅または高さがゼロのテキストも除外されます（<code>&lt;slot&gt;</code>のような<code>display: contents</code>の要素は自分のボックスを持たず、その内容が描画される矩形で判断されます）。ページの完全に上側や左側にあり、スクロールしても届かないテキスト（<code>left: -9999px</code>の手法）や、<code>overflow: hidden</code>または<code>clip</code>の祖先に完全に切り取られたテキスト（<code>height: 0; overflow: hidden</code>、表示範囲外のカルーセルのスライド）も同様です。スクロールするボックス（<code>auto</code>、<code>scroll</code>）は、読み手がそのテキストまでたどり着けるため、除外の理由になりません。<code>&lt;select&gt;</code>の選択肢は、その<code>&lt;select&gt;</code>がページ上にある位置で判断されます。どちらのモードでも、フォントサイズが0のテキストや完全に透明な色のテキストは、何も描画されないため除外されます。ただし、グリフを通して背景を見せる透明なテキスト（そのテキストか祖先の<code>background-clip: text</code>）は除外されません。背景が単色ならその色で計測され、グラデーションや画像なら確認が必要なものとして扱われます。ブラウザーで、以前のリリースと同じように計算済みスタイルだけからテキストをチェックするには<code>'styleOnly'</code>を指定してください。素のjsdom（<code>runDomRulesInPage</code>）には本物のレイアウトエンジンがないため、<code>'styleAndGeometry'</code>で加わるのは主に<code>getBoundingClientRect()</code>によるサイズゼロのチェックで、本当の意味でのクリッピングやオーバーフローの検出にはなりません。<a href="/help/known-limitations/">既知の制限事項</a>を参照してください。
 			</>
 		),
 	},
@@ -241,7 +241,16 @@ const optionRows = [
 		option: <code>output.detail</code>,
 		meaning: (
 			<>
-				<code>'full'</code>（デフォルト）または<code>'findings'</code>：より小さな結果です。何かを報告するチェック結果（<code>fail</code>、<code>cantTell</code>、検出箇所を列挙するもの）だけを完全なまま残し、それ以外の<code>pass</code>と<code>notApplicable</code>は、<code>ruleId</code>、<code>outcome</code>、<code>type</code>と、ある場合はその<code>margin</code>または<code>error</code>だけを保持します。集約と判定は変わらず、レポーターはこれを完全な結果として読みます。コアのカタログで補えないルールは完全なまま残ります。<code>packs</code>付きのスキャンのすべてのルール、カスタムルール、スキャンの<code>messages</code>が文言を変えるルールです。<a href="/results-reports/output-schema/#top-level-result"><code>engine.outputDetail</code></a>を参照してください。TypeScriptでは、このような結果は<code>CompactScanResult</code>です。
+				<code>'full'</code>（デフォルト）または<code>'findings'</code>：より小さな結果です。何かを報告するチェック結果（<code>fail</code>、<code>cantTell</code>、検出箇所を列挙するもの）だけを完全なまま残し、それ以外の<code>pass</code>と<code>notApplicable</code>は、<code>ruleId</code>、<code>outcome</code>、<code>type</code>と、ある場合はその<code>margin</code>または<code>error</code>だけを保持します。集約と判定は変わらず、レポーターはこれを完全な結果として読みます。コアのカタログで補えないルールは完全なまま残ります。<code>packs</code>付きのスキャンのすべてのルール、カスタムルール、スキャンの<code>messages</code>が文言を変えるルールです。<a href="/results-reports/output-schema/#top-level-result"><code>engine.outputDetail</code></a>を参照してください。TypeScriptでは、このような結果は<code>CompactScanResult</code>で、レポーター、ベースラインの関数、<code>addHowToCheck</code>、<code>leaningFailures</code>、<code>getMargins</code>がこれを受け取ります。スキャン関数の型は1.17と同じく<code>ScanResult</code>を返すものなので、そう型付けするには結果を<code>CompactScanResult</code>として宣言してください（または<code>{"ScanResultFor<typeof options>"}</code>を使います）。
+			</>
+		),
+	},
+	{
+		id: "output-max-occurrences",
+		option: <code>output.maxOccurrencesPerRule</code>,
+		meaning: (
+			<>
+				省略可能です。1以上の整数を指定します。各チェック結果は、不合格のものを先にして最大でその数の検出箇所を保持し、残りを<code>occurrencesOmitted</code>に数えます。判定結果、集約、ゲートは、指定しない場合と同じです。後述の<a href="#a-cap-on-occurrences-outputmaxoccurrencesperrule">「検出箇所の上限」</a>を参照してください。core 1.18.0以降です。
 			</>
 		),
 	},
@@ -268,7 +277,7 @@ const optionRows = [
 		option: <code>probes</code>,
 		meaning: (
 			<>
-				サイトのほかのページなど、1ページのスキャンでは見えないもののために、ホストアプリケーションが渡す、JSONとして安全な省略可能の証拠オブジェクトです。ルールが読む前にエンジンが制限します（<code>ctx.inputs.probes</code>）。深さは6階層、配列は200項目、オブジェクトは50キー、文字列は2,000文字までです。<code>page-title-patterns</code>は<code>crawl.pageTitles</code>（<code>{"{ pages: [{ url, title }] }"}</code>）を読み、サイト全体で汎用的なタイトルやテンプレートのままのタイトルを探します。パックのルールは独自のprobesを読むことがあり、それはパックが説明します。
+				サイトのほかのページなど、1ページのスキャンでは見えないもののために、ホストアプリケーションが渡す、JSONとして安全な省略可能の証拠オブジェクトです。値が文字列、有限の数値、<code>true</code>、<code>false</code>、<code>null</code>、配列、プレーンなオブジェクトだけのプレーンなオブジェクトを指定します。それ以外のもの（関数、<code>Date</code>、最上位の配列、<code>BigInt</code>、循環参照）は<code>console.warn</code>を出して無視され、<code>strictOptions</code>のもとでは<code>INVALID_ENGINE_OPTIONS</code>を投げます。ルールが読む前にエンジンが制限します（<code>ctx.inputs.probes</code>）。深さは6階層、配列は200項目、オブジェクトは50キー、文字列は2,000文字までです。<code>page-title-patterns</code>は<code>crawl.pageTitles</code>（<code>{"{ pages: [{ url, title }] }"}</code>）を読み、サイト全体で汎用的なタイトルやテンプレートのままのタイトルを探します。パックのルールは独自のprobesを読むことがあり、それはパックが説明します。
 			</>
 		),
 	},
@@ -286,6 +295,15 @@ const optionRows = [
 		),
 	},
 	{
+		id: "timeBudgetMs",
+		option: <code>timeBudgetMs</code>,
+		meaning: (
+			<>
+				デフォルトはオフです。0より大きいミリ秒数を指定します（<code>Infinity</code>は、省略した場合と同じく制限なしです）。スキャンがその時間を使い切ると、それ以上ルールを開始しません。後述の<a href="#a-time-budget-timebudgetms">「時間の予算」</a>を参照してください。core 1.18.0以降です。
+			</>
+		),
+	},
+	{
 		id: "frameWaitTime",
 		option: (
 			<>
@@ -294,7 +312,7 @@ const optionRows = [
 		),
 		meaning: (
 			<>
-				<code>runa11yCoreAcrossFrames</code>だけが読み取ります（<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}><code>INTEGRATION.md</code></a>を参照）。子フレームを到達不能とみなすまでに、pingへの応答（デフォルト<code>500</code>ms）とスキャン全体の要求への応答（デフォルト<code>60000</code>ms）をそれぞれどれだけ待つかを指定します。<code>runDomRulesInPage</code>/<code>runa11yCoreInPage</code>では無視されます。
+				<code>runa11yCoreAcrossFrames</code>だけが読み取ります（<a href={`${core}/docs/INTEGRATION.md#cross-frame-scanning-including-cross-origin`}><code>INTEGRATION.md</code></a>を参照）。子フレームを到達不能とみなすまでに、pingへの応答（デフォルト<code>2000</code>ms、1.18.0より前は<code>500</code>ms）とスキャン全体の要求への応答（デフォルト<code>60000</code>ms）をそれぞれどれだけ待つかを指定します。<code>runDomRulesInPage</code>/<code>runa11yCoreInPage</code>では無視されます。
 			</>
 		),
 	},
@@ -711,7 +729,7 @@ export function EngineOptionsContent() {
 				以下のフィールドは、ルールが持つタグとルールIDで選択します。1つの達成基準（<code>tags: ['wcag1412']</code>）、ルールのリスト、除外、独自のタグセットなど、WCAGの目標と<code>bestPractices</code>では表せないものに使ってください。これらは<code>wcag</code>や<code>bestPractices</code>と組み合わせられます。含めるものはそれらが選択するものに追加され、除外するものはその後に取り除かれます。
 			</p>
 			<p>
-				指定する方法は<strong>互いに独立して2つ</strong>あります。第4引数（<code>runOnly</code>）と、<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>/<code>.includeMode</code>です。<code>runOnly</code>にフィルターが1つでも含まれていればそちらが無条件に優先され、そうでなければエンジンは<code>engineOptions</code>を使います。<strong>両方が適用されると期待して混在させないでください。どちらか一方を選びます。</strong><code>engineOptions.rules</code>、<code>.tags</code>、<code>.tests</code>は<code>{"{ include, exclude }"}</code>を受け取ります。リストや文字列をそのまま渡すと、含めるリストになります。
+				指定する方法は<strong>互いに独立して2つ</strong>あります。第4引数（<code>runOnly</code>）と、<code>engineOptions.rules</code>/<code>.tags</code>/<code>.tests</code>/<code>.includeMode</code>です。<code>runOnly</code>にフィルターが1つでも含まれていればそちらが無条件に優先され、そうでなければエンジンは<code>engineOptions</code>を使います。<strong>両方が適用されると期待して混在させないでください。どちらか一方を選びます。</strong><code>runOnly</code>のフィルターと並べて指定した<code>rules</code>、<code>tags</code>、<code>tests</code>のフィルターは読まれず、スキャンがそのことを伝えます（<code>[surea11y] engineOptions.tags: runOnly has a filter, which wins over it; ignored.</code>）。<code>strictOptions</code>のもとでは<code>INVALID_ENGINE_OPTIONS</code>を投げます。1つのルールの設定のための<code>rules</code>のエントリはフィルターではなく、どちらの場合も読まれます。<code>engineOptions.rules</code>、<code>.tags</code>、<code>.tests</code>は<code>{"{ include, exclude }"}</code>を受け取ります。リストや文字列をそのまま渡すと、含めるリストになります。
 			</p>
 
 			<h3 id="via-runonly-4th-argument"><code>runOnly</code>（第4引数）で指定する</h3>
@@ -787,7 +805,7 @@ export function EngineOptionsContent() {
 				ルールIDにはエンジンのプレフィックスを付けません（例：<code>'img-alt-present'</code>）。後方互換性のため、同じIDに旧来の<code>a11ycore-</code>プレフィックスを付けた形式（<code>'a11ycore-img-alt-present'</code>）も照合できます。IDはタグと同じく大文字小文字を問わずに照合されます。<code>'IMG-ALT-PRESENT'</code>は<code>img-alt-present</code>を選択し、これはルールを指定するすべてのリスト（各形式の<code>runOnly</code>、<code>engineOptions.rules</code>と<code>engineOptions.tests</code>、含めるものと除外するもの）で同じです。大文字小文字だけが違うIDを持つルールはないため、誤ったルールが選ばれることはありません。
 			</p>
 			<p>
-				<code>runOnly</code>の値全体として、<strong><code>{"{ type, values }"}</code>形式</strong>も受け付けます。<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>は<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>と、<code>{"{ type: 'rule', values: ['img-alt-present'] }"}</code>は<code>{"{ includeRuleIds: ['img-alt-present'] }"}</code>と同じ意味です（<code>'tags'</code>と<code>'rules'</code>も使えます）。<code>values</code>はカンマ区切りの文字列でもよく、その名前はほかのルールIDやタグと同じように検証され、並べて指定したほかのキー（<code>excludeTags</code>、<code>excludeRuleIds</code>など）も引き続き適用されます。名前の<code>Set</code>は、それが持つリストとして読まれます。オブジェクト形式が読むキーと並んでいる、読まないキーは、警告を出して無視されます。それ以外の<code>type</code>は<code>INVALID_RUN_ONLY</code>を投げます。数値や真偽値の<code>runOnly</code>や、エンジンが読むキーを1つも持たないオブジェクト（<code>{"{ includeRuleId: [...] }"}</code>）も同様です。これらはいずれも、以前はすべてのルールを実行していました。空の配列、文字列、オブジェクトは、これまでどおり既定の選択を意味します。
+				<code>runOnly</code>の値全体として、<strong><code>{"{ type, values }"}</code>形式</strong>も受け付けます。<code>{"{ type: 'tag', values: ['wcag2a', 'wcag2aa'] }"}</code>は<code>{"{ tags: ['wcag2a', 'wcag2aa'] }"}</code>と、<code>{"{ type: 'rule', values: ['img-alt-present'] }"}</code>は<code>{"{ includeRuleIds: ['img-alt-present'] }"}</code>と同じ意味です（<code>'tags'</code>と<code>'rules'</code>も使えます）。<code>values</code>はカンマ区切りの文字列でもよく、その名前はほかのルールIDやタグと同じように検証され、並べて指定したほかのキー（<code>excludeTags</code>、<code>excludeRuleIds</code>など）も引き続き適用されます。名前の<code>Set</code>は、それが持つリストとして読まれます。オブジェクト形式が読むキーと並んでいる、読まないキーは、警告を出して無視されます。<code>includeTestIds</code>と<code>excludeTestIds</code>は<code>includeRuleIds</code>と同じように検証されます。複合ルールのIDにも、ルールのIDと同じく旧来の<code>a11ycore-</code>プレフィックスを付けられます。それ以外の<code>type</code>は<code>INVALID_RUN_ONLY</code>を投げます。数値や真偽値の<code>runOnly</code>や、エンジンが読むキーを1つも持たないオブジェクト（<code>{"{ includeRuleId: [...] }"}</code>）も同様です。これらはいずれも、以前はすべてのルールを実行していました。空のオブジェクト（<code>{"{}"}</code>）は、これまでどおり既定の選択を意味します。空のルールやタグのリスト（<code>[]</code>、<code>''</code>、空の<code>Set</code>、<code>{"{ type: 'rule', values: [] }"}</code>、<code>{"{ tags: [] }"}</code>、<code>{"{ includeRuleIds: [] }"}</code>）や、<code>values</code>のない<code>type</code>（<code>{"{ type: 'tag' }"}</code>）も同じですが、フィルターが組み立てたリストが誤って空になったのかもしれないので、スキャンがそのことを伝えます：<code>[surea11y] runOnly.values is an empty list: it selects no rule, so every rule runs.</code><code>runOnly</code>にフィルターがない場合の、<code>engineOptions.rules</code>、<code>.tags</code>、<code>.tests</code>の空の含めるリスト（<code>rules: []</code>、<code>tags: []</code>、<code>{"tags: { include: [] }"}</code>）も同様です。<code>strictOptions</code>のもとでは、いずれも<code>INVALID_ENGINE_OPTIONS</code>を投げます。core 1.18.0以降です。
 			</p>
 
 			<h3 id="which-criteria-a-scan-reports">スキャンが報告する達成基準</h3>
@@ -904,7 +922,7 @@ export function EngineOptionsContent() {
 				<strong>1つだけ逆向きの達成基準があります。</strong>WCAG 2.2ではSC 4.1.1（構文解析）が削除されました。追加ではなく削除された唯一の達成基準です。これに対応するルールは、他の2.0由来のルールと同じく2.0の導入バージョンタグ（<code>wcag2a</code>）を持ち、さらに<code>wcag22-removed</code>も持ちます。そのため上のバージョン別のタグの集合では、本来含まれるべきでない2.2対象のスキャンにもこのルールが含まれてしまいます。
 			</p>
 			<p>
-				これについて何かする必要はありません。エンジンはスキャンごとに<strong>対象のWCAGバージョン</strong>を決定し、対象が2.2の場合、<code>wcag22-removed</code>のルールは<code>fail</code>を報告できません。ルールは実行され、見つけた検出箇所もすべて報告しますが、判定結果は<code>cantTell</code>に強制変換され、結果にはその理由を示す<code>wcagVersionScope</code>フィールドが付きます（<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）。黙って捨てられるものは何もなく、2.2のスキャンが2.2に存在しない達成基準によってゲートされることもありません。
+				これについて何かする必要はありません。エンジンはスキャンごとに<strong>対象のWCAGバージョン</strong>を決定し、対象が2.2の場合、<code>wcag22-removed</code>のルールは<code>fail</code>を報告できません。WCAGの達成基準がすべて2.2で削除されたものであるルール（タグなしで4.1.1だけに対応付けたカスタムルールやパックのルールなど）も同様です。ルールは実行され、見つけた検出箇所もすべて報告しますが、判定結果は<code>cantTell</code>に強制変換され、結果にはその理由を示す<code>wcagVersionScope</code>フィールドが付きます（<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）。黙って捨てられるものは何もなく、2.2のスキャンが2.2に存在しない達成基準によってゲートされることもありません。
 			</p>
 			<p id="parsing-errata">
 				2.0または2.1を対象にした場合も同じです。WCAG 2.0と2.1に対する2023年の正誤表は、HTMLやXMLのコンテンツについて4.1.1を常に満たされているものとするため、ルールは不合格にせず確認を求め、<code>wcagVersionScope.by</code>は<code>"errata"</code>になります。唯一の例外は、<code>en301549-v3.2.1</code>のように規格が4.1.1の文言を維持しているプロファイルです（規格のプロファイルの<code>keepsParsing</code>。<a href="/configuration/packs/#profiles">パック</a>を参照）。そこでは重複したidが今も<code>fail</code>になりえます。core 1.14.0以降の動作で、それ以前は2.0や2.1を対象にすると不合格になりました。
@@ -989,6 +1007,7 @@ export function EngineOptionsContent() {
 					"  timestamp: '2026-07-20T12:00:00Z',  // optional — engine has no built-in clock",
 					"  perfStats: false,                // default false — internal timing counters, debug-only shape",
 					"  profileRules: false,             // default false — per-rule timings; needs perfStats",
+					"  timeBudgetMs: undefined,         // optional — once the scan has spent this many ms, it starts no more rules (see below)",
 					"",
 					"  contrast: {",
 					"    mode: 'strictConformance',     // 'strictConformance' (default) | 'auditorAssist'",
@@ -1005,7 +1024,8 @@ export function EngineOptionsContent() {
 					"  output: {",
 					"    includeSelector: true,         // set false to suppress auto-filled selectors",
 					"    includeHtml: true,",
-					"    detail: 'full'                 // 'findings': pass/notApplicable results keep only rule, outcome, type",
+					"    detail: 'full',                // 'findings': pass/notApplicable results keep only rule, outcome, type",
+					"    maxOccurrencesPerRule: undefined  // optional — keep at most this many occurrences per rule, the rest counted (see below)",
 					"  },",
 					"",
 					"  rules: {",
@@ -1020,7 +1040,7 @@ export function EngineOptionsContent() {
 					"  packs: [ /* rules and standards from outside core, see Packs */ ],",
 					"",
 					"  // Only read by runa11yCoreAcrossFrames. Ignored by runDomRulesInPage/runa11yCoreInPage.",
-					"  pingWaitTime: 500,               // ms to wait for a child frame to answer a ping",
+					"  pingWaitTime: 2000,              // ms to wait for a child frame to answer a ping",
 					"  frameWaitTime: 60000             // ms to wait for a child frame's full scan result",
 					"};",
 				]} />
@@ -1034,6 +1054,73 @@ export function EngineOptionsContent() {
 				rows={optionRows}
 			/>
 
+			<h3 id="a-time-budget-timebudgetms">時間の予算（<code>timeBudgetMs</code>）</h3>
+			<p>
+				<code>timeBudgetMs</code>は、スキャンがルールを開始し続ける時間に上限を設けます。スキャンの開始から数えてそのミリ秒数を使い切ると、それ以上ルールを開始しません。開始済みのルールは最後まで実行され、選択されたルールのうちまだ開始していないものは<code>checksResults</code>から外れ、結果の<code>notRun</code>に<code>{"[{ ruleId, reason: 'timeBudget' }]"}</code>として記録されます。そのとき<code>engine.incomplete</code>がスキャンが途中で打ち切られたことを<code>{"{ reason: 'timeBudget', timeBudgetMs, rulesNotRun }"}</code>として示し、<code>console.warn</code>が実行されなかったルールの数を伝えます。core 1.18.0以降です。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"const result = runDomRulesInPage(url, null, { timeBudgetMs: 2000 }, null);",
+					"if (result.engine.incomplete) {",
+					"  // result.notRun: the rules that checked nothing",
+					"}",
+				]}
+			/>
+			<p>途中で打ち切られたスキャンが合格と読まれることはありません。</p>
+			<ul>
+				<li>
+					実行されなかったルールを含む集約は<code>cantTell</code>（<code>composite.rollup.cantTell.missingChild</code>）になり、その構成ルールには、実行されなかったほかのルールと同じく<code>notRun: 'timeBudget'</code>が付きます。
+				</li>
+				<li>
+					HTMLレポートは、見つけたものより先に、スキャンが不完全であることと、そのルールを示します。SARIFはルールごとに<code>error</code>の通知と<code>executionSuccessful: false</code>を出し、JUnitはルールごとに<code>error</code>のテストケースを「Rules not run」というスイートに出し、EARLはそれぞれを<code>earl:untested</code>と表明し、ブラウザーバンドルの<code>table()</code>はそれぞれを<code>notRun</code>として一覧にして警告します。<code>matchBaseline</code>は<code>{"incomplete: { notRun }"}</code>を加えるので、<code>newCount</code>だけを読むゲートはこれも確認する必要があります。
+				</li>
+				<li>
+					<a href="#several-profiles">複数のプロファイルのスキャン</a>では、予算はスキャン全体のものです。最初より後の各プロファイルは残りを受け取り、残りがない状態で始まるはずのプロファイルは実行されず、理由<code>timeBudget</code>とともに<code>engine.profilesNotRun</code>に記録されます（<code>allowProfilesNotRun</code>はこれを受け入れません）。そのルールは、予算を使い切ったプロファイルと同じく<code>notRun</code>に記録され、同じ警告が出ます。<code>notRun</code>の各エントリは、その<code>profile</code>を示します。
+				</li>
+				<li>
+					フレームをまたぐ場合（<code>runa11yCoreAcrossFrames</code>）も、予算はスキャン全体のもので、最上位のドキュメントのスキャン開始から数えます。各フレームのスキャンは、入れ子のフレームも含め、開始時点での残りだけを受け取ります。残りがない状態で到達したフレームはルールを開始せず、その結果は選択するすべてのルールを<code>notRun</code>に記録し、そのフレームのもとに<code>engine.incomplete</code>を持ち、同じ警告が出ます。<code>engine.incomplete.timeBudgetMs</code>は常に、残りではなく、スキャンに与えられた予算です。
+				</li>
+				<li>
+					ブラウザーバンドルでは、<code>runa11yCoreInPageAsync</code>がスキャンの前にページが読めないスタイルシートを取得し、予算はその前から数えます。取得に使えるのは予算の半分までです。それを超えるとスタイルシートを待つのをやめ、残りの時間でそれらなしにルールを実行するので、遅いスタイルシート1つのために、ルールが1つも実行されない結果になることはありません。取得をあきらめたスタイルシートは警告と<code>engine.incomplete.styleSheetsNotRead</code>に示され、結果は不完全になります（<code>engine.incomplete</code>。すべてのルールが実行された場合、<code>rulesNotRun</code>は0です）。そのようなスタイルシートを読むはずだったルールは、確認が必要なものとして扱います。予算がない場合は、これまでどおり各スタイルシートを最大5秒待ちます。
+				</li>
+			</ul>
+			<p>
+				デフォルトはオフで、予算内に収まったスキャンの結果は、指定しない場合と同じです。予算を使い切るまでにどのルールが実行されるかはマシンとその負荷によって変わるので、予算付きのスキャンは決定論的ではありません。重いページのスキャンをCIの時間制限に収めるために使い、差分を取る結果には使わないでください。<code>Infinity</code>は、省略した場合と同じく制限なしを意味し、警告なしで受け付けられます。0より大きい数値以外は<code>console.warn</code>を出して無視され、<code>strictOptions</code>のもとでは<code>INVALID_ENGINE_OPTIONS</code>を投げます。Node、jsdom、ブラウザーバンドルのどれでも同じように働きます。
+			</p>
+
+			<h3 id="a-cap-on-occurrences-outputmaxoccurrencesperrule">
+				検出箇所の上限（<code>output.maxOccurrencesPerRule</code>）
+			</h3>
+			<p>
+				長い表のすべての行で同じ欠陥が繰り返されるページでは、1つのルールの検出箇所が数百になり、結果は数十メガバイトになります。<code>output.maxOccurrencesPerRule</code>は、各ルールの検出箇所を結果に最大でその数だけ残し、ほかは数だけを記録します。core 1.18.0以降です。
+			</p>
+			<CodeBlock
+				lang="js"
+				lines={[
+					"runDomRulesInPage(url, null, { output: { maxOccurrencesPerRule: 20 } }, null);",
+					"// checksResults[i]: occurrences (20 at most), occurrencesOmitted: 412,",
+					"//   occurrencesOmittedByOutcome: { fail: 412 }",
+				]}
+			/>
+			<ul>
+				<li>
+					<strong>残したものから決まることは何もありません。</strong>上限は、スキャンがすべてを決めた後に適用されます。各ルールの<code>outcome</code>と<code>severity</code>、集約とその件数、複数のプロファイルのスキャンでは各プロファイルの判定は、ルールが見つけたすべての検出箇所によるものです。<code>engine.occurrenceCap</code>がスキャンに上限が適用されたことを示します：<code>{"{ maxOccurrencesPerRule, occurrencesOmitted, rulesCapped }"}</code>。
+				</li>
+				<li>
+					<strong>不合格のものが先に残ります。</strong>次に不合格に傾く未確定の検出結果、次にそれ以外の未確定のもの、最後に残りで、それぞれルールが出した順です。そのため、不合格のルールは必ず少なくとも1つの不合格を示します。
+				</li>
+				<li>
+					<strong>レポーターは省いたものを数えます。</strong>HTMLレポートは合計とルールのカードでそれを数え（「ほかに412件（一覧には表示されません）」）、SARIFは上限が適用されたルールごとに注記を加え、JUnitは失敗のメッセージでそれを数えて本文に「+412 more」と書き、ブラウザーバンドルの<code>table()</code>は「+412 more」の行を出します。
+				</li>
+				<li>
+					<strong>ゲートは正確なままです。</strong>上限が適用された不合格のルールは、それでも不合格です。ベースラインと照合する場合、省かれた不合格は照合できないので新規として数えます。<code>matchBaseline</code>はそれを<code>totalFail</code>と<code>newCount</code>に加え（<code>incomplete.occurrencesOmitted</code>でそのことを示します）、JUnitはそのルールを失敗にし、SARIFは、残した不合格をベースラインがすべて知っていた場合に、それらのためにそのルールに<code>error</code>の結果を出します。不合格に傾く未確定の検出結果は別に数えられ（<code>occurrencesOmittedLeaningFail</code>）、傾きによるゲートを求めた場合には同じようにゲートします：<code>matchBaseline</code>の<code>leanFail</code>、JUnitの<code>leanFailAs: 'failure'</code>、SARIFの<code>leanFailAs: 'error'</code>です。上限が適用された結果からは完全な<a href="/conformance/baseline/#incomplete-scan">ベースライン</a>を書けません。<code>buildBaselineEntries</code>が警告します。
+				</li>
+			</ul>
+			<p>
+				指定しない場合は、すべての検出箇所が残ります。1以上の整数以外は<code>console.warn</code>を出して無視され、<code>strictOptions</code>のもとでは<code>INVALID_ENGINE_OPTIONS</code>を投げます。
+			</p>
+
 			<h3 id="catching-mistakes-in-the-options-strictoptions">オプションの誤りを見つける（<code>strictOptions</code>）</h3>
 			<p>
 				エンジンが読まないオプションは、そのまま受け渡されます。カスタムルールは<code>ctx.engineOptions</code>から独自の設定を読めますし、後のリリースで削除されたオプションがスキャンを壊すこともありません。そのため、デフォルトでは綴りを誤ったオプションは無視され、スキャンはそれがないものとして実行されます。それを知らせるものが2つあります。
@@ -1043,10 +1130,10 @@ export function EngineOptionsContent() {
 					<strong>常に</strong>、既知のキーと1文字か2文字だけ違う（大文字小文字は問いません）キーは、入れ子のキーも含めて警告されます。<code>lcoale</code>には<code>[surea11y] engineOptions: unknown option "lcoale" (did you mean "locale"?); ignored.</code>が出ます。
 				</li>
 				<li>
-					<strong>常に</strong>、型が誤っている値は警告されたうえで指定がなかったものとして読まれます。オブジェクトでない<code>engineOptions</code>も同様です。オン／オフのオプション（<code>includeShadowDom</code>、<code>includeHiddenElements</code>、<code>fragment</code>、<code>perfStats</code>、<code>profileRules</code>、<code>output.includeHtml</code>、<code>output.includeSelector</code>）は<code>true</code>か<code>false</code>を受け取り、コマンドラインでの表記である<code>'true'</code>、<code>'false'</code>、<code>'1'</code>、<code>'0'</code>、<code>1</code>、<code>0</code>も受け取ります。<code>perfStats: 'false'</code>はオフです。
+					<strong>常に</strong>、型が誤っている値は警告されたうえで指定がなかったものとして読まれます（<code>perfStats: 'maybe'</code>：<code>[surea11y] engineOptions: perfStats must be true or false, not "maybe"; ignored.</code>）。オブジェクトでない<code>engineOptions</code>も同様です。オン／オフのオプション（<code>includeShadowDom</code>、<code>includeHiddenElements</code>、<code>fragment</code>、<code>perfStats</code>、<code>profileRules</code>、<code>output.includeHtml</code>、<code>output.includeSelector</code>）は<code>true</code>か<code>false</code>を受け取り、実行時には、コマンドラインのフラグ、クエリ文字列、環境変数の表記で値を渡す型のない呼び出し側のために、<code>'true'</code>、<code>'false'</code>、<code>'1'</code>、<code>'0'</code>、<code>1</code>、<code>0</code>も読みます。<code>perfStats: 'false'</code>はオフです。TypeScriptの型は真偽値だけを受け取るので、型のあるコードは<code>true</code>か<code>false</code>を渡します。スキャンのどのルールも指さない<code>rules[ruleId]</code>のキーは、最も近いIDとともに警告され、<code>strictOptions</code>のもとでは例外を投げます。<code>contrast.rootCanvasFallback</code>はCSSが色を読むように読まれ（ブラウザーではブラウザー自身が読みます）、不透明な色でなければなりません。それ以外の値（<code>inherit</code>、<code>currentColor</code>）は白として計測され、結果はそれを返し、警告が出て、<code>strictOptions</code>のもとでは例外を投げます。
 				</li>
 				<li>
-					<strong><code>strictOptions: true</code>を指定すると</strong>（または<code>'true'</code>、<code>'1'</code>、<code>1</code>）、スキャンの前にすべてのオプションが確認され、誤りがあれば<code>code: 'INVALID_ENGINE_OPTIONS'</code>付きのエラーを投げてそれぞれを示します。<code>problems</code>はそれらを<code>{"{ path, kind, message, suggestion }"}</code>として列挙します。対象は、<code>engineOptions</code>やそのオブジェクトのいずれかにある未知のキー（<code>kind: 'unknown'</code>）と、<code>includeHiddenElements: 'yes'</code>や<code>contrast.mode: 'strict'</code>のように型が誤っているか集合の外にある値（<code>kind: 'invalid'</code>）です。
+					<strong><code>strictOptions: true</code>を指定すると</strong>（型のない呼び出し側のために、実行時には<code>'true'</code>、<code>'1'</code>、<code>1</code>も読みます。TypeScriptの型は真偽値を受け取ります）、スキャンの前にすべてのオプションが確認され、誤りがあれば<code>code: 'INVALID_ENGINE_OPTIONS'</code>付きのエラーを投げてそれぞれを示します。<code>problems</code>はそれらを<code>{"{ path, kind, message, suggestion }"}</code>として列挙します。対象は、<code>engineOptions</code>やそのオブジェクトのいずれかにある未知のキー（<code>kind: 'unknown'</code>）と、<code>includeHiddenElements: 'yes'</code>や<code>contrast.mode: 'strict'</code>のように型が誤っているか集合の外にある値（<code>kind: 'invalid'</code>）です。<code>runOnly</code>のフィルターと並べた<code>rules</code>、<code>tags</code>、<code>tests</code>のフィルターも例外を投げます。<code>runOnly</code>が優先され、それは読まれないからです。
 				</li>
 			</ul>
 			<CodeBlock lang="js" lines={[
@@ -1054,10 +1141,13 @@ export function EngineOptionsContent() {
 					"// Error: engineOptions: unknown option \"lcoale\" (did you mean \"locale\"?). (strictOptions)",
 				]} />
 			<p>
-				<code>engineOptions</code>を受け取るカタログ関数（<code>getChecksCatalog</code>、<code>getRulesCatalog</code>、<code>getCheckDefById</code>、<code>getCompositeRuleById</code>、<code>getChecksForRunOnly</code>、<code>getRulesForRunOnly</code>、<code>getTestsForRunOnly</code>）も、同じ方法、同じ文言でそれを確認します。<code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code>は警告を出し、レベルを指定がなかったものとして読み、そのオプションでのスキャンが報告するものを列挙します。<code>strictOptions: true</code>を指定すると、スキャンと同じように<code>INVALID_ENGINE_OPTIONS</code>を投げます。自分自身を打ち消す選択（同じルールを含めると同時に除外する、共通するルールのない部分を組み合わせる）も、スキャンと同じように知らされます。警告が出て、<code>strictOptions</code>のもとでは<code>INVALID_RUN_ONLY</code>になります。
+				<code>strictOptions</code>のもとでは、スキャンは、本来なら開始後に警告されるだけのものも、同じコードで拒否します。存在しないプロファイル、<code>mappings</code>の規格、<code>optInRules</code>のタグと、何も除外しない、有効なCSSでない<code>excludeSelectors</code>（またはルール独自の<code>rules[ruleId].excludeSelectors</code>）のセレクターです。リストの空の要素（<code>{"excludeSelectors: [, 'main']"}</code>）は、<code>null</code>と同じく拒否されます。
 			</p>
 			<p>
-				確認しないもの：ルール自身の設定（<code>rules[ruleId]</code>）、<code>messages</code>のキー、エンジンが読まずに受け渡す<code>probes</code>、そして独自の確認を持つカスタムルール（<code>skippedCustomRules</code>）です。TypeScriptでは、<code>StrictEngineOptions</code>は、任意のキーをコンパイルできるようにするインデックスシグネチャを持たない同じオプションの集合なので、綴りを誤ったオプションはそこでもエラーになります。
+				<code>engineOptions</code>を受け取るカタログ関数（<code>getChecksCatalog</code>、<code>getRulesCatalog</code>、<code>getCheckDefById</code>、<code>getCompositeRuleById</code>、<code>getChecksForRunOnly</code>、<code>getRulesForRunOnly</code>、<code>getTestsForRunOnly</code>）も、同じ方法、同じ文言でそれを確認します。<code>{"getRulesForRunOnly(runOnly, { wcagLevel: 'AA+' })"}</code>は警告を出し、レベルを指定がなかったものとして読み、そのオプションでのスキャンが報告するものを列挙します。<code>strictOptions: true</code>を指定すると、スキャンと同じように<code>INVALID_ENGINE_OPTIONS</code>を投げます。<code>strictOptions</code>のもとでは、スキャンが実行前に拒否するものも拒否します。何も指さない<code>profile</code>、<code>optInRules</code>のタグ、<code>mappings</code>の規格、存在しないルールについての<code>rules</code>の設定、知らない<code>policyContract</code>、不透明な色でない<code>contrast.rootCanvasFallback</code>、有効なCSSでない<code>excludeSelectors</code>（グローバルまたはルールのもの）です。セレクターは、グローバルな<code>document</code>があればそれ（グローバルに設定したjsdomのwindow）に対して試されます。ない場合はスキャンだけが試します。<code>black</code>のような名前付きの色も、ページでしか読めないため、スキャンだけが確認します。自分自身を打ち消す選択（同じルールを含めると同時に除外する、共通するルールのない部分を組み合わせる）も、スキャンと同じように知らされます。警告が出て、<code>strictOptions</code>のもとでは<code>INVALID_RUN_ONLY</code>になります。
+			</p>
+			<p>
+				オブジェクトを受け取るオプション（<code>contrast</code>、<code>output</code>、<code>policy</code>、<code>policyContract</code>、<code>rules</code>、<code>tags</code>、<code>tests</code>、<code>messages</code>）は、リテラルや<code>JSON.parse</code>が書くようなプレーンなオブジェクトを受け取ります。<code>Date</code>、<code>Map</code>、クラスのインスタンスは、型が誤っているほかの値と同じく拒否されます。確認しないもの：エンジンが読まずに受け渡す、ルール自身の設定（<code>rules[ruleId]</code>）と<code>messages</code>のキー（<code>probes</code>はキーではなく、JSONとして安全なデータかどうかを確認します）、そして独自の確認を持つカスタムルール（<code>skippedCustomRules</code>）です。TypeScriptでは、<code>StrictEngineOptions</code>は、任意のキーをコンパイルできるようにするインデックスシグネチャを持たない同じオプションの集合なので、綴りを誤ったオプションはそこでもエラーになります。また、呼び出しそのものの中で<code>strictOptions: true</code>とともに書いたオブジェクト（<code>{"runDomRulesInPage(url, null, { strictOptions: true, lcoale: 'de' })"}</code>、カタログ関数、<code>runa11yCoreOnHtml</code>の<code>engineOptions</code>）は、そのようなものとして確認されます。
 			</p>
 
 			<h3 id="rule-scoped-excludeselectors">ルール単位の<code>excludeSelectors</code></h3>
@@ -1195,10 +1285,10 @@ export function EngineOptionsContent() {
 					カスタムルールも組み込みルールと同じようにマージンを報告できます。<code>meta.margin</code>（<code>{"{ measure, unit, limit }"}</code>）を宣言し、<code>marginCandidates</code>を返してください（GitHub上のルール作成ガイド<a href={`${core}/docs/RULE_AUTHORING.md#metamargin`}><code>RULE_AUTHORING.md</code>の<code>meta.margin</code></a>を参照）。形式が正しくない<code>meta.margin</code>は無視され、そのルールはマージンを報告しませんが、スキャンは続行します。
 				</li>
 				<li>
-					無効な記述子（<code>id</code>がない、または文字列でない、<code>runInPage</code>が関数でも関数に戻せるソース文字列でもない、<code>applicability</code>を関数に変換できない、<code>deprecation</code>のない<code>deprecated: true</code>など<code>meta</code>が検証に失敗する、リスト内の別のカスタムルールと同じIDを持つ、複合ルールのIDを使っている）は、ルール名と理由を示す<code>console.warn</code>を出してスキップされ、結果の<code>skippedCustomRules</code>に記録されます。組み込みルールを含むスキャンの残りは通常どおり実行されます。これは直すべき検証の抜けではありません。カスタムルールは呼び出し側が渡す任意のコードなので、「問題のあるエントリだけを安全側に倒して除外し、スキャンは中断しない」ほうが安全なデフォルトです。例外を投げた<em>組み込み</em>ルールが、スキャン全体をクラッシュさせずにそのルールの<code>cantTell</code>にとどめられるのと同じ考え方です。
+					無効な記述子（<code>id</code>がない、または文字列でない、<code>runInPage</code>が関数でも関数に戻せるソース文字列でもない、<code>applicability</code>を関数に変換できない、<code>deprecation</code>のない<code>deprecated: true</code>や、WCAGの達成基準を指さない<code>wcagSc</code>のエントリ（<code>'9.9.9'</code>）など<code>meta</code>が検証に失敗する、リスト内の別のカスタムルールと同じIDを持つ、複合ルールのIDを使っている）は、ルール名と理由を示す<code>console.warn</code>を出してスキップされ、結果の<code>skippedCustomRules</code>に記録されます。組み込みルールを含むスキャンの残りは通常どおり実行されます。これは直すべき検証の抜けではありません。カスタムルールは呼び出し側が渡す任意のコードなので、「問題のあるエントリだけを安全側に倒して除外し、スキャンは中断しない」ほうが安全なデフォルトです。例外を投げた<em>組み込み</em>ルールが、スキャン全体をクラッシュさせずにそのルールの<code>cantTell</code>にとどめられるのと同じ考え方です。
 				</li>
 				<li>
-					ルールは同期的に実行されます。Promiseを返す<code>runInPage</code>や<code>applicability</code>（<code>async</code>関数）は、その旨を示す<code>error</code>付きの<code>cantTell</code>として報告されます。結果オブジェクト以外を返す<code>runInPage</code>も同様です。<code>pass</code>、<code>fail</code>、<code>cantTell</code>、<code>notApplicable</code>以外の<code>outcome</code>（<code>'failed'</code>など）は<code>cantTell</code>になり、<code>error</code>に返された値が示されます。ルールの<code>type</code>はその<code>meta</code>から決まります。戻り値の<code>type</code>は無視され、<code>error</code>に注記が付きます。
+					ルールは同期的に実行されます。Promiseを返す<code>runInPage</code>や<code>applicability</code>（<code>async</code>関数）は、その旨を示す<code>error</code>付きの<code>cantTell</code>として報告されます。<code>true</code>、<code>false</code>、<code>{"{ applicable: true | false }"}</code>以外を返す<code>applicability</code>（<code>return</code>を書き忘れた<code>undefined</code>、<code>0</code>、<code>null</code>、<code>'false'</code>。1.18.0より前は、そのルールをあらゆる場所で実行していました）と、結果オブジェクト以外を返す<code>runInPage</code>も同様です。<code>pass</code>、<code>fail</code>、<code>cantTell</code>、<code>notApplicable</code>以外の<code>outcome</code>（<code>'failed'</code>など）は<code>cantTell</code>になり、<code>error</code>に返された値が示されます。ルールの<code>type</code>はその<code>meta</code>から決まります。戻り値の<code>type</code>は無視され、<code>error</code>に注記が付きます。
 				</li>
 				<li>
 					結果は他のルールとまったく同じように<code>checksResults</code>に現れます。<code>{"{ __node }"}</code>だけを付けた<code>fail</code>/<code>cantTell</code>の検出箇所に対して<code>selector</code>/<code>html</code>/<code>structuralPath</code>が自動補完される点も同じです（<a href="/results-reports/output-schema/">出力スキーマ</a>を参照）。

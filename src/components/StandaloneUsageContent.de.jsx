@@ -93,11 +93,17 @@ export function StandaloneUsageContent() {
 				Standalone-Weg — das entspricht <span lang="en">Pattern 1</span>/<span lang="en">Pattern 2</span> in{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>: jsdom in Node
 				ohne echten Browser, oder Puppeteer/Playwright selbst steuern, statt über ein Binding zu
-				gehen.
+				gehen. Aus einem ES-Modul lässt sich seit core 1.18.0 jeder Export mit Namen importieren (
+				<code>{"import { runDomRulesInPage } from '@surea11y/core'"}</code>).
 				Für Tests scannt <code>runa11yCoreOnHtml(html, options)</code> aus{" "}
 				<code>@surea11y/core/testing</code> einen HTML-String in jsdom und richtet das
 				Dokument für Sie ein; seit core 1.12 liest seine Option <code>contentType</code>{" "}
-				ein SVG- oder XHTML-Dokument als das, was es ist.
+				ein SVG- oder XHTML-Dokument als das, was es ist. Seit 1.18.0 warnt es bei einem
+				Schlüssel, den es nicht kennt, und nennt den nächstliegenden (<code>engineOption</code>:
+				gemeint <code>engineOptions</code>?), und bei einer Engine-Option, die es neben{" "}
+				<code>engineOptions</code> nicht liest (<code>locale</code>: als{" "}
+				<code>engineOptions.locale</code> übergeben); mit gesetztem{" "}
+				<code>engineOptions.strictOptions</code> wirft es in beiden Fällen.
 			</p>
 
 			<h2 id="from-the-browser-console">Aus der Browser-Konsole</h2>
@@ -128,7 +134,12 @@ export function StandaloneUsageContent() {
 				<code>run(options)</code> nimmt die Engine-Optionen und zwei eigene,{" "}
 				<code>context</code> (ein Selektor, um nur einen Teil der Seite zu scannen) und{" "}
 				<code>runOnly</code>, und ruft vor dem Scan die Stylesheets ab, die die Seite selbst nicht
-				lesen kann. <code>table()</code> gibt eine Zeile pro Befund aus: zuerst die Fehlschläge,
+				lesen kann. Seit core 1.18.0 prüft es sie: Es lehnt Engine-Optionen ab, die in{" "}
+				<code>engineOptions</code> verpackt sind, sowie die ältere Auswahlform{" "}
+				<code>{"{ type: 'tag', values }"}</code> auf oberster Ebene (beides führte jede Regel aus,
+				ohne eine dieser Optionen), und warnt einmal bei einem naheliegenden Tippfehler wie{" "}
+				<code>lcoale</code> oder einem Schlüssel, den keine Engine-Option hat.{" "}
+				<code>table()</code> gibt eine Zeile pro Befund aus: zuerst die Fehlschläge,
 				dann die Fragen, die zu <code>fail</code> tendieren, die, die zu <code>pass</code>{" "}
 				tendieren, und die, die nur eine Person beurteilen kann. <code>highlight()</code> zeichnet
 				einen Rahmen um jedes Element, das ein <code>fail</code> (durchgehend rot) oder ein{" "}
@@ -269,7 +280,8 @@ export function StandaloneUsageContent() {
 				<code>css-focus-indicator-suppressed</code> lesen ihn. Im Bundle nimmt{" "}
 				<code>runa11yCoreInPageAsync</code> dieselben vier Argumente wie{" "}
 				<code>runa11yCoreInPage</code>, ruft mit <code>preloadStyleSheets()</code> die Stylesheets
-				ab, die ihr Server freigibt (CORS), und scannt dann:
+				ab, die ihr Server freigibt (CORS), und scannt dann, innerhalb von{" "}
+				<code>engineOptions.timeBudgetMs</code>, wenn angegeben (<a href="#a-time-limit-on-a-scan">siehe unten</a>):
 			</p>
 			<CodeBlock
 				lang="js"
@@ -280,7 +292,11 @@ export function StandaloneUsageContent() {
 			<p>
 				Ein Stylesheet, das sein Server nicht freigibt, lässt sich aus der Seite gar nicht lesen.
 				Ein Werkzeug, das den Browser steuert, kann es außerhalb der Seite abrufen, wo kein CORS
-				gilt, und in derselben Option übergeben; die Bindings tun das.
+				gilt, und in derselben Option übergeben; die Bindings tun das.{" "}
+				<code>preloadStyleSheets()</code> gibt jedes Stylesheet nach <code>timeoutMs</code>{" "}
+				(Standard <code>5000</code>) auf, oder zu <code>deadline</code> (eine{" "}
+				<code>Date.now()</code>-Zeit), wenn angegeben, und nennt die abgebrochenen Stylesheets in{" "}
+				<code>notRead</code> der Liste.
 			</p>
 
 			<h2 id="a-time-limit-on-a-scan">Ein Zeitlimit für einen Scan</h2>
@@ -323,6 +339,19 @@ export function StandaloneUsageContent() {
 				auslösen, wenn er endet: Führen Sie den Scan in einem Worker-Thread oder einem
 				Kindprozess aus, und beenden Sie diesen, wenn das Limit überschritten ist. Das Zeitlimit des
 				CI-Jobs selbst ist in beiden Fällen der letzte Ausweg.
+			</p>
+			<p>
+				Seit core 1.18.0 lässt <code>engineOptions.timeBudgetMs</code> den Scan selbst auf einer
+				schweren Seite rechtzeitig aufhören: Hat er so viele Millisekunden gebraucht, startet er
+				keine Regeln mehr, und das Ergebnis listet die nicht gestarteten in <code>notRun</code> und
+				sagt, dass es unvollständig ist (<code>engine.incomplete</code>), sodass ein abgebrochener
+				Scan nie als bestanden gilt. Eine gestartete Regel läuft trotzdem zu Ende, das Budget
+				ersetzt also nicht das Limit oben für eine Seite, die hängt. In{" "}
+				<code>runa11yCoreInPageAsync</code> deckt es auch das Laden der Stylesheets ab, das
+				höchstens die Hälfte davon brauchen darf; über Frames hinweg gilt es für den ganzen Scan,
+				und jeder Frame bekommt, was übrig ist. Siehe{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">„Ein Zeitbudget“</a>{" "}
+				in Engine-Optionen.
 			</p>
 
 			<h2 id="internals-hook">Web Components mit privaten Internals</h2>
@@ -409,7 +438,11 @@ export function StandaloneUsageContent() {
 				Skript der Seite es lesen kann: Installieren Sie sie für Test- und Audit-Läufe. In einer
 				jsdom-Setup-Datei übergeben Sie <code>{"{ early: true }"}</code> und führen für den
 				Listener-Hook vorher einen Selektor aus (<code>document.querySelector('*')</code>), weil
-				jsdom beim ersten Selektor eigene Tastatur-Listener hinzufügt. Ein jsdom-Test, der{" "}
+				jsdom beim ersten Selektor eigene Tastatur-Listener hinzufügt. Ein Listener, der über{" "}
+				<code>addEventListener</code> eines anderen Frames am Element dieser Seite hinzugefügt
+				wird, ist sichtbar, wenn der Hook in beiden Frames läuft (ab core 1.18.0); ohne den Hook in
+				jenem Frame ist er es nicht, da jeder Frame seine eigene Kopie der Methode hat. Ein
+				jsdom-Test, der{" "}
 				<code>showModal()</code> nachbildet, indem er <code>open</code> und{" "}
 				<code>aria-modal="true"</code> auf einen Dialog setzt, installiert den Live-Region-Hook mit{" "}
 				<code>{"{ early: true, assumeModal: true }"}</code> und scannt mit{" "}

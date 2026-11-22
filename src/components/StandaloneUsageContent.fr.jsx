@@ -93,11 +93,17 @@ export function StandaloneUsageContent() {
 				l’autre voie autonome : ce sont les <span lang="en">Pattern 1</span> et <span lang="en">Pattern 2</span> de{" "}
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>, à savoir jsdom
 				dans Node sans vrai navigateur, ou piloter vous-même Puppeteer/Playwright au lieu de
-				passer par un binding.
+				passer par un binding. Depuis un module ES, chaque export peut être importé par son nom (
+				<code>{"import { runDomRulesInPage } from '@surea11y/core'"}</code>), depuis core 1.18.0.
 				Pour les tests, <code>runa11yCoreOnHtml(html, options)</code> de{" "}
 				<code>@surea11y/core/testing</code> analyse une chaîne HTML dans jsdom et
 				prépare le document pour vous ; depuis core 1.12, son option{" "}
-				<code>contentType</code> lit un document SVG ou XHTML comme ce qu’il est.
+				<code>contentType</code> lit un document SVG ou XHTML comme ce qu’il est. Depuis 1.18.0, il
+				émet un avertissement pour une clé qu’il ne connaît pas, en nommant la plus proche (
+				<code>engineOption</code> : vouliez-vous dire <code>engineOptions</code> ?), et pour une
+				option du moteur qu’il ne lit pas à côté de <code>engineOptions</code> (<code>locale</code> :
+				passez-la comme <code>engineOptions.locale</code>) ; avec{" "}
+				<code>engineOptions.strictOptions</code>, l’un comme l’autre lève une exception.
 			</p>
 
 			<h2 id="from-the-browser-console">Depuis la console du navigateur</h2>
@@ -128,7 +134,12 @@ export function StandaloneUsageContent() {
 				<code>run(options)</code> accepte les options du moteur et deux qui lui sont propres,{" "}
 				<code>context</code> (un sélecteur, pour n’analyser qu’une partie de la page) et{" "}
 				<code>runOnly</code>, et récupère avant l’analyse les feuilles de style que la page ne peut
-				pas lire elle-même. <code>table()</code> affiche une ligne par constat : d’abord les échecs,
+				pas lire elle-même. Depuis core 1.18.0, il les vérifie : il refuse des options du moteur
+				enveloppées dans <code>engineOptions</code>, et l’ancienne forme de sélection{" "}
+				<code>{"{ type: 'tag', values }"}</code> au premier niveau (toutes deux exécutaient
+				auparavant toutes les règles, sans aucune d’elles), et émet un seul avertissement pour une
+				faute de frappe proche comme <code>lcoale</code> ou une clé qu’aucune option du moteur ne
+				porte. <code>table()</code> affiche une ligne par constat : d’abord les échecs,
 				puis les questions qui penchent vers l’échec, celles qui penchent vers la réussite, et
 				celles que seule une personne peut juger. <code>highlight()</code> encadre chaque élément
 				que nomme un <code>fail</code> (rouge plein) ou un <code>cantTell</code> (ambre en
@@ -270,7 +281,9 @@ export function StandaloneUsageContent() {
 				<code>css-focus-indicator-suppressed</code> le lisent. Dans le bundle,{" "}
 				<code>runa11yCoreInPageAsync</code> prend les quatre mêmes arguments que{" "}
 				<code>runa11yCoreInPage</code>, récupère avec <code>preloadStyleSheets()</code> les feuilles
-				que leur serveur partage (CORS), puis analyse :
+				que leur serveur partage (CORS), puis analyse, dans la limite de{" "}
+				<code>engineOptions.timeBudgetMs</code> s’il est donné (
+				<a href="#a-time-limit-on-a-scan">ci-dessous</a>) :
 			</p>
 			<CodeBlock
 				lang="js"
@@ -281,7 +294,10 @@ export function StandaloneUsageContent() {
 			<p>
 				Une feuille que son serveur ne partage pas ne peut pas du tout être lue depuis la page. Un
 				outil qui pilote le navigateur peut la récupérer hors de la page, où CORS ne s’applique pas,
-				et la passer dans la même option ; les bindings le font.
+				et la passer dans la même option ; les bindings le font. <code>preloadStyleSheets()</code>{" "}
+				abandonne chaque feuille après <code>timeoutMs</code> (par défaut <code>5000</code>), ou à{" "}
+				<code>deadline</code> (une heure <code>Date.now()</code>) s’il est donné, et nomme les
+				feuilles ainsi abandonnées dans le <code>notRead</code> de la liste.
 			</p>
 
 			<h2 id="a-time-limit-on-a-scan">Une limite de temps pour une analyse</h2>
@@ -325,6 +341,19 @@ export function StandaloneUsageContent() {
 				s’y déclencher avant qu’elle se termine. Exécutez l’analyse dans un worker thread ou un
 				processus enfant, et arrêtez-le quand la limite est dépassée. La limite de temps propre au
 				job de CI reste le dernier recours dans les deux cas.
+			</p>
+			<p>
+				Depuis core 1.18.0, <code>engineOptions.timeBudgetMs</code> permet à l’analyse elle-même
+				de s’arrêter à temps sur une page lourde : une fois qu’elle a passé ce nombre de
+				millisecondes, elle ne lance plus de règle, et le résultat liste celles qu’elle n’a pas
+				lancées dans <code>notRun</code> et se déclare incomplet (<code>engine.incomplete</code>),
+				si bien qu’une analyse écourtée ne se lit jamais comme une réussite. Une règle déjà lancée
+				se termine quand même : il ne remplace donc pas la limite ci-dessus pour une page qui se
+				bloque. Dans <code>runa11yCoreInPageAsync</code>, il couvre aussi la récupération des
+				feuilles de style, qui peut en prendre au plus la moitié ; sur plusieurs frames, c’est
+				celui de toute l’analyse, chaque frame recevant ce qu’il en reste. Voir{" "}
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">« Un budget de temps »</a>{" "}
+				dans les options du moteur.
 			</p>
 
 			<h2 id="internals-hook">Composants web aux internals privés</h2>
@@ -413,7 +442,10 @@ export function StandaloneUsageContent() {
 				d’audit. Dans un fichier de configuration jsdom, passez <code>{"{ early: true }"}</code> et,
 				pour le hook d’écouteurs, exécutez d’abord un sélecteur (
 				<code>document.querySelector('*')</code>), car jsdom ajoute ses propres écouteurs de clavier
-				la première fois qu’un sélecteur s’exécute. Un test jsdom qui remplace{" "}
+				la première fois qu’un sélecteur s’exécute. Un écouteur ajouté avec l’
+				<code>addEventListener</code> d’un autre frame, appelé sur un élément de cette page, est vu
+				quand le hook s’exécute dans les deux frames (core 1.18.0 et ultérieur) ; sans le hook dans
+				ce frame, il ne l’est pas, puisque chaque frame a sa propre copie de la méthode. Un test jsdom qui remplace{" "}
 				<code>showModal()</code> en définissant <code>open</code> et <code>aria-modal="true"</code>{" "}
 				sur une boîte de dialogue installe le hook de régions live avec{" "}
 				<code>{"{ early: true, assumeModal: true }"}</code> et analyse avec{" "}

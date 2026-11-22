@@ -100,13 +100,23 @@ export function StandaloneUsageContent() {
 				<code>require('@surea11y/core')</code>
 				を直接呼び出すのが、もう1つのスタンドアロンな方法です。
 				<a href={`${core}/docs/INTEGRATION.md`}><code>INTEGRATION.md</code></a>
-				の<span lang="en">Pattern 1</span>/<span lang="en">Pattern 2</span>にあたります。実際のブラウザーなしでNode上のjsdomを使う方法と、バインディングを経由せずにPuppeteer/Playwrightを自分で操作する方法です。テストでは、
+				の<span lang="en">Pattern 1</span>/<span lang="en">Pattern 2</span>にあたります。実際のブラウザーなしでNode上のjsdomを使う方法と、バインディングを経由せずにPuppeteer/Playwrightを自分で操作する方法です。core 1.18.0からは、ESモジュールからすべてのエクスポートを名前でインポートできます（
+				<code>{"import { runDomRulesInPage } from '@surea11y/core'"}</code>
+				）。テストでは、
 				<code>@surea11y/core/testing</code>
 				の
 				<code>runa11yCoreOnHtml(html, options)</code>
 				が、ドキュメントを用意したうえでHTML文字列をjsdomでスキャンします。core 1.12からは、その
 				<code>contentType</code>
-				オプションで、SVGやXHTMLのドキュメントをその形式どおりに解析できます。
+				オプションで、SVGやXHTMLのドキュメントをその形式どおりに解析できます。1.18.0からは、知らないキーについて最も近いものを示して警告し（
+				<code>engineOption</code>
+				：<code>engineOptions</code>の誤りではないか）、
+				<code>engineOptions</code>
+				と並べて渡された、そこでは読まないエンジンオプションについても警告します（
+				<code>locale</code>
+				：<code>engineOptions.locale</code>として渡す）。
+				<code>engineOptions.strictOptions</code>
+				を設定すると、どちらも例外を投げます。
 			</p>
 
 			<h2 id="from-the-browser-console">ブラウザーのコンソールから</h2>
@@ -136,7 +146,13 @@ export function StandaloneUsageContent() {
 				<code>context</code>
 				（ページの一部だけをスキャンするセレクター）と
 				<code>runOnly</code>
-				を受け取り、スキャンの前に、ページ自身が読めないスタイルシートを取得します。
+				を受け取り、スキャンの前に、ページ自身が読めないスタイルシートを取得します。core 1.18.0からはそれらを確認します。
+				<code>engineOptions</code>
+				で包んだエンジンオプションと、トップレベルに置いた古い選択の形式
+				<code>{"{ type: 'tag', values }"}</code>
+				は拒否し（どちらも、以前はそれらを1つも使わずにすべてのルールを実行していました）、
+				<code>lcoale</code>
+				のような近い綴り誤りや、どのエンジンオプションにもないキーは1回だけ警告します。
 				<code>table()</code>
 				は検出結果を1行ずつ表示します。まず失敗、次に不適合に傾いた問い、適合に傾いた問い、人だけが判断できる問いの順です。
 				<code>highlight()</code>
@@ -316,7 +332,9 @@ export function StandaloneUsageContent() {
 				<code>runa11yCoreInPage</code>
 				と同じ4つの引数を受け取り、サーバーが共有している（CORS）スタイルシートを
 				<code>preloadStyleSheets()</code>
-				で取得してからスキャンします。
+				で取得してから、指定があれば
+				<code>engineOptions.timeBudgetMs</code>
+				の範囲内で（<a href="#a-time-limit-on-a-scan">後述</a>）スキャンします。
 			</p>
 			<CodeBlock
 				lang="js"
@@ -326,6 +344,14 @@ export function StandaloneUsageContent() {
 			/>
 			<p>
 				サーバーが共有していないスタイルシートは、ページからはまったく読めません。ブラウザーを操作するツールなら、CORSが適用されないページの外から取得して、同じオプションで渡せます。バインディングはそうしています。
+				<code>preloadStyleSheets()</code>
+				は、各スタイルシートを
+				<code>timeoutMs</code>
+				（デフォルト<code>5000</code>）の後、または指定があれば
+				<code>deadline</code>
+				（<code>Date.now()</code>の時刻）にあきらめ、途中で打ち切ったスタイルシートをリストの
+				<code>notRead</code>
+				に示します。
 			</p>
 
 			<h2 id="a-time-limit-on-a-scan">スキャンの制限時間</h2>
@@ -361,6 +387,19 @@ export function StandaloneUsageContent() {
 			/>
 			<p>
 				jsdomではスキャンがNode自身のスレッドで実行されるため、そこでのタイマーはスキャンが終わるまで発火できません。スキャンをワーカースレッドか子プロセスで実行し、制限を過ぎたらそれを終了してください。どちらの場合も、最後の手段はCIジョブ自体の制限時間です。
+			</p>
+			<p>
+				core 1.18.0からは、
+				<code>engineOptions.timeBudgetMs</code>
+				で、重いページでもスキャン自身が時間内に止まるようにできます。そのミリ秒数を使い切るとそれ以上ルールを開始せず、結果は開始しなかったルールを
+				<code>notRun</code>
+				に記録して、不完全であることを示します（
+				<code>engine.incomplete</code>
+				）。そのため、途中で打ち切られたスキャンが合格と読まれることはありません。開始済みのルールは最後まで実行されるので、止まってしまうページのための上記の制限の代わりにはなりません。
+				<code>runa11yCoreInPageAsync</code>
+				では、スタイルシートの取得も予算に含まれ、取得に使えるのはその半分までです。フレームをまたぐ場合は予算はスキャン全体のもので、各フレームは残りを受け取ります。エンジンオプションの
+				<a href="/configuration/engine-options/#a-time-budget-timebudgetms">「時間の予算」</a>
+				を参照してください。
 			</p>
 
 			<h2 id="internals-hook">非公開のinternalsを持つWebコンポーネント</h2>
@@ -455,7 +494,9 @@ export function StandaloneUsageContent() {
 				<code>{"{ early: true }"}</code>
 				を渡し、リスナーフックの前にセレクターを1回実行してください（
 				<code>document.querySelector('*')</code>
-				）。jsdomは最初にセレクターを実行したときに独自のキーリスナーを追加するためです。jsdomで<code>showModal()</code>の代わりにダイアログに<code>open</code>と<code>aria-modal="true"</code>を設定するテストは、ライブリージョンフックを<code>{"{ early: true, assumeModal: true }"}</code>でインストールし、<code>engineOptions.assumeModal: true</code>でスキャンします（core 1.16.0以降）。
+				）。jsdomは最初にセレクターを実行したときに独自のキーリスナーを追加するためです。別のフレームの
+				<code>addEventListener</code>
+				を通じてこのページの要素に追加されたリスナーは、両方のフレームでフックが動いていれば見えます（core 1.18.0以降）。そのフレームにフックがなければ見えません。フレームはそれぞれ独自のメソッドのコピーを持つからです。jsdomで<code>showModal()</code>の代わりにダイアログに<code>open</code>と<code>aria-modal="true"</code>を設定するテストは、ライブリージョンフックを<code>{"{ early: true, assumeModal: true }"}</code>でインストールし、<code>engineOptions.assumeModal: true</code>でスキャンします（core 1.16.0以降）。
 			</p>
 			<p>
 				<strong>Playwrightの<code>setContent()</code>はナビゲーションではありません。</strong>マークアップを、すでに読み込みを終えたページの現在の文書に書き込むので、その文書の読み込み中に初期化スクリプトが実行されることはありません。ページを開く前にコンテキストに追加したスクリプトは、ページの最初の空の文書で実行されます。<code>setContent()</code>がページを書き込むときにフックはありますが、<code>'late'</code>として記録され、早期のフックなら要素を不合格にしていたところで、<code>click-handler-keyboard-operable</code>は確認を求めます。すでに開いているページに追加したスクリプトは次の文書を待ちますが、<code>setContent()</code>は文書を作らないので、スキャンはフックなしで実行されます。早期に記録するには、実際のナビゲーションでページを読み込んでください。サーバーや<code>file://</code>のURLへの<code>page.goto()</code>、またはURLにマークアップで応答する<code>page.route()</code>です。internalsフックも同様です。

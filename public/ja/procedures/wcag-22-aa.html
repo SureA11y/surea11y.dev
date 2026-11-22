@@ -103,7 +103,7 @@
 <a class="skip" href="#main">手順へスキップ</a>
 <header class="page">
 <h1>WCAG 2.2：各要件の評価方法</h1>
-<p>要件：55 · 手順：53</p>
+<p>要件：55 · 手順：54</p>
 <ul><li>レベル：A, AA</li></ul>
 
 </header>
@@ -259,8 +259,8 @@
 <ul class="badges"><li class="badge auto-partial">ルールが一部を判定する</li><li class="badge">必要なもの：<span>ブラウザーの開発者ツール</span>, <span>スクリーンリーダー</span></li></ul>
 <ol class="steps"><li>テキストフィールド、チェックボックス、ラジオボタン、ドロップダウン、カスタムコントロールなど、ページ上のすべてのフォームフィールドを見つけてください。</li><li>それぞれを開発者ツールの [Elements] パネルで選択し、アクセシビリティ ペインの Name に見えるラベルが含まれていることを確認してください。</li><li>ラジオボタンや 3 つに分かれた日付など、1 つの質問に属するフィールドのグループについては、各フィールドとともに質問が読み上げられるように、グループが &lt;legend&gt; 付きの &lt;fieldset&gt; であるか、名前付きの role=&quot;group&quot; を持つことを確認してください。</li><li>フィールドの隣に表示される指示 (形式、必須の印) が、aria-describedby でフィールドに関連付けられているか、ラベルの中にあることを確認してください。</li></ol>
 <dl class="verdict"><dt>合格の条件</dt><dd>各フィールドの名前に見えるラベルが含まれ、フィールドのグループには質問による名前があり、フィールドの指示がフィールドに関連付けられています。</dd><dt>不合格の条件</dt><dd>フィールドが関連付けられていない近くのテキストだけでラベル付けされているか、グループの質問がフィールドに関連付けられていないため、スクリーンリーダーがフィールドの目的を伝えずに読み上げ、WCAG 1.3.1 を満たしません。</dd></dl>
-<p class="rules">これを検査するルール：<code>form-control-programmatic-label-present</code></p>
-<div class="covers"><p>この手順では次も評価します：</p><ul><li>フォームコントロールにプログラムで解釈できるラベル (label/aria-label/aria-labelledby/title/placeholder) がある</li><li>フォームコントロールのラベルが適切である</li></ul></div>
+<p class="rules">これを検査するルール：<code>form-control-programmatic-label-present</code>, <code>form-group-name-present</code></p>
+<div class="covers"><p>この手順では次も評価します：</p><ul><li>フォームコントロールにプログラムで解釈できるラベル (label/aria-label/aria-labelledby/title/placeholder) がある</li><li>フォームコントロールのラベルが適切である</li><li>同じ name を持ち、名前のあるグループに入っていないラジオボタンまたはチェックボックス (手がかりのみ)</li></ul></div>
 </section>
 <section class="facet" aria-labelledby="facet-1-3-1-aria-structure-valid">
 <h5 id="facet-1-3-1-aria-structure-valid">ARIA のロールと関係性が、ページの見た目と同じ構造を伝えている</h5>
@@ -368,8 +368,8 @@
 <ul class="badges"><li class="badge auto-partial">ルールが一部を判定する</li><li class="badge">必要なもの：<span>ブラウザーのズーム</span></li></ul>
 <ol class="steps"><li>ブラウザーを 200% にズームしてください。</li><li>ページ全体を確認し、すべてのテキストが大きくなり、切り取られたり重なったり隠れたりしているテキストがないことを確認してください。</li><li>そのサイズでページのコントロール、メニュー、フォームを操作し、すべてが引き続き機能することを確認してください。</li><li>スマートフォンで、ピンチ操作でページを 200% までズームできることを確認してください。ズームを強制的に有効にするユーザー補助設定をオフにした Android の Chrome を使ってください。iOS の Safari はズームを禁止するビューポートの指定を無視するため、この不合格が見えなくなることがあります。</li><li>キャプションと文字画像は除外してください。</li></ol>
 <dl class="verdict"><dt>合格の条件</dt><dd>200% で、すべてのテキストが大きくなって読める状態を保ち、すべてが引き続き機能します。</dd><dt>不合格の条件</dt><dd>200% でテキストが切り取られる、重なる、大きくならない、コントロールが機能しなくなる、またはピンチズームが禁止されているため、WCAG 1.4.4 を満たしません。</dd></dl>
-<p class="rules">これを検査するルール：<code>meta-viewport-zoom-enabled</code></p>
-<div class="covers"><p>この手順では次も評価します：</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; がピンチズームを無効にしたり 200% 未満に制限したりしていない</li></ul></div>
+<p class="rules">これを検査するルール：<code>meta-viewport-zoom-enabled</code>, <code>resize-text-content-loss</code></p>
+<div class="covers"><p>この手順では次も評価します：</p><ul><li>&lt;meta name=&quot;viewport&quot;&gt; がピンチズームを無効にしたり 200% 未満に制限したりしていない</li><li>幅 640 CSS ピクセル（200% ズーム）で、はみ出しを隠すボックス内のテキストが切り取られない（確認を求める: 全文が別の方法で提供されているかは人が判断する）</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-5" aria-labelledby="req-1-4-5">
@@ -389,9 +389,10 @@
 <p class="meta"><span>レベル AA</span></p>
 <section class="facet" aria-labelledby="facet-1-4-10-reflow-320">
 <h5 id="facet-1-4-10-reflow-320">幅 320 CSS ピクセルで、コンテンツに 2 方向のスクロールが不要で、何も失われない</h5>
-<ul class="badges"><li class="badge auto-manual">人だけが確認できる</li></ul>
-<p class="empty">これにはまだ手順がありません。</p>
-
+<ul class="badges"><li class="badge auto-partial">ルールが一部を判定する</li><li class="badge">必要なもの：<span>ブラウザーの開発者ツール</span>, <span>ブラウザーのズーム</span></li></ul>
+<ol class="steps"><li>ブラウザーのウィンドウを幅 320 CSS ピクセルにします。開発者ツールでデバイスツールバーをオンにして幅を 320 にするか、幅 1280 ピクセルのウィンドウを 400% に拡大します。</li><li>ページ全体をスクロールして、上下だけでなく横にもスクロールするかを確認します。</li><li>横にスクロールする場合は、ウィンドウより広いものを見つけます。地図、図、動画、ゲーム、データ表など、使用や理解に 2 次元が必要なコンテンツは、それ自体で横にスクロールしてかまいません。</li><li>すべてのコンテンツとすべてのコントロールが残っていて使えることを確認します。メニュー、フォーム、ボタンは移動したり折りたたまれたりしてもかまいませんが、何も失われてはいけません。</li></ol>
+<dl class="verdict"><dt>合格の条件</dt><dd>幅 320 CSS ピクセルで、2 次元が必要なコンテンツを除き、ページは一方向にだけスクロールし、何も失われない。</dd><dt>不合格の条件</dt><dd>幅 320 CSS ピクセルで、コンテンツを読んだり使ったりするために横スクロールが必要か、コンテンツや機能が失われており、WCAG 1.4.10 を満たしていない。</dd></dl>
+<p class="rules">これを検査するルール：<code>reflow-horizontal-scroll</code></p>
 </section>
 </article>
 <article class="req" id="r-1-4-11" aria-labelledby="req-1-4-11">
@@ -410,7 +411,8 @@
 <ul class="badges"><li class="badge auto-manual">人だけが確認できる</li><li class="badge">必要なもの：<span>ブラウザーの開発者ツール</span></li></ul>
 <ol class="steps"><li>テキストを伴わないアイコン、グラフ、図、地図、インフォグラフィックなど、情報を伝えるグラフィックを探してください。</li><li>それぞれについて、アイコンの形、グラフの線や棒、領域の境界など、理解に必要な部分を見つけてください。</li><li>コントラストチェッカーで、各部分と隣接する色とのコントラスト比を測ってください。3:1 以上が必要です。テキストでラベル付けされている部分や、同じ情報が近くのテキストでも示されている部分は対象外です。</li><li>装飾的なグラフィック、ロゴ、写真や国旗のように特定の見た目が必要不可欠なグラフィックは除外してください。</li></ol>
 <dl class="verdict"><dt>合格の条件</dt><dd>グラフィックの理解に必要なすべての部分のコントラスト比が 3:1 以上であるか、その情報が別の方法で示されています。</dd><dt>不合格の条件</dt><dd>グラフィックの理解に必要な部分のコントラスト比が 3:1 未満で、その情報が別の方法で示されておらず、WCAG 1.4.11 を満たしません。</dd></dl>
-
+<p class="rules">これを検査するルール：<code>symbol-graphic-contrast</code></p>
+<div class="covers"><p>この手順では次も評価します：</p><ul><li>文字も数字も含まないテキストとして描かれ、グラフィックとして使われる、3:1 未満の記号 (手がかりのみ)</li></ul></div>
 </section>
 </article>
 <article class="req" id="r-1-4-12" aria-labelledby="req-1-4-12">
