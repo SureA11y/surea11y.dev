@@ -651,13 +651,18 @@ Open English-source issues found in that review, not yet decided:
 - **a11y**: `npm run check:a11y` (`scripts/check-a11y.mjs`) scans every
   built page except `/from/` redirects in Chromium with
   `@surea11y/playwright` and the pinned `@surea11y/core`, profile
-  `wcag22-aa` (the statement's WCAG 2.2 AA), at 375 and 1280 px (one
-  parallel job each, artifacts `a11y-results-<width>`), after
-  `document.fonts.ready`. Any `fail` or unscannable page fails the run;
-  `cantTell` never does. Writes `a11y-results/summary.md` (also the run
-  summary) and core's HTML report per page with a finding (artifact).
-  `--widths=` and `--pages=` narrow a local run. Installs `fonts-noto-cjk`
-  so Japanese pages are measured in a real CJK font.
+  `wcag22-aa` (the statement's WCAG 2.2 AA), at 375 and 1280 px, after
+  `document.fonts.ready`. Each width is split over four parallel jobs
+  (`--shard=<i>/4`, round-robin over the sorted routes; artifacts
+  `a11y-results-<width>-<shard>`, one run summary each): the scan took
+  6.5 to 8 minutes per width in one job. Any `fail` or unscannable page fails
+  the run; `cantTell` never does. Writes `a11y-results/summary.md` (also the
+  run summary) and core's HTML report per page with a finding (artifact).
+  `--widths=`, `--pages=` and `--shard=` narrow a local run. Installs
+  `fonts-noto-cjk` so Japanese pages are measured in a real CJK font.
+  If PR runs still feel slow, the next step is caching each page's result by
+  its HTML hash plus core and Chromium versions (Astro hashes asset names, so
+  identical HTML means identical assets), not sampling pages.
 - **deploy**: push to `main` only, after both: `npx wrangler deploy` with
   secrets `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`. It replaces
   Cloudflare's git-triggered build, which was disconnected on 2026-10-03

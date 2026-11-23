@@ -18,6 +18,8 @@
  *   --widths=375,1280   viewport widths (CSS px), default 375,1280; CI runs
  *                       one job per width
  *   --pages=/,/rules/   only these routes, for a quick local look
+ *   --shard=2/4         every fourth route from the second, so CI can split
+ *                       one width over several jobs
  */
 import fs from "node:fs";
 import http from "node:http";
@@ -40,6 +42,12 @@ const PARALLEL = 8;
 const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.split("=")[1];
 const widths = (arg("widths") ?? "375,1280").split(",").map(Number);
 const onlyPages = arg("pages")?.split(",");
+const [shardIndex, shardCount] = (arg("shard") ?? "1/1").split("/").map(Number);
+if (!(shardCount >= 1 && shardIndex >= 1 && shardIndex <= shardCount)) {
+	console.error(`--shard must be i/n with 1 <= i <= n, got ${arg("shard")}`);
+	process.exit(2);
+}
+const sharded = shardCount > 1;
 
 if (!fs.existsSync(DIST)) {
 	console.error("No dist/ — run `npm run build` first.");
@@ -154,7 +162,8 @@ function summarize(width, results) {
 }
 
 function markdown(summaries, environment) {
-	const lines = [`## Accessibility scan (WCAG 2.2 AA, \`${PROFILE}\`)`, ""];
+	const part = sharded ? `, shard ${shardIndex} of ${shardCount}` : "";
+	const lines = [`## Accessibility scan (WCAG 2.2 AA, \`${PROFILE}\`${part})`, ""];
 	if (environment) lines.push(`@surea11y/core ${environment.version} · Chromium · fonts loaded before each scan`, "");
 	lines.push("| Width | Pages | fail | cantTell | pass | Page errors |", "|---|---|---|---|---|---|");
 	for (const s of summaries) {
@@ -185,14 +194,20 @@ function markdown(summaries, environment) {
 		}
 	}
 	if (summaries.some((s) => s.findings.size)) {
-		const artifact = summaries.length === 1 ? `a11y-results-${summaries[0].width}` : "a11y-results";
+		const artifact =
+			summaries.length === 1
+				? `a11y-results-${summaries[0].width}${sharded ? `-${shardIndex}` : ""}`
+				: "a11y-results";
 		lines.push(`HTML reports for each page with findings are in the \`${artifact}\` artifact.`, "");
 	}
 	return lines.join("\n");
 }
 
 const allRoutes = builtRoutes();
-const routes = onlyPages ? allRoutes.filter((r) => onlyPages.includes(r)) : allRoutes;
+// Round-robin over the sorted routes, so each shard gets a mix of languages and page types.
+const routes = (onlyPages ? allRoutes.filter((r) => onlyPages.includes(r)) : allRoutes).filter(
+	(_, i) => i % shardCount === shardIndex - 1
+);
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 
