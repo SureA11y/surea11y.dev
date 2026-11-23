@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Les règles de lint de core pour les règles." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Norme seulement : les exigences et les règles qui vérifient chacune d’elles." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Norme seulement : comment une personne évalue chaque exigence à la main, et un test qui vérifie que chaque exigence a une procédure pour chacune de ses facettes." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, avec <code>@surea11y/core</code> en dépendance peer à la version qui l’a écrit (<code>^1.18.0</code> ; <code>~1.18.0</code> pour un pack dérivé), et eslint, jsdom et Playwright en dépendances de développement.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, avec <code>@surea11y/core</code> en dépendance peer à la version qui l’a écrit (<code>^1.18.1</code> ; <code>~1.18.0</code> pour un pack dérivé), et eslint, jsdom et Playwright en dépendances de développement.</> },
 	{ id: "derived", file: <><code>standard-data.js</code>, <code>tests/standard.test.js</code></>, what: <>Pack dérivé seulement, et ses seuls fichiers en dehors de <code>index.js</code>, <code>README.md</code>, <code>package.json</code>, <code>eslint.config.js</code> et <code>.gitignore</code> : la norme dérivée des données de la base, la base telle quelle tant que vous ne la changez pas, et ses tests (<a href="#a-pack-built-on-another-pack">Un pack fondé sur un autre pack</a>).</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "Le guide du pack lui-même sur ces fichiers, et ce que git laisse de côté." },
 ];
@@ -743,7 +743,7 @@ export function PacksContent() {
 					dans Node. Une analyse avec
 					une version de core hors de cette plage ignore le pack, avec la raison dans{" "}
 					<code>skippedPacks</code>. <code>surea11y-pack new</code> écrit la version qui a généré
-					le pack (<code>^1.18.0</code>) ; gardez une plage qui commence à 1.14 si le pack utilise ce
+					le pack (<code>^1.18.1</code>) ; gardez une plage qui commence à 1.14 si le pack utilise ce
 					qu’a ajouté la 1.14 : <code>meta.review</code>, des lignes <code>reasonCodes</code> et{" "}
 					<code>findings</code>, <code>meta.contributions</code>, <code>applicability</code>,{" "}
 					<code>partial</code> ou <code>keepsParsing</code> ; et une qui commence à 1.15 s’il

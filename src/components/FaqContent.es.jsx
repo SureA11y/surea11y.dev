@@ -152,6 +152,24 @@ export function FaqContent() {
 						<a href="#invalid-engine-options">la entrada de más abajo</a>). Los valores que aceptaba
 						la 1.17 siguen funcionando.
 					</li>
+					<li>
+						<strong>La 1.18.1 cambia dos reglas.</strong>{" "}
+						<a href="/rules/p-as-heading/">
+							<code>p-as-heading</code>
+						</a>{" "}
+						también pregunta por una línea en negrita en una página cuyo texto de cuerpo es de 18px
+						o más, cuando la línea no es más grande que el texto que la sigue, solo tiene más peso,
+						como algunos temas ponen <code>&lt;strong&gt;</code>; la 1.18.0 solo preguntaba por
+						debajo de 18px.{" "}
+						<a href="/rules/link-in-text-block/">
+							<code>link-in-text-block</code>
+						</a>{" "}
+						compara un enlace con su bloque de texto, el ancestro más cercano que se dispone como
+						bloque, no con un elemento en línea que tenga al lado. Un enlace subrayado junto a un{" "}
+						<code>&lt;abbr&gt;</code> subrayado ya no falla; un enlace sin estilo junto a una
+						etiqueta en negrita o a un span de otro color ya no se distingue por ello, así que donde
+						esa era la única diferencia ahora falla, o pregunta con 3:1 o más, donde antes pasaba.
+					</li>
 				</ul>
 				<p>
 					Nuevo, y sin cambiar nada salvo que lo uses: un límite de tiempo para un análisis (

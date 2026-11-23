@@ -157,6 +157,25 @@ export function FaqContent() {
 						<a href="#invalid-engine-options">l’entrée ci-dessous</a>). Les valeurs que la 1.17
 						acceptait fonctionnent toujours.
 					</li>
+					<li>
+						<strong>La 1.18.1 modifie deux règles.</strong>{" "}
+						<a href="/rules/p-as-heading/">
+							<code>p-as-heading</code>
+						</a>{" "}
+						pose aussi une question sur une ligne en gras dans une page dont le corps de texte fait
+						18px ou plus, lorsque la ligne n’est pas plus grande que le texte qui la suit, seulement
+						plus grasse, comme certains thèmes composent <code>&lt;strong&gt;</code> ; la 1.18.0
+						ne posait la question qu’en dessous de 18px.{" "}
+						<a href="/rules/link-in-text-block/">
+							<code>link-in-text-block</code>
+						</a>{" "}
+						compare un lien à son bloc de texte, l’ancêtre le plus proche disposé en bloc, et non à
+						un élément en ligne placé à côté. Un lien souligné à côté d’un{" "}
+						<code>&lt;abbr&gt;</code> souligné n’échoue plus ; un lien sans style à côté d’un
+						libellé en gras ou d’un span d’une autre couleur n’en est plus distingué, si bien que là
+						où c’était la seule différence, il échoue désormais, ou donne lieu à une question à 3:1
+						ou plus, là où il réussissait avant.
+					</li>
 				</ul>
 				<p>
 					Nouveau, et sans rien changer tant que vous ne l’utilisez pas : un budget de temps pour
