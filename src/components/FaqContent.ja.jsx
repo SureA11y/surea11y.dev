@@ -60,6 +60,13 @@ export function FaqContent() {
 						<strong>オプションがより細かくチェックされます。</strong>
 						空の<code>runOnly</code>リスト、<code>runOnly</code>と並べた<code>rules</code>や<code>tags</code>のフィルター、ISO 8601の日時でない<code>timestamp</code>は警告され、<code>strictOptions</code>のもとでは拒否されます（<a href="#invalid-engine-options">後の項目</a>を参照してください）。1.17が受け付けた値は引き続き使えます。
 					</li>
+					<li>
+						<strong>1.18.1では2つのルールが変わります。</strong>
+						<a href="/rules/p-as-heading/"><code>p-as-heading</code></a>
+						は、本文が18px以上のページの太字の行についても、その行が後に続くテキストより大きくなく、太いだけの場合に確認を求めます。一部のテーマが<code>&lt;strong&gt;</code>をそのように設定するためです。1.18.0が確認を求めたのは18px未満の場合だけでした。
+						<a href="/rules/link-in-text-block/"><code>link-in-text-block</code></a>
+						は、リンクを隣のインライン要素ではなく、そのテキストブロック（ブロックとしてレイアウトされる最も近い祖先）と比べます。下線付きの<code>&lt;abbr&gt;</code>の隣にある下線付きのリンクは不合格にならなくなりました。一方、太字のラベルや別の色のspanの隣にある装飾のないリンクは、それによって区別されなくなるため、それが唯一の違いだった場合は、以前は合格していたところで不合格になるか、3:1以上なら確認を求めます。
+					</li>
 				</ul>
 				<p>
 					新しく追加され、使わない限り何も変えないもの：スキャンの時間予算（<code>engineOptions.timeBudgetMs</code>。実行しなかったものを<code>notRun</code>に挙げ、合格とは読まれません）と、ルールごとに保持するオカレンスの上限（<code>engineOptions.output.maxOccurrencesPerRule</code>。判定結果は変えません）。どちらも<a href="/configuration/engine-options/#a-time-budget-timebudgetms">エンジンオプション</a>にあります。<code>Object.prototype</code>に値を置くページが、スキャンを変えることはなくなりました（<a href="#page-builtins-broken">後の項目</a>を参照してください）。Chromiumでの全体のスキャンは、新しいチェックの分だけ1.17.0より約9%遅くなり、ブラウザーバンドルは1,829 KBから2,088 KBに増えます。変更の全一覧は、coreの<a href={`${core}/CHANGELOG.md`}><code>CHANGELOG.md</code></a>にあります。

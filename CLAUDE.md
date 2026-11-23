@@ -1341,3 +1341,24 @@ Rule pages pick those up when the site pins that release. Two Chromium pixel
 tests in core (`contrast-forced-colors-chromium`,
 `native-controls-pixels-chromium`) fail on this machine on an untouched
 v1.18.0 too.
+
+## Core 1.18.1 update (2026-11-23)
+
+Pinned `@surea11y/core` 1.18.1 (bindings, CLI, test-matchers and packs
+unchanged). It ships the English-source fixes from SureA11y/core#426, which
+the site's content pages already followed, plus two rule fixes. 14 rules'
+text changed (variants no longer cite `docs/RULE_AUTHORING.md`, landmark
+`others` examples, `page-zones-landmark`'s field of type search,
+`video-poster-text-alternative-present`'s figure-caption question has no lean,
+`page-title-patterns`, `aria-prohibited-children`, `p-as-heading` from 18px,
+"color"); every overlay follows. Review steps, locale counts and sample
+procedures unchanged; sample HTML reports byte-identical.
+
+- FAQ: a 1.18.1 bullet in `#results-changed-1-18` (`p-as-heading` from 18px,
+  `link-in-text-block` compared with its text block), every language.
+- Samples re-run with CLI 1.6.0 on core 1.18.1: same output, version line
+  only (quickstart, CLI, test-matchers, Output schema's `engine.version`).
+  Packs: `surea11y-pack new` writes `^1.18.1` (`pack-scaffold.js` writes
+  `^<core version>`, `~<minor>.0` for a derived pack).
+- `@surea11y/pack-rgaa` 1.3.0 is on npm; the site still names RGAA only as
+  core's example.

@@ -155,6 +155,24 @@ export function FaqContent() {
 						<a href="#invalid-engine-options">den Eintrag unten</a>). Werte, die 1.17 akzeptiert
 						hat, funktionieren weiter.
 					</li>
+					<li>
+						<strong>1.18.1 ändert zwei Regeln.</strong>{" "}
+						<a href="/rules/p-as-heading/">
+							<code>p-as-heading</code>
+						</a>{" "}
+						fragt auch nach einer fetten Zeile auf einer Seite, deren Fließtext 18px oder größer ist,
+						wenn die Zeile nicht größer ist als der Text danach, nur schwerer, wie manche Themes{" "}
+						<code>&lt;strong&gt;</code> setzen; 1.18.0 fragte nur unter 18px.{" "}
+						<a href="/rules/link-in-text-block/">
+							<code>link-in-text-block</code>
+						</a>{" "}
+						vergleicht einen Link mit seinem Textblock, dem nächsten als Block dargestellten
+						Vorfahren, nicht mit einem Inline-Element daneben. Ein unterstrichener Link neben einem
+						unterstrichenen <code>&lt;abbr&gt;</code> schlägt nicht mehr fehl; ein schlichter Link
+						neben einer fetten Beschriftung oder einem span in anderer Farbe hebt sich dadurch nicht
+						mehr ab, sodass er dort, wo das der einzige Unterschied war, jetzt fehlschlägt oder ab
+						3:1 nachgefragt wird, wo er vorher bestand.
+					</li>
 				</ul>
 				<p>
 					Neu, und ohne Änderung, solange Sie es nicht nutzen: ein Zeitbudget für einen Scan (

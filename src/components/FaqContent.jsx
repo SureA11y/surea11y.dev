@@ -145,6 +145,23 @@ export function FaqContent() {
 						<code>strictOptions</code> (see <a href="#invalid-engine-options">the entry below</a>).
 						Values 1.17 accepted still work.
 					</li>
+					<li>
+						<strong>1.18.1 changes two rules.</strong>{" "}
+						<a href="/rules/p-as-heading/">
+							<code>p-as-heading</code>
+						</a>{" "}
+						also asks about a bold line on a page whose body text is 18px or more, when the line is
+						no larger than the text after it, only heavier, as some themes set{" "}
+						<code>&lt;strong&gt;</code>; 1.18.0 asked only below 18px.{" "}
+						<a href="/rules/link-in-text-block/">
+							<code>link-in-text-block</code>
+						</a>{" "}
+						compares a link with its text block, the nearest ancestor laid out as a block, not with
+						an inline element beside it. An underlined link beside an underlined{" "}
+						<code>&lt;abbr&gt;</code> no longer fails; a plain link beside a bold label or a span of
+						another color is no longer set apart by it, so where that was the only difference it now
+						fails, or asks at 3:1 or more, where it passed before.
+					</li>
 				</ul>
 				<p>
 					New, and changing nothing unless you use it: a time budget for a scan (

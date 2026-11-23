@@ -105,7 +105,7 @@ const fileRows = [
 	{ id: "eslint", file: <code>eslint.config.js</code>, what: "Core's lint rules for rules." },
 	{ id: "standard", file: <><code>requirements.js</code>, <code>rule-map.js</code></>, what: "Standard only: the requirements and the rules that check each." },
 	{ id: "procedures", file: <><code>procedures.js</code>, <code>tests/procedures.test.js</code></>, what: "Standard only: how a person assesses each requirement by hand, and a test that every requirement has a procedure for each of its facets." },
-	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.18.0</code>; <code>~1.18.0</code> for a derived pack), and eslint, jsdom and Playwright as development dependencies.</> },
+	{ id: "package", file: <code>package.json</code>, what: <><code>private</code>, with <code>@surea11y/core</code> as a peer dependency at the version that wrote it (<code>^1.18.1</code>; <code>~1.18.0</code> for a derived pack), and eslint, jsdom and Playwright as development dependencies.</> },
 	{ id: "derived", file: <><code>standard-data.js</code>, <code>tests/standard.test.js</code></>, what: <>Derived only, and its only files besides <code>index.js</code>, <code>README.md</code>, <code>package.json</code>, <code>eslint.config.js</code> and <code>.gitignore</code>: the standard derived from the base's data, the base as it is until you change it, and its tests (<a href="#a-pack-built-on-another-pack">A pack built on another pack</a>).</> },
 	{ id: "readme", file: <><code>README.md</code>, <code>.gitignore</code></>, what: "The pack's own guide to these files, and what git leaves out." },
 ];
@@ -699,7 +699,7 @@ export function PacksContent() {
 					<code>'^1.11.1'</code>), read as npm reads ranges. Start new packs at 1.11.1: the 1.11.0
 					package left out a file packs need in Node. A scan with a core outside it skips the
 					pack, with the reason in <code>skippedPacks</code>. <code>surea11y-pack new</code> writes
-					the version that generated the pack (<code>^1.18.0</code>); keep a range that starts at
+					the version that generated the pack (<code>^1.18.1</code>); keep a range that starts at
 					1.14 if the pack uses what 1.14 added: <code>meta.review</code>, <code>reasonCodes</code>{" "}
 					and <code>findings</code> rows, <code>meta.contributions</code>, <code>applicability</code>,{" "}
 					<code>partial</code> or <code>keepsParsing</code>; and one that starts at 1.15 if it uses{" "}

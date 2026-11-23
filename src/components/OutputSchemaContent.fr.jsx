@@ -1865,7 +1865,7 @@ export function OutputSchemaContent() {
 					"{",
 					'  "engine": {',
 					'    "tag": "a11ycore",',
-					'    "version": "1.18.0",',
+					'    "version": "1.18.1",',
 					'    "schemaVersion": "1.0.0",',
 					'    "locale": { "requested": "en", "resolved": "en", "reason": "ok" },',
 					'    "wcagVersion": "2.2",',
