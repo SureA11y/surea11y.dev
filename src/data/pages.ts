@@ -180,6 +180,13 @@ export const contentPages: ContentPage[] = [
 			"Gate CI on new accessibility failures only: record the known ones in a baseline file, and the build fails as soon as a new one appears.",
 		content: "BaselineContent",
 	},
+	{
+		href: "/conformance/automation-limits/",
+		title: "What automation can't catch",
+		description:
+			"What automated accessibility testing decides and what it can't: meaning and behavior stay with people. How to combine scans with manual checks, and when to bring in an audit.",
+		content: "AutomationLimitsContent",
+	},
 
 	{ href: "/help/", title: "Help", content: "HelpContent" },
 	{

@@ -47,6 +47,16 @@ export function ConformanceContent() {
 				quietly. See{" "}
 				<a href="/conformance/baseline/">Baseline / allowlist</a>.
 			</p>
+
+			<h2>What automation can't catch</h2>
+			<p>
+				Passing every automated check is not the same as being accessible: a scan confirms that an
+				alternative text exists, not that it's the right one, and it never presses a key. This page
+				sets out where automated testing stops, what the engine does at that edge instead of
+				guessing, and how to combine scans, manual checks and an audit so each does the work it's
+				good at. See{" "}
+				<a href="/conformance/automation-limits/">What automation can't catch</a>.
+			</p>
 		</>
 	);
 }

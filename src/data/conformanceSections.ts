@@ -7,4 +7,5 @@ export const conformanceSections: ConformanceSection[] = [
 	{ href: "/conformance/wcag-mapping/", label: "WCAG conformance mapping" },
 	{ href: "/conformance/procedures/", label: "Test procedures" },
 	{ href: "/conformance/baseline/", label: "Baseline / allowlist" },
+	{ href: "/conformance/automation-limits/", label: "What automation can't catch" },
 ];

@@ -361,7 +361,33 @@ function main() {
   const corePkg = require(path.join(CORE_DIR, 'package.json'));
   // The composite WCAG rollups aren't in getChecksCatalog(); pages quote
   // their count, and RULE_CATALOG.md's heading anchor carries it.
-  const engine = { version: corePkg.version, license: corePkg.license, composites: core.getRulesCatalog().length };
+  // How much of WCAG 2.2 A and AA a scan decides, by core's own breakdown:
+  // each criterion's procedure lists facets, each marked full/partial/manual
+  // by how far rules decide it. The "What automation can't catch" page quotes
+  // these, so they come from core, not from this site.
+  const procedures = require(CORE_DIR).listProcedures({ levels: ['A', 'AA'] });
+  const facets = { full: 0, partial: 0, manual: 0 };
+  let criteriaAllManual = 0;
+  for (const requirement of procedures.requirements) {
+    const list = requirement.facets || [];
+    for (const facet of list) facets[facet.automation] += 1;
+    if (list.length && list.every((facet) => facet.automation === 'manual')) criteriaAllManual += 1;
+  }
+  const engine = {
+    version: corePkg.version,
+    license: corePkg.license,
+    composites: core.getRulesCatalog().length,
+    procedures: {
+      criteria: procedures.requirements.length,
+      criteriaAllManual,
+      facets,
+      // Criteria no rule of core's touches at all, in WCAG's order: what a
+      // scan never looks at, as opposed to what it asks about.
+      criteriaWithoutRules: procedures.requirements
+        .filter((requirement) => !(requirement.rules || []).length)
+        .map((requirement) => ({ id: requirement.id, title: requirement.title, level: requirement.level })),
+    },
+  };
   const engineJson = JSON.stringify(engine, null, 2) + '\n';
 
   if (args.check) {
